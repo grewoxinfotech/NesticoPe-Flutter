@@ -34,6 +34,7 @@ dependencies:
   readmore:
   speech_to_text:
   fl_chart:
+  easy_stepper:
   dropdown_button2:
   flutter_tts:
   
