@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
@@ -35,11 +36,10 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
   /// 🔹 Pick random color from 5 predefined colors
   Color getRandomAvatarColor() {
     final colors = [
-      ColorRes.primary,
-      Colors.redAccent,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
+      Color(0xFF0D47A1), // Deep Blue – trust, professional
+      Color(0xFFF57C00), // Orange – energy, attention
+      Color(0xFF6A1B9A), // Purple – premium / luxury feel
+      Color(0xFF00897B), // Teal – fresh, professional
     ];
     return colors[Random().nextInt(colors.length)];
   }
@@ -660,6 +660,7 @@ class NesticoPeCardWithText extends StatelessWidget {
   final double height;
   final double width;
   final Color opacity;
+  final bool isCenterText;
 
   const NesticoPeCardWithText({
     super.key,
@@ -668,6 +669,7 @@ class NesticoPeCardWithText extends StatelessWidget {
     this.height = 200,
     this.width = 160,
     required this.opacity,
+    this.isCenterText = false,
   });
 
   @override
@@ -701,7 +703,7 @@ class NesticoPeCardWithText extends StatelessWidget {
     return Container(
       height: height,
       width: width,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Stack(
@@ -718,27 +720,44 @@ class NesticoPeCardWithText extends StatelessWidget {
               Container(color: opacity),
 
             // Top color overlay with adaptive gradient
-            Container(
-              height: height,
-              width: width,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: gradientStops,
-                  colors: gradientColors,
+            if (isCenterText) ...[
+              // Blurred background
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                // optional for rounded corners
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
+                  child: Container(
+                    height: height,
+                    width: width,
+                    color: Colors.black.withOpacity(
+                      0.2,
+                    ), // semi-transparent overlay
+                  ),
                 ),
               ),
-            ),
+            ] else ...[
+              // Gradient background
+              Container(
+                height: height,
+                width: width,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: gradientStops,
+                    colors: gradientColors,
+                  ),
+                ),
+              ),
+            ],
 
-            // Title placement
-            Positioned(
-              top: 16,
-              left: 20,
-              child: SizedBox(
-                width: width - 20,
+            if (isCenterText) ...[
+              Align(
+                alignment: Alignment.center,
                 child: Text(
                   title,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: textColor,
                     fontSize: 16,
@@ -748,7 +767,25 @@ class NesticoPeCardWithText extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
+            ] else ...[
+              Positioned(
+                top: 16,
+                left: 20,
+                child: SizedBox(
+                  width: width - 20,
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

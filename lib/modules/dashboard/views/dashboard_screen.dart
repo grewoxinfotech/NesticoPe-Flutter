@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../home/views/home_screen.dart';
 import '../../saved_property/views/saved_property_screen.dart';
+import '../../seller/seller_listing/view/seller_listing_view.dart';
 
 // class HomeScreen extends StatefulWidget {
 //   const HomeScreen({Key? key}) : super(key: key);
@@ -468,7 +469,7 @@ class DashboardScreen extends StatelessWidget {
         } else if (navigationController.currentIndex.value == 1) {
           return const Center(child: NesticoPeDeleteDialog());
         } else if (navigationController.currentIndex.value == 2) {
-          return const Center(child: Text("No Update"));
+          return SellerListingView();
         } else if (navigationController.currentIndex.value == 3) {
           return const Center(child: Text("No Update"));
         } else if (navigationController.currentIndex.value == 4) {

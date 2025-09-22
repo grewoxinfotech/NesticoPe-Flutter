@@ -711,81 +711,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                   const SizedBox(height: 12),
-
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //
-                  //   padding: const EdgeInsets.only(left: 12.0),
-                  //   child: Row(
-                  //     children:
-                  //         cities.map((city) {
-                  //           return GestureDetector(
-                  //             onTap: () {
-                  //               Get.to(
-                  //                 () => AgentProfilePage(
-                  //                   agent: AgentProfile(
-                  //                     name: "Houselink Properties",
-                  //                     logoUrl:
-                  //                         "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-                  //                     badgeText: "HOUSING EXPERT PRO",
-                  //                     buyersServed: "600+ Buyers Served",
-                  //                     listings: "Owner Verified",
-                  //                     description:
-                  //                         "Deal with ready-to-move & under-construction Residential or Commercial.",
-                  //                     infoTiles: [
-                  //                       InfoTileData(
-                  //                         title: "Leads",
-                  //                         value: "120",
-                  //                       ),
-                  //                       InfoTileData(
-                  //                         title: "Visiters",
-                  //                         value: "54",
-                  //                       ),
-                  //                       InfoTileData(
-                  //                         title: 'Impression',
-                  //                         value: '258',
-                  //                       ),
-                  //                     ],
-                  //                     areas: [
-                  //                       "Ghatkopar East",
-                  //                       "Vikhroli East",
-                  //                     ],
-                  //                     categories: [
-                  //                       {'type': 'Buy', 'number': 17},
-                  //                       {'type': 'Rent', 'number': 17},
-                  //                       {'type': 'PG', 'number': 17},
-                  //                       {'type': 'Commercial', 'number': 17},
-                  //                     ],
-                  //                     tags: [
-                  //                       AgentTagData(
-                  //                         icon: Icons.location_on,
-                  //                         text: "Ghatkopar East",
-                  //                         color: Colors.green,
-                  //                       ),
-                  //                     ],
-                  //                     showTags: true,
-                  //                     showAreas: false,
-                  //                     isOwner: true,
-                  //                     showActiveProperties: true,
-                  //                     showSellerPropertyList: true,
-                  //                   ),
-                  //                 ),
-                  //               );
-                  //             },
-                  //             child: CityCard(
-                  //               imageUrl: city["imageUrl"],
-                  //               cityName: city["cityName"],
-                  //               propertyCount: city["propertyCount"],
-                  //             ),
-                  //           );
-                  //         }).toList(),
-                  //   ),
-                  // ),
-
-                  // const SizedBox(height: 12),
-                  //
                   const CityFilterList(),
-                  // const SizedBox(height: 12),
                   const SizedBox(height: 20),
 
                   // const TitleWithViewAll(title: "Residential Properties"),
@@ -828,7 +754,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Padding(
                             padding: const EdgeInsets.only(right: 12),
                             child: NesticoPeCardWithText(
-                              height: 150,
+                              height: 120,
                               width: 200,
                               imageUrl: furnished["image"]!,
                               // ✅ image
@@ -975,7 +901,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   RecommendedInsights(),
                   const SizedBox(height: 32),
                   const TitleWithViewAll(
-                    title: "Recommended Insights",
+                    title: "Tending Insights",
                     showViewAll: true,
                   ),
                   SizedBox(height: AppSpacing.medium),
@@ -2300,7 +2226,7 @@ class TrendingInsights extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 110,
+      height: 90,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: trendingInsights.length,
