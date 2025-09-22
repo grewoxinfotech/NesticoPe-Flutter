@@ -461,8 +461,14 @@ class SettingsMenuTile extends StatelessWidget {
 
     return ListTile(
       leading: Icon(icon, size: 28, color: ColorRes.primary),
-      title: Text(title, style: theme.textTheme.titleMedium),
-      subtitle: Text(subTitle, style: theme.textTheme.labelMedium),
+      title: Text(
+        title,
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        subTitle,
+        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+      ),
       trailing: trailing ?? const Icon(Icons.chevron_right),
       onTap: onTap,
     );
@@ -534,9 +540,15 @@ class _ExpandableTileState extends State<ExpandableTile>
           leading: Icon(widget.leadingIcon, color: ColorRes.primary),
           title: Text(
             widget.title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
-          subtitle: widget.subtitle != null ? Text(widget.subtitle!) : null,
+          subtitle:
+              widget.subtitle != null
+                  ? Text(
+                    widget.subtitle!,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  )
+                  : null,
           trailing: AnimatedRotation(
             turns: _isExpanded ? 0.5 : 0,
             duration: const Duration(milliseconds: 300),
