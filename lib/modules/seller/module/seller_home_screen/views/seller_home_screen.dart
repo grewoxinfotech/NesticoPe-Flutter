@@ -1,0 +1,1521 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
+
+import '../../../../../app/constants/app_font_sizes.dart';
+import '../../../../../app/widgets/texts/headline_text.dart';
+import '../../../../profile/views/profile_screen.dart';
+
+final List<Map<String, dynamic>> addonData = [
+  {
+    "title": "Extended Warranty",
+    "description": "Get 2 extra years of warranty for your plan.",
+    "price": 49.99,
+    "isPopular": true,
+  },
+  {
+    "title": "Priority Support",
+    "description": "24/7 dedicated support for faster resolutions.",
+    "price": 29.99,
+  },
+  {
+    "title": "Cloud Backup",
+    "description": "Secure cloud storage for all your data.",
+    "price": 19.99,
+  },
+  {
+    "title": "Premium Themes",
+    "description": "Access exclusive themes and templates.",
+    "price": 9.99,
+  },
+  {
+    "title": "Advanced Analytics",
+    "description": "Get detailed reports and insights.",
+    "price": 39.99,
+  },
+  {
+    "title": "Custom Domain",
+    "description": "Use your own domain for branding.",
+    "price": 14.99,
+  },
+  {
+    "title": "Marketing Tools",
+    "description": "Boost your visibility with built-in tools.",
+    "price": 24.99,
+  },
+  {
+    "title": "Team Collaboration",
+    "description": "Add team members and collaborate easily.",
+    "price": 34.99,
+  },
+  {
+    "title": "Security Package",
+    "description": "Extra security features for your plan.",
+    "price": 19.99,
+  },
+  {
+    "title": "VIP Access",
+    "description": "Early access to new features and updates.",
+    "price": 59.99,
+    "isPopular": true,
+  },
+];
+
+class SellerHomeScreen extends StatelessWidget {
+  const SellerHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        top: false,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              children: [
+                // 🔹 Background (header)
+                Container(
+                  width: double.infinity,
+                  color: const Color(0xff091F48),
+                  padding: const EdgeInsets.only(
+                    top: 30,
+                    left: 12,
+                    right: 12,
+                    bottom: 80, // extra space so overlap looks smooth
+                  ),
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Top Bar
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Welcome, Seller",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+
+                                  const Text(
+                                    "Sell or rent your property faster",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              // SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  Get.to(
+                                    () => ProfileScreen(
+                                      imageUrl:
+                                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  width: 45,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: ColorRes.grey.withOpacity(0.2),
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(
+                                      "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // 🔹 Foreground (overlapping form card)
+                Positioned(
+                  top: 100,
+                  // adjust overlap distance
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(28),
+                        topRight: Radius.circular(28),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      child: SizedBox(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              child: TitleWithViewAll(
+                                title: "Choose Your Plan",
+                                showViewAll: false,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: PricingWidgetDemo(),
+                            ),
+                            SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              child: TitleWithViewAll(
+                                title: "Add-ons to attract more buyers",
+                                showViewAll: false,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            AddOnsForBuyer(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class AddOnsForBuyer extends StatelessWidget {
+  const AddOnsForBuyer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 180, // set fixed height for all cards
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        itemCount: addonData.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 2),
+        itemBuilder: (context, index) {
+          final addon = addonData[index];
+          return SizedBox(
+            width: 250,
+            child: AddonCard(
+              title: addon['title'],
+              description: addon['description'],
+              price: addon['price'],
+              isPopular: addon['isPopular'] ?? false,
+              onTap: () {
+                print('${addon['title']} added!');
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class AddonCard extends StatelessWidget {
+  final String title;
+  final String description;
+  final double price;
+  final Color backgroundColor;
+  final VoidCallback? onTap;
+  final bool isPopular;
+
+  const AddonCard({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.price,
+    this.backgroundColor = Colors.white,
+    this.onTap,
+    this.isPopular = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isPopular ? Colors.orange : Colors.grey[300]!,
+            width: isPopular ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // if (isPopular)
+            //   Container(
+            //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            //     decoration: BoxDecoration(
+            //       color: Colors.orange,
+            //       borderRadius: BorderRadius.circular(12),
+            //     ),
+            //     child: const Text(
+            //       'POPULAR',
+            //       style: TextStyle(
+            //         color: Colors.white,
+            //         fontSize: 10,
+            //         fontWeight: FontWeight.bold,
+            //       ),
+            //     ),
+            //   ),
+            // const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              description,
+              style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '\$${price.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: onTap,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isPopular ? Colors.orange : Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                  ),
+                  child: const Text(
+                    'Add',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PricingComparisonWidget extends StatefulWidget {
+  final List<PricingPlan> plans;
+  final Function(PricingPlan)? onPlanSelected;
+  final Duration animationDuration;
+  final Color primaryColor;
+  final Color secondaryColor;
+  final Color backgroundColor;
+
+  const PricingComparisonWidget({
+    Key? key,
+    required this.plans,
+    this.onPlanSelected,
+    this.animationDuration = const Duration(milliseconds: 800),
+    this.primaryColor = const Color(0xFF6366F1),
+    this.secondaryColor = const Color(0xFF10B981),
+    this.backgroundColor = Colors.white,
+  }) : super(key: key);
+
+  @override
+  State<PricingComparisonWidget> createState() =>
+      _PricingComparisonWidgetState();
+}
+
+class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  int? selectedPlanIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: widget.animationDuration,
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideTransition(
+      position: _slideAnimation,
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(),
+              _buildComparisonTable(),
+              _buildActionButtons(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            // border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Text(
+                    "Plans",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: widget.primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+              const Expanded(child: Text("", style: TextStyle(fontSize: 14))),
+              ...widget.plans.map((plan) {
+                return Expanded(
+                  child: Text(
+                    plan.name,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color:
+                          plan.isPopular
+                              ? widget.primaryColor
+                              : const Color(0xFF4A4A4A),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
+        ),
+        Divider(height: 1, color: Colors.grey[200]!),
+      ],
+    );
+  }
+
+  Widget _buildComparisonTable() {
+    final allFeatures = _getAllUniqueFeatures();
+
+    return Column(
+      children:
+          allFeatures.map((featureName) {
+            return _buildFeatureRow(featureName);
+          }).toList(),
+    );
+  }
+
+  List<String> _getAllUniqueFeatures() {
+    Set<String> features = {};
+    for (var plan in widget.plans) {
+      features.addAll(plan.features.keys);
+    }
+    return features.toList();
+  }
+
+  Widget _buildFeatureRow(String featureName) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 1), // Reduced margin
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              featureName,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF4A4A4A),
+              ),
+            ),
+          ),
+          ...widget.plans.map((plan) {
+            final feature = plan.features[featureName];
+            return Expanded(child: _buildFeatureValue(feature));
+          }).toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureValue(PlanFeature? feature) {
+    if (feature == null) {
+      return const Text(
+        "-",
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.grey,
+          fontWeight: FontWeight.w500,
+        ),
+        textAlign: TextAlign.center,
+      );
+    }
+
+    switch (feature.type) {
+      case FeatureType.boolean:
+        return Icon(
+          feature.value == true ? Icons.check_circle : Icons.cancel,
+          color: feature.value == true ? widget.secondaryColor : Colors.red,
+          size: 20,
+        );
+      case FeatureType.percentage:
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: feature.value / 100),
+                duration: widget.animationDuration,
+                builder: (context, value, child) {
+                  return CircularProgressIndicator(
+                    value: value,
+                    strokeWidth: 4,
+                    backgroundColor: Colors.grey[300],
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      feature.value >= 90
+                          ? widget.secondaryColor
+                          : widget.primaryColor,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Text(
+              '${feature.value.toInt()}%',
+              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            ),
+          ],
+        );
+      case FeatureType.text:
+        return Text(
+          feature.value.toString(),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color:
+                feature.isHighlight
+                    ? widget.primaryColor
+                    : const Color(0xFF4A4A4A),
+          ),
+          textAlign: TextAlign.center,
+        );
+      case FeatureType.number:
+        return Text(
+          feature.value.toString(),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color:
+                feature.isHighlight
+                    ? widget.primaryColor
+                    : const Color(0xFF4A4A4A),
+          ),
+          textAlign: TextAlign.center,
+        );
+    }
+  }
+
+  Widget _buildActionButtons() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+      child: Row(
+        children:
+            widget.plans.map((plan) {
+              int index = widget.plans.indexOf(plan);
+              bool isSelected = selectedPlanIndex == index;
+
+              return Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(left: index > 0 ? 8 : 0),
+                  child: Column(
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        width: double.infinity,
+                        height: 45,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedPlanIndex = index;
+                            });
+                            widget.onPlanSelected?.call(plan);
+                            _showPlanDetails(plan);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                plan.isPopular
+                                    ? widget.primaryColor
+                                    : Colors.grey[200],
+                            foregroundColor:
+                                plan.isPopular
+                                    ? Colors.white
+                                    : Colors.grey[700],
+                            elevation: isSelected ? 8 : 2,
+                            // shadowColor: (plan.isPopular
+                            //         ? widget.primaryColor
+                            //         : widget.secondaryColor)
+                            //     .withOpacity(0.3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            plan.buttonText,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // const SizedBox(height: 8),
+                      // TextButton(
+                      //   onPressed: () {
+                      //     _showPlanDetails(plan);
+                      //   },
+                      //   child: Text(
+                      //     'Know More',
+                      //     style: TextStyle(
+                      //       color: widget.primaryColor,
+                      //       fontSize: 12,
+                      //       decoration: TextDecoration.underline,
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+      ),
+    );
+  }
+
+  void _showPlanDetails(PricingPlan plan) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder:
+          (context) => Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            decoration: BoxDecoration(
+              color: widget.backgroundColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    plan.name,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: widget.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: ListView(
+                      children:
+                          plan.features.entries.map((entry) {
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[50],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      entry.key,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  _buildFeatureValue(entry.value),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+  }
+}
+
+// Data Models
+class PricingPlan {
+  final String name;
+  final String buttonText;
+  final bool isPopular;
+  final Map<String, PlanFeature> features;
+
+  PricingPlan({
+    required this.name,
+    required this.buttonText,
+    this.isPopular = false,
+    required this.features,
+  });
+}
+
+class PlanFeature {
+  final dynamic value;
+  final FeatureType type;
+  final bool isHighlight;
+
+  PlanFeature({
+    required this.value,
+    required this.type,
+    this.isHighlight = false,
+  });
+}
+
+enum FeatureType { boolean, text, number, percentage }
+
+// Example Usage
+class PricingWidgetDemo extends StatelessWidget {
+  const PricingWidgetDemo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final plans = [
+      PricingPlan(
+        name: 'Free',
+        buttonText: 'Know More',
+        features: {
+          'Visibility': PlanFeature(value: 15.0, type: FeatureType.percentage),
+          'Leads': PlanFeature(value: 'Only 3', type: FeatureType.text),
+          'Listing expiry': PlanFeature(
+            value: '15 Days',
+            type: FeatureType.text,
+          ),
+          'Matching buyers': PlanFeature(
+            value: false,
+            type: FeatureType.boolean,
+          ),
+          'Relationship Manager': PlanFeature(
+            value: false,
+            type: FeatureType.boolean,
+          ),
+          'Field Visit Assistance': PlanFeature(
+            value: false,
+            type: FeatureType.boolean,
+          ),
+          'PhotoShoot': PlanFeature(value: false, type: FeatureType.boolean),
+        },
+      ),
+      PricingPlan(
+        name: 'Owner',
+        buttonText: 'Explore',
+        isPopular: true,
+        features: {
+          'Visibility': PlanFeature(
+            value: 98.0,
+            type: FeatureType.percentage,
+            isHighlight: true,
+          ),
+          'Leads': PlanFeature(
+            value: 'Unlimited',
+            type: FeatureType.text,
+            isHighlight: true,
+          ),
+          'Listing expiry': PlanFeature(
+            value: '120 Days',
+            type: FeatureType.text,
+            isHighlight: true,
+          ),
+          'Matching buyers': PlanFeature(
+            value: true,
+            type: FeatureType.boolean,
+          ),
+          'Relationship Manager': PlanFeature(
+            value: true,
+            type: FeatureType.boolean,
+          ),
+          'Field Visit Assistance': PlanFeature(
+            value: true,
+            type: FeatureType.boolean,
+          ),
+          'PhotoShoot': PlanFeature(value: true, type: FeatureType.boolean),
+        },
+      ),
+    ];
+
+    return PricingComparisonWidget(
+      plans: plans,
+      primaryColor: ColorRes.primary,
+      onPlanSelected: (plan) {
+        print('Selected: ${plan.name}');
+      },
+    );
+  }
+}
+
+// import 'package:flutter/material.dart';
+//
+// class SellerHomeScreen extends StatelessWidget {
+//   const SellerHomeScreen({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: SafeArea(
+//         top: false,
+//         child: LayoutBuilder(
+//           builder: (context, constraints) {
+//             return Stack(
+//               children: [
+//                 // 🔹 Background (header)
+//                 Container(
+//                   width: double.infinity,
+//                   color: const Color(0xff091F48),
+//                   padding: const EdgeInsets.only(
+//                     top: 26,
+//                     left: 16,
+//                     right: 16,
+//                     bottom: 80, // extra space so overlap looks smooth
+//                   ),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       // Top Bar
+//                       Row(
+//                         children: [
+//                           const Text(
+//                             "Welcome, Seller",
+//                             style: TextStyle(
+//                               color: Colors.white,
+//                               fontSize: 18,
+//                               fontWeight: FontWeight.w700,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                       const Text(
+//                         "Sell or rent your property faster",
+//                         style: TextStyle(
+//                           color: Colors.white,
+//                           fontSize: 14,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//
+//                 // 🔹 Foreground (overlapping form card)
+//                 Positioned(
+//                   top: 100,
+//                   // adjust overlap distance
+//                   left: 0,
+//                   right: 0,
+//                   bottom: 0,
+//                   child: Container(
+//                     padding: const EdgeInsets.symmetric(
+//                       vertical: 20,
+//                       horizontal: 16,
+//                     ),
+//                     decoration: const BoxDecoration(
+//                       color: Colors.white,
+//                       borderRadius: BorderRadius.only(
+//                         topLeft: Radius.circular(28),
+//                         topRight: Radius.circular(28),
+//                       ),
+//                     ),
+//                     child: SingleChildScrollView(
+//                       child: SizedBox(
+//                         child: Column(children: [PricingWidgetDemo()]),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             );
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class PricingComparisonWidget extends StatefulWidget {
+//   final List<PricingPlan> plans;
+//   final Function(PricingPlan)? onPlanSelected;
+//   final Duration animationDuration;
+//   final Color primaryColor;
+//   final Color secondaryColor;
+//   final Color backgroundColor;
+//
+//   const PricingComparisonWidget({
+//     Key? key,
+//     required this.plans,
+//     this.onPlanSelected,
+//     this.animationDuration = const Duration(milliseconds: 800),
+//     this.primaryColor = const Color(0xFF6366F1),
+//     this.secondaryColor = const Color(0xFF10B981),
+//     this.backgroundColor = Colors.white,
+//   }) : super(key: key);
+//
+//   @override
+//   State<PricingComparisonWidget> createState() =>
+//       _PricingComparisonWidgetState();
+// }
+//
+// class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
+//     with TickerProviderStateMixin {
+//   late AnimationController _animationController;
+//   late Animation<double> _fadeAnimation;
+//   late Animation<Offset> _slideAnimation;
+//   int? selectedPlanIndex;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _animationController = AnimationController(
+//       duration: widget.animationDuration,
+//       vsync: this,
+//     );
+//
+//     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+//       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+//     );
+//
+//     _slideAnimation = Tween<Offset>(
+//       begin: const Offset(0, 0.1),
+//       end: Offset.zero,
+//     ).animate(
+//       CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+//     );
+//
+//     _animationController.forward();
+//   }
+//
+//   @override
+//   void dispose() {
+//     _animationController.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return SlideTransition(
+//       position: _slideAnimation,
+//       child: FadeTransition(
+//         opacity: _fadeAnimation,
+//         child: Container(
+//           margin: const EdgeInsets.symmetric(vertical: 8),
+//           decoration: BoxDecoration(
+//             color: widget.backgroundColor,
+//             borderRadius: BorderRadius.circular(16),
+//             border: Border.all(color: Colors.grey[300]!),
+//           ),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               _buildHeader(),
+//               _buildComparisonTable(),
+//               _buildActionButtons(),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildHeader() {
+//     return Container(
+//       padding: const EdgeInsets.all(20),
+//       decoration: BoxDecoration(
+//         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+//       ),
+//       child: IntrinsicHeight(
+//         // 🔑 ensures equal height for all children
+//         child: Row(
+//           crossAxisAlignment:
+//           CrossAxisAlignment.stretch, // 🔑 stretch to max height
+//           children: [
+//             Expanded(
+//               flex: 1,
+//               child: Center(
+//                 child: Text(
+//                   "Plans",
+//                   style: TextStyle(
+//                     fontSize: 20,
+//                     fontWeight: FontWeight.bold,
+//                     color: widget.primaryColor,
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(width: 12),
+//             ...widget.plans.asMap().entries.map((entry) {
+//               int index = entry.key;
+//               final plan = entry.value;
+//
+//               return Expanded(
+//                 child: AnimatedContainer(
+//                   duration: const Duration(milliseconds: 300),
+//                   margin: EdgeInsets.only(left: index > 0 ? 8 : 0),
+//                   padding: const EdgeInsets.all(10),
+//                   decoration: BoxDecoration(
+//                     color:
+//                     plan.isPopular ? widget.primaryColor : Colors.grey[50],
+//                     borderRadius: BorderRadius.circular(12),
+//                     border: Border.all(
+//                       color:
+//                       plan.isPopular
+//                           ? widget.primaryColor
+//                           : Colors.grey[300]!,
+//                       width: 1,
+//                     ),
+//                   ),
+//                   child: Column(
+//                     mainAxisAlignment:
+//                     MainAxisAlignment.center, // 🔑 vertical centering
+//                     children: [
+//                       Text(
+//                         plan.name,
+//                         style: TextStyle(
+//                           fontSize: 13,
+//                           fontWeight: FontWeight.w600,
+//                           color:
+//                           plan.isPopular ? Colors.white : Colors.grey[800],
+//                         ),
+//                       ),
+//                       if (plan.isPopular)
+//                         Container(
+//                           margin: const EdgeInsets.only(top: 6),
+//                           padding: const EdgeInsets.symmetric(
+//                             horizontal: 8,
+//                             vertical: 2,
+//                           ),
+//                           decoration: BoxDecoration(
+//                             color: Colors.white.withOpacity(0.25),
+//                             borderRadius: BorderRadius.circular(10),
+//                           ),
+//                           child: const Text(
+//                             'POPULAR',
+//                             style: TextStyle(
+//                               fontSize: 8,
+//                               fontWeight: FontWeight.w400,
+//                               color: Colors.white,
+//                             ),
+//                           ),
+//                         ),
+//                     ],
+//                   ),
+//                 ),
+//               );
+//             }).toList(),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildComparisonTable() {
+//     final allFeatures = _getAllUniqueFeatures();
+//
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 20),
+//       child: Column(
+//         children:
+//         allFeatures.map((featureName) {
+//           return _buildFeatureRow(featureName);
+//         }).toList(),
+//       ),
+//     );
+//   }
+//
+//   List<String> _getAllUniqueFeatures() {
+//     Set<String> features = {};
+//     for (var plan in widget.plans) {
+//       features.addAll(plan.features.keys);
+//     }
+//     return features.toList();
+//   }
+//
+//   Widget _buildFeatureRow(String featureName) {
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: 8),
+//       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+//       decoration: BoxDecoration(
+//         // color: Colors.grey[50],
+//         borderRadius: BorderRadius.circular(12),
+//         border: Border.all(color: Colors.grey[200]!),
+//       ),
+//       child: Row(
+//         children: [
+//           Expanded(
+//             flex: 2,
+//             child: Text(
+//               featureName,
+//               style: TextStyle(
+//                 fontSize: 12,
+//                 fontWeight: FontWeight.w500,
+//                 color: Colors.grey[700],
+//               ),
+//             ),
+//           ),
+//           ...widget.plans.map((plan) {
+//             final feature = plan.features[featureName];
+//             return Expanded(child: _buildFeatureValue(feature));
+//           }).toList(),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _buildFeatureValue(PlanFeature? feature) {
+//     if (feature == null) {
+//       return const Icon(Icons.remove, color: Colors.grey, size: 20);
+//     }
+//
+//     switch (feature.type) {
+//       case FeatureType.boolean:
+//         return Icon(
+//           feature.value == true ? Icons.check_circle : Icons.cancel,
+//           color: feature.value == true ? widget.secondaryColor : Colors.red,
+//           size: 20,
+//         );
+//       case FeatureType.percentage:
+//         return _buildCircularProgress(feature.value as double);
+//       case FeatureType.text:
+//         return Text(
+//           feature.value.toString(),
+//           style: TextStyle(
+//             fontSize: 13,
+//             fontWeight: FontWeight.w500,
+//             color: feature.isHighlight ? widget.primaryColor : Colors.grey[700],
+//           ),
+//           textAlign: TextAlign.center,
+//         );
+//       case FeatureType.number:
+//         return Text(
+//           feature.value.toString(),
+//           style: TextStyle(
+//             fontSize: 13,
+//             fontWeight: FontWeight.w600,
+//             color: feature.isHighlight ? widget.primaryColor : Colors.grey[700],
+//           ),
+//           textAlign: TextAlign.center,
+//         );
+//     }
+//   }
+//
+//   Widget _buildCircularProgress(double percentage) {
+//     return Stack(
+//       alignment: Alignment.center,
+//       children: [
+//         SizedBox(
+//           width: 40,
+//           height: 40,
+//           child: TweenAnimationBuilder<double>(
+//             tween: Tween(begin: 0, end: percentage / 100),
+//             duration: widget.animationDuration,
+//             builder: (context, value, child) {
+//               return CircularProgressIndicator(
+//                 value: value,
+//                 strokeWidth: 4,
+//                 backgroundColor: Colors.grey[300],
+//                 valueColor: AlwaysStoppedAnimation<Color>(
+//                   percentage >= 90
+//                       ? widget.secondaryColor
+//                       : widget.primaryColor,
+//                 ),
+//               );
+//             },
+//           ),
+//         ),
+//         Text(
+//           '${percentage.toInt()}%',
+//           style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildActionButtons() {
+//     return Container(
+//       padding: const EdgeInsets.all(20),
+//       child: Row(
+//         children:
+//         widget.plans.map((plan) {
+//           int index = widget.plans.indexOf(plan);
+//           bool isSelected = selectedPlanIndex == index;
+//
+//           return Expanded(
+//             child: Container(
+//               margin: EdgeInsets.only(left: index > 0 ? 8 : 0),
+//               child: Column(
+//                 children: [
+//                   AnimatedContainer(
+//                     duration: const Duration(milliseconds: 300),
+//                     width: double.infinity,
+//                     height: 45,
+//                     child: ElevatedButton(
+//                       onPressed: () {
+//                         setState(() {
+//                           selectedPlanIndex = index;
+//                         });
+//                         widget.onPlanSelected?.call(plan);
+//                         _showPlanDetails(plan);
+//                       },
+//                       style: ElevatedButton.styleFrom(
+//                         backgroundColor:
+//                         plan.isPopular
+//                             ? widget.primaryColor
+//                             : (isSelected
+//                             ? widget.secondaryColor
+//                             : Colors.grey[200]),
+//                         foregroundColor:
+//                         plan.isPopular || isSelected
+//                             ? Colors.white
+//                             : Colors.grey[700],
+//                         elevation: isSelected ? 8 : 2,
+//                         // shadowColor: (plan.isPopular
+//                         //         ? widget.primaryColor
+//                         //         : widget.secondaryColor)
+//                         //     .withOpacity(0.3),
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(12),
+//                         ),
+//                       ),
+//                       child: Text(
+//                         plan.buttonText,
+//                         style: const TextStyle(
+//                           fontWeight: FontWeight.w600,
+//                           fontSize: 13,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   // const SizedBox(height: 8),
+//                   // TextButton(
+//                   //   onPressed: () {
+//                   //     _showPlanDetails(plan);
+//                   //   },
+//                   //   child: Text(
+//                   //     'Know More',
+//                   //     style: TextStyle(
+//                   //       color: widget.primaryColor,
+//                   //       fontSize: 12,
+//                   //       decoration: TextDecoration.underline,
+//                   //     ),
+//                   //   ),
+//                   // ),
+//                 ],
+//               ),
+//             ),
+//           );
+//         }).toList(),
+//       ),
+//     );
+//   }
+//
+//   void _showPlanDetails(PricingPlan plan) {
+//     showModalBottomSheet(
+//       context: context,
+//       isScrollControlled: true,
+//       backgroundColor: Colors.transparent,
+//       builder:
+//           (context) => Container(
+//         height: MediaQuery.of(context).size.height * 0.7,
+//         decoration: BoxDecoration(
+//           color: widget.backgroundColor,
+//           borderRadius: const BorderRadius.only(
+//             topLeft: Radius.circular(20),
+//             topRight: Radius.circular(20),
+//           ),
+//         ),
+//         child: Padding(
+//           padding: const EdgeInsets.all(24),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Center(
+//                 child: Container(
+//                   width: 40,
+//                   height: 4,
+//                   decoration: BoxDecoration(
+//                     color: Colors.grey[300],
+//                     borderRadius: BorderRadius.circular(2),
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(height: 20),
+//               Text(
+//                 plan.name,
+//                 style: TextStyle(
+//                   fontSize: 24,
+//                   fontWeight: FontWeight.bold,
+//                   color: widget.primaryColor,
+//                 ),
+//               ),
+//               const SizedBox(height: 16),
+//               Expanded(
+//                 child: ListView(
+//                   children:
+//                   plan.features.entries.map((entry) {
+//                     return Container(
+//                       margin: const EdgeInsets.only(bottom: 12),
+//                       padding: const EdgeInsets.all(16),
+//                       decoration: BoxDecoration(
+//                         color: Colors.grey[50],
+//                         borderRadius: BorderRadius.circular(12),
+//                       ),
+//                       child: Row(
+//                         children: [
+//                           Expanded(
+//                             child: Text(
+//                               entry.key,
+//                               style: const TextStyle(
+//                                 fontSize: 16,
+//                                 fontWeight: FontWeight.w500,
+//                               ),
+//                             ),
+//                           ),
+//                           _buildFeatureValue(entry.value),
+//                         ],
+//                       ),
+//                     );
+//                   }).toList(),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// // Data Models
+// class PricingPlan {
+//   final String name;
+//   final String buttonText;
+//   final bool isPopular;
+//   final Map<String, PlanFeature> features;
+//
+//   PricingPlan({
+//     required this.name,
+//     required this.buttonText,
+//     this.isPopular = false,
+//     required this.features,
+//   });
+// }
+//
+// class PlanFeature {
+//   final dynamic value;
+//   final FeatureType type;
+//   final bool isHighlight;
+//
+//   PlanFeature({
+//     required this.value,
+//     required this.type,
+//     this.isHighlight = false,
+//   });
+// }
+//
+// enum FeatureType { boolean, text, number, percentage }
+//
+// // Example Usage
+// class PricingWidgetDemo extends StatelessWidget {
+//   const PricingWidgetDemo({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final plans = [
+//       PricingPlan(
+//         name: 'Free Plan',
+//         buttonText: 'Know More',
+//         features: {
+//           'Visibility': PlanFeature(value: 15.0, type: FeatureType.percentage),
+//           'Leads': PlanFeature(value: 'Only 3', type: FeatureType.text),
+//           'Listing expiry': PlanFeature(
+//             value: '15 Days',
+//             type: FeatureType.text,
+//           ),
+//           'Matching buyers': PlanFeature(
+//             value: false,
+//             type: FeatureType.boolean,
+//           ),
+//           'Relationship Manager': PlanFeature(
+//             value: false,
+//             type: FeatureType.boolean,
+//           ),
+//           'Field Visit Assistance': PlanFeature(
+//             value: false,
+//             type: FeatureType.boolean,
+//           ),
+//           'PhotoShoot': PlanFeature(value: false, type: FeatureType.boolean),
+//         },
+//       ),
+//       PricingPlan(
+//         name: 'Owner Packages',
+//         buttonText: 'Explore',
+//         isPopular: true,
+//         features: {
+//           'Visibility': PlanFeature(
+//             value: 98.0,
+//             type: FeatureType.percentage,
+//             isHighlight: true,
+//           ),
+//           'Leads': PlanFeature(
+//             value: 'Unlimited',
+//             type: FeatureType.text,
+//             isHighlight: true,
+//           ),
+//           'Listing expiry': PlanFeature(
+//             value: '120 Days',
+//             type: FeatureType.text,
+//             isHighlight: true,
+//           ),
+//           'Matching buyers': PlanFeature(
+//             value: true,
+//             type: FeatureType.boolean,
+//           ),
+//           'Relationship Manager': PlanFeature(
+//             value: true,
+//             type: FeatureType.boolean,
+//           ),
+//           'Field Visit Assistance': PlanFeature(
+//             value: true,
+//             type: FeatureType.boolean,
+//           ),
+//           'PhotoShoot': PlanFeature(value: true, type: FeatureType.boolean),
+//         },
+//       ),
+//     ];
+//
+//     return PricingComparisonWidget(
+//       plans: plans,
+//       onPlanSelected: (plan) {
+//         print('Selected: ${plan.name}');
+//       },
+//     );
+//   }
+// }
