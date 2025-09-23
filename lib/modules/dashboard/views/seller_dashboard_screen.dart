@@ -124,6 +124,7 @@ import '../../../widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../widgets/drawer/drawer.dart';
 import '../../home/views/home_screen.dart';
 import '../../saved_property/views/saved_property_screen.dart';
+import '../../seller/module/package_screen/views/package_screen.dart';
 import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
 import '../../seller/seller_listing/view/seller_listing_view.dart';
 
@@ -182,8 +183,8 @@ class SellerDashboardScreen extends StatelessWidget {
                   ),
 
                   SalomonBottomBarItem(
-                    icon: Icon(Icons.explore, size: iconSize),
-                    title: Text("Explore", style: style),
+                    icon: Icon(Icons.broken_image_outlined, size: iconSize),
+                    title: Text("Enquiries", style: style),
                   ),
 
                   /// 🔥 Middle Highlighted Item
@@ -206,17 +207,17 @@ class SellerDashboardScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    title: Text("Wishlist", style: style),
+                    title: Text("Listings", style: style),
                   ),
 
                   SalomonBottomBarItem(
-                    icon: Icon(FontAwesomeIcons.message, size: iconSize),
-                    title: Text("Message", style: style),
+                    icon: Icon(Icons.subscriptions, size: iconSize),
+                    title: Text("Packages", style: style),
                   ),
 
                   SalomonBottomBarItem(
                     icon: Icon(FontAwesomeIcons.user, size: iconSize),
-                    title: Text("Profile", style: style),
+                    title: Text("Profiles", style: style),
                   ),
                 ],
               ),
@@ -240,7 +241,7 @@ class SellerDashboardScreen extends StatelessWidget {
           case 2:
             return SellerListingView();
           case 3:
-            return const Center(child: Text("No Update"));
+            return SubscriptionPlansScreen();
           case 4:
             return const Center(child: Text("No Update"));
           default:

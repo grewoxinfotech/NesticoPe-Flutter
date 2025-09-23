@@ -126,7 +126,7 @@ class PropertyListCard extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.purple[50],
+                color: ColorRes.primary.withOpacity(0.03),
                 borderRadius: BorderRadius.circular(AppRadius.small),
               ),
               child: Column(

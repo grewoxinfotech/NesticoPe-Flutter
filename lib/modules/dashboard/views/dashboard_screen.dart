@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../widgets/dialogs/delete_dialog.dart';
 import '../../../widgets/drawer/drawer.dart';
@@ -467,7 +468,11 @@ class DashboardScreen extends StatelessWidget {
         if (navigationController.currentIndex.value == 0) {
           return const HomeScreen();
         } else if (navigationController.currentIndex.value == 1) {
-          return const Center(child: NesticoPeDeleteDialog());
+          return  Center(child:ElevatedButton(
+            onPressed: () {
+              Get.offAll(()=>SellerDashboardScreen());
+                },
+          child: Text("Seller"),));
         } else if (navigationController.currentIndex.value == 2) {
           return SellerListingView();
         } else if (navigationController.currentIndex.value == 3) {
