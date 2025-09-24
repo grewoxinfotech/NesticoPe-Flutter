@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/constants/ic_res.dart';
+import 'package:housing_flutter_app/widgets/display/ic.dart';
 
 final List<SubscriptionPlan> plans = [
   SubscriptionPlan(
@@ -23,7 +25,7 @@ final List<SubscriptionPlan> plans = [
   ),
   SubscriptionPlan(
     id: 'premium_plus',
-    name: 'Premium +',
+    name: 'Premium',
     price: '₹7725',
     originalPrice: '₹10500',
     duration: 'per month',
@@ -100,12 +102,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       child: Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          // backgroundColor: Colors.white,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.pop(context),
-          ),
           title: const Text(
             'Choose a Package',
             style: TextStyle(
@@ -114,7 +112,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          centerTitle: true,
+          // centerTitle: true,
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -124,23 +122,23 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
               // Header Section
               _buildHeaderSection(),
               const SizedBox(height: 24),
-      
+
               // Plans Grid
               _buildPlansList(),
               const SizedBox(height: 32),
-      
+
               // Features Comparison
               _buildFeaturesComparison(),
               const SizedBox(height: 32),
-      
+
               // Benefits Section
               _buildBenefitsSection(),
               const SizedBox(height: 16),
-      
+
               // FAQ Section
               _buildFAQSection(),
               const SizedBox(height: 32),
-      
+
               // Subscribe Button
               _buildSubscribeButton(selectedPlanIndex),
               const SizedBox(height: 16),
@@ -243,6 +241,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         plan.name,
@@ -252,6 +251,14 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                           color: plan.color,
                         ),
                       ),
+                      if (plan.isPopular) ...[
+                        SizedBox(width: 2),
+                        NesticoPeIc(
+                          iconPath: ICRes.geminiSvg,
+                          height: 12,
+                          width: 12,
+                        ),
+                      ],
                       Spacer(),
                       if (plan.isPopular) ...[
                         Container(
@@ -315,38 +322,38 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children:
-                  plan.features.take(3).map((feature) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          Icon(
-                            feature.isIncluded
-                                ? Icons.check_circle
-                                : Icons.cancel,
-                            size: 16,
-                            color:
-                            feature.isIncluded
-                                ? Colors.green
-                                : Colors.grey,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              feature.name,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color:
+                      plan.features.take(3).map((feature) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            children: [
+                              Icon(
                                 feature.isIncluded
-                                    ? Colors.black87
-                                    : Colors.grey,
+                                    ? Icons.check_circle
+                                    : Icons.cancel,
+                                size: 16,
+                                color:
+                                    feature.isIncluded
+                                        ? Colors.green
+                                        : Colors.grey,
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  feature.name,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color:
+                                        feature.isIncluded
+                                            ? Colors.black87
+                                            : Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+                        );
+                      }).toList(),
                 ),
               ),
             ),
@@ -433,9 +440,9 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           boxShadow: [
             BoxShadow(
               color:
-              isSelected
-                  ? plan.color.withOpacity(0.2)
-                  : Colors.black.withOpacity(0.05),
+                  isSelected
+                      ? plan.color.withOpacity(0.2)
+                      : Colors.black.withOpacity(0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -523,38 +530,38 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children:
-                  plan.features.map((feature) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          Icon(
-                            feature.isIncluded
-                                ? Icons.check_circle
-                                : Icons.cancel,
-                            size: 16,
-                            color:
-                            feature.isIncluded
-                                ? Colors.green
-                                : Colors.grey,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              feature.name,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color:
+                      plan.features.map((feature) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            children: [
+                              Icon(
                                 feature.isIncluded
-                                    ? Colors.black87
-                                    : Colors.grey,
+                                    ? Icons.check_circle
+                                    : Icons.cancel,
+                                size: 16,
+                                color:
+                                    feature.isIncluded
+                                        ? Colors.green
+                                        : Colors.grey,
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  feature.name,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color:
+                                        feature.isIncluded
+                                            ? Colors.black87
+                                            : Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+                        );
+                      }).toList(),
                 ),
               ),
             ),
@@ -593,7 +600,6 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       ),
     );
   }
-
 
   Widget _buildFeaturesComparison() {
     return Container(
@@ -634,14 +640,14 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
         icon: Icons.trending_up,
         title: 'Boost Your Sales',
         description:
-        'Increase property inquiries by up to 300% with premium listings',
+            'Increase property inquiries by up to 300% with premium listings',
         color: const Color(0xFF10B981),
       ),
       BenefitItem(
         icon: Icons.analytics,
         title: 'Advanced Analytics',
         description:
-        'Track performance and optimize your listings with detailed insights',
+            'Track performance and optimize your listings with detailed insights',
         color: const Color(0xFF3B82F6),
       ),
       BenefitItem(
@@ -661,9 +667,13 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Why Choose Premium?',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,color: ColorRes.textPrimary),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: ColorRes.textPrimary,
+          ),
         ),
         const SizedBox(height: 16),
         ...benefits.map((benefit) => _buildBenefitItem(benefit)),
@@ -678,13 +688,14 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Colors.grey[200]!),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black.withOpacity(0.05),
+        //     blurRadius: 8,
+        //     offset: const Offset(0, 2),
+        //   ),
+        // ],
       ),
       child: Row(
         children: [
@@ -726,17 +737,17 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       FAQItem(
         question: 'Can I change my plan anytime?',
         answer:
-        'Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.',
+            'Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.',
       ),
       FAQItem(
         question: 'Do you offer refunds?',
         answer:
-        'We offer a 30-day money-back guarantee for all our premium plans. No questions asked.',
+            'We offer a 30-day money-back guarantee for all our premium plans. No questions asked.',
       ),
       FAQItem(
         question: 'What payment methods do you accept?',
         answer:
-        'We accept all major credit cards, debit cards, UPI, and net banking.',
+            'We accept all major credit cards, debit cards, UPI, and net banking.',
       ),
     ];
 
@@ -745,13 +756,14 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Colors.grey[200]!),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black.withOpacity(0.05),
+        //     blurRadius: 8,
+        //     offset: const Offset(0, 2),
+        //   ),
+        // ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -843,23 +855,25 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
 
   void _handleSubscribe(SubscriptionPlan plan) {
     // Handle subscription logic here
-    showDialog(
-      context: Get.context!,
-      builder:
-          (context) =>
-          AlertDialog(
-            title: const Text('Subscription'),
-            content: Text('You selected ${plan.name} plan for ${plan.price}'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
+    Get.dialog(
+      Container(
+        color: Colors.transparent,
+        child: AlertDialog(
+          title: const Text('Subscription'),
+          content: Text('You selected ${plan.name} plan for ${plan.price}'),
+          backgroundColor: Colors.white,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
+
 // Data Models
 class SubscriptionPlan {
   final String id;

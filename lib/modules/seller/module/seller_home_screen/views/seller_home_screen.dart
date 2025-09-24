@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/widgets/texts/headline_text.dart';
@@ -58,6 +59,130 @@ final List<Map<String, dynamic>> addonData = [
     "description": "Early access to new features and updates.",
     "price": 59.99,
     "isPopular": true,
+  },
+];
+
+// final List<Map<String, String>> propertiesOverview = [
+//   {
+//     "title": "Luxury Villa",
+//     "location": "Beverly Hills",
+//     "price": "\$1,200,000",
+//     "views": "3.2K",
+//     "likes": "800",
+//     "inquiries": "45",
+//   },
+//   {
+//     "title": "Modern Apartment",
+//     "location": "Downtown",
+//     "price": "\$450,000",
+//     "views": "2.1K",
+//     "likes": "600",
+//     "inquiries": "30",
+//   },
+//   {
+//     "title": "Cozy Cottage",
+//     "location": "Countryside",
+//     "price": "\$320,000",
+//     "views": "1.5K",
+//     "likes": "300",
+//     "inquiries": "15",
+//   },
+// ];
+
+final List<Map<String, dynamic>> propertiesOverview = [
+  {
+    'id': '1',
+    'title': 'Modern Luxury Villa',
+    'location': 'Beverly Hills, CA',
+    'price': '\$2,500,000',
+    'image':
+        'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400',
+    'type': 'Villa',
+    'bedrooms': 5,
+    'bathrooms': 4,
+    'area': '3,500 sq ft',
+    'views': 15420,
+    'likes': 892,
+    'shares': 234,
+    'visits': 1250,
+    'totalLeads': 45,
+    'status': 'Available',
+    'featured': true,
+  },
+  {
+    'id': '2',
+    'title': 'Downtown Penthouse',
+    'location': 'Manhattan, NY',
+    'price': '\$4,200,000',
+    'image': 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400',
+    'type': 'Penthouse',
+    'bedrooms': 3,
+    'bathrooms': 3,
+    'area': '2,800 sq ft',
+    'views': 23150,
+    'likes': 1456,
+    'shares': 567,
+    'visits': 2100,
+    'totalLeads': 78,
+    'status': 'Available',
+    'featured': true,
+  },
+  {
+    'id': '3',
+    'title': 'Cozy Family Home',
+    'location': 'Austin, TX',
+    'price': '\$650,000',
+    'image':
+        'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=400',
+    'type': 'House',
+    'bedrooms': 4,
+    'bathrooms': 3,
+    'area': '2,200 sq ft',
+    'views': 8750,
+    'likes': 421,
+    'shares': 156,
+    'visits': 890,
+    'totalLeads': 32,
+    'status': 'Available',
+    'featured': false,
+  },
+  {
+    'id': '4',
+    'title': 'Beachfront Condo',
+    'location': 'Miami Beach, FL',
+    'price': '\$1,800,000',
+    'image':
+        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400',
+    'type': 'Condo',
+    'bedrooms': 2,
+    'bathrooms': 2,
+    'area': '1,600 sq ft',
+    'views': 19200,
+    'likes': 1123,
+    'shares': 445,
+    'visits': 1680,
+    'totalLeads': 67,
+    'status': 'Sold',
+    'featured': true,
+  },
+  {
+    'id': '5',
+    'title': 'Mountain Retreat',
+    'location': 'Aspen, CO',
+    'price': '\$3,100,000',
+    'image':
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+    'type': 'Cabin',
+    'bedrooms': 6,
+    'bathrooms': 5,
+    'area': '4,200 sq ft',
+    'views': 12890,
+    'likes': 734,
+    'shares': 298,
+    'visits': 1020,
+    'totalLeads': 38,
+    'status': 'Available',
+    'featured': false,
   },
 ];
 
@@ -178,6 +303,23 @@ class SellerHomeScreen extends StatelessWidget {
                                 horizontal: 4,
                               ),
                               child: TitleWithViewAll(
+                                title: "Overview",
+                                showViewAll: false,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: OverViewCard(),
+                            ),
+                            SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              child: TitleWithViewAll(
                                 title: "Choose Your Plan",
                                 showViewAll: false,
                               ),
@@ -222,7 +364,6 @@ class SellerHomeScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 20),
-
                           ],
                         ),
                       ),
@@ -233,6 +374,140 @@ class SellerHomeScreen extends StatelessWidget {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class OverViewCard extends StatelessWidget {
+  const OverViewCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> overviewData = const [
+      {
+        "title": "Views",
+        "value": "12.4K",
+        "icon": Icons.remove_red_eye_outlined,
+      },
+      {"title": "Likes", "value": "2.3K", "icon": Icons.favorite_border},
+      {"title": "Shares", "value": "540", "icon": Icons.share_outlined},
+      {"title": "Visits", "value": "8.9K", "icon": Icons.travel_explore},
+      {"title": "Total Leads", "value": "1.1K", "icon": Icons.people_alt},
+    ];
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey[300]!),
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.dashboard_customize,
+                      color: Colors.blue.shade700,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      "Overview",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Get.to(
+                      () => PropertyOverviewScreen(
+                        properties: propertiesOverview,
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "Explore>",
+                    style: TextStyle(
+                      color: ColorRes.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 120 / 50,
+              ),
+              itemCount: overviewData.length,
+              itemBuilder: (context, index) {
+                final item = overviewData[index];
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(
+                        item["icon"] as IconData,
+                        size: 20,
+                        color: ColorRes.primary,
+                      ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            item["title"]!,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          Text(
+                            item["value"]!,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -350,7 +625,7 @@ class AddonCard extends StatelessWidget {
                 ElevatedButton(
                   onPressed: onTap,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:  ColorRes.primary ,
+                    backgroundColor: ColorRes.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -913,7 +1188,6 @@ class CustomerSupportCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey[300]!),
-
       ),
       // margin: const EdgeInsets.all(16),
       child: Padding(
@@ -923,14 +1197,11 @@ class CustomerSupportCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.support_agent,color: ColorRes.primary,),
+                Icon(Icons.support_agent, color: ColorRes.primary),
                 const SizedBox(width: 8),
                 const Text(
                   "Customer Support",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -940,17 +1211,14 @@ class CustomerSupportCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.grey[200]!),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
 
               child: Row(
                 children: [
-                   Icon(Icons.email_outlined, color: ColorRes.primary),
+                  Icon(Icons.email_outlined, color: ColorRes.primary),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      email,
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                    child: Text(email, style: const TextStyle(fontSize: 16)),
                   ),
                 ],
               ),
@@ -961,16 +1229,13 @@ class CustomerSupportCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.grey[200]!),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               child: Row(
                 children: [
-                   Icon(Icons.phone_outlined, color: ColorRes.primary),
+                  Icon(Icons.phone_outlined, color: ColorRes.primary),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      phone,
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                    child: Text(phone, style: const TextStyle(fontSize: 16)),
                   ),
                 ],
               ),
@@ -981,4 +1246,3 @@ class CustomerSupportCard extends StatelessWidget {
     );
   }
 }
-

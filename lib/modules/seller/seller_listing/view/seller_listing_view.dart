@@ -42,23 +42,22 @@ class SellerListingView extends GetView<SellerListingController> {
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Obx(
-                      () => ToggleButtons(
+                  () => ToggleButtons(
                     borderRadius: BorderRadius.circular(AppRadius.medium),
                     fillColor: ColorRes.primary.withOpacity(0.1),
                     selectedColor: ColorRes.primary,
                     color: Colors.black87,
                     borderColor: ColorRes.grey.withOpacity(0.3),
                     selectedBorderColor: ColorRes.primary,
-                    constraints:
-                    const BoxConstraints(minHeight: 40, minWidth: 120),
+                    constraints: const BoxConstraints(
+                      minHeight: 40,
+                      minWidth: 120,
+                    ),
                     textStyle: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
-                    children: const [
-                      Text('Residential'),
-                      Text('Commercial'),
-                    ],
+                    children: const [Text('Residential'), Text('Commercial')],
                     isSelected: controller.isSelected,
                     onPressed: (index) => controller.toggle(index),
                   ),
@@ -68,70 +67,6 @@ class SellerListingView extends GetView<SellerListingController> {
               // 🔹 Show TabBar ONLY if Residential is selected
               Obx(() {
                 if (controller.isSelected[0]) {
-                  // Residential selected
-                  // return Expanded(
-                  //   child: Column(
-                  //     children: [
-                  //       const TabBar(
-                  //         labelColor: Colors.black,
-                  //         indicatorColor: ColorRes.primary,
-                  //         splashBorderRadius: BorderRadius.only(
-                  //           topLeft: Radius.circular(AppRadius.medium),
-                  //           topRight: Radius.circular(AppRadius.medium),
-                  //         ),
-                  //         indicatorSize: TabBarIndicatorSize.tab,
-                  //         indicatorPadding: EdgeInsets.symmetric(
-                  //             horizontal: AppPadding.medium),
-                  //         unselectedLabelColor: Colors.grey,
-                  //         labelStyle: TextStyle(
-                  //           fontSize: 14,
-                  //           fontWeight: FontWeight.w600,
-                  //           color: ColorRes.primary
-                  //         ),
-                  //
-                  //         tabs: [
-                  //           Tab(text: "Buy"),
-                  //           Tab(text: "Sell"),
-                  //           Tab(text: "Rent"),
-                  //         ],
-                  //       ),
-                  //       Expanded(
-                  //         child: TabBarView(
-                  //           children: [
-                  //             _buildPropertyList(controller, "buy"),
-                  //             _buildPropertyList(controller, "sell"),
-                  //             _buildPropertyList(controller, "rent"),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //
-                  //       SingleChildScrollView(
-                  //         child: Row(
-                  //           children: [
-                  //             ...List.generate(controller.listingFilter.length, (index) {
-                  //               return Padding(
-                  //                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  //                 child: Container(
-                  //                   decoration: BoxDecoration(
-                  //                     border: Border.all(color: ColorRes.grey.withOpacity(0.3)),
-                  //                     borderRadius: BorderRadius.circular(AppRadius.medium),
-                  //                   ),
-                  //                   padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16),
-                  //                   alignment: Alignment.centerLeft,
-                  //
-                  //                   child: Text(controller.listingFilter[index]),
-                  //                 ),
-                  //               );
-                  //             })
-                  //           ],
-                  //         ),
-                  //       )
-                  //     ],
-                  //   ),
-                  //
-                  // );
-
-                  // inside Residential section
                   return Expanded(
                     child: Column(
                       children: [
@@ -141,7 +76,9 @@ class SellerListingView extends GetView<SellerListingController> {
                           indicatorColor: ColorRes.primary,
                           unselectedLabelColor: Colors.grey,
                           indicatorSize: TabBarIndicatorSize.tab,
-                          indicatorPadding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
+                          indicatorPadding: EdgeInsets.symmetric(
+                            horizontal: AppPadding.medium,
+                          ),
                           labelStyle: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -157,32 +94,60 @@ class SellerListingView extends GetView<SellerListingController> {
                         // Filters Row
                         SizedBox(
                           height: 60,
-                          child: Obx(() => ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            itemBuilder: (context, index) {
-                              final isSelected = controller.selectedFilter.value == controller.listingFilter[index];
-                              return GestureDetector(
-                                onTap: (){
-                                  controller.selectedFilter.value = controller.listingFilter[index];
-                                  // Trigger UI update by filtering properties
-                                  controller.properties.refresh();
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color:isSelected ? ColorRes.primary : ColorRes.grey.withOpacity(0.3)),
-                                    borderRadius: BorderRadius.circular(AppRadius.medium),
-                                    color: isSelected ? ColorRes.primary.withOpacity(0.1) : Colors.transparent,
+                          child: Obx(
+                            () => ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              itemBuilder: (context, index) {
+                                final isSelected =
+                                    controller.selectedFilter.value ==
+                                    controller.listingFilter[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    controller.selectedFilter.value =
+                                        controller.listingFilter[index];
+                                    // Trigger UI update by filtering properties
+                                    controller.properties.refresh();
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color:
+                                            isSelected
+                                                ? ColorRes.primary
+                                                : ColorRes.grey.withOpacity(
+                                                  0.3,
+                                                ),
+                                      ),
+                                      borderRadius: BorderRadius.circular(
+                                        AppRadius.medium,
+                                      ),
+                                      color:
+                                          isSelected
+                                              ? ColorRes.primary.withOpacity(
+                                                0.1,
+                                              )
+                                              : Colors.transparent,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0,
+                                      horizontal: 16,
+                                    ),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      controller.listingFilter[index],
+                                    ),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(controller.listingFilter[index]),
-                                ),
-                              );
-                            },
-                            separatorBuilder: (_, __) => const SizedBox(width: 8),
-                            itemCount: controller.listingFilter.length,
-                          )),
+                                );
+                              },
+                              separatorBuilder:
+                                  (_, __) => const SizedBox(width: 8),
+                              itemCount: controller.listingFilter.length,
+                            ),
+                          ),
                         ),
 
                         // Listings per Tab
@@ -198,15 +163,14 @@ class SellerListingView extends GetView<SellerListingController> {
                       ],
                     ),
                   );
-
-
                 } else {
                   // Commercial selected
                   return Expanded(
                     child: Obx(() {
-                      final items = controller.properties
-                          .where((e) => e["category"] == "commercial")
-                          .toList();
+                      final items =
+                          controller.properties
+                              .where((e) => e["category"] == "commercial")
+                              .toList();
                       if (items.isEmpty) {
                         return const Center(
                           child: Text("No Commercial listings"),
@@ -225,7 +189,7 @@ class SellerListingView extends GetView<SellerListingController> {
                             title: item["title"],
                             price: item["price"],
                             status: item["status"],
-                            onRepost: (){},
+                            onRepost: () {},
                           );
                         },
                       );
@@ -242,18 +206,27 @@ class SellerListingView extends GetView<SellerListingController> {
 
   /// Helper widget to build filtered property lists
   Widget _buildPropertyList(
-      SellerListingController controller, String category) {
-
+    SellerListingController controller,
+    String category,
+  ) {
     // Get the currently selected filter (status)
     final selectedStatus = controller.selectedFilter.value;
 
     // Filter by category first
-    final filteredItems = controller.properties.where((e) => e["category"] == category).toList();
+    final filteredItems =
+        controller.properties.where((e) => e["category"] == category).toList();
 
     // Then filter by status if not "All"
-    final items = selectedStatus == "All"
-        ? filteredItems
-        : filteredItems.where((e) => e["status"].toString().toLowerCase() == selectedStatus.toString().toLowerCase()).toList();
+    final items =
+        selectedStatus == "All"
+            ? filteredItems
+            : filteredItems
+                .where(
+                  (e) =>
+                      e["status"].toString().toLowerCase() ==
+                      selectedStatus.toString().toLowerCase(),
+                )
+                .toList();
 
     if (items.isEmpty) {
       return Center(child: Text("No $category listings"));
@@ -277,5 +250,4 @@ class SellerListingView extends GetView<SellerListingController> {
       },
     );
   }
-
 }

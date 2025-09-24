@@ -117,6 +117,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import '../../../app/constants/size_manager.dart';
@@ -124,6 +125,9 @@ import '../../../widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../widgets/drawer/drawer.dart';
 import '../../home/views/home_screen.dart';
 import '../../saved_property/views/saved_property_screen.dart';
+import '../../seller/module/lead_screen/views/lead_screen.dart';
+
+import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
 import '../../seller/module/package_screen/views/package_screen.dart';
 import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
 import '../../seller/seller_listing/view/seller_listing_view.dart';
@@ -230,20 +234,21 @@ class SellerDashboardScreen extends StatelessWidget {
           case 0:
             return const SellerHomeScreen();
           case 1:
-            return Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.offAll(() => DashboardScreen());
-                },
-                child: const Text("seller"),
-              ),
-            );
+            return LeadScreen();
+          // return Center(
+          //   child: ElevatedButton(
+          //     onPressed: () {
+          //       Get.offAll(() => DashboardScreen());
+          //     },
+          //     child: const Text("seller"),
+          //   ),
+          // );
           case 2:
             return SellerListingView();
           case 3:
             return SubscriptionPlansScreen();
           case 4:
-            return const Center(child: Text("No Update"));
+            return ProfileScreen(imageUrl: "");
           default:
             return const SizedBox();
         }

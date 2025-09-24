@@ -5,10 +5,7 @@ class ICRes {
   // app logo icon in png
   static const appLogoPNG = "${IconPath}app_logo.png";
 
-
   static const appLogoPNG1 = "${IconPath}ic_1.png";
-
-
 
   // comments icons
   static const CommentsPath = "${IconPath}comments/";
@@ -118,6 +115,9 @@ class ICRes {
   static const call = "${UiPath}ic_call.svg";
   static const emoji = "${UiPath}ic_emoji.svg";
   static const location = "${UiPath}ic_location.svg";
-   static const mailSVG = "${UiPath}ic_mail.svg";
+  static const mailSVG = "${UiPath}ic_mail.svg";
   static const mention = "${UiPath}ic_mention.svg";
+
+  ///
+  static const geminiSvg = "assets/svg/gemini.svg";
 }
