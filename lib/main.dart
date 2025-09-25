@@ -23,12 +23,16 @@ void main() async {
     ),
   );
 
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp
+    ]);
+
   await Get.putAsync(() => NetworkStatusService().init());
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const DashboardScreen(),
+      home: const SplashScreen(),
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
         return MediaQuery(

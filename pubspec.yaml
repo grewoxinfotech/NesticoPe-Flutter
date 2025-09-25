@@ -75,6 +75,7 @@ flutter:
     - assets/icons/native_icons/system/
     - assets/icons/native_icons/ui/
     - assets/svg/
+    - assets/icons/third_party/
 
     #- .env
 

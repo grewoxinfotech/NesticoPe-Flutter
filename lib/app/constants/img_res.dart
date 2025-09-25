@@ -46,4 +46,7 @@ class IMGRes {
   static const String user_2 = "assets/images/user_2.jpg";
   static const String user_3 = "assets/images/user_3.jpg";
   static const String user_4 = "assets/images/user_4.jpg";
+
+  /// Third Party
+static const String whatsapp = "assets/icons/third_party/whatsapp.svg";
 }

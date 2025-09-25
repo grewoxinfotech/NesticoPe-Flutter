@@ -13,6 +13,9 @@ class ApiConstants {
   static const String resendOtpEndpoint = "$auth/resend-otp";
   static const String sellerRegister = "$auth/seller-register";
 
+  // Lead
+  static const String leads = "$baseURL/lead";
+
 
 
 //---------------------------------other-----------------------------//

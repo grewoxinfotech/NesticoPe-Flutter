@@ -1,7 +1,142 @@
-import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:get/get.dart';
+//
+// class LeadController extends GetxController {
+//   final List<String> statusList = [
+//     'Interested',
+//     'New Lead',
+//     'Contacted',
+//     'Follow Up',
+//     'Site Visit',
+//     'Negotiation',
+//     'Closed',
+//     'Lost',
+//   ];
+//
+//   RxString selectedFilterStatus = ''.obs;
+//   RxString selectedStatus = ''.obs;
+//
+//   final List<String> leadTypeList = ["All Leads", "Residential", "Commercial"];
+//
+//   RxString selectedLeadType = ''.obs;
+//   Rxn<DateTime> selectedDate = Rxn<DateTime>();
+//   final TextEditingController dateController = TextEditingController();
+//
+//   // Add notes functionality
+//   RxString notes = ''.obs;
+//   final TextEditingController notesController = TextEditingController();
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     loadVariables();
+//   }
+//
+//   @override
+//   void onClose() {
+//     dateController.dispose();
+//     notesController.dispose();
+//     super.onClose();
+//   }
+//
+//   void loadVariables() {
+//     selectedFilterStatus.value = 'All Status'; // Changed to show all by default
+//     selectedLeadType.value = leadTypeList.first; // This is "All Leads"
+//     selectedStatus.value = statusList.first;
+//     dateController.text = "";
+//     selectedDate.value = null;
+//     notes.value = '';
+//   }
+//
+//   // Method to update lead status
+//   void updateStatus(String newStatus) {
+//     if (statusList.contains(newStatus)) {
+//       selectedFilterStatus.value = newStatus;
+//     }
+//   }
+//
+//   // Method to update lead type filter
+//   void updateLeadType(String newType) {
+//     if (leadTypeList.contains(newType)) {
+//       selectedLeadType.value = newType;
+//     }
+//   }
+//
+//   // Method to set follow-up date and time
+//   void setFollowUpDateTime(DateTime dateTime) {
+//     selectedDate.value = dateTime;
+//     dateController.text = dateTime.toString();
+//   }
+//
+//   // Method to clear follow-up date
+//   void clearFollowUpDate() {
+//     selectedDate.value = null;
+//     dateController.text = "";
+//   }
+//
+//   // Method to update notes
+//   void updateNotes(String newNotes) {
+//     notes.value = newNotes;
+//     notesController.text = newNotes;
+//   }
+//
+//   // Method to clear notes
+//   void clearNotes() {
+//     notes.value = '';
+//     notesController.text = '';
+//   }
+//
+//   // Method to reset all filters and data
+//   void resetFilters() {
+//     selectedFilterStatus.value = statusList.first;
+//     selectedLeadType.value = leadTypeList.first;
+//   }
+//
+//   // Method to check if lead has pending follow-up
+//   bool hasUpcomingFollowUp() {
+//     if (selectedDate.value == null) return false;
+//     return selectedDate.value!.isAfter(DateTime.now());
+//   }
+//
+//   // Method to check if follow-up is overdue
+//   bool isFollowUpOverdue() {
+//     if (selectedDate.value == null) return false;
+//     return selectedDate.value!.isBefore(DateTime.now());
+//   }
+//
+//   // Method to get formatted follow-up date
+//   String getFormattedFollowUpDate() {
+//     if (selectedDate.value == null) return "No follow-up set";
+//     return dateController.text;
+//   }
+//
+//   // Method to validate if all required fields are filled
+//   bool isValid() {
+//     return selectedFilterStatus.value.isNotEmpty;
+//   }
+// }
 
-class LeadController extends GetxController {
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+
+import '../../../../../data/network/lead/lead_service.dart';
+import '../model/lead_model.dart';
+
+class LeadController extends PaginatedController<LeadItem> {
+  final LeadService _service = LeadService();
+
+  // --- Form Controllers ---
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController notesController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+
+  // --- Lead Status & Type Lists ---
   final List<String> statusList = [
     'Interested',
     'New Lead',
@@ -12,106 +147,170 @@ class LeadController extends GetxController {
     'Closed',
     'Lost',
   ];
-
-  RxString selectedFilterStatus = ''.obs;
-  RxString selectedStatus = ''.obs;
-
   final List<String> leadTypeList = ["All Leads", "Residential", "Commercial"];
 
-  RxString selectedLeadType = ''.obs;
+  // --- Reactive Fields ---
+  RxString selectedFilterStatus = 'All Status'.obs;
+  RxString selectedStatus = 'New Lead'.obs;
+  RxString selectedLeadType = 'All Leads'.obs;
   Rxn<DateTime> selectedDate = Rxn<DateTime>();
-  final TextEditingController dateController = TextEditingController();
-
-  // Add notes functionality
   RxString notes = ''.obs;
-  final TextEditingController notesController = TextEditingController();
+
+  // --- Optional filters for API ---
+  Map<String, String>? filters;
 
   @override
   void onInit() {
     super.onInit();
     loadVariables();
+    loadInitial(); // Load first page of leads automatically
   }
 
   @override
   void onClose() {
-    dateController.dispose();
+    nameController.dispose();
+    phoneController.dispose();
+    emailController.dispose();
     notesController.dispose();
+    dateController.dispose();
     super.onClose();
   }
 
+  // --- Pagination Fetch ---
+  @override
+  Future<PaginationResponse<LeadItem>> fetchItems(int page) async {
+    try {
+      final response = await _service.fetchLeads(page: page, filters: filters);
+      print("Fetched leads: ${response.items.length}");
+      return response;
+    } catch (e) {
+      print("Exception in fetchItems: $e");
+      rethrow;
+    }
+  }
+
+  // --- CRUD Methods ---
+  Future<bool> createLead(LeadItem lead) async {
+    try {
+      final success = await _service.createLead(lead);
+      if (success) await loadInitial();
+      return success;
+    } catch (e) {
+      print("Create lead error: $e");
+      return false;
+    }
+  }
+
+  Future<bool> updateLead(String id, LeadItem updatedLead) async {
+    try {
+      final success = await _service.updateLead(id, updatedLead);
+      if (success) {
+        int index = items.indexWhere((item) => item.id == id);
+        if (index != -1) {
+          items[index] = updatedLead;
+          items.refresh();
+        }
+      }
+      return success;
+    } catch (e) {
+      print("Update lead error: $e");
+      return false;
+    }
+  }
+
+  Future<bool> deleteLead(String id) async {
+    try {
+      final success = await _service.deleteLead(id);
+      if (success) items.removeWhere((item) => item.id == id);
+      return success;
+    } catch (e) {
+      print("Delete lead error: $e");
+      return false;
+    }
+  }
+
+  // --- Filters ---
+  Future<void> applyFilters(Map<String, String> newFilters) async {
+    filters = newFilters;
+    await refreshList();
+  }
+
   void loadVariables() {
-    selectedFilterStatus.value = 'All Status'; // Changed to show all by default
-    selectedLeadType.value = leadTypeList.first; // This is "All Leads"
+    selectedFilterStatus.value = 'All Status';
+    selectedLeadType.value = leadTypeList.first;
     selectedStatus.value = statusList.first;
     dateController.text = "";
     selectedDate.value = null;
     notes.value = '';
   }
 
-  // Method to update lead status
+  // --- Lead Management Helpers ---
   void updateStatus(String newStatus) {
     if (statusList.contains(newStatus)) {
-      selectedFilterStatus.value = newStatus;
+      selectedStatus.value = newStatus;
     }
   }
 
-  // Method to update lead type filter
   void updateLeadType(String newType) {
     if (leadTypeList.contains(newType)) {
       selectedLeadType.value = newType;
     }
   }
 
-  // Method to set follow-up date and time
   void setFollowUpDateTime(DateTime dateTime) {
     selectedDate.value = dateTime;
     dateController.text = dateTime.toString();
   }
 
-  // Method to clear follow-up date
   void clearFollowUpDate() {
     selectedDate.value = null;
     dateController.text = "";
   }
 
-  // Method to update notes
   void updateNotes(String newNotes) {
     notes.value = newNotes;
     notesController.text = newNotes;
   }
 
-  // Method to clear notes
   void clearNotes() {
     notes.value = '';
-    notesController.text = '';
+    notesController.clear();
   }
 
-  // Method to reset all filters and data
   void resetFilters() {
     selectedFilterStatus.value = statusList.first;
     selectedLeadType.value = leadTypeList.first;
   }
 
-  // Method to check if lead has pending follow-up
   bool hasUpcomingFollowUp() {
     if (selectedDate.value == null) return false;
     return selectedDate.value!.isAfter(DateTime.now());
   }
 
-  // Method to check if follow-up is overdue
   bool isFollowUpOverdue() {
     if (selectedDate.value == null) return false;
     return selectedDate.value!.isBefore(DateTime.now());
   }
 
-  // Method to get formatted follow-up date
   String getFormattedFollowUpDate() {
     if (selectedDate.value == null) return "No follow-up set";
     return dateController.text;
   }
 
-  // Method to validate if all required fields are filled
   bool isValid() {
-    return selectedFilterStatus.value.isNotEmpty;
+    return selectedStatus.value.isNotEmpty && nameController.text.isNotEmpty;
+  }
+
+  // --- Reset Form ---
+  void resetForm() {
+    nameController.clear();
+    phoneController.clear();
+    emailController.clear();
+    notesController.clear();
+    dateController.clear();
+    notes.value = '';
+    selectedDate.value = null;
+    selectedStatus.value = statusList.first;
+    selectedLeadType.value = leadTypeList.first;
   }
 }

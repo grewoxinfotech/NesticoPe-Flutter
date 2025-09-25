@@ -71,13 +71,13 @@ class _SplashScreenState extends State<SplashScreen>
         Get.offAll(() => const DashboardScreen());
       } else {
         // ❌ No token, go to login
-        Get.offAll(() => const DashboardScreen());
+        // Get.offAll(() => const DashboardScreen());
 
-        // Get.offAll(() => const LoginScreen());
+        Get.offAll(() => const LoginScreen());
       }
     } else {
-      Get.offAll(() => const DashboardScreen());
-      // Get.offAll(() => const LoginScreen());
+      // Get.offAll(() => const DashboardScreen());
+      Get.offAll(() => const LoginScreen());
       print("login_new_token $token");
     }
   }

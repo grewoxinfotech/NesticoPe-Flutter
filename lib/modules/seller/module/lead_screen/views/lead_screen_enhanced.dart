@@ -1101,10 +1101,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/contact_helper.dart';
+import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
 import 'package:intl/intl.dart';
 
 import '../controllers/lead_controller.dart';
+import '../model/lead_model.dart';
 
 final List<Map<String, dynamic>> dummyLeads = [
   {
@@ -1199,43 +1203,242 @@ final List<Map<String, dynamic>> dummyLeads = [
   },
 ];
 
+// class LeadScreen extends StatelessWidget {
+//   const LeadScreen({super.key});
+//
+//   List<Map<String, dynamic>> getFilteredLeads(LeadController controller) {
+//     List<Map<String, dynamic>> filteredLeads = List.from(dummyLeads);
+//
+//     // Filter by status
+//     if (controller.selectedFilterStatus.value.isNotEmpty &&
+//         controller.selectedFilterStatus.value != 'All Status') {
+//       filteredLeads =
+//           filteredLeads
+//               .where(
+//                 (lead) =>
+//                     lead['stage'] == controller.selectedFilterStatus.value,
+//               )
+//               .toList();
+//     }
+//
+//     // Filter by lead type (property type)
+//     if (controller.selectedLeadType.value.isNotEmpty &&
+//         controller.selectedLeadType.value != 'All Leads') {
+//       if (controller.selectedLeadType.value == 'Residential') {
+//         filteredLeads =
+//             filteredLeads
+//                 .where(
+//                   (lead) => [
+//                     'Apartment',
+//                     'Villa',
+//                     'Penthouse',
+//                   ].contains(lead['property']['type']),
+//                 )
+//                 .toList();
+//       } else if (controller.selectedLeadType.value == 'Commercial') {
+//         filteredLeads =
+//             filteredLeads
+//                 .where((lead) => lead['property']['type'] == 'Commercial')
+//                 .toList();
+//       }
+//     }
+//
+//     return filteredLeads;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final mainController = Get.put(LeadController(), tag: 'main');
+//
+//     return SafeArea(
+//       top: false,
+//       child: Scaffold(
+//         appBar: AppBar(
+//           title: Obx(() {
+//             final filteredCount = getFilteredLeads(mainController).length;
+//             return Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 const Text(
+//                   "Leads",
+//                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+//                 ),
+//                 Text(
+//                   "$filteredCount of ${dummyLeads.length} leads",
+//                   style: const TextStyle(
+//                     fontSize: 12,
+//                     fontWeight: FontWeight.w400,
+//                   ),
+//                 ),
+//               ],
+//             );
+//           }),
+//           elevation: 0,
+//           backgroundColor: Colors.white,
+//           foregroundColor: Colors.black,
+//           bottom: PreferredSize(
+//             preferredSize: const Size.fromHeight(48.0),
+//             child: Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 8.0),
+//               child: Row(
+//                 children: [
+//                   Expanded(
+//                     child: Obx(
+//                       () => NesticoPeDropdownField(
+//                         value:
+//                             mainController.selectedFilterStatus.value.isEmpty
+//                                 ? null
+//                                 : mainController.selectedFilterStatus.value,
+//                         items:
+//                             ['All Status', ...mainController.statusList]
+//                                 .map(
+//                                   (e) => DropdownMenuItem(
+//                                     value: e,
+//                                     child: Text(
+//                                       e,
+//                                       style: TextStyle(
+//                                         fontSize: 12,
+//                                         color: Colors.grey[800],
+//                                         fontWeight: FontWeight.w600,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 )
+//                                 .toList(),
+//                         onChanged: (value) {
+//                           if (value != null) {
+//                             mainController.selectedFilterStatus.value = value;
+//                           }
+//                         },
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(width: 8),
+//                   Expanded(
+//                     child: Obx(
+//                       () => NesticoPeDropdownField(
+//                         value:
+//                             mainController.selectedLeadType.value.isEmpty
+//                                 ? null
+//                                 : mainController.selectedLeadType.value,
+//                         items:
+//                             mainController.leadTypeList
+//                                 .map(
+//                                   (e) => DropdownMenuItem(
+//                                     value: e,
+//                                     child: Text(
+//                                       e,
+//                                       style: TextStyle(
+//                                         fontSize: 12,
+//                                         color: Colors.grey[800],
+//                                         fontWeight: FontWeight.w600,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 )
+//                                 .toList(),
+//                         onChanged: (value) {
+//                           if (value != null) {
+//                             mainController.selectedLeadType.value = value;
+//                           }
+//                         },
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//         body: Container(
+//           decoration: BoxDecoration(
+//             gradient: LinearGradient(
+//               begin: Alignment.topCenter,
+//               end: Alignment.bottomCenter,
+//               colors: [Colors.grey[50]!, Colors.white],
+//             ),
+//           ),
+//           child: Obx(() {
+//             final filteredLeads = getFilteredLeads(mainController);
+//
+//             if (filteredLeads.isEmpty) {
+//               return const Center(
+//                 child: Column(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     Icon(Icons.search_off, size: 64, color: Colors.grey),
+//                     SizedBox(height: 16),
+//                     Text(
+//                       'No leads found',
+//                       style: TextStyle(
+//                         fontSize: 16,
+//                         color: Colors.grey,
+//                         fontWeight: FontWeight.w500,
+//                       ),
+//                     ),
+//                     Text(
+//                       'Try adjusting your filters',
+//                       style: TextStyle(fontSize: 14, color: Colors.grey),
+//                     ),
+//                   ],
+//                 ),
+//               );
+//             }
+//
+//             return ListView.builder(
+//               padding: const EdgeInsets.all(16),
+//               itemCount: filteredLeads.length,
+//               itemBuilder: (context, index) {
+//                 final lead = filteredLeads[index];
+//                 final originalIndex = dummyLeads.indexOf(lead);
+//
+//                 return LeadCard(
+//                   index: originalIndex,
+//                   name: lead['name'],
+//                   email: lead['email'],
+//                   phone: lead['phone'],
+//                   property: lead['property'],
+//                   reseller: lead['reseller'],
+//                   source: lead['source'],
+//                   stage: lead['stage'],
+//                   date: lead['date'],
+//                 );
+//               },
+//             );
+//           }),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
 class LeadScreen extends StatelessWidget {
   const LeadScreen({super.key});
 
-  List<Map<String, dynamic>> getFilteredLeads(LeadController controller) {
-    List<Map<String, dynamic>> filteredLeads = List.from(dummyLeads);
+  List<LeadItem> getFilteredLeads(LeadController controller) {
+    List<LeadItem> filteredLeads = List.from(controller.items);
 
     // Filter by status
     if (controller.selectedFilterStatus.value.isNotEmpty &&
         controller.selectedFilterStatus.value != 'All Status') {
-      filteredLeads =
-          filteredLeads
-              .where(
-                (lead) =>
-                    lead['stage'] == controller.selectedFilterStatus.value,
-              )
-              .toList();
+      filteredLeads = filteredLeads
+          .where((lead) => lead.stage == controller.selectedFilterStatus.value)
+          .toList();
     }
 
     // Filter by lead type (property type)
     if (controller.selectedLeadType.value.isNotEmpty &&
         controller.selectedLeadType.value != 'All Leads') {
       if (controller.selectedLeadType.value == 'Residential') {
-        filteredLeads =
-            filteredLeads
-                .where(
-                  (lead) => [
-                    'Apartment',
-                    'Villa',
-                    'Penthouse',
-                  ].contains(lead['property']['type']),
-                )
-                .toList();
+        filteredLeads = filteredLeads
+            .where((lead) => lead.customFields?.type! == 'residential')
+            .toList();
       } else if (controller.selectedLeadType.value == 'Commercial') {
-        filteredLeads =
-            filteredLeads
-                .where((lead) => lead['property']['type'] == 'Commercial')
-                .toList();
+        filteredLeads = filteredLeads
+            .where((lead) => lead.customFields?.type! == 'commercial')
+            .toList();
       }
     }
 
@@ -1244,14 +1447,16 @@ class LeadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mainController = Get.put(LeadController(), tag: 'main');
+    final controller = Get.put(LeadController());
 
     return SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(
           title: Obx(() {
-            final filteredCount = getFilteredLeads(mainController).length;
+            final filteredCount = getFilteredLeads(controller).length;
+            final totalCount = controller.items.length;
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1260,7 +1465,7 @@ class LeadScreen extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
                 Text(
-                  "$filteredCount of ${dummyLeads.length} leads",
+                  "$filteredCount of $totalCount leads",
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -1275,18 +1480,18 @@ class LeadScreen extends StatelessWidget {
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48.0),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 10),
               child: Row(
                 children: [
                   Expanded(
                     child: Obx(
                       () => NesticoPeDropdownField(
                         value:
-                            mainController.selectedFilterStatus.value.isEmpty
+                        controller.selectedFilterStatus.value.isEmpty
                                 ? null
-                                : mainController.selectedFilterStatus.value,
+                                : controller.selectedFilterStatus.value,
                         items:
-                            ['All Status', ...mainController.statusList]
+                            ['All Status', ...controller.statusList]
                                 .map(
                                   (e) => DropdownMenuItem(
                                     value: e,
@@ -1303,7 +1508,7 @@ class LeadScreen extends StatelessWidget {
                                 .toList(),
                         onChanged: (value) {
                           if (value != null) {
-                            mainController.selectedFilterStatus.value = value;
+                            controller.selectedFilterStatus.value = value;
                           }
                         },
                       ),
@@ -1314,11 +1519,11 @@ class LeadScreen extends StatelessWidget {
                     child: Obx(
                       () => NesticoPeDropdownField(
                         value:
-                            mainController.selectedLeadType.value.isEmpty
+                            controller.selectedLeadType.value.isEmpty
                                 ? null
-                                : mainController.selectedLeadType.value,
+                                : controller.selectedLeadType.value,
                         items:
-                            mainController.leadTypeList
+                        controller.leadTypeList
                                 .map(
                                   (e) => DropdownMenuItem(
                                     value: e,
@@ -1335,7 +1540,7 @@ class LeadScreen extends StatelessWidget {
                                 .toList(),
                         onChanged: (value) {
                           if (value != null) {
-                            mainController.selectedLeadType.value = value;
+                            controller.selectedLeadType.value = value;
                           }
                         },
                       ),
@@ -1346,96 +1551,79 @@ class LeadScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.grey[50]!, Colors.white],
-            ),
-          ),
-          child: Obx(() {
-            final filteredLeads = getFilteredLeads(mainController);
+        body: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            if (filteredLeads.isEmpty) {
-              return const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.search_off, size: 64, color: Colors.grey),
-                    SizedBox(height: 16),
-                    Text(
-                      'No leads found',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      'Try adjusting your filters',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              );
-            }
+          final filteredLeads = getFilteredLeads(controller);
 
-            return ListView.builder(
+          if (filteredLeads.isEmpty) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.search_off, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text(
+                    'No leads found',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    'Try adjusting your filters',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return NotificationListener<ScrollNotification>(
+            onNotification: (scrollInfo) {
+              if (!controller.isPaging.value &&
+                  scrollInfo.metrics.pixels ==
+                      scrollInfo.metrics.maxScrollExtent &&
+                  controller.hasMore.value) {
+                controller.loadMore();
+              }
+              return false;
+            },
+            child: ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: filteredLeads.length,
               itemBuilder: (context, index) {
                 final lead = filteredLeads[index];
-                final originalIndex = dummyLeads.indexOf(lead);
 
                 return LeadCard(
-                  index: originalIndex,
-                  name: lead['name'],
-                  email: lead['email'],
-                  phone: lead['phone'],
-                  property: lead['property'],
-                  reseller: lead['reseller'],
-                  source: lead['source'],
-                  stage: lead['stage'],
-                  date: lead['date'],
+                  lead: lead,
+
                 );
               },
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }
 }
 
+
 class LeadCard extends StatelessWidget {
-  final int index;
-  final String name;
-  final String email;
-  final String phone;
-  final Map<String, dynamic> property;
-  final String reseller;
-  final String source;
-  final String stage;
-  final String date;
+  final LeadItem lead;
 
   const LeadCard({
-    super.key,
-    required this.index,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.property,
-    required this.reseller,
-    required this.source,
-    required this.stage,
-    required this.date,
+    super.key, required this.lead,
+
   });
 
   @override
   Widget build(BuildContext context) {
     // Get or create controller for this specific lead
-    final controller = Get.put(LeadController(), tag: 'lead_$index');
+    final controller = Get.find<LeadController>();
 
     return Container(
       decoration: BoxDecoration(
@@ -1443,7 +1631,7 @@ class LeadCard extends StatelessWidget {
         border: Border.all(color: Colors.grey[300]!),
         color: Colors.white,
       ),
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       child: GestureDetector(
         onTap: () {
@@ -1466,16 +1654,7 @@ class LeadCard extends StatelessWidget {
                     controller: scrollController,
                     child: LeadDetailBottomSheet(
                       controller: controller,
-                      leadData: {
-                        'name': name,
-                        'email': email,
-                        'phone': phone,
-                        'property': property,
-                        'reseller': reseller,
-                        'source': source,
-                        'stage': stage,
-                        'date': date,
-                      },
+                      leadData: lead,
                     ),
                   ),
                 );
@@ -1495,7 +1674,7 @@ class LeadCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "$name >",
+                        "${lead.name} >",
                         style: const TextStyle(
                           fontSize: 13,
                           color: Colors.black54,
@@ -1505,13 +1684,9 @@ class LeadCard extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          Obx(
-                            () => _buildChip(
-                              controller.selectedFilterStatus.value.isEmpty
-                                  ? stage
-                                  : controller.selectedFilterStatus.value,
+                          _buildChip(lead.status
                             ),
-                          ),
+
                           const SizedBox(width: 4),
                           SizedBox(
                             height: 16,
@@ -1522,7 +1697,7 @@ class LeadCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            date,
+                            DateFormat('yyyy-MM-dd').format(lead.createdAt),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[600],
@@ -1538,12 +1713,12 @@ class LeadCard extends StatelessWidget {
                   children: [
                     _buildActionButton(
                       Icons.phone_outlined,
-                      () => _makePhoneCall(phone),
+                      () => ContactHelper.openDialer(lead.phone),
                     ),
                     const SizedBox(width: 6),
                     _buildActionButton(
                       Icons.email_outlined,
-                      () => _sendEmail(email),
+                      () => ContactHelper.sendEmail(lead.email,),
                     ),
                   ],
                 ),
@@ -1551,7 +1726,7 @@ class LeadCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              property['name'],
+              lead.customFields?.title ?? "N/A",
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -1579,27 +1754,7 @@ class LeadCard extends StatelessWidget {
     );
   }
 
-  void _makePhoneCall(String phoneNumber) {
-    // Implement phone call functionality
-    Get.snackbar(
-      'Calling',
-      'Calling $phoneNumber',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
-  }
 
-  void _sendEmail(String email) {
-    // Implement email functionality
-    Get.snackbar(
-      'Email',
-      'Opening email for $email',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-    );
-  }
 
   Widget _buildChip(String text) {
     return Container(
@@ -1623,12 +1778,12 @@ class LeadCard extends StatelessWidget {
 
 class LeadDetailBottomSheet extends StatelessWidget {
   final LeadController controller;
-  final Map<String, dynamic> leadData;
+  final LeadItem leadData;
 
   const LeadDetailBottomSheet({
     super.key,
-    required this.controller,
-    required this.leadData,
+    required this.controller, required this.leadData,
+
   });
 
   void pickDateTime(BuildContext context, LeadController controller) async {
@@ -1676,6 +1831,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
 
     Get.dialog(
       AlertDialog(
+        backgroundColor: Colors.white,
         title: const Text('Edit Notes'),
         content: TextField(
           controller: notesController,
@@ -1741,7 +1897,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    leadData['name'],
+                    leadData.name,
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.black54,
@@ -1848,14 +2004,25 @@ class LeadDetailBottomSheet extends StatelessWidget {
           const Divider(color: Colors.black12),
           const SizedBox(height: 12),
 
-          _buildInfoRow("Property", leadData['property']['name']),
-          const SizedBox(height: 8),
-          _buildInfoRow("Type", leadData['property']['type']),
-          const SizedBox(height: 8),
-          _buildInfoRow("Price", leadData['property']['price']),
-          const SizedBox(height: 8),
-          _buildInfoRow("Area", leadData['property']['area']),
-          const SizedBox(height: 12),
+          if(leadData.customFields?.title != null &&leadData.customFields!.title!.isNotEmpty)...[
+            _buildInfoRow("Property", leadData.customFields?.title ?? "N/A"),
+            const SizedBox(height: 8),
+          ],
+
+          if(leadData.customFields?.type != null &&leadData.customFields!.type!.isNotEmpty)...[
+            _buildInfoRow("Type", leadData.customFields?.type ?? "N/A"),
+            const SizedBox(height: 8),
+          ],
+
+          if(leadData.customFields?.propertyDetails?.financialInfo?.price != null &&leadData.customFields!.propertyDetails!.financialInfo!.price.toString().isNotEmpty)...[
+            _buildInfoRow("Price", Formatter.formatPrice(leadData.customFields!.propertyDetails!.financialInfo!.price) ?? "0"),
+            const SizedBox(height: 8),
+          ],
+
+          if(leadData.customFields?.propertyDetails?.propertyBuiltUpArea != null &&leadData.customFields!.propertyDetails!.propertyBuiltUpArea!.toString().isNotEmpty)...[
+            _buildInfoRow("Area", "${leadData.customFields?.propertyDetails?.propertyBuiltUpArea.toString()} / sq.ft"),
+            const SizedBox(height: 12),
+          ],
           const Divider(color: Colors.black12),
           const SizedBox(height: 12),
 
@@ -1870,7 +2037,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          _buildPropertyCard(leadData['property']),
+          if(leadData.customFields != null)...[
+            _buildPropertyCard(leadData.customFields!),
+          ],
 
           const SizedBox(height: 16),
 
@@ -1879,7 +2048,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: ElevatedButton(
-                  onPressed: () => _makePhoneCall(leadData['phone']),
+                  onPressed: () =>ContactHelper.openWhatsApp(leadData.phone,),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorRes.primary.withOpacity(0.1),
                     foregroundColor: ColorRes.primary,
@@ -1888,14 +2057,14 @@ class LeadDetailBottomSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Center(child: Icon(Icons.phone_outlined)),
+                  child:  Center(child: Image.asset(IMGRes.whatsapp)),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 flex: 3,
                 child: ElevatedButton(
-                  onPressed: () => _sendMessage(leadData['phone']),
+                  onPressed: () => ContactHelper.sendEmail(leadData.email),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorRes.primary.withOpacity(0.1),
                     foregroundColor: ColorRes.primary,
@@ -1907,10 +2076,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.message_outlined),
+                      Icon(Icons.mail_outline),
                       SizedBox(width: 6),
                       Text(
-                        "Message",
+                        "Email",
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -1924,7 +2093,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
-                  onPressed: () => _makePhoneCall(leadData['phone']),
+                  onPressed: () => ContactHelper.openDialer(leadData.phone),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorRes.primary,
                     foregroundColor: ColorRes.white,
@@ -1959,25 +2128,6 @@ class LeadDetailBottomSheet extends StatelessWidget {
     );
   }
 
-  void _makePhoneCall(String phoneNumber) {
-    Get.snackbar(
-      'Calling',
-      'Calling $phoneNumber',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
-  }
-
-  void _sendMessage(String phoneNumber) {
-    Get.snackbar(
-      'Message',
-      'Opening message for $phoneNumber',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-    );
-  }
 
   Widget _buildTextWithIconAndButton(
     IconData icon,
@@ -2033,7 +2183,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildPropertyCard(Map<String, dynamic> property) {
+  Widget _buildPropertyCard(Items property) {
     return Container(
       height: 100,
       decoration: BoxDecoration(
@@ -2052,7 +2202,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                 bottomLeft: Radius.circular(12),
               ),
               image: DecorationImage(
-                image: AssetImage(property['image']),
+                image: property.propertyImages != null ? NetworkImage(property.propertyImages!.first,) : AssetImage(IMGRes.home3),
                 fit: BoxFit.cover,
               ),
             ),
@@ -2064,19 +2214,21 @@ class LeadDetailBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    property['name'],
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[800],
+                  if(property.title != null)...[
+                    Text(
+                      property.title!,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[800],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
+                    const SizedBox(height: 4),
+                  ],
                   Text(
-                    property['address'] ?? '',
+                    property.address ?? '',
                     style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -2084,9 +2236,13 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      _buildChip(property['price']),
-                      const SizedBox(width: 4),
-                      _buildChip(property['area']),
+                      if(property.propertyDetails?.financialInfo?.price.toString() != null )...[
+                        _buildChip(Formatter.formatPrice(property.propertyDetails!.financialInfo!.price)),
+                        const SizedBox(width: 4),
+                      ],
+                      if(property.propertyDetails?.propertyBuiltUpArea != null)...[
+                        _buildChip("${property.propertyDetails?.propertyBuiltUpArea.toString()} / sq.ft"),
+                      ]
                     ],
                   ),
                 ],
