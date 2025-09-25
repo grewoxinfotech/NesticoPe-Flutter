@@ -310,9 +310,9 @@ import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 
 import '../../../app/widgets/snackbar/snackbar.dart';
+import '../../../data/network/auth/model/user_model.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
 
-enum UserRole { buyer, seller, reseller, contractor }
 UserRole? selectedRole;
 
 class RegisterScreen extends StatefulWidget {

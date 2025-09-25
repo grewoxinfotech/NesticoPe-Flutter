@@ -19,9 +19,11 @@ dependencies:
   shimmer:
   intl:
   image_picker:
+  permission_handler:
   get:
   connectivity_plus:
   internet_connection_checker_plus:
+  multi_image_picker_view:
   awesome_snackbar_content:
   salomon_bottom_bar:
   font_awesome_flutter:
@@ -29,10 +31,10 @@ dependencies:
   google_fonts:
   smooth_page_indicator:
   video_player:
-  share_plus:
+  share_plus: ^12.0.0
   url_launcher:
   readmore:
-  speech_to_text:
+  speech_to_text: 
   fl_chart:
   easy_stepper:
   dropdown_button2:
@@ -53,6 +55,8 @@ flutter:
     - assets/images/
     - assets/logo/
     - assets/icons/
+    - assets/amenities/
+    - assets/furnishing/
     - assets/fonts/
     - assets/icons/comments/
     - assets/icons/employee/

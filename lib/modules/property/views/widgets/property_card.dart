@@ -138,17 +138,17 @@ class _PropertyCardState extends State<PropertyCard> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
 
                   // Location
                   Row(
                     children: [
-                      const Icon(
-                        Icons.location_on_rounded,
-                        size: 14,
-                        color: ColorRes.grey,
-                      ),
-                      const SizedBox(width: 4),
+                      // const Icon(
+                      //   Icons.location_on_rounded,
+                      //   size: 14,
+                      //   color: ColorRes.grey,
+                      // ),
+                      //const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           widget.property.address ?? "-",
@@ -178,34 +178,19 @@ class _PropertyCardState extends State<PropertyCard> {
                                 "${widget.property.propertyDetails!.bhk} BHK",
                                 AppSvgRes.bedroom,
                                 15,
+                                isFirst: true, // first chip → no dot
                               ),
 
-                            if (widget
-                                    .property
-                                    .propertyDetails
-                                    ?.furnishInfo
-                                    ?.furnishType !=
-                                null)
+                            if (widget.property.propertyDetails?.furnishInfo?.furnishType != null)
                               _buildChip(
-                                widget
-                                        .property
-                                        .propertyDetails!
-                                        .furnishInfo!
-                                        .furnishType ??
-                                    "",
+                                widget.property.propertyDetails!.furnishInfo!.furnishType ?? "",
                                 AppSvgRes.furniture,
                                 15,
                               ),
-                            if (widget
-                                    .property
-                                    .propertyDetails
-                                    ?.propertyFacing !=
-                                null)
+
+                            if (widget.property.propertyDetails?.propertyFacing != null)
                               _buildChip(
-                                widget
-                                    .property
-                                    .propertyDetails!
-                                    .propertyFacing!,
+                                widget.property.propertyDetails!.propertyFacing!,
                                 AppSvgRes.direction,
                                 15,
                               ),
@@ -231,7 +216,7 @@ class _PropertyCardState extends State<PropertyCard> {
                         ),
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 18,
+                          fontSize: 16,
                           color: ColorRes.textColor,
                         ),
                       ),
@@ -245,9 +230,9 @@ class _PropertyCardState extends State<PropertyCard> {
                           color: ColorRes.primary,
                         ),
                         child: const Text(
-                          'Book Now',
+                          'Contact Now',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
@@ -307,19 +292,21 @@ class _PropertyCardState extends State<PropertyCard> {
     );
   }
 
-  Widget _buildChip(String text, String svgIcon, double size) {
+  Widget _buildChip(String text, String svgIcon, double size, {bool isFirst = false}) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: Row(
         children: [
-          const Text('•', style: TextStyle(fontSize: 10)),
-          const SizedBox(width: 2),
+          if (!isFirst) ...[
+            const Text('•', style: TextStyle(fontSize: 10)),
+            const SizedBox(width: 2),
+          ],
           AppSvgIcon(assetName: svgIcon, size: size),
           const SizedBox(width: 4),
           Text(
             text,
             style: const TextStyle(
-              fontSize: 10,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
               color: ColorRes.grey,
             ),

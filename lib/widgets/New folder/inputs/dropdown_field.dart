@@ -6,7 +6,7 @@ import '../../../app/constants/size_manager.dart';
 import '../../display/ic.dart';
 
 class NesticoPeDropdownField<T> extends StatelessWidget {
-  final String title;
+  final String? title;
   final dynamic value;
   final List<DropdownMenuItem<T>> items;
   final Function(dynamic) onChanged;
@@ -23,7 +23,7 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
 
   const NesticoPeDropdownField({
     super.key,
-    required this.title,
+    this.title,
     required this.value,
     required this.items,
     required this.onChanged,
@@ -44,10 +44,11 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if(title != null && title!.isNotEmpty)
         Row(
           children: [
             Text(
-              title,
+              title!,
               style: TextStyle(
                 fontSize: 14,
                 color: Get.theme.colorScheme.onSecondary,

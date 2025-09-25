@@ -5,18 +5,21 @@ class AppSvgIcon extends StatelessWidget {
   final String assetName;
   final double size;
   final Color? color;
+  final String folder;
 
   const AppSvgIcon({
     Key? key,
     required this.assetName,
     this.size = 24,
     this.color,
+    this.folder='svg'
+
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(
-      'assets/svg/$assetName.svg',
+      'assets/$folder/$assetName.svg',
       width: size,
       height: size,
       color: color,

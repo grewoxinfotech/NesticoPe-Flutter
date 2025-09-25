@@ -82,6 +82,84 @@ class SellerListWidget extends StatelessWidget {
         },
       ),
     );
+    // return SizedBox(
+    //   height: 390, // smaller height
+    //   child: GridView.builder(
+    //     scrollDirection: Axis.horizontal,
+    //     itemCount: propertyList.length,
+    //     padding: const EdgeInsets.symmetric(horizontal: 10),
+    //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    //       crossAxisCount: 2,
+    //       // mainAxisSpacing: 10,
+    //       crossAxisSpacing: 10,
+    //       childAspectRatio: 190 / 140, // Adjusted for wider cards
+    //     ),
+    //     itemBuilder: (context, index) {
+    //       final property = propertyList[index];
+    //       final seller = property['seller'];
+    //
+    //       return SizedBox(
+    //         width: 140, // reduced card width
+    //         child: GestureDetector(
+    //           onTap: () {
+    //             Get.to(
+    //               () => AgentProfilePage(
+    //                 agent: AgentProfile(
+    //                   name: "Houselink Properties",
+    //                   logoUrl:
+    //                       "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+    //                   badgeText: "HOUSING EXPERT PRO",
+    //                   buyersServed: "600+ Buyers Served",
+    //                   listings: "Authentic Listing",
+    //                   description:
+    //                       "Deal with ready-to-move & under-construction Residential or Commercial.",
+    //                   infoTiles: [
+    //                     InfoTileData(title: "Experience", value: "8 years"),
+    //                     InfoTileData(title: "Properties", value: "54"),
+    //                     InfoTileData(title: 'Firm Prop', value: 'Firm'),
+    //                   ],
+    //                   areas: ["Ghatkopar East", "Vikhroli East"],
+    //                   categories: [
+    //                     {'type': 'Buy', 'number': 17},
+    //                     {'type': 'Rent', 'number': 17},
+    //                     {'type': 'Buy', 'number': 17},
+    //                     {'type': 'Rent', 'number': 17},
+    //                   ],
+    //                   tags: [
+    //                     AgentTagData(
+    //                       icon: Icons.verified,
+    //                       text: "Trusted agent",
+    //                       color: Colors.green,
+    //                     ),
+    //                     AgentTagData(
+    //                       icon: Icons.star,
+    //                       text: "Professional Expert",
+    //                       color: Colors.amber,
+    //                     ),
+    //                   ],
+    //                   showTags: true,
+    //                   showAreas: true,
+    //                   isOwner: false,
+    //                   // 🔥 hides the Areas section
+    //                   showActiveProperties: true,
+    //                   showSellerPropertyList:
+    //                       true, // 🔥 hides SellerPropertyList
+    //                 ),
+    //               ),
+    //             );
+    //           },
+    //           child: SellerCard(
+    //             name: seller["name"],
+    //             imageUrl: seller["image"],
+    //             experience: seller["experience"],
+    //             location: seller["location"],
+    //             properties: seller["properties_count"],
+    //           ),
+    //         ),
+    //       );
+    //     },
+    //   ),
+    // );
   }
 }
 

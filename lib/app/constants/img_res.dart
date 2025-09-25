@@ -23,6 +23,27 @@ class IMGRes {
   static const String bhk1 = "assets/images/bhk_1.jpg";
   static const String bhk2 = "assets/images/bhk_2.jpg";
   static const String bhk3 = "assets/images/bhk_3.jpg";
+  static const String furnished = "assets/images/furnished.jpg";
+  static const String semiFurnished = "assets/images/semi-furnished.jpg";
+  static const String unFurnished = "assets/images/unfurnished.jpeg";
 
+  /// Projects
+  static const String project_1 = "assets/images/project_1.jpg";
+  static const String project_2 = "assets/images/project_2.jpg";
+  static const String project_3 = "assets/images/project_3.jpg";
+  static const String project_4 = "assets/images/project_4.jpg";
+  static const String project_5 = "assets/images/project_5.jpg";
+  static const String project_6 = "assets/images/project_6.jpg";
 
+  /// News
+  static const String news_1 = "assets/images/news_1.jpg";
+  static const String news_2 = "assets/images/news_2.jpg";
+  static const String news_3 = "assets/images/news_3.jpg";
+  static const String news_4 = "assets/images/news_4.jpg";
+
+  /// Users
+  static const String user_1 = "assets/images/user_1.jpg";
+  static const String user_2 = "assets/images/user_2.jpg";
+  static const String user_3 = "assets/images/user_3.jpg";
+  static const String user_4 = "assets/images/user_4.jpg";
 }

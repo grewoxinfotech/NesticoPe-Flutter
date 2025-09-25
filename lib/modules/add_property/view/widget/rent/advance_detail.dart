@@ -1,0 +1,805 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
+import 'package:housing_flutter_app/modules/add_property/view/widget/stepper_property.dart';
+
+class RentAdvanceDetail extends StatelessWidget {
+  final CreatePropertyController controller;
+  const RentAdvanceDetail({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    final rent_legal = [
+      "Free rental agreement",
+      "Free Police Verification",
+      "No Brokerage",
+    ];
+    final sell_Brokerage_and_loan = [
+      "No Brokerage",
+      "Interest Free Loan",
+    ];
+    final sell_Registration_and_Possession = [
+      "Free registration",
+      "50% off on registration fees",
+      "10% off on registration fees",
+      "Zero stamp duty fees",
+      "Zero GST charges",
+    ];
+    final sell_Amenities=[
+      "Free car parking",
+      "Free furniture",
+      "Free Chimeny",
+      "Free modular kitchen setup",
+      "Free bed",
+      "Free sofa",
+      "Free AC's",
+    ];
+    final rent_Rentals = [
+      "Zero brokerage",
+      '15 days free rent',
+      '1 month free rent',
+    ];
+    final rent_Security_DepositType = [
+      "Only one month security deposit",
+      "10% discount on security deposit",
+      "30% discount on security deposit",
+    ];
+    final rent_Home_Services = ["Free Home Cleaning", "Free Painting Service "];
+    final rent_Preferred_Tenants = ["Family", "Bachelors", "Company"];
+    final rent_Selected_Tenants_for_Bachelors = [
+      'Open to Both',
+      "Men Only",
+      "Women Only",
+    ];
+    final rent_Pet_Friendly = ["Yes", "No"];
+    final rent_maintenanceChargeType = [
+      "Included in rent",
+      "Separate",
+      // "As per actuals",
+    ];
+    final rent_lockInPeriod = [
+      "None",
+      "1 month",
+      // "2 month",
+      // "3 month",
+      // "4 month",
+      // "5 month",
+      "6 month",
+      "Custom",
+    ];
+    final rent_Painting_Charges = [
+      "None",
+      "As per cost",
+      "1 month",
+      "Custom",
+      // "As per actuals",
+    ];
+    final sell_rent_facing = [
+      "East",
+      "West",
+      "North",
+      "South",
+      "North-East",
+      "North-West",
+      "South-East",
+      "South-West",
+    ];
+    final rent_Parking_Charges = ['Included in rent', 'Separate'];
+    return Obx(() {
+      if ((controller.lookingTo.value == "Rent" || controller.lookingTo.value == 'Sell') && controller.propertyType.value=="Residential") {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 16),
+            Text("Age of Property"),
+            SizedBox(height: 8),
+            buildTextField(
+              "Enter Age of Property",
+              Icons.timelapse_outlined,
+              controller.ageOfPropertyController,
+              isPhoneKey: true,
+            ),
+            SizedBox(height: 16),
+            buildSectionTitle("Bathrooms"),
+            SizedBox(height: 8),
+            Obx(() {
+              int bhkCount = 1;
+              if (controller.bhkType.value.isNotEmpty) {
+                bhkCount =
+                    int.tryParse(controller.bhkType.value.split(' ')[0]) ?? 1;
+              }
+              final bathroomOptions = List<int>.generate(
+                bhkCount,
+                (i) => i + 1, // Generates [1, 2, ..., bhkCount]
+              );
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  spacing: 12,
+                  children:
+                      bathroomOptions
+                          .map(
+                            (option) => buildChoice(
+                              title: option.toString(),
+                              selected:
+                                  controller.rent_Bathroom.value == option,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.rent_Bathroom,
+                                  option,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+              );
+            }),
+            // SizedBox(height: 16),
+            SizedBox(height: 16),
+            buildSectionTitle("Balcony"),
+            SizedBox(height: 8),
+            Obx(() {
+              int bhkCount = 1;
+              if (controller.bhkType.value.isNotEmpty) {
+                bhkCount =
+                    int.tryParse(controller.bhkType.value.split(' ')[0]) ?? 1;
+              }
+              final balconyOptions = List<int>.generate(
+                bhkCount + 1,
+                (i) => i, // Generates [0, 1, ..., bhkCount]
+              );
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  spacing: 12,
+                  children:
+                      balconyOptions
+                          .map(
+                            (option) => buildChoice(
+                              title: option.toString(),
+                              selected: controller.rent_Balcony.value == option,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.rent_Balcony,
+                                  option,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+              );
+            }),
+            SizedBox(height: 16),
+            buildSectionTitle("Covered Parking"),
+            SizedBox(height: 8),
+            Obx(() {
+              final coverParkingOptions = ['0', '1', '2', '3', '3+'];
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  spacing: 12,
+                  children:
+                      coverParkingOptions.map((option) {
+                        return buildChoice(
+                          width: 80,
+                          title: option,
+                          selected:
+                              controller.rent_CoveredParking.value == option,
+                          onTap: () {
+                            controller.setValue(
+                              controller.rent_CoveredParking,
+                              option,
+                            );
+                          },
+                        );
+                      }).toList(),
+                ),
+              );
+            }),
+            SizedBox(height: 16),
+            buildSectionTitle("Open Parking"),
+            SizedBox(height: 8),
+            Obx(() {
+              final openParkingOptions = ['0', '1', '2', '3', '3+'];
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  spacing: 12,
+                  children:
+                      openParkingOptions.map((option) {
+                        return buildChoice(
+                          width: 80,
+                          title: option,
+                          selected: controller.rent_OpenParking.value == option,
+                          onTap: () {
+                            controller.setValue(
+                              controller.rent_OpenParking,
+                              option,
+                            );
+                          },
+                        );
+                      }).toList(),
+                ),
+              );
+            }),
+            SizedBox(height: 16),
+            Text("Offers - Increase upto 50% leads"),
+            SizedBox(height: 16),
+           if(controller.lookingTo.value == 'Rent')...[
+             buildSizedSectionTitle("Legal"),
+             SizedBox(height: 8),
+             SelectableChipRow(
+               options: rent_legal,
+               selectedItems: controller.rent_Legal,
+               onTap: (option) {
+                 controller.toggleItemInList(controller.rent_Legal, option);
+               },
+               // chipWidth: 180,
+               fontSize: 12,
+               selectedColor: ColorRes.primary,
+               unselectedColor: Colors.white,
+               selectedTextColor: ColorRes.primary,
+               unselectedTextColor: ColorRes.textPrimary,
+             ),
+             SizedBox(height: 16),
+             buildSizedSectionTitle("Rentals"),
+             SizedBox(height: 8),
+             SelectableChipRow(
+               options: rent_Rentals,
+               selectedItems: controller.rent_Rentals,
+               onTap: (option) {
+                 controller.toggleItemInList(controller.rent_Rentals, option);
+               },
+
+               fontSize: 12,
+               selectedColor: ColorRes.primary,
+               unselectedColor: Colors.white,
+               selectedTextColor: ColorRes.primary,
+               unselectedTextColor: ColorRes.textPrimary,
+             ),
+             SizedBox(height: 16),
+             buildSizedSectionTitle("Security Deposit"),
+             SizedBox(height: 8),
+             SelectableChipRow(
+               options: rent_Security_DepositType,
+               selectedItems: controller.rent_Security_DepositType,
+               onTap: (option) {
+                 controller.toggleItemInList(
+                   controller.rent_Security_DepositType,
+                   option,
+                 );
+               },
+
+               fontSize: 12,
+               selectedColor: ColorRes.primary,
+               unselectedColor: Colors.white,
+               selectedTextColor: ColorRes.primary,
+               unselectedTextColor: ColorRes.textPrimary,
+             ),
+             SizedBox(height: 16),
+             buildSizedSectionTitle("Home Services"),
+             SizedBox(height: 8),
+             SelectableChipRow(
+               options: rent_Home_Services,
+               selectedItems: controller.rent_HomeServices,
+               onTap: (option) {
+                 controller.toggleItemInList(
+                   controller.rent_HomeServices,
+                   option,
+                 );
+               },
+
+               fontSize: 12,
+               selectedColor: ColorRes.primary,
+               unselectedColor: Colors.white,
+               selectedTextColor: ColorRes.primary,
+               unselectedTextColor: ColorRes.textPrimary,
+             ),
+           ]else if(controller.lookingTo.value == 'Sell')...[
+             buildSizedSectionTitle("Brokerage and loan"),
+             SizedBox(height: 8),
+             SelectableChipRow(
+               options: sell_Brokerage_and_loan,
+               selectedItems: controller.sell_Brokerage,
+               onTap: (option) {
+                 controller.toggleItemInList(controller.sell_Brokerage, option);
+               },
+               // chipWidth: 180,
+               fontSize: 12,
+               selectedColor: ColorRes.primary,
+               unselectedColor: Colors.white,
+               selectedTextColor: ColorRes.primary,
+               unselectedTextColor: ColorRes.textPrimary,
+             ),
+              SizedBox(height: 16),
+             buildSizedSectionTitle("Registration"),
+             SizedBox(height: 8),
+             SelectableChipRow(
+               options: sell_Registration_and_Possession,
+               selectedItems: controller.sell_Registration_Charges,
+               onTap: (option) {
+                 controller.toggleItemInList(controller.sell_Registration_Charges, option);
+               },
+               // chipWidth: 180,
+               fontSize: 12,
+               selectedColor: ColorRes.primary,
+               unselectedColor: Colors.white,
+               selectedTextColor: ColorRes.primary,
+               unselectedTextColor: ColorRes.textPrimary,
+             ),
+              SizedBox(height: 16),
+             buildSizedSectionTitle("Amenities and Furnishing"),
+             SizedBox(height: 8),
+             SelectableChipRow(
+               options: sell_Amenities,
+               selectedItems: controller.sell_Amenities_Furniture,
+               onTap: (option) {
+                 controller.toggleItemInList(controller.sell_Amenities_Furniture, option);
+               },
+               // chipWidth: 180,
+               fontSize: 12,
+               selectedColor: ColorRes.primary,
+               unselectedColor: Colors.white,
+               selectedTextColor: ColorRes.primary,
+               unselectedTextColor: ColorRes.textPrimary,
+             ),
+           ],
+
+          if(controller.lookingTo.value == 'Rent')...[
+            SizedBox(height: 24),
+            buildSectionTitle("Prefered Tenants Type"),
+            SizedBox(height: 8),
+            MultiSelectChip(
+              options: rent_Preferred_Tenants,
+              selectedItems: controller.rent_Preferred_Tenants,
+              onTap: (String option) {
+                controller.toggleItemInList(
+                  controller.rent_Preferred_Tenants,
+                  option,
+                );
+              },
+            ),
+            SizedBox(height: 16),
+            buildSectionTitle("Select Your Preferred for Bachelors"),
+            SizedBox(height: 8),
+            Obx(
+                  () =>
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
+                    rent_Selected_Tenants_for_Bachelors.map((option) {
+                      return buildChoice(
+                        title: option,
+                        selected:
+                        controller
+                            .rent_Selected_Tenants_for_Bachelors
+                            .value ==
+                            option,
+                        onTap: () {
+                          controller.setValue(
+                            controller.rent_Selected_Tenants_for_Bachelors,
+                            option,
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+            ),
+            SizedBox(height: 16),
+            buildSectionTitle("Pet Friendly? "),
+            SizedBox(height: 8),
+            Obx(() =>
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                  rent_Pet_Friendly.map((option) {
+                    return buildChoice(
+                      title: option,
+                      selected: controller.rent_Pet_Friendly.value == option,
+                      onTap: () {
+                        controller.setValue(
+                          controller.rent_Pet_Friendly,
+                          option,
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
+            ),
+            ],
+            SizedBox(height: 16),
+            buildSectionTitle("Carpet Area"),
+            SizedBox(height: 8),
+
+            Obx(
+              () => 
+               Row(
+                children: [
+                  Expanded(
+                    child: buildTextField(
+                      'Carpet Area',
+                      Icons.square_foot_outlined,
+                      controller.carpetAreaController,
+                      isPhoneKey: true,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade400),
+                    ),
+                    child: DropdownButton<String>(
+                      value: controller.carpetAreaUnit.value,
+                      items:
+                          ['sq.ft.', 'sq.yd.', 'sq.mt.']
+                              .map(
+                                (unit) => DropdownMenuItem(
+                                  value: unit,
+                                  child: Text(unit),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.carpetAreaUnit.value = value;
+                        }
+                      },
+                      underline: Container(),
+                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                      dropdownColor: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
+            buildSectionTitle("Flat No."),
+            SizedBox(height: 8),
+            buildTextField(
+              "Flat No.",
+              Icons.home_outlined,
+              controller.sell_rent_Flat_No,
+              isPhoneKey: true,
+            ),
+            SizedBox(height: 16),
+            buildSectionTitle('Floor No.'),
+            SizedBox(height: 8),
+            buildTextField(
+              "Enter Floor No.",
+              Icons.apartment_outlined,
+              controller.sell_rent_Floor_No,
+              isPhoneKey: true,
+            ),
+            SizedBox(height: 16),
+            buildSectionTitle('Total Floor'),
+            SizedBox(height: 8),
+            buildTextField(
+              "Enter Total Floor",
+              Icons.apartment_outlined,
+              controller.sell_rent_Total_Floor,
+              isPhoneKey: true,
+            ),
+            SizedBox(height: 16),
+
+            if(controller.lookingTo.value=='Rent')...[
+              buildSectionTitle("Maintenance Charges"),
+              SizedBox(height: 8),
+              Obx(
+                    () =>
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children:
+                      rent_maintenanceChargeType.map((option) {
+                        return buildChoice(
+                          title: option,
+                          selected:
+                          controller.rent_maintenanceChargeType.value == option,
+                          onTap: () {
+                            controller.setValue(
+                              controller.rent_maintenanceChargeType,
+                              option,
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ),
+              ),
+              if (controller.rent_maintenanceChargeType.value == "Separate") ...[
+                SizedBox(height: 16),
+                Text("Maintenance Charges"),
+                SizedBox(height: 8),
+                buildTextField(
+                  "Enter Maintenance Charges",
+                  Icons.currency_rupee_outlined,
+                  controller.sell_rent_Maintenance_Charges,
+                  isPhoneKey: true,
+                ),
+              ],
+            ]else if(controller.lookingTo.value=="Sell")...[
+              Text("Maintenance Charges"),
+              SizedBox(height: 8),
+              buildTextField(
+                "Enter Maintenance Charges",
+                Icons.currency_rupee_outlined,
+                controller.sell_rent_Maintenance_Charges,
+                isPhoneKey: true,
+              ),
+            ],
+
+           if(controller.lookingTo.value == 'Rent')...[
+             SizedBox(height: 16),
+             buildSectionTitle("Lock In Period"),
+             SizedBox(height: 8),
+             Obx(() =>
+                 Wrap(
+                   spacing: 12,
+                   runSpacing: 12,
+                   children:
+                   rent_lockInPeriod.map((option) {
+                     return buildChoice(
+                       title: option,
+                       selected: controller.rent_lockInPeriod.value == option,
+                       onTap: () {
+                         controller.setValue(
+                           controller.rent_lockInPeriod,
+                           option,
+                         );
+                       },
+                     );
+                   }).toList(),
+                 ),
+             ),
+             if (controller.rent_lockInPeriod.value == "Custom") ...[
+               SizedBox(height: 16),
+               Text("Custom Lock In Period"),
+               SizedBox(height: 8),
+
+               buildTextField(
+                 "Enter Lock In Period in Months",
+                 Icons.lock,
+                 controller.rent_Custom_LockIn_Period,
+                 isPhoneKey: true,
+               ),
+             ],
+             SizedBox(height: 16),
+             buildSectionTitle("Parking Charges"),
+             SizedBox(height: 8),
+             Obx(
+                   () =>
+                   Wrap(
+                     spacing: 12,
+                     runSpacing: 12,
+                     children:
+                     rent_Parking_Charges.map((option) {
+                       return buildChoice(
+                         title: option,
+                         selected: controller.rent_Parking_Charges.value == option,
+                         onTap: () {
+                           controller.setValue(
+                             controller.rent_Parking_Charges,
+                             option,
+                           );
+                         },
+                       );
+                     }).toList(),
+                   ),
+             ),
+             if (controller.rent_Parking_Charges.value == "Separate") ...[
+               SizedBox(height: 16),
+               Text("Custom Parking Charges"),
+               SizedBox(height: 8),
+
+               buildTextField(
+                 "Enter Parking Charges",
+                 Icons.currency_rupee_outlined,
+                 controller.rent_Custom_Parking_Charges,
+                 isPhoneKey: true,
+               ),
+             ],
+             SizedBox(height: 16),
+             buildSectionTitle("Painting Charges"),
+             SizedBox(height: 8),
+             Obx(
+                   () => Wrap(
+                 spacing: 12,
+                 runSpacing: 12,
+                 children:
+                 rent_Painting_Charges.map((option) {
+                   return buildChoice(
+                     title: option,
+                     selected:
+                     controller.rent_Painting_Charges.value == option,
+                     onTap: () {
+                       controller.setValue(
+                         controller.rent_Painting_Charges,
+                         option,
+                       );
+                     },
+                   );
+                 }).toList(),
+               ),
+             ),
+             if (controller.rent_Painting_Charges.value == "Custom") ...[
+               SizedBox(height: 16),
+               Text("Custom Painting Charges"),
+               SizedBox(height: 8),
+
+               buildTextField(
+                 "Enter Painting Charges",
+                 Icons.currency_rupee_outlined,
+                 controller.rent_Custom_Painting_Charges,
+                 isPhoneKey: true,
+               ),
+             ],
+           ],
+            SizedBox(height: 16),
+            buildSectionTitle("Facing"),
+            SizedBox(height: 8),
+            Obx(
+              () => Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children:
+                    sell_rent_facing.map((option) {
+                      return buildChoice(
+                        title: option,
+                        selected: controller.rent_facing.value == option,
+                        onTap: () {
+                          controller.setValue(controller.rent_facing, option);
+                        },
+                      );
+                    }).toList(),
+              ),
+            ),
+            SizedBox(height: 16),
+            buildSectionTitle("Address"),
+            SizedBox(height: 8),
+            buildTextField(
+              "Enter Address",
+              Icons.location_on_outlined,
+              controller.sell_rent_Address,
+              maxLines: 3,
+              minLines: 1,
+            ),
+            SizedBox(height: 16),
+            buildSectionTitle("Servent Room"),
+            SizedBox(height: 8),
+            Obx(
+              () => Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children:
+                    ['Yes', 'No'].map((option) {
+                      return buildChoice(
+                        title: option,
+                        selected: controller.sell_rent_Servent_Room.value == option,
+                        onTap: () {
+                          controller.setValue(
+                            controller.sell_rent_Servent_Room,
+                            option,
+                          );
+                        },
+                      );
+                    }).toList(),
+              ),
+            ),
+
+            SizedBox(height: 16),
+            if(controller.lookingTo.value == 'Sell')...[
+              buildSectionTitle('RERA ID'),
+              SizedBox(height: 8),
+              buildTextField(
+                "Enter RERA id",
+                Icons.description_outlined,
+                controller.sell_rent_propertyDescriptionController,
+
+
+              ),
+              SizedBox(height: 16,)
+            ],
+            buildSectionTitle('Property Description'),
+            SizedBox(height: 8),
+            buildTextField(
+              "Write about your property",
+              Icons.description_outlined,
+              controller.sell_rent_propertyDescriptionController,
+              maxLines: 5,
+              minLines: 1,
+            ),
+            SizedBox(height: 4),
+            Text(
+              "Tell us more about the specific features of your property.",
+              style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+            ),
+          ],
+        );
+      }
+      return SizedBox.shrink();
+    });
+  }
+}
+
+class SelectableChipRow extends StatelessWidget {
+  final List<String> options;
+  final RxList<String> selectedItems;
+  final void Function(String) onTap;
+
+  final double fontSize;
+  final Color selectedColor;
+  final Color unselectedColor;
+  final Color selectedTextColor;
+  final Color unselectedTextColor;
+
+  const SelectableChipRow({
+    super.key,
+    required this.options,
+    required this.selectedItems,
+    required this.onTap,
+
+    this.fontSize = 12,
+    this.selectedColor = const Color(0xFF1976D2), // Example primary color
+    this.unselectedColor = Colors.white,
+    this.selectedTextColor = const Color(0xFF1976D2),
+    this.unselectedTextColor = Colors.black,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          spacing: 12,
+          children:
+              options.map((option) {
+                final bool selected = selectedItems.contains(option);
+                return GestureDetector(
+                  onTap: () => onTap(option),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          selected
+                              ? selectedColor.withOpacity(0.1)
+                              : unselectedColor,
+                      border: Border.all(
+                        color:
+                            selected
+                                ? Colors.transparent
+                                : Colors.grey.shade300,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      option,
+                      style: TextStyle(
+                        color:
+                            selected ? selectedTextColor : unselectedTextColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: fontSize,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+        ),
+      ),
+    );
+  }
+}

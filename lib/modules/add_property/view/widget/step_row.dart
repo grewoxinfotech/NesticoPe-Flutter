@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
 
 class StepChipsRow extends StatelessWidget {
   final int selectedIndex;
@@ -24,9 +25,8 @@ class StepChipsRow extends StatelessWidget {
 
             return Column(
               children: [
-                // Step container with text only
                 Container(
-                  margin: EdgeInsets.only(right: 8),
+                  margin: const EdgeInsets.only(right: 8),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 10,
@@ -36,7 +36,7 @@ class StepChipsRow extends StatelessWidget {
                         isCompleted
                             ? Colors.green
                             : isSelected
-                            ? Colors.blue
+                            ? ColorRes.primary
                             : Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -54,7 +54,7 @@ class StepChipsRow extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
 
                 // Connector line (except last step)
                 // if (idx != steps.length - 1)

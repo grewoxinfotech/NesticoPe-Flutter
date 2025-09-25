@@ -1,3 +1,5 @@
+enum UserRole { buyer, seller, reseller, contractor }
+
 class UserModel {
   String? token;
   User? user;
@@ -27,6 +29,7 @@ class User {
   String? password;
   String? email;
   String? userType;
+  String? sellerType;
   String? roleId;
   String? profilePic;
   String? firstName;
@@ -50,6 +53,7 @@ class User {
       this.password,
       this.email,
       this.userType,
+      this.sellerType,
       this.roleId,
       this.profilePic,
       this.firstName,
@@ -73,6 +77,7 @@ class User {
     password = json['password'];
     email = json['email'];
     userType = json['userType'];
+    sellerType = json['sellerType'];
     roleId = json['role_id'];
     profilePic = json['profilePic'];
     firstName = json['firstName'];
@@ -98,6 +103,7 @@ class User {
     data['password'] = password;
     data['email'] = email;
     data['userType'] = userType;
+    data['sellerType'] = sellerType;
     data['role_id'] = roleId;
     data['profilePic'] = profilePic;
     data['firstName'] = firstName;

@@ -9,6 +9,9 @@ class PropertyService {
   final String baseUrl = "${ApiConstants.baseURL}/property";
 
   /// Common headers
+  static Future<Map<String, String>> headersWithoutToken() async {
+    return await ApiConstants.getHeadersWithoutToken();
+  }
   static Future<Map<String, String>> headers() async {
     return await ApiConstants.getHeaders();
   }

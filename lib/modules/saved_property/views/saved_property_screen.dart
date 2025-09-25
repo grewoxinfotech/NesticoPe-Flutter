@@ -205,193 +205,195 @@ import 'package:housing_flutter_app/modules/property/views/widgets/property_list
 
 import '../../../app/constants/img_res.dart';
 import '../../../data/network/property/models/property_model.dart';
+import '../../propert_detail/view/property_details.dart';
+
 //
-// class SavedPropertyScreen extends StatefulWidget {
-//   const SavedPropertyScreen({super.key});
-//
-//   @override
-//   State<SavedPropertyScreen> createState() => _SavedPropertyScreenState();
-// }
-//
-// class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
-//   int selectedIndex = 0;
-//
-//   final List<String> tabs = ["Saved", "Seen", "Contacted", "Recent"];
-//
-//   final List<String> tabsCount = ["00", "10", "05", "12"];
-//
-//   final List<IconData> tabsIcon = [
-//     Icons.favorite_border_rounded,
-//     Icons.visibility_outlined,
-//     Icons.phone_outlined,
-//     Icons.search_outlined,
-//   ];
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.grey[100],
-//       body: Column(
-//         children: [
-//           /// Custom Header
-//           Container(
-//             padding: const EdgeInsets.only(
-//               top: 50,
-//               left: 10,
-//               right: 10,
-//               bottom: 16,
-//             ),
-//             decoration: BoxDecoration(
-//               color: Colors.white,
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.black12,
-//                   blurRadius: 4,
-//                   offset: const Offset(0, 2),
-//                 ),
-//               ],
-//               borderRadius: const BorderRadius.vertical(
-//                 bottom: Radius.circular(20),
-//               ),
-//             ),
-//             child: Row(
-//               children: List.generate(tabs.length, (index) {
-//                 bool isSelected = selectedIndex == index;
-//                 return Expanded(
-//                   child: GestureDetector(
-//                     onTap: () => setState(() => selectedIndex = index),
-//                     child: AnimatedContainer(
-//                       duration: const Duration(milliseconds: 250),
-//                       padding: const EdgeInsets.symmetric(vertical: 10),
-//                       margin: const EdgeInsets.symmetric(horizontal: 4),
-//                       decoration: BoxDecoration(
-//                         borderRadius: BorderRadius.circular(12),
-//                         color:
-//                             isSelected
-//                                 ? ColorRes.primary.withOpacity(0.15)
-//                                 : Colors.white,
-//                         border: Border.all(
-//                           color:
-//                               isSelected ? ColorRes.primary : Colors.grey[300]!,
-//                           width: 1.5,
-//                         ),
-//                       ),
-//                       child: Column(
-//                         mainAxisSize: MainAxisSize.min,
-//                         children: [
-//                           Icon(
-//                             tabsIcon[index],
-//                             size: 20,
-//                             color:
-//                                 isSelected ? ColorRes.primary : Colors.black54,
-//                           ),
-//                           // SizedBox(height: AppSpacing.small),
-//                           Text(
-//                             "${tabs[index]}",
-//                             textAlign: TextAlign.center,
-//                             style: TextStyle(
-//                               fontSize: 12,
-//                               // fontWeight:
-//                               //     isSelected
-//                               //         ? FontWeight.w600
-//                               //         : FontWeight.normal,
-//                               color:
-//                                   isSelected
-//                                       ? ColorRes.primary
-//                                       : Colors.black87,
-//                             ),
-//                           ),
-//                           SizedBox(height: 4),
-//                           Text(
-//                             "(${tabsCount[index]})",
-//                             textAlign: TextAlign.center,
-//                             style: TextStyle(
-//                               fontSize: 12,
-//                               // fontWeight:
-//                               //     isSelected
-//                               //         ? FontWeight.w600
-//                               //         : FontWeight.normal,
-//                               color:
-//                                   isSelected
-//                                       ? ColorRes.primary
-//                                       : Colors.black87,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                 );
-//               }),
-//             ),
-//           ),
-//
-//           /// Tab Content
-//           Expanded(
-//             child: IndexedStack(
-//               index: selectedIndex,
-//               children: const [
-//                 SavedPropertiesTab(),
-//                 SeenPropertiesTab(),
-//                 ContactedPropertiesTab(),
-//                 RecentSearchesTab(),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-//
-// class SeenPropertiesTab extends StatelessWidget {
-//   const SeenPropertiesTab({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return RefreshIndicator(
-//       onRefresh: () async {
-//         await Future.delayed(const Duration(seconds: 1));
-//       },
-//       child: ListView.separated(
-//         padding: const EdgeInsets.all(12),
-//         itemCount: dummyItems.length,
-//         separatorBuilder: (context, index) => const SizedBox(height: 12),
-//         itemBuilder: (context, index) {
-//           final property = dummyItems[index];
-//           return PropertyListScreenCard(items: property);
-//         },
-//       ),
-//     );
-//   }
-// }
-//
-// class SavedPropertiesTab extends StatelessWidget {
-//   const SavedPropertiesTab({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Center(child: Text("Saved Properties will appear here"));
-//   }
-// }
-//
-// class ContactedPropertiesTab extends StatelessWidget {
-//   const ContactedPropertiesTab({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Center(child: Text("Contacted Properties will appear here"));
-//   }
-// }
-//
-// class RecentSearchesTab extends StatelessWidget {
-//   const RecentSearchesTab({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Center(child: Text("Recent Searches will appear here"));
-//   }
-// }
+class SavedPropertyScreen extends StatefulWidget {
+  const SavedPropertyScreen({super.key});
+
+  @override
+  State<SavedPropertyScreen> createState() => _SavedPropertyScreenState();
+}
+
+class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
+  int selectedIndex = 0;
+
+  final List<String> tabs = ["Saved", "Seen", "Contacted", "Recent"];
+
+  final List<String> tabsCount = ["00", "10", "05", "12"];
+
+  final List<IconData> tabsIcon = [
+    Icons.favorite_border_rounded,
+    Icons.visibility_outlined,
+    Icons.phone_outlined,
+    Icons.search_outlined,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      body: Column(
+        children: [
+          /// Custom Header
+          Container(
+            padding: const EdgeInsets.only(
+              top: 50,
+              left: 10,
+              right: 10,
+              bottom: 16,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(20),
+              ),
+            ),
+            child: Row(
+              children: List.generate(tabs.length, (index) {
+                bool isSelected = selectedIndex == index;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => selectedIndex = index),
+                    child: Container(
+                      // duration: const Duration(milliseconds: 250),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color:
+                            isSelected
+                                ? ColorRes.primary.withOpacity(0.15)
+                                : Colors.white,
+                        border: Border.all(
+                          color:
+                              isSelected ? ColorRes.primary : Colors.grey[300]!,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            tabsIcon[index],
+                            size: 20,
+                            color:
+                                isSelected ? ColorRes.primary : Colors.black54,
+                          ),
+                          // SizedBox(height: AppSpacing.small),
+                          Text(
+                            "${tabs[index]}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12,
+                              // fontWeight:
+                              //     isSelected
+                              //         ? FontWeight.w600
+                              //         : FontWeight.normal,
+                              color:
+                                  isSelected
+                                      ? ColorRes.primary
+                                      : Colors.black87,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            "(${tabsCount[index]})",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  isSelected
+                                      ? ColorRes.primary
+                                      : Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+
+          /// Tab Content
+          Expanded(
+            child: IndexedStack(
+              index: selectedIndex,
+              children: const [
+                SavedPropertiesTab(),
+                SeenPropertiesTab(),
+                ContactedPropertiesTab(),
+                RecentSearchesTab(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SeenPropertiesTab extends StatelessWidget {
+  const SeenPropertiesTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: PropertyDetail(),
+      // child: RefreshIndicator(
+      //   onRefresh: () async {
+      //     await Future.delayed(const Duration(seconds: 1));
+      //   },
+      //   child: ListView.separated(
+      //     padding: const EdgeInsets.all(12),
+      //     itemCount: dummyItems.length,
+      //     separatorBuilder: (context, index) => const SizedBox(height: 12),
+      //     itemBuilder: (context, index) {
+      //       final property = dummyItems[index];
+      //       return PropertyListScreenCard(items: property);
+      //     },
+      //   ),
+      // ),
+    );
+  }
+}
+
+class SavedPropertiesTab extends StatelessWidget {
+  const SavedPropertiesTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("Saved Properties will appear here"));
+  }
+}
+
+class ContactedPropertiesTab extends StatelessWidget {
+  const ContactedPropertiesTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("Contacted Properties will appear here"));
+  }
+}
+
+class RecentSearchesTab extends StatelessWidget {
+  const RecentSearchesTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("Recent Searches will appear here"));
+  }
+}
 
 List<Items> dummyItems = [
   Items(
@@ -724,231 +726,231 @@ List<Items> dummyItems = [
   ),
 ];
 
-class SavedPropertyScreen extends StatefulWidget {
-  const SavedPropertyScreen({super.key});
-
-  @override
-  State<SavedPropertyScreen> createState() => _SavedPropertyScreenState();
-}
-
-class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
-  int selectedIndex = 0;
-
-  final List<String> tabs = ["Saved", "Seen", "Contacted", "Recent"];
-  final List<String> tabsCount = ["00", "10", "05", "12"];
-  final List<IconData> tabsIcon = [
-    Icons.favorite_border_rounded,
-    Icons.visibility_outlined,
-    Icons.phone_outlined,
-    Icons.search_outlined,
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: Column(
-        children: [
-          /// Header
-          Container(
-            padding: const EdgeInsets.only(
-              top: 50,
-              left: 16,
-              right: 16,
-              bottom: 20,
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [ColorRes.primary, ColorRes.primary.withOpacity(0.8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(24),
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 8,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                const Text(
-                  "My Properties",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                /// Custom pill selector
-                Container(
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    children: List.generate(tabs.length, (index) {
-                      final isSelected = selectedIndex == index;
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => selectedIndex = index),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 250),
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 6,
-                              horizontal: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color:
-                                  isSelected
-                                      ? ColorRes.primary.withOpacity(0.1)
-                                      : Colors.transparent,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Icon(
-                                //   tabsIcon[index],
-                                //   size: 18,
-                                //   color: isSelected
-                                //       ? ColorRes.primary
-                                //       : Colors.black54,
-                                // ),
-                                // const SizedBox(height: 2),
-                                Text(
-                                  tabs[index],
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight:
-                                        isSelected
-                                            ? FontWeight.w600
-                                            : FontWeight.normal,
-                                    color:
-                                        isSelected
-                                            ? ColorRes.primary
-                                            : Colors.black87,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          /// Tab Content
-          Expanded(
-            child: IndexedStack(
-              index: selectedIndex,
-              children: const [
-                SavedPropertiesTab(),
-                SeenPropertiesTab(),
-                ContactedPropertiesTab(),
-                RecentSearchesTab(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SeenPropertiesTab extends StatelessWidget {
-  const SeenPropertiesTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        await Future.delayed(const Duration(seconds: 1));
-      },
-      child: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: dummyItems.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 14),
-        itemBuilder: (context, index) {
-          final property = dummyItems[index];
-          return PropertyListScreenCard(items: property);
-        },
-      ),
-    );
-  }
-}
-
-class SavedPropertiesTab extends StatelessWidget {
-  const SavedPropertiesTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const _EmptyState(
-      icon: Icons.favorite_border_rounded,
-      message: "Saved Properties will appear here",
-    );
-  }
-}
-
-class ContactedPropertiesTab extends StatelessWidget {
-  const ContactedPropertiesTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const _EmptyState(
-      icon: Icons.phone_outlined,
-      message: "Contacted Properties will appear here",
-    );
-  }
-}
-
-class RecentSearchesTab extends StatelessWidget {
-  const RecentSearchesTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const _EmptyState(
-      icon: Icons.search_outlined,
-      message: "Recent Searches will appear here",
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  final IconData icon;
-  final String message;
-  const _EmptyState({required this.icon, required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 60, color: Colors.grey[400]),
-          const SizedBox(height: 12),
-          Text(
-            message,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black54,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class SavedPropertyScreen extends StatefulWidget {
+//   const SavedPropertyScreen({super.key});
+//
+//   @override
+//   State<SavedPropertyScreen> createState() => _SavedPropertyScreenState();
+// }
+//
+// class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
+//   int selectedIndex = 0;
+//
+//   final List<String> tabs = ["Saved", "Seen", "Contacted", "Recent"];
+//   final List<String> tabsCount = ["00", "10", "05", "12"];
+//   final List<IconData> tabsIcon = [
+//     Icons.favorite_border_rounded,
+//     Icons.visibility_outlined,
+//     Icons.phone_outlined,
+//     Icons.search_outlined,
+//   ];
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.grey[100],
+//       body: Column(
+//         children: [
+//           /// Header
+//           Container(
+//             padding: const EdgeInsets.only(
+//               top: 50,
+//               left: 16,
+//               right: 16,
+//               bottom: 20,
+//             ),
+//             decoration: BoxDecoration(
+//               gradient: LinearGradient(
+//                 colors: [ColorRes.primary, ColorRes.primary.withOpacity(0.8)],
+//                 begin: Alignment.topLeft,
+//                 end: Alignment.bottomRight,
+//               ),
+//               borderRadius: const BorderRadius.vertical(
+//                 bottom: Radius.circular(24),
+//               ),
+//               boxShadow: const [
+//                 BoxShadow(
+//                   color: Colors.black26,
+//                   blurRadius: 8,
+//                   offset: Offset(0, 3),
+//                 ),
+//               ],
+//             ),
+//             child: Column(
+//               children: [
+//                 const Text(
+//                   "My Properties",
+//                   style: TextStyle(
+//                     fontSize: 20,
+//                     fontWeight: FontWeight.bold,
+//                     color: Colors.white,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 16),
+//
+//                 /// Custom pill selector
+//                 Container(
+//                   height: 52,
+//                   decoration: BoxDecoration(
+//                     color: Colors.white,
+//                     borderRadius: BorderRadius.circular(30),
+//                   ),
+//                   child: Row(
+//                     children: List.generate(tabs.length, (index) {
+//                       final isSelected = selectedIndex == index;
+//                       return Expanded(
+//                         child: GestureDetector(
+//                           onTap: () => setState(() => selectedIndex = index),
+//                           child: AnimatedContainer(
+//                             duration: const Duration(milliseconds: 250),
+//                             margin: const EdgeInsets.symmetric(
+//                               vertical: 6,
+//                               horizontal: 4,
+//                             ),
+//                             decoration: BoxDecoration(
+//                               borderRadius: BorderRadius.circular(30),
+//                               color:
+//                                   isSelected
+//                                       ? ColorRes.primary.withOpacity(0.1)
+//                                       : Colors.transparent,
+//                             ),
+//                             child: Column(
+//                               mainAxisAlignment: MainAxisAlignment.center,
+//                               children: [
+//                                 // Icon(
+//                                 //   tabsIcon[index],
+//                                 //   size: 18,
+//                                 //   color: isSelected
+//                                 //       ? ColorRes.primary
+//                                 //       : Colors.black54,
+//                                 // ),
+//                                 // const SizedBox(height: 2),
+//                                 Text(
+//                                   tabs[index],
+//                                   style: TextStyle(
+//                                     fontSize: 11,
+//                                     fontWeight:
+//                                         isSelected
+//                                             ? FontWeight.w600
+//                                             : FontWeight.normal,
+//                                     color:
+//                                         isSelected
+//                                             ? ColorRes.primary
+//                                             : Colors.black87,
+//                                     overflow: TextOverflow.ellipsis,
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         ),
+//                       );
+//                     }),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//
+//           /// Tab Content
+//           Expanded(
+//             child: IndexedStack(
+//               index: selectedIndex,
+//               children: const [
+//                 SavedPropertiesTab(),
+//                 SeenPropertiesTab(),
+//                 ContactedPropertiesTab(),
+//                 RecentSearchesTab(),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// class SeenPropertiesTab extends StatelessWidget {
+//   const SeenPropertiesTab({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return RefreshIndicator(
+//       onRefresh: () async {
+//         await Future.delayed(const Duration(seconds: 1));
+//       },
+//       child: ListView.separated(
+//         padding: const EdgeInsets.all(16),
+//         itemCount: dummyItems.length,
+//         separatorBuilder: (context, index) => const SizedBox(height: 14),
+//         itemBuilder: (context, index) {
+//           final property = dummyItems[index];
+//           return PropertyListScreenCard(items: property);
+//         },
+//       ),
+//     );
+//   }
+// }
+//
+// class SavedPropertiesTab extends StatelessWidget {
+//   const SavedPropertiesTab({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const _EmptyState(
+//       icon: Icons.favorite_border_rounded,
+//       message: "Saved Properties will appear here",
+//     );
+//   }
+// }
+//
+// class ContactedPropertiesTab extends StatelessWidget {
+//   const ContactedPropertiesTab({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const _EmptyState(
+//       icon: Icons.phone_outlined,
+//       message: "Contacted Properties will appear here",
+//     );
+//   }
+// }
+//
+// class RecentSearchesTab extends StatelessWidget {
+//   const RecentSearchesTab({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const _EmptyState(
+//       icon: Icons.search_outlined,
+//       message: "Recent Searches will appear here",
+//     );
+//   }
+// }
+//
+// class _EmptyState extends StatelessWidget {
+//   final IconData icon;
+//   final String message;
+//   const _EmptyState({required this.icon, required this.message});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           Icon(icon, size: 60, color: Colors.grey[400]),
+//           const SizedBox(height: 12),
+//           Text(
+//             message,
+//             style: const TextStyle(
+//               fontSize: 14,
+//               color: Colors.black54,
+//               fontWeight: FontWeight.w500,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

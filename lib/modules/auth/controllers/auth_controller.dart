@@ -1,19 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart'
-    show UserModel;
+    show UserModel, UserRole;
 import 'package:housing_flutter_app/data/network/auth/service/auth_service.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/ResetPasswordScreen.dart';
+import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import '../../add_property/view/create_property.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../views/login_screen.dart';
 import '../views/otp_verification_screen.dart';
 
 enum AuthState { initial, authenticated, unauthenticated }
-
-enum UserRole { buyer, seller, reseller }
 
 class AuthController extends GetxController {
   final AuthService authService = AuthService();
@@ -34,13 +35,16 @@ class AuthController extends GetxController {
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
+  final phoneController = TextEditingController();
+  RxString selectedSellerType = "owner".obs; // "owner" or "builder"
+
   String get selectedRoleString =>
       selectedRole.value.toString().split('.').last;
 
   @override
   void onInit() {
     super.onInit();
-    checkAuthStatus();
+    //checkAuthStatus();
   }
 
   @override
@@ -120,7 +124,13 @@ class AuthController extends GetxController {
         final token = response['data']['token'];
         await SecureStorage.saveToken(token);
 
-        Get.to(() => OtpVerificationScreen(phone: phone, token: token));
+        Get.to(
+          () => OtpVerificationScreen(
+            phone: phone,
+            token: token,
+            verifyOTPFor: VerifyOTPFor.registration,
+          ),
+        );
 
         return true;
       } else {
@@ -130,12 +140,72 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       errorMessage.value = e.toString();
+      print("[Debug]-> Error: ${e.toString()}");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Registration Failed",
         message: e.toString(),
         contentType: ContentType.failure,
       );
       return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> sellerRegister({
+    required String phone,
+    required String userType,
+    required String sellerType,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      final response = await authService.sellerRegister(
+        phone: phone,
+        userType: userType,
+        sellerType: sellerType,
+      );
+
+      if (response['success'] == true && response['data']['token'] != null) {
+        final token = response['data']['token'];
+        // await SecureStorage.saveToken(token);
+
+        print(
+          'API called successfully with phone: $phone, userType: $userType, sellerType: $sellerType, token: $token',
+        );
+
+        // Navigate to OTP screen using the passed phone
+        Get.to(
+          () => OtpVerificationScreen(
+            phone: phone,
+            token: token,
+            verifyOTPFor: VerifyOTPFor.sellerRegister,
+            // isPasswordReset: false,
+            redirectAfterOtp: CreatePropertyScreen(
+              sellerType:
+                  sellerType == "owner" ? SellerType.owner : SellerType.builder,
+            ),
+          ),
+        );
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Registration successful. Please verify OTP sent to $phone.',
+          contentType: ContentType.success,
+        );
+      } else {
+        throw Exception(
+          response['message'] ?? 'Registration failed - no token received',
+        );
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+      print("[Debug]-> Error: ${e.toString()}");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Registration Failed",
+        message: e.toString(),
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -172,6 +242,24 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<void> verifyOtpSellerRegister(String otp, String token) async {
+    try {
+      isLoading.value = true;
+      final data = await authService.verifyOtpSellerRegister(otp, token);
+      // await SecureStorage.saveToken(user.token!);
+      // await SecureStorage.saveUserData(user);
+      // await SecureStorage.saveToken(data);
+      // await SecureStorage.saveLoggedIn(true);
+
+      authState.value = AuthState.authenticated;
+    } catch (e) {
+      errorMessage.value = e.toString();
+      rethrow;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> forgotPassword({required String id}) async {
     try {
       isLoading.value = true;
@@ -182,7 +270,8 @@ class AuthController extends GetxController {
         () => OtpVerificationScreen(
           phone: id,
           token: token,
-          isPasswordReset: true,
+          verifyOTPFor: VerifyOTPFor.passwordReset,
+          // isPasswordReset: true,
         ),
       );
 

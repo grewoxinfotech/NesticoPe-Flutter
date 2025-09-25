@@ -4,6 +4,8 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 
+import '../../../data/network/auth/model/user_model.dart';
+
 // No UserRole enum here — use the one from register_screen.dart
 
 class SelectAccountTypeScreen extends StatelessWidget {

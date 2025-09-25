@@ -11,7 +11,7 @@ class ApiConstants {
   static const String registerEndpoint = "$auth/signup";
   static const String verifyOtpEndpoint = "$auth/verify-otp";
   static const String resendOtpEndpoint = "$auth/resend-otp";
-
+  static const String sellerRegister = "$auth/seller-register";
 
 
 
@@ -51,5 +51,11 @@ class ApiConstants {
     final token = await SecureStorage.getToken();
     print("header_token: $token");
     return {contentType: applicationJson, authorization: "Bearer $token"};
+  }
+
+  static Future<Map<String, String>> getHeadersWithoutToken() async {
+   // final token = await SecureStorage.getToken();
+   // print("header_token: $token");
+    return {contentType: applicationJson};
   }
 } 

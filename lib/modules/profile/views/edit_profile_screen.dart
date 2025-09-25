@@ -115,7 +115,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: 24),
               NesticoPeButton(
                 onTap: () {
-                  controller.updateProfile();
+                  // controller.updateProfile();
                   // if (_formKey.currentState?.validate() ?? false) {
                   //   // TODO: Submit updated profile
                   //   ScaffoldMessenger.of(context).showSnackBar(

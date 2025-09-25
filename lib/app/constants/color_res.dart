@@ -22,6 +22,8 @@ class ColorRes {
   static const success = Colors.green;
   static const warning = Color(0xFFFA9501);
 
+
+
   // Borders & Dividers
   static const border = Color(0xFFD8E0F0);
   static const divider = Color(0xFFE4E6E8);

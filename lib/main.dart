@@ -4,16 +4,19 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/auth/views/splash_screen.dart';
 import 'package:housing_flutter_app/app/services/network_status_service.dart';
+import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 
 
+import 'app/services/network_status_service.dart';
 import 'app/theme/themes.dart' as AppTheme;
 
 void main() async {
+   debugProfileBuildsEnabled = true;
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: ColorRes.primary, // Status bar background color
-      statusBarIconBrightness: Brightness.dark, // Android: dark icons
+      statusBarColor: ColorRes.primary, 
+      statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
       systemNavigationBarColor: ColorRes.primary,
       // iOS: dark icons
@@ -25,7 +28,7 @@ void main() async {
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const SplashScreen(),
+      home: const DashboardScreen(),
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
         return MediaQuery(
