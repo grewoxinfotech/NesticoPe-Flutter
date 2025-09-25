@@ -121,7 +121,7 @@
 //                   child: SizedBox(
 //                     width: 150,
 //                     child: Obx(() => NesticoPeDropdownField(
-//                       value: controller.selectedStatus.value,
+//                       value: controller.selectedFilterStatus.value,
 //                       items: controller.statusList
 //                           .map((e) => DropdownMenuItem(
 //                         value: e,
@@ -137,7 +137,7 @@
 //                           .toList(),
 //                       onChanged: (value) {
 //                         if (value != null) {
-//                           controller.selectedStatus.value = value;
+//                           controller.selectedFilterStatus.value = value;
 //                         }
 //                       },
 //                     )),
@@ -290,7 +290,7 @@
 //                     SizedBox(height: 10),
 //                     Row(
 //                       children: [
-//                         Obx(()=> _buildChip(controller.selectedStatus.value)),
+//                         Obx(()=> _buildChip(controller.selectedFilterStatus.value)),
 //                         const SizedBox(width: 4),
 //                         Container(
 //                           height: 16, // controls the divider height
@@ -515,7 +515,7 @@
 //                   ()=> SizedBox(
 //                     width: MediaQuery.of(context).size.width * 0.33,
 //                     child: NesticoPeDropdownField(
-//                       value: controller.selectedStatus.value,
+//                       value: controller.selectedFilterStatus.value,
 //                       items: controller.statusList.map((e) {
 //                         return DropdownMenuItem(
 //                           value: e,
@@ -531,7 +531,7 @@
 //                       }).toList(), // 🔑 convert to list
 //                       onChanged: (value) {
 //                         if (value != null) {
-//                           controller.selectedStatus.value = value;
+//                           controller.selectedFilterStatus.value = value;
 //                         }
 //                       },
 //                     ),
@@ -1097,7 +1097,6 @@
 // //   }
 // // }
 
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -1207,21 +1206,36 @@ class LeadScreen extends StatelessWidget {
     List<Map<String, dynamic>> filteredLeads = List.from(dummyLeads);
 
     // Filter by status
-    if (controller.selectedStatus.value.isNotEmpty &&
-        controller.selectedStatus.value != 'All Status') {
-      filteredLeads = filteredLeads.where((lead) =>
-      lead['stage'] == controller.selectedStatus.value).toList();
+    if (controller.selectedFilterStatus.value.isNotEmpty &&
+        controller.selectedFilterStatus.value != 'All Status') {
+      filteredLeads =
+          filteredLeads
+              .where(
+                (lead) =>
+                    lead['stage'] == controller.selectedFilterStatus.value,
+              )
+              .toList();
     }
 
     // Filter by lead type (property type)
     if (controller.selectedLeadType.value.isNotEmpty &&
         controller.selectedLeadType.value != 'All Leads') {
       if (controller.selectedLeadType.value == 'Residential') {
-        filteredLeads = filteredLeads.where((lead) =>
-            ['Apartment', 'Villa', 'Penthouse'].contains(lead['property']['type'])).toList();
+        filteredLeads =
+            filteredLeads
+                .where(
+                  (lead) => [
+                    'Apartment',
+                    'Villa',
+                    'Penthouse',
+                  ].contains(lead['property']['type']),
+                )
+                .toList();
       } else if (controller.selectedLeadType.value == 'Commercial') {
-        filteredLeads = filteredLeads.where((lead) =>
-        lead['property']['type'] == 'Commercial').toList();
+        filteredLeads =
+            filteredLeads
+                .where((lead) => lead['property']['type'] == 'Commercial')
+                .toList();
       }
     }
 
@@ -1247,7 +1261,10 @@ class LeadScreen extends StatelessWidget {
                 ),
                 Text(
                   "$filteredCount of ${dummyLeads.length} leads",
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ],
             );
@@ -1262,55 +1279,67 @@ class LeadScreen extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Obx(() => NesticoPeDropdownField(
-                      value: mainController.selectedStatus.value.isEmpty
-                          ? null
-                          : mainController.selectedStatus.value,
-                      items: ['All Status', ...mainController.statusList]
-                          .map((e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(
-                          e,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ))
-                          .toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          mainController.selectedStatus.value = value;
-                        }
-                      },
-                    )),
+                    child: Obx(
+                      () => NesticoPeDropdownField(
+                        value:
+                            mainController.selectedFilterStatus.value.isEmpty
+                                ? null
+                                : mainController.selectedFilterStatus.value,
+                        items:
+                            ['All Status', ...mainController.statusList]
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(
+                                      e,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[800],
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            mainController.selectedFilterStatus.value = value;
+                          }
+                        },
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Obx(() => NesticoPeDropdownField(
-                      value: mainController.selectedLeadType.value.isEmpty
-                          ? null
-                          : mainController.selectedLeadType.value,
-                      items: mainController.leadTypeList
-                          .map((e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(
-                          e,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ))
-                          .toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          mainController.selectedLeadType.value = value;
-                        }
-                      },
-                    )),
+                    child: Obx(
+                      () => NesticoPeDropdownField(
+                        value:
+                            mainController.selectedLeadType.value.isEmpty
+                                ? null
+                                : mainController.selectedLeadType.value,
+                        items:
+                            mainController.leadTypeList
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(
+                                      e,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[800],
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            mainController.selectedLeadType.value = value;
+                          }
+                        },
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -1333,11 +1362,7 @@ class LeadScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.search_off,
-                      size: 64,
-                      color: Colors.grey,
-                    ),
+                    Icon(Icons.search_off, size: 64, color: Colors.grey),
                     SizedBox(height: 16),
                     Text(
                       'No leads found',
@@ -1349,10 +1374,7 @@ class LeadScreen extends StatelessWidget {
                     ),
                     Text(
                       'Try adjusting your filters',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -1483,9 +1505,13 @@ class LeadCard extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          Obx(() => _buildChip(controller.selectedStatus.value.isEmpty
-                              ? stage
-                              : controller.selectedStatus.value)),
+                          Obx(
+                            () => _buildChip(
+                              controller.selectedFilterStatus.value.isEmpty
+                                  ? stage
+                                  : controller.selectedFilterStatus.value,
+                            ),
+                          ),
                           const SizedBox(width: 4),
                           SizedBox(
                             height: 16,
@@ -1512,12 +1538,12 @@ class LeadCard extends StatelessWidget {
                   children: [
                     _buildActionButton(
                       Icons.phone_outlined,
-                          () => _makePhoneCall(phone),
+                      () => _makePhoneCall(phone),
                     ),
                     const SizedBox(width: 6),
                     _buildActionButton(
                       Icons.email_outlined,
-                          () => _sendEmail(email),
+                      () => _sendEmail(email),
                     ),
                   ],
                 ),
@@ -1548,10 +1574,7 @@ class LeadCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           color: ColorRes.primary.withOpacity(0.1),
         ),
-        child: Icon(
-          icon,
-          color: ColorRes.primary,
-        ),
+        child: Icon(icon, color: ColorRes.primary),
       ),
     );
   }
@@ -1632,8 +1655,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
         );
 
         controller.selectedDate.value = fullDateTime;
-        controller.dateController.text =
-            DateFormat('dd MMM yyyy, hh:mm a').format(fullDateTime);
+        controller.dateController.text = DateFormat(
+          'dd MMM yyyy, hh:mm a',
+        ).format(fullDateTime);
 
         Get.snackbar(
           'Follow-up Scheduled',
@@ -1662,10 +1686,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
               controller.notes.value = notesController.text;
@@ -1728,50 +1749,58 @@ class LeadDetailBottomSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Obx(() => Text(
-                    controller.selectedDate.value != null
-                        ? DateFormat('dd MMM yyyy, hh:mm a').format(controller.selectedDate.value!)
-                        : "No follow-up set",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: controller.selectedDate.value != null
-                          ? Colors.black54
-                          : Colors.grey[400],
+                  Obx(
+                    () => Text(
+                      controller.selectedDate.value != null
+                          ? DateFormat(
+                            'dd MMM yyyy, hh:mm a',
+                          ).format(controller.selectedDate.value!)
+                          : "No follow-up set",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color:
+                            controller.selectedDate.value != null
+                                ? Colors.black54
+                                : Colors.grey[400],
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
-              Obx(() => SizedBox(
-                width: MediaQuery.of(context).size.width * 0.33,
-                child: NesticoPeDropdownField(
-                  value: controller.selectedStatus.value,
-                  items: controller.statusList.map((e) {
-                    return DropdownMenuItem(
-                      value: e,
-                      child: Text(
-                        e,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[800],
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      controller.selectedStatus.value = value;
-                      Get.snackbar(
-                        'Status Updated',
-                        'Lead status changed to $value',
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.blue,
-                        colorText: Colors.white,
-                      );
-                    }
-                  },
+              Obx(
+                () => SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.33,
+                  child: NesticoPeDropdownField(
+                    value: controller.selectedStatus.value,
+                    items:
+                        controller.statusList.map((e) {
+                          return DropdownMenuItem(
+                            value: e,
+                            child: Text(
+                              e,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[800],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.selectedStatus.value = value;
+                        // Get.snackbar(
+                        //   'Status Updated',
+                        //   'Lead status changed to $value',
+                        //   snackPosition: SnackPosition.BOTTOM,
+                        //   backgroundColor: Colors.blue,
+                        //   colorText: Colors.white,
+                        // );
+                      }
+                    },
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
 
@@ -1780,8 +1809,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
           _buildTextWithIconAndButton(
             Icons.calendar_month,
             "Follow up",
-            controller.selectedDate.value != null ? "Update Date" : "Set Date And Time",
-                () => pickDateTime(context, controller),
+            controller.selectedDate.value != null
+                ? "Update Date"
+                : "Set Date And Time",
+            () => pickDateTime(context, controller),
           ),
 
           const SizedBox(height: 12),
@@ -1790,7 +1821,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
             Icons.note_add,
             "Notes",
             "Edit",
-                () => _showNotesDialog(context),
+            () => _showNotesDialog(context),
           ),
 
           // Show notes if any
@@ -1949,11 +1980,11 @@ class LeadDetailBottomSheet extends StatelessWidget {
   }
 
   Widget _buildTextWithIconAndButton(
-      IconData icon,
-      String text,
-      String buttonText,
-      VoidCallback onPressed,
-      ) {
+    IconData icon,
+    String text,
+    String buttonText,
+    VoidCallback onPressed,
+  ) {
     return Row(
       children: [
         Icon(icon, color: ColorRes.primary, size: 15),

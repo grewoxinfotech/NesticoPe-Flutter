@@ -6,6 +6,7 @@ import '../../../widgets/drawer/drawer.dart';
 import 'package:get/get.dart';
 
 import '../../home/views/home_screen.dart';
+import '../../insights/views/insights_screen.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import '../../seller/seller_listing/view/seller_listing_view.dart';
 
@@ -468,15 +469,18 @@ class DashboardScreen extends StatelessWidget {
         if (navigationController.currentIndex.value == 0) {
           return const HomeScreen();
         } else if (navigationController.currentIndex.value == 1) {
-          return  Center(child:ElevatedButton(
-            onPressed: () {
-              Get.offAll(()=>SellerDashboardScreen());
-                },
-          child: Text("Seller"),));
+          return Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Get.offAll(() => SellerDashboardScreen());
+              },
+              child: Text("Seller"),
+            ),
+          );
         } else if (navigationController.currentIndex.value == 2) {
           return SellerListingView();
         } else if (navigationController.currentIndex.value == 3) {
-          return const Center(child: Text("No Update"));
+          return InsightsScreen();
         } else if (navigationController.currentIndex.value == 4) {
           return const SavedPropertyScreen();
         } else if (navigationController.currentIndex.value == 5) {

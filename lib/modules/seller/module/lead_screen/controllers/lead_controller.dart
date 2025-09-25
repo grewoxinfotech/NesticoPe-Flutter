@@ -10,16 +10,13 @@ class LeadController extends GetxController {
     'Site Visit',
     'Negotiation',
     'Closed',
-    'Lost'
+    'Lost',
   ];
 
+  RxString selectedFilterStatus = ''.obs;
   RxString selectedStatus = ''.obs;
 
-  final List<String> leadTypeList = [
-    "All Leads",
-    "Residential",
-    "Commercial"
-  ];
+  final List<String> leadTypeList = ["All Leads", "Residential", "Commercial"];
 
   RxString selectedLeadType = ''.obs;
   Rxn<DateTime> selectedDate = Rxn<DateTime>();
@@ -43,8 +40,9 @@ class LeadController extends GetxController {
   }
 
   void loadVariables() {
-    selectedStatus.value = 'All Status'; // Changed to show all by default
+    selectedFilterStatus.value = 'All Status'; // Changed to show all by default
     selectedLeadType.value = leadTypeList.first; // This is "All Leads"
+    selectedStatus.value = statusList.first;
     dateController.text = "";
     selectedDate.value = null;
     notes.value = '';
@@ -53,7 +51,7 @@ class LeadController extends GetxController {
   // Method to update lead status
   void updateStatus(String newStatus) {
     if (statusList.contains(newStatus)) {
-      selectedStatus.value = newStatus;
+      selectedFilterStatus.value = newStatus;
     }
   }
 
@@ -90,7 +88,7 @@ class LeadController extends GetxController {
 
   // Method to reset all filters and data
   void resetFilters() {
-    selectedStatus.value = statusList.first;
+    selectedFilterStatus.value = statusList.first;
     selectedLeadType.value = leadTypeList.first;
   }
 
@@ -114,6 +112,6 @@ class LeadController extends GetxController {
 
   // Method to validate if all required fields are filled
   bool isValid() {
-    return selectedStatus.value.isNotEmpty;
+    return selectedFilterStatus.value.isNotEmpty;
   }
 }
