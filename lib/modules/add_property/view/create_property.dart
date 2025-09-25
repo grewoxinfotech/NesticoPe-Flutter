@@ -18,7 +18,11 @@ import 'package:housing_flutter_app/modules/add_property/view/widget/step_row.da
 import 'package:housing_flutter_app/modules/add_property/view/widget/stepper_property.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
-  import '../../../data/network/auth/model/user_model.dart';
+import '../../../data/network/auth/model/user_model.dart';
+
+class CreatePropertyScreen extends StatelessWidget {
+  final SellerType sellerType;
+  const CreatePropertyScreen({super.key, required this.sellerType});
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +93,7 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
                                     ),
                                   ),
                                 ],
-                              ],
+                              ),
                             ),
 
                             Container(
@@ -161,7 +165,9 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 
                                       Expanded(
                                         child: Obx(() {
-                                          print('list of ${controller.stepsList}');
+                                          print(
+                                            'list of ${controller.stepsList}',
+                                          );
                                           final step =
                                               controller
                                                   .stepperSelectedIndex
@@ -194,11 +200,13 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
                                                 return Container();
                                             }
                                           } else if ((controller
-                                                      .lookingTo
-                                                      .value ==
-                                                  'Rent' ||
-                                              controller.lookingTo.value ==
-                                                  'Sell')&& controller.propertyType.value=="Residential") {
+                                                          .lookingTo
+                                                          .value ==
+                                                      'Rent' ||
+                                                  controller.lookingTo.value ==
+                                                      'Sell') &&
+                                              controller.propertyType.value ==
+                                                  "Residential") {
                                             switch (step) {
                                               case 1:
                                                 return PostProperty(
@@ -225,34 +233,43 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
                                                 return VerifySection(
                                                   controller: controller,
                                                 );
-                                                
+                                            }
+                                          } else if ((controller
+                                                          .lookingTo
+                                                          .value ==
+                                                      "Rent" ||
+                                                  controller.lookingTo.value ==
+                                                      "Sell") &&
+                                              controller.propertyType.value ==
+                                                  "Commercial") {
+                                            print(
+                                              'current step ${controller.stepsList[step]}',
+                                            );
+                                            switch (step) {
+                                              case 1:
+                                                return PostProperty(
+                                                  controller: controller,
+                                                );
+                                              case 2:
+                                                return RentPriceDetail(
+                                                  controller: controller,
+                                                );
+                                              case 3:
+                                                return RentAmenities(
+                                                  controller: controller,
+                                                );
+                                              case 4:
+                                                return PhotoUpload(
+                                                  controller: controller,
+                                                );
+                                              case 5:
+                                                return ListingReviewCard(
+                                                  controller: controller,
+                                                );
+                                              default:
+                                                return Container();
                                             }
                                           }
-                                          else if((controller.lookingTo.value=="Rent" || controller.lookingTo.value=="Sell") && controller.propertyType.value=="Commercial")
-                                            {print('current step ${controller.stepsList[step]}');
-                                              switch (step) {
-                                                case 1:
-                                                  return PostProperty(
-                                                    controller: controller,
-                                                  );
-                                                case 2:
-                                                  return RentPriceDetail(
-                                                    controller: controller,
-                                                  );
-                                                case 3:
-                                                  return RentAmenities(controller: controller);
-                                                case 4:
-                                                  return PhotoUpload(
-                                                    controller: controller,
-                                                  );
-                                                case 5:
-                                                  return ListingReviewCard(
-                                                    controller: controller,
-                                                  );
-                                                default:
-                                                  return Container();
-                                              }
-                                            }
                                           return Container();
                                         }),
                                       ),
@@ -268,6 +285,7 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
                   ),
             ),
           ),
+
           bottomNavigationBar: Container(
             color: Colors.white, // 👈 white background behind button
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -761,9 +779,8 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
                                                 horizontal: 12,
                                               ),
                                               child: Row(
-                                                mainAxisSize:
-                                                    MainAxisSize
-                                                        .min, // keep row compact
+                                                mainAxisSize: MainAxisSize.min,
+                                                // keep row compact
                                                 children: [
                                                   Text(
                                                     "Existing User?",
@@ -955,8 +972,8 @@ Widget buildTextField(
   bool isPhone = false,
   bool isPhoneKey = false,
   bool isEnable = true,
-  int maxLines = 1, 
-  int minLines = 1, 
+  int maxLines = 1,
+  int minLines = 1,
 }) {
   return TextField(
     controller: controller,

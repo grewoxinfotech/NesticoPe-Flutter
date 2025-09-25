@@ -346,8 +346,6 @@
 // }
 //
 
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -364,7 +362,8 @@ class VerifySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.lookingTo.value == "Rent" ||controller.lookingTo.value == "Sell") {
+      if (controller.lookingTo.value == "Rent" ||
+          controller.lookingTo.value == "Sell") {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -401,7 +400,7 @@ class VerifySection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.grey.shade300, width: 1)
+        border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -433,34 +432,31 @@ class VerifySection extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          Obx(
-            () =>
-             Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildEnhancedStep(
-                  Icons.location_on_outlined,
-                  "Visit Property",
-                  "Go to the location",
-                  0,
-                ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildEnhancedStep(
+                Icons.location_on_outlined,
+                "Visit Property",
+                "Go to the location",
+                0,
+              ),
 
-                _buildEnhancedStep(
-                  Icons.link_outlined,
-                  "Open Link",
-                  "Access verification",
-                  1,
-                ),
+              _buildEnhancedStep(
+                Icons.link_outlined,
+                "Open Link",
+                "Access verification",
+                1,
+              ),
 
-                _buildEnhancedStep(
-                  Icons.camera_alt_outlined,
-                  "Take Photos",
-                  "Capture evidence",
-                  2,
-                ),
-              ],
-            ),
+              _buildEnhancedStep(
+                Icons.camera_alt_outlined,
+                "Take Photos",
+                "Capture evidence",
+                2,
+              ),
+            ],
           ),
         ],
       ),
@@ -516,45 +512,47 @@ class VerifySection extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Enhanced Date/Time Selection
-          Obx(
-            () =>
-             Row(
-              children: [
-                // Quick Today Option
-                Expanded(
-                  flex: 2,
-                  child: _buildQuickDateOption(
-                    "Today",
-                    DateFormat("d MMM").format(DateTime.now()),
-                    Icons.today_outlined,
-                    false,
-                  ),
+          Row(
+            children: [
+              // Quick Today Option
+              Expanded(
+                flex: 2,
+                child: _buildQuickDateOption(
+                  "Today",
+                  DateFormat("d MMM").format(DateTime.now()),
+                  Icons.today_outlined,
+                  false,
                 ),
-                const SizedBox(width: 12),
+              ),
+              const SizedBox(width: 12),
 
-                // Custom Date Selection
-                Expanded(
-                  flex: 3,
-                  child: Obx(() {
-                    final selected = controller.selectedDate.value;
-                    final selectedTime = controller.selectedTime.value;
+              // Custom Date Selection
+              Expanded(
+                flex: 3,
+                child: Obx(() {
+                  final selected = controller.selectedDate.value;
+                  final selectedTime = controller.selectedTime.value;
 
-                    return _buildCustomDateTimeOption(
-                      context,
-                      selected,
-                      selectedTime,
-                    );
-                  }),
-                ),
-              ],
-            ),
+                  return _buildCustomDateTimeOption(
+                    context,
+                    selected,
+                    selectedTime,
+                  );
+                }),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildQuickDateOption(String title, String date, IconData icon, bool isSelected) {
+  Widget _buildQuickDateOption(
+    String title,
+    String date,
+    IconData icon,
+    bool isSelected,
+  ) {
     return Container(
       height: 120,
       padding: const EdgeInsets.all(12),
@@ -564,7 +562,10 @@ class VerifySection extends StatelessWidget {
           width: isSelected ? 2 : 1,
         ),
         borderRadius: BorderRadius.circular(12),
-        color: isSelected ? ColorRes.primary.withOpacity(0.05) : Colors.grey.shade50,
+        color:
+            isSelected
+                ? ColorRes.primary.withOpacity(0.05)
+                : Colors.grey.shade50,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -595,7 +596,11 @@ class VerifySection extends StatelessWidget {
     );
   }
 
-  Widget _buildCustomDateTimeOption(BuildContext context, DateTime? selectedDate, TimeOfDay? selectedTime) {
+  Widget _buildCustomDateTimeOption(
+    BuildContext context,
+    DateTime? selectedDate,
+    TimeOfDay? selectedTime,
+  ) {
     bool hasSelection = selectedDate != null || selectedTime != null;
 
     return GestureDetector(
@@ -609,7 +614,10 @@ class VerifySection extends StatelessWidget {
             width: hasSelection ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
-          color: hasSelection ? ColorRes.primary.withOpacity(0.05) : Colors.grey.shade50,
+          color:
+              hasSelection
+                  ? ColorRes.primary.withOpacity(0.05)
+                  : Colors.grey.shade50,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -630,27 +638,20 @@ class VerifySection extends StatelessWidget {
             ),
             if (hasSelection) ...[
               Text(
-                selectedDate != null ? DateFormat("d MMM").format(selectedDate) : "Date",
-                style: TextStyle(
-                  fontSize: 10,
-                  color: ColorRes.primary,
-                ),
+                selectedDate != null
+                    ? DateFormat("d MMM").format(selectedDate)
+                    : "Date",
+                style: TextStyle(fontSize: 10, color: ColorRes.primary),
               ),
               if (selectedTime != null)
                 Text(
                   selectedTime.format(context),
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: ColorRes.primary,
-                  ),
+                  style: TextStyle(fontSize: 10, color: ColorRes.primary),
                 ),
             ] else
               Text(
                 "Tap to choose",
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey.shade500,
-                ),
+                style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
               ),
           ],
         ),
@@ -676,28 +677,30 @@ class VerifySection extends StatelessWidget {
               side: BorderSide(color: ColorRes.primary),
               borderRadius: BorderRadius.circular(16),
             ),
-
           ),
-          onPressed: isEnabled
-              ? () {
-            Get.snackbar(
-              "🎉 Reminder Set!",
-              "Visit planned for ${controller.formattedDate} at ${controller.formattedTime}",
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: ColorRes.primary,
-              colorText: Colors.white,
-              borderRadius: 12,
-              margin: const EdgeInsets.all(16),
-              icon: const Icon(Icons.check_circle, color: Colors.white),
-              duration: const Duration(seconds: 3),
-            );
-          }
-              : null,
+          onPressed:
+              isEnabled
+                  ? () {
+                    Get.snackbar(
+                      "🎉 Reminder Set!",
+                      "Visit planned for ${controller.formattedDate} at ${controller.formattedTime}",
+                      snackPosition: SnackPosition.TOP,
+                      backgroundColor: ColorRes.primary,
+                      colorText: Colors.white,
+                      borderRadius: 12,
+                      margin: const EdgeInsets.all(16),
+                      icon: const Icon(Icons.check_circle, color: Colors.white),
+                      duration: const Duration(seconds: 3),
+                    );
+                  }
+                  : null,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                isEnabled ? Icons.notifications_active : Icons.notifications_off,
+                isEnabled
+                    ? Icons.notifications_active
+                    : Icons.notifications_off,
                 size: 20,
                 color: ColorRes.primary,
               ),
@@ -707,7 +710,7 @@ class VerifySection extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                    color: ColorRes.primary
+                  color: ColorRes.primary,
                 ),
               ),
             ],
@@ -746,7 +749,12 @@ class VerifySection extends StatelessWidget {
     );
   }
 
-  Widget _buildEnhancedStep(IconData icon, String title, String subtitle, int index) {
+  Widget _buildEnhancedStep(
+    IconData icon,
+    String title,
+    String subtitle,
+    int index,
+  ) {
     return Expanded(
       child: Column(
         children: [
@@ -760,7 +768,6 @@ class VerifySection extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(25),
-
             ),
             child: Icon(icon, color: Colors.white, size: 22),
           ),
@@ -778,10 +785,7 @@ class VerifySection extends StatelessWidget {
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
           ),
         ],
       ),
@@ -885,29 +889,36 @@ class VerifySection extends StatelessWidget {
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
-                            todayForegroundColor: WidgetStateProperty.all(ColorRes.primary),
+                            todayForegroundColor: WidgetStateProperty.all(
+                              ColorRes.primary,
+                            ),
                             // --- Circle for Selected Day ---
                             dayOverlayColor: WidgetStateProperty.all(
                               ColorRes.primary.withOpacity(0.2),
                             ),
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(color: ColorRes.primary, width: 1.5),
+                              side: BorderSide(
+                                color: ColorRes.primary,
+                                width: 1.5,
+                              ),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             // Circle background for selected date
-                            rangeSelectionBackgroundColor: ColorRes.primary.withOpacity(0.2),
+                            rangeSelectionBackgroundColor: ColorRes.primary
+                                .withOpacity(0.2),
                           ),
                         ),
                         child: CalendarDatePicker(
                           initialDate: tempDate,
                           firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(const Duration(days: 60)),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 60),
+                          ),
                           onDateChanged: (date) {
                             setState(() => tempDate = date);
                           },
                         ),
-                      )
-
+                      ),
                     ),
 
                     const SizedBox(height: 16),
@@ -931,7 +942,6 @@ class VerifySection extends StatelessWidget {
                                   colorScheme: ColorScheme.light(
                                     primary: ColorRes.primary,
                                   ),
-
                                 ),
 
                                 child: child!,
@@ -992,7 +1002,6 @@ class VerifySection extends StatelessWidget {
 
                     // Enhanced Confirm Button
                     SafeArea(
-
                       child: SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -1010,7 +1019,7 @@ class VerifySection extends StatelessWidget {
                             controller.setDateTime(tempDate, tempTime);
                             Navigator.pop(ctx);
                           },
-                          child:  Text(
+                          child: Text(
                             "Confirm Selection",
                             style: TextStyle(
                               fontSize: 16,
@@ -1040,12 +1049,10 @@ class ShareReminderButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: TextButton(
-
         style: TextButton.styleFrom(
           padding: const EdgeInsets.all(12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-         
           ),
           backgroundColor: ColorRes.primary.withOpacity(0.2),
         ),
@@ -1057,14 +1064,13 @@ class ShareReminderButton extends StatelessWidget {
           );
         },
 
-          child: Text(
-            "Share link with others",
-            style: TextStyle(
-              color: Colors.blue.shade700,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
-
+        child: Text(
+          "Share link with others",
+          style: TextStyle(
+            color: Colors.blue.shade700,
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );

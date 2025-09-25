@@ -14,184 +14,186 @@ class PhotoUpload extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      print(
+        "vfsdgytgfgsdytfgydy ===========${controller.propertyType.value}  djhfiuw ${controller.lookingTo.value}",
+      );
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 12),
-            buildSectionTitle('Upload Photos'),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton.icon(
-                  onPressed:
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          buildSectionTitle('Upload Photos'),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton.icon(
+                onPressed:
+                    controller.selectedImages.length >= controller.maxImages
+                        ? null
+                        : () => showImageSourceSheet(context, controller),
+                icon: Icon(
+                  Icons.add_a_photo,
+                  color:
                       controller.selectedImages.length >= controller.maxImages
-                          ? null
-                          : () => showImageSourceSheet(context, controller),
-                  icon: Icon(
-                    Icons.add_a_photo,
+                          ? Colors.grey
+                          : Colors.white,
+                ),
+                label: Text(
+                  controller.selectedImages.length >= controller.maxImages
+                      ? "Max ${controller.maxImages} reached"
+                      : "Add Photo",
+                  style: TextStyle(
                     color:
                         controller.selectedImages.length >= controller.maxImages
                             ? Colors.grey
                             : Colors.white,
-                  ),
-                  label: Text(
-                    controller.selectedImages.length >= controller.maxImages
-                        ? "Max ${controller.maxImages} reached"
-                        : "Add Photo",
-                    style: TextStyle(
-                      color:
-                          controller.selectedImages.length >=
-                                  controller.maxImages
-                              ? Colors.grey
-                              : Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 3,
-                    backgroundColor:
-                        controller.selectedImages.length >= controller.maxImages
-                            ? Colors.grey
-                            : Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
                   ),
                 ),
-                Text(
-                  "${controller.selectedImages.length} / ${controller.maxImages} photos selected",
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 3,
+                  backgroundColor:
+                      controller.selectedImages.length >= controller.maxImages
+                          ? Colors.grey
+                          : Theme.of(context).primaryColor,
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            controller.selectedImages.isEmpty
-                ? const Text(
-                  "No images selected yet.",
-                  style: TextStyle(color: Colors.grey),
-                )
-                : Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: List.generate(controller.selectedImages.length, (
-                    index,
-                  ) {
-                    final img = controller.selectedImages[index];
-                    return Stack(
-                      children: [
-                        Container(
-                          width: 150,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color:
-                                  img.isCover
-                                      ? Theme.of(context).primaryColor
-                                      : Colors.grey.shade300,
-                              width: img.isCover ? 2 : 1,
-                            ),
+              ),
+              Text(
+                "${controller.selectedImages.length} / ${controller.maxImages} photos selected",
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          controller.selectedImages.isEmpty
+              ? const Text(
+                "No images selected yet.",
+                style: TextStyle(color: Colors.grey),
+              )
+              : Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: List.generate(controller.selectedImages.length, (
+                  index,
+                ) {
+                  final img = controller.selectedImages[index];
+                  return Stack(
+                    children: [
+                      Container(
+                        width: 150,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color:
+                                img.isCover
+                                    ? Theme.of(context).primaryColor
+                                    : Colors.grey.shade300,
+                            width: img.isCover ? 2 : 1,
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Stack(
-                              children: [
-                                Image.file(
-                                  File(img.path),
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                                // Label overlay at bottom, tap to change label
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: GestureDetector(
-                                    onTap:
-                                        () => showLabelBottomSheet(
-                                          context,
-                                          index,
-                                          controller,
-                                        ),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 6,
-                                        horizontal: 8,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Stack(
+                            children: [
+                              Image.file(
+                                File(img.path),
+                                width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                              // Label overlay at bottom, tap to change label
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap:
+                                      () => showLabelBottomSheet(
+                                        context,
+                                        index,
+                                        controller,
                                       ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black54,
-                                        borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(12),
-                                          bottomRight: Radius.circular(12),
-                                        ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                      horizontal: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(12),
+                                        bottomRight: Radius.circular(12),
                                       ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              img.label.isEmpty
-                                                  ? "Set Label"
-                                                  : img.label,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            img.label.isEmpty
+                                                ? "Set Label"
+                                                : img.label,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
-                                          // if (img.isCover)
-                                          //   const Icon(
-                                          //     Icons.star,
-                                          //     color: Colors.amber,
-                                          //     size: 18,
-                                          //   ),
-                                        ],
-                                      ),
+                                        ),
+                                        // if (img.isCover)
+                                        //   const Icon(
+                                        //     Icons.star,
+                                        //     color: Colors.amber,
+                                        //     size: 18,
+                                        //   ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Remove button
+                      Positioned(
+                        top: 6,
+                        right: 6,
+                        child: GestureDetector(
+                          onTap: () => controller.removeImageByPath(img.path),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.black54,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              size: 20,
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                        // Remove button
-                        Positioned(
-                          top: 6,
-                          right: 6,
-                          child: GestureDetector(
-                            onTap: () => controller.removeImageByPath(img.path),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.black54,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.close,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
-                ),
-            const SizedBox(height: 16),
-          ],
-        );
+                      ),
+                    ],
+                  );
+                }),
+              ),
+          const SizedBox(height: 16),
+        ],
+      );
     });
   }
 }

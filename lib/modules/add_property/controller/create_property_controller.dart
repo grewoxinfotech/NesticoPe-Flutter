@@ -15,6 +15,7 @@ import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import '../model/commercial_model.dart';
 
 enum SellerType { owner, builder }
+
 class CreatePropertyController extends GetxController {
   late MultiImagePickerController pickerController;
 
@@ -71,20 +72,10 @@ class CreatePropertyController extends GetxController {
   var selectedFurnishing = <String, FurnishingItemModel>{}.obs;
   var selectedRoomAmenities = <String>[].obs;
   var selectedCommercialAmenities = <String>[].obs;
-  var commercial_isPreLeased=''.obs;
-  var commercial_current_rent_preLeasedTill=TextEditingController();
-  var commercial_lease_years=TextEditingController();
-  var commercial_returned_RIO=TextEditingController();
-
-
-
-
-
-
-
-
-
-
+  var commercial_isPreLeased = ''.obs;
+  var commercial_current_rent_preLeasedTill = TextEditingController();
+  var commercial_lease_years = TextEditingController();
+  var commercial_returned_RIO = TextEditingController();
 
   // Add a computed getter for stepsList
   List<String> get stepsList {
@@ -99,8 +90,8 @@ class CreatePropertyController extends GetxController {
         "Amenities",
         "Verify",
       ];
-    } else
-    if (lookingTo.value == "Sell" && propertyType.value == "Residential") {
+    } else if (lookingTo.value == "Sell" &&
+        propertyType.value == "Residential") {
       return [
         "Basic Detail",
         "Property Details",
@@ -112,7 +103,7 @@ class CreatePropertyController extends GetxController {
       ];
     }
     // Default steps
-    else if (lookingTo.value == "PG/Co-living" &&
+    else if (lookingTo.value == "PG/Co-Living" &&
         propertyType.value == "Residential") {
       return [
         "Basic Detail",
@@ -121,8 +112,8 @@ class CreatePropertyController extends GetxController {
         "Photos",
         "Review",
       ];
-    } else
-    if ((lookingTo.value == "Rent" || lookingTo.value == "Sell" ) && propertyType.value == "Commercial") {
+    } else if ((lookingTo.value == "Rent" || lookingTo.value == "Sell") &&
+        propertyType.value == "Commercial") {
       return [
         "Basic Detail",
         "Property Details",
@@ -130,10 +121,8 @@ class CreatePropertyController extends GetxController {
         "Amenities",
         "Photos",
         "Review",
-
       ];
-    }
-    else {
+    } else {
       return [
         "Basic Detail",
         "Property Details",
@@ -146,7 +135,8 @@ class CreatePropertyController extends GetxController {
 
   // Perfect getter method for photo labels
   List<String> get labelsPhoto {
-    if (propertyType.value == "Residential" && lookingTo.value == "PG/Co-living") {
+    if (propertyType.value == "Residential" &&
+        lookingTo.value == "PG/Co-Living") {
       return [
         "Single Room",
         "Double Sharing Room",
@@ -207,13 +197,9 @@ class CreatePropertyController extends GetxController {
     }
 
     // Default fallback
-    return [
-      "Main Area",
-      "Entrance",
-      "Outside View",
-      "Others",
-    ];
+    return ["Main Area", "Entrance", "Outside View", "Others"];
   }
+
   List<String> zoneType = [
     "Industrial",
     "Commercial",
@@ -227,19 +213,19 @@ class CreatePropertyController extends GetxController {
   List<String> get locationHub {
     if (selectedIndex.value == 'Office') {
       return ['IT Park', 'Business', 'Park', 'Other'];
-    } else
-    if (selectedIndex.value == "Shop" || selectedIndex.value == "Showroom" ||
-        selectedIndex.value == "Warehouse" || selectedIndex.value == "Other") {
+    } else if (selectedIndex.value == "Shop" ||
+        selectedIndex.value == "Showroom" ||
+        selectedIndex.value == "Warehouse" ||
+        selectedIndex.value == "Other") {
       return [
         'Mall',
         'Commercial Project',
         'Residential Project',
         'Retail Complex',
         'Market/High Street',
-        'Other'
+        'Other',
       ];
-    }
-    else if (selectedIndex.value == "Plot") {
+    } else if (selectedIndex.value == "Plot") {
       return [
         'Freehold',
         'Leasehold',
@@ -247,12 +233,11 @@ class CreatePropertyController extends GetxController {
         'Special economical',
         'Open Spaces',
         'Agricultural zone',
-        'Other'
+        'Other',
       ];
     }
     return [];
   }
-
 
   var commercial_ZoneType = "".obs;
   var commercial_LocationHub = "".obs;
@@ -281,7 +266,8 @@ class CreatePropertyController extends GetxController {
   // Change from list to single review
   // RxList<PropertyReviewModel> reviewList = <PropertyReviewModel>[].obs;
   Rxn<PropertyReviewModel> review = Rxn<PropertyReviewModel>();
-  Rxn<CommercialPropertyModel>commercialReview = Rxn<CommercialPropertyModel>();
+  Rxn<CommercialPropertyModel> commercialReview =
+      Rxn<CommercialPropertyModel>();
 
   // Text Controllers
   final phoneController = TextEditingController();
@@ -357,8 +343,7 @@ class CreatePropertyController extends GetxController {
   void addCommercialAmenities(String items) {
     if (selectedCommercialAmenities.contains(items)) {
       selectedCommercialAmenities.remove(items);
-    }
-    else {
+    } else {
       selectedCommercialAmenities.add(items);
     }
     selectedCommercialAmenities.refresh();
@@ -380,8 +365,7 @@ class CreatePropertyController extends GetxController {
         quantity: 1,
       );
       print(
-        "Added Furnishing: ${FurnishingItemModel(
-            key: item.key, title: item.title, quantity: 1)}",
+        "Added Furnishing: ${FurnishingItemModel(key: item.key, title: item.title, quantity: 1)}",
       );
     }
     selectedFurnishing.refresh();
@@ -446,7 +430,6 @@ class CreatePropertyController extends GetxController {
       try {
         stepperSelectedIndex.value++;
         debugPrint("Current Step: ${stepperSelectedIndex.value}");
-
 
         if (stepsList[stepperSelectedIndex.value] == "Review" ||
             stepsList[stepperSelectedIndex.value] == "Verify") {
@@ -531,9 +514,7 @@ class CreatePropertyController extends GetxController {
     // Update isOwner reactive accordingly
     isOwner.value = (type == SellerType.owner);
     print("Selected User Type: $type"); // Debug log
-
   }
-
 
   void toggleOwner(bool ownerSelected) {
     isOwner.value = ownerSelected;
@@ -743,29 +724,27 @@ class CreatePropertyController extends GetxController {
     try {
       // Create copies to avoid concurrent modification
       final imagesCopy =
-      selectedImages
-          .where((img) => img.path.isNotEmpty)
-          .map(
-            (img) =>
-            PhotoImageModel(
-              path: img.path,
-              label: img.label,
-              isCover: img.isCover,
-            ),
-      )
-          .toList();
-//dysadg663
+          selectedImages
+              .where((img) => img.path.isNotEmpty)
+              .map(
+                (img) => PhotoImageModel(
+                  path: img.path,
+                  label: img.label,
+                  isCover: img.isCover,
+                ),
+              )
+              .toList();
+      //dysadg663
       final roomsCopy =
-      rooms
-          .map(
-            (room) =>
-            RoomModel(
-              roomType: room.roomType,
-              monthlyRent: room.monthlyRent,
-              deposit: room.deposit,
-            ),
-      )
-          .toList();
+          rooms
+              .map(
+                (room) => RoomModel(
+                  roomType: room.roomType,
+                  monthlyRent: room.monthlyRent,
+                  deposit: room.deposit,
+                ),
+              )
+              .toList();
 
       // Use compute for heavy data processing if needed
       await Future.microtask(() {
@@ -811,7 +790,8 @@ class CreatePropertyController extends GetxController {
       await Future.microtask(() {
         // Use the factory method from CommercialPropertyModel
         final commercialReviewModel = CommercialPropertyModel.fromController(
-            this);
+          this,
+        );
 
         // Assign to the commercialReview observable
         commercialReview.value = commercialReviewModel;
@@ -824,24 +804,24 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-// Alternative approach if you want to manually create the model:
-// Updated _addCommercialReviewModelAsync method matching CommercialPropertyMode
+  // Alternative approach if you want to manually create the model:
+  // Updated _addCommercialReviewModelAsync method matching CommercialPropertyMode
 
-// Alternative approach if you want to manually create the model:
+  // Alternative approach if you want to manually create the model:
   Future<void> _addCommercialReviewModelAsyncManual() async {
     try {
       // Create copies to avoid concurrent modification
-      final imagesCopy = selectedImages
-          .where((img) => img.path.isNotEmpty)
-          .map(
-            (img) =>
-            PhotoImageModel(
-              path: img.path,
-              label: img.label,
-              isCover: img.isCover,
-            ),
-      )
-          .toList();
+      final imagesCopy =
+          selectedImages
+              .where((img) => img.path.isNotEmpty)
+              .map(
+                (img) => PhotoImageModel(
+                  path: img.path,
+                  label: img.label,
+                  isCover: img.isCover,
+                ),
+              )
+              .toList();
 
       await Future.microtask(() {
         final commercialReviewModel = CommercialPropertyModel(
@@ -850,79 +830,98 @@ class CreatePropertyController extends GetxController {
           localityName: commercial_rent_Loaclity_Name.text,
 
           // Optional fields
-          propertyName: commercial_Property_Name.text.isEmpty
-              ? null
-              : commercial_Property_Name.text,
-          possessionStatus: commercial_rent_posessionStatus.value.isEmpty
-              ? null
-              : commercial_rent_posessionStatus.value,
-          availableFrom: commercial_rent_AvailableFrom.text.isEmpty
-              ? null
-              : commercial_rent_AvailableFrom.text,
-          ageOfProperty: commercial_rent_AgeOfPropertInYear.text.isEmpty
-              ? null
-              : commercial_rent_AgeOfPropertInYear.text,
+          propertyName:
+              commercial_Property_Name.text.isEmpty
+                  ? null
+                  : commercial_Property_Name.text,
+          possessionStatus:
+              commercial_rent_posessionStatus.value.isEmpty
+                  ? null
+                  : commercial_rent_posessionStatus.value,
+          availableFrom:
+              commercial_rent_AvailableFrom.text.isEmpty
+                  ? null
+                  : commercial_rent_AvailableFrom.text,
+          ageOfProperty:
+              commercial_rent_AgeOfPropertInYear.text.isEmpty
+                  ? null
+                  : commercial_rent_AgeOfPropertInYear.text,
 
           // Property details
-          zoneType: commercial_ZoneType.value.isEmpty
-              ? null
-              : commercial_ZoneType.value,
-          locationHub: commercial_LocationHub.value.isEmpty
-              ? null
-              : commercial_LocationHub.value,
-          otherLocation: commercial_other_Location.text.isEmpty
-              ? null
-              : commercial_other_Location.text,
+          zoneType:
+              commercial_ZoneType.value.isEmpty
+                  ? null
+                  : commercial_ZoneType.value,
+          locationHub:
+              commercial_LocationHub.value.isEmpty
+                  ? null
+                  : commercial_LocationHub.value,
+          otherLocation:
+              commercial_other_Location.text.isEmpty
+                  ? null
+                  : commercial_other_Location.text,
 
           // Property condition and areas
-          propertyCondition: commercial_property_condition.value.isEmpty
-              ? null
-              : commercial_property_condition.value,
-          carpetArea: commercial_Square_CarpetArea.text.isEmpty
-              ? null
-              : commercial_Square_CarpetArea.text,
-          carpetAreaUnit: commercial_Square_AreaUnti_Carpet.value.isEmpty
-              ? null
-              : commercial_Square_AreaUnti_Carpet.value,
+          propertyCondition:
+              commercial_property_condition.value.isEmpty
+                  ? null
+                  : commercial_property_condition.value,
+          carpetArea:
+              commercial_Square_CarpetArea.text.isEmpty
+                  ? null
+                  : commercial_Square_CarpetArea.text,
+          carpetAreaUnit:
+              commercial_Square_AreaUnti_Carpet.value.isEmpty
+                  ? null
+                  : commercial_Square_AreaUnti_Carpet.value,
           plotArea: commercial_plot.text.isEmpty ? null : commercial_plot.text,
-          plotAreaUnit: commercial_plotArea.value.isEmpty
-              ? null
-              : commercial_plotArea.value,
-          buildUpArea: commercial_Square_BuildArea.text.isEmpty
-              ? null
-              : commercial_Square_BuildArea.text,
-          buildUpAreaUnit: commercial_Square_AreaUnti_Build.value.isEmpty
-              ? null
-              : commercial_Square_AreaUnti_Build.value,
+          plotAreaUnit:
+              commercial_plotArea.value.isEmpty
+                  ? null
+                  : commercial_plotArea.value,
+          buildUpArea:
+              commercial_Square_BuildArea.text.isEmpty
+                  ? null
+                  : commercial_Square_BuildArea.text,
+          buildUpAreaUnit:
+              commercial_Square_AreaUnti_Build.value.isEmpty
+                  ? null
+                  : commercial_Square_AreaUnti_Build.value,
 
           // Ownership and construction
-          ownership: commercial_ownerShipList.value.isEmpty
-              ? null
-              : commercial_ownerShipList.value,
-          constructionStatus: commercial_construction_status_value.value.isEmpty
-              ? null
-              : commercial_construction_status_value.value,
+          ownership:
+              commercial_ownerShipList.value.isEmpty
+                  ? null
+                  : commercial_ownerShipList.value,
+          constructionStatus:
+              commercial_construction_status_value.value.isEmpty
+                  ? null
+                  : commercial_construction_status_value.value,
 
           // Office specific (if applicable)
           seats: commercial_seats.text.isEmpty ? null : commercial_seats.text,
-          cabins: commercial_cabins.text.isEmpty ? null : commercial_cabins
-              .text,
-          meetingRooms: commercial_meeting_room.text.isEmpty
-              ? null
-              : commercial_meeting_room.text,
+          cabins:
+              commercial_cabins.text.isEmpty ? null : commercial_cabins.text,
+          meetingRooms:
+              commercial_meeting_room.text.isEmpty
+                  ? null
+                  : commercial_meeting_room.text,
 
           // Floor details
-          totalFloor: commercial_total_floor.text.isEmpty
-              ? null
-              : commercial_total_floor.text,
-          yourFloor: commercial_your_floor.text.isEmpty
-              ? null
-              : commercial_your_floor.text,
+          totalFloor:
+              commercial_total_floor.text.isEmpty
+                  ? null
+                  : commercial_total_floor.text,
+          yourFloor:
+              commercial_your_floor.text.isEmpty
+                  ? null
+                  : commercial_your_floor.text,
 
           // Financial
-          expectedRent: commercial_rent_cost.text.isEmpty
-              ? null
-              : commercial_rent_cost.text,
+          expectedRent:
+              commercial_rent_cost.text.isEmpty
+                  ? null
+                  : commercial_rent_cost.text,
 
           // Collections
           amenities: List<String>.from(selectedCommercialAmenities),
@@ -939,7 +938,7 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-// Add these methods to your CreatePropertyController class
+  // Add these methods to your CreatePropertyController class
 
   /// Prints all variables in the controller for debugging purposes
   Future<void> printAllControllerVariables() async {
@@ -979,33 +978,35 @@ class CreatePropertyController extends GetxController {
     debugPrint("rent_OpenParking: ${rent_OpenParking.value}");
     debugPrint("rent_CoveredParking: ${rent_CoveredParking.value}");
     debugPrint(
-        "rent_maintenanceChargeType: ${rent_maintenanceChargeType.value}");
+      "rent_maintenanceChargeType: ${rent_maintenanceChargeType.value}",
+    );
     debugPrint("rent_Pet_Friendly: ${rent_Pet_Friendly.value}");
     debugPrint("rent_lockInPeriod: ${rent_lockInPeriod.value}");
     debugPrint("rent_depositType: ${rent_depositType.value}");
     debugPrint(
-        "rent_Selected_Tenants_for_Bachelors: ${rent_Selected_Tenants_for_Bachelors
-            .value}");
+      "rent_Selected_Tenants_for_Bachelors: ${rent_Selected_Tenants_for_Bachelors.value}",
+    );
 
     // Commercial properties
     debugPrint("--- Commercial Properties ---");
     debugPrint("commercial_ZoneType: ${commercial_ZoneType.value}");
     debugPrint("commercial_LocationHub: ${commercial_LocationHub.value}");
-    debugPrint("commercial_property_condition: ${commercial_property_condition
-        .value}");
     debugPrint(
-        "commercial_Square_AreaUnti_Build: ${commercial_Square_AreaUnti_Build
-            .value}");
+      "commercial_property_condition: ${commercial_property_condition.value}",
+    );
     debugPrint(
-        "commercial_Square_AreaUnti_Carpet: ${commercial_Square_AreaUnti_Carpet
-            .value}");
+      "commercial_Square_AreaUnti_Build: ${commercial_Square_AreaUnti_Build.value}",
+    );
+    debugPrint(
+      "commercial_Square_AreaUnti_Carpet: ${commercial_Square_AreaUnti_Carpet.value}",
+    );
     debugPrint("commercial_ownerShipList: ${commercial_ownerShipList.value}");
     debugPrint(
-        "commercial_construction_status_value: ${commercial_construction_status_value
-            .value}");
+      "commercial_construction_status_value: ${commercial_construction_status_value.value}",
+    );
     debugPrint(
-        "commercial_rent_posessionStatus: ${commercial_rent_posessionStatus
-            .value}");
+      "commercial_rent_posessionStatus: ${commercial_rent_posessionStatus.value}",
+    );
     debugPrint("selectedFloors: ${selectedFloors.toList()}");
 
     // Sell properties
@@ -1044,29 +1045,36 @@ class CreatePropertyController extends GetxController {
     debugPrint("commercial_Property_Name: ${commercial_Property_Name.text}");
     debugPrint("commercial_other_Location: ${commercial_other_Location.text}");
     debugPrint(
-        "commercial_Square_BuildArea: ${commercial_Square_BuildArea.text}");
+      "commercial_Square_BuildArea: ${commercial_Square_BuildArea.text}",
+    );
     debugPrint(
-        "commercial_Square_CarpetArea: ${commercial_Square_CarpetArea.text}");
+      "commercial_Square_CarpetArea: ${commercial_Square_CarpetArea.text}",
+    );
     debugPrint("commercial_seats: ${commercial_seats.text}");
     debugPrint("commercial_cabins: ${commercial_cabins.text}");
     debugPrint("commercial_meeting_room: ${commercial_meeting_room.text}");
     debugPrint("commercial_total_floor: ${commercial_total_floor.text}");
     debugPrint("commercial_your_floor: ${commercial_your_floor.text}");
     debugPrint(
-        "commercial_rent_building_Name: ${commercial_rent_building_Name.text}");
+      "commercial_rent_building_Name: ${commercial_rent_building_Name.text}",
+    );
     debugPrint(
-        "commercial_rent_Loaclity_Name: ${commercial_rent_Loaclity_Name.text}");
+      "commercial_rent_Loaclity_Name: ${commercial_rent_Loaclity_Name.text}",
+    );
     debugPrint(
-        "commercial_rent_AvailableFrom: ${commercial_rent_AvailableFrom.text}");
+      "commercial_rent_AvailableFrom: ${commercial_rent_AvailableFrom.text}",
+    );
     debugPrint(
-        "commercial_rent_AgeOfPropertInYear: ${commercial_rent_AgeOfPropertInYear
-            .text}");
+      "commercial_rent_AgeOfPropertInYear: ${commercial_rent_AgeOfPropertInYear.text}",
+    );
 
     // Rent text controllers
     debugPrint(
-        "rent_Custom_Painting_Charges: ${rent_Custom_Painting_Charges.text}");
+      "rent_Custom_Painting_Charges: ${rent_Custom_Painting_Charges.text}",
+    );
     debugPrint(
-        "rent_Custom_Parking_Charges: ${rent_Custom_Parking_Charges.text}");
+      "rent_Custom_Parking_Charges: ${rent_Custom_Parking_Charges.text}",
+    );
     debugPrint("rent_Custom_LockIn_Period: ${rent_Custom_LockIn_Period.text}");
     debugPrint("rent_MonthilyRent: ${rent_MonthilyRent.text}");
     debugPrint("rent_SecurityDeposit: ${rent_SecurityDeposit.text}");
@@ -1077,55 +1085,64 @@ class CreatePropertyController extends GetxController {
     debugPrint("sell_rent_Flat_No: ${sell_rent_Flat_No.text}");
     debugPrint("sell_rent_Floor_No: ${sell_rent_Floor_No.text}");
     debugPrint(
-        "sell_rent_propertyDescriptionController: ${sell_rent_propertyDescriptionController
-            .text}");
+      "sell_rent_propertyDescriptionController: ${sell_rent_propertyDescriptionController.text}",
+    );
     debugPrint("sell_rent_Total_Floor: ${sell_rent_Total_Floor.text}");
     debugPrint("sell_AvailableFrom: ${sell_AvailableFrom.text}");
     debugPrint("sell_ExpectedPrice: ${sell_ExpectedPrice.text}");
     debugPrint(
-        "sell_rent_Maintenance_Charges: ${sell_rent_Maintenance_Charges.text}");
+      "sell_rent_Maintenance_Charges: ${sell_rent_Maintenance_Charges.text}",
+    );
     debugPrint("sell_Rera_Id: ${sell_Rera_Id.text}");
 
     // Collections
     debugPrint("--- Collections ---");
-    debugPrint("rooms (${rooms.length}): ${rooms.map((r) => '${r.roomType}: ${r
-        .monthlyRent}').join(', ')}");
     debugPrint(
-        "selectedImages (${selectedImages.length}): ${selectedImages.map((
-            img) => '${img.label}: ${img.path}').join(', ')}");
+      "rooms (${rooms.length}): ${rooms.map((r) => '${r.roomType}: ${r.monthlyRent}').join(', ')}",
+    );
     debugPrint(
-        "selectedFurnishing (${selectedFurnishing.length}): ${selectedFurnishing
-            .keys.join(', ')}");
-    debugPrint("selectedRoomAmenities (${selectedRoomAmenities
-        .length}): ${selectedRoomAmenities.join(', ')}");
+      "selectedImages (${selectedImages.length}): ${selectedImages.map((img) => '${img.label}: ${img.path}').join(', ')}",
+    );
     debugPrint(
-        "selectedItems (${selectedItems.length}): ${selectedItems.join(', ')}");
+      "selectedFurnishing (${selectedFurnishing.length}): ${selectedFurnishing.keys.join(', ')}",
+    );
     debugPrint(
-        "mealAvailableList (${mealAvailableList.length}): ${mealAvailableList
-            .join(', ')}");
+      "selectedRoomAmenities (${selectedRoomAmenities.length}): ${selectedRoomAmenities.join(', ')}",
+    );
     debugPrint(
-        "bestSuitedList (${bestSuitedList.length}): ${bestSuitedList.join(
-            ', ')}");
+      "selectedItems (${selectedItems.length}): ${selectedItems.join(', ')}",
+    );
     debugPrint(
-        "commonAreasList (${commonAreasList.length}): ${commonAreasList.join(
-            ', ')}");
+      "mealAvailableList (${mealAvailableList.length}): ${mealAvailableList.join(', ')}",
+    );
+    debugPrint(
+      "bestSuitedList (${bestSuitedList.length}): ${bestSuitedList.join(', ')}",
+    );
+    debugPrint(
+      "commonAreasList (${commonAreasList.length}): ${commonAreasList.join(', ')}",
+    );
     debugPrint("rent_Legal (${rent_Legal.length}): ${rent_Legal.join(', ')}");
     debugPrint(
-        "sell_Brokerage (${sell_Brokerage.length}): ${sell_Brokerage.join(
-            ', ')}");
-    debugPrint("sell_Registration_Charges (${sell_Registration_Charges
-        .length}): ${sell_Registration_Charges.join(', ')}");
-    debugPrint("sell_Amenities_Furniture (${sell_Amenities_Furniture
-        .length}): ${sell_Amenities_Furniture.join(', ')}");
+      "sell_Brokerage (${sell_Brokerage.length}): ${sell_Brokerage.join(', ')}",
+    );
     debugPrint(
-        "rent_Rentals (${rent_Rentals.length}): ${rent_Rentals.join(', ')}");
-    debugPrint("rent_Security_DepositType (${rent_Security_DepositType
-        .length}): ${rent_Security_DepositType.join(', ')}");
+      "sell_Registration_Charges (${sell_Registration_Charges.length}): ${sell_Registration_Charges.join(', ')}",
+    );
     debugPrint(
-        "rent_HomeServices (${rent_HomeServices.length}): ${rent_HomeServices
-            .join(', ')}");
-    debugPrint("rent_Preferred_Tenants (${rent_Preferred_Tenants
-        .length}): ${rent_Preferred_Tenants.join(', ')}");
+      "sell_Amenities_Furniture (${sell_Amenities_Furniture.length}): ${sell_Amenities_Furniture.join(', ')}",
+    );
+    debugPrint(
+      "rent_Rentals (${rent_Rentals.length}): ${rent_Rentals.join(', ')}",
+    );
+    debugPrint(
+      "rent_Security_DepositType (${rent_Security_DepositType.length}): ${rent_Security_DepositType.join(', ')}",
+    );
+    debugPrint(
+      "rent_HomeServices (${rent_HomeServices.length}): ${rent_HomeServices.join(', ')}",
+    );
+    debugPrint(
+      "rent_Preferred_Tenants (${rent_Preferred_Tenants.length}): ${rent_Preferred_Tenants.join(', ')}",
+    );
 
     // Review model
     debugPrint("--- Review Model ---");
@@ -1284,7 +1301,8 @@ class CreatePropertyController extends GetxController {
       lookingTo.value = isLooking;
 
       debugPrint(
-          "All variables cleared except propertyType: ${propertyType.value}");
+        "All variables cleared except propertyType: ${propertyType.value}",
+      );
     } finally {
       isProcessing.value = false;
     }
@@ -1326,5 +1344,4 @@ class CreatePropertyController extends GetxController {
       isProcessing.value = false;
     }
   }
-
 }
