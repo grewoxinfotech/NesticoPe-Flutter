@@ -28,6 +28,7 @@
         "intl",
         "multi_image_picker_view",
         "permission_handler",
+        "persistent_bottom_nav_bar",
         "provider",
         "readmore",
         "salomon_bottom_bar",
@@ -1623,6 +1624,13 @@
       "name": "synchronized",
       "version": "3.4.0",
       "dependencies": []
+    },
+    {
+      "name": "persistent_bottom_nav_bar",
+      "version": "6.2.1",
+      "dependencies": [
+        "flutter"
+      ]
     }
   ],
   "configVersion": 1

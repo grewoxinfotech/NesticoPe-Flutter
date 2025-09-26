@@ -23,6 +23,7 @@ class SellerListingController extends GetxController {
 
   void loadProperties() {
     properties.assignAll([
+      // ---------------- Residential: Buy ----------------
       {
         "id": 1,
         "title": "Luxury Villa in LA",
@@ -38,7 +39,7 @@ class SellerListingController extends GetxController {
         "id": 2,
         "title": "Modern Apartment in NYC",
         "price": "\$850,000",
-        "status": "deleted",
+        "status": "Deleted",
         "category": "buy",
         "location": "New York, NY",
         "lastAddedDate": "2025-09-10",
@@ -47,39 +48,6 @@ class SellerListingController extends GetxController {
       },
       {
         "id": 3,
-        "title": "Cozy Studio",
-        "price": "\$1,200/month",
-        "status": "Active",
-        "category": "rent",
-        "location": "San Francisco, CA",
-        "lastAddedDate": "2025-08-25",
-        "roomType": "Studio",
-        "image": IMGRes.home3,
-      },
-      {
-        "id": 4,
-        "title": "Beachside Condo",
-        "price": "\$2,500/month",
-        "status": "Active",
-        "category": "rent",
-        "location": "Miami, FL",
-        "lastAddedDate": "2025-09-05",
-        "roomType": "3 BHK",
-        "image": IMGRes.banner2,
-      },
-      {
-        "id": 5,
-        "title": "Downtown Office Space",
-        "price": "\$5,000/month",
-        "status": "Inactive",
-        "category": "commercial",
-        "location": "Chicago, IL",
-        "lastAddedDate": "2025-09-12",
-        "roomType": "Open Plan",
-        "image": IMGRes.banner1,
-      },
-      {
-        "id": 6,
         "title": "Suburban House",
         "price": "\$650,000",
         "status": "Active",
@@ -90,7 +58,7 @@ class SellerListingController extends GetxController {
         "image": IMGRes.banner3,
       },
       {
-        "id": 7,
+        "id": 4,
         "title": "Luxury Penthouse",
         "price": "\$3,500,000",
         "status": "Pending",
@@ -101,18 +69,7 @@ class SellerListingController extends GetxController {
         "image": IMGRes.bhk1,
       },
       {
-        "id": 8,
-        "title": "Retail Space",
-        "price": "\$8,000/month",
-        "status": "Active",
-        "category": "commercial",
-        "location": "Los Angeles, CA",
-        "lastAddedDate": "2025-09-15",
-        "roomType": "Open Plan",
-        "image": IMGRes.bhk2,
-      },
-      {
-        "id": 9,
+        "id": 5,
         "title": "Mountain Cabin",
         "price": "\$350,000",
         "status": "Inactive",
@@ -122,8 +79,32 @@ class SellerListingController extends GetxController {
         "roomType": "2 BHK",
         "image": IMGRes.bhk3,
       },
+
+      // ---------------- Residential: Rent ----------------
       {
-        "id": 10,
+        "id": 6,
+        "title": "Cozy Studio",
+        "price": "\$1,200/month",
+        "status": "Active",
+        "category": "rent",
+        "location": "San Francisco, CA",
+        "lastAddedDate": "2025-08-25",
+        "roomType": "Studio",
+        "image": IMGRes.home3,
+      },
+      {
+        "id": 7,
+        "title": "Beachside Condo",
+        "price": "\$2,500/month",
+        "status": "Active",
+        "category": "rent",
+        "location": "Miami, FL",
+        "lastAddedDate": "2025-09-05",
+        "roomType": "3 BHK",
+        "image": IMGRes.banner2,
+      },
+      {
+        "id": 8,
         "title": "Shared Co-living Apartment",
         "price": "\$700/month",
         "status": "Active",
@@ -133,7 +114,84 @@ class SellerListingController extends GetxController {
         "roomType": "Shared Studio",
         "image": IMGRes.furnished,
       },
+
+      // ---------------- Residential: Sell ----------------
+      {
+        "id": 9,
+        "title": "Modern Family Home",
+        "price": "\$900,000",
+        "status": "Active",
+        "category": "sell",
+        "location": "Toronto, Canada",
+        "lastAddedDate": "2025-09-08",
+        "roomType": "3 BHK",
+        "image": IMGRes.home1,
+      },
+      {
+        "id": 10,
+        "title": "Downtown Loft",
+        "price": "\$1,100,000",
+        "status": "Under Review",
+        "category": "sell",
+        "location": "London, UK",
+        "lastAddedDate": "2025-09-12",
+        "roomType": "2 BHK",
+        "image": IMGRes.home2,
+      },
+
+      // ---------------- Commercial: Sell ----------------
+      {
+        "id": 11,
+        "title": "Downtown Office Space",
+        "price": "\$5,000/month",
+        "status": "Inactive",
+        "category": "commercial",
+        "type": "sell",
+        "location": "Chicago, IL",
+        "lastAddedDate": "2025-09-12",
+        "roomType": "Open Plan",
+        "image": IMGRes.banner1,
+      },
+      {
+        "id": 12,
+        "title": "Retail Space",
+        "price": "\$8,000/month",
+        "status": "Active",
+        "category": "commercial",
+        "type": "sell",
+        "location": "Los Angeles, CA",
+        "lastAddedDate": "2025-09-15",
+        "roomType": "Open Plan",
+        "image": IMGRes.bhk2,
+      },
+
+      // ---------------- Commercial: Rent ----------------
+      {
+        "id": 13,
+        "title": "Warehouse for Rent",
+        "price": "\$6,500/month",
+        "status": "Active",
+        "category": "commercial",
+        "type": "rent",
+        "location": "Houston, TX",
+        "lastAddedDate": "2025-09-10",
+        "roomType": "Large Open",
+        "image": IMGRes.banner3,
+      },
+      {
+        "id": 14,
+        "title": "Business Center",
+        "price": "\$4,200/month",
+        "status": "Pending",
+        "category": "commercial",
+        "type": "rent",
+        "location": "San Diego, CA",
+        "lastAddedDate": "2025-09-05",
+        "roomType": "Flexible Office",
+        "image": IMGRes.furnished,
+      },
     ]);
+
   }
 
   void deleteProperty(int id) {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:housing_flutter_app/modules/home/views/home_screen.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
@@ -201,7 +203,8 @@ class SellerHomeScreen extends StatelessWidget {
                 // 🔹 Background (header)
                 Container(
                   width: double.infinity,
-                  color: const Color(0xff091F48),
+                  // color: const Color(0xff091F48),
+                  color: ColorRes.primary,
                   padding: const EdgeInsets.only(
                     top: 30,
                     left: 12,
@@ -217,6 +220,7 @@ class SellerHomeScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,7 +229,7 @@ class SellerHomeScreen extends StatelessWidget {
                                     "Welcome, Seller",
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -238,6 +242,20 @@ class SellerHomeScreen extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
+                                  SizedBox(height: 8,),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Get.offAll(()=>DashboardScreen());
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 6),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: Colors.grey[300]!)
+                                      ),
+                                      child: Text("Home",style: TextStyle(color: Colors.white),),
+                                    ),
+                                  )
                                 ],
                               ),
 
@@ -280,7 +298,7 @@ class SellerHomeScreen extends StatelessWidget {
 
                 // 🔹 Foreground (overlapping form card)
                 Positioned(
-                  top: 100,
+                  top: 130,
                   // adjust overlap distance
                   left: 0,
                   right: 0,

@@ -147,6 +147,7 @@ class SellerDashboardScreen extends StatelessWidget {
     double iconSize = 20;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       extendBody: true,
       drawer: NesticoPeDrawer(),
       bottomNavigationBar: SafeArea(

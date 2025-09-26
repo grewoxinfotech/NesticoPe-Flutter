@@ -39,7 +39,7 @@ dependencies:
   easy_stepper:
   dropdown_button2:
   flutter_tts:
-  
+  persistent_bottom_nav_bar:
   
 
 dev_dependencies:

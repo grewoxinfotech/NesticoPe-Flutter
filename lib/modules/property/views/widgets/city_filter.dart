@@ -453,10 +453,64 @@
 // ),
 // );
 
+// import 'package:flutter/material.dart';
+// import 'package:housing_flutter_app/app/constants/color_res.dart';
+// import 'package:housing_flutter_app/app/constants/size_manager.dart';
+// import 'package:housing_flutter_app/app/widgets/cards/banner_card_with_text.dart';
+// import '../../../../app/constants/img_res.dart';
+//
+// class CityFilterList extends StatefulWidget {
+//   const CityFilterList({super.key});
+//
+//   @override
+//   State<CityFilterList> createState() => _CityFilterListState();
+// }
+//
+// class _CityFilterListState extends State<CityFilterList> {
+//   final List<String> cities = [
+//     "Mumbai",
+//     "Delhi",
+//     "Bangalore",
+//     "Pune",
+//     "Chennai",
+//     "Kolkata",
+//     "Hyderabad",
+//   ];
+//
+//   final List<String> images = [
+//     IMGRes.city1,
+//     IMGRes.city2,
+//     IMGRes.city3,
+//     IMGRes.city4,
+//     IMGRes.city5,
+//     IMGRes.city6,
+//     IMGRes.city7,
+//   ];
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       height: 100,
+//       child: ListView.separated(
+//         scrollDirection: Axis.horizontal,
+//         padding: const EdgeInsets.symmetric(horizontal: 12),
+//         itemCount: cities.length,
+//         separatorBuilder: (_, __) =>  SizedBox(width: AppSpacing.small),
+//         itemBuilder: (context, index) {
+//           return GestureDetector(
+//             onTap: () {},
+//             child: NesticoPeCardWithText(title: cities[index], imageUrl: images[index], opacity: ColorRes.black,isCenterText: true,height: 100,),
+//
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/widgets/cards/banner_card_with_text.dart';
 import '../../../../app/constants/img_res.dart';
 
 class CityFilterList extends StatefulWidget {
@@ -487,40 +541,68 @@ class _CityFilterListState extends State<CityFilterList> {
     IMGRes.city7,
   ];
 
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100,
-      child: ListView.separated(
+      height: 100, // Fixed height for horizontal list
+      child: ListView.builder(
+        clipBehavior: Clip.none,
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         itemCount: cities.length,
-        separatorBuilder: (_, __) =>  SizedBox(width: AppSpacing.small),
         itemBuilder: (context, index) {
+
           return GestureDetector(
-            onTap: () {},
-            child: NesticoPeCardWithText(title: cities[index], imageUrl: images[index], opacity: ColorRes.black,isCenterText: true,height: 100,),
-            // child: Column(
-            //   mainAxisSize: MainAxisSize.min,
-            //   children: [
-            //     CircleAvatar(
-            //       radius: 45,
-            //       backgroundImage: AssetImage(images[index]),
-            //       backgroundColor: Colors.grey[200],
-            //     ),
-            //     const SizedBox(height: 6),
-            //     Text(
-            //       cities[index],
-            //       style: TextStyle(
-            //         fontSize: 12,
-            //         fontWeight: FontWeight.w500,
-            //         color: Colors.black87,
-            //       ),
-            //       maxLines: 1,
-            //       overflow: TextOverflow.ellipsis,
-            //     ),
-            //   ],
-            // ),
+            onTap: () {
+
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.only(right: 8),
+              width: 120,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      images[index],
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.4),
+                          Colors.transparent,
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    child: Text(
+                      cities[index],
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
         },
       ),
