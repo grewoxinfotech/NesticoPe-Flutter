@@ -209,7 +209,6 @@ abstract class PaginatedController<T> extends GetxController {
     print("Pagination: _loadPage called for page $page");
 
     if (page == 1 && !isRefreshing.value) {
-      
       isLoading.value = true;
     } else {
       isPaging.value = true;
@@ -217,7 +216,7 @@ abstract class PaginatedController<T> extends GetxController {
 
     try {
       final response = await fetchItems(page);
-      print("Pagination: Response from fetchItems: $response");
+      print("Pagination: Response from fetchItems: ${response.meta.toJson()}");
 
       if (clear) {
         // ✅ replaces clear+addAll to avoid intermediate empty state

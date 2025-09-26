@@ -1107,6 +1107,7 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
 import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
 import 'package:intl/intl.dart';
 
+import 'package:housing_flutter_app/widgets/expand_list/expanded_list.dart';
 import '../controllers/lead_controller.dart';
 import '../model/lead_model.dart';
 
@@ -1412,137 +1413,1332 @@ final List<Map<String, dynamic>> dummyLeads = [
 //   }
 // }
 
+/// --------------------------------------------------- New -----------------------------------------------///
 
+// class LeadScreen extends StatelessWidget {
+//   const LeadScreen({super.key});
+//
+//   List<LeadItem> getFilteredLeads(LeadController controller) {
+//     List<LeadItem> filteredLeads = List.from(controller.items);
+//
+//     // Filter by status
+//     if (controller.selectedFilterStatus.value.isNotEmpty &&
+//         controller.selectedFilterStatus.value != 'All Status') {
+//       filteredLeads =
+//           filteredLeads
+//               .where(
+//                 (lead) => lead.stage == controller.selectedFilterStatus.value,
+//               )
+//               .toList();
+//     }
+//
+//     // Filter by lead type (property type)
+//     if (controller.selectedLeadType.value.isNotEmpty &&
+//         controller.selectedLeadType.value != 'All Leads') {
+//       if (controller.selectedLeadType.value == 'Residential') {
+//         filteredLeads =
+//             filteredLeads
+//                 .where((lead) => lead.customFields?.type! == 'residential')
+//                 .toList();
+//       } else if (controller.selectedLeadType.value == 'Commercial') {
+//         filteredLeads =
+//             filteredLeads
+//                 .where((lead) => lead.customFields?.type! == 'commercial')
+//                 .toList();
+//       }
+//     }
+//
+//     return filteredLeads;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final controller = Get.put(LeadController());
+//
+//     return SafeArea(
+//       top: false,
+//       child: Scaffold(
+//         appBar: AppBar(
+//           title: Obx(() {
+//             final filteredCount = getFilteredLeads(controller).length;
+//             final totalCount = controller.items.length;
+//
+//             return Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 const Text(
+//                   "Leads",
+//                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+//                 ),
+//                 Text(
+//                   "$filteredCount of $totalCount leads",
+//                   style: const TextStyle(
+//                     fontSize: 12,
+//                     fontWeight: FontWeight.w400,
+//                   ),
+//                 ),
+//               ],
+//             );
+//           }),
+//           elevation: 0,
+//           backgroundColor: Colors.white,
+//           foregroundColor: Colors.black,
+//           bottom: PreferredSize(
+//             preferredSize: const Size.fromHeight(48.0),
+//             child: Padding(
+//               padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 10),
+//               child: Row(
+//                 children: [
+//                   Expanded(
+//                     child: Obx(
+//                       () => NesticoPeDropdownField(
+//                         value:
+//                             controller.selectedFilterStatus.value.isEmpty
+//                                 ? null
+//                                 : controller.selectedFilterStatus.value,
+//                         items:
+//                             ['All Status', ...controller.statusList]
+//                                 .map(
+//                                   (e) => DropdownMenuItem(
+//                                     value: e,
+//                                     child: Text(
+//                                       e,
+//                                       style: TextStyle(
+//                                         fontSize: 12,
+//                                         color: Colors.grey[800],
+//                                         fontWeight: FontWeight.w600,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 )
+//                                 .toList(),
+//                         onChanged: (value) {
+//                           if (value != null) {
+//                             controller.selectedFilterStatus.value = value;
+//                           }
+//                         },
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(width: 8),
+//                   Expanded(
+//                     child: Obx(
+//                       () => NesticoPeDropdownField(
+//                         value:
+//                             controller.selectedLeadType.value.isEmpty
+//                                 ? null
+//                                 : controller.selectedLeadType.value,
+//                         items:
+//                             controller.leadTypeList
+//                                 .map(
+//                                   (e) => DropdownMenuItem(
+//                                     value: e,
+//                                     child: Text(
+//                                       e,
+//                                       style: TextStyle(
+//                                         fontSize: 12,
+//                                         color: Colors.grey[800],
+//                                         fontWeight: FontWeight.w600,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 )
+//                                 .toList(),
+//                         onChanged: (value) {
+//                           if (value != null) {
+//                             controller.selectedLeadType.value = value;
+//                           }
+//                         },
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//         body: Obx(() {
+//           if (controller.isLoading.value) {
+//             return const Center(child: CircularProgressIndicator());
+//           }
+//
+//           final filteredLeads = getFilteredLeads(controller);
+//
+//           if (filteredLeads.isEmpty) {
+//             return const Center(
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Icon(Icons.search_off, size: 64, color: Colors.grey),
+//                   SizedBox(height: 16),
+//                   Text(
+//                     'No leads found',
+//                     style: TextStyle(
+//                       fontSize: 16,
+//                       color: Colors.grey,
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+//                   Text(
+//                     'Try adjusting your filters',
+//                     style: TextStyle(fontSize: 14, color: Colors.grey),
+//                   ),
+//                 ],
+//               ),
+//             );
+//           }
+//
+//           return NotificationListener<ScrollNotification>(
+//             onNotification: (scrollInfo) {
+//               if (!controller.isPaging.value &&
+//                   scrollInfo.metrics.pixels ==
+//                       scrollInfo.metrics.maxScrollExtent &&
+//                   controller.hasMore.value) {
+//                 controller.loadMore();
+//               }
+//               return false;
+//             },
+//             child: ListView.builder(
+//               padding: const EdgeInsets.all(16),
+//               itemCount: filteredLeads.length,
+//               itemBuilder: (context, index) {
+//                 final lead = filteredLeads[index];
+//
+//                 return LeadCard(lead: lead);
+//               },
+//             ),
+//           );
+//         }),
+//       ),
+//     );
+//   }
+// }
+//
+// class LeadCard extends StatelessWidget {
+//   final LeadItem lead;
+//
+//   const LeadCard({super.key, required this.lead});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     // Get or create controller for this specific lead
+//     final controller = Get.find<LeadController>();
+//
+//     return Container(
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(16),
+//         border: Border.all(color: Colors.grey[300]!),
+//         color: Colors.white,
+//       ),
+//       margin: const EdgeInsets.only(bottom: 10),
+//       padding: const EdgeInsets.all(12),
+//       child: GestureDetector(
+//         onTap: () {
+//           Get.bottomSheet(
+//             DraggableScrollableSheet(
+//               expand: false,
+//               initialChildSize: 0.6,
+//               minChildSize: 0.4,
+//               maxChildSize: 0.68,
+//               builder: (context, scrollController) {
+//                 return Container(
+//                   decoration: const BoxDecoration(
+//                     color: Colors.white,
+//                     borderRadius: BorderRadius.only(
+//                       topLeft: Radius.circular(16),
+//                       topRight: Radius.circular(16),
+//                     ),
+//                   ),
+//                   child: SingleChildScrollView(
+//                     controller: scrollController,
+//                     child: LeadDetailBottomSheet(
+//                       controller: controller,
+//                       leadData: lead,
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//             isScrollControlled: true,
+//             backgroundColor: Colors.transparent,
+//           );
+//         },
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Row(
+//               children: [
+//                 Expanded(
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text(
+//                         "${lead.name} >",
+//                         style: const TextStyle(
+//                           fontSize: 13,
+//                           color: Colors.black54,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                       const SizedBox(height: 10),
+//                       Row(
+//                         children: [
+//                           _buildChip(lead.status),
+//
+//                           const SizedBox(width: 4),
+//                           SizedBox(
+//                             height: 16,
+//                             child: const VerticalDivider(
+//                               thickness: 1,
+//                               color: Colors.black54,
+//                             ),
+//                           ),
+//                           const SizedBox(width: 4),
+//                           Text(
+//                             DateFormat('yyyy-MM-dd').format(lead.createdAt),
+//                             style: TextStyle(
+//                               fontSize: 12,
+//                               color: Colors.grey[600],
+//                               fontWeight: FontWeight.w500,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 Row(
+//                   children: [
+//                     _buildActionButton(
+//                       Icons.phone_outlined,
+//                       () => ContactHelper.openDialer(lead.phone),
+//                     ),
+//                     const SizedBox(width: 6),
+//                     _buildActionButton(
+//                       Icons.email_outlined,
+//                       () => ContactHelper.sendEmail(lead.email),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(height: 8),
+//             Text(
+//               lead.customFields?.title ?? "N/A",
+//               style: TextStyle(
+//                 fontSize: 12,
+//                 fontWeight: FontWeight.w600,
+//                 color: Colors.grey[600],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildActionButton(IconData icon, VoidCallback onTap) {
+//     return GestureDetector(
+//       onTap: onTap,
+//       child: Container(
+//         height: 40,
+//         width: 40,
+//         decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(8),
+//           color: ColorRes.primary.withOpacity(0.1),
+//         ),
+//         child: Icon(icon, color: ColorRes.primary),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildChip(String text) {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+//       decoration: BoxDecoration(
+//         color: Colors.grey.shade50,
+//         borderRadius: BorderRadius.circular(8),
+//         border: Border.all(color: Colors.grey.shade300),
+//       ),
+//       child: Text(
+//         text,
+//         style: const TextStyle(
+//           color: Colors.black54,
+//           fontSize: 12,
+//           fontWeight: FontWeight.w600,
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class LeadDetailBottomSheet extends StatelessWidget {
+//   final LeadController controller;
+//   final LeadItem leadData;
+//
+//   const LeadDetailBottomSheet({
+//     super.key,
+//     required this.controller,
+//     required this.leadData,
+//   });
+//
+//   void pickDateTime(BuildContext context, LeadController controller) async {
+//     final DateTime? pickedDate = await showDatePicker(
+//       context: context,
+//       initialDate: controller.selectedDate.value ?? DateTime.now(),
+//       firstDate: DateTime.now(),
+//       lastDate: DateTime(2100),
+//     );
+//
+//     if (pickedDate != null) {
+//       final TimeOfDay? pickedTime = await showTimePicker(
+//         context: context,
+//         initialTime: TimeOfDay.now(),
+//       );
+//
+//       if (pickedTime != null) {
+//         final DateTime fullDateTime = DateTime(
+//           pickedDate.year,
+//           pickedDate.month,
+//           pickedDate.day,
+//           pickedTime.hour,
+//           pickedTime.minute,
+//         );
+//
+//         controller.selectedDate.value = fullDateTime;
+//         controller.dateController.text = DateFormat(
+//           'dd MMM yyyy, hh:mm a',
+//         ).format(fullDateTime);
+//
+//         Get.snackbar(
+//           'Follow-up Scheduled',
+//           'Follow-up set for ${DateFormat('dd MMM yyyy, hh:mm a').format(fullDateTime)}',
+//           snackPosition: SnackPosition.BOTTOM,
+//           backgroundColor: Colors.green,
+//           colorText: Colors.white,
+//         );
+//       }
+//     }
+//   }
+//
+//   void _showNotesDialog(BuildContext context) {
+//     final TextEditingController notesController = TextEditingController();
+//     notesController.text = controller.notes.value;
+//
+//     Get.dialog(
+//       AlertDialog(
+//         backgroundColor: Colors.white,
+//         title: const Text('Edit Notes'),
+//         content: TextField(
+//           controller: notesController,
+//           maxLines: 5,
+//           decoration: const InputDecoration(
+//             hintText: 'Enter your notes here...',
+//             border: OutlineInputBorder(),
+//           ),
+//         ),
+//         actions: [
+//           TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+//           TextButton(
+//             onPressed: () {
+//               controller.notes.value = notesController.text;
+//               Get.back();
+//               Get.snackbar(
+//                 'Notes Updated',
+//                 'Lead notes have been updated',
+//                 snackPosition: SnackPosition.BOTTOM,
+//                 backgroundColor: Colors.green,
+//                 colorText: Colors.white,
+//               );
+//             },
+//             child: const Text('Save'),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: const BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.only(
+//           topLeft: Radius.circular(16),
+//           topRight: Radius.circular(16),
+//         ),
+//       ),
+//       padding: const EdgeInsets.all(16),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           // Handle bar
+//           Center(
+//             child: Container(
+//               width: 40,
+//               height: 4,
+//               margin: const EdgeInsets.only(bottom: 20),
+//               decoration: BoxDecoration(
+//                 color: Colors.grey[300],
+//                 borderRadius: BorderRadius.circular(2),
+//               ),
+//             ),
+//           ),
+//
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             children: [
+//               Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     leadData.name,
+//                     style: const TextStyle(
+//                       fontSize: 14,
+//                       color: Colors.black54,
+//                       fontWeight: FontWeight.w600,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 8),
+//                   Obx(
+//                     () => Text(
+//                       controller.selectedDate.value != null
+//                           ? DateFormat(
+//                             'dd MMM yyyy, hh:mm a',
+//                           ).format(controller.selectedDate.value!)
+//                           : "No follow-up set",
+//                       style: TextStyle(
+//                         fontSize: 12,
+//                         color:
+//                             controller.selectedDate.value != null
+//                                 ? Colors.black54
+//                                 : Colors.grey[400],
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//               Obx(
+//                 () => SizedBox(
+//                   width: MediaQuery.of(context).size.width * 0.33,
+//                   child: NesticoPeDropdownField(
+//                     value: controller.selectedStatus.value,
+//                     items:
+//                         controller.statusList.map((e) {
+//                           return DropdownMenuItem(
+//                             value: e,
+//                             child: Text(
+//                               e,
+//                               style: TextStyle(
+//                                 fontSize: 12,
+//                                 color: Colors.grey[800],
+//                                 fontWeight: FontWeight.w600,
+//                               ),
+//                             ),
+//                           );
+//                         }).toList(),
+//                     onChanged: (value) {
+//                       if (value != null) {
+//                         controller.selectedStatus.value = value;
+//                         // Get.snackbar(
+//                         //   'Status Updated',
+//                         //   'Lead status changed to $value',
+//                         //   snackPosition: SnackPosition.BOTTOM,
+//                         //   backgroundColor: Colors.blue,
+//                         //   colorText: Colors.white,
+//                         // );
+//                       }
+//                     },
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//
+//           const SizedBox(height: 16),
+//
+//           _buildTextWithIconAndButton(
+//             Icons.calendar_month,
+//             "Follow up",
+//             controller.selectedDate.value != null
+//                 ? "Update Date"
+//                 : "Set Date And Time",
+//             () => pickDateTime(context, controller),
+//           ),
+//
+//           const SizedBox(height: 12),
+//
+//           _buildTextWithIconAndButton(
+//             Icons.note_add,
+//             "Notes",
+//             "Edit",
+//             () => _showNotesDialog(context),
+//           ),
+//
+//           // Show notes if any
+//           Obx(() {
+//             if (controller.notes.value.isNotEmpty) {
+//               return Padding(
+//                 padding: const EdgeInsets.only(top: 8, left: 21),
+//                 child: Text(
+//                   controller.notes.value,
+//                   style: TextStyle(
+//                     fontSize: 11,
+//                     color: Colors.grey[600],
+//                     fontStyle: FontStyle.italic,
+//                   ),
+//                   maxLines: 3,
+//                   overflow: TextOverflow.ellipsis,
+//                 ),
+//               );
+//             }
+//             return const SizedBox.shrink();
+//           }),
+//
+//           const SizedBox(height: 12),
+//           const Divider(color: Colors.black12),
+//           const SizedBox(height: 12),
+//
+//           if (leadData.customFields?.title != null &&
+//               leadData.customFields!.title!.isNotEmpty) ...[
+//             _buildInfoRow("Property", leadData.customFields?.title ?? "N/A"),
+//             const SizedBox(height: 8),
+//           ],
+//
+//           if (leadData.customFields?.type != null &&
+//               leadData.customFields!.type!.isNotEmpty) ...[
+//             _buildInfoRow("Type", leadData.customFields?.type ?? "N/A"),
+//             const SizedBox(height: 8),
+//           ],
+//
+//           if (leadData.customFields?.propertyDetails?.financialInfo?.price !=
+//                   null &&
+//               leadData.customFields!.propertyDetails!.financialInfo!.price
+//                   .toString()
+//                   .isNotEmpty) ...[
+//             _buildInfoRow(
+//               "Price",
+//               Formatter.formatPrice(
+//                     leadData
+//                         .customFields!
+//                         .propertyDetails!
+//                         .financialInfo!
+//                         .price,
+//                   ) ??
+//                   "0",
+//             ),
+//             const SizedBox(height: 8),
+//           ],
+//
+//           if (leadData.customFields?.propertyDetails?.propertyBuiltUpArea !=
+//                   null &&
+//               leadData.customFields!.propertyDetails!.propertyBuiltUpArea!
+//                   .toString()
+//                   .isNotEmpty) ...[
+//             _buildInfoRow(
+//               "Area",
+//               "${leadData.customFields?.propertyDetails?.propertyBuiltUpArea.toString()} / sq.ft",
+//             ),
+//             const SizedBox(height: 12),
+//           ],
+//           const Divider(color: Colors.black12),
+//           const SizedBox(height: 12),
+//
+//           const Text(
+//             "Interested In: ",
+//             style: TextStyle(
+//               fontSize: 14,
+//               color: Colors.black54,
+//               fontWeight: FontWeight.w600,
+//             ),
+//           ),
+//
+//           const SizedBox(height: 12),
+//
+//           if (leadData.customFields != null) ...[
+//             _buildPropertyCard(leadData.customFields!),
+//           ],
+//
+//           const SizedBox(height: 16),
+//
+//           Row(
+//             children: [
+//               Expanded(
+//                 flex: 1,
+//                 child: ElevatedButton(
+//                   onPressed: () => ContactHelper.openWhatsApp(leadData.phone),
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: ColorRes.primary.withOpacity(0.1),
+//                     foregroundColor: ColorRes.primary,
+//                     shape: RoundedRectangleBorder(
+//                       side: BorderSide(color: ColorRes.primary),
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                   child: Center(child: Image.asset(IMGRes.whatsapp)),
+//                 ),
+//               ),
+//               const SizedBox(width: 12),
+//               Expanded(
+//                 flex: 3,
+//                 child: ElevatedButton(
+//                   onPressed: () => ContactHelper.sendEmail(leadData.email),
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: ColorRes.primary.withOpacity(0.1),
+//                     foregroundColor: ColorRes.primary,
+//                     shape: RoundedRectangleBorder(
+//                       side: BorderSide(color: ColorRes.primary),
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                   child: const Row(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Icon(Icons.mail_outline),
+//                       SizedBox(width: 6),
+//                       Text(
+//                         "Email",
+//                         style: TextStyle(
+//                           fontSize: 12,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(width: 12),
+//               Expanded(
+//                 flex: 2,
+//                 child: ElevatedButton(
+//                   onPressed: () => ContactHelper.openDialer(leadData.phone),
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: ColorRes.primary,
+//                     foregroundColor: ColorRes.white,
+//                     shape: RoundedRectangleBorder(
+//                       side: BorderSide(color: ColorRes.primary),
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                   child: const Row(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Icon(Icons.phone_outlined),
+//                       SizedBox(width: 6),
+//                       Text(
+//                         "Call",
+//                         style: TextStyle(
+//                           fontSize: 12,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//
+//           // Add some bottom padding for better UX
+//           const SizedBox(height: 20),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _buildTextWithIconAndButton(
+//     IconData icon,
+//     String text,
+//     String buttonText,
+//     VoidCallback onPressed,
+//   ) {
+//     return Row(
+//       children: [
+//         Icon(icon, color: ColorRes.primary, size: 15),
+//         const SizedBox(width: 6),
+//         Text(text, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+//         const SizedBox(width: 6),
+//         GestureDetector(
+//           onTap: onPressed,
+//           child: Text(
+//             buttonText,
+//             style: TextStyle(
+//               fontSize: 10,
+//               decoration: TextDecoration.underline,
+//               color: ColorRes.primary,
+//               decorationColor: ColorRes.primary,
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildInfoRow(String title, String value) {
+//     return Row(
+//       children: [
+//         Text(
+//           "$title: ",
+//           style: TextStyle(
+//             fontSize: 12,
+//             color: Colors.grey[600],
+//             fontWeight: FontWeight.w500,
+//           ),
+//         ),
+//         const SizedBox(width: 6),
+//         Expanded(
+//           child: Text(
+//             value,
+//             style: TextStyle(
+//               fontSize: 12,
+//               color: Colors.grey[800],
+//               fontWeight: FontWeight.w600,
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildPropertyCard(Items property) {
+//     return Container(
+//       height: 100,
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(12),
+//         border: Border.all(color: Colors.grey[300]!),
+//         color: Colors.white,
+//       ),
+//       child: Row(
+//         children: [
+//           Container(
+//             height: 100,
+//             width: 100,
+//             decoration: BoxDecoration(
+//               borderRadius: const BorderRadius.only(
+//                 topLeft: Radius.circular(12),
+//                 bottomLeft: Radius.circular(12),
+//               ),
+//               image: DecorationImage(
+//                 image:
+//                     property.propertyImages != null
+//                         ? NetworkImage(property.propertyImages!.first)
+//                         : AssetImage(IMGRes.home3),
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//           Expanded(
+//             child: Padding(
+//               padding: const EdgeInsets.all(8.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 mainAxisAlignment: MainAxisAlignment.start,
+//                 children: [
+//                   if (property.title != null) ...[
+//                     Text(
+//                       property.title!,
+//                       style: TextStyle(
+//                         fontSize: 11,
+//                         fontWeight: FontWeight.w600,
+//                         color: Colors.grey[800],
+//                       ),
+//                       maxLines: 2,
+//                       overflow: TextOverflow.ellipsis,
+//                     ),
+//                     const SizedBox(height: 4),
+//                   ],
+//                   Text(
+//                     property.address ?? '',
+//                     style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+//                     maxLines: 2,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                   const SizedBox(height: 8),
+//                   Row(
+//                     children: [
+//                       if (property.propertyDetails?.financialInfo?.price
+//                               .toString() !=
+//                           null) ...[
+//                         _buildChip(
+//                           Formatter.formatPrice(
+//                             property.propertyDetails!.financialInfo!.price,
+//                           ),
+//                         ),
+//                         const SizedBox(width: 4),
+//                       ],
+//                       if (property.propertyDetails?.propertyBuiltUpArea !=
+//                           null) ...[
+//                         _buildChip(
+//                           "${property.propertyDetails?.propertyBuiltUpArea.toString()} / sq.ft",
+//                         ),
+//                       ],
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _buildChip(String text) {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+//       decoration: BoxDecoration(
+//         color: Colors.grey.shade50,
+//         borderRadius: BorderRadius.circular(6),
+//         border: Border.all(color: Colors.grey.shade300),
+//       ),
+//       child: Text(
+//         text,
+//         style: const TextStyle(
+//           color: Colors.black54,
+//           fontSize: 9,
+//           fontWeight: FontWeight.w600,
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class LeadScreen extends StatelessWidget {
+//   const LeadScreen({super.key});
+//
+//   List<LeadItem> getFilteredLeads(LeadController controller, String status) {
+//     List<LeadItem> filteredLeads = List.from(controller.items);
+//
+//     // Always filter by the section's status
+//     filteredLeads =
+//         filteredLeads.where((lead) => lead.stage == status).toList();
+//
+//     // Apply global status filter (dropdown) if selected
+//     if (controller.selectedFilterStatus.value.isNotEmpty &&
+//         controller.selectedFilterStatus.value != 'All Status') {
+//       filteredLeads =
+//           filteredLeads
+//               .where(
+//                 (lead) =>
+//                     lead.stage == controller.selectedFilterStatus.value &&
+//                     lead.stage == status,
+//               ) // ensure it belongs to this section
+//               .toList();
+//     }
+//
+//     // Apply global lead type filter
+//     if (controller.selectedLeadType.value.isNotEmpty &&
+//         controller.selectedLeadType.value != 'All Leads') {
+//       if (controller.selectedLeadType.value == 'Residential') {
+//         filteredLeads =
+//             filteredLeads
+//                 .where((lead) => lead.customFields?.type == 'residential')
+//                 .toList();
+//       } else if (controller.selectedLeadType.value == 'Commercial') {
+//         filteredLeads =
+//             filteredLeads
+//                 .where((lead) => lead.customFields?.type == 'commercial')
+//                 .toList();
+//       }
+//     }
+//
+//     return filteredLeads;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final controller = Get.put(LeadController());
+//
+//     return SafeArea(
+//       top: false,
+//       child: Scaffold(
+//         appBar: AppBar(
+//           title: Text("Leads"),
+//           elevation: 0,
+//           backgroundColor: Colors.white,
+//           foregroundColor: Colors.black,
+//         ),
+//
+//         body: SingleChildScrollView(
+//           child: Column(
+//             children: [
+//               ...controller.statusList.map((status) {
+//                 return Padding(
+//                   padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
+//                   child: ExpandableTileConfig.card(
+//                     title: status.capitalize.toString(),
+//                     backgroundColor: Colors.transparent,
+//                     children: [
+//                       Obx(() {
+//                         if (controller.isLoading.value) {
+//                           return const Padding(
+//                             padding: EdgeInsets.all(16.0),
+//                             child: Center(child: CircularProgressIndicator()),
+//                           );
+//                         }
+//
+//                         final filteredLeads = getFilteredLeads(
+//                           controller,
+//                           status,
+//                         );
+//
+//                         if (filteredLeads.isEmpty) {
+//                           return const Padding(
+//                             padding: EdgeInsets.all(24.0),
+//                             child: Center(
+//                               child: Column(
+//                                 mainAxisAlignment: MainAxisAlignment.center,
+//                                 children: [
+//                                   Icon(
+//                                     Icons.search_off,
+//                                     size: 64,
+//                                     color: Colors.grey,
+//                                   ),
+//                                   SizedBox(height: 16),
+//                                   Text(
+//                                     'No leads found',
+//                                     style: TextStyle(
+//                                       fontSize: 16,
+//                                       color: Colors.grey,
+//                                       fontWeight: FontWeight.w500,
+//                                     ),
+//                                   ),
+//                                   SizedBox(height: 4),
+//                                   Text(
+//                                     'Try adjusting your filters',
+//                                     style: TextStyle(
+//                                       fontSize: 14,
+//                                       color: Colors.grey,
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                           );
+//                         }
+//
+//                         return NotificationListener<ScrollNotification>(
+//                           onNotification: (scrollInfo) {
+//                             if (!controller.isPaging.value &&
+//                                 scrollInfo.metrics.pixels ==
+//                                     scrollInfo.metrics.maxScrollExtent &&
+//                                 controller.hasMore.value) {
+//                               controller
+//                                   .loadMore(); // load more for this status
+//                             }
+//                             return false;
+//                           },
+//                           child: ListView.builder(
+//                             shrinkWrap:
+//                                 true, // 🔑 makes it fit inside expandable
+//                             physics:
+//                                 const NeverScrollableScrollPhysics(), // avoid nested scroll
+//                             padding: const EdgeInsets.symmetric(
+//                               horizontal: 12,
+//                               vertical: 8,
+//                             ),
+//                             itemCount: filteredLeads.length,
+//                             itemBuilder: (context, index) {
+//                               final lead = filteredLeads[index];
+//                               return LeadCard(lead: lead);
+//                             },
+//                           ),
+//                         );
+//                       }),
+//                     ],
+//                   ),
+//                 );
+//               }).toList(),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class LeadScreen extends StatelessWidget {
   const LeadScreen({super.key});
 
-  List<LeadItem> getFilteredLeads(LeadController controller) {
-    List<LeadItem> filteredLeads = List.from(controller.items);
+  List<LeadItem> getFilteredLeads(LeadController controller, String status) {
+    // return controller.items.where((lead) => lead.status == status).toList();
 
-    // Filter by status
-    if (controller.selectedFilterStatus.value.isNotEmpty &&
-        controller.selectedFilterStatus.value != 'All Status') {
-      filteredLeads = filteredLeads
-          .where((lead) => lead.stage == controller.selectedFilterStatus.value)
-          .toList();
+    if (controller.selectedFilterType.value == "source") {
+      return controller.items.where((lead) => lead.source == status).toList();
+    } else if (controller.selectedFilterType.value == "status") {
+      return controller.items.where((lead) => lead.status == status).toList();
+    } else if (controller.selectedFilterType.value == "stage") {
+      return controller.items.where((lead) => lead.stage == status).toList();
+    } else {
+      return [];
     }
+  }
 
-    // Filter by lead type (property type)
-    if (controller.selectedLeadType.value.isNotEmpty &&
-        controller.selectedLeadType.value != 'All Leads') {
-      if (controller.selectedLeadType.value == 'Residential') {
-        filteredLeads = filteredLeads
-            .where((lead) => lead.customFields?.type! == 'residential')
-            .toList();
-      } else if (controller.selectedLeadType.value == 'Commercial') {
-        filteredLeads = filteredLeads
-            .where((lead) => lead.customFields?.type! == 'commercial')
-            .toList();
-      }
+  List<String> getFilterList(LeadController controller) {
+    if (controller.selectedFilterType.value == "source") {
+      return controller.sourceList;
+    } else if (controller.selectedFilterType.value == "status") {
+      return controller.statusList;
+    } else if (controller.selectedFilterType.value == "stage") {
+      return controller.stageList;
+    } else {
+      return ["none"];
     }
-
-    return filteredLeads;
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(LeadController());
+    final controller = Get.put(LeadController()); // Use Get.put at app entry
+
+    // return SafeArea(
+    //   top: false,
+    //   child: Scaffold(
+    //     appBar: AppBar(
+    //       title: const Text("Leads"),
+    //       elevation: 0,
+    //       backgroundColor: Colors.white,
+    //       foregroundColor: Colors.black,
+    //       bottom: PreferredSize(
+    //         preferredSize: const Size.fromHeight(48.0),
+    //         child: Padding(
+    //           padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 10),
+    //           child: Row(
+    //             children: [
+    //               Expanded(
+    //                 child: Obx(
+    //                   () => NesticoPeDropdownField(
+    //                     value:
+    //                         controller.selectedFilterType.value.isEmpty
+    //                             ? null
+    //                             : controller.selectedFilterType.value,
+    //                     items:
+    //                         controller.filterType
+    //                             .map(
+    //                               (e) => DropdownMenuItem(
+    //                                 value: e,
+    //                                 child: Text(
+    //                                   e,
+    //                                   style: TextStyle(
+    //                                     fontSize: 14,
+    //                                     color: Colors.grey[800],
+    //                                     fontWeight: FontWeight.w700,
+    //                                   ),
+    //                                 ),
+    //                               ),
+    //                             )
+    //                             .toList(),
+    //                     onChanged: (value) {
+    //                       if (value != null) {
+    //                         controller.selectedFilterType.value = value;
+    //                       }
+    //                     },
+    //                   ),
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //
+    //     body: RefreshIndicator(
+    //       onRefresh: () async => await controller.refreshList(),
+    //       child: Obx(() {
+    //         if (controller.isLoading.value && controller.items.isEmpty) {
+    //           return const Center(child: CircularProgressIndicator());
+    //         }
+    //
+    //         return SingleChildScrollView(
+    //           physics: const AlwaysScrollableScrollPhysics(),
+    //           child: Column(
+    //             children: [
+    //               ...getFilterList(controller).map((status) {
+    //                 return Padding(
+    //                   padding: const EdgeInsets.only(
+    //                     top: 8.0,
+    //                     left: 12,
+    //                     right: 12,
+    //                   ),
+    //                   child: ExpandableTileConfig.card(
+    //                     title: status.capitalize.toString(),
+    //                     backgroundColor: Colors.transparent,
+    //                     children: [
+    //                       Obx(() {
+    //                         controller.filters.value = {
+    //                           '${controller.selectedFilterType}': '${status}',
+    //                         };
+    //                         final filteredLeads = getFilteredLeads(
+    //                           controller,
+    //                           status,
+    //                         );
+    //
+    //                         if (filteredLeads.isEmpty) {
+    //                           return const Padding(
+    //                             padding: EdgeInsets.all(24.0),
+    //                             child: Center(
+    //                               child: Column(
+    //                                 mainAxisAlignment: MainAxisAlignment.center,
+    //                                 children: [
+    //                                   Icon(
+    //                                     Icons.search_off,
+    //                                     size: 64,
+    //                                     color: Colors.grey,
+    //                                   ),
+    //                                   SizedBox(height: 16),
+    //                                   Text(
+    //                                     'No leads found',
+    //                                     style: TextStyle(
+    //                                       fontSize: 16,
+    //                                       color: Colors.grey,
+    //                                       fontWeight: FontWeight.w500,
+    //                                     ),
+    //                                   ),
+    //                                   SizedBox(height: 4),
+    //                                   Text(
+    //                                     'Try adjusting your filters',
+    //                                     style: TextStyle(
+    //                                       fontSize: 14,
+    //                                       color: Colors.grey,
+    //                                     ),
+    //                                   ),
+    //                                 ],
+    //                               ),
+    //                             ),
+    //                           );
+    //                         }
+    //
+    //                         return NotificationListener<ScrollNotification>(
+    //                           onNotification: (scrollInfo) {
+    //                             if (scrollInfo is ScrollUpdateNotification) {
+    //                               final threshold = 100.0;
+    //                               if (!controller.isPaging.value &&
+    //                                   controller.hasMore.value &&
+    //                                   scrollInfo.metrics.pixels >
+    //                                       scrollInfo.metrics.maxScrollExtent -
+    //                                           threshold) {
+    //                                 controller.loadMore();
+    //                               }
+    //                             }
+    //                             return false; // allow other notifications to continue
+    //                           },
+    //                           child: ListView.builder(
+    //                             shrinkWrap: true,
+    //                             physics:
+    //                                 const NeverScrollableScrollPhysics(), // embed
+    //                             padding: const EdgeInsets.symmetric(
+    //                               horizontal: 12,
+    //                               vertical: 8,
+    //                             ),
+    //                             itemCount:
+    //                                 filteredLeads.length +
+    //                                 (controller.isPaging.value ? 1 : 0),
+    //                             itemBuilder: (context, index) {
+    //                               if (index == filteredLeads.length) {
+    //                                 return const Padding(
+    //                                   padding: EdgeInsets.all(16.0),
+    //                                   child: Center(
+    //                                     child: CircularProgressIndicator(),
+    //                                   ),
+    //                                 );
+    //                               }
+    //                               final lead = filteredLeads[index];
+    //                               return LeadCard(lead: lead);
+    //                             },
+    //                           ),
+    //                         );
+    //                       }),
+    //                     ],
+    //                   ),
+    //                 );
+    //               }),
+    //             ],
+    //           ),
+    //         );
+    //       }),
+    //     ),
+    //   ),
+    // );
 
     return SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: Obx(() {
-            final filteredCount = getFilteredLeads(controller).length;
-            final totalCount = controller.items.length;
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Leads",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                ),
-                Text(
-                  "$filteredCount of $totalCount leads",
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            );
-          }),
+          title: const Text("Leads"),
           elevation: 0,
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48.0),
             child: Padding(
-              padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 10),
+              padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 10),
               child: Row(
                 children: [
+                  // Expanded(flex: 2, child: SizedBox()),
                   Expanded(
+                    flex: 1,
+                    // child: Obx(
+                    //   () => NesticoPeDropdownField(
+                    //     value:
+                    //         controller.selectedFilterType.value.isEmpty
+                    //             ? null
+                    //             : controller.selectedFilterType.value,
+                    //     items:
+                    //         controller.filterType
+                    //             .map(
+                    //               (e) => DropdownMenuItem(
+                    //                 value: e,
+                    //                 child: Text(
+                    //                   e,
+                    //                   style: TextStyle(
+                    //                     fontSize: 14,
+                    //                     color: Colors.grey[800],
+                    //                     fontWeight: FontWeight.w700,
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //             )
+                    //             .toList(),
+                    //     onChanged: (value) {
+                    //       if (value != null) {
+                    //         controller.selectedFilterType.value = value;
+                    //       }
+                    //     },
+                    //   ),
+                    // ),
                     child: Obx(
-                      () => NesticoPeDropdownField(
-                        value:
-                        controller.selectedFilterStatus.value.isEmpty
-                                ? null
-                                : controller.selectedFilterStatus.value,
-                        items:
-                            ['All Status', ...controller.statusList]
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(
-                                      e,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[800],
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                      () => Wrap(
+                        spacing: 8,
+                        runSpacing: 6,
+                        children:
+                            controller.filterType.map((filter) {
+                              final isSelected =
+                                  controller.selectedFilterType.value == filter;
+
+                              return ChoiceChip(
+                                label: Text(
+                                  filter,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color:
+                                        isSelected
+                                            ? Colors.white
+                                            : Colors.grey[800],
                                   ),
-                                )
-                                .toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.selectedFilterStatus.value = value;
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Obx(
-                      () => NesticoPeDropdownField(
-                        value:
-                            controller.selectedLeadType.value.isEmpty
-                                ? null
-                                : controller.selectedLeadType.value,
-                        items:
-                        controller.leadTypeList
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(
-                                      e,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[800],
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.selectedLeadType.value = value;
-                          }
-                        },
+                                ),
+                                selected: isSelected,
+                                selectedColor: ColorRes.primary,
+                                backgroundColor: Colors.transparent,
+                                checkmarkColor: ColorRes.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                onSelected: (_) {
+                                  controller.selectedFilterType.value = filter;
+                                },
+                              );
+                            }).toList(),
                       ),
                     ),
                   ),
@@ -1551,74 +2747,162 @@ class LeadScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: Obx(() {
-          if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final filteredLeads = getFilteredLeads(controller);
-
-          if (filteredLeads.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search_off, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    'No leads found',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    'Try adjusting your filters',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return NotificationListener<ScrollNotification>(
-            onNotification: (scrollInfo) {
-              if (!controller.isPaging.value &&
-                  scrollInfo.metrics.pixels ==
-                      scrollInfo.metrics.maxScrollExtent &&
-                  controller.hasMore.value) {
-                controller.loadMore();
+        body: RefreshIndicator(
+          onRefresh: () async => await controller.refreshList(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Obx(() {
+              if (controller.isLoading.value && controller.items.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
               }
-              return false;
-            },
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: filteredLeads.length,
-              itemBuilder: (context, index) {
-                final lead = filteredLeads[index];
 
-                return LeadCard(
-                  lead: lead,
+              return Column(
+                children:
+                    getFilterList(controller).map((status) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8,
+                          left: 12,
+                          right: 12,
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: ColorRes.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.grey[200]!),
+                          ),
+                          child: NesticoPeExpandableTile(
+                            title: status.capitalize.toString(),
+                            expandedBackgroundColor: ColorRes.white,
+                            borderRadius: BorderRadius.circular(12),
+                            trailingIcon: Icons.keyboard_arrow_down_outlined,
+                            // border: Border.all(color: Colors.grey.shade300),
+                            onTap: () {
+                              controller.filters.value = {
+                                controller.selectedFilterType.value: status,
+                              };
+                              controller.loadMore();
+                            },
+                            onExpansionChanged: (value) {
+                              if (value) {
+                                controller.filters.value = {
+                                  controller.selectedFilterType.value: status,
+                                };
+                              }
+                            },
+                            initiallyExpanded: false,
+                            backgroundColor: Colors.white,
+                            children: [
+                              Obx(() {
+                                // Apply filter for this tile
 
-                );
-              },
-            ),
-          );
-        }),
+                                final filteredLeads = getFilteredLeads(
+                                  controller,
+                                  status,
+                                );
+
+                                if (filteredLeads.isEmpty &&
+                                    !controller.isLoading.value) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(24.0),
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.search_off,
+                                            size: 64,
+                                            color: Colors.grey,
+                                          ),
+                                          SizedBox(height: 16),
+                                          Text(
+                                            'No leads found',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            'Try adjusting your filters',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                // Fixed height ListView for inner scroll
+                                return SizedBox(
+                                  height: 300, // adjust as needed
+                                  child: NotificationListener<
+                                    ScrollNotification
+                                  >(
+                                    onNotification: (scrollInfo) {
+                                      if (scrollInfo
+                                          is ScrollUpdateNotification) {
+                                        final threshold = 100.0;
+                                        if (!controller.isPaging.value &&
+                                            controller.hasMore.value &&
+                                            scrollInfo.metrics.pixels >
+                                                scrollInfo
+                                                        .metrics
+                                                        .maxScrollExtent -
+                                                    threshold) {
+                                          controller.loadMore();
+                                        }
+                                      }
+                                      return false;
+                                    },
+                                    child: ListView.builder(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      itemCount:
+                                          filteredLeads.length +
+                                          (controller.isPaging.value ? 1 : 0),
+                                      itemBuilder: (context, index) {
+                                        if (index == filteredLeads.length) {
+                                          return const Padding(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          );
+                                        }
+                                        final lead = filteredLeads[index];
+                                        return LeadCard(lead: lead);
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+              );
+            }),
+          ),
+        ),
       ),
     );
   }
 }
 
-
 class LeadCard extends StatelessWidget {
   final LeadItem lead;
 
-  const LeadCard({
-    super.key, required this.lead,
-
-  });
+  const LeadCard({super.key, required this.lead});
 
   @override
   Widget build(BuildContext context) {
@@ -1684,8 +2968,7 @@ class LeadCard extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          _buildChip(lead.status
-                            ),
+                          _buildChip(lead.status),
 
                           const SizedBox(width: 4),
                           SizedBox(
@@ -1718,7 +3001,7 @@ class LeadCard extends StatelessWidget {
                     const SizedBox(width: 6),
                     _buildActionButton(
                       Icons.email_outlined,
-                      () => ContactHelper.sendEmail(lead.email,),
+                      () => ContactHelper.sendEmail(lead.email),
                     ),
                   ],
                 ),
@@ -1754,8 +3037,6 @@ class LeadCard extends StatelessWidget {
     );
   }
 
-
-
   Widget _buildChip(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -1782,8 +3063,8 @@ class LeadDetailBottomSheet extends StatelessWidget {
 
   const LeadDetailBottomSheet({
     super.key,
-    required this.controller, required this.leadData,
-
+    required this.controller,
+    required this.leadData,
   });
 
   void pickDateTime(BuildContext context, LeadController controller) async {
@@ -2004,23 +3285,46 @@ class LeadDetailBottomSheet extends StatelessWidget {
           const Divider(color: Colors.black12),
           const SizedBox(height: 12),
 
-          if(leadData.customFields?.title != null &&leadData.customFields!.title!.isNotEmpty)...[
+          if (leadData.customFields?.title != null &&
+              leadData.customFields!.title!.isNotEmpty) ...[
             _buildInfoRow("Property", leadData.customFields?.title ?? "N/A"),
             const SizedBox(height: 8),
           ],
 
-          if(leadData.customFields?.type != null &&leadData.customFields!.type!.isNotEmpty)...[
+          if (leadData.customFields?.type != null &&
+              leadData.customFields!.type!.isNotEmpty) ...[
             _buildInfoRow("Type", leadData.customFields?.type ?? "N/A"),
             const SizedBox(height: 8),
           ],
 
-          if(leadData.customFields?.propertyDetails?.financialInfo?.price != null &&leadData.customFields!.propertyDetails!.financialInfo!.price.toString().isNotEmpty)...[
-            _buildInfoRow("Price", Formatter.formatPrice(leadData.customFields!.propertyDetails!.financialInfo!.price) ?? "0"),
+          if (leadData.customFields?.propertyDetails?.financialInfo?.price !=
+                  null &&
+              leadData.customFields!.propertyDetails!.financialInfo!.price
+                  .toString()
+                  .isNotEmpty) ...[
+            _buildInfoRow(
+              "Price",
+              Formatter.formatPrice(
+                    leadData
+                        .customFields!
+                        .propertyDetails!
+                        .financialInfo!
+                        .price,
+                  ) ??
+                  "0",
+            ),
             const SizedBox(height: 8),
           ],
 
-          if(leadData.customFields?.propertyDetails?.propertyBuiltUpArea != null &&leadData.customFields!.propertyDetails!.propertyBuiltUpArea!.toString().isNotEmpty)...[
-            _buildInfoRow("Area", "${leadData.customFields?.propertyDetails?.propertyBuiltUpArea.toString()} / sq.ft"),
+          if (leadData.customFields?.propertyDetails?.propertyBuiltUpArea !=
+                  null &&
+              leadData.customFields!.propertyDetails!.propertyBuiltUpArea!
+                  .toString()
+                  .isNotEmpty) ...[
+            _buildInfoRow(
+              "Area",
+              "${leadData.customFields?.propertyDetails?.propertyBuiltUpArea.toString()} / sq.ft",
+            ),
             const SizedBox(height: 12),
           ],
           const Divider(color: Colors.black12),
@@ -2037,7 +3341,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          if(leadData.customFields != null)...[
+          if (leadData.customFields != null) ...[
             _buildPropertyCard(leadData.customFields!),
           ],
 
@@ -2048,7 +3352,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: ElevatedButton(
-                  onPressed: () =>ContactHelper.openWhatsApp(leadData.phone,),
+                  onPressed: () => ContactHelper.openWhatsApp(leadData.phone),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorRes.primary.withOpacity(0.1),
                     foregroundColor: ColorRes.primary,
@@ -2057,7 +3361,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child:  Center(child: Image.asset(IMGRes.whatsapp)),
+                  child: Center(child: Image.asset(IMGRes.whatsapp)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -2127,7 +3431,6 @@ class LeadDetailBottomSheet extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildTextWithIconAndButton(
     IconData icon,
@@ -2202,7 +3505,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
                 bottomLeft: Radius.circular(12),
               ),
               image: DecorationImage(
-                image: property.propertyImages != null ? NetworkImage(property.propertyImages!.first,) : AssetImage(IMGRes.home3),
+                image:
+                    property.propertyImages != null
+                        ? NetworkImage(property.propertyImages!.first)
+                        : AssetImage(IMGRes.home3),
                 fit: BoxFit.cover,
               ),
             ),
@@ -2214,7 +3520,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if(property.title != null)...[
+                  if (property.title != null) ...[
                     Text(
                       property.title!,
                       style: TextStyle(
@@ -2236,13 +3542,22 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      if(property.propertyDetails?.financialInfo?.price.toString() != null )...[
-                        _buildChip(Formatter.formatPrice(property.propertyDetails!.financialInfo!.price)),
+                      if (property.propertyDetails?.financialInfo?.price
+                              .toString() !=
+                          null) ...[
+                        _buildChip(
+                          Formatter.formatPrice(
+                            property.propertyDetails!.financialInfo!.price,
+                          ),
+                        ),
                         const SizedBox(width: 4),
                       ],
-                      if(property.propertyDetails?.propertyBuiltUpArea != null)...[
-                        _buildChip("${property.propertyDetails?.propertyBuiltUpArea.toString()} / sq.ft"),
-                      ]
+                      if (property.propertyDetails?.propertyBuiltUpArea !=
+                          null) ...[
+                        _buildChip(
+                          "${property.propertyDetails?.propertyBuiltUpArea.toString()} / sq.ft",
+                        ),
+                      ],
                     ],
                   ),
                 ],

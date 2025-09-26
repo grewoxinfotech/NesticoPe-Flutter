@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +8,7 @@ import '../../../modules/seller/module/lead_screen/model/lead_model.dart';
 
 class LeadService {
   final String baseUrl = "${ApiConstants.leads}";
+  var isInitialLoaded = false.obs;
 
   /// Common headers
   static Future<Map<String, String>> headersWithoutToken() async {
@@ -23,12 +25,22 @@ class LeadService {
     Map<String, String>? filters,
   }) async {
     try {
-      final queryParameters = {
-        'page': page.toString(),
-        if (filters != null) ...filters,
-      };
+      Map<String, String> queryParameters;
+
+      if (page == 1) {
+        // First page: ignore filters
+        queryParameters = {
+          'page': page.toString(),
+          // if (filters != null) ...filters,
+        };
+      } else {
+        // Subsequent pages: include filters if any
+
+        queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
+      }
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+      print("Leads API URL: $uri");
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
@@ -37,7 +49,7 @@ class LeadService {
 
         return PaginationResponse<LeadItem>.fromJson(
           data,
-              (json) => LeadItem.fromJson(json),
+          (json) => LeadItem.fromJson(json),
         );
       } else {
         print("Failed to load leads: ${response.statusCode}");

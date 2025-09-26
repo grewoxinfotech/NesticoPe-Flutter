@@ -116,6 +116,201 @@
 //   }
 // }
 
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
+// import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+//
+// import '../../../../../data/network/lead/lead_service.dart';
+// import '../model/lead_model.dart';
+//
+// class LeadController extends PaginatedController<LeadItem> {
+//   final LeadService _service = LeadService();
+//
+//   // --- Form Controllers ---
+//   final formKey = GlobalKey<FormState>();
+//   final TextEditingController nameController = TextEditingController();
+//   final TextEditingController phoneController = TextEditingController();
+//   final TextEditingController emailController = TextEditingController();
+//   final TextEditingController notesController = TextEditingController();
+//   final TextEditingController dateController = TextEditingController();
+//
+//   // --- Lead Status & Type Lists ---
+//   final List<String> statusList = [
+//     'new',
+//     'contacted',
+//     'qualified',
+//     'negotiation',
+//     'lost',
+//     'converted',
+//   ];
+//   final List<String> leadTypeList = ["All Leads", "Residential", "Commercial"];
+//
+//   // --- Reactive Fields ---
+//   RxString selectedFilterStatus = 'All Status'.obs;
+//   RxString selectedStatus = 'New Lead'.obs;
+//   RxString selectedLeadType = 'All Leads'.obs;
+//   Rxn<DateTime> selectedDate = Rxn<DateTime>();
+//   RxString notes = ''.obs;
+//
+//   // --- Optional filters for API ---
+//   Map<String, String>? filters;
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     loadVariables();
+//     loadInitial(); // Load first page of leads automatically
+//   }
+//
+//   @override
+//   void onClose() {
+//     nameController.dispose();
+//     phoneController.dispose();
+//     emailController.dispose();
+//     notesController.dispose();
+//     dateController.dispose();
+//     super.onClose();
+//   }
+//
+//   // --- Pagination Fetch ---
+//   @override
+//   Future<PaginationResponse<LeadItem>> fetchItems(int page) async {
+//     try {
+//       final response = await _service.fetchLeads(page: page, filters: filters);
+//       print("Fetched leads: ${response.items.length}");
+//       return response;
+//     } catch (e) {
+//       print("Exception in fetchItems: $e");
+//       rethrow;
+//     }
+//   }
+//
+//   // --- CRUD Methods ---
+//   Future<bool> createLead(LeadItem lead) async {
+//     try {
+//       final success = await _service.createLead(lead);
+//       if (success) await loadInitial();
+//       return success;
+//     } catch (e) {
+//       print("Create lead error: $e");
+//       return false;
+//     }
+//   }
+//
+//   Future<bool> updateLead(String id, LeadItem updatedLead) async {
+//     try {
+//       final success = await _service.updateLead(id, updatedLead);
+//       if (success) {
+//         int index = items.indexWhere((item) => item.id == id);
+//         if (index != -1) {
+//           items[index] = updatedLead;
+//           items.refresh();
+//         }
+//       }
+//       return success;
+//     } catch (e) {
+//       print("Update lead error: $e");
+//       return false;
+//     }
+//   }
+//
+//   Future<bool> deleteLead(String id) async {
+//     try {
+//       final success = await _service.deleteLead(id);
+//       if (success) items.removeWhere((item) => item.id == id);
+//       return success;
+//     } catch (e) {
+//       print("Delete lead error: $e");
+//       return false;
+//     }
+//   }
+//
+//   // --- Filters ---
+//   Future<void> applyFilters(Map<String, String> newFilters) async {
+//     filters = newFilters;
+//     await refreshList();
+//   }
+//
+//   void loadVariables() {
+//     selectedFilterStatus.value = 'All Status';
+//     selectedLeadType.value = leadTypeList.first;
+//     selectedStatus.value = statusList.first;
+//     dateController.text = "";
+//     selectedDate.value = null;
+//     notes.value = '';
+//   }
+//
+//   // --- Lead Management Helpers ---
+//   void updateStatus(String newStatus) {
+//     if (statusList.contains(newStatus)) {
+//       selectedStatus.value = newStatus;
+//     }
+//   }
+//
+//   void updateLeadType(String newType) {
+//     if (leadTypeList.contains(newType)) {
+//       selectedLeadType.value = newType;
+//     }
+//   }
+//
+//   void setFollowUpDateTime(DateTime dateTime) {
+//     selectedDate.value = dateTime;
+//     dateController.text = dateTime.toString();
+//   }
+//
+//   void clearFollowUpDate() {
+//     selectedDate.value = null;
+//     dateController.text = "";
+//   }
+//
+//   void updateNotes(String newNotes) {
+//     notes.value = newNotes;
+//     notesController.text = newNotes;
+//   }
+//
+//   void clearNotes() {
+//     notes.value = '';
+//     notesController.clear();
+//   }
+//
+//   void resetFilters() {
+//     selectedFilterStatus.value = statusList.first;
+//     selectedLeadType.value = leadTypeList.first;
+//   }
+//
+//   bool hasUpcomingFollowUp() {
+//     if (selectedDate.value == null) return false;
+//     return selectedDate.value!.isAfter(DateTime.now());
+//   }
+//
+//   bool isFollowUpOverdue() {
+//     if (selectedDate.value == null) return false;
+//     return selectedDate.value!.isBefore(DateTime.now());
+//   }
+//
+//   String getFormattedFollowUpDate() {
+//     if (selectedDate.value == null) return "No follow-up set";
+//     return dateController.text;
+//   }
+//
+//   bool isValid() {
+//     return selectedStatus.value.isNotEmpty && nameController.text.isNotEmpty;
+//   }
+//
+//   // --- Reset Form ---
+//   void resetForm() {
+//     nameController.clear();
+//     phoneController.clear();
+//     emailController.clear();
+//     notesController.clear();
+//     dateController.clear();
+//     notes.value = '';
+//     selectedDate.value = null;
+//     selectedStatus.value = statusList.first;
+//     selectedLeadType.value = leadTypeList.first;
+//   }
+// }
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -138,16 +333,34 @@ class LeadController extends PaginatedController<LeadItem> {
 
   // --- Lead Status & Type Lists ---
   final List<String> statusList = [
-    'Interested',
-    'New Lead',
-    'Contacted',
-    'Follow Up',
-    'Site Visit',
-    'Negotiation',
-    'Closed',
-    'Lost',
+    'new',
+    'contacted',
+    'qualified',
+    'negotiation',
+    'lost',
+    'converted',
   ];
   final List<String> leadTypeList = ["All Leads", "Residential", "Commercial"];
+
+  final List<String> filterType = ["source", "status", "stage"];
+  final List<String> sourceList = [
+    'app',
+    'website',
+    'referral',
+    'social_media',
+    'direct',
+    'other',
+  ];
+  final List<String> stageList = [
+    'new_lead',
+    'contacted',
+    'interested',
+    'site_visit',
+    'sell',
+  ];
+  final RxString selectedFilterType = RxString("status");
+
+  var selectedFilterValue = "".obs;
 
   // --- Reactive Fields ---
   RxString selectedFilterStatus = 'All Status'.obs;
@@ -157,7 +370,7 @@ class LeadController extends PaginatedController<LeadItem> {
   RxString notes = ''.obs;
 
   // --- Optional filters for API ---
-  Map<String, String>? filters;
+  RxMap<String, String> filters = <String, String>{}.obs;
 
   @override
   void onInit() {
@@ -180,7 +393,10 @@ class LeadController extends PaginatedController<LeadItem> {
   @override
   Future<PaginationResponse<LeadItem>> fetchItems(int page) async {
     try {
-      final response = await _service.fetchLeads(page: page, filters: filters);
+      final response = await _service.fetchLeads(
+        page: page,
+        filters: filters.value,
+      );
       print("Fetched leads: ${response.items.length}");
       return response;
     } catch (e) {
@@ -231,7 +447,7 @@ class LeadController extends PaginatedController<LeadItem> {
 
   // --- Filters ---
   Future<void> applyFilters(Map<String, String> newFilters) async {
-    filters = newFilters;
+    filters.value = newFilters;
     await refreshList();
   }
 
