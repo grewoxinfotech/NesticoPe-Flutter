@@ -180,10 +180,10 @@ class AuthController extends GetxController {
             phone: phone,
             token: token,
             verifyOTPFor: VerifyOTPFor.sellerRegister,
-            // isPasswordReset: false,
             redirectAfterOtp: CreatePropertyScreen(
               sellerType:
                   sellerType == "owner" ? SellerType.owner : SellerType.builder,
+              isLogin: true,
             ),
           ),
         );
@@ -247,8 +247,12 @@ class AuthController extends GetxController {
       isLoading.value = true;
       final data = await authService.verifyOtpSellerRegister(otp, token);
       // await SecureStorage.saveToken(user.token!);
-      // await SecureStorage.saveUserData(user);
-      // await SecureStorage.saveToken(data);
+      final user = await SecureStorage.getUserData();
+      if (user != null) {
+        user.user!.userType = "seller";
+        await SecureStorage.saveUserData(user);
+      }
+      await SecureStorage.saveToken(data);
       // await SecureStorage.saveLoggedIn(true);
 
       authState.value = AuthState.authenticated;

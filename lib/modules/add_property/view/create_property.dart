@@ -20,14 +20,25 @@ import 'package:housing_flutter_app/modules/search_property/model/search_model.d
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
 import '../../../data/network/auth/model/user_model.dart';
+import '../../auth/controllers/auth_controller.dart';
 
 class CreatePropertyScreen extends StatelessWidget {
   final SellerType sellerType;
-  const CreatePropertyScreen({super.key, required this.sellerType});
+  final bool isLogin;
+  const CreatePropertyScreen({
+    super.key,
+    required this.sellerType,
+    this.isLogin = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CreatePropertyController());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isLogin) {
+        controller.isLogin.value = isLogin;
+      }
+    });
 
     // Add form keys for each step
     final List<GlobalKey<FormState>> formKeys = List.generate(
@@ -149,146 +160,146 @@ class CreatePropertyScreen extends StatelessWidget {
                                     topRight: Radius.circular(28),
                                   ),
                                 ),
-                                child: Obx(
-                                  () => Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
 
-                                    children: [
-                                      // Tabs
-                                      Obx(
-                                        () => SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: StepChipsRow(
-                                            selectedIndex:
-                                                controller
-                                                    .stepperSelectedIndex
-                                                    .value,
-                                            steps: controller.stepsList,
-                                          ),
+                                  children: [
+                                    // Tabs
+                                    Obx(
+                                      () => SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: StepChipsRow(
+                                          selectedIndex:
+                                              controller
+                                                  .stepperSelectedIndex
+                                                  .value,
+                                          steps: controller.stepsList,
                                         ),
                                       ),
+                                    ),
 
-                                      Expanded(
-                                        child: Obx(() {
-                                          final step = controller.stepperSelectedIndex.value;
-                                          // Pass formKey to each step widget
-                                          if (step == 0) {
-                                            return BasicDetail(
-                                              controller: controller,
-                                              formKey: formKeys[0], // Pass formKey
-                                            );
+                                    Expanded(
+                                      child: Obx(() {
+                                        final step =
+                                            controller
+                                                .stepperSelectedIndex
+                                                .value;
+                                        // Pass formKey to each step widget
+                                        if (step == 0) {
+                                          return BasicDetail(
+                                            controller: controller,
+                                            formKey:
+                                                formKeys[0], // Pass formKey
+                                          );
+                                        }
+                                        if (controller.lookingTo.value ==
+                                            'PG/Co-Living') {
+                                          switch (step) {
+                                            case 1:
+                                              return PostProperty(
+                                                controller: controller,
+                                                formKey: formKeys[1],
+                                              );
+                                            case 2:
+                                              return RoomDetail(
+                                                controller: controller,
+                                                formKey: formKeys[2],
+                                              );
+                                            case 3:
+                                              return PhotoUpload(
+                                                controller: controller,
+                                                formKey: formKeys[3],
+                                              );
+                                            case 4:
+                                              return ListingReviewCard(
+                                                controller: controller,
+                                                // No formKey needed for review
+                                              );
+                                            default:
+                                              return Container();
                                           }
-                                          if (controller.lookingTo.value == 'PG/Co-Living') {
-                                            switch (step) {
-                                              case 1:
-                                                return PostProperty(
-                                                  controller: controller,
-                                                  formKey: formKeys[1],
-                                                );
-                                              case 2:
-                                                return RoomDetail(
-                                                  controller: controller,
-                                                  formKey: formKeys[2],
-                                                );
-                                              case 3:
-                                                return PhotoUpload(
-                                                  controller: controller,
-                                                  formKey: formKeys[3],
-                                                );
-                                              case 4:
-                                                return ListingReviewCard(
-                                                  controller: controller,
-                                                  // No formKey needed for review
-                                                );
-                                              default:
-                                                return Container();
-                                            }
-                                          } else if ((controller
-                                                          .lookingTo
-                                                          .value ==
-                                                      'Rent' ||
-                                                  controller.lookingTo.value ==
-                                                      'Sell') &&
-                                              controller.propertyType.value ==
-                                                  "Residential") {
-                                            switch (step) {
-                                              case 1:
-                                                return PostProperty(
-                                                  controller: controller,
-                                                  formKey: formKeys[1],
-                                                );
-                                              case 2:
-                                                return RentPriceDetail(
-                                                  controller: controller,
-                                                  formKey: formKeys[2],
-                                                );
-                                              case 3:
-                                                return PhotoUpload(
-                                                  controller: controller, formKey: formKeys[3],
-                                                );
-                                              case 4:
-                                                return RentAdvanceDetail(
-                                                  controller: controller,
-                                                  formKey: formKeys[4],
+                                        } else if ((controller
+                                                        .lookingTo
+                                                        .value ==
+                                                    'Rent' ||
+                                                controller.lookingTo.value ==
+                                                    'Sell') &&
+                                            controller.propertyType.value ==
+                                                "Residential") {
+                                          switch (step) {
+                                            case 1:
+                                              return PostProperty(
+                                                controller: controller,
+                                                formKey: formKeys[1],
+                                              );
+                                            case 2:
+                                              return RentPriceDetail(
+                                                controller: controller,
+                                                formKey: formKeys[2],
+                                              );
+                                            case 3:
+                                              return PhotoUpload(
+                                                controller: controller,
+                                                formKey: formKeys[3],
+                                              );
+                                            case 4:
+                                              return RentAdvanceDetail(
+                                                controller: controller,
+                                                formKey: formKeys[4],
+                                              );
+                                            case 5:
+                                              return RentAmenities(
+                                                controller: controller,
+                                              );
 
-
-                                                );
-                                              case 5:
-                                                return RentAmenities(
-                                                  controller: controller,
-
-                                                );
-
-                                              case 6:
-                                                return VerifySection(
-                                                  controller: controller,
-                                                );
-                                            }
-                                          } else if ((controller
-                                                          .lookingTo
-                                                          .value ==
-                                                      "Rent" ||
-                                                  controller.lookingTo.value ==
-                                                      "Sell") &&
-                                              controller.propertyType.value ==
-                                                  "Commercial") {
-                                            print(
-                                              'current step ${controller.stepsList[step]}',
-                                            );
-                                            switch (step) {
-                                              case 1:
-                                                return PostProperty(
-                                                  controller: controller,
-                                                  formKey: formKeys[1],
-                                                );
-                                              case 2:
-                                                return RentPriceDetail(
-                                                  controller: controller,
-                                                  formKey: formKeys[2],
-                                                );
-                                              case 3:
-                                                return RentAmenities(
-                                                  controller: controller,
-                                                );
-                                              case 4:
-                                                return PhotoUpload(
-                                                  controller: controller,
-                                                  formKey: formKeys[4],
-                                                );
-                                              case 5:
-                                                return ListingReviewCard(
-                                                  controller: controller,
-                                                );
-                                              default:
-                                                return Container();
-                                            }
+                                            case 6:
+                                              return VerifySection(
+                                                controller: controller,
+                                              );
                                           }
-                                          return Container();
-                                        }),
-                                      ),
-                                    ],
-                                  ),
+                                        } else if ((controller
+                                                        .lookingTo
+                                                        .value ==
+                                                    "Rent" ||
+                                                controller.lookingTo.value ==
+                                                    "Sell") &&
+                                            controller.propertyType.value ==
+                                                "Commercial") {
+                                          print(
+                                            'current step ${controller.stepsList[step]}',
+                                          );
+                                          switch (step) {
+                                            case 1:
+                                              return PostProperty(
+                                                controller: controller,
+                                                formKey: formKeys[1],
+                                              );
+                                            case 2:
+                                              return RentPriceDetail(
+                                                controller: controller,
+                                                formKey: formKeys[2],
+                                              );
+                                            case 3:
+                                              return RentAmenities(
+                                                controller: controller,
+                                              );
+                                            case 4:
+                                              return PhotoUpload(
+                                                controller: controller,
+                                                formKey: formKeys[4],
+                                              );
+                                            case 5:
+                                              return ListingReviewCard(
+                                                controller: controller,
+                                              );
+                                            default:
+                                              return Container();
+                                          }
+                                        }
+                                        return Container();
+                                      }),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -308,180 +319,158 @@ class CreatePropertyScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                    onPressed: () {
-                      final step = controller.stepperSelectedIndex.value;
+                  onPressed: () {
+                    final step = controller.stepperSelectedIndex.value;
 
-                      // Property type validation
-                      if(step==0 && controller.propertyType.value.isEmpty)
-                        {
-                          controller.showBasicPropertyType.value=true;
-                          return;
-                        }
-                      else
-                        {
-                          controller.showBasicPropertyType.value=false;
-
-
-                        }
-                      if(step==0 && controller.lookingTo.value.isEmpty)
-                      {
-                        controller.showBasicLookingTo.value=true;
-                        return;
-                      }
-                      else
-                      {
-                        controller.showBasicLookingTo.value=false;
-                      }
-                      if(step==0 && controller.selectedIndex.value.isEmpty && controller.propertyType.value=='Commercial')
-                      {
-                        controller.hasShownCommercialCategory.value=true;
-                        return;
-                      }
-                      else
-                      {
-                        controller.hasShownCommercialCategory.value=false;
-                      }
-                      // Rent property type validation
-                      if (
-                        (controller.lookingTo.value == 'Rent' || controller.lookingTo.value == 'Sell') &&
+                    // Property type validation
+                    if (step == 0 && controller.propertyType.value.isEmpty) {
+                      controller.showBasicPropertyType.value = true;
+                      return;
+                    } else {
+                      controller.showBasicPropertyType.value = false;
+                    }
+                    if (step == 0 && controller.lookingTo.value.isEmpty) {
+                      controller.showBasicLookingTo.value = true;
+                      return;
+                    } else {
+                      controller.showBasicLookingTo.value = false;
+                    }
+                    if (step == 0 &&
+                        controller.selectedIndex.value.isEmpty &&
+                        controller.propertyType.value == 'Commercial') {
+                      controller.hasShownCommercialCategory.value = true;
+                      return;
+                    } else {
+                      controller.hasShownCommercialCategory.value = false;
+                    }
+                    // Rent property type validation
+                    if ((controller.lookingTo.value == 'Rent' ||
+                            controller.lookingTo.value == 'Sell') &&
                         controller.propertyType.value == 'Residential' &&
                         step == 1 &&
-                        controller.rent_propertyType.value.isEmpty
-                      ) {
-                        controller.showPropertyTypeError.value = true;
-                        // Optionally scroll to error or focus
-                        return;
-                      } else {
-                        controller.showPropertyTypeError.value = false;
-                      }
-                      if (
-                      controller.lookingTo.value == 'Rent' &&
-                          controller.propertyType.value == 'Residential' &&
-                          step == 2 &&
-                          controller.rent_depositType.value.isEmpty
-                      ) {
-                        controller.selectedDepositFromPrice.value = true;
-                        // Optionally scroll to error or focus
-                        return;
-                      } else {
-                        controller.selectedDepositFromPrice.value = false;
-                      }
-                      if (
-                      controller.lookingTo.value == 'Sell' &&
-                          controller.propertyType.value == 'Residential' &&
-                          step == 2 &&
-                          controller.sell_constructionStatus.value.isEmpty
-                      ) {
-                        controller.selectedSellFromPriceDetail.value = true;
-                        // Optionally scroll to error or focus
-                        return;
-                      } else {
-                        controller.selectedSellFromPriceDetail.value = false;
-                      }
-//prooperty commercial type validation
+                        controller.rent_propertyType.value.isEmpty) {
+                      controller.showPropertyTypeError.value = true;
+                      // Optionally scroll to error or focus
+                      return;
+                    } else {
+                      controller.showPropertyTypeError.value = false;
+                    }
+                    if (controller.lookingTo.value == 'Rent' &&
+                        controller.propertyType.value == 'Residential' &&
+                        step == 2 &&
+                        controller.rent_depositType.value.isEmpty) {
+                      controller.selectedDepositFromPrice.value = true;
+                      // Optionally scroll to error or focus
+                      return;
+                    } else {
+                      controller.selectedDepositFromPrice.value = false;
+                    }
+                    if (controller.lookingTo.value == 'Sell' &&
+                        controller.propertyType.value == 'Residential' &&
+                        step == 2 &&
+                        controller.sell_constructionStatus.value.isEmpty) {
+                      controller.selectedSellFromPriceDetail.value = true;
+                      // Optionally scroll to error or focus
+                      return;
+                    } else {
+                      controller.selectedSellFromPriceDetail.value = false;
+                    }
+                    //prooperty commercial type validation
 
-                      if((controller.lookingTo.value == 'Sell'||controller.lookingTo.value == 'Rent')&&
-                          controller.propertyType.value == 'Commercial' &&
-                          step == 1 &&
-                          controller.commercial_ZoneType.value.isEmpty)
-                        {
-                          controller.selectedZoneTypeInCommercial.value=true;
+                    if ((controller.lookingTo.value == 'Sell' ||
+                            controller.lookingTo.value == 'Rent') &&
+                        controller.propertyType.value == 'Commercial' &&
+                        step == 1 &&
+                        controller.commercial_ZoneType.value.isEmpty) {
+                      controller.selectedZoneTypeInCommercial.value = true;
+                    } else {
+                      controller.selectedZoneTypeInCommercial.value = false;
+                    }
+                    if ((controller.lookingTo.value == 'Sell' ||
+                            controller.lookingTo.value == 'Rent') &&
+                        controller.propertyType.value == 'Commercial' &&
+                        step == 1 &&
+                        controller.commercial_ownerShipList.value.isEmpty) {
+                      controller.seletedOwnerShipInCommercial.value = true;
+                    } else {
+                      controller.seletedOwnerShipInCommercial.value = false;
+                    }
+                    if ((controller.lookingTo.value == 'Sell' ||
+                            controller.lookingTo.value == 'Rent') &&
+                        controller.propertyType.value == 'Commercial' &&
+                        step == 1 &&
+                        controller
+                            .commercial_rent_posessionStatus
+                            .value
+                            .isEmpty) {
+                      controller.selectedPossessionStatus.value = true;
+                    } else {
+                      controller.selectedPossessionStatus.value = false;
+                    }
+                    if ((controller.lookingTo.value == 'Sell') &&
+                        controller.propertyType.value == 'Commercial' &&
+                        step == 1 &&
+                        controller
+                            .commercial_construction_status_value
+                            .value
+                            .isEmpty) {
+                      controller
+                          .selectedConstructionStatusRent_Commercial
+                          .value = true;
+                    } else {
+                      controller
+                          .selectedConstructionStatusRent_Commercial
+                          .value = false;
+                    }
+                    if ((controller.lookingTo.value == 'Sell') &&
+                        controller.propertyType.value == 'Commercial' &&
+                        step == 2 &&
+                        controller.commercial_isPreLeased.value.isEmpty) {
+                      controller.selectedChoiceAnyoneInPriceSection.value =
+                          true;
+                    } else {
+                      controller.selectedChoiceAnyoneInPriceSection.value =
+                          false;
+                    }
 
-                        }
-                      else{
-                        controller.selectedZoneTypeInCommercial.value=false;
-
-                      }
-                      if((controller.lookingTo.value == 'Sell'||controller.lookingTo.value == 'Rent') &&
-                          controller.propertyType.value == 'Commercial' &&
-                          step == 1 &&
-                          controller.commercial_ownerShipList.value.isEmpty)
-                      {
-                        controller.seletedOwnerShipInCommercial.value=true;
-
-                      }
-                      else{
-                        controller.seletedOwnerShipInCommercial.value=false;
-
-                      }
-                      if((controller.lookingTo.value == 'Sell'||controller.lookingTo.value == 'Rent') &&
-                          controller.propertyType.value == 'Commercial' &&
-                          step == 1 &&
-                          controller.commercial_rent_posessionStatus.value.isEmpty)
-                      {
-                        controller.selectedPossessionStatus.value=true;
-
-                      }
-                      else{
-                        controller.selectedPossessionStatus.value=false;
-
-                      }
-                      if((controller.lookingTo.value == 'Sell') &&
-                          controller.propertyType.value == 'Commercial' &&
-                          step == 1 &&
-                          controller.commercial_construction_status_value.value.isEmpty)
-                      {
-                        controller.selectedConstructionStatusRent_Commercial.value=true;
-
-                      }
-                      else{
-                        controller.selectedConstructionStatusRent_Commercial.value=false;
-
-                      }
-                      if((controller.lookingTo.value == 'Sell') &&
-                          controller.propertyType.value == 'Commercial' &&
-                          step == 2 &&
-                          controller.commercial_isPreLeased.value.isEmpty)
-                      {
-                        controller.selectedChoiceAnyoneInPriceSection.value=true;
-
-                      }
-                      else{
-                        controller.selectedChoiceAnyoneInPriceSection.value=false;
-
-                      }
-
-                      // BHK validation
-                      if (
-                        (controller.lookingTo.value == 'Rent' || controller.lookingTo.value == 'Sell') &&
+                    // BHK validation
+                    if ((controller.lookingTo.value == 'Rent' ||
+                            controller.lookingTo.value == 'Sell') &&
                         controller.propertyType.value == 'Residential' &&
                         step == 1 &&
-                        controller.bhkType.value.isEmpty
-                      ) {
-                        controller.showBHKChooseToError.value = true;
-                        return;
-                      } else {
-                        controller.showBHKChooseToError.value = false;
+                        controller.bhkType.value.isEmpty) {
+                      controller.showBHKChooseToError.value = true;
+                      return;
+                    } else {
+                      controller.showBHKChooseToError.value = false;
+                    }
+
+                    // Add more conditions for other fields as needed, following the same pattern
+
+                    // Validate current step's form before proceeding
+                    if (formKeys[step].currentState?.validate() ?? true) {
+                      if (controller.stepperSelectedIndex.value <
+                          controller.stepsList.length) {
+                        controller.nextStep();
                       }
-
-
-                      // Add more conditions for other fields as needed, following the same pattern
-
-                      // Validate current step's form before proceeding
-                      if (formKeys[step].currentState?.validate() ?? true) {
-                        if (controller.stepperSelectedIndex.value <
-                            controller.stepsList.length) {
-                          controller.nextStep();
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorRes.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      elevation: 2,
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorRes.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Text(
-                      "Next, add address & price",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    elevation: 2,
+                  ),
+                  child: const Text(
+                    "Next, add address & price",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-
+                ),
               ),
             ),
           ),
@@ -592,9 +581,11 @@ class CreatePropertyScreen extends StatelessWidget {
                                   ),
                                 ),
                                 child: Obx(
-                                  () => Form( // Wrap with Form
+                                  () => Form(
+                                    // Wrap with Form
                                     key: loginFormKey,
-                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -684,7 +675,9 @@ class CreatePropertyScreen extends StatelessWidget {
                                             spacing: 12,
                                             runSpacing: 12,
                                             children: [
-                                              if (controller.propertyType.value ==
+                                              if (controller
+                                                      .propertyType
+                                                      .value ==
                                                   'Residential') ...[
                                                 buildChoice(
                                                   title: 'Rent',
@@ -722,7 +715,8 @@ class CreatePropertyScreen extends StatelessWidget {
                                                   onTap:
                                                       () =>
                                                           controller..setValue(
-                                                            controller.lookingTo,
+                                                            controller
+                                                                .lookingTo,
                                                             'PG/Co-Living',
                                                           ),
                                                 ),
@@ -772,27 +766,33 @@ class CreatePropertyScreen extends StatelessWidget {
                                             isPhone: true,
                                             isPhoneKey: true,
                                             validator: (value) {
-                                              if (value == null || value.isEmpty) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
                                                 return 'Phone required';
                                               }
 
-                                              final selectedCode = controller.countryCode.value;
-                                              final expectedLength =controller.countryRules[selectedCode] ?? 10;
+                                              final selectedCode =
+                                                  controller.countryCode.value;
+                                              final expectedLength =
+                                                  controller
+                                                      .countryRules[selectedCode] ??
+                                                  10;
 
                                               // ensure only digits
-                                              final onlyDigits = RegExp(r'^\d+$');
+                                              final onlyDigits = RegExp(
+                                                r'^\d+$',
+                                              );
                                               if (!onlyDigits.hasMatch(value)) {
                                                 return 'Enter digits only';
                                               }
 
-                                              if (value.length != expectedLength) {
+                                              if (value.length !=
+                                                  expectedLength) {
                                                 return 'Enter $expectedLength digit number';
                                               }
 
                                               return null;
                                             },
-
-
                                           ),
                                           const SizedBox(height: 16),
                                           buildTextField(
@@ -807,24 +807,38 @@ class CreatePropertyScreen extends StatelessWidget {
                                             Icons.location_on,
                                             controller.cityController,
                                             onTap: () async {
-                                              Prediction selectedCity = await Navigator.push(
+                                              Prediction
+                                              selectedCity = await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => CommonSearchField(
-                                                    onCitySelected: (city) {
-                                                      Navigator.pop(context, city);
-                                                    },
-                                                    isFromAddProperty: true,
-                                                    initialSearchText: controller.cityController.text,
-
-                                                  ),
+                                                  builder:
+                                                      (
+                                                        context,
+                                                      ) => CommonSearchField(
+                                                        onCitySelected: (city) {
+                                                          Navigator.pop(
+                                                            context,
+                                                            city,
+                                                          );
+                                                        },
+                                                        isFromAddProperty: true,
+                                                        initialSearchText:
+                                                            controller
+                                                                .cityController
+                                                                .text,
+                                                      ),
                                                 ),
                                               );
 
-                                                // controller.cityController.text = selectedCity.split(',')[0];
-                                                controller.cityController.text=selectedCity.description?.split(',')[0]??'';
+                                              // controller.cityController.text = selectedCity.split(',')[0];
+                                              controller.cityController.text =
+                                                  selectedCity.description
+                                                      ?.split(',')[0] ??
+                                                  '';
 
-                                              print("city ${controller.cityController.text}");
+                                              print(
+                                                "city ${controller.cityController.text}",
+                                              );
                                               FocusScope.of(context).unfocus();
                                             },
                                             isEnable: false,
@@ -864,26 +878,33 @@ class CreatePropertyScreen extends StatelessWidget {
                                             isPhone: true,
                                             isPhoneKey: true,
                                             validator: (value) {
-                                              if (value == null || value.isEmpty) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
                                                 return 'Phone required';
                                               }
 
-                                              final selectedCode = controller.countryCode.value;
-                                              final expectedLength =controller.countryRules[selectedCode] ?? 10;
+                                              final selectedCode =
+                                                  controller.countryCode.value;
+                                              final expectedLength =
+                                                  controller
+                                                      .countryRules[selectedCode] ??
+                                                  10;
 
                                               // ensure only digits
-                                              final onlyDigits = RegExp(r'^\d+$');
+                                              final onlyDigits = RegExp(
+                                                r'^\d+$',
+                                              );
                                               if (!onlyDigits.hasMatch(value)) {
                                                 return 'Enter digits only';
                                               }
 
-                                              if (value.length != expectedLength) {
+                                              if (value.length !=
+                                                  expectedLength) {
                                                 return 'Enter $expectedLength digit number';
                                               }
 
                                               return null;
                                             },
-
                                           ),
 
                                           const SizedBox(height: 40),
@@ -896,9 +917,8 @@ class CreatePropertyScreen extends StatelessWidget {
                                               color: ColorRes.grey.withOpacity(
                                                 0.2,
                                               ),
-                                              borderRadius: BorderRadius.circular(
-                                                12,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             alignment: Alignment.center,
                                             child: const Text(
@@ -940,9 +960,10 @@ class CreatePropertyScreen extends StatelessWidget {
                                             children: [
                                               Expanded(
                                                 child: Divider(
-                                                  color: Colors.grey.withOpacity(
-                                                    0.5,
-                                                  ), // choose color
+                                                  color: Colors.grey
+                                                      .withOpacity(
+                                                        0.5,
+                                                      ), // choose color
                                                   thickness: 0.8, // optional
                                                 ),
                                               ),
@@ -962,9 +983,8 @@ class CreatePropertyScreen extends StatelessWidget {
                                               const SizedBox(width: 16),
                                               Expanded(
                                                 child: Divider(
-                                                  color: Colors.grey.withOpacity(
-                                                    0.5,
-                                                  ),
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
                                                   thickness: 0.8,
                                                 ),
                                               ),
@@ -999,9 +1019,8 @@ class CreatePropertyScreen extends StatelessWidget {
 
                                           Center(
                                             child: InkWell(
-                                              borderRadius: BorderRadius.circular(
-                                                8,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                               onTap: controller.submitForm,
                                               child: const Padding(
                                                 padding: EdgeInsets.symmetric(
@@ -1009,7 +1028,8 @@ class CreatePropertyScreen extends StatelessWidget {
                                                   horizontal: 12,
                                                 ),
                                                 child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   // keep row compact
                                                   children: [
                                                     Text(
@@ -1213,7 +1233,8 @@ Widget buildTextField(
 }) {
   return GestureDetector(
     onTap: onTap,
-    child: TextFormField( // <-- Use TextFormField for validation
+    child: TextFormField(
+      // <-- Use TextFormField for validation
       controller: controller,
       enabled: isEnable,
 
@@ -1231,10 +1252,16 @@ Widget buildTextField(
                   child: buildPhonePrefix(),
                 )
                 : Icon(icon, color: ColorRes.primary, size: 20),
-        prefixIconConstraints: const BoxConstraints(minWidth: 48, maxHeight: 20),
+        prefixIconConstraints: const BoxConstraints(
+          minWidth: 48,
+          maxHeight: 20,
+        ),
         hintText: label,
         hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
-        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 12,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
@@ -1253,7 +1280,7 @@ Widget buildTextField(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(width: 1.2, color: ColorRes.primary),
         ),
-        errorBorder:OutlineInputBorder(
+        errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(width: 1.2, color: Colors.red),
         ),
@@ -1261,12 +1288,10 @@ Widget buildTextField(
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(width: 1.2, color: Colors.red),
-        ),        filled: true,
-        fillColor: Colors.grey.shade50,
-        errorStyle: TextStyle(
-          color: Colors.red.shade700,
-          fontSize: 12,
         ),
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        errorStyle: TextStyle(color: Colors.red.shade700, fontSize: 12),
       ),
     ),
   );
@@ -1285,7 +1310,6 @@ Widget buildPhonePrefix() {
     {'code': '+971', 'flag': '🇦🇪'},
     {'code': '+81', 'flag': '🇯🇵'},
   ];
-
 
   final controller = Get.find<CreatePropertyController>();
 

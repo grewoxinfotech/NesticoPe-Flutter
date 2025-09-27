@@ -492,7 +492,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
     await SecureStorage.saveToken(token);
 
-    Get.offAll(() => widget.redirectAfterOtp ?? const DashboardScreen());
+    Get.offUntil(
+      MaterialPageRoute(
+        builder: (_) => widget.redirectAfterOtp ?? const DashboardScreen(),
+      ),
+      (route) => route.isFirst,
+    );
   }
 
   /// ✅ Normal Registration Flow

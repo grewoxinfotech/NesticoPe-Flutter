@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
@@ -41,13 +42,13 @@ class CreatePropertyController extends GetxController {
   var carpetAreaUnit = "sq.ft.".obs;
   final countryRules = {
     '+91': 10, // India: 10 digits
-    '+1': 10,  // USA: 10 digits
+    '+1': 10, // USA: 10 digits
     '+44': 10, // UK: usually 10 digits after 0
-    '+61': 9,  // Australia
+    '+61': 9, // Australia
     '+1-CA': 10,
     '+49': 11, // Germany varies but 11 is common
-    '+33': 9,  // France
-    '+65': 8,  // Singapore
+    '+33': 9, // France
+    '+65': 8, // Singapore
     '+971': 9, // UAE
     '+81': 10, // Japan
   };
@@ -331,16 +332,32 @@ class CreatePropertyController extends GetxController {
   final showAddRoomCard = true.obs; // Start with card visible for first room
   final showPropertyTypeError = false.obs; // <-- Add this observable
   final showBHKChooseToError = false.obs;
-  final showBasicPropertyType=false.obs;
-  final showBasicLookingTo=false.obs;// <-- Add this observable
+  final showBasicPropertyType = false.obs;
+  final showBasicLookingTo = false.obs; // <-- Add this observable
   final hasShownCommercialCategory = false.obs;
-  final selectedDepositFromPrice=false.obs;
-  final selectedSellFromPriceDetail=false.obs;
-  final selectedZoneTypeInCommercial=false.obs;
-  final seletedOwnerShipInCommercial=false.obs;
-  final selectedChoiceAnyoneInPriceSection=false.obs;
-  final selectedPossessionStatus=false.obs;
-  final selectedConstructionStatusRent_Commercial=false.obs;
+  final selectedDepositFromPrice = false.obs;
+  final selectedSellFromPriceDetail = false.obs;
+  final selectedZoneTypeInCommercial = false.obs;
+  final seletedOwnerShipInCommercial = false.obs;
+  final selectedChoiceAnyoneInPriceSection = false.obs;
+  final selectedPossessionStatus = false.obs;
+  final selectedConstructionStatusRent_Commercial = false.obs;
+
+  @override
+  void onInit() {
+    checkSellerAuthentication();
+    super.onInit();
+  }
+
+  Future<void> checkSellerAuthentication() async {
+    final user = await SecureStorage.getUserData();
+    if (user != null) {
+      final userType = user.user!.userType;
+      if (userType!.toLowerCase() == "seller") {
+        isLogin.value = true;
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -554,21 +571,35 @@ class CreatePropertyController extends GetxController {
 
   void submitForm() {
     if (isProcessing.value) return;
+    print("1===================== ${isLogin.value}======================");
 
-    isLogin.value = true;
-    Get.snackbar(
-      "Form Submitted",
-      "Owner: ${isOwner.value ? "Owner" : "Broker/Builder"}\n"
-          "Property: ${propertyType.value}\n"
-          "Looking to: ${lookingTo.value}\n"
-          "Phone: $countryCode ${phoneController.text}\n"
-          "Name: ${nameController.text}\n"
-          "City: ${cityController.text}",
-      snackPosition: SnackPosition.TOP,
-      colorText: ColorRes.white,
-      backgroundColor: ColorRes.primary.withOpacity(0.2),
-      duration: const Duration(seconds: 4),
-    );
+    if (!isLogin.value) {
+      Get.lazyPut(() => AuthController());
+      final authController = Get.find<AuthController>();
+      print("2===================== ${isLogin.value}======================");
+
+      if (isOwner.value) {
+        authController.sellerRegister(
+          phone: phoneController.text.trim(),
+          userType: "seller",
+          sellerType: "owner",
+        );
+      }
+    }
+    // isLogin.value = true;
+    // Get.snackbar(
+    //   "Form Submitted",
+    //   "Owner: ${isOwner.value ? "Owner" : "Broker/Builder"}\n"
+    //       "Property: ${propertyType.value}\n"
+    //       "Looking to: ${lookingTo.value}\n"
+    //       "Phone: $countryCode ${phoneController.text}\n"
+    //       "Name: ${nameController.text}\n"
+    //       "City: ${cityController.text}",
+    //   snackPosition: SnackPosition.TOP,
+    //   colorText: ColorRes.white,
+    //   backgroundColor: ColorRes.primary.withOpacity(0.2),
+    //   duration: const Duration(seconds: 4),
+    // );
   }
 
   // Modify saveRoom method
@@ -608,7 +639,6 @@ class CreatePropertyController extends GetxController {
       rooms.removeAt(index);
     }
   }
-
 
   Future<void> pickImageFromCamera() async {
     if (isProcessing.value) return;
