@@ -133,9 +133,9 @@ class PropertyDetailManager {
     if (pd.possessionInfo?.possessionStatus != null) {
       details.add({"Possession": pd.possessionInfo!.possessionStatus!});
     }
-    if (pd.possessionInfo?.possessionDate != null) {
+    if (pd.possessionInfo?.propertyAgeInYear != null) {
       details.add({
-        "Age of Property": "${pd.possessionInfo!.possessionDate} years",
+        "Age of Property": "${pd.possessionInfo!.propertyAgeInYear} years",
       });
     }
 

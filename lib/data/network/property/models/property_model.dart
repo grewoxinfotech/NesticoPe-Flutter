@@ -1139,20 +1139,6 @@ class ParkingInfo {
   Map<String, dynamic> toJson() => {'covered': covered, 'open': open};
 }
 
-// class FinancialInfo {
-//   double? price;
-//   double? maintenance;
-//
-//   FinancialInfo({this.price, this.maintenance});
-//
-//   FinancialInfo.fromJson(Map<String, dynamic> json) {
-//     price = TypeConverter.parseDouble(json['price']) ?? 0;
-//     maintenance = TypeConverter.parseDouble(json['maintenance']) ?? 0;
-//   }
-//
-//   Map<String, dynamic> toJson() => {'price': price, 'maintenance': maintenance};
-// }
-
 class FinancialInfo {
   double price;
   double? maintenance;
@@ -1199,18 +1185,18 @@ class FinancialInfo {
 
 class PossessionInfo {
   String? possessionStatus;
-  String? possessionDate;
+  String? propertyAgeInYear;
 
-  PossessionInfo({this.possessionStatus, this.possessionDate});
+  PossessionInfo({this.possessionStatus, this.propertyAgeInYear});
 
   PossessionInfo.fromJson(Map<String, dynamic> json) {
     possessionStatus = json['possession_status'] as String?;
-    possessionDate = json['possession_date'] as String?;
+    propertyAgeInYear = json['property_age_in_years'].toString();
   }
 
   Map<String, dynamic> toJson() => {
     'possession_status': possessionStatus,
-    'possession_date': possessionDate,
+    'property_age_in_years': propertyAgeInYear,
   };
 }
 

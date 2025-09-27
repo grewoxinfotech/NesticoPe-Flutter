@@ -350,6 +350,8 @@ class SeenPropertiesTab extends StatelessWidget {
     return SafeArea(
       top: false,
       child: PropertyDetail(),
+      // child: Container(),
+
       // child: RefreshIndicator(
       //   onRefresh: () async {
       //     await Future.delayed(const Duration(seconds: 1));
@@ -425,7 +427,7 @@ List<Items> dummyItems = [
       financialInfo: FinancialInfo(price: 6500000, maintenance: 2500),
       possessionInfo: PossessionInfo(
         possessionStatus: "Ready to Move",
-        possessionDate: "2025-12-01",
+        propertyAgeInYear: "2025-12-01",
       ),
     ),
     address: "Vesu Main Road",
@@ -481,7 +483,7 @@ List<Items> dummyItems = [
       financialInfo: FinancialInfo(price: 15000, maintenance: 1000),
       possessionInfo: PossessionInfo(
         possessionStatus: "Immediate",
-        possessionDate: "2025-09-01",
+        propertyAgeInYear: "2025-09-01",
       ),
     ),
     address: "Adajan Road",

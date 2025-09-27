@@ -150,86 +150,198 @@ class SellerDashboardScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       extendBody: true,
       drawer: NesticoPeDrawer(),
+
+      // bottomNavigationBar: SafeArea(
+      //   child: Obx(
+      //     () => Card(
+      //       elevation: 8,
+      //       shadowColor: Get.theme.shadowColor.withOpacity(0.3),
+      //       color: Get.theme.colorScheme.surface,
+      //       margin: const EdgeInsets.only(
+      //         left: AppMargin.small,
+      //         // bottom: AppMargin.small,
+      //         right: AppMargin.small,
+      //       ),
+      //       shape: RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.circular(AppRadius.large),
+      //       ),
+      //       child: Container(
+      //         height: kToolbarHeight + 5,
+      //         alignment: Alignment.center,
+      //         child: SalomonBottomBar(
+      //           duration: const Duration(milliseconds: 400),
+      //           unselectedItemColor: Get.theme.colorScheme.onSurface
+      //               .withOpacity(0.6),
+      //           margin: const EdgeInsets.all(AppPadding.small),
+      //           itemShape: RoundedRectangleBorder(
+      //             borderRadius: BorderRadius.circular(AppRadius.large),
+      //           ),
+      //           itemPadding: const EdgeInsets.symmetric(
+      //             horizontal: AppPadding.small,
+      //             vertical: AppPadding.small,
+      //           ),
+      //           currentIndex: navigationController.currentIndex.value,
+      //           onTap: (i) => navigationController.changeIndex(i),
+      //           items: [
+      //             SalomonBottomBarItem(
+      //               icon: Icon(Icons.home, size: iconSize),
+      //               title: Text("Home", style: style),
+      //             ),
+      //
+      //             SalomonBottomBarItem(
+      //               icon: Icon(Icons.broken_image_outlined, size: iconSize),
+      //               title: Text("Enquiries", style: style),
+      //             ),
+      //
+      //             /// 🔥 Middle Highlighted Item
+      //             SalomonBottomBarItem(
+      //               icon: Container(
+      //                 // padding: const EdgeInsets.all(10),
+      //                 decoration: BoxDecoration(
+      //                   shape: BoxShape.circle,
+      //                   color: Get.theme.colorScheme.primary,
+      //                   border: Border.all(
+      //                     color: Get.theme.colorScheme.primary,
+      //                     width: 2,
+      //                   ),
+      //                 ),
+      //                 child: Center(
+      //                   child: Icon(
+      //                     FontAwesomeIcons.add,
+      //                     size: iconSize,
+      //                     color: Colors.white,
+      //                   ),
+      //                 ),
+      //               ),
+      //               title: Text("Listings", style: style),
+      //             ),
+      //
+      //             SalomonBottomBarItem(
+      //               icon: Icon(Icons.subscriptions, size: iconSize),
+      //               title: Text("Packages", style: style),
+      //             ),
+      //
+      //             SalomonBottomBarItem(
+      //               icon: Icon(FontAwesomeIcons.user, size: iconSize),
+      //               title: Text("Profiles", style: style),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
+      // bottomNavigationBar: SafeArea(
+      //   child: Obx(
+      //     () => BottomNavigationBar(
+      //       type: BottomNavigationBarType.fixed,
+      //       currentIndex: navigationController.currentIndex.value,
+      //       onTap: (i) => navigationController.changeIndex(i),
+      //       items: const [
+      //         BottomNavigationBarItem(
+      //           icon: Column(
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: [Icon(Icons.home), Text('Home')],
+      //           ),
+      //           label: '',
+      //         ),
+      //         BottomNavigationBarItem(
+      //           icon: Column(
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: [Icon(Icons.search), Text('Search')],
+      //           ),
+      //           label: '',
+      //         ),
+      //         BottomNavigationBarItem(
+      //           icon: Column(
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: [Icon(Icons.add), Text('Add')],
+      //           ),
+      //           label: '',
+      //         ),
+      //         BottomNavigationBarItem(
+      //           icon: Column(
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: [Icon(Icons.notifications), Text('Alerts')],
+      //           ),
+      //           label: '',
+      //         ),
+      //         BottomNavigationBarItem(
+      //           icon: Column(
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: [Icon(Icons.person), Text('Profile')],
+      //           ),
+      //           label: '',
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
       bottomNavigationBar: SafeArea(
         child: Obx(
-          () => Card(
-            elevation: 8,
-            shadowColor: Get.theme.shadowColor.withOpacity(0.3),
-            color: Get.theme.colorScheme.surface,
-            margin: const EdgeInsets.only(
-              left: AppMargin.small,
-              bottom: AppMargin.small,
-              right: AppMargin.small,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.large),
-            ),
-            child: Container(
-              height: kToolbarHeight + 5,
-              alignment: Alignment.center,
-              child: SalomonBottomBar(
-                duration: const Duration(milliseconds: 400),
-                unselectedItemColor: Get.theme.colorScheme.onSurface
-                    .withOpacity(0.6),
-                margin: const EdgeInsets.all(AppPadding.small),
-                itemShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.large),
+          () => Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 8,
+                  offset: Offset(0, -2),
                 ),
-                itemPadding: const EdgeInsets.symmetric(
-                  horizontal: AppPadding.small,
-                  vertical: AppPadding.small,
-                ),
-                currentIndex: navigationController.currentIndex.value,
-                onTap: (i) => navigationController.changeIndex(i),
-                items: [
-                  SalomonBottomBarItem(
-                    icon: Icon(Icons.home, size: iconSize),
-                    title: Text("Home", style: style),
-                  ),
-
-                  SalomonBottomBarItem(
-                    icon: Icon(Icons.broken_image_outlined, size: iconSize),
-                    title: Text("Enquiries", style: style),
-                  ),
-
-                  /// 🔥 Middle Highlighted Item
-                  SalomonBottomBarItem(
-                    icon: Container(
-                      // padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Get.theme.colorScheme.primary,
-                        border: Border.all(
-                          color: Get.theme.colorScheme.primary,
-                          width: 2,
-                        ),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          FontAwesomeIcons.add,
-                          size: iconSize,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    title: Text("Listings", style: style),
-                  ),
-
-                  SalomonBottomBarItem(
-                    icon: Icon(Icons.subscriptions, size: iconSize),
-                    title: Text("Packages", style: style),
-                  ),
-
-                  SalomonBottomBarItem(
-                    icon: Icon(FontAwesomeIcons.user, size: iconSize),
-                    title: Text("Profiles", style: style),
-                  ),
-                ],
+              ],
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
+            ),
+            child: BottomNavigationBar(
+              elevation: 5,
+
+              type: BottomNavigationBarType.fixed,
+              currentIndex: navigationController.currentIndex.value,
+              onTap: (i) => navigationController.changeIndex(i),
+              selectedItemColor: Get.theme.colorScheme.primary,
+              unselectedItemColor: Colors.grey,
+              showSelectedLabels: true,
+              showUnselectedLabels: true,
+              selectedLabelStyle: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+
+              unselectedLabelStyle: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.normal,
+              ),
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_outlined),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.leaderboard_outlined,
+                  ), // optional better icon for leads
+                  label: 'Leads',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.list_alt),
+                  label: 'Listing',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.card_membership),
+                  label: 'Plans',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_2_outlined),
+                  label: 'Profile',
+                ),
+              ],
             ),
           ),
         ),
       ),
+
       body: Obx(() {
         switch (navigationController.currentIndex.value) {
           case 0:

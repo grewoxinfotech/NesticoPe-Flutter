@@ -43,12 +43,12 @@ class PropertyListCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// 🔹 Top Row: ID
-            Text(
-              "$id",
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
-
-            const SizedBox(height: 8),
+            // Text(
+            //   "$id",
+            //   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            // ),
+            //
+            // const SizedBox(height: 8),
 
             /// 🔹 Property Row
             Row(

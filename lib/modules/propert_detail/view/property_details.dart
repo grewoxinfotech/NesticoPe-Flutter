@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
+import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
 
 import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
 
+import '../../../data/network/property/models/property_model.dart';
+import '../../property/controllers/property_controller.dart';
+
 class PropertyDetail extends StatelessWidget {
+  final PropertyController controller = Get.put(PropertyController());
+
   final List<Map<String, dynamic>> properties = [
     {
       'title': 'The White Abode',
@@ -86,7 +93,7 @@ class PropertyDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: ColorRes.white,
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: ColorRes.white,
@@ -97,30 +104,80 @@ class PropertyDetail extends StatelessWidget {
             color: ColorRes.textColor,
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: GestureDetector(
+              onTap: () {
+                Get.to(() => RealEstateFilterScreen());
+              },
+              child: Icon(Icons.filter_list),
+            ),
+          ),
+        ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(
-          vertical: AppPadding.small,
-          horizontal: AppPadding.small,
-        ),
-        itemCount: properties.length,
-        itemBuilder: (context, index) {
-          final property = properties[index];
-          return PropertyCardWidget(
-            imageUrl: property['imageUrl'],
-            features: propertyFeatures,
-            apartments: property['apartments'],
-            images: property['images'],
-            title: property['title'],
-            location: property['location'],
-            price: 'Ready To Move',
-            ownerName: property['ownerName'],
-            ownerAvatar: property['ownerAvatar'],
-            role: property['role'],
-            beds: '2 BHK Apartment',
-          );
-        },
-      ),
+      // body: ListView.builder(
+      //   padding:  EdgeInsets.symmetric(
+      //     vertical: AppPadding.small,
+      //     horizontal: AppPadding.small,
+      //   ),
+      //   itemCount: properties.length,
+      //   itemBuilder: (context, index) {
+      //     final property = properties[index];
+      //     final item = items[index];
+      //     return PropertyCardWidget(
+      //       property: item,
+      //       // imageUrl: property['imageUrl'],
+      //       // features: propertyFeatures,
+      //       // apartments: property['apartments'],
+      //       // images: property['images'],
+      //       // title: property['title'],
+      //       // location: property['location'],
+      //       // price: 'Ready To Move',
+      //       // ownerName: property['ownerName'],
+      //       // ownerAvatar: property['ownerAvatar'],
+      //       role: property['role'],
+      //       // beds: '2 BHK Apartment',
+      //     );
+      //   },
+      // ),
+      body: Obx(() {
+        if (controller.isLoading.value && controller.items.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!controller.isLoading.value && controller.items.isEmpty) {
+          return const Center(child: Text("No Property found."));
+        }
+
+        return NotificationListener<ScrollNotification>(
+          onNotification: (scrollEnd) {
+            final metrics = scrollEnd.metrics;
+            if (metrics.atEdge && metrics.pixels != 0) {
+              controller.loadMore();
+            }
+            return false;
+          },
+          child: RefreshIndicator(
+            onRefresh: controller.refreshList,
+            child: ListView.builder(
+              padding: EdgeInsets.symmetric(
+                vertical: AppPadding.small,
+                horizontal: AppPadding.small,
+              ),
+              itemCount: controller.items.length,
+              itemBuilder: (context, index) {
+                final property = properties[index % properties.length];
+                final data = controller.items[index];
+                return PropertyCardWidget(
+                  property: data,
+                  role: property['role'],
+                );
+              },
+            ),
+          ),
+        );
+      }),
     );
   }
 }

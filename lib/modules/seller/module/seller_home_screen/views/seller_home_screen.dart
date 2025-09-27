@@ -242,20 +242,28 @@ class SellerHomeScreen extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  SizedBox(height: 8,),
+                                  SizedBox(height: 8),
                                   GestureDetector(
-                                    onTap: (){
-                                      Get.offAll(()=>DashboardScreen());
+                                    onTap: () {
+                                      Get.offAll(() => DashboardScreen());
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 6),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 6,
+                                      ),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.grey[300]!)
+                                        border: Border.all(
+                                          color: Colors.grey[300]!,
+                                        ),
                                       ),
-                                      child: Text("Home",style: TextStyle(color: Colors.white),),
+                                      child: Text(
+                                        "Home",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
 
@@ -304,7 +312,7 @@ class SellerHomeScreen extends StatelessWidget {
                   right: 0,
                   bottom: 0,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    padding: const EdgeInsets.only(top: 20),
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(

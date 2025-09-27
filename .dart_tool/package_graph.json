@@ -110,6 +110,13 @@
       ]
     },
     {
+      "name": "persistent_bottom_nav_bar",
+      "version": "6.2.1",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "flutter_tts",
       "version": "4.2.3",
       "dependencies": [
@@ -1624,13 +1631,6 @@
       "name": "synchronized",
       "version": "3.4.0",
       "dependencies": []
-    },
-    {
-      "name": "persistent_bottom_nav_bar",
-      "version": "6.2.1",
-      "dependencies": [
-        "flutter"
-      ]
     }
   ],
   "configVersion": 1

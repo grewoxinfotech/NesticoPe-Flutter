@@ -424,7 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           TitleWithViewAll(
                             title: "Newly added properties",
                             showViewAll: true,
-                            onViewAll: () => Get.to(PropertyListScreen()),
+                            onViewAll: () => Get.to(PropertyDetail()),
                           ),
                         ],
                       ),
@@ -495,7 +495,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: "Recommended Properties",
                     showViewAll: true,
                     description: "Best properties for you",
-                    onViewAll: () => Get.to(PropertyDetail()),
+                    // onViewAll: () => Get.to(PropertyDetail()),
                   ),
                   SizedBox(height: 4),
                   SingleChildScrollView(
@@ -2548,7 +2548,7 @@ List<Items> dummyItems = [
       financialInfo: FinancialInfo(price: 6500000, maintenance: 2500),
       possessionInfo: PossessionInfo(
         possessionStatus: "Ready to Move",
-        possessionDate: "2025-12-01",
+        propertyAgeInYear: "2025-12-01",
       ),
     ),
     address: "Vesu Main Road",
@@ -2604,7 +2604,7 @@ List<Items> dummyItems = [
       financialInfo: FinancialInfo(price: 15000, maintenance: 1000),
       possessionInfo: PossessionInfo(
         possessionStatus: "Immediate",
-        possessionDate: "2025-09-01",
+        propertyAgeInYear: "2025-09-01",
       ),
     ),
     address: "Adajan Road",

@@ -6,6 +6,7 @@ import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/app/constants/svg_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/svg_widget.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../property_detail_screen.dart';
 
@@ -56,34 +57,40 @@ class _PropertyCardState extends State<PropertyCard> {
               ),
               child: Stack(
                 children: [
-                  widget.property.propertyMedia?.images?.isNotEmpty == true
-                      ? Image.network(
-                        widget.property.propertyMedia!.images!.first,
-                        height: 170,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      )
-                      : Image.asset(
-                        IMGRes.home1,
-                        height: 170,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                  CustomImage(
+                    type: CustomImageType.network,
+                    src: widget.property.propertyMedia!.images!.first,
+                    fit: BoxFit.cover,
+                    height: 170,
+                  ),
+                  // widget.property.propertyMedia?.images?.isNotEmpty == true
+                  //     ? Image.network(
+                  //       widget.property.propertyMedia!.images!.first,
+                  //       height: 170,
+                  //       width: double.infinity,
+                  //       fit: BoxFit.cover,
+                  //     )
+                  //     : Image.asset(
+                  //       IMGRes.home1,
+                  //       height: 170,
+                  //       width: double.infinity,
+                  //       fit: BoxFit.cover,
+                  //     ),
 
                   // Dark Gradient Overlay
-                  Container(
-                    height: 170,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.black.withOpacity(0.6),
-                          Colors.transparent,
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   height: 170,
+                  //   decoration: BoxDecoration(
+                  //     gradient: LinearGradient(
+                  //       colors: [
+                  //         Colors.black.withOpacity(0.6),
+                  //         Colors.transparent,
+                  //       ],
+                  //       begin: Alignment.bottomCenter,
+                  //       end: Alignment.topCenter,
+                  //     ),
+                  //   ),
+                  // ),
 
                   // 🔹 Rent/Sale Tag
                   Positioned(
@@ -174,23 +181,40 @@ class _PropertyCardState extends State<PropertyCard> {
                         child: Row(
                           children: [
                             if (widget.property.propertyDetails?.bhk != null)
-                              _buildChip(       
+                              _buildChip(
                                 "${widget.property.propertyDetails!.bhk} BHK",
                                 AppSvgRes.bedroom,
                                 15,
                                 isFirst: true, // first chip → no dot
                               ),
 
-                            if (widget.property.propertyDetails?.furnishInfo?.furnishType != null)
+                            if (widget
+                                    .property
+                                    .propertyDetails
+                                    ?.furnishInfo
+                                    ?.furnishType !=
+                                null)
                               _buildChip(
-                                widget.property.propertyDetails!.furnishInfo!.furnishType ?? "",
+                                widget
+                                        .property
+                                        .propertyDetails!
+                                        .furnishInfo!
+                                        .furnishType ??
+                                    "",
                                 AppSvgRes.furniture,
                                 15,
                               ),
 
-                            if (widget.property.propertyDetails?.propertyFacing != null)
+                            if (widget
+                                    .property
+                                    .propertyDetails
+                                    ?.propertyFacing !=
+                                null)
                               _buildChip(
-                                widget.property.propertyDetails!.propertyFacing!,
+                                widget
+                                    .property
+                                    .propertyDetails!
+                                    .propertyFacing!,
                                 AppSvgRes.direction,
                                 15,
                               ),
@@ -292,7 +316,12 @@ class _PropertyCardState extends State<PropertyCard> {
     );
   }
 
-  Widget _buildChip(String text, String svgIcon, double size, {bool isFirst = false}) {
+  Widget _buildChip(
+    String text,
+    String svgIcon,
+    double size, {
+    bool isFirst = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: Row(

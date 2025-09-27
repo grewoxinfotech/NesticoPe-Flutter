@@ -101,9 +101,9 @@ class PropertyHighlightManager {
     if (pd.possessionInfo?.possessionStatus != null) {
       highlights.add({"Possession": pd.possessionInfo!.possessionStatus!});
     }
-    if (pd.possessionInfo?.possessionDate != null) {
+    if (pd.possessionInfo?.propertyAgeInYear != null) {
       highlights.add({
-        "Age of Property": "${pd.possessionInfo!.possessionDate} years",
+        "Age of Property": "${pd.possessionInfo!.propertyAgeInYear} years",
       });
     }
 
