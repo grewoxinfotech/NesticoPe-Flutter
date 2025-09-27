@@ -528,6 +528,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   const SizedBox(height: 20),
+                  // Top Locations
 
                   const TitleWithViewAll(
                     title: "Trending Areas",
@@ -564,7 +565,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
 
                           return SizedBox(
-                            height: 225,
+                            height: 180,
                             child: ClipRRect(
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
@@ -599,6 +600,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     },
                   ),
+
                   const SizedBox(height: 20),
 
                   const TitleWithViewAll(
@@ -3634,4 +3636,133 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     );
   }
+}
+Widget _buildShimmerLoader() {
+  return Container(
+    height: 320,
+    child: ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: 3,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      separatorBuilder: (_, __) => const SizedBox(width: 16),
+      itemBuilder: (context, index) {
+        return Container(
+          width: 190,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Column(
+            children: [
+              Container(
+                height: 130,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      height: 14,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+
+Widget _buildErrorState(String error) {
+  return Container(
+    height: 200,
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Something went wrong',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Please try again later',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildEmptyState() {
+  return Container(
+    height: 200,
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.home_outlined,
+            size: 48,
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No Properties Available',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Check back later for new listings',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

@@ -39,6 +39,19 @@ class CreatePropertyController extends GetxController {
   var commercial_Property_Name = TextEditingController();
   var rent_Parking_Charges = "".obs;
   var carpetAreaUnit = "sq.ft.".obs;
+  final countryRules = {
+    '+91': 10, // India: 10 digits
+    '+1': 10,  // USA: 10 digits
+    '+44': 10, // UK: usually 10 digits after 0
+    '+61': 9,  // Australia
+    '+1-CA': 10,
+    '+49': 11, // Germany varies but 11 is common
+    '+33': 9,  // France
+    '+65': 8,  // Singapore
+    '+971': 9, // UAE
+    '+81': 10, // Japan
+  };
+
   var mealAvailable = " ".obs;
   var rooms = <RoomModel>[].obs;
   var rent_Custom_Painting_Charges = TextEditingController();
@@ -314,6 +327,21 @@ class CreatePropertyController extends GetxController {
   // Loading state to prevent multiple operations
   var isProcessing = false.obs;
 
+  // Add this new variable
+  final showAddRoomCard = true.obs; // Start with card visible for first room
+  final showPropertyTypeError = false.obs; // <-- Add this observable
+  final showBHKChooseToError = false.obs;
+  final showBasicPropertyType=false.obs;
+  final showBasicLookingTo=false.obs;// <-- Add this observable
+  final hasShownCommercialCategory = false.obs;
+  final selectedDepositFromPrice=false.obs;
+  final selectedSellFromPriceDetail=false.obs;
+  final selectedZoneTypeInCommercial=false.obs;
+  final seletedOwnerShipInCommercial=false.obs;
+  final selectedChoiceAnyoneInPriceSection=false.obs;
+  final selectedPossessionStatus=false.obs;
+  final selectedConstructionStatusRent_Commercial=false.obs;
+
   @override
   void dispose() {
     // Properly dispose controllers
@@ -543,6 +571,7 @@ class CreatePropertyController extends GetxController {
     );
   }
 
+  // Modify saveRoom method
   void saveRoom() {
     if (tempRoomType.value.isNotEmpty &&
         tempMonthlyRent.text.isNotEmpty &&
@@ -560,17 +589,18 @@ class CreatePropertyController extends GetxController {
         editingIndex.value = -1;
       }
 
-      // Clear inputs
-      tempRoomType.value = '';
-      tempMonthlyRent.clear();
-      tempDeposit.clear();
+      // Clear inputs and hide card
+      clearRoomDetail();
+      showAddRoomCard.value = false;
     }
   }
 
+  // Modify clearRoomDetail method
   void clearRoomDetail() {
     tempRoomType.value = '';
     tempMonthlyRent.clear();
     tempDeposit.clear();
+    editingIndex.value = -1;
   }
 
   void deleteRoom(int index) {
@@ -579,7 +609,6 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  // ...existing code...
 
   Future<void> pickImageFromCamera() async {
     if (isProcessing.value) return;

@@ -5,13 +5,18 @@ import 'package:housing_flutter_app/modules/add_property/controller/create_prope
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart'
     hide Obx;
 import 'package:housing_flutter_app/modules/add_property/view/widget/stepper_property.dart';
+import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../utils/common_widget/validator/area_validator.dart';
+import '../../../search_property/view/search_screen.dart';
+
 class PostProperty extends StatelessWidget {
   final CreatePropertyController controller;
+  final GlobalKey<FormState>? formKey;
 
-  const PostProperty({super.key, required this.controller});
+  const PostProperty({super.key, required this.controller, this.formKey});
 
   @override
   Widget build(BuildContext context) {
@@ -77,1085 +82,1100 @@ class PostProperty extends StatelessWidget {
 
     return Obx(() {
       print(
-        "Chrvloefjeri ${controller.lookingTo.value == 'Sell'} ${controller.propertyType.value == "Commercial"} ${(controller.lookingTo.value == 'Rent' && controller.propertyType.value == "Commercial")}",
+        "Chrvloefjeri ${controller.lookingTo.value == 'Sell'} ${controller
+            .propertyType.value == "Commercial"} ${(controller.lookingTo
+            .value == 'Rent' &&
+            controller.propertyType.value == "Commercial")}",
       );
       if (controller.lookingTo.value == 'PG/Co-Living') {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 20),
+        return Form(
+          key: formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 20),
 
-            // Property Type
-            buildSectionTitle("Property Type"),
-            const SizedBox(height: 12),
-            Obx(
-              () => Row(
-                children: [
-                  buildChoice(
-                    title: 'Residential',
-                    selected: controller.propertyType.value == 'Residential',
-                    onTap:
-                        () => controller.setValue(
-                          controller.propertyType,
-                          'Residential',
+              // Property Type
+              buildSectionTitle("Property Type"),
+              const SizedBox(height: 12),
+              Obx(
+                    () =>
+                    Row(
+                      children: [
+                        buildChoice(
+                          title: 'Residential',
+                          selected: controller.propertyType.value ==
+                              'Residential',
+                          onTap:
+                              () =>
+                              controller.setValue(
+                                controller.propertyType,
+                                'Residential',
+                              ),
                         ),
-                  ),
-                  const SizedBox(width: 12),
-                  buildChoice(
-                    title: 'Commercial',
-                    selected: controller.propertyType.value == 'Commercial',
-                    onTap: () {
-                      controller.previousStep();
-                      controller.setValue(
-                        controller.propertyType,
-                        'Commercial',
-                      );
-                    },
-                  ),
-                ],
+                        const SizedBox(width: 12),
+                        buildChoice(
+                          title: 'Commercial',
+                          selected: controller.propertyType.value == 'Commercial',
+                          onTap: () {
+                            controller.previousStep();
+                            controller.setValue(
+                              controller.propertyType,
+                              'Commercial',
+                            );
+                          },
+                        ),
+                      ],
+                    ),
               ),
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // Looking To
-            buildSectionTitle("You're looking to..."),
-            const SizedBox(height: 12),
-            Obx(() {
-              final isResidential =
-                  controller.propertyType.value == 'Residential';
-              final options =
-                  isResidential
-                      ? ['Rent', 'Sell', 'PG/Co-Living']
-                      : ['Rent', 'Sell'];
-              return Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children:
-                    options
-                        .map(
-                          (option) => GestureDetector(
+              // Looking To
+              buildSectionTitle("You're looking to..."),
+              const SizedBox(height: 12),
+              Obx(() {
+                final isResidential =
+                    controller.propertyType.value == 'Residential';
+                final options =
+                isResidential
+                    ? ['Rent', 'Sell', 'PG/Co-Living']
+                    : ['Rent', 'Sell'];
+                return Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                  options
+                      .map(
+                        (option) =>
+                        GestureDetector(
+                          onTap: () {
+                            controller.setValue(controller.lookingTo, option);
+                            if (option != 'PG/Co-Living') {
+                              controller.previousStep();
+                            }
+                          },
+                          child: buildChoice(
+                            title: option,
+                            selected: controller.lookingTo.value == option,
                             onTap: () {
-                              controller.setValue(controller.lookingTo, option);
+                              controller.setValue(
+                                controller.lookingTo,
+                                option,
+                              );
                               if (option != 'PG/Co-Living') {
                                 controller.previousStep();
                               }
                             },
-                            child: buildChoice(
-                              title: option,
-                              selected: controller.lookingTo.value == option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.lookingTo,
-                                  option,
-                                );
-                                if (option != 'PG/Co-Living') {
-                                  controller.previousStep();
-                                }
-                              },
+                          ),
+                        ),
+                  )
+                      .toList(),
+                );
+              }),
+              const SizedBox(height: 24),
+
+              // City
+              const Text('City'),
+              const SizedBox(height: 8),
+              buildTextField(
+                "Search City",
+                Icons.search,
+                controller.cityController,
+                isEnable: false,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a city';
+                  }
+                  return null;
+                },
+                onTap: () async {
+                  Prediction selectedCity = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CommonSearchField(
+                            onCitySelected: (city) {
+                              Navigator.pop(context, city);
+                            },
+                            isFromAddProperty: true,
+                            initialSearchText: controller.cityController.text,
+
+                          ),
+                    ),
+                  );
+
+                    controller.cityController.text = selectedCity.structuredFormatting?.secondaryText?.split(',')[0]??'';
+
+                print("city ${controller.cityController.text}");
+                },
+
+              ),
+              const SizedBox(height: 16),
+
+              // PG-specific fields
+              Obx(() {
+                final showPGFields =
+                    controller.lookingTo.value == "PG/Co-Living" &&
+                        controller.propertyType.value == "Residential";
+
+                if (showPGFields) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Locality
+                      const Text('Locality'),
+                      const SizedBox(height: 8),
+                      buildTextField(
+                        "Enter Locality",
+                        Icons.location_on_outlined,
+                        controller.localityController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please add locality';
+                          }
+                          return null;
+                        },
+                        onTap: () async {
+                          Prediction selectedCity = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  CommonSearchField(
+                                    onCitySelected: (city) {
+                                      Navigator.pop(context, city);
+                                    },
+                                    isFromAddProperty: true,
+                                    initialSearchText: controller
+                                        .localityController.text.isEmpty
+                                        ? ''
+                                        : controller.localityController.text,
+
+                                  ),
                             ),
-                          ),
-                        )
-                        .toList(),
-              );
-            }),
-            const SizedBox(height: 24),
+                          );
 
-            // City
-            const Text('City'),
-            const SizedBox(height: 8),
-            buildTextField(
-              "Search City",
-              Icons.search,
-              controller.cityController,
-            ),
-            const SizedBox(height: 16),
 
-            // PG-specific fields
-            Obx(() {
-              final showPGFields =
-                  controller.lookingTo.value == "PG/Co-Living" &&
-                  controller.propertyType.value == "Residential";
+                            controller.localityController.text =
+                            selectedCity.description??'';
 
-              if (showPGFields) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Locality
-                    const Text('Locality'),
-                    const SizedBox(height: 8),
-                    buildTextField(
-                      "Enter Locality",
-                      Icons.location_on_outlined,
-                      controller.localityController,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // PG Details
-                    buildSectionTitle("PG Details"),
-                    const SizedBox(height: 8),
-                    buildTextField(
-                      "PG Name",
-                      Icons.home_work_outlined,
-                      controller.pgNameController,
-                    ),
-                    const SizedBox(height: 16),
-                    buildTextField(
-                      "Total Bed",
-                      Icons.bed_outlined,
-                      controller.totalRoomsController,
-                      isPhoneKey: true,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // PG for
-                    buildSectionTitle("PG for"),
-                    const SizedBox(height: 8),
-                    MultiSelectChip(
-                      options: pgFor,
-                      selectedItems: controller.selectedItems,
-                      onTap:
-                          (option) => controller.toggleItemInList(
-                            controller.selectedItems,
-                            option,
-                          ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Best Suited for
-                    buildSectionTitle("Best Suited for"),
-                    const SizedBox(height: 8),
-                    MultiSelectChip(
-                      options: bestSuitedFor,
-                      selectedItems: controller.bestSuitedList,
-                      onTap:
-                          (option) => controller.toggleItemInList(
-                            controller.bestSuitedList,
-                            option,
-                          ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Meal Available
-                    buildSectionTitle("Meal Available"),
-                    const SizedBox(height: 8),
-                    Obx(
-                      () => Row(
-                        children: [
-                          buildChoice(
-                            title: 'Yes',
-                            selected: controller.mealAvailable.value == 'Yes',
-                            onTap:
-                                () => controller.setValue(
-                                  controller.mealAvailable,
-                                  'Yes',
-                                ),
-                          ),
-                          const SizedBox(width: 10),
-                          buildChoice(
-                            title: 'No',
-                            selected: controller.mealAvailable.value == 'No',
-                            onTap:
-                                () => controller.setValue(
-                                  controller.mealAvailable,
-                                  'No',
-                                ),
-                          ),
-                        ],
+                          print("city ${controller.localityController
+                              .text}  $selectedCity");
+                        },
+                        isEnable: false,
                       ),
-                    ),
+                      const SizedBox(height: 16),
 
-                    // Additional fields if meal is Yes (optional)
-                    Obx(() {
-                      if (controller.mealAvailable.value == "Yes") {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 16),
+                      // PG Details
+                      buildSectionTitle("PG Details"),
+                      const SizedBox(height: 8),
+                      buildTextField(
+                        "PG Name",
+                        Icons.home_work_outlined,
+                        controller.pgNameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter PG Name';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      buildTextField(
+                        "Total Bed",
+                        Icons.bed_outlined,
+                        controller.totalRoomsController,
+                        isPhoneKey: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter total bed';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
 
-                            // Meal Available
-                            buildSectionTitle("Meal offering"),
-                            const SizedBox(height: 8),
-                            MultiSelectChip(
-                              options: mealList,
-                              selectedItems: controller.mealAvailableList,
-                              onTap: (option) {
-                                controller.toggleItemInList(
-                                  controller.mealAvailableList,
-                                  option,
-                                );
-                              },
+                      // PG for
+                      buildSectionTitle("PG for"),
+                      const SizedBox(height: 8),
+                      MultiSelectChip(
+                        options: pgFor,
+                        selectedItems: controller.selectedItems,
+                        onTap:
+                            (option) =>
+                            controller.toggleItemInList(
+                              controller.selectedItems,
+                              option,
                             ),
-                          ],
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
-                    const SizedBox(height: 16),
-                    buildTextField(
-                      'Notice Period (Days)',
-                      Icons.calendar_month_outlined,
-                      controller.noticPeriodController,
-                      isPhoneKey: true,
-                    ),
-                    const SizedBox(height: 16),
-                    buildTextField(
-                      'Lock in Period (Days)',
-                      Icons.calendar_month_outlined,
-                      controller.lockPeriodController,
-                      isPhoneKey: true,
-                    ),
-                    const SizedBox(height: 16),
-                    buildSectionTitle("Common Areas"),
-                    const SizedBox(height: 8),
-                    MultiSelectChip(
-                      options: commonArea,
-                      selectedItems: controller.commonAreasList,
-                      onTap:
-                          (option) => controller.toggleItemInList(
-                            controller.commonAreasList,
-                            option,
-                          ),
-                    ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Best Suited for
+                      buildSectionTitle("Best Suited for"),
+                      const SizedBox(height: 8),
+                      MultiSelectChip(
+                        options: bestSuitedFor,
+                        selectedItems: controller.bestSuitedList,
+                        onTap:
+                            (option) =>
+                            controller.toggleItemInList(
+                              controller.bestSuitedList,
+                              option,
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Meal Available
+                      buildSectionTitle("Meal Available"),
+                      const SizedBox(height: 8),
+                      Obx(
+                            () =>
+                            Row(
+                              children: [
+                                buildChoice(
+                                  title: 'Yes',
+                                  selected: controller.mealAvailable.value ==
+                                      'Yes',
+                                  onTap:
+                                      () =>
+                                      controller.setValue(
+                                        controller.mealAvailable,
+                                        'Yes',
+                                      ),
+                                ),
+                                const SizedBox(width: 10),
+                                buildChoice(
+                                  title: 'No',
+                                  selected: controller.mealAvailable.value ==
+                                      'No',
+                                  onTap:
+                                      () =>
+                                      controller.setValue(
+                                        controller.mealAvailable,
+                                        'No',
+                                      ),
+                                ),
+                              ],
+                            ),
+                      ),
+
+                      // Additional fields if meal is Yes (optional)
+                      Obx(() {
+                        if (controller.mealAvailable.value == "Yes") {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16),
+
+                              // Meal Available
+                              buildSectionTitle("Meal offering"),
+                              const SizedBox(height: 8),
+                              MultiSelectChip(
+                                options: mealList,
+                                selectedItems: controller.mealAvailableList,
+                                onTap: (option) {
+                                  controller.toggleItemInList(
+                                    controller.mealAvailableList,
+                                    option,
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                      const SizedBox(height: 16),
+                      buildTextField(
+                        'Notice Period (Days)',
+                        Icons.calendar_month_outlined,
+
+                        controller.noticPeriodController,
+                        isPhoneKey: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter notice period';
+                          }
+                          final onlyDigits = RegExp(r'^\d+$');
+                          if (!onlyDigits.hasMatch(value)) {
+                            return 'Enter digits only';
+                          }
+                          return null;
+                        },
+
+                        isEnable: false,
+
+                      ),
+                      const SizedBox(height: 16),
+                      buildTextField(
+                        'Lock in Period (Days)',
+                        Icons.calendar_month_outlined,
+                        controller.lockPeriodController,
+                        isPhoneKey: true,
+                        isEnable: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter lock in period';
+                          }
+                          final onlyDigits = RegExp(r'^\d+$');
+                          if (!onlyDigits.hasMatch(value)) {
+                            return 'Enter digits only';
+                          }
+                          return null;
+                        },
+
+                      ),
+                      const SizedBox(height: 16),
+                      buildSectionTitle("Common Areas"),
+                      const SizedBox(height: 8),
+                      MultiSelectChip(
+                        options: commonArea,
+                        selectedItems: controller.commonAreasList,
+                        onTap:
+                            (option) =>
+                            controller.toggleItemInList(
+                              controller.commonAreasList,
+                              option,
+                            ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              }),
+
+              // Commercial-specific fields
+              Obx(() {
+                if (controller.propertyType.value != "Commercial") {
+                  return const SizedBox();
+                }
+                return Column(
+                  children: [
+                    const SizedBox(height: 24),
+                    subPropertyType(controller),
                   ],
                 );
-              } else {
-                return const SizedBox();
-              }
-            }),
+              }),
 
-            // Commercial-specific fields
-            Obx(() {
-              if (controller.propertyType.value != "Commercial") {
-                return const SizedBox();
-              }
-              return Column(
-                children: [
-                  const SizedBox(height: 24),
-                  subPropertyType(controller),
-                ],
-              );
-            }),
-
-            const SizedBox(height: 28),
-          ],
+              const SizedBox(height: 28),
+            ],
+          ),
         );
       } else if ((controller.lookingTo.value == 'Rent' ||
-              controller.lookingTo.value == 'Sell') &&
+          controller.lookingTo.value == 'Sell') &&
           controller.propertyType.value == 'Residential') {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20),
-            buildSectionTitle("Property Type"),
-            SizedBox(height: 12),
-            Obx(
-              () => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  spacing: 12,
-
-                  children:
-                      propertyType
-                          .map(
-                            (type) => buildChoice(
-                              title: type,
-                              selected:
-                                  controller.rent_propertyType.value == type,
-                              onTap:
-                                  () => controller.setValue(
-                                    controller.rent_propertyType,
-                                    type,
-                                  ),
-                            ),
-                          )
-                          .toList(),
-                ),
-              ),
-            ),
-            SizedBox(height: 24),
-            const Text('Building'),
-            SizedBox(height: 8),
-            buildTextField(
-              'Building / Project / Society',
-              Icons.apartment_outlined,
-              controller.rentBuildingController,
-            ),
-            SizedBox(height: 16),
-            const Text('Locality'),
-            SizedBox(height: 8),
-            buildTextField(
-              'Locality',
-              Icons.location_on,
-              controller.localityController,
-            ),
-            SizedBox(height: 16),
-            buildSectionTitle('BHK'),
-            SizedBox(height: 8),
-            Obx(
-              () => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  spacing: 12,
-                  children:
-                      bhkTypes
-                          .map(
-                            (type) => buildChoice(
-                              title: type,
-                              selected: controller.bhkType.value == type,
-                              width: 80,
-                              onTap:
-                                  () => controller.setValue(
-                                    controller.bhkType,
-                                    type,
-                                  ),
-                            ),
-                          )
-                          .toList(),
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-            const Text('Build Up Area'),
-            // SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: buildTextField(
-                    'Build Up Area',
-                    Icons.square_foot,
-                    controller.areaController,
-                    isPhoneKey: true,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade400),
-                  ),
-                  child: DropdownButton<String>(
-                    value: controller.areaUnit.value,
-                    items:
-                        ['sq.ft.', 'sq.yd.', 'sq.mt.']
-                            .map(
-                              (unit) => DropdownMenuItem(
-                                value: unit,
-                                child: Text(unit),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        controller.areaUnit.value = value;
-                      }
-                    },
-                    underline: Container(),
-                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                    dropdownColor: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            buildSectionTitle('Furnishing'),
-            SizedBox(height: 8),
-            Obx(
-              () => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  spacing: 12,
-                  children:
-                      furnishingList
-                          .map(
-                            (type) => buildChoice(
-                              title: type,
-                              selected: controller.furnishingType.value == type,
-                              onTap:
-                                  () => controller.setValue(
-                                    controller.furnishingType,
-                                    type,
-                                  ),
-                            ),
-                          )
-                          .toList(),
-                ),
-              ),
-            ),
-            SizedBox(height: 12),
-            Obx(
-              () => Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Checkbox(
-                    value: controller.isShareWithAgents.value,
-                    onChanged: (val) {
-                      controller.isShareWithAgents.value = val ?? false;
-                    },
-                  ),
-                  Text(
-                    'Share listing information with agents',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-            // SizedBox(height: 28),
-          ],
-        );
-      } else if (controller.propertyType.value == "Commercial" &&
-          controller.lookingTo.value == "Rent") {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 24),
-            const Text('Building'),
-            SizedBox(height: 8),
-            buildTextField(
-              'Building / Project / Society',
-              Icons.apartment_outlined,
-              controller.commercial_rent_building_Name,
-            ),
-            SizedBox(height: 16),
-            const Text('Locality'),
-            SizedBox(height: 8),
-            buildTextField(
-              'Locality',
-              Icons.location_on_outlined,
-              controller.commercial_rent_Loaclity_Name,
-            ),
-
-            if (controller.selectedIndex.value == 'Other') ...[
-              SizedBox(height: 16),
-              const Text('Property Name'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Enter Property Name',
-                Icons.apartment_outlined,
-                controller.commercial_Property_Name,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'POSSESSTION INFO',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-            if (controller.selectedIndex.value != 'Plot') ...[
-              SizedBox(height: 16),
-              buildSectionTitle('Posession status'),
-              SizedBox(height: 8),
+        return Form(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          key:  formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20),
+              buildSectionTitle("Property Type"),
+              SizedBox(height: 12),
               Obx(
-                () => Wrap(
-                  spacing: 12,
-                  children:
-                      posession_Status.map((e) {
-                        return buildChoice(
-                          title: e,
-                          selected:
-                              controller
-                                  .commercial_rent_posessionStatus
-                                  .value ==
-                              e,
-                          onTap: () {
-                            controller.setValue(
-                              controller.commercial_rent_posessionStatus,
-                              e,
-                            );
-                          },
-                        );
-                      }).toList(),
-                ),
-              ),
-            ],
-            SizedBox(height: 16),
-            Text('Available From'),
-            SizedBox(height: 8),
-            GestureDetector(
-              onTap: () async {
-                FocusScope.of(context).unfocus(); // hide keyboard if open
-
-                final DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                );
-
-                if (pickedDate != null) {
-                  final formattedDate = DateFormat(
-                    'dd/MM/yyyy',
-                  ).format(pickedDate);
-                  controller.commercial_rent_AvailableFrom.text = formattedDate;
-                  controller.setDate(
-                    pickedDate,
-                  ); // optional: save in observable
-                }
-              },
-              child: buildTextField(
-                'Enter Available From',
-                Icons.calendar_month_outlined,
-                controller.commercial_rent_AvailableFrom,
-                isEnable: false,
-                isPhoneKey: true
-              ),
-            ),
-
-            SizedBox(height: 16),
-            if (controller.commercial_rent_posessionStatus.value ==
-                    "Ready to move" &&
-                controller.selectedIndex.value != "Plot") ...[
-              Text('Age of Property'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Enter Age of property in years',
-                Icons.apartment_outlined,
-                controller.commercial_rent_AgeOfPropertInYear,
-              ),
-              SizedBox(height: 16),
-            ],
-
-            Text(
-              'ABOUT THE PROPERTY',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 16),
-            if (controller.selectedIndex.value == 'Office' ||
-                controller.selectedIndex.value == 'Warehouse' ||
-                controller.selectedIndex.value == 'Plot' ||
-                controller.selectedIndex.value == 'Other') ...[
-              buildSectionTitle("Zone Type"),
-              SizedBox(height: 8),
-
-              Obx(
-                () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
-                      controller.zoneType
-                          .map(
-                            (e) => buildChoice(
-                              title: e,
-                              selected:
-                                  controller.commercial_ZoneType.value == e,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.commercial_ZoneType,
-                                  e,
-                                );
-                              },
-                            ),
-                          )
-                          .toList(),
-                ),
-              ),
-              SizedBox(height: 16),
-            ],
-            if (controller.selectedIndex.value != 'Plot') ...[
-              buildSectionTitle('Location Hub'),
-              SizedBox(height: 8),
-              Obx(
-                () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
-                      controller.locationHub
-                          .map(
-                            (e) => buildChoice(
-                              title: e,
-                              selected:
-                                  controller.commercial_LocationHub.value == e,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.commercial_LocationHub,
-                                  e,
-                                );
-                              },
-                            ),
-                          )
-                          .toList(),
-                ),
-              ),
-              SizedBox(height: 16),
-            ],
-
-            if (controller.commercial_LocationHub.value == "Other") ...[
-              Text('Other Location '),
-              SizedBox(height: 8),
-              buildTextField(
-                'Enter the Location',
-                Icons.location_on_outlined,
-                controller.commercial_other_Location,
-              ),
-              SizedBox(height: 16),
-            ],
-            if (controller.selectedIndex.value != "Shop" &&
-                controller.selectedIndex.value != "Showroom" &&
-                controller.selectedIndex.value != "Warehouse" &&
-                controller.selectedIndex.value != "Plot" &&
-                controller.selectedIndex.value != "Other") ...[
-              SizedBox(height: 16),
-              buildSectionTitle("Property Condition"),
-              SizedBox(height: 8),
-              Obx(
-                () => Wrap(
-                  spacing: 12,
-                  children:
-                      commercial_propertyComditon
-                          .map(
-                            (e) => buildChoice(
-                              title: e,
-                              selected:
-                                  controller
-                                      .commercial_property_condition
-                                      .value ==
-                                  e,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.commercial_property_condition,
-                                  e,
-                                );
-                              },
-                            ),
-                          )
-                          .toList(),
-                ),
-              ),
-
-              if (controller.commercial_property_condition.value ==
-                  'Ready to use') ...[
-                SizedBox(height: 16),
-                Text("Carpet Area"),
-                SizedBox(height: 8),
-                TextFieldWithDropdown(
-                  hintText: "Carpet Area",
-                  icon: Icons.square_foot,
-                  controller: controller.commercial_Square_CarpetArea,
-                  selectedValue: controller.commercial_Square_AreaUnti_Carpet,
-                  // RxString
-                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
-                  isPhoneKey: true,
-                ),
-              ],
-            ],
-            if (controller.selectedIndex.value == "Plot") ...[
-              Text("Plot Area"),
-              SizedBox(height: 8),
-              TextFieldWithDropdown(
-                hintText: "Plot Area",
-                icon: Icons.square_foot,
-                controller: controller.commercial_plot,
-                selectedValue: controller.commercial_plotArea,
-                // RxString
-                dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
-                isPhoneKey: true,
-              ),
-            ],
-            if (controller.selectedIndex.value == 'Shop' ||
-                controller.selectedIndex.value == 'Showroom' ||
-                controller.selectedIndex.value == "Warehouse" ||
-                controller.selectedIndex.value == "Other") ...[
-              Text("Carpet Area"),
-              SizedBox(height: 8),
-              TextFieldWithDropdown(
-                hintText: "Carpet Area",
-                icon: Icons.square_foot,
-                controller: controller.commercial_Square_CarpetArea,
-                selectedValue: controller.commercial_Square_AreaUnti_Carpet,
-                // RxString
-                dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
-                isPhoneKey: true,
-              ),
-            ],
-            if (controller.selectedIndex.value != "Plot") ...[
-              SizedBox(height: 8),
-              Text("Build Up Area"),
-              SizedBox(height: 8),
-              TextFieldWithDropdown(
-                hintText: "Build Up Area",
-                icon: Icons.square_foot,
-                controller: controller.commercial_Square_BuildArea,
-                selectedValue: controller.commercial_Square_AreaUnti_Build,
-                // RxString
-                dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
-                isPhoneKey: true,
-              ),
-            ],
-
-            SizedBox(height: 16),
-            buildSectionTitle("Ownership"),
-            SizedBox(height: 8),
-            Obx(
-              () => Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children:
-                    commercial_ownerShipList
+                () => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    spacing: 12,
+                    children: propertyType
                         .map(
-                          (e) => buildChoice(
-                            title: e,
-                            selected:
-                                controller.commercial_ownerShipList.value == e,
+                          (type) => buildChoice(
+                            title: type,
+                            selected: controller.rent_propertyType.value == type,
                             onTap: () {
-                              controller.setValue(
-                                controller.commercial_ownerShipList,
-                                e,
-                              );
+                              controller.setValue(controller.rent_propertyType, type);
+                              controller.showPropertyTypeError.value = false; // Hide error on selection
                             },
                           ),
                         )
                         .toList(),
+                  ),
+                ),
               ),
-            ),
-            if (controller.commercial_property_condition.value ==
-                "Bare shell") ...[
+              // --- Show error text only if showPropertyTypeError is true ---
+              Obx(() => controller.showPropertyTypeError.value
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 6, left: 4),
+                      child: Text(
+                        'Please select a property type',
+                        style: TextStyle(color: Colors.red, fontSize: 13),
+                      ),
+                    )
+                  : SizedBox.shrink()),
+              SizedBox(height: 24),
+              const Text('Building'),
+              SizedBox(height: 8),
+              buildTextField(
+                'Building / Project / Society',
+                Icons.apartment_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    return null;
+                  },
+                controller.rentBuildingController,
+
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+
+
+                              initialSearchText: controller.rentBuildingController
+                                  .text,
+                              hintText: 'Building / Project / Society',
+
+
+                            ),
+                      ),
+                    );
+                    controller.rentBuildingController.text =selectedCity.structuredFormatting?.mainText??'';
+                    if(controller.rentBuildingController.text.isNotEmpty)
+                      {
+                        controller.localityController.text=selectedCity.structuredFormatting?.secondaryText??'';
+                      }
+
+
+
+                    print("city ${controller.localityController.text}");
+                  },
+                  isEnable: false
+              ),
               SizedBox(height: 16),
-              buildSectionTitle("Construction status"),
+              const Text('Locality'),
+              SizedBox(height: 8),
+              buildTextField(
+                  'Locality',
+                  Icons.location_on,
+                  controller.localityController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter locality';
+                    }
+                    return null;
+                  },
+                  onTap:(controller.localityController.text.trim().isEmpty)? () async {
+                    Prediction  selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              initialSearchText: controller.localityController
+                                  .text,
+                              hintText: 'Locality',
+
+                            ),
+                      ),
+                    );
+
+                      controller.localityController.text = selectedCity.description??'';
+                    print("city ${controller.localityController.text}");
+                  }: null,
+                  isEnable: false
+              ),
+              SizedBox(height: 16),
+              buildSectionTitle('BHK'),
               SizedBox(height: 8),
               Obx(
-                () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
-                      commercial_construction_status
-                          .map(
-                            (e) => buildChoice(
-                              title: e,
-                              selected:
-                                  controller
-                                      .commercial_construction_status_value
-                                      .value ==
-                                  e,
-                              onTap: () {
-                                controller.setValue(
-                                  controller
-                                      .commercial_construction_status_value,
-                                  e,
-                                );
-                              },
-                            ),
-                          )
+                    () =>
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 12,
+                        children:
+                        bhkTypes
+                            .map(
+                              (type) =>
+                              buildChoice(
+                                title: type,
+                                selected: controller.bhkType.value == type,
+                                width: 80,
+                                onTap:
+                                    () =>
+                                    controller.setValue(
+                                      controller.bhkType,
+                                      type,
+                                    ),
+                              ),
+                        )
+                            .toList(),
+                      ),
+                    ),
+              ),
+              Obx(() => controller.showBHKChooseToError.value
+                  ? Padding(
+                padding: const EdgeInsets.only(top: 6, left: 4),
+                child: Text(
+                  'Please select a BHK type',
+                  style: TextStyle(color: Colors.red, fontSize: 13),
+                ),
+              )
+                  : SizedBox.shrink()),
+              SizedBox(height: 16),
+              const Text('Build Up Area'),
+              SizedBox(height: 8
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: buildTextField(
+                      'Build Up Area',
+                      Icons.square_foot,
+                      controller.areaController,
+                      isPhoneKey: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter valid area';
+                        }
+
+                        if (controller.bhkType.value.isEmpty) {
+                          return 'Please select BHK type first';
+                        }
+
+                        final entered = int.tryParse(value);
+                        if (entered == null) {
+                          return 'Please enter a valid number';
+                        }
+
+                        final range = AreaRangeHelper.getAreaRange(
+                          controller.bhkType.value,
+                          controller.areaUnit.value
+                        );
+
+                        if (range[0] == 0 && range[1] == 0) {
+                          return 'Please select BHK type first';
+                        }
+
+                        if (entered < range[0] || entered > range[1]) {
+                          return 'Area must be between ${range[0]} - ${range[1]} ${controller.areaUnit.value}';
+                        }
+
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade400),
+                    ),
+                    child: DropdownButton<String>(
+                      value: controller.areaUnit.value,
+                      items: ['sq.ft.', 'sq.yd.', 'sq.mt.']
+                          .map((unit) => DropdownMenuItem(
+                                value: unit,
+                                child: Text(unit),
+                              ))
                           .toList(),
-                ),
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.areaUnit.value = value;
+                          // Trigger revalidation when unit changes
+                          if (formKey?.currentState != null) {
+                            formKey!.currentState!.validate();
+                          }
+                        }
+                      },
+                      underline: Container(),
+                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                      dropdownColor: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-            ],
-            if (controller.commercial_property_condition.value ==
-                    "Ready to use" &&
-                controller.selectedIndex.value == 'Office') ...[
-              SizedBox(height: 16),
-              Text("Seats"),
-              SizedBox(height: 8),
-              buildTextField(
-                'Min Number of seats',
-                Icons.chair_alt_outlined,
-                controller.commercial_seats,
-                isPhoneKey: true
-              ),
-              SizedBox(height: 16),
-              Text("Cabins"),
-              SizedBox(height: 8),
-              buildTextField(
-                'Min Number of cabins',
-                Icons.cabin_outlined,
-                controller.commercial_cabins,
-                isPhoneKey: true
-              ),
-              SizedBox(height: 16),
-              Text("Meeting Room"),
-              SizedBox(height: 8),
-              buildTextField(
-                'Number of Meeting Rooms',
-                Icons.meeting_room_outlined,
-                controller.commercial_meeting_room,
-                isPhoneKey: true
-              ),
-            ],
 
-            SizedBox(height: 16),
-            Text('Floor Available'),
-            SizedBox(height: 8),
-            buildTextField(
-              'Total Floor',
-              Icons.elevator_outlined,
-              controller.commercial_total_floor,
-              isPhoneKey: true,
-            ),
-            SizedBox(height: 16),
-            Text('Your Floor'),
-            SizedBox(height: 8),
-
-            GestureDetector(
-              onTap: () {
-                int totalFloor = int.tryParse(controller.commercial_total_floor.text) ?? 0;
-                List<String> floorOptions = ['-2', '-1', 'Ground'];
-                for (int i = 1; i <= totalFloor; i++) {
-                  floorOptions.add(i.toString());
-                }
-                _showFloorSelectionBottomSheet(context, controller, floorOptions);
-              },
-              child: AbsorbPointer(
-                child: buildTextField(
-                  'Select Your Floor',
-                  Icons.elevator_outlined,
-                  controller.commercial_your_floor,
-                  isEnable: false,
-                ),
+              SizedBox(height: 16),
+              buildSectionTitle('Furnishing'),
+              SizedBox(height: 8),
+              Obx(
+                    () =>
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 12,
+                        children:
+                        furnishingList
+                            .map(
+                              (type) =>
+                              buildChoice(
+                                title: type,
+                                selected: controller.furnishingType.value == type,
+                                onTap:
+                                    () =>
+                                    controller.setValue(
+                                      controller.furnishingType,
+                                      type,
+                                    ),
+                              ),
+                        )
+                            .toList(),
+                      ),
+                    ),
               ),
-            ),
-          ],
+              SizedBox(height: 12),
+              Obx(
+                    () =>
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Checkbox(
+                          value: controller.isShareWithAgents.value,
+                          onChanged: (val) {
+                            controller.isShareWithAgents.value = val ?? false;
+                          },
+                        ),
+                        Text(
+                          'Share listing information with agents',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      ],
+                    ),
+              ),
+              // SizedBox(height: 28),
+            ],
+          ),
         );
-      }else if (controller.propertyType.value == "Commercial" &&
-          controller.lookingTo.value == "Sell") {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 24),
-            const Text('Building'),
-            SizedBox(height: 8),
-            buildTextField(
-              'Building / Project / Society',
-              Icons.apartment_outlined,
-              controller.commercial_rent_building_Name,
-            ),
-            SizedBox(height: 16),
-            const Text('Locality'),
-            SizedBox(height: 8),
-            buildTextField(
-              'Locality',
-              Icons.location_on_outlined,
-              controller.commercial_rent_Loaclity_Name,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'POSSESSTION INFO',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-
-            if (controller.selectedIndex.value == 'Other') ...[
-              SizedBox(height: 16),
-              const Text('Property Name'),
+      } else if (controller.propertyType.value == "Commercial" &&
+          controller.lookingTo.value == "Rent" && controller.selectedIndex.value.isNotEmpty) {
+        return Form(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 24),
+              const Text('Building'),
               SizedBox(height: 8),
               buildTextField(
-                'Enter Property Name',
+                'Building / Project / Society',
                 Icons.apartment_outlined,
-                controller.commercial_Property_Name,
+                controller.commercial_rent_building_Name,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    return null;
+                  },
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              initialSearchText: controller
+                                  .commercial_rent_Loaclity_Name.text,
+                              hintText: 'Building / Project / Society',
+
+                            ),
+                      ),
+                    );
+
+                      controller.commercial_rent_building_Name.text =
+                      selectedCity.structuredFormatting?.mainText??'';
+                    if(controller.commercial_rent_building_Name.text.isNotEmpty)
+                      {
+                        controller.commercial_rent_Loaclity_Name.text=selectedCity.structuredFormatting?.secondaryText??'';
+                      }
+                    print(
+                        "city ${controller.commercial_rent_Loaclity_Name.text}");
+                  },
+                  isEnable: false
               ),
               SizedBox(height: 16),
+              const Text('Locality'),
+              SizedBox(height: 8),
+              buildTextField(
+                  'Locality',
+                  Icons.location_on_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter locality';
+                    }
+                    return null;
+                  },
+                  controller.commercial_rent_Loaclity_Name,
+                  onTap:(controller.commercial_rent_Loaclity_Name.text.trim().isEmpty)? () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              initialSearchText: controller
+                                  .commercial_rent_Loaclity_Name.text,
+                              hintText: 'Locality',
+
+                            ),
+                      ),
+                    );
+
+                      controller.commercial_rent_Loaclity_Name.text =
+                      selectedCity.description??'';
+
+
+                    print(
+                        "city ${controller.commercial_rent_Loaclity_Name.text}");
+                  }: null,
+                  isEnable: false
+              ),
+
+              if (controller.selectedIndex.value == 'Other') ...[
+                SizedBox(height: 16),
+                const Text('Property Name'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter Property Name',
+                  Icons.apartment_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter Property name';
+                    }
+                    return null;
+                  },
+                  controller.commercial_Property_Name,
+                ),
+                SizedBox(height: 16),
+
+              ],
+              if (controller.selectedIndex.value != 'Plot') ...[
+                SizedBox(height: 16),
+                Text(
+                  'POSSESSTION INFO',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle('Posession status'),
+                SizedBox(height: 8),
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        children:
+                        posession_Status.map((e) {
+                          return buildChoice(
+                            title: e,
+                            selected:
+                            controller
+                                .commercial_rent_posessionStatus
+                                .value ==
+                                e,
+                            onTap: () {
+                              controller.setValue(
+                                controller.commercial_rent_posessionStatus,
+                                e,
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
+                ),
+                Obx(() => controller.selectedPossessionStatus.value?Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 4),
+                  child: Text(
+                    'Please select possession type',
+                    style: TextStyle(
+                      color: Colors.red.shade700,
+                      fontSize: 12,
+                    ),
+                  ),
+                )
+                    : const SizedBox.shrink() ,),
+              ],
+              SizedBox(height: 16),
+              Text('Available From'),
+              SizedBox(height: 8),
+            buildTextField(
+                    'Enter Available From',
+                    Icons.calendar_month_outlined,
+                    controller.commercial_rent_AvailableFrom,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter valid date';
+                }
+                return null;
+              },
+                  isEnable: false,
+                  onTap: () async {
+
+                    FocusScope.of(context).unfocus();
+                    DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2100),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: ColorRes.primary,
+                              // header background color
+                              onPrimary: Colors.white,
+                              // header text color
+                              onSurface: Colors.black, // body text color
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: ColorRes.primary,
+                              ),
+                            ),
+                          ),
+
+
+                          child: child!,
+                        );
+                      },
+
+                    );
+                    if (picked != null) {
+                      controller.commercial_rent_AvailableFrom.text =
+                      "${picked.day}/${picked.month}/${picked.year}";
+                    }
+                  },
+                    isPhoneKey: true,
+                ),
+
+              SizedBox(height: 16),
+              if (controller.commercial_rent_posessionStatus.value ==
+                  "Ready to move" &&
+                  controller.selectedIndex.value != "Plot") ...[
+                Text('Age of Property'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter Age of property in years',
+                  Icons.apartment_outlined,
+                  controller.commercial_rent_AgeOfPropertInYear,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter property age';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+              ],
+
               Text(
-                'POSSESSTION INFO',
+                'ABOUT THE PROPERTY',
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-            ],
-            if (controller.selectedIndex.value != 'Plot') ...[
               SizedBox(height: 16),
-              buildSectionTitle('Posession status'),
-              SizedBox(height: 8),
-              Obx(
-                    () => Wrap(
-                  spacing: 12,
-                  children:
-                  posession_Status.map((e) {
-                    return buildChoice(
-                      title: e,
-                      selected:
-                      controller
-                          .commercial_rent_posessionStatus
-                          .value ==
-                          e,
-                      onTap: () {
-                        controller.setValue(
-                          controller.commercial_rent_posessionStatus,
-                          e,
-                        );
-                      },
-                    );
-                  }).toList(),
+              if (controller.selectedIndex.value == 'Office' ||
+                  controller.selectedIndex.value == 'Warehouse' ||
+                  controller.selectedIndex.value == 'Plot' ||
+                  controller.selectedIndex.value == 'Other') ...[
+                buildSectionTitle("Zone Type"),
+                SizedBox(height: 8),
+
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        controller.zoneType
+                            .map(
+                              (e) =>
+                              buildChoice(
+                                title: e,
+                                selected:
+                                controller.commercial_ZoneType.value == e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.commercial_ZoneType,
+                                    e,
+                                  );
+                                },
+                              ),
+                        )
+                            .toList(),
+                      ),
                 ),
-              ),
-            ],
-           if(controller.commercial_rent_posessionStatus.value=="Under Construction")...[
-             SizedBox(height: 16),
-             Text('Possession Date'),
-             SizedBox(height: 8),
-             GestureDetector(
-               onTap: () async {
-                 FocusScope.of(context).unfocus();
-
-                 final DateTime? pickedDate = await showDatePicker(
-                   context: context,
-                   initialDate: DateTime.now(),
-                   firstDate: DateTime(2000),
-                   lastDate: DateTime(2100),
-                 );
-
-                 if (pickedDate != null) {
-                   final formattedDate = DateFormat(
-                     'dd/MM/yyyy',
-                   ).format(pickedDate);
-                   controller.commercial_rent_AvailableFrom.text = formattedDate;
-                   controller.setDate(
-                     pickedDate,
-                   ); // optional: save in observable
-                 }
-               },
-               child: buildTextField(
-                   'Enter possession Date',
-                   Icons.calendar_month_outlined,
-                   controller.commercial_rent_AvailableFrom,
-                   isEnable: false,
-                   isPhoneKey: true
-               ),
-             ),
-
-           ],
-
-            SizedBox(height: 16),
-            if (controller.commercial_rent_posessionStatus.value ==
-                "Ready to move" &&
-                controller.selectedIndex.value != "Plot") ...[
-              Text('Age of Property'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Enter Age of property in years',
-                Icons.apartment_outlined,
-                controller.commercial_rent_AgeOfPropertInYear,
-              ),
-              SizedBox(height: 16),
-            ],
-
-            Text(
-              'ABOUT THE PROPERTY',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 16),
-            if (controller.selectedIndex.value == 'Office' ||
-                controller.selectedIndex.value == 'Warehouse' ||
-                controller.selectedIndex.value == 'Plot' ||
-                controller.selectedIndex.value == 'Other') ...[
-              buildSectionTitle("Zone Type"),
-              SizedBox(height: 8),
-
-              Obx(
-                    () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
-                  controller.zoneType
-                      .map(
-                        (e) => buildChoice(
-                      title: e,
-                      selected:
-                      controller.commercial_ZoneType.value == e,
-                      onTap: () {
-                        controller.setValue(
-                          controller.commercial_ZoneType,
-                          e,
-                        );
-                      },
+                Obx(() => controller.selectedZoneTypeInCommercial.value?Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 4),
+                  child: Text(
+                    'Please select Zone type',
+                    style: TextStyle(
+                      color: Colors.red.shade700,
+                      fontSize: 12,
                     ),
-                  )
-                      .toList(),
-                ),
-              ),
-              SizedBox(height: 16),
-            ],
-            if (controller.selectedIndex.value != 'Plot') ...[
-              buildSectionTitle('Location Hub'),
-              SizedBox(height: 8),
-              Obx(
-                    () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
-                  controller.locationHub
-                      .map(
-                        (e) => buildChoice(
-                      title: e,
-                      selected:
-                      controller.commercial_LocationHub.value == e,
-                      onTap: () {
-                        controller.setValue(
-                          controller.commercial_LocationHub,
-                          e,
-                        );
-                      },
-                    ),
-                  )
-                      .toList(),
-                ),
-              ),
-              SizedBox(height: 16),
-            ],
-
-            if (controller.commercial_LocationHub.value == "Other") ...[
-              Text('Other Location '),
-              SizedBox(height: 8),
-              buildTextField(
-                'Enter the Location',
-                Icons.location_on_outlined,
-                controller.commercial_other_Location,
-              ),
-              SizedBox(height: 16),
-            ],
-            if (controller.selectedIndex.value != "Shop" &&
-                controller.selectedIndex.value != "Showroom" &&
-                controller.selectedIndex.value != "Warehouse" &&
-                controller.selectedIndex.value != "Plot" &&
-                controller.selectedIndex.value != "Other") ...[
-              SizedBox(height: 16),
-              buildSectionTitle("Property Condition"),
-              SizedBox(height: 8),
-              Obx(
-                    () => Wrap(
-                  spacing: 12,
-                  children:
-                  commercial_propertyComditon
-                      .map(
-                        (e) => buildChoice(
-                      title: e,
-                      selected:
-                      controller
-                          .commercial_property_condition
-                          .value ==
-                          e,
-                      onTap: () {
-                        controller.setValue(
-                          controller.commercial_property_condition,
-                          e,
-                        );
-                      },
-                    ),
-                  )
-                      .toList(),
-                ),
-              ),
-
-              if (controller.commercial_property_condition.value ==
-                  'Ready to use') ...[
+                  ),
+                )
+                    : const SizedBox.shrink() ,),
                 SizedBox(height: 16),
+
+              ],
+              if (controller.selectedIndex.value != 'Plot') ...[
+                buildSectionTitle('Location Hub'),
+                SizedBox(height: 8),
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        controller.locationHub
+                            .map(
+                              (e) =>
+                              buildChoice(
+                                title: e,
+                                selected:
+                                controller.commercial_LocationHub.value == e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.commercial_LocationHub,
+                                    e,
+                                  );
+                                },
+                              ),
+                        )
+                            .toList(),
+                      ),
+                ),
+                SizedBox(height: 16),
+              ],
+
+              if (controller.commercial_LocationHub.value == "Other") ...[
+                Text('Other Location '),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter the Location',
+                  Icons.location_on_outlined,
+                  controller.commercial_other_Location,
+                ),
+                SizedBox(height: 16),
+              ],
+              if (controller.selectedIndex.value != "Shop" &&
+                  controller.selectedIndex.value != "Showroom" &&
+                  controller.selectedIndex.value != "Warehouse" &&
+                  controller.selectedIndex.value != "Plot" &&
+                  controller.selectedIndex.value != "Other") ...[
+                SizedBox(height: 16),
+                buildSectionTitle("Property Condition"),
+                SizedBox(height: 8),
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        children:
+                        commercial_propertyComditon
+                            .map(
+                              (e) =>
+                              buildChoice(
+                                title: e,
+                                selected:
+                                controller
+                                    .commercial_property_condition
+                                    .value ==
+                                    e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.commercial_property_condition,
+                                    e,
+                                  );
+                                },
+                              ),
+                        )
+                            .toList(),
+                      ),
+                ),
+
+                if (controller.commercial_property_condition.value ==
+                    'Ready to use') ...[
+                  SizedBox(height: 16),
+                  Text("Carpet Area"),
+                  SizedBox(height: 8),
+                  TextFieldWithDropdown(
+                    hintText: "Carpet Area",
+                    icon: Icons.square_foot,
+                    validator: (value) {
+
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter building name';
+                      }
+                      final rent =int.parse(value);
+                      final buildArea = int.tryParse(controller.commercial_Square_BuildArea.text) ?? 0;
+                      if(rent>buildArea)
+                        {
+                            return 'Carpet area should not be greater than Build up area';
+                        }
+                      return null;
+                    },
+                    controller: controller.commercial_Square_CarpetArea,
+                    selectedValue: controller.commercial_Square_AreaUnti_Carpet,
+                    // RxString
+                    dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
+                    isPhoneKey: true,
+                  ),
+                ],
+              ],
+              if (controller.selectedIndex.value == "Plot") ...[
+                Text("Plot Area"),
+                SizedBox(height: 8),
+                TextFieldWithDropdown(
+                  hintText: "Plot Area",
+                  icon: Icons.square_foot,
+                  controller: controller.commercial_plot,
+
+                  selectedValue: controller.commercial_plotArea,
+                  // RxString
+                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
+                  isPhoneKey: true,
+                ),
+              ],
+              if (controller.selectedIndex.value == 'Shop' ||
+                  controller.selectedIndex.value == 'Showroom' ||
+                  controller.selectedIndex.value == "Warehouse" ||
+                  controller.selectedIndex.value == "Other") ...[
                 Text("Carpet Area"),
                 SizedBox(height: 8),
                 TextFieldWithDropdown(
                   hintText: "Carpet Area",
                   icon: Icons.square_foot,
+                  validator: (value) {
+
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    final rent =int.parse(value);
+                    final buildArea = int.tryParse(controller.commercial_Square_BuildArea.text) ?? 0;
+                    if(rent>buildArea)
+                    {
+                      return 'Carpet area should not be greater than Build up area';
+                    }
+                    return null;
+                  },
                   controller: controller.commercial_Square_CarpetArea,
                   selectedValue: controller.commercial_Square_AreaUnti_Carpet,
                   // RxString
@@ -1163,175 +1183,900 @@ class PostProperty extends StatelessWidget {
                   isPhoneKey: true,
                 ),
               ],
-            ],
-            if (controller.selectedIndex.value == "Plot") ...[
-              Text("Plot Area"),
-              SizedBox(height: 8),
-              TextFieldWithDropdown(
-                hintText: "Plot Area",
-                icon: Icons.square_foot,
-                controller: controller.commercial_plot,
-                selectedValue: controller.commercial_plotArea,
-                // RxString
-                dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
-                isPhoneKey: true,
-              ),
-            ],
-            if (controller.selectedIndex.value == 'Shop' ||
-                controller.selectedIndex.value == 'Showroom' ||
-                controller.selectedIndex.value == "Warehouse" ||
-                controller.selectedIndex.value == "Other") ...[
-              Text("Carpet Area"),
-              SizedBox(height: 8),
-              TextFieldWithDropdown(
-                hintText: "Carpet Area",
-                icon: Icons.square_foot,
-                controller: controller.commercial_Square_CarpetArea,
-                selectedValue: controller.commercial_Square_AreaUnti_Carpet,
-                // RxString
-                dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
-                isPhoneKey: true,
-              ),
-            ],
-            if (controller.selectedIndex.value != "Plot") ...[
-              SizedBox(height: 8),
-              Text("Build Up Area"),
-              SizedBox(height: 8),
-              TextFieldWithDropdown(
-                hintText: "Build Up Area",
-                icon: Icons.square_foot,
-                controller: controller.commercial_Square_BuildArea,
-                selectedValue: controller.commercial_Square_AreaUnti_Build,
-                // RxString
-                dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
-                isPhoneKey: true,
-              ),
-            ],
+              if (controller.selectedIndex.value != "Plot") ...[
+                SizedBox(height: 8),
+                Text("Build Up Area"),
+                SizedBox(height: 8),
+                TextFieldWithDropdown(
+                  hintText: "Build Up Area",
+                  icon: Icons.square_foot,
+                  controller: controller.commercial_Square_BuildArea,
+                  selectedValue: controller.commercial_Square_AreaUnti_Build,
+                  validator: (value) {
+                    final rent =int.parse(value??'0');
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    if(rent<50 || rent>3000000)
+                    {
+                      return 'Area should be between 50 to 3000000';
+                    }
+                    return null;
+                  },
+                  // RxString
+                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
+                  isPhoneKey: true,
+                ),
+              ],
 
-            SizedBox(height: 16),
-            buildSectionTitle("Ownership"),
-            SizedBox(height: 8),
-            Obx(
-                  () => Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children:
-                commercial_ownerShipList
-                    .map(
-                      (e) => buildChoice(
-                    title: e,
-                    selected:
-                    controller.commercial_ownerShipList.value == e,
-                    onTap: () {
-                      controller.setValue(
-                        controller.commercial_ownerShipList,
-                        e,
-                      );
-                    },
-                  ),
-                )
-                    .toList(),
-              ),
-            ),
-            if (controller.commercial_property_condition.value ==
-                "Bare shell") ...[
               SizedBox(height: 16),
-              buildSectionTitle("Construction status"),
+              buildSectionTitle("Ownership"),
               SizedBox(height: 8),
               Obx(
-                    () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
-                  commercial_construction_status
-                      .map(
-                        (e) => buildChoice(
-                      title: e,
-                      selected:
-                      controller
-                          .commercial_construction_status_value
-                          .value ==
-                          e,
-                      onTap: () {
-                        controller.setValue(
-                          controller
-                              .commercial_construction_status_value,
-                          e,
-                        );
-                      },
+                    () =>
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children:
+                      commercial_ownerShipList
+                          .map(
+                            (e) =>
+                            buildChoice(
+                              title: e,
+                              selected:
+                              controller.commercial_ownerShipList.value == e,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.commercial_ownerShipList,
+                                  e,
+                                );
+                              },
+                            ),
+                      )
+                          .toList(),
                     ),
-                  )
-                      .toList(),
+              ),
+              Obx(() => controller.seletedOwnerShipInCommercial.value?Padding(
+                padding: const EdgeInsets.only(top: 8, left: 4),
+                child: Text(
+                  'Please select OwnerShip type',
+                  style: TextStyle(
+                    color: Colors.red.shade700,
+                    fontSize: 12,
+                  ),
+                ),
+              )
+                  : const SizedBox.shrink() ,),
+              if (controller.commercial_property_condition.value ==
+                  "Bare shell") ...[
+                SizedBox(height: 16),
+                buildSectionTitle("Construction status"),
+                SizedBox(height: 8),
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        commercial_construction_status
+                            .map(
+                              (e) =>
+                              buildChoice(
+                                title: e,
+                                selected:
+                                controller
+                                    .commercial_construction_status_value
+                                    .value ==
+                                    e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller
+                                        .commercial_construction_status_value,
+                                    e,
+                                  );
+                                },
+                              ),
+                        )
+                            .toList(),
+                      ),
+                ),
+                Obx(() => controller.seletedOwnerShipInCommercial.value?Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 4),
+                  child: Text(
+                    'Please select OwnerShip type',
+                    style: TextStyle(
+                      color: Colors.red.shade700,
+                      fontSize: 12,
+                    ),
+                  ),
+                )
+                    : const SizedBox.shrink() ,),
+              ],
+              if (controller.commercial_property_condition.value ==
+                  "Ready to use" &&
+                  controller.selectedIndex.value == 'Office') ...[
+                SizedBox(height: 16),
+                Text("Seats"),
+                SizedBox(height: 8),
+                buildTextField(
+                    'Min Number of seats',
+                    Icons.chair_alt_outlined,
+                    controller.commercial_seats,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter minimum area';
+                      }
+
+                      return null;
+                    },
+                    isPhoneKey: true
+                ),
+                SizedBox(height: 16),
+                Text("Cabins"),
+                SizedBox(height: 8),
+                buildTextField(
+                    'Min Number of cabins',
+                    Icons.cabin_outlined,
+                    controller.commercial_cabins,
+                    validator: (value) {
+
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter cabins';
+                      }
+                      final rent =int.parse(value);
+                      if(rent<0 || rent>1000)
+                        {
+                          return 'Cabins should be between 0 to 1000';
+                        }
+
+                      return null;
+                    },
+                    // controller.commercial_cabins,
+                    isPhoneKey: true
+                ),
+                SizedBox(height: 16),
+                Text("Meeting Room"),
+                SizedBox(height: 8),
+                buildTextField(
+                    'Number of Meeting Rooms',
+                    validator: (value) {
+
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter cabins';
+                      }
+                      final rent =int.parse(value);
+                      if(rent<0 || rent>100)
+                      {
+                        return 'Meeting should be between 0 to 100';
+                      }
+
+                      return null;
+                    },
+                    Icons.meeting_room_outlined,
+                    controller.commercial_meeting_room,
+                    isPhoneKey: true
+                ),
+              ],
+
+              SizedBox(height: 16),
+              Text('Floor Available'),
+              SizedBox(height: 8),
+              buildTextField(
+                'Total Floor',
+                Icons.elevator_outlined,
+                controller.commercial_total_floor,
+                isPhoneKey: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter total floor';
+                  }
+
+                  final totalFloor = int.tryParse(value);
+                  if (totalFloor == null) {
+                    return 'Please enter a valid number';
+                  }
+
+                  if (totalFloor < 1 || totalFloor > 200) {
+                    // you can decide your valid range
+                    return 'Total floor should be between 1 and 200';
+                  }
+
+                  return null;
+                },
+              ),
+
+              SizedBox(height: 16),
+              Text('Your Floor'),
+              SizedBox(height: 8),
+
+              GestureDetector(
+                onTap: () {
+                  int totalFloor = int.tryParse(controller.commercial_total_floor.text) ?? 0;
+                  List<String> floorOptions = ['-2', '-1', 'Ground'];
+                  for (int i = 1; i <= totalFloor; i++) {
+                    floorOptions.add(i.toString());
+                  }
+                  _showFloorSelectionBottomSheet(context, controller, floorOptions);
+                },
+                child: AbsorbPointer(
+                  child: buildTextField(
+                    'Select Your Floor',
+                    Icons.elevator_outlined,
+                    controller.commercial_your_floor,
+                    isEnable: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select your floor';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
               ),
-            ],
-            if (controller.commercial_property_condition.value ==
-                "Ready to use" &&
-                controller.selectedIndex.value == 'Office') ...[
-              SizedBox(height: 16),
-              Text("Seats"),
-              SizedBox(height: 8),
-              buildTextField(
-                  'Min Number of seats',
-                  Icons.chair_alt_outlined,
-                  controller.commercial_seats,
-                  isPhoneKey: true
-              ),
-              SizedBox(height: 16),
-              Text("Cabins"),
-              SizedBox(height: 8),
-              buildTextField(
-                  'Min Number of cabins',
-                  Icons.cabin_outlined,
-                  controller.commercial_cabins,
-                  isPhoneKey: true
-              ),
-              SizedBox(height: 16),
-              Text("Meeting Room"),
-              SizedBox(height: 8),
-              buildTextField(
-                  'Number of Meeting Rooms',
-                  Icons.meeting_room_outlined,
-                  controller.commercial_meeting_room,
-                  isPhoneKey: true
-              ),
-            ],
 
-            SizedBox(height: 16),
-            Text('Floor Available'),
-            SizedBox(height: 8),
-            buildTextField(
-              'Total Floor',
-              Icons.elevator_outlined,
-              controller.commercial_total_floor,
-              isPhoneKey: true,
-            ),
-            SizedBox(height: 16),
-            Text('Your Floor'),
-            SizedBox(height: 8),
-
-            GestureDetector(
-              onTap: () {
-                int totalFloor = int.tryParse(controller.commercial_total_floor.text) ?? 0;
-                List<String> floorOptions = ['-2', '-1', 'Ground'];
-                for (int i = 1; i <= totalFloor; i++) {
-                  floorOptions.add(i.toString());
-                }
-                _showFloorSelectionBottomSheet(context, controller, floorOptions);
-              },
-              child: AbsorbPointer(
-                child: buildTextField(
-                  'Select Your Floor',
-                  Icons.elevator_outlined,
-                  controller.commercial_your_floor,
-                  isEnable: false,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         );
+      } else if (controller.propertyType.value == "Commercial" &&
+          controller.lookingTo.value == "Sell" && controller.selectedIndex.value.isNotEmpty) {
+        return Form(
+          key:  formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 24),
+              const Text('Building'),
+              SizedBox(height: 8),
+              buildTextField(
+                'Building / Project / Society',
+                Icons.apartment_outlined,
+                controller.commercial_rent_building_Name,
+                  validator: (value) {
+
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    return null;
+                  },
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              initialSearchText: controller
+                                  .commercial_rent_building_Name.text,
+                              hintText: 'Building / Project / Society',
+
+                            ),
+                      ),
+                    );
+
+                      controller.commercial_rent_building_Name.text =
+                      selectedCity.structuredFormatting?.mainText??'';
+                    if(controller.commercial_rent_building_Name.text.isNotEmpty)
+                      {
+                        controller.commercial_rent_Loaclity_Name.text=selectedCity.structuredFormatting?.secondaryText??'';
+                      }
+
+                    print(
+                        "city ${controller.commercial_rent_building_Name.text}");
+                  },
+                  isEnable: false
+              ),
+              SizedBox(height: 16),
+              const Text('Locality'),
+              SizedBox(height: 8),
+              buildTextField(
+                  'Locality',
+                  Icons.location_on_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter locality';
+                    }
+                    return null;
+                  },
+                  controller.commercial_rent_Loaclity_Name,
+                  onTap:(controller.commercial_rent_Loaclity_Name.text.trim().isEmpty)? () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              initialSearchText: controller
+                                  .commercial_rent_Loaclity_Name.text,
+                              hintText: 'Locality',
+
+                            ),
+                      ),
+                    );
+
+                      controller.commercial_rent_Loaclity_Name.text =
+                      selectedCity.description??'';
+
+                    print(
+                        "city ${controller.commercial_rent_Loaclity_Name.text}");
+                  }:null,
+                  isEnable: false
+              ),
+              // SizedBox(height: 16),
+              // Text(
+              //   'POSSESSTION INFO',
+              //   style: TextStyle(
+              //     color: Colors.black,
+              //     fontWeight: FontWeight.w500,
+              //   ),
+              // ),
+
+              if (controller.selectedIndex.value == 'Other') ...[
+                SizedBox(height: 16),
+                const Text('Property Name'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter Property Name',
+                  Icons.apartment_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter property name';
+                    }
+
+                    return null;
+                  },
+
+                  controller.commercial_Property_Name,
+                ),
+                SizedBox(height: 16),
+              ],
+              if (controller.selectedIndex.value != 'Plot') ...[
+                SizedBox(height: 16),
+                Text(
+                  'POSSESSTION INFO',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle('Posession status'),
+                SizedBox(height: 8),
+                ////////////////////
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        children:
+                        posession_Status.map((e) {
+                          return buildChoice(
+                            title: e,
+                            selected:
+                            controller
+                                .commercial_rent_posessionStatus
+                                .value ==
+                                e,
+                            onTap: () {
+                              controller.setValue(
+                                controller.commercial_rent_posessionStatus,
+                                e,
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
+                ),
+                Obx(() => controller.selectedPossessionStatus.value?Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 4),
+                  child: Text(
+                    'Please select possession type',
+                    style: TextStyle(
+                      color: Colors.red.shade700,
+                      fontSize: 12,
+                    ),
+                  ),
+                )
+                    : const SizedBox.shrink() ,),
+              ],
+              if(controller.commercial_rent_posessionStatus.value ==
+                  "Under Construction")...[
+                SizedBox(height: 16),
+                Text('Possession Date'),
+                SizedBox(height: 8),
+               buildTextField(
+                   validator: (value) {
+                     if (value == null || value.isEmpty) {
+                       return 'Please valid date';
+                     }
+
+                     return null;
+                   },
+                      'Enter possession Date',
+                      Icons.calendar_month_outlined,
+                      controller.commercial_rent_AvailableFrom,
+                      isEnable: false,
+                      onTap: () async {
+
+                        FocusScope.of(context).unfocus();
+                        DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime(2100),
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: ColorScheme.light(
+                                  primary: ColorRes.primary,
+                                  // header background color
+                                  onPrimary: Colors.white,
+                                  // header text color
+                                  onSurface: Colors.black, // body text color
+                                ),
+                                textButtonTheme: TextButtonThemeData(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: ColorRes.primary,
+                                  ),
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (picked != null) {
+                          controller.commercial_rent_AvailableFrom.text =
+                          "${picked.day}/${picked.month}/${picked.year}";
+                        }
+                      },
+
+                      isPhoneKey: true
+                  ),
 
 
+              ],
+
+              SizedBox(height: 16),
+              if (controller.commercial_rent_posessionStatus.value ==
+                  "Ready to move" &&
+                  controller.selectedIndex.value != "Plot") ...[
+                Text('Age of Property'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter Age of property in years',
+                  Icons.apartment_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter property age';
+                    }
+
+                    return null;
+                  },
+                  controller.commercial_rent_AgeOfPropertInYear,
+                ),
+                SizedBox(height: 16),
+              ],
+
+              Text(
+                'ABOUT THE PROPERTY',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 16),
+              if (controller.selectedIndex.value == 'Office' ||
+                  controller.selectedIndex.value == 'Warehouse' ||
+                  controller.selectedIndex.value == 'Plot' ||
+                  controller.selectedIndex.value == 'Other') ...[
+                buildSectionTitle("Zone Type"),
+                SizedBox(height: 8),
+
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        controller.zoneType
+                            .map(
+                              (e) =>
+                              buildChoice(
+                                title: e,
+                                selected:
+                                controller.commercial_ZoneType.value == e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.commercial_ZoneType,
+                                    e,
+                                  );
+                                },
+                              ),
+                        )
+                            .toList(),
+                      ),
+                ),
+                Obx(() => controller.selectedZoneTypeInCommercial.value?Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 4),
+                  child: Text(
+                    'Please select Zone type',
+                    style: TextStyle(
+                      color: Colors.red.shade700,
+                      fontSize: 12,
+                    ),
+                  ),
+                )
+                    : const SizedBox.shrink() ,),
+                SizedBox(height: 16),
+              ],
+              if (controller.selectedIndex.value != 'Plot') ...[
+                buildSectionTitle('Location Hub'),
+                SizedBox(height: 8),
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        controller.locationHub
+                            .map(
+                              (e) =>
+                              buildChoice(
+                                title: e,
+                                selected:
+                                controller.commercial_LocationHub.value == e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.commercial_LocationHub,
+                                    e,
+                                  );
+                                },
+                              ),
+                        )
+                            .toList(),
+                      ),
+                ),
+                SizedBox(height: 16),
+              ],
+
+              if (controller.commercial_LocationHub.value == "Other") ...[
+                Text('Other Location '),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter the Location',
+                  Icons.location_on_outlined,
+                  controller.commercial_other_Location,
+                ),
+                SizedBox(height: 16),
+              ],
+              if (controller.selectedIndex.value != "Shop" &&
+                  controller.selectedIndex.value != "Showroom" &&
+                  controller.selectedIndex.value != "Warehouse" &&
+                  controller.selectedIndex.value != "Plot" &&
+                  controller.selectedIndex.value != "Other") ...[
+                SizedBox(height: 16),
+                buildSectionTitle("Property Condition"),
+                SizedBox(height: 8),
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        children:
+                        commercial_propertyComditon
+                            .map(
+                              (e) =>
+                              buildChoice(
+                                title: e,
+                                selected:
+                                controller
+                                    .commercial_property_condition
+                                    .value ==
+                                    e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.commercial_property_condition,
+                                    e,
+                                  );
+                                },
+                              ),
+                        )
+                            .toList(),
+                      ),
+                ),
+
+                if (controller.commercial_property_condition.value ==
+                    'Ready to use') ...[
+                  SizedBox(height: 16),
+                  Text("Carpet Area"),
+                  SizedBox(height: 8),
+                  TextFieldWithDropdown(
+                    hintText: "Carpet Area",
+                    icon: Icons.square_foot,
+                    validator: (value) {
+
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter building name';
+                      }
+                      final rent =int.parse(value);
+                      final buildArea = int.tryParse(controller.commercial_Square_BuildArea.text) ?? 0;
+                      if(rent>buildArea)
+                        {
+                            return 'Carpet area should not be greater than Build up area';
+                        }
+                      return null;
+                    },
+                    controller: controller.commercial_Square_CarpetArea,
+                    selectedValue: controller.commercial_Square_AreaUnti_Carpet,
+                    // RxString
+                    dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
+                    isPhoneKey: true,
+                  ),
+                ],
+              ],
+              if (controller.selectedIndex.value == "Plot") ...[
+                Text("Plot Area"),
+                SizedBox(height: 8),
+                TextFieldWithDropdown(
+                  hintText: "Plot Area",
+                  icon: Icons.square_foot,
+
+                  controller: controller.commercial_plot,
+                  selectedValue: controller.commercial_plotArea,
+                  // RxString
+                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
+                  isPhoneKey: true,
+                ),
+              ],
+              if (controller.selectedIndex.value == 'Shop' ||
+                  controller.selectedIndex.value == 'Showroom' ||
+                  controller.selectedIndex.value == "Warehouse" ||
+                  controller.selectedIndex.value == "Other") ...[
+                Text("Carpet Area"),
+                SizedBox(height: 8),
+                TextFieldWithDropdown(
+                  hintText: "Carpet Area",
+                  icon: Icons.square_foot,
+                  validator: (value) {
+
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    final rent =int.parse(value);
+                    final buildArea = int.tryParse(controller.commercial_Square_BuildArea.text) ?? 0;
+                    if(rent>buildArea)
+                    {
+                      return 'Carpet area should not be greater than Build up area';
+                    }
+                    return null;
+                  },
+                  controller: controller.commercial_Square_CarpetArea,
+                  selectedValue: controller.commercial_Square_AreaUnti_Carpet,
+                  // RxString
+                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
+                  isPhoneKey: true,
+                ),
+              ],
+              if (controller.selectedIndex.value != "Plot") ...[
+                SizedBox(height: 8),
+                Text("Build Up Area"),
+                SizedBox(height: 8),
+                TextFieldWithDropdown(
+                  hintText: "Build Up Area",
+                  icon: Icons.square_foot,
+                  controller: controller.commercial_Square_BuildArea,
+                  selectedValue: controller.commercial_Square_AreaUnti_Build,
+                  validator: (value) {
+
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    final rent =int.parse(value);
+                    if(rent<50 || rent>3000000)
+                    {
+                      return 'Area should be between 50 to 3000000';
+                    }
+                    return null;
+                  },
+                  // RxString
+                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
+                  isPhoneKey: true,
+                ),
+              ],
+
+              SizedBox(height: 16),
+              buildSectionTitle("Ownership"),
+              SizedBox(height: 8),
+              Obx(
+                    () =>
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children:
+                      commercial_ownerShipList
+                          .map(
+                            (e) =>
+                            buildChoice(
+                              title: e,
+                              selected:
+                              controller.commercial_ownerShipList.value == e,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.commercial_ownerShipList,
+                                  e,
+                                );
+                              },
+                            ),
+                      )
+                          .toList(),
+                    ),
+              ),
+              Obx(() => controller.seletedOwnerShipInCommercial.value?Padding(
+                padding: const EdgeInsets.only(top: 8, left: 4),
+                child: Text(
+                  'Please select OwnerShip type',
+                  style: TextStyle(
+                    color: Colors.red.shade700,
+                    fontSize: 12,
+                  ),
+                ),
+              )
+                  : const SizedBox.shrink() ,),
+              if (controller.commercial_property_condition.value ==
+                  "Bare shell") ...[
+                SizedBox(height: 16),
+                buildSectionTitle("Construction status"),
+                SizedBox(height: 8),
+                Obx(
+                      () =>
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                        commercial_construction_status
+                            .map(
+                              (e) =>
+                              buildChoice(
+                                title: e,
+                                selected:
+                                controller
+                                    .commercial_construction_status_value
+                                    .value ==
+                                    e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller
+                                        .commercial_construction_status_value,
+                                    e,
+                                  );
+                                },
+                              ),
+                        )
+                            .toList(),
+                      ),
+                ),
+                Obx(() => controller.selectedConstructionStatusRent_Commercial.value?Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 4),
+                  child: Text(
+                    'Please select Construction Status',
+                    style: TextStyle(
+                      color: Colors.red.shade700,
+                      fontSize: 12,
+                    ),
+                  ),
+                )
+                    : const SizedBox.shrink() ,),
+              ],
+              if (controller.commercial_property_condition.value ==
+                  "Ready to use" &&
+                  controller.selectedIndex.value == 'Office') ...[
+                SizedBox(height: 16),
+                Text("Seats"),
+                SizedBox(height: 8),
+                buildTextField(
+                    'Min Number of seats',
+                    Icons.chair_alt_outlined,
+                    controller.commercial_seats,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter minimum area';
+                      }
+                      if(int.parse(value)<0)
+                        {
+                          return 'Seats should be greater than 0';
+                        }
+
+                      return null;
+                    },
+
+
+                    isPhoneKey: true
+                ),
+                SizedBox(height: 16),
+                Text("Cabins"),
+                SizedBox(height: 8),
+                buildTextField(
+                    'Min Number of cabins',
+                    Icons.cabin_outlined,
+                    controller.commercial_cabins,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter minimum area';
+                      }
+                      if(int.parse(value)<0)
+                      {
+                        return 'Cabins should be greater than 0';
+                      }
+
+                      return null;
+                    },
+
+                    isPhoneKey: true
+
+
+                ),
+                SizedBox(height: 16),
+                Text("Meeting Room"),
+                SizedBox(height: 8),
+                buildTextField(
+                    'Number of Meeting Rooms',
+                    Icons.meeting_room_outlined,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter minimum area';
+                      }
+                      if(int.parse(value)<0)
+                      {
+                        return 'Meeting should be greater than 0';
+                      }
+
+                      return null;
+                    },
+                    controller.commercial_meeting_room,
+                    isPhoneKey: true
+                ),
+              ],
+
+              SizedBox(height: 16),
+              Text('Floor Available'),
+              SizedBox(height: 8),
+              buildTextField(
+                'Total Floor',
+                Icons.elevator_outlined,
+                controller.commercial_total_floor,
+                isPhoneKey: true,
+              ),
+              SizedBox(height: 16),
+              Text('Your Floor'),
+              SizedBox(height: 8),
+
+              GestureDetector(
+                onTap: () {
+                  int totalFloor = int.tryParse(
+                      controller.commercial_total_floor.text) ?? 0;
+                  List<String> floorOptions = ['-2', '-1', 'Ground'];
+                  for (int i = 1; i <= totalFloor; i++) {
+                    floorOptions.add(i.toString());
+                  }
+                  _showFloorSelectionBottomSheet(
+                      context, controller, floorOptions);
+                },
+                child: AbsorbPointer(
+                  child: buildTextField(
+                    'Select Your Floor',
+                    Icons.elevator_outlined,
+                    controller.commercial_your_floor,
+                    isEnable: false,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
       } else {
         return Container();
       }
@@ -1346,6 +2091,7 @@ class TextFieldWithDropdown extends StatelessWidget {
   final RxString selectedValue;
   final List<String> dropdownItems;
   final bool isPhoneKey;
+  final String? Function(String?)? validator;
 
   const TextFieldWithDropdown({
     super.key,
@@ -1355,12 +2101,14 @@ class TextFieldWithDropdown extends StatelessWidget {
     required this.selectedValue,
     required this.dropdownItems,
     this.isPhoneKey = false,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
+
         /// Text Field
         Expanded(
           child: buildTextField(
@@ -1368,49 +2116,50 @@ class TextFieldWithDropdown extends StatelessWidget {
             icon,
             controller,
             isPhoneKey: isPhoneKey,
+            validator: validator,
           ),
         ),
         const SizedBox(width: 12),
 
         /// Dropdown
         Obx(
-          () => Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade400),
-            ),
-            child: DropdownButton<String>(
-              value: selectedValue.value,
-              items:
+              () =>
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade400),
+                ),
+                child: DropdownButton<String>(
+                  value: selectedValue.value,
+                  items:
                   dropdownItems
                       .map(
                         (unit) =>
-                            DropdownMenuItem(value: unit, child: Text(unit)),
-                      )
+                        DropdownMenuItem(value: unit, child: Text(unit)),
+                  )
                       .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  selectedValue.value = value;
-                }
-              },
-              underline: Container(),
-              style: const TextStyle(fontSize: 12, color: Colors.black),
-              dropdownColor: Colors.white,
-            ),
-          ),
+                  onChanged: (value) {
+                    if (value != null) {
+                      selectedValue.value = value;
+                    }
+                  },
+                  underline: Container(),
+                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                  dropdownColor: Colors.white,
+                ),
+              ),
         ),
       ],
     );
   }
 }
-void _showFloorSelectionBottomSheet(
-    BuildContext context,
+
+void _showFloorSelectionBottomSheet(BuildContext context,
     CreatePropertyController controller,
-    List<String> floorOptions,
-    ) {
+    List<String> floorOptions,) {
   // Parse total floor from controller (assume it's a TextEditingController)
   int totalFloor = int.tryParse(controller.commercial_total_floor.text) ?? 0;
 
@@ -1436,7 +2185,10 @@ void _showFloorSelectionBottomSheet(
           return Container(
             // Add maximum height constraint
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.5,
+              maxHeight: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.5,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -1490,11 +2242,13 @@ void _showFloorSelectionBottomSheet(
                       bool isSelected = tempSelectedFloors.contains(floor);
 
                       return Container(
-                        margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 2),
                         child: CheckboxListTile(
                           title: Text(
                             floor,
-                            style: TextStyle(fontSize: 15, color: Colors.black87),
+                            style: TextStyle(
+                                fontSize: 15, color: Colors.black87),
                           ),
                           value: isSelected,
                           onChanged: (bool? value) {
@@ -1507,7 +2261,9 @@ void _showFloorSelectionBottomSheet(
                             });
                           },
                           controlAffinity: ListTileControlAffinity.leading,
-                          activeColor: Theme.of(context).primaryColor,
+                          activeColor: Theme
+                              .of(context)
+                              .primaryColor,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 0,
@@ -1562,7 +2318,9 @@ void _showFloorSelectionBottomSheet(
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).primaryColor,
+                              backgroundColor: Theme
+                                  .of(context)
+                                  .primaryColor,
                               foregroundColor: Colors.white,
                               padding: EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(

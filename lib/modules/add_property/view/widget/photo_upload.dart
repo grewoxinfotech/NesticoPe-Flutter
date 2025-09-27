@@ -9,7 +9,7 @@ import '../../controller/create_property_controller.dart';
 class PhotoUpload extends StatelessWidget {
   final CreatePropertyController controller;
 
-  const PhotoUpload({super.key, required this.controller});
+  const PhotoUpload({super.key, required this.controller, required GlobalKey<FormState> formKey});
 
   @override
   Widget build(BuildContext context) {

@@ -11,11 +11,12 @@ import 'package:housing_flutter_app/modules/add_property/view/widget/post_proper
 import 'package:housing_flutter_app/modules/add_property/view/widget/rent/advance_detail.dart';
 import 'package:housing_flutter_app/modules/add_property/view/widget/rent/amenities.dart';
 import 'package:housing_flutter_app/modules/add_property/view/widget/rent/price_detail.dart';
-import 'package:housing_flutter_app/modules/add_property/view/widget/rent/verify_section.dart';
+import 'package:housing_flutter_app/modules/add_property/view/widget/rent/verify_section_add.dart';
 import 'package:housing_flutter_app/modules/add_property/view/widget/review_property.dart';
 import 'package:housing_flutter_app/modules/add_property/view/widget/room_detail.dart';
 import 'package:housing_flutter_app/modules/add_property/view/widget/step_row.dart';
 import 'package:housing_flutter_app/modules/add_property/view/widget/stepper_property.dart';
+import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
 import '../../../data/network/auth/model/user_model.dart';
@@ -26,8 +27,13 @@ class CreatePropertyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> pgFor = ['Girl', 'Boy'];
     final controller = Get.put(CreatePropertyController());
+
+    // Add form keys for each step
+    final List<GlobalKey<FormState>> formKeys = List.generate(
+      controller.stepsList.length,
+      (_) => GlobalKey<FormState>(),
+    );
 
     return Obx(() {
       if (controller.isLogin.value) {
@@ -165,36 +171,35 @@ class CreatePropertyScreen extends StatelessWidget {
 
                                       Expanded(
                                         child: Obx(() {
-                                          print(
-                                            'list of ${controller.stepsList}',
-                                          );
-                                          final step =
-                                              controller
-                                                  .stepperSelectedIndex
-                                                  .value;
+                                          final step = controller.stepperSelectedIndex.value;
+                                          // Pass formKey to each step widget
                                           if (step == 0) {
                                             return BasicDetail(
                                               controller: controller,
+                                              formKey: formKeys[0], // Pass formKey
                                             );
                                           }
-                                          if (controller.lookingTo.value ==
-                                              'PG/Co-Living') {
+                                          if (controller.lookingTo.value == 'PG/Co-Living') {
                                             switch (step) {
                                               case 1:
                                                 return PostProperty(
                                                   controller: controller,
+                                                  formKey: formKeys[1],
                                                 );
                                               case 2:
                                                 return RoomDetail(
                                                   controller: controller,
+                                                  formKey: formKeys[2],
                                                 );
                                               case 3:
                                                 return PhotoUpload(
                                                   controller: controller,
+                                                  formKey: formKeys[3],
                                                 );
                                               case 4:
                                                 return ListingReviewCard(
                                                   controller: controller,
+                                                  // No formKey needed for review
                                                 );
                                               default:
                                                 return Container();
@@ -211,22 +216,28 @@ class CreatePropertyScreen extends StatelessWidget {
                                               case 1:
                                                 return PostProperty(
                                                   controller: controller,
+                                                  formKey: formKeys[1],
                                                 );
                                               case 2:
                                                 return RentPriceDetail(
                                                   controller: controller,
+                                                  formKey: formKeys[2],
                                                 );
                                               case 3:
                                                 return PhotoUpload(
-                                                  controller: controller,
+                                                  controller: controller, formKey: formKeys[3],
                                                 );
                                               case 4:
                                                 return RentAdvanceDetail(
                                                   controller: controller,
+                                                  formKey: formKeys[4],
+
+
                                                 );
                                               case 5:
                                                 return RentAmenities(
                                                   controller: controller,
+
                                                 );
 
                                               case 6:
@@ -249,10 +260,12 @@ class CreatePropertyScreen extends StatelessWidget {
                                               case 1:
                                                 return PostProperty(
                                                   controller: controller,
+                                                  formKey: formKeys[1],
                                                 );
                                               case 2:
                                                 return RentPriceDetail(
                                                   controller: controller,
+                                                  formKey: formKeys[2],
                                                 );
                                               case 3:
                                                 return RentAmenities(
@@ -261,6 +274,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                               case 4:
                                                 return PhotoUpload(
                                                   controller: controller,
+                                                  formKey: formKeys[4],
                                                 );
                                               case 5:
                                                 return ListingReviewCard(
@@ -287,46 +301,194 @@ class CreatePropertyScreen extends StatelessWidget {
           ),
 
           bottomNavigationBar: Container(
-            color: Colors.white, // 👈 white background behind button
+            color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: SafeArea(
               child: SizedBox(
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (controller.isLogin.value) {
-                      // Use stepperSelectedIndex for navigation
-                      if (controller.stepperSelectedIndex.value <
-                          controller.stepsList.length - 1) {
-                        controller.nextStep();
+                    onPressed: () {
+                      final step = controller.stepperSelectedIndex.value;
+
+                      // Property type validation
+                      if(step==0 && controller.propertyType.value.isEmpty)
+                        {
+                          controller.showBasicPropertyType.value=true;
+                          return;
+                        }
+                      else
+                        {
+                          controller.showBasicPropertyType.value=false;
+
+
+                        }
+                      if(step==0 && controller.lookingTo.value.isEmpty)
+                      {
+                        controller.showBasicLookingTo.value=true;
+                        return;
                       }
-                      // else do nothing or show a message, as you are already at the last step (review)
-                    } else {
-                      controller.submitForm();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorRes.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      else
+                      {
+                        controller.showBasicLookingTo.value=false;
+                      }
+                      if(step==0 && controller.selectedIndex.value.isEmpty && controller.propertyType.value=='Commercial')
+                      {
+                        controller.hasShownCommercialCategory.value=true;
+                        return;
+                      }
+                      else
+                      {
+                        controller.hasShownCommercialCategory.value=false;
+                      }
+                      // Rent property type validation
+                      if (
+                        (controller.lookingTo.value == 'Rent' || controller.lookingTo.value == 'Sell') &&
+                        controller.propertyType.value == 'Residential' &&
+                        step == 1 &&
+                        controller.rent_propertyType.value.isEmpty
+                      ) {
+                        controller.showPropertyTypeError.value = true;
+                        // Optionally scroll to error or focus
+                        return;
+                      } else {
+                        controller.showPropertyTypeError.value = false;
+                      }
+                      if (
+                      controller.lookingTo.value == 'Rent' &&
+                          controller.propertyType.value == 'Residential' &&
+                          step == 2 &&
+                          controller.rent_depositType.value.isEmpty
+                      ) {
+                        controller.selectedDepositFromPrice.value = true;
+                        // Optionally scroll to error or focus
+                        return;
+                      } else {
+                        controller.selectedDepositFromPrice.value = false;
+                      }
+                      if (
+                      controller.lookingTo.value == 'Sell' &&
+                          controller.propertyType.value == 'Residential' &&
+                          step == 2 &&
+                          controller.sell_constructionStatus.value.isEmpty
+                      ) {
+                        controller.selectedSellFromPriceDetail.value = true;
+                        // Optionally scroll to error or focus
+                        return;
+                      } else {
+                        controller.selectedSellFromPriceDetail.value = false;
+                      }
+//prooperty commercial type validation
+
+                      if((controller.lookingTo.value == 'Sell'||controller.lookingTo.value == 'Rent')&&
+                          controller.propertyType.value == 'Commercial' &&
+                          step == 1 &&
+                          controller.commercial_ZoneType.value.isEmpty)
+                        {
+                          controller.selectedZoneTypeInCommercial.value=true;
+
+                        }
+                      else{
+                        controller.selectedZoneTypeInCommercial.value=false;
+
+                      }
+                      if((controller.lookingTo.value == 'Sell'||controller.lookingTo.value == 'Rent') &&
+                          controller.propertyType.value == 'Commercial' &&
+                          step == 1 &&
+                          controller.commercial_ownerShipList.value.isEmpty)
+                      {
+                        controller.seletedOwnerShipInCommercial.value=true;
+
+                      }
+                      else{
+                        controller.seletedOwnerShipInCommercial.value=false;
+
+                      }
+                      if((controller.lookingTo.value == 'Sell'||controller.lookingTo.value == 'Rent') &&
+                          controller.propertyType.value == 'Commercial' &&
+                          step == 1 &&
+                          controller.commercial_rent_posessionStatus.value.isEmpty)
+                      {
+                        controller.selectedPossessionStatus.value=true;
+
+                      }
+                      else{
+                        controller.selectedPossessionStatus.value=false;
+
+                      }
+                      if((controller.lookingTo.value == 'Sell') &&
+                          controller.propertyType.value == 'Commercial' &&
+                          step == 1 &&
+                          controller.commercial_construction_status_value.value.isEmpty)
+                      {
+                        controller.selectedConstructionStatusRent_Commercial.value=true;
+
+                      }
+                      else{
+                        controller.selectedConstructionStatusRent_Commercial.value=false;
+
+                      }
+                      if((controller.lookingTo.value == 'Sell') &&
+                          controller.propertyType.value == 'Commercial' &&
+                          step == 2 &&
+                          controller.commercial_isPreLeased.value.isEmpty)
+                      {
+                        controller.selectedChoiceAnyoneInPriceSection.value=true;
+
+                      }
+                      else{
+                        controller.selectedChoiceAnyoneInPriceSection.value=false;
+
+                      }
+
+                      // BHK validation
+                      if (
+                        (controller.lookingTo.value == 'Rent' || controller.lookingTo.value == 'Sell') &&
+                        controller.propertyType.value == 'Residential' &&
+                        step == 1 &&
+                        controller.bhkType.value.isEmpty
+                      ) {
+                        controller.showBHKChooseToError.value = true;
+                        return;
+                      } else {
+                        controller.showBHKChooseToError.value = false;
+                      }
+
+
+                      // Add more conditions for other fields as needed, following the same pattern
+
+                      // Validate current step's form before proceeding
+                      if (formKeys[step].currentState?.validate() ?? true) {
+                        if (controller.stepperSelectedIndex.value <
+                            controller.stepsList.length) {
+                          controller.nextStep();
+                        }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      elevation: 2,
                     ),
-                    elevation: 2,
-                  ),
-                  child: const Text(
-                    "Next, add address & price",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
+                    child: const Text(
+                      "Next, add address & price",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ),
+
               ),
             ),
           ),
         );
       } else {
+        // Add form key for login section
+        final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
         return Scaffold(
           backgroundColor: const Color(0xff091F48),
           body: SafeArea(
@@ -430,391 +592,460 @@ class CreatePropertyScreen extends StatelessWidget {
                                   ),
                                 ),
                                 child: Obx(
-                                  () => Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-
-                                    children: [
-                                      // Tabs
-                                      Container(
-                                        padding: const EdgeInsets.all(6),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey.shade200,
-                                          borderRadius: BorderRadius.circular(
-                                            14,
+                                  () => Form( // Wrap with Form
+                                    key: loginFormKey,
+                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Tabs
+                                        Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade200,
+                                            borderRadius: BorderRadius.circular(
+                                              14,
+                                            ),
                                           ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: GestureDetector(
-                                                onTap:
-                                                    () => controller
-                                                        .toggleOwner(true),
-                                                child: buildTab(
-                                                  "Owner",
-                                                  controller.isOwner.value,
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: GestureDetector(
+                                                  onTap:
+                                                      () => controller
+                                                          .toggleOwner(true),
+                                                  child: buildTab(
+                                                    "Owner",
+                                                    controller.isOwner.value,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Expanded(
-                                              child: GestureDetector(
-                                                onTap:
-                                                    () => controller
-                                                        .toggleOwner(false),
-                                                child: buildTab(
-                                                  "Broker/Builder",
-                                                  !controller.isOwner.value,
+                                              const SizedBox(width: 8),
+                                              Expanded(
+                                                child: GestureDetector(
+                                                  onTap:
+                                                      () => controller
+                                                          .toggleOwner(false),
+                                                  child: buildTab(
+                                                    "Broker/Builder",
+                                                    !controller.isOwner.value,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 24),
-                                      if (controller.isOwner.value) ...[
-                                        buildSectionTitle("Property Type"),
-                                        const SizedBox(height: 12),
-
-                                        Row(
-                                          children: [
-                                            buildChoice(
-                                              title: 'Residential',
-                                              selected:
-                                                  controller
-                                                      .propertyType
-                                                      .value ==
-                                                  'Residential',
-                                              onTap:
-                                                  () => controller.setValue(
-                                                    controller.propertyType,
-                                                    'Residential',
-                                                  ),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            buildChoice(
-                                              title: 'Commercial',
-                                              selected:
-                                                  controller
-                                                      .propertyType
-                                                      .value ==
-                                                  'Commercial',
-                                              onTap:
-                                                  () => controller.setValue(
-                                                    controller.propertyType,
-                                                    'Commercial',
-                                                  ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
 
                                         const SizedBox(height: 24),
-                                        buildSectionTitle(
-                                          "You're looking to...",
-                                        ),
-                                        const SizedBox(height: 12),
+                                        if (controller.isOwner.value) ...[
+                                          buildSectionTitle("Property Type"),
+                                          const SizedBox(height: 12),
 
-                                        Wrap(
-                                          spacing: 12,
-                                          runSpacing: 12,
-                                          children: [
-                                            if (controller.propertyType.value ==
-                                                'Residential') ...[
+                                          Row(
+                                            children: [
                                               buildChoice(
-                                                title: 'Rent',
+                                                title: 'Residential',
                                                 selected:
                                                     controller
-                                                        .lookingTo
+                                                        .propertyType
                                                         .value ==
-                                                    'Rent',
+                                                    'Residential',
                                                 onTap:
                                                     () => controller.setValue(
-                                                      controller.lookingTo,
-                                                      'Rent',
+                                                      controller.propertyType,
+                                                      'Residential',
                                                     ),
                                               ),
+                                              const SizedBox(width: 12),
                                               buildChoice(
-                                                title: 'Sell',
+                                                title: 'Commercial',
                                                 selected:
                                                     controller
-                                                        .lookingTo
+                                                        .propertyType
                                                         .value ==
-                                                    'Sell',
+                                                    'Commercial',
                                                 onTap:
                                                     () => controller.setValue(
-                                                      controller.lookingTo,
-                                                      'Sell',
-                                                    ),
-                                              ),
-                                              buildChoice(
-                                                title: 'PG/Co-Living',
-                                                selected:
-                                                    controller
-                                                        .lookingTo
-                                                        .value ==
-                                                    'PG/Co-Living',
-                                                onTap:
-                                                    () =>
-                                                        controller..setValue(
-                                                          controller.lookingTo,
-                                                          'PG/Co-Living',
-                                                        ),
-                                              ),
-                                            ] else ...[
-                                              buildChoice(
-                                                title: 'Rent',
-                                                selected:
-                                                    controller
-                                                        .lookingTo
-                                                        .value ==
-                                                    'Rent',
-                                                onTap:
-                                                    () => controller.setValue(
-                                                      controller.lookingTo,
-                                                      'Rent',
-                                                    ),
-                                              ),
-                                              buildChoice(
-                                                title: 'Sell',
-                                                selected:
-                                                    controller
-                                                        .lookingTo
-                                                        .value ==
-                                                    'Sell',
-                                                onTap:
-                                                    () => controller.setValue(
-                                                      controller.lookingTo,
-                                                      'Sell',
+                                                      controller.propertyType,
+                                                      'Commercial',
                                                     ),
                                               ),
                                             ],
-                                          ],
-                                        ),
+                                          ),
 
-                                        if (controller.propertyType.value ==
-                                            "Commercial") ...[
                                           const SizedBox(height: 24),
-                                          subPropertyType(controller),
-                                        ],
-
-                                        const SizedBox(height: 24),
-
-                                        buildTextField(
-                                          "Phone Number",
-                                          Icons.phone,
-                                          controller.phoneController,
-                                          isPhone: true,
-                                          isPhoneKey: true,
-                                        ),
-                                        const SizedBox(height: 16),
-                                        buildTextField(
-                                          "Your Name",
-                                          Icons.person,
-                                          controller.nameController,
-                                        ),
-                                        const SizedBox(height: 16),
-                                        buildTextField(
-                                          "Search City",
-                                          Icons.location_on,
-                                          controller.cityController,
-                                        ),
-
-                                        const SizedBox(height: 28),
-                                        // SizedBox(
-                                        //   width: double.infinity,
-                                        //   height: 45,
-                                        //   child: ElevatedButton(
-                                        //     onPressed: controller.submitForm,
-                                        //     style: ElevatedButton.styleFrom(
-                                        //       backgroundColor: ColorRes.primary,
-                                        //       shape: RoundedRectangleBorder(
-                                        //         borderRadius:
-                                        //             BorderRadius.circular(14),
-                                        //       ),
-                                        //       elevation: 2,
-                                        //     ),
-                                        //     child: const Text(
-                                        //       "Next, add address & price",
-                                        //       style: TextStyle(
-                                        //         fontSize: 14,
-                                        //         color: Colors.white,
-                                        //         fontWeight: FontWeight.w500,
-                                        //       ),
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                      ] else ...[
-                                        const SizedBox(height: 20),
-
-                                        buildTextField(
-                                          "Phone Number",
-                                          Icons.phone,
-                                          controller.phoneController,
-                                          isPhone: true,
-                                          isPhoneKey: true,
-                                        ),
-
-                                        const SizedBox(height: 40),
-
-                                        // Con const SizedBox(height: 20),tinue button
-                                        Container(
-                                          width: double.infinity,
-                                          height: 48,
-                                          decoration: BoxDecoration(
-                                            color: ColorRes.grey.withOpacity(
-                                              0.2,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
+                                          buildSectionTitle(
+                                            "You're looking to...",
                                           ),
-                                          alignment: Alignment.center,
-                                          child: const Text(
-                                            'Continue',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                            ),
+                                          const SizedBox(height: 12),
+
+                                          Wrap(
+                                            spacing: 12,
+                                            runSpacing: 12,
+                                            children: [
+                                              if (controller.propertyType.value ==
+                                                  'Residential') ...[
+                                                buildChoice(
+                                                  title: 'Rent',
+                                                  selected:
+                                                      controller
+                                                          .lookingTo
+                                                          .value ==
+                                                      'Rent',
+                                                  onTap:
+                                                      () => controller.setValue(
+                                                        controller.lookingTo,
+                                                        'Rent',
+                                                      ),
+                                                ),
+                                                buildChoice(
+                                                  title: 'Sell',
+                                                  selected:
+                                                      controller
+                                                          .lookingTo
+                                                          .value ==
+                                                      'Sell',
+                                                  onTap:
+                                                      () => controller.setValue(
+                                                        controller.lookingTo,
+                                                        'Sell',
+                                                      ),
+                                                ),
+                                                buildChoice(
+                                                  title: 'PG/Co-Living',
+                                                  selected:
+                                                      controller
+                                                          .lookingTo
+                                                          .value ==
+                                                      'PG/Co-Living',
+                                                  onTap:
+                                                      () =>
+                                                          controller..setValue(
+                                                            controller.lookingTo,
+                                                            'PG/Co-Living',
+                                                          ),
+                                                ),
+                                              ] else ...[
+                                                buildChoice(
+                                                  title: 'Rent',
+                                                  selected:
+                                                      controller
+                                                          .lookingTo
+                                                          .value ==
+                                                      'Rent',
+                                                  onTap:
+                                                      () => controller.setValue(
+                                                        controller.lookingTo,
+                                                        'Rent',
+                                                      ),
+                                                ),
+                                                buildChoice(
+                                                  title: 'Sell',
+                                                  selected:
+                                                      controller
+                                                          .lookingTo
+                                                          .value ==
+                                                      'Sell',
+                                                  onTap:
+                                                      () => controller.setValue(
+                                                        controller.lookingTo,
+                                                        'Sell',
+                                                      ),
+                                                ),
+                                              ],
+                                            ],
                                           ),
-                                        ),
-                                        const SizedBox(height: 15),
-                                        const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'By clicking above you agree to ',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Terms & Conditions',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: ColorRes.primary,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
+
+                                          if (controller.propertyType.value ==
+                                              "Commercial") ...[
+                                            const SizedBox(height: 24),
+                                            subPropertyType(controller),
                                           ],
-                                        ),
-                                        const SizedBox(height: 20),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Divider(
-                                                color: Colors.grey.withOpacity(
-                                                  0.5,
-                                                ), // choose color
-                                                thickness: 0.8, // optional
+
+                                          const SizedBox(height: 24),
+
+                                          buildTextField(
+                                            "Phone Number",
+                                            Icons.phone,
+                                            controller.phoneController,
+                                            isPhone: true,
+                                            isPhoneKey: true,
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Phone required';
+                                              }
+
+                                              final selectedCode = controller.countryCode.value;
+                                              final expectedLength =controller.countryRules[selectedCode] ?? 10;
+
+                                              // ensure only digits
+                                              final onlyDigits = RegExp(r'^\d+$');
+                                              if (!onlyDigits.hasMatch(value)) {
+                                                return 'Enter digits only';
+                                              }
+
+                                              if (value.length != expectedLength) {
+                                                return 'Enter $expectedLength digit number';
+                                              }
+
+                                              return null;
+                                            },
+
+
+                                          ),
+                                          const SizedBox(height: 16),
+                                          buildTextField(
+                                            "Your Name",
+                                            Icons.person,
+                                            controller.nameController,
+                                            // No validator here
+                                          ),
+                                          const SizedBox(height: 16),
+                                          buildTextField(
+                                            "Search City",
+                                            Icons.location_on,
+                                            controller.cityController,
+                                            onTap: () async {
+                                              Prediction selectedCity = await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => CommonSearchField(
+                                                    onCitySelected: (city) {
+                                                      Navigator.pop(context, city);
+                                                    },
+                                                    isFromAddProperty: true,
+                                                    initialSearchText: controller.cityController.text,
+
+                                                  ),
+                                                ),
+                                              );
+
+                                                // controller.cityController.text = selectedCity.split(',')[0];
+                                                controller.cityController.text=selectedCity.description?.split(',')[0]??'';
+
+                                              print("city ${controller.cityController.text}");
+                                              FocusScope.of(context).unfocus();
+                                            },
+                                            isEnable: false,
+                                          ),
+
+                                          const SizedBox(height: 28),
+                                          // SizedBox(
+                                          //   width: double.infinity,
+                                          //   height: 45,
+                                          //   child: ElevatedButton(
+                                          //     onPressed: controller.submitForm,
+                                          //     style: ElevatedButton.styleFrom(
+                                          //       backgroundColor: ColorRes.primary,
+                                          //       shape: RoundedRectangleBorder(
+                                          //         borderRadius:
+                                          //             BorderRadius.circular(14),
+                                          //       ),
+                                          //       elevation: 2,
+                                          //     ),
+                                          //     child: const Text(
+                                          //       "Next, add address & price",
+                                          //       style: TextStyle(
+                                          //         fontSize: 14,
+                                          //         color: Colors.white,
+                                          //         fontWeight: FontWeight.w500,
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                        ] else ...[
+                                          const SizedBox(height: 20),
+
+                                          buildTextField(
+                                            "Phone Number",
+                                            Icons.phone,
+                                            controller.phoneController,
+                                            isPhone: true,
+                                            isPhoneKey: true,
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Phone required';
+                                              }
+
+                                              final selectedCode = controller.countryCode.value;
+                                              final expectedLength =controller.countryRules[selectedCode] ?? 10;
+
+                                              // ensure only digits
+                                              final onlyDigits = RegExp(r'^\d+$');
+                                              if (!onlyDigits.hasMatch(value)) {
+                                                return 'Enter digits only';
+                                              }
+
+                                              if (value.length != expectedLength) {
+                                                return 'Enter $expectedLength digit number';
+                                              }
+
+                                              return null;
+                                            },
+
+                                          ),
+
+                                          const SizedBox(height: 40),
+
+                                          // Con const SizedBox(height: 20),tinue button
+                                          Container(
+                                            width: double.infinity,
+                                            height: 48,
+                                            decoration: BoxDecoration(
+                                              color: ColorRes.grey.withOpacity(
+                                                0.2,
+                                              ),
+                                              borderRadius: BorderRadius.circular(
+                                                12,
                                               ),
                                             ),
-                                            const SizedBox(width: 16),
-                                            const Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0,
+                                            alignment: Alignment.center,
+                                            child: const Text(
+                                              'Continue',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
                                               ),
-                                              child: Text(
-                                                'OR',
+                                            ),
+                                          ),
+                                          const SizedBox(height: 15),
+                                          const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'By clicking above you agree to ',
+                                                textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: Colors.grey,
-                                                  fontSize: 12,
-                                                ), // adjust color if needed
-                                              ),
-                                            ),
-                                            const SizedBox(width: 16),
-                                            Expanded(
-                                              child: Divider(
-                                                color: Colors.grey.withOpacity(
-                                                  0.5,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
-                                                thickness: 0.8,
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        // const SizedBox(height: 20),
-
-                                        // SizedBox(
-                                        //   width: double.infinity,
-                                        //   height: 45,
-                                        //   child: ElevatedButton(
-                                        //     onPressed: controller.submitForm,
-                                        //     style: ElevatedButton.styleFrom(
-                                        //       backgroundColor: ColorRes.primary,
-                                        //       shape: RoundedRectangleBorder(
-                                        //         borderRadius:
-                                        //             BorderRadius.circular(14),
-                                        //       ),
-                                        //       elevation: 2,
-                                        //     ),
-                                        //     child: const Text(
-                                        //       "On Tap Login with Truecaller",
-                                        //       style: TextStyle(
-                                        //         fontSize: 14,
-                                        //         color: Colors.white,
-                                        //         fontWeight: FontWeight.w500,
-                                        //       ),
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                        const SizedBox(height: 40),
-
-                                        Center(
-                                          child: InkWell(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            onTap: controller.submitForm,
-                                            child: const Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 6,
-                                                horizontal: 12,
+                                              Text(
+                                                'Terms & Conditions',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: ColorRes.primary,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                               ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                // keep row compact
-                                                children: [
-                                                  Text(
-                                                    "Existing User?",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color:
-                                                          ColorRes
-                                                              .textSecondary,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 20),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Divider(
+                                                  color: Colors.grey.withOpacity(
+                                                    0.5,
+                                                  ), // choose color
+                                                  thickness: 0.8, // optional
+                                                ),
+                                              ),
+                                              const SizedBox(width: 16),
+                                              const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0,
+                                                ),
+                                                child: Text(
+                                                  'OR',
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 12,
+                                                  ), // adjust color if needed
+                                                ),
+                                              ),
+                                              const SizedBox(width: 16),
+                                              Expanded(
+                                                child: Divider(
+                                                  color: Colors.grey.withOpacity(
+                                                    0.5,
                                                   ),
-                                                  SizedBox(width: 6),
-                                                  Text(
-                                                    "Login Here",
-                                                    style: TextStyle(
-                                                      fontSize: 13,
-                                                      color: ColorRes.primary,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      decoration:
-                                                          TextDecoration
-                                                              .underline, // 👈 adds a hint it's clickable
+                                                  thickness: 0.8,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          // const SizedBox(height: 20),
+
+                                          // SizedBox(
+                                          //   width: double.infinity,
+                                          //   height: 45,
+                                          //   child: ElevatedButton(
+                                          //     onPressed: controller.submitForm,
+                                          //     style: ElevatedButton.styleFrom(
+                                          //       backgroundColor: ColorRes.primary,
+                                          //       shape: RoundedRectangleBorder(
+                                          //         borderRadius:
+                                          //             BorderRadius.circular(14),
+                                          //       ),
+                                          //       elevation: 2,
+                                          //     ),
+                                          //     child: const Text(
+                                          //       "On Tap Login with Truecaller",
+                                          //       style: TextStyle(
+                                          //         fontSize: 14,
+                                          //         color: Colors.white,
+                                          //         fontWeight: FontWeight.w500,
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                          const SizedBox(height: 40),
+
+                                          Center(
+                                            child: InkWell(
+                                              borderRadius: BorderRadius.circular(
+                                                8,
+                                              ),
+                                              onTap: controller.submitForm,
+                                              child: const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 6,
+                                                  horizontal: 12,
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  // keep row compact
+                                                  children: [
+                                                    Text(
+                                                      "Existing User?",
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                            ColorRes
+                                                                .textSecondary,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                    SizedBox(width: 6),
+                                                    Text(
+                                                      "Login Here",
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        color: ColorRes.primary,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline, // 👈 adds a hint it's clickable
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
 
-                                        // const SizedBox(height: 25),
+                                          // const SizedBox(height: 25),
+                                        ],
                                       ],
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -843,7 +1074,10 @@ class CreatePropertyScreen extends StatelessWidget {
                       }
                       // else do nothing or show a message, as you are already at the last step (review)
                     } else {
-                      controller.submitForm();
+                      // Validate login form before submit
+                      if (loginFormKey.currentState?.validate() ?? true) {
+                        controller.submitForm();
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -974,46 +1208,66 @@ Widget buildTextField(
   bool isEnable = true,
   int maxLines = 1,
   int minLines = 1,
+  VoidCallback? onTap,
+  String? Function(String?)? validator, // <-- Add validator param
 }) {
-  return TextField(
-    controller: controller,
-    enabled: isEnable,
-    maxLines: maxLines,
-    minLines: minLines,
-    keyboardType: isPhoneKey ? TextInputType.phone : TextInputType.text,
-    style: const TextStyle(fontSize: 14, color: ColorRes.textPrimary),
-    decoration: InputDecoration(
-      prefixIcon:
-          isPhone
-              ? Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: buildPhonePrefix(),
-              )
-              : Icon(icon, color: ColorRes.primary, size: 20),
-      prefixIconConstraints: const BoxConstraints(minWidth: 48, maxHeight: 20),
-      hintText: label,
-      hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
-      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(
-          width: 0.8,
-          color: ColorRes.grey.withOpacity(0.3),
+  return GestureDetector(
+    onTap: onTap,
+    child: TextFormField( // <-- Use TextFormField for validation
+      controller: controller,
+      enabled: isEnable,
+
+      maxLines: maxLines,
+      minLines: minLines,
+      keyboardType: isPhoneKey ? TextInputType.phone : TextInputType.text,
+      style: const TextStyle(fontSize: 14, color: ColorRes.textPrimary),
+
+      validator: validator, // <-- Apply validator if provided
+      decoration: InputDecoration(
+        prefixIcon:
+            isPhone
+                ? Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: buildPhonePrefix(),
+                )
+                : Icon(icon, color: ColorRes.primary, size: 20),
+        prefixIconConstraints: const BoxConstraints(minWidth: 48, maxHeight: 20),
+        hintText: label,
+        hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            width: 0.8,
+            color: ColorRes.grey.withOpacity(0.3),
+          ),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            width: 0.8,
+            color: ColorRes.grey.withOpacity(0.3),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(width: 1.2, color: ColorRes.primary),
+        ),
+        errorBorder:OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(width: 1.2, color: Colors.red),
+        ),
+
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(width: 1.2, color: Colors.red),
+        ),        filled: true,
+        fillColor: Colors.grey.shade50,
+        errorStyle: TextStyle(
+          color: Colors.red.shade700,
+          fontSize: 12,
         ),
       ),
-      disabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(
-          width: 0.8,
-          color: ColorRes.grey.withOpacity(0.3),
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(width: 1.2, color: ColorRes.primary),
-      ),
-      filled: true,
-      fillColor: Colors.grey.shade50,
     ),
   );
 }
@@ -1031,6 +1285,7 @@ Widget buildPhonePrefix() {
     {'code': '+971', 'flag': '🇦🇪'},
     {'code': '+81', 'flag': '🇯🇵'},
   ];
+
 
   final controller = Get.find<CreatePropertyController>();
 

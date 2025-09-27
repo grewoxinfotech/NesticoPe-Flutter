@@ -14,8 +14,14 @@ import 'package:housing_flutter_app/utils/global.dart';
 import 'package:housing_flutter_app/widgets/input/custom_text_field.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../model/search_model.dart';
+
 class CommonSearchField extends StatefulWidget {
-  const CommonSearchField({super.key});
+  final Function(Prediction)? onCitySelected;
+  final bool isFromAddProperty;
+  final String? initialSearchText;
+  final String hintText;
+  const CommonSearchField({super.key, this.onCitySelected, this.isFromAddProperty = false, this.initialSearchText, this.hintText='Surat , Gujarat , 395010'});
 
   @override
   State<CommonSearchField> createState() => _CommonSearchFieldState();
@@ -32,7 +38,12 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
   @override
   void initState() {
     super.initState();
-
+    if (widget.initialSearchText != null && widget.initialSearchText!.isNotEmpty) {
+      micController.searchText.value.text = widget.initialSearchText!;
+      print('micro jsdewud ${micController.searchText.value.text}');
+      // Fetch predictions for initial text
+      controller.fetchPredictions(widget.initialSearchText!);
+    }
     micController.searchText.value.addListener(() {
       controller.fetchPredictions(micController.searchText.value.text);
     });
@@ -51,7 +62,13 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
           ColorRes.black,
           1,
         ),
-      ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: ColorRes.black),
+              onPressed: (){
+                Navigator.of(context).pop();
+                micController.searchText.value.clear();
+              }
+      ),),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
@@ -77,7 +94,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                           ),
                         ),
                         controller: micController.searchText.value,
-                        hintText: 'Surat , Gujarat , 395010',
+                        hintText:widget.hintText,
                       ),
                     ),
                   ),
@@ -168,16 +185,13 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                     final item = controller.predictions[index];
                     return InkWell(
                       onTap: () {
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //   SnackBar(
-                        //     content: Text("Selected: ${item.description}"),
-                        //   ),
-                        // );
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const RealEstateFilterScreen(),
-                          ),
-                        );
+                        if (widget.onCitySelected != null) {
+                          widget.onCitySelected!(item);
+
+                          controller.predictions.clear(); // Clear predictions
+                          micController.searchText.value.clear();
+                        }
+                        // Remove navigation to RealEstateFilterScreen for city selection
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -232,7 +246,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                   },
                 );
               } else {
-                return Column(
+                return (widget.isFromAddProperty)?SizedBox.shrink(): Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     buildSection("Popular Locations", propertyList),
