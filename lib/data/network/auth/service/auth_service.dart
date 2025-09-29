@@ -110,6 +110,30 @@ class AuthService {
     }
   }
 
+  Future<String?> sellerRegistrationComplete(Map<String, dynamic> data) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/complete-seller-registration"),
+        headers: await headers(),
+        body: jsonEncode(data),
+      );
+
+      print("response : -----------------> ${response.body}");
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (body['success'] == true) {
+          // Return token from response
+          return body['data']['token'];
+        }
+      }
+      return null;
+    } catch (e) {
+      print("Error in sellerRegistrationComplete: $e");
+      return null;
+    }
+  }
+
   Future<void> resendOtp(String token) async {
     final response = await http.post(
       Uri.parse('${ApiConstants.auth}/resend-otp'),

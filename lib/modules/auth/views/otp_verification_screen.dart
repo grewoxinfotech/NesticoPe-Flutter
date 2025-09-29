@@ -490,7 +490,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       contentType: ContentType.success,
     );
 
-    await SecureStorage.saveToken(token);
+    // await SecureStorage.saveToken(token);
 
     Get.offUntil(
       MaterialPageRoute(

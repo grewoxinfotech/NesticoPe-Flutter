@@ -6,6 +6,7 @@ import 'package:housing_flutter_app/data/network/auth/service/auth_service.dart'
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/ResetPasswordScreen.dart';
+import 'package:housing_flutter_app/modules/auth/views/seller_registration_complete.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -168,7 +169,7 @@ class AuthController extends GetxController {
 
       if (response['success'] == true && response['data']['token'] != null) {
         final token = response['data']['token'];
-        // await SecureStorage.saveToken(token);
+        await SecureStorage.saveToken(token);
 
         print(
           'API called successfully with phone: $phone, userType: $userType, sellerType: $sellerType, token: $token',
@@ -180,11 +181,12 @@ class AuthController extends GetxController {
             phone: phone,
             token: token,
             verifyOTPFor: VerifyOTPFor.sellerRegister,
-            redirectAfterOtp: CreatePropertyScreen(
-              sellerType:
-                  sellerType == "owner" ? SellerType.owner : SellerType.builder,
-              isLogin: true,
-            ),
+            redirectAfterOtp: SellerRegistrationComplete(),
+            // redirectAfterOtp: CreatePropertyScreen(
+            //   sellerType:
+            //       sellerType == "owner" ? SellerType.owner : SellerType.builder,
+            //   isLogin: true,
+            // ),
           ),
         );
 
@@ -206,6 +208,25 @@ class AuthController extends GetxController {
         message: e.toString(),
         contentType: ContentType.failure,
       );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<bool> completeSellerRegistration(Map<String, dynamic> data) async {
+    try {
+      isLoading.value = true;
+      final receivedToken = await authService.sellerRegistrationComplete(data);
+      if (receivedToken != null) {
+        await SecureStorage.saveToken(receivedToken);
+        return true;
+      } else {
+        print("Registration failed or token not received");
+        return false;
+      }
+    } catch (e) {
+      print("Error in completeSellerRegistration: $e");
+      return false;
     } finally {
       isLoading.value = false;
     }
@@ -252,6 +273,7 @@ class AuthController extends GetxController {
         user.user!.userType = "seller";
         await SecureStorage.saveUserData(user);
       }
+      print("Token data: ${data}");
       await SecureStorage.saveToken(data);
       // await SecureStorage.saveLoggedIn(true);
 

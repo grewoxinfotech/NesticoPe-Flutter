@@ -138,16 +138,16 @@ class PropertyController extends PaginatedController<Items> {
   // }
 
   /// Create a new property
-  Future<bool> createProperty(Items property) async {
-    try {
-      final success = await _service.createProperty(property);
-      if (success) await loadInitial();
-      return success;
-    } catch (e) {
-      print("Create property error: $e");
-      return false;
-    }
-  }
+  // Future<bool> createProperty(Items property) async {
+  //   try {
+  //     final success = await _service.createProperty(property);
+  //     if (success) await loadInitial();
+  //     return success;
+  //   } catch (e) {
+  //     print("Create property error: $e");
+  //     return false;
+  //   }
+  // }
 
   /// Update property
   Future<bool> updateProperty(String id, Items updatedProperty) async {
