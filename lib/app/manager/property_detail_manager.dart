@@ -116,10 +116,10 @@ class PropertyDetailManager {
 
     if (pd.parkingInfo != null) {
       final parking = pd.parkingInfo!;
-      if ((parking.covered ?? 0) > 0 || (parking.open ?? 0) > 0) {
+      if ((parking.covered ?? false) || (parking.open ?? false)) {
         details.add({
           "Parking":
-              "${parking.covered ?? 0} Covered, ${parking.open ?? 0} Open",
+          "${(parking.covered ?? false) ? "1 Covered" : "0 Covered"}, ${(parking.open ?? false) ? "1 Open" : "0 Open"}",
         });
       }
     }

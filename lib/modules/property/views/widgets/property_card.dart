@@ -58,11 +58,16 @@ class _PropertyCardState extends State<PropertyCard> {
               child: Stack(
                 children: [
                   CustomImage(
-                    type: CustomImageType.network,
-                    src: widget.property.propertyMedia!.images!.first,
+                    type: (widget.property.propertyMedia?.images?.isNotEmpty ?? false)
+                        ? CustomImageType.network
+                        : CustomImageType.asset,
+                    src: (widget.property.propertyMedia?.images?.isNotEmpty ?? false)
+                        ? widget.property.propertyMedia!.images!.first
+                        : IMGRes.home1,
                     fit: BoxFit.cover,
                     height: 170,
                   ),
+
                   // widget.property.propertyMedia?.images?.isNotEmpty == true
                   //     ? Image.network(
                   //       widget.property.propertyMedia!.images!.first,

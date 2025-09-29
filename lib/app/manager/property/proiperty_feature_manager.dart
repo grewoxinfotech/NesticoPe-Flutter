@@ -57,11 +57,29 @@ class PropertyFeatureManager {
   }
 
   /// Helper to format parking info
+  // static String _getParkingInfo(ParkingInfo? parking) {
+  //   if (parking == null) return "N/A";
+  //   List<String> list = [];
+  //   if ((parking.covered ?? 0) > 0) list.add("${parking.covered} Covered");
+  //   if ((parking.open ?? 0) > 0) list.add("${parking.open} Open");
+  //   return list.isNotEmpty ? list.join(", ") : "N/A";
+  // }
   static String _getParkingInfo(ParkingInfo? parking) {
     if (parking == null) return "N/A";
-    List<String> list = [];
-    if ((parking.covered ?? 0) > 0) list.add("${parking.covered} Covered");
-    if ((parking.open ?? 0) > 0) list.add("${parking.open} Open");
+
+    final List<String> list = [];
+
+    // Only add if the number of parking slots is greater than 0
+    if (parking.covered != null && parking.covered == true) {
+      list.add("${parking.covered} Covered");
+    }
+
+    if (parking.open != null && parking.open == true ) {
+      list.add("${parking.open} Open");
+    }
+
+    // Join the list with comma or return "N/A" if empty
     return list.isNotEmpty ? list.join(", ") : "N/A";
   }
+
 }

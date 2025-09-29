@@ -152,20 +152,20 @@ class PropertyService {
       });
 
       // 🔑 Attach images
-      for (int i = 0; i < images.length; i++) {
-        final file = File(images[i].path);
-        final stream = http.ByteStream(file.openRead());
-        final length = await file.length();
-
-        final multipartFile = http.MultipartFile(
-          'property_images', // 👈 backend expects this field
-          stream,
-          length,
-          filename: file.path.split("/").last,
-        );
-
-        request.files.add(multipartFile);
-      }
+      // for (int i = 0; i < images.length; i++) {
+      //   final file = File(images[i].path);
+      //   final stream = http.ByteStream(file.openRead());
+      //   final length = await file.length();
+      //
+      //   final multipartFile = http.MultipartFile(
+      //     'property_images', // 👈 backend expects this field
+      //     stream,
+      //     length,
+      //     filename: file.path.split("/").last,
+      //   );
+      //
+      //   request.files.add(multipartFile);
+      // }
 
       // Send request
       final streamedResponse = await request.send();

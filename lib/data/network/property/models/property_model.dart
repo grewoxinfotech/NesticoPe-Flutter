@@ -720,7 +720,8 @@ class Items {
   String? city;
   String? state;
   String? zipCode;
-  Location? location;
+  String? location;
+  // Location? location;
   List<NearbyLocations>? nearbyLocations;
   String? reraId;
   String? propertyStatus;
@@ -845,9 +846,7 @@ class Items {
     state = json['state'] as String?;
     zipCode = json['zipCode'] as String?;
     location =
-        json['location'] != null
-            ? Location.fromJson(json['location'] as Map<String, dynamic>)
-            : null;
+        json['location'] ;
     nearbyLocations =
         json['nearbyLocations'] != null
             ? (json['nearbyLocations'] as List)
@@ -892,84 +891,174 @@ class Items {
     updatedAt = json['updatedAt'] as String?;
   }
 
+  // Map<String, dynamic> toJson() {
+  //   final Map<String, dynamic> data = {};
+  //   if (propertyMedia != null) data['propertyMedia'] = propertyMedia!.toJson();
+  //   data['id'] = id;
+  //   data['created_by'] = createdBy;
+  //   data['updated_by'] = updatedBy;
+  //   data['title'] = title;
+  //   data['type'] = type;
+  //   data['listingType'] = listingType;
+  //   data['propertyType'] = propertyType;
+  //   data['propertyDescription'] = propertyDescription;
+  //   data['keywords'] = keywords;
+  //   data['propertyImages'] = propertyImages;
+  //   if (propertyDetails != null) {
+  //     data['propertyDetails'] = propertyDetails!.toJson();
+  //   }
+  //   data['address'] = address;
+  //   data['city'] = city;
+  //   data['state'] = state;
+  //   data['zipCode'] = zipCode;
+  //   if (location != null) data['location'] = location;
+  //   if (nearbyLocations != null) {
+  //     data['nearbyLocations'] =
+  //         nearbyLocations!.map((v) => v.toJson()).toList();
+  //   }
+  //   data['reraId'] = reraId;
+  //   data['property_status'] = propertyStatus;
+  //   data['builderName'] = builderName;
+  //   data['projectName'] = projectName;
+  //   data['ownerPhone'] = ownerPhone;
+  //   data['ownerName'] = ownerName;
+  //   data['ownerEmail'] = ownerEmail;
+  //   data['isVerified'] = isVerified;
+  //   data['verifiedBy'] = verifiedBy;
+  //   data['verifiedAt'] = verifiedAt;
+  //   data['totalInquiries'] = totalInquiries;
+  //   data['totalViews'] = totalViews;
+  //   data['approval_status'] = approvalStatus;
+  //   data['approval_comment'] = approvalComment;
+  //   data['approved_by'] = approvedBy;
+  //   data['approved_at'] = approvedAt;
+  //   data['totalFavorites'] = totalFavorites;
+  //   data['totalShares'] = totalShares;
+  //   data['totalVisits'] = totalVisits;
+  //   data['totalSales'] = totalSales;
+  //   data['totalCommissions'] = totalCommissions;
+  //   data['assignedTo'] = assignedTo;
+  //   data['assignmentDate'] = assignmentDate;
+  //   data['assignmentExpiryDate'] = assignmentExpiryDate;
+  //   data['potentialEarnings'] = potentialEarnings;
+  //   data['assignmentStatus'] = assignmentStatus;
+  //   data['performanceScore'] = performanceScore;
+  //   data['expiryDate'] = expiryDate;
+  //   data['lastRenewalDate'] = lastRenewalDate;
+  //   data['renewalCount'] = renewalCount;
+  //   data['isExpired'] = isExpired;
+  //   data['totalReports'] = totalReports;
+  //   data['isHiddenDueToReports'] = isHiddenDueToReports;
+  //   data['lastReportedAt'] = lastReportedAt;
+  //   data['createdAt'] = createdAt;
+  //   data['updatedAt'] = updatedAt;
+  //   return data;
+  // }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    if (propertyMedia != null) data['propertyMedia'] = propertyMedia!.toJson();
+
     data['id'] = id;
     data['created_by'] = createdBy;
     data['updated_by'] = updatedBy;
-    data['title'] = title;
-    data['type'] = type;
-    data['listingType'] = listingType;
-    data['propertyType'] = propertyType;
-    data['propertyDescription'] = propertyDescription;
-    data['keywords'] = keywords;
-    data['propertyImages'] = propertyImages;
+    data['title'] = title ?? "Default Property Title";
+    data['type'] = type ?? "residential";
+    data['listingType'] = listingType ?? "Rent";
+    data['propertyType'] = propertyType ?? "apartment";
+    data['propertyDescription'] = propertyDescription ?? "No description";
+    if (keywords != null && keywords!.isNotEmpty) data['keywords'] = keywords;
+    if (propertyImages != null && propertyImages!.isNotEmpty) data['propertyImages'] = propertyImages;
     if (propertyDetails != null) {
-      data['propertyDetails'] = propertyDetails!.toJson();
+      final details = propertyDetails!.toJson();
+      details.removeWhere((key, value) => value == null);
+      data['propertyDetails'] = details;
+    } else {
+      data['propertyDetails'] = {};
     }
-    data['address'] = address;
-    data['city'] = city;
-    data['state'] = state;
-    data['zipCode'] = zipCode;
-    if (location != null) data['location'] = location!.toJson();
-    if (nearbyLocations != null) {
-      data['nearbyLocations'] =
-          nearbyLocations!.map((v) => v.toJson()).toList();
+    data['address'] = address ?? "";
+    data['city'] = city ?? "";
+    data['state'] = state ?? "";
+    data['zipCode'] = zipCode ?? "";
+    data['location'] = location ?? "";
+    if (nearbyLocations != null && nearbyLocations!.isNotEmpty) {
+      data['nearbyLocations'] = nearbyLocations!.map((v) => v.toJson()).toList();
     }
     data['reraId'] = reraId;
     data['property_status'] = propertyStatus;
     data['builderName'] = builderName;
     data['projectName'] = projectName;
-    data['ownerPhone'] = ownerPhone;
-    data['ownerName'] = ownerName;
-    data['ownerEmail'] = ownerEmail;
-    data['isVerified'] = isVerified;
+    data['ownerPhone'] = ownerPhone ?? "";
+    data['ownerName'] = ownerName ?? "";
+    data['ownerEmail'] = ownerEmail ?? "";
+    data['isVerified'] = isVerified ?? false;
     data['verifiedBy'] = verifiedBy;
     data['verifiedAt'] = verifiedAt;
-    data['totalInquiries'] = totalInquiries;
-    data['totalViews'] = totalViews;
+    data['totalInquiries'] = totalInquiries ?? 0;
+    data['totalViews'] = totalViews ?? 0;
     data['approval_status'] = approvalStatus;
     data['approval_comment'] = approvalComment;
     data['approved_by'] = approvedBy;
     data['approved_at'] = approvedAt;
-    data['totalFavorites'] = totalFavorites;
-    data['totalShares'] = totalShares;
-    data['totalVisits'] = totalVisits;
-    data['totalSales'] = totalSales;
-    data['totalCommissions'] = totalCommissions;
+    data['totalFavorites'] = totalFavorites ?? 0;
+    data['totalShares'] = totalShares ?? 0;
+    data['totalVisits'] = totalVisits ?? 0;
+    data['totalSales'] = totalSales ?? 0;
+    data['totalCommissions'] = totalCommissions ?? "0.00";
     data['assignedTo'] = assignedTo;
     data['assignmentDate'] = assignmentDate;
     data['assignmentExpiryDate'] = assignmentExpiryDate;
     data['potentialEarnings'] = potentialEarnings;
-    data['assignmentStatus'] = assignmentStatus;
-    data['performanceScore'] = performanceScore;
+    data['assignmentStatus'] = assignmentStatus ?? "available";
+    data['performanceScore'] = performanceScore ?? "0.0";
     data['expiryDate'] = expiryDate;
     data['lastRenewalDate'] = lastRenewalDate;
-    data['renewalCount'] = renewalCount;
-    data['isExpired'] = isExpired;
-    data['totalReports'] = totalReports;
-    data['isHiddenDueToReports'] = isHiddenDueToReports;
+    data['renewalCount'] = renewalCount ?? 0;
+    data['isExpired'] = isExpired ?? false;
+    data['totalReports'] = totalReports ?? 0;
+    data['isHiddenDueToReports'] = isHiddenDueToReports ?? false;
     data['lastReportedAt'] = lastReportedAt;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
+
     return data;
   }
+
 }
+
+// class PropertyMedia {
+//   List<String>? images;
+//   List<String>? videos;
+//
+//   PropertyMedia({this.images, this.videos});
+//
+//   PropertyMedia.fromJson(Map<String, dynamic> json) {
+//     images = (json['images'] as List?)?.map((e) => e as String).toList();
+//     videos = (json['videos'] as List?)?.map((e) => e as String).toList();
+//   }
+//
+//   Map<String, dynamic> toJson() => {'images': images, 'videos': videos};
+// }
 
 class PropertyMedia {
   List<String>? images;
   List<String>? videos;
+  List<String>? documents; // <-- add this
 
-  PropertyMedia({this.images, this.videos});
+  PropertyMedia({this.images, this.videos, this.documents});
 
   PropertyMedia.fromJson(Map<String, dynamic> json) {
     images = (json['images'] as List?)?.map((e) => e as String).toList();
     videos = (json['videos'] as List?)?.map((e) => e as String).toList();
+    documents = (json['documents'] as List?)?.map((e) => e as String).toList();
   }
 
-  Map<String, dynamic> toJson() => {'images': images, 'videos': videos};
+  Map<String, dynamic> toJson() => {
+    'images': images,
+    'videos': videos,
+    'documents': documents, // <-- include here
+  };
 }
+
 
 class PropertyDetails {
   int? bhk;
@@ -986,6 +1075,8 @@ class PropertyDetails {
   String? propertyCondition;
   double? propertyCarpetArea;
   double? propertyBuiltUpArea;
+  String? propertyCarpetAreaUnit;
+  String? propertyBuiltUpAreaUnit;
 
   PropertyDetails({
     this.bhk,
@@ -1002,6 +1093,8 @@ class PropertyDetails {
     this.propertyCondition,
     this.propertyCarpetArea,
     this.propertyBuiltUpArea,
+    this.propertyBuiltUpAreaUnit,
+    this.propertyCarpetAreaUnit
   });
 
   PropertyDetails.fromJson(Map<String, dynamic> json) {
@@ -1042,28 +1135,70 @@ class PropertyDetails {
     propertyBuiltUpArea = TypeConverter.parseDouble(
       json['property_built_up_area'],
     );
+    propertyCarpetAreaUnit = json["property_carpet_area_unit"];
+    propertyBuiltUpAreaUnit = json["property_built_up_area_unit"];
   }
 
+  // Map<String, dynamic> toJson() {
+  //   final Map<String, dynamic> data = {};
+  //   data['bhk'] = bhk;
+  //   data['balcony'] = balcony;
+  //   data['bathroom'] = bathroom;
+  //   data['amenities'] = amenities;
+  //   data['zone_type'] = zoneType;
+  //   if (floorInfo != null) data['floor_info'] = floorInfo!.toJson();
+  //   if (furnishInfo != null) data['furnish_info'] = furnishInfo!.toJson();
+  //   if (parkingInfo != null) data['parking_info'] = parkingInfo!.toJson();
+  //   if (financialInfo != null) data['financial_info'] = financialInfo!.toJson();
+  //   if (possessionInfo != null) {
+  //     data['possession_info'] = possessionInfo!.toJson();
+  //   }
+  //   data['property_facing'] = propertyFacing;
+  //   data['property_condition'] = propertyCondition;
+  //   data['property_carpet_area'] = propertyCarpetArea;
+  //   data['property_built_up_area'] = propertyBuiltUpArea;
+  //   data['property_built_up_area_unit'] = propertyBuiltUpAreaUnit;
+  //   data['property_carpet_area_unit']=propertyCarpetAreaUnit;
+  //   return data;
+  // }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
+
     data['bhk'] = bhk;
     data['balcony'] = balcony;
     data['bathroom'] = bathroom;
-    data['amenities'] = amenities;
-    data['zone_type'] = zoneType;
+    if (amenities != null && amenities!.isNotEmpty) data['amenities'] = amenities;
+    if (zoneType != null) data['zone_type'] = zoneType;
+
     if (floorInfo != null) data['floor_info'] = floorInfo!.toJson();
-    if (furnishInfo != null) data['furnish_info'] = furnishInfo!.toJson();
-    if (parkingInfo != null) data['parking_info'] = parkingInfo!.toJson();
-    if (financialInfo != null) data['financial_info'] = financialInfo!.toJson();
-    if (possessionInfo != null) {
-      data['possession_info'] = possessionInfo!.toJson();
+    if (furnishInfo != null) {
+      final furnish = furnishInfo!.toJson();
+      // remove null fields
+      furnish.removeWhere((key, value) => value == null);
+      data['furnish_info'] = furnish;
     }
-    data['property_facing'] = propertyFacing;
-    data['property_condition'] = propertyCondition;
-    data['property_carpet_area'] = propertyCarpetArea;
-    data['property_built_up_area'] = propertyBuiltUpArea;
+    if (parkingInfo != null) {
+      final parking = parkingInfo!.toJson();
+      parking.removeWhere((key, value) => value == null);
+      data['parking_info'] = parking;
+    }
+    if (financialInfo != null) {
+      final finance = financialInfo!.toJson();
+      finance.removeWhere((key, value) => value == null);
+      data['financial_info'] = finance;
+    }
+    if (possessionInfo != null) data['possession_info'] = possessionInfo!.toJson();
+
+    if (propertyFacing != null) data['property_facing'] = propertyFacing;
+    if (propertyCondition != null) data['property_condition'] = propertyCondition;
+    if (propertyCarpetArea != null) data['property_carpet_area'] = propertyCarpetArea;
+    if (propertyBuiltUpArea != null) data['property_built_up_area'] = propertyBuiltUpArea;
+    if (propertyCarpetAreaUnit != null) data['property_carpet_area_unit'] = propertyCarpetAreaUnit;
+    if (propertyBuiltUpAreaUnit != null) data['property_built_up_area_unit'] = propertyBuiltUpAreaUnit;
+
     return data;
   }
+
 }
 
 class FloorInfo {
@@ -1099,10 +1234,18 @@ class FurnishInfo {
             : null;
   }
 
-  Map<String, dynamic> toJson() => {
-    'furnish_type': furnishType,
-    'furnish_details': furnishDetails?.toJson(),
-  };
+  // Map<String, dynamic> toJson() => {
+  //   'furnish_type': furnishType,
+  //   'furnish_details': furnishDetails?.toJson(),
+  // };
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (furnishType != null) data['furnish_type'] = furnishType;
+    if (furnishDetails != null) data['furnish_details'] = furnishDetails!.toJson();
+    return data;
+  }
+
 }
 
 class FurnishDetails {
@@ -1126,18 +1269,31 @@ class FurnishDetails {
 }
 
 class ParkingInfo {
-  int? covered;
-  int? open;
+  bool? covered;
+  bool? open;
 
   ParkingInfo({this.covered, this.open});
 
   ParkingInfo.fromJson(Map<String, dynamic> json) {
-    covered = TypeConverter.parseInt(json['covered']);
-    open = TypeConverter.parseInt(json['open']);
+    covered = json['covered_parking'];
+    open = json['open_parking'];
   }
 
-  Map<String, dynamic> toJson() => {'covered': covered, 'open': open};
+  Map<String, dynamic> toJson() => {'covered_parking': covered, 'open_parking': open};
 }
+// class ParkingInfo {
+//   int? covered;
+//   int? open;
+//
+//   ParkingInfo({this.covered, this.open});
+//
+//   ParkingInfo.fromJson(Map<String, dynamic> json) {
+//     covered = TypeConverter.parseInt(json['covered']);
+//     open = TypeConverter.parseInt(json['open']);
+//   }
+//
+//   Map<String, dynamic> toJson() => {'covered': covered, 'open': open};
+// }
 
 class FinancialInfo {
   double price;
@@ -1200,22 +1356,22 @@ class PossessionInfo {
   };
 }
 
-class Location {
-  double? latitude;
-  double? longitude;
-
-  Location({this.latitude, this.longitude});
-
-  Location.fromJson(Map<String, dynamic> json) {
-    latitude = TypeConverter.parseDouble(json['latitude']);
-    longitude = TypeConverter.parseDouble(json['longitude']);
-  }
-
-  Map<String, dynamic> toJson() => {
-    'latitude': latitude,
-    'longitude': longitude,
-  };
-}
+// class Location {
+//   double? latitude;
+//   double? longitude;
+//
+//   Location({this.latitude, this.longitude});
+//
+//   Location.fromJson(Map<String, dynamic> json) {
+//     latitude = TypeConverter.parseDouble(json['latitude']);
+//     longitude = TypeConverter.parseDouble(json['longitude']);
+//   }
+//
+//   Map<String, dynamic> toJson() => {
+//     'latitude': latitude,
+//     'longitude': longitude,
+//   };
+// }
 
 class NearbyLocations {
   String? name;

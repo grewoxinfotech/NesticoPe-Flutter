@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/utils/validation.dart';
 
+import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../controllers/auth_controller.dart';
 
@@ -13,6 +16,7 @@ class SellerRegistrationComplete extends StatefulWidget {
 }
 
 class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
+  bool isObSecure = true;
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _usernameController = TextEditingController();
@@ -62,7 +66,9 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('User Form')),
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text('Seller Registration')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -70,64 +76,118 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                TextFormField(
+                NesticoPeTextField(
+                  isRequired: true,
+                  title: "Username",
                   controller: _usernameController,
-                  decoration: const InputDecoration(labelText: 'Username'),
+                  hintText: "Enter Username",
                   validator:
                       (value) => value!.isEmpty ? 'Enter username' : null,
                 ),
-                TextFormField(
+                SizedBox(height: 12),
+                NesticoPeTextField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
+                  isRequired: true,
+                  title: "Password",
+                  hintText: "Enter Password",
+                  obscureText: isObSecure,
+                  suffixIcon: IconButton(
+                      icon: _togglePassword(),
+                      onPressed: () {
+                        setState(() {
+                          isObSecure = !isObSecure;
+                        });
+                      }),
                   validator:
                       (value) => value!.isEmpty ? 'Enter password' : null,
                 ),
-                TextFormField(
+                SizedBox(height: 12),
+                NesticoPeTextField(
                   controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  isRequired: true,
+                  title: "Email",
+                  hintText: "Enter Email",
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value!.isEmpty) return 'Enter email';
-                    if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value))
-                      return 'Enter valid email';
-                    return null;
-                  },
+                  validator: (value) => emailValidation(value!),
                 ),
-                TextFormField(
-                  controller: _firstNameController,
-                  decoration: const InputDecoration(labelText: 'First Name'),
-                  validator:
-                      (value) => value!.isEmpty ? 'Enter first name' : null,
+                SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: NesticoPeTextField(
+                        controller: _firstNameController,
+                        isRequired: true,
+                        title: "First Name",
+                        hintText: "Enter First Name",
+                        validator:
+                            (value) =>
+                        value!.isEmpty
+                            ? 'Enter first name'
+                            : null,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: NesticoPeTextField(
+                        controller: _lastNameController,
+                        isRequired: true,
+                        title: "Last Name",
+                        hintText: "Enter Last Name",
+                        validator:
+                            (value) =>
+                        value!.isEmpty
+                            ? 'Enter last name'
+                            : null,
+                      ),
+                    ),
+                  ],
                 ),
-                TextFormField(
-                  controller: _lastNameController,
-                  decoration: const InputDecoration(labelText: 'Last Name'),
-                  validator:
-                      (value) => value!.isEmpty ? 'Enter last name' : null,
-                ),
-                TextFormField(
+                SizedBox(height: 12),
+                NesticoPeTextField(
                   controller: _addressController,
-                  decoration: const InputDecoration(labelText: 'Address'),
+                  isRequired: true,
+                  title: "Address",
+                  hintText: "Enter Address",
                   validator: (value) => value!.isEmpty ? 'Enter address' : null,
                 ),
-                TextFormField(
+                SizedBox(height: 12),
+                NesticoPeTextField(
                   controller: _cityController,
-                  decoration: const InputDecoration(labelText: 'City'),
+                  isRequired: true,
+                  title: "City",
+                  hintText: "Enter City",
                   validator: (value) => value!.isEmpty ? 'Enter city' : null,
                 ),
-                TextFormField(
-                  controller: _stateController,
-                  decoration: const InputDecoration(labelText: 'State'),
-                  validator: (value) => value!.isEmpty ? 'Enter state' : null,
+                SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: NesticoPeTextField(
+                        controller: _stateController,
+                        isRequired: true,
+                        title: "State",
+                        hintText: "Enter State",
+                        validator: (value) =>
+                        value!.isEmpty
+                            ? 'Enter state'
+                            : null,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: NesticoPeTextField(
+                        controller: _zipCodeController,
+                        isRequired: true,
+                        title: "Zip code",
+                        hintText: "Enter Zip code",
+                        keyboardType: TextInputType.number,
+                        validator:
+                            (value) => value!.isEmpty ? 'Enter zip code' : null,
+                      ),
+                    ),
+                  ],
                 ),
-                TextFormField(
-                  controller: _zipCodeController,
-                  decoration: const InputDecoration(labelText: 'Zip Code'),
-                  keyboardType: TextInputType.number,
-                  validator:
-                      (value) => value!.isEmpty ? 'Enter zip code' : null,
-                ),
+
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
@@ -143,4 +203,13 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
       ),
     );
   }
+
+  Widget _togglePassword() {
+    return Icon(
+      isObSecure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+      color: ColorRes.primary,
+      size: 18,
+    );
+  }
+
 }

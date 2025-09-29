@@ -39,7 +39,8 @@ class PropertyController extends PaginatedController<Items> {
   // Reactive fields
   Rxn<PropertyMedia> propertyMedia = Rxn<PropertyMedia>();
   Rxn<PropertyDetails> propertyDetails = Rxn<PropertyDetails>();
-  Rxn<Location> location = Rxn<Location>();
+  Rxn<String> location = Rxn<String>();
+  // Rxn<Location> location = Rxn<Location>();
   RxList<NearbyLocations> nearbyLocations = <NearbyLocations>[].obs;
   RxString approvalStatus = "pending".obs;
   RxString assignmentStatus = "available".obs;

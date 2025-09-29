@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 
@@ -1473,94 +1474,96 @@ class CreatePropertyController extends GetxController {
   Future<void> _addPropertyResidentialRent() async {
     try {
       print("Adding Residential Property for Rent...");
-      // debugPrint("Property Type : ${propertyType.value}");
-      // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("Selected Index : ${cityController.text.trim()}");
-      // debugPrint("Sub Property Type : ${rent_propertyType.value}");
-      // debugPrint("Building : ${rentBuildingController.text.trim()}");
-      // debugPrint("Locality : ${localityController.text.trim()}");
-      // debugPrint("BHK : ${bhkType.value}");
-      // debugPrint("BuiltUpo area : ${areaController.text.trim()}");
-      // debugPrint("BuiltUpo area Size : ${areaUnit.value}");
-      // debugPrint("Furnishing  : ${furnishingType.value}");
-      // debugPrint("Agent Share  : ${isShareWithAgents.value}");
-      // debugPrint("Monthly Rent  : ${rent_MonthilyRent.text.trim()}");
-      // debugPrint("Available From  : ${rent_AvailableFrom.text.trim()}");
-      // debugPrint("Deposit  : ${rent_depositType.value}");
-      // debugPrint(
-      //   "Photos  : ${selectedImages.map((element) => element.path.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint("Age of Property  : ${ageOfPropertyController.text.trim()}");
-      // debugPrint("Bathroom  : ${rent_Bathroom.value}");
-      // debugPrint("Balcony  : ${rent_Balcony.value}");
-      // debugPrint("Covered Parking  : ${rent_CoveredParking.value}");
-      // debugPrint("Open Parking  : ${rent_OpenParking.value}");
-      // debugPrint(
-      //   "Legals  : ${rent_Legal.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Rentals  : ${rent_Rentals.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Security Deposit  : ${rent_Security_DepositType.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Home Services  : ${rent_HomeServices.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Tenants Types  : ${rent_Preferred_Tenants.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Tenants For Bachelors  : ${rent_Selected_Tenants_for_Bachelors.value}",
-      // );
-      // debugPrint("Pet Friendly  : ${rent_Pet_Friendly.value}");
-      // debugPrint("Carpet Area  : ${carpetAreaController.text.trim()}");
-      // debugPrint("Carpet Area Type : ${carpetAreaUnit.value}");
-      // debugPrint("Flat No : ${sell_rent_Flat_No.text.trim()}");
-      // debugPrint("Floor No : ${sell_rent_Floor_No.text.trim()}");
-      // debugPrint("Total Floor : ${sell_rent_Total_Floor.text.trim()}");
-      // debugPrint("Maintenance Charge : ${rent_maintenanceChargeType.value}");
-      // if (rent_maintenanceChargeType.value.toLowerCase() == "separate") {
-      //   debugPrint(
-      //     "Maintenance Charge  : ${sell_rent_Maintenance_Charges.text.trim()}",
-      //   );
-      // }
-      // debugPrint("Lock in period : ${rent_lockInPeriod.value}");
-      // if (rent_lockInPeriod.value.toLowerCase() == "custom") {
-      //   debugPrint("Lock in period : ${rent_Custom_LockIn_Period.text.trim()}");
-      // }
-      // debugPrint("Parking Charge : ${rent_Parking_Charges.value}");
-      // if (rent_Parking_Charges.value.toLowerCase() == "separate") {
-      //   debugPrint(
-      //     "Parking Charge : ${rent_Custom_Parking_Charges.text.trim()}",
-      //   );
-      // }
-      // debugPrint("Painting Charge : ${rent_Painting_Charges.value}");
-      // if (rent_Painting_Charges.value.toLowerCase() == "custom") {
-      //   debugPrint(
-      //     "Painting Charge  : ${rent_Custom_Painting_Charges.text.trim()}",
-      //   );
-      // }
-      // debugPrint("Facing : ${rent_facing.value}");
-      // debugPrint("Address : ${sell_rent_Address.text.trim()}");
-      // debugPrint("Servant Room : ${sell_rent_Servent_Room.value}");
-      // debugPrint(
-      //   "Property Description : ${sell_rent_propertyDescriptionController.text.trim()}",
-      // );
-      // debugPrint(
-      //   "Flat Furnishing: ${selectedFurnishing.entries.map((e) => "${e.key}: ${e.value.title}").toList()}",
-      // );
-      // debugPrint(
-      //   "amenities Types  : ${sell_Amenities_Furniture.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "amenities Types  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      // );
+      debugPrint("Property Type : ${propertyType.value}");
+      debugPrint("Looking to Type : ${lookingTo.value}");
+      debugPrint("Selected Index : ${cityController.text.trim()}");
+      debugPrint("Sub Property Type : ${rent_propertyType.value}");
+      debugPrint("Building : ${rentBuildingController.text.trim()}");
+      debugPrint("Locality : ${localityController.text.trim()}");
+      debugPrint("BHK : ${bhkType.value}");
+      debugPrint("BuiltUpo area : ${areaController.text.trim()}");
+      debugPrint("BuiltUpo area Size : ${areaUnit.value}");
+      debugPrint("Furnishing  : ${furnishingType.value}");
+      debugPrint("Agent Share  : ${isShareWithAgents.value}");
+      debugPrint("Monthly Rent  : ${rent_MonthilyRent.text.trim()}");
+      debugPrint("Available From  : ${rent_AvailableFrom.text.trim()}");
+      debugPrint("Deposit  : ${rent_depositType.value}");
+      debugPrint(
+        "Photos  : ${selectedImages.map((element) => element.path.toLowerCase()).join(", ")}",
+      );
+      debugPrint("Age of Property  : ${ageOfPropertyController.text.trim()}");
+      debugPrint("Bathroom  : ${rent_Bathroom.value}");
+      debugPrint("Balcony  : ${rent_Balcony.value}");
+      debugPrint("Covered Parking  : ${rent_CoveredParking.value}");
+      debugPrint("Open Parking  : ${rent_OpenParking.value}");
+      debugPrint(
+        "Legals  : ${rent_Legal.map((element) => element.toLowerCase()).join(", ")}",
+      );
+      debugPrint(
+        "Rentals  : ${rent_Rentals.map((element) => element.toLowerCase()).join(", ")}",
+      );
+      debugPrint(
+        "Security Deposit  : ${rent_Security_DepositType.map((element) => element.toLowerCase()).join(", ")}",
+      );
+      debugPrint(
+        "Home Services  : ${rent_HomeServices.map((element) => element.toLowerCase()).join(", ")}",
+      );
+      debugPrint(
+        "Tenants Types  : ${rent_Preferred_Tenants.map((element) => element.toLowerCase()).join(", ")}",
+      );
+      debugPrint(
+        "Tenants For Bachelors  : ${rent_Selected_Tenants_for_Bachelors.value}",
+      );
+      debugPrint("Pet Friendly  : ${rent_Pet_Friendly.value}");
+      debugPrint("Carpet Area  : ${carpetAreaController.text.trim()}");
+      debugPrint("Carpet Area Type : ${carpetAreaUnit.value}");
+      debugPrint("Flat No : ${sell_rent_Flat_No.text.trim()}");
+      debugPrint("Floor No : ${sell_rent_Floor_No.text.trim()}");
+      debugPrint("Total Floor : ${sell_rent_Total_Floor.text.trim()}");
+      debugPrint("Maintenance Charge : ${rent_maintenanceChargeType.value}");
+      if (rent_maintenanceChargeType.value.toLowerCase() == "separate") {
+        debugPrint(
+          "Maintenance Charge  : ${sell_rent_Maintenance_Charges.text.trim()}",
+        );
+      }
+      debugPrint("Lock in period : ${rent_lockInPeriod.value}");
+      if (rent_lockInPeriod.value.toLowerCase() == "custom") {
+        debugPrint("Lock in period : ${rent_Custom_LockIn_Period.text.trim()}");
+      }
+      debugPrint("Parking Charge : ${rent_Parking_Charges.value}");
+      if (rent_Parking_Charges.value.toLowerCase() == "separate") {
+        debugPrint(
+          "Parking Charge : ${rent_Custom_Parking_Charges.text.trim()}",
+        );
+      }
+      debugPrint("Painting Charge : ${rent_Painting_Charges.value}");
+      if (rent_Painting_Charges.value.toLowerCase() == "custom") {
+        debugPrint(
+          "Painting Charge  : ${rent_Custom_Painting_Charges.text.trim()}",
+        );
+      }
+      debugPrint("Facing : ${rent_facing.value}");
+      debugPrint("Address : ${sell_rent_Address.text.trim()}");
+      debugPrint("Servant Room : ${sell_rent_Servent_Room.value}");
+      debugPrint(
+        "Property Description : ${sell_rent_propertyDescriptionController.text.trim()}",
+      );
+      debugPrint(
+        "Flat Furnishing: ${selectedFurnishing.entries.map((e) => "${e.key}: ${e.value.title}").toList()}",
+      );
+      debugPrint(
+        "amenities Types  : ${sell_Amenities_Furniture.map((element) => element.toLowerCase()).join(", ")}",
+      );
+      debugPrint(
+        "amenities Types  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      );
 
       final payload =
           await buildPropertyPayload(); // returns Map<String, dynamic>
+
+      debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
-        payload,
+        payload.toJson(),
         selectedImages.value, // List<PhotoImageModel>
       );
       if (success) {
@@ -1658,83 +1661,119 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<Map<String, dynamic>> buildPropertyPayload() async {
+  Future<Items> buildPropertyPayload() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? "";
-    return {
-      "title":
-          rentBuildingController.text.trim().isNotEmpty
-              ? rentBuildingController.text.trim()
-              : "Default Property Title",
 
-      "type": propertyType.value.toLowerCase(), // residential / commercial
-      "listingType": lookingTo.value, // Rent / Sell / PG
-      "propertyType":
-          rent_propertyType.value
-              .toLowerCase(), // apartment, office, plot, etc.
-      "propertyDescription":
-          sell_rent_propertyDescriptionController.text.trim(),
-      // "propertyMedia": {
-      //   "images": selectedImages.map((e) => e.path).toList(),
-      //   "videos": [], // handle later if video picker is added
-      //   "documents": [], // handle later
-      // },
-      "propertyDetails": {
-        "bhk": int.tryParse(bhkType.value) ?? 0,
-        "bathroom": rent_Bathroom.value,
-        "balcony": rent_Balcony.value,
-        "property_built_up_area":
-            double.tryParse(areaController.text.trim()) ?? 0,
-        "property_built_up_area_unit": areaUnit.value,
-        "property_carpet_area":
+    return Items(
+      type: propertyType.value.toLowerCase(),
+      listingType: lookingTo.value,
+      propertyType: rent_propertyType.value.toLowerCase(),
+      propertyDescription: rent_propertyType.value.toLowerCase(),
+      propertyDetails: PropertyDetails(
+        bhk: int.tryParse(bhkType.value) ?? 0,
+        bathroom: rent_Bathroom.value,
+        balcony: rent_Balcony.value,
+        propertyBuiltUpArea: double.tryParse(areaController.text.trim()) ?? 0,
+        propertyCarpetArea:
             double.tryParse(carpetAreaController.text.trim()) ?? 0,
-        "property_carpet_area_unit": carpetAreaUnit.value,
-        "furnish_info": {
-          "furnish_type": furnishingType.value.toLowerCase(),
-          "furnish_details": {
-            for (var entry in selectedFurnishing.value.entries)
-              entry.key: entry.value.quantity, // 👈 use the model’s `value`
-          },
-        },
-        "property_facing": rent_facing.value,
-        "floor_info": {
-          "floor_number": int.tryParse(sell_rent_Floor_No.text.trim()) ?? 0,
-          "total_floors": int.tryParse(sell_rent_Total_Floor.text.trim()) ?? 0,
-        },
-        "parking_info": {
-          "covered_parking": rent_CoveredParking.value.toLowerCase() == "yes",
-          "open_parking": rent_OpenParking.value.toLowerCase() == "yes",
-        },
-        "financial_info": {
-          "property_price":
-              lookingTo.value == "Sell"
-                  ? double.tryParse(
-                        sell_rent_Maintenance_Charges.text.trim(),
-                      ) ??
-                      0
-                  : null,
-          "property_rent_per_month":
-              lookingTo.value == "Rent"
-                  ? double.tryParse(rent_MonthilyRent.text.trim()) ?? 0
-                  : null,
-          "property_security_deposit":
-              rent_Security_DepositType.isNotEmpty
-                  ? double.tryParse(rent_Security_DepositType.first) ?? 0
-                  : null,
-          "broker_commission":
-              double.tryParse(rent_Custom_Painting_Charges.text.trim()) ?? 0,
-          "negotiable": true, // you can add toggle later
-        },
-      },
-      "address": sell_rent_Address.text.trim(),
-      "city": cityController.text.trim(),
-      // "created_by": userId,
-      // "state": "",
-      // "zipCode": "",
-      // "location": localityController.text.trim(),
-      // "ownerPhone": "9876543210",
-      // "ownerName": "John Doe",
-      // "ownerEmail": "john@example.com",
-    };
+        propertyBuiltUpAreaUnit: areaUnit.value,
+        propertyCarpetAreaUnit: carpetAreaUnit.value,
+
+        propertyFacing: rent_facing.value,
+        amenities: selectedRoomAmenities.value,
+        floorInfo: FloorInfo(
+          floorNumber: int.tryParse(sell_rent_Floor_No.text.trim()),
+          totalFloors: int.tryParse(sell_rent_Total_Floor.text.trim()),
+        ),
+        parkingInfo: ParkingInfo(
+          covered: int.tryParse(rent_CoveredParking.value) != null &&
+              int.tryParse(rent_CoveredParking.value)! > 0,
+          open: int.tryParse(rent_OpenParking.value) != null &&
+              int.tryParse(rent_OpenParking.value)! > 0,
+        ),
+          financialInfo: FinancialInfo(
+          propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()) ?? 1,
+            propertySecurityDeposit: double.tryParse(rent_SecurityDeposit.text.trim()) ?? 1,
+      ),
+        furnishInfo: FurnishInfo(
+          furnishType: furnishingType.value
+
+        )
+      ),
+      location: rentBuildingController.text.trim(),
+      city: cityController.text.trim(),
+      address: sell_rent_Address.text.trim(),
+    );
+    // return {
+    //   "title":
+    //       rentBuildingController.text.trim().isNotEmpty
+    //           ? rentBuildingController.text.trim()
+    //           : "Default Property Title",
+    //
+    //   "type": propertyType.value.toLowerCase(), // residential / commercial
+    //   "listingType": lookingTo.value, // Rent / Sell / PG
+    //   "propertyType":
+    //       rent_propertyType.value
+    //           .toLowerCase(), // apartment, office, plot, etc.
+    //   "propertyDescription":
+    //       sell_rent_propertyDescriptionController.text.trim(),
+    //   "propertyDetails": {
+    //     "bhk": int.tryParse(bhkType.value) ?? 0,
+    //     "bathroom": rent_Bathroom.value,
+    //     "balcony": rent_Balcony.value,
+    //     "property_built_up_area":
+    //         double.tryParse(areaController.text.trim()) ?? 0,
+    //     "property_built_up_area_unit": areaUnit.value,
+    //     "property_carpet_area":
+    //         double.tryParse(carpetAreaController.text.trim()) ?? 0,
+    //     "property_carpet_area_unit": carpetAreaUnit.value,
+    //     "furnish_info": {
+    //       "furnish_type": furnishingType.value.toLowerCase(),
+    //       "furnish_details": {
+    //         for (var entry in selectedFurnishing.value.entries)
+    //           entry.key: entry.value.quantity, // 👈 use the model’s `value`
+    //       },
+    //     },
+    //     "property_facing": rent_facing.value,
+    //     "floor_info": {
+    //       "floor_number": int.tryParse(sell_rent_Floor_No.text.trim()) ?? 0,
+    //       "total_floors": int.tryParse(sell_rent_Total_Floor.text.trim()) ?? 0,
+    //     },
+    //     "parking_info": {
+    //       "covered_parking": rent_CoveredParking.value.toLowerCase() == "yes",
+    //       "open_parking": rent_OpenParking.value.toLowerCase() == "yes",
+    //     },
+    //     "financial_info": {
+    //       "property_price":
+    //           lookingTo.value == "Sell"
+    //               ? double.tryParse(
+    //                     sell_rent_Maintenance_Charges.text.trim(),
+    //                   ) ??
+    //                   0
+    //               : null,
+    //       "property_rent_per_month":
+    //           lookingTo.value == "Rent"
+    //               ? double.tryParse(rent_MonthilyRent.text.trim()) ?? 0
+    //               : null,
+    //       "property_security_deposit":
+    //           rent_Security_DepositType.isNotEmpty
+    //               ? double.tryParse(rent_Security_DepositType.first) ?? 0
+    //               : null,
+    //       "broker_commission":
+    //           double.tryParse(rent_Custom_Painting_Charges.text.trim()) ?? 0,
+    //       "negotiable": true, // you can add toggle later
+    //     },
+    //   },
+    //   "address": sell_rent_Address.text.trim(),
+    //   "city": cityController.text.trim(),
+    //   // "created_by": userId,
+    //   // "state": "",
+    //   // "zipCode": "",
+    //   // "location": localityController.text.trim(),
+    //   // "ownerPhone": "9876543210",
+    //   // "ownerName": "John Doe",
+    //   // "ownerEmail": "john@example.com",
+    // };
   }
 }

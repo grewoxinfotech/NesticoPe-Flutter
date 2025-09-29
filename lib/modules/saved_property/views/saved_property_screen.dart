@@ -423,7 +423,7 @@ List<Items> dummyItems = [
           acInstalled: false,
         ),
       ),
-      parkingInfo: ParkingInfo(covered: 1, open: 1),
+      // parkingInfo: ParkingInfo(covered: 1, open: 1),
       financialInfo: FinancialInfo(price: 6500000, maintenance: 2500),
       possessionInfo: PossessionInfo(
         possessionStatus: "Ready to Move",
@@ -434,7 +434,6 @@ List<Items> dummyItems = [
     city: "Surat",
     state: "Gujarat",
     zipCode: "395007",
-    location: Location(latitude: 21.1702, longitude: 72.8311),
     nearbyLocations: [
       NearbyLocations(name: "School", distance: 1.2),
       NearbyLocations(name: "Hospital", distance: 2.0),
@@ -479,7 +478,7 @@ List<Items> dummyItems = [
           acInstalled: true,
         ),
       ),
-      parkingInfo: ParkingInfo(covered: 0, open: 1),
+      // parkingInfo: ParkingInfo(covered: 0, open: 1),
       financialInfo: FinancialInfo(price: 15000, maintenance: 1000),
       possessionInfo: PossessionInfo(
         possessionStatus: "Immediate",
@@ -490,7 +489,6 @@ List<Items> dummyItems = [
     city: "Surat",
     state: "Gujarat",
     zipCode: "395009",
-    location: Location(latitude: 21.2, longitude: 72.85),
     builderName: "XYZ Developers",
     projectName: "Green Residency",
     ownerName: "Priya Shah",
