@@ -294,7 +294,7 @@ class TopPropertyByLocation extends StatelessWidget {
               ),
               Positioned(
                 bottom: 8,
-               left: 0,
+                left: 0,
                 right: 0,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -327,12 +327,14 @@ class TopPropertyByLocation extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomText(
-                            '${Formatter.formatPriceCompact(property.propertyDetails!.financialInfo!.price ?? 0.0)} ',
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: ColorRes.white,
-                          ),
+                          if (property.propertyDetails?.financialInfo?.price !=
+                              null)
+                            CustomText(
+                              '${Formatter.formatPriceCompact(property.propertyDetails!.financialInfo!.price ?? 0.0)} ',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: ColorRes.white,
+                            ),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,

@@ -14,8 +14,11 @@ class RentAdvanceDetail extends StatelessWidget {
 
   final GlobalKey<FormState> formKey;
 
-  const RentAdvanceDetail({super.key, required this.controller, required this.formKey});
-
+  const RentAdvanceDetail({
+    super.key,
+    required this.controller,
+    required this.formKey,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +173,8 @@ class RentAdvanceDetail extends StatelessWidget {
                             .map(
                               (option) => buildChoice(
                                 title: option.toString(),
-                                selected: controller.rent_Balcony.value == option,
+                                selected:
+                                    controller.rent_Balcony.value == option,
                                 onTap: () {
                                   controller.setValue(
                                     controller.rent_Balcony,
@@ -224,7 +228,8 @@ class RentAdvanceDetail extends StatelessWidget {
                           return buildChoice(
                             width: 80,
                             title: option,
-                            selected: controller.rent_OpenParking.value == option,
+                            selected:
+                                controller.rent_OpenParking.value == option,
                             onTap: () {
                               controller.setValue(
                                 controller.rent_OpenParking,
@@ -262,7 +267,10 @@ class RentAdvanceDetail extends StatelessWidget {
                   options: rent_Rentals,
                   selectedItems: controller.rent_Rentals,
                   onTap: (option) {
-                    controller.toggleItemInList(controller.rent_Rentals, option);
+                    controller.toggleItemInList(
+                      controller.rent_Rentals,
+                      option,
+                    );
                   },
 
                   fontSize: 12,
@@ -473,7 +481,10 @@ class RentAdvanceDetail extends StatelessWidget {
                           }
                         },
                         underline: Container(),
-                        style: const TextStyle(fontSize: 12, color: Colors.black),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
                         dropdownColor: Colors.white,
                       ),
                     ),
@@ -592,7 +603,6 @@ class RentAdvanceDetail extends StatelessWidget {
                     isPhoneKey: true,
                     isEnable: false,
                     onTap: () async {
-
                       FocusScope.of(context).unfocus();
                       DateTime? picked = await showDatePicker(
                         context: context,
@@ -673,7 +683,8 @@ class RentAdvanceDetail extends StatelessWidget {
                           return buildChoice(
                             title: option,
                             selected:
-                                controller.rent_Painting_Charges.value == option,
+                                controller.rent_Painting_Charges.value ==
+                                option,
                             onTap: () {
                               controller.setValue(
                                 controller.rent_Painting_Charges,
@@ -736,7 +747,8 @@ class RentAdvanceDetail extends StatelessWidget {
                               Navigator.pop(context, city);
                             },
                             isFromAddProperty: true,
-                            initialSearchText: controller.sell_rent_Address.text,
+                            initialSearchText:
+                                controller.sell_rent_Address.text,
                           ),
                     ),
                   );
@@ -778,7 +790,7 @@ class RentAdvanceDetail extends StatelessWidget {
                 buildTextField(
                   "Enter RERA id",
                   Icons.description_outlined,
-                  controller.sell_rent_propertyDescriptionController,
+                  controller.sell_Rera_Id,
                 ),
                 SizedBox(height: 16),
               ],

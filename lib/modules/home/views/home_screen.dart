@@ -18,7 +18,7 @@ import 'package:housing_flutter_app/modules/property/controllers/property_contro
 import 'package:housing_flutter_app/modules/property/views/property_list_screen.dart';
 
 // import 'package:housing_flutter_app/modules/property/views/recommended.dart';
-import 'package:housing_flutter_app/modules/property/views/widgets/property_card.dart';
+
 import 'package:housing_flutter_app/modules/property_rating/view/top_rated_property.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart';
@@ -28,6 +28,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../property/views/widgets/city_filter.dart';
+import '../../property/views/widgets/property_card.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Map<String, String>> propertyTypes;
@@ -528,8 +529,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   const SizedBox(height: 20),
-                  // Top Locations
 
+                  // Top Locations
                   const TitleWithViewAll(
                     title: "Trending Areas",
                     showViewAll: true,
@@ -2557,7 +2558,7 @@ List<Items> dummyItems = [
     city: "Surat",
     state: "Gujarat",
     zipCode: "395007",
-    
+
     nearbyLocations: [
       NearbyLocations(name: "School", distance: 1.2),
       NearbyLocations(name: "Hospital", distance: 2.0),
@@ -3636,6 +3637,7 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
     );
   }
 }
+
 Widget _buildShimmerLoader() {
   return Container(
     height: 320,
@@ -3703,11 +3705,7 @@ Widget _buildErrorState(String error) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 48,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.error_outline, size: 48, color: Colors.grey.shade400),
           const SizedBox(height: 16),
           Text(
             'Something went wrong',
@@ -3720,10 +3718,7 @@ Widget _buildErrorState(String error) {
           const SizedBox(height: 8),
           Text(
             'Please try again later',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
         ],
       ),
@@ -3738,11 +3733,7 @@ Widget _buildEmptyState() {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.home_outlined,
-            size: 48,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.home_outlined, size: 48, color: Colors.grey.shade400),
           const SizedBox(height: 16),
           Text(
             'No Properties Available',
@@ -3755,10 +3746,7 @@ Widget _buildEmptyState() {
           const SizedBox(height: 8),
           Text(
             'Check back later for new listings',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
         ],
       ),

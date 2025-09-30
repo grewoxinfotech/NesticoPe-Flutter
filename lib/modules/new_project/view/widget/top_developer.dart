@@ -280,7 +280,9 @@ class DeveloperSection extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   data.propertyDetails?.financialInfo?.price != null
-                      ? Formatter.formatPrice(data.propertyDetails!.financialInfo!.price)
+                      ? Formatter.formatPrice(
+                        data.propertyDetails!.financialInfo!.price!.toDouble(),
+                      )
                       : 'Price not available',
                   style: const TextStyle(
                     fontSize: AppFontSizes.medium,

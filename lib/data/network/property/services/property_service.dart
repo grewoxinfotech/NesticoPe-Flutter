@@ -5,6 +5,8 @@ import 'package:housing_flutter_app/app/care/pagination/models/pagination_models
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 import '../../../../modules/add_property/model/photo_model.dart';
 
@@ -107,75 +109,57 @@ class PropertyService {
   // }
 
   /// Create new property
-  // Future<bool> createProperty(
-  //   Map<String, dynamic> property,
-  //   List<PhotoImageModel> image,
-  // ) async {
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(baseUrl),
-  //       headers: await headers(),
-  //       body: jsonEncode(property.toJson()),
-  //     );
-  //     print("Create property response: ${response.body}");
-  //     return response.statusCode == 201 || response.statusCode == 200;
-  //   } catch (e) {
-  //     print("Create property exception: $e");
-  //     return false;
-  //   }
-  // }
-
   Future<bool> createProperty(
     Map<String, dynamic> property,
     List<PhotoImageModel> images,
   ) async {
     try {
       final url = Uri.parse(baseUrl);
+      debugPrint("Property JSON: ${jsonEncode(property)}");
 
-      debugPrint("Property Json : ${property}");
-
-      // Multipart request
       var request = http.MultipartRequest("POST", url);
 
-      // Add headers (auth, content-type, etc.)
+      // Add headers
       request.headers.addAll(await headers());
 
-      // 🔑 Add property data (as normal fields, not JSON)
       property.forEach((key, value) {
-        if (value != null) {
-          if (value is Map || value is List) {
-            request.fields[key] = jsonEncode(value); // stringify nested objects
-          } else {
-            request.fields[key] = value.toString();
-          }
+        if (value is Map || value is List) {
+          request.fields[key] = jsonEncode(
+            value,
+          ); // nested objects/lists as JSON string
+        } else {
+          request.fields[key] = value.toString();
         }
       });
 
-      // 🔑 Attach images
-      // for (int i = 0; i < images.length; i++) {
-      //   final file = File(images[i].path);
-      //   final stream = http.ByteStream(file.openRead());
-      //   final length = await file.length();
-      //
-      //   final multipartFile = http.MultipartFile(
-      //     'property_images', // 👈 backend expects this field
-      //     stream,
-      //     length,
-      //     filename: file.path.split("/").last,
-      //   );
-      //
-      //   request.files.add(multipartFile);
-      // }
+      // Assuming `images` is List<PhotoImageModel>
+      for (var image in images) {
+        final file = File(image.path);
+        if (await file.exists()) {
+          // Detect MIME type dynamically
+          final mimeType =
+              lookupMimeType(file.path)?.split('/') ?? ['image', 'jpeg'];
+
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'property_images', // backend field for images
+              file.path,
+              filename: file.path.split('/').last,
+              contentType: MediaType(mimeType[0], mimeType[1]),
+            ),
+          );
+        }
+      }
 
       // Send request
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      print("Create property response: ${response.body}");
+      debugPrint("Create property response: ${response.body}");
 
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
-      print("Create property exception: $e");
+      debugPrint("Create property exception: $e");
       return false;
     }
   }

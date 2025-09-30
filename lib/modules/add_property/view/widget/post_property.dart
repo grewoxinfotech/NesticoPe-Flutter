@@ -82,10 +82,7 @@ class PostProperty extends StatelessWidget {
 
     return Obx(() {
       print(
-        "Chrvloefjeri ${controller.lookingTo.value == 'Sell'} ${controller
-            .propertyType.value == "Commercial"} ${(controller.lookingTo
-            .value == 'Rent' &&
-            controller.propertyType.value == "Commercial")}",
+        "Chrvloefjeri ${controller.lookingTo.value == 'Sell'} ${controller.propertyType.value == "Commercial"} ${(controller.lookingTo.value == 'Rent' && controller.propertyType.value == "Commercial")}",
       );
       if (controller.lookingTo.value == 'PG/Co-Living') {
         return Form(
@@ -101,34 +98,31 @@ class PostProperty extends StatelessWidget {
               buildSectionTitle("Property Type"),
               const SizedBox(height: 12),
               Obx(
-                    () =>
-                    Row(
-                      children: [
-                        buildChoice(
-                          title: 'Residential',
-                          selected: controller.propertyType.value ==
-                              'Residential',
-                          onTap:
-                              () =>
-                              controller.setValue(
-                                controller.propertyType,
-                                'Residential',
-                              ),
-                        ),
-                        const SizedBox(width: 12),
-                        buildChoice(
-                          title: 'Commercial',
-                          selected: controller.propertyType.value == 'Commercial',
-                          onTap: () {
-                            controller.previousStep();
-                            controller.setValue(
-                              controller.propertyType,
-                              'Commercial',
-                            );
-                          },
-                        ),
-                      ],
+                () => Row(
+                  children: [
+                    buildChoice(
+                      title: 'Residential',
+                      selected: controller.propertyType.value == 'Residential',
+                      onTap:
+                          () => controller.setValue(
+                            controller.propertyType,
+                            'Residential',
+                          ),
                     ),
+                    const SizedBox(width: 12),
+                    buildChoice(
+                      title: 'Commercial',
+                      selected: controller.propertyType.value == 'Commercial',
+                      onTap: () {
+                        controller.previousStep();
+                        controller.setValue(
+                          controller.propertyType,
+                          'Commercial',
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
 
@@ -139,39 +133,41 @@ class PostProperty extends StatelessWidget {
                 final isResidential =
                     controller.propertyType.value == 'Residential';
                 final options =
-                isResidential
-                    ? ['Rent', 'Sell', 'PG/Co-Living']
-                    : ['Rent', 'Sell'];
+                    isResidential
+                        ? ['Rent', 'Sell', 'PG/Co-Living']
+                        : ['Rent', 'Sell'];
                 return Wrap(
                   spacing: 12,
                   runSpacing: 12,
                   children:
-                  options
-                      .map(
-                        (option) =>
-                        GestureDetector(
-                          onTap: () {
-                            controller.setValue(controller.lookingTo, option);
-                            if (option != 'PG/Co-Living') {
-                              controller.previousStep();
-                            }
-                          },
-                          child: buildChoice(
-                            title: option,
-                            selected: controller.lookingTo.value == option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.lookingTo,
-                                option,
-                              );
-                              if (option != 'PG/Co-Living') {
-                                controller.previousStep();
-                              }
-                            },
-                          ),
-                        ),
-                  )
-                      .toList(),
+                      options
+                          .map(
+                            (option) => GestureDetector(
+                              onTap: () {
+                                controller.setValue(
+                                  controller.lookingTo,
+                                  option,
+                                );
+                                if (option != 'PG/Co-Living') {
+                                  controller.previousStep();
+                                }
+                              },
+                              child: buildChoice(
+                                title: option,
+                                selected: controller.lookingTo.value == option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.lookingTo,
+                                    option,
+                                  );
+                                  if (option != 'PG/Co-Living') {
+                                    controller.previousStep();
+                                  }
+                                },
+                              ),
+                            ),
+                          )
+                          .toList(),
                 );
               }),
               const SizedBox(height: 24),
@@ -194,23 +190,25 @@ class PostProperty extends StatelessWidget {
                   Prediction selectedCity = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          CommonSearchField(
+                      builder:
+                          (context) => CommonSearchField(
                             onCitySelected: (city) {
                               Navigator.pop(context, city);
                             },
                             isFromAddProperty: true,
                             initialSearchText: controller.cityController.text,
-
                           ),
                     ),
                   );
 
-                    controller.cityController.text = selectedCity.structuredFormatting?.secondaryText?.split(',')[0]??'';
+                  controller.cityController.text =
+                      selectedCity.structuredFormatting?.secondaryText?.split(
+                        ',',
+                      )[0] ??
+                      '';
 
-                print("city ${controller.cityController.text}");
+                  print("city ${controller.cityController.text}");
                 },
-
               ),
               const SizedBox(height: 16),
 
@@ -218,7 +216,7 @@ class PostProperty extends StatelessWidget {
               Obx(() {
                 final showPGFields =
                     controller.lookingTo.value == "PG/Co-Living" &&
-                        controller.propertyType.value == "Residential";
+                    controller.propertyType.value == "Residential";
 
                 if (showPGFields) {
                   return Column(
@@ -241,27 +239,31 @@ class PostProperty extends StatelessWidget {
                           Prediction selectedCity = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  CommonSearchField(
+                              builder:
+                                  (context) => CommonSearchField(
                                     onCitySelected: (city) {
                                       Navigator.pop(context, city);
                                     },
                                     isFromAddProperty: true,
-                                    initialSearchText: controller
-                                        .localityController.text.isEmpty
-                                        ? ''
-                                        : controller.localityController.text,
-
+                                    initialSearchText:
+                                        controller
+                                                .localityController
+                                                .text
+                                                .isEmpty
+                                            ? ''
+                                            : controller
+                                                .localityController
+                                                .text,
                                   ),
                             ),
                           );
 
+                          controller.localityController.text =
+                              selectedCity.description ?? '';
 
-                            controller.localityController.text =
-                            selectedCity.description??'';
-
-                          print("city ${controller.localityController
-                              .text}  $selectedCity");
+                          print(
+                            "city ${controller.localityController.text}  $selectedCity",
+                          );
                         },
                         isEnable: false,
                       ),
@@ -303,8 +305,7 @@ class PostProperty extends StatelessWidget {
                         options: pgFor,
                         selectedItems: controller.selectedItems,
                         onTap:
-                            (option) =>
-                            controller.toggleItemInList(
+                            (option) => controller.toggleItemInList(
                               controller.selectedItems,
                               option,
                             ),
@@ -319,8 +320,7 @@ class PostProperty extends StatelessWidget {
                         options: bestSuitedFor,
                         selectedItems: controller.bestSuitedList,
                         onTap:
-                            (option) =>
-                            controller.toggleItemInList(
+                            (option) => controller.toggleItemInList(
                               controller.bestSuitedList,
                               option,
                             ),
@@ -331,34 +331,29 @@ class PostProperty extends StatelessWidget {
                       buildSectionTitle("Meal Available"),
                       const SizedBox(height: 8),
                       Obx(
-                            () =>
-                            Row(
-                              children: [
-                                buildChoice(
-                                  title: 'Yes',
-                                  selected: controller.mealAvailable.value ==
-                                      'Yes',
-                                  onTap:
-                                      () =>
-                                      controller.setValue(
-                                        controller.mealAvailable,
-                                        'Yes',
-                                      ),
-                                ),
-                                const SizedBox(width: 10),
-                                buildChoice(
-                                  title: 'No',
-                                  selected: controller.mealAvailable.value ==
-                                      'No',
-                                  onTap:
-                                      () =>
-                                      controller.setValue(
-                                        controller.mealAvailable,
-                                        'No',
-                                      ),
-                                ),
-                              ],
+                        () => Row(
+                          children: [
+                            buildChoice(
+                              title: 'Yes',
+                              selected: controller.mealAvailable.value == 'Yes',
+                              onTap:
+                                  () => controller.setValue(
+                                    controller.mealAvailable,
+                                    'Yes',
+                                  ),
                             ),
+                            const SizedBox(width: 10),
+                            buildChoice(
+                              title: 'No',
+                              selected: controller.mealAvailable.value == 'No',
+                              onTap:
+                                  () => controller.setValue(
+                                    controller.mealAvailable,
+                                    'No',
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
 
                       // Additional fields if meal is Yes (optional)
@@ -405,8 +400,7 @@ class PostProperty extends StatelessWidget {
                           return null;
                         },
 
-                        isEnable: false,
-
+                        // isEnable: false,
                       ),
                       const SizedBox(height: 16),
                       buildTextField(
@@ -414,7 +408,7 @@ class PostProperty extends StatelessWidget {
                         Icons.calendar_month_outlined,
                         controller.lockPeriodController,
                         isPhoneKey: true,
-                        isEnable: false,
+                        // isEnable: false,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter lock in period';
@@ -425,7 +419,6 @@ class PostProperty extends StatelessWidget {
                           }
                           return null;
                         },
-
                       ),
                       const SizedBox(height: 16),
                       buildSectionTitle("Common Areas"),
@@ -434,8 +427,7 @@ class PostProperty extends StatelessWidget {
                         options: commonArea,
                         selectedItems: controller.commonAreasList,
                         onTap:
-                            (option) =>
-                            controller.toggleItemInList(
+                            (option) => controller.toggleItemInList(
                               controller.commonAreasList,
                               option,
                             ),
@@ -465,11 +457,11 @@ class PostProperty extends StatelessWidget {
           ),
         );
       } else if ((controller.lookingTo.value == 'Rent' ||
-          controller.lookingTo.value == 'Sell') &&
+              controller.lookingTo.value == 'Sell') &&
           controller.propertyType.value == 'Residential') {
         return Form(
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          key:  formKey,
+          key: formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -481,155 +473,162 @@ class PostProperty extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     spacing: 12,
-                    children: propertyType
-                        .map(
-                          (type) => buildChoice(
-                            title: type,
-                            selected: controller.rent_propertyType.value == type,
-                            onTap: () {
-                              controller.setValue(controller.rent_propertyType, type);
-                              controller.showPropertyTypeError.value = false; // Hide error on selection
-                            },
-                          ),
-                        )
-                        .toList(),
+                    children:
+                        propertyType
+                            .map(
+                              (type) => buildChoice(
+                                title: type,
+                                selected:
+                                    controller.rent_propertyType.value == type,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.rent_propertyType,
+                                    type,
+                                  );
+                                  controller.showPropertyTypeError.value =
+                                      false; // Hide error on selection
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 ),
               ),
               // --- Show error text only if showPropertyTypeError is true ---
-              Obx(() => controller.showPropertyTypeError.value
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 6, left: 4),
-                      child: Text(
-                        'Please select a property type',
-                        style: TextStyle(color: Colors.red, fontSize: 13),
-                      ),
-                    )
-                  : SizedBox.shrink()),
+              Obx(
+                () =>
+                    controller.showPropertyTypeError.value
+                        ? Padding(
+                          padding: const EdgeInsets.only(top: 6, left: 4),
+                          child: Text(
+                            'Please select a property type',
+                            style: TextStyle(color: Colors.red, fontSize: 13),
+                          ),
+                        )
+                        : SizedBox.shrink(),
+              ),
               SizedBox(height: 24),
               const Text('Building'),
               SizedBox(height: 8),
               buildTextField(
                 'Building / Project / Society',
                 Icons.apartment_outlined,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
-                    }
-                    return null;
-                  },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter building name';
+                  }
+                  return null;
+                },
                 controller.rentBuildingController,
 
-                  onTap: () async {
-                    Prediction selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CommonSearchField(
-                              onCitySelected: (city) {
-                                Navigator.pop(context, city);
-                              },
-                              isFromAddProperty: true,
+                onTap: () async {
+                  Prediction selectedCity = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => CommonSearchField(
+                            onCitySelected: (city) {
+                              Navigator.pop(context, city);
+                            },
+                            isFromAddProperty: true,
 
+                            initialSearchText:
+                                controller.rentBuildingController.text,
+                            hintText: 'Building / Project / Society',
+                          ),
+                    ),
+                  );
+                  controller.rentBuildingController.text =
+                      selectedCity.structuredFormatting?.mainText ?? '';
+                  if (controller.rentBuildingController.text.isNotEmpty) {
+                    controller.localityController.text =
+                        selectedCity.structuredFormatting?.secondaryText ?? '';
+                  }
 
-                              initialSearchText: controller.rentBuildingController
-                                  .text,
-                              hintText: 'Building / Project / Society',
-
-
-                            ),
-                      ),
-                    );
-                    controller.rentBuildingController.text =selectedCity.structuredFormatting?.mainText??'';
-                    if(controller.rentBuildingController.text.isNotEmpty)
-                      {
-                        controller.localityController.text=selectedCity.structuredFormatting?.secondaryText??'';
-                      }
-
-
-
-                    print("city ${controller.localityController.text}");
-                  },
-                  isEnable: false
+                  print("city ${controller.localityController.text}");
+                },
+                isEnable: false,
               ),
               SizedBox(height: 16),
               const Text('Locality'),
               SizedBox(height: 8),
               buildTextField(
-                  'Locality',
-                  Icons.location_on,
-                  controller.localityController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter locality';
-                    }
-                    return null;
-                  },
-                  onTap:(controller.localityController.text.trim().isEmpty)? () async {
-                    Prediction  selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CommonSearchField(
-                              onCitySelected: (city) {
-                                Navigator.pop(context, city);
-                              },
-                              isFromAddProperty: true,
-                              initialSearchText: controller.localityController
-                                  .text,
-                              hintText: 'Locality',
-
+                'Locality',
+                Icons.location_on,
+                controller.localityController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter locality';
+                  }
+                  return null;
+                },
+                onTap:
+                    (controller.localityController.text.trim().isEmpty)
+                        ? () async {
+                          Prediction selectedCity = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => CommonSearchField(
+                                    onCitySelected: (city) {
+                                      Navigator.pop(context, city);
+                                    },
+                                    isFromAddProperty: true,
+                                    initialSearchText:
+                                        controller.localityController.text,
+                                    hintText: 'Locality',
+                                  ),
                             ),
-                      ),
-                    );
+                          );
 
-                      controller.localityController.text = selectedCity.description??'';
-                    print("city ${controller.localityController.text}");
-                  }: null,
-                  isEnable: false
+                          controller.localityController.text =
+                              selectedCity.description ?? '';
+                          print("city ${controller.localityController.text}");
+                        }
+                        : null,
+                isEnable: false,
               ),
               SizedBox(height: 16),
               buildSectionTitle('BHK'),
               SizedBox(height: 8),
               Obx(
-                    () =>
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        spacing: 12,
-                        children:
+                () => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    spacing: 12,
+                    children:
                         bhkTypes
                             .map(
-                              (type) =>
-                              buildChoice(
+                              (type) => buildChoice(
                                 title: type,
                                 selected: controller.bhkType.value == type,
                                 width: 80,
                                 onTap:
-                                    () =>
-                                    controller.setValue(
+                                    () => controller.setValue(
                                       controller.bhkType,
                                       type,
                                     ),
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
-                    ),
-              ),
-              Obx(() => controller.showBHKChooseToError.value
-                  ? Padding(
-                padding: const EdgeInsets.only(top: 6, left: 4),
-                child: Text(
-                  'Please select a BHK type',
-                  style: TextStyle(color: Colors.red, fontSize: 13),
+                  ),
                 ),
-              )
-                  : SizedBox.shrink()),
+              ),
+              Obx(
+                () =>
+                    controller.showBHKChooseToError.value
+                        ? Padding(
+                          padding: const EdgeInsets.only(top: 6, left: 4),
+                          child: Text(
+                            'Please select a BHK type',
+                            style: TextStyle(color: Colors.red, fontSize: 13),
+                          ),
+                        )
+                        : SizedBox.shrink(),
+              ),
               SizedBox(height: 16),
               const Text('Build Up Area'),
-              SizedBox(height: 8
-              ),
+              SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
@@ -654,7 +653,7 @@ class PostProperty extends StatelessWidget {
 
                         final range = AreaRangeHelper.getAreaRange(
                           controller.bhkType.value,
-                          controller.areaUnit.value
+                          controller.areaUnit.value,
                         );
 
                         if (range[0] == 0 && range[1] == 0) {
@@ -680,12 +679,15 @@ class PostProperty extends StatelessWidget {
                     ),
                     child: DropdownButton<String>(
                       value: controller.areaUnit.value,
-                      items: ['sq.ft.', 'sq.yd.', 'sq.mt.']
-                          .map((unit) => DropdownMenuItem(
-                                value: unit,
-                                child: Text(unit),
-                              ))
-                          .toList(),
+                      items:
+                          ['sq.ft.', 'sq.yd.', 'sq.mt.']
+                              .map(
+                                (unit) => DropdownMenuItem(
+                                  value: unit,
+                                  child: Text(unit),
+                                ),
+                              )
+                              .toList(),
                       onChanged: (value) {
                         if (value != null) {
                           controller.areaUnit.value = value;
@@ -707,55 +709,53 @@ class PostProperty extends StatelessWidget {
               buildSectionTitle('Furnishing'),
               SizedBox(height: 8),
               Obx(
-                    () =>
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        spacing: 12,
-                        children:
+                () => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    spacing: 12,
+                    children:
                         furnishingList
                             .map(
-                              (type) =>
-                              buildChoice(
+                              (type) => buildChoice(
                                 title: type,
-                                selected: controller.furnishingType.value == type,
+                                selected:
+                                    controller.furnishingType.value == type,
                                 onTap:
-                                    () =>
-                                    controller.setValue(
+                                    () => controller.setValue(
                                       controller.furnishingType,
                                       type,
                                     ),
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
-                    ),
+                  ),
+                ),
               ),
               SizedBox(height: 12),
               Obx(
-                    () =>
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Checkbox(
-                          value: controller.isShareWithAgents.value,
-                          onChanged: (val) {
-                            controller.isShareWithAgents.value = val ?? false;
-                          },
-                        ),
-                        Text(
-                          'Share listing information with agents',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                      ],
+                () => Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: controller.isShareWithAgents.value,
+                      onChanged: (val) {
+                        controller.isShareWithAgents.value = val ?? false;
+                      },
                     ),
+                    Text(
+                      'Share listing information with agents',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ),
               ),
               // SizedBox(height: 28),
             ],
           ),
         );
       } else if (controller.propertyType.value == "Commercial" &&
-          controller.lookingTo.value == "Rent" && controller.selectedIndex.value.isNotEmpty) {
+          controller.lookingTo.value == "Rent" &&
+          controller.selectedIndex.value.isNotEmpty) {
         return Form(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           key: formKey,
@@ -769,80 +769,89 @@ class PostProperty extends StatelessWidget {
                 'Building / Project / Society',
                 Icons.apartment_outlined,
                 controller.commercial_rent_building_Name,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
-                    }
-                    return null;
-                  },
-                  onTap: () async {
-                    Prediction selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CommonSearchField(
-                              onCitySelected: (city) {
-                                Navigator.pop(context, city);
-                              },
-                              isFromAddProperty: true,
-                              initialSearchText: controller
-                                  .commercial_rent_Loaclity_Name.text,
-                              hintText: 'Building / Project / Society',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter building name';
+                  }
+                  return null;
+                },
+                onTap: () async {
+                  Prediction selectedCity = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => CommonSearchField(
+                            onCitySelected: (city) {
+                              Navigator.pop(context, city);
+                            },
+                            isFromAddProperty: true,
+                            initialSearchText:
+                                controller.commercial_rent_Loaclity_Name.text,
+                            hintText: 'Building / Project / Society',
+                          ),
+                    ),
+                  );
 
-                            ),
-                      ),
-                    );
-
-                      controller.commercial_rent_building_Name.text =
-                      selectedCity.structuredFormatting?.mainText??'';
-                    if(controller.commercial_rent_building_Name.text.isNotEmpty)
-                      {
-                        controller.commercial_rent_Loaclity_Name.text=selectedCity.structuredFormatting?.secondaryText??'';
-                      }
-                    print(
-                        "city ${controller.commercial_rent_Loaclity_Name.text}");
-                  },
-                  isEnable: false
+                  controller.commercial_rent_building_Name.text =
+                      selectedCity.structuredFormatting?.mainText ?? '';
+                  if (controller
+                      .commercial_rent_building_Name
+                      .text
+                      .isNotEmpty) {
+                    controller.commercial_rent_Loaclity_Name.text =
+                        selectedCity.structuredFormatting?.secondaryText ?? '';
+                  }
+                  print(
+                    "city ${controller.commercial_rent_Loaclity_Name.text}",
+                  );
+                },
+                isEnable: false,
               ),
               SizedBox(height: 16),
               const Text('Locality'),
               SizedBox(height: 8),
               buildTextField(
-                  'Locality',
-                  Icons.location_on_outlined,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter locality';
-                    }
-                    return null;
-                  },
-                  controller.commercial_rent_Loaclity_Name,
-                  onTap:(controller.commercial_rent_Loaclity_Name.text.trim().isEmpty)? () async {
-                    Prediction selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CommonSearchField(
-                              onCitySelected: (city) {
-                                Navigator.pop(context, city);
-                              },
-                              isFromAddProperty: true,
-                              initialSearchText: controller
-                                  .commercial_rent_Loaclity_Name.text,
-                              hintText: 'Locality',
-
+                'Locality',
+                Icons.location_on_outlined,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter locality';
+                  }
+                  return null;
+                },
+                controller.commercial_rent_Loaclity_Name,
+                onTap:
+                    (controller.commercial_rent_Loaclity_Name.text
+                            .trim()
+                            .isEmpty)
+                        ? () async {
+                          Prediction selectedCity = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => CommonSearchField(
+                                    onCitySelected: (city) {
+                                      Navigator.pop(context, city);
+                                    },
+                                    isFromAddProperty: true,
+                                    initialSearchText:
+                                        controller
+                                            .commercial_rent_Loaclity_Name
+                                            .text,
+                                    hintText: 'Locality',
+                                  ),
                             ),
-                      ),
-                    );
+                          );
 
-                      controller.commercial_rent_Loaclity_Name.text =
-                      selectedCity.description??'';
+                          controller.commercial_rent_Loaclity_Name.text =
+                              selectedCity.description ?? '';
 
-
-                    print(
-                        "city ${controller.commercial_rent_Loaclity_Name.text}");
-                  }: null,
-                  isEnable: false
+                          print(
+                            "city ${controller.commercial_rent_Loaclity_Name.text}",
+                          );
+                        }
+                        : null,
+                isEnable: false,
               ),
 
               if (controller.selectedIndex.value == 'Other') ...[
@@ -861,7 +870,6 @@ class PostProperty extends StatelessWidget {
                   controller.commercial_Property_Name,
                 ),
                 SizedBox(height: 16),
-
               ],
               if (controller.selectedIndex.value != 'Plot') ...[
                 SizedBox(height: 16),
@@ -876,17 +884,16 @@ class PostProperty extends StatelessWidget {
                 buildSectionTitle('Posession status'),
                 SizedBox(height: 8),
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    children:
                         posession_Status.map((e) {
                           return buildChoice(
                             title: e,
                             selected:
-                            controller
-                                .commercial_rent_posessionStatus
-                                .value ==
+                                controller
+                                    .commercial_rent_posessionStatus
+                                    .value ==
                                 e,
                             onTap: () {
                               controller.setValue(
@@ -896,76 +903,77 @@ class PostProperty extends StatelessWidget {
                             },
                           );
                         }).toList(),
-                      ),
-                ),
-                Obx(() => controller.selectedPossessionStatus.value?Padding(
-                  padding: const EdgeInsets.only(top: 8, left: 4),
-                  child: Text(
-                    'Please select possession type',
-                    style: TextStyle(
-                      color: Colors.red.shade700,
-                      fontSize: 12,
-                    ),
                   ),
-                )
-                    : const SizedBox.shrink() ,),
+                ),
+                Obx(
+                  () =>
+                      controller.selectedPossessionStatus.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select possession type',
+                              style: TextStyle(
+                                color: Colors.red.shade700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
+                ),
               ],
               SizedBox(height: 16),
               Text('Available From'),
               SizedBox(height: 8),
-            buildTextField(
-                    'Enter Available From',
-                    Icons.calendar_month_outlined,
-                    controller.commercial_rent_AvailableFrom,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter valid date';
-                }
-                return null;
-              },
-                  isEnable: false,
-                  onTap: () async {
-
-                    FocusScope.of(context).unfocus();
-                    DateTime? picked = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2100),
-                      builder: (context, child) {
-                        return Theme(
-                          data: Theme.of(context).copyWith(
-                            colorScheme: ColorScheme.light(
-                              primary: ColorRes.primary,
-                              // header background color
-                              onPrimary: Colors.white,
-                              // header text color
-                              onSurface: Colors.black, // body text color
-                            ),
-                            textButtonTheme: TextButtonThemeData(
-                              style: TextButton.styleFrom(
-                                foregroundColor: ColorRes.primary,
-                              ),
+              buildTextField(
+                'Enter Available From',
+                Icons.calendar_month_outlined,
+                controller.commercial_rent_AvailableFrom,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter valid date';
+                  }
+                  return null;
+                },
+                isEnable: false,
+                onTap: () async {
+                  FocusScope.of(context).unfocus();
+                  DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: ColorScheme.light(
+                            primary: ColorRes.primary,
+                            // header background color
+                            onPrimary: Colors.white,
+                            // header text color
+                            onSurface: Colors.black, // body text color
+                          ),
+                          textButtonTheme: TextButtonThemeData(
+                            style: TextButton.styleFrom(
+                              foregroundColor: ColorRes.primary,
                             ),
                           ),
+                        ),
 
-
-                          child: child!,
-                        );
-                      },
-
-                    );
-                    if (picked != null) {
-                      controller.commercial_rent_AvailableFrom.text =
-                      "${picked.day}/${picked.month}/${picked.year}";
-                    }
-                  },
-                    isPhoneKey: true,
-                ),
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (picked != null) {
+                    controller.commercial_rent_AvailableFrom.text =
+                        "${picked.day}/${picked.month}/${picked.year}";
+                  }
+                },
+                isPhoneKey: true,
+              ),
 
               SizedBox(height: 16),
               if (controller.commercial_rent_posessionStatus.value ==
-                  "Ready to move" &&
+                      "Ready to move" &&
                   controller.selectedIndex.value != "Plot") ...[
                 Text('Age of Property'),
                 SizedBox(height: 8),
@@ -999,18 +1007,16 @@ class PostProperty extends StatelessWidget {
                 SizedBox(height: 8),
 
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
                         controller.zoneType
                             .map(
-                              (e) =>
-                              buildChoice(
+                              (e) => buildChoice(
                                 title: e,
                                 selected:
-                                controller.commercial_ZoneType.value == e,
+                                    controller.commercial_ZoneType.value == e,
                                 onTap: () {
                                   controller.setValue(
                                     controller.commercial_ZoneType,
@@ -1018,40 +1024,42 @@ class PostProperty extends StatelessWidget {
                                   );
                                 },
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
-                ),
-                Obx(() => controller.selectedZoneTypeInCommercial.value?Padding(
-                  padding: const EdgeInsets.only(top: 8, left: 4),
-                  child: Text(
-                    'Please select Zone type',
-                    style: TextStyle(
-                      color: Colors.red.shade700,
-                      fontSize: 12,
-                    ),
                   ),
-                )
-                    : const SizedBox.shrink() ,),
+                ),
+                Obx(
+                  () =>
+                      controller.selectedZoneTypeInCommercial.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select Zone type',
+                              style: TextStyle(
+                                color: Colors.red.shade700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
+                ),
                 SizedBox(height: 16),
-
               ],
               if (controller.selectedIndex.value != 'Plot') ...[
                 buildSectionTitle('Location Hub'),
                 SizedBox(height: 8),
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
                         controller.locationHub
                             .map(
-                              (e) =>
-                              buildChoice(
+                              (e) => buildChoice(
                                 title: e,
                                 selected:
-                                controller.commercial_LocationHub.value == e,
+                                    controller.commercial_LocationHub.value ==
+                                    e,
                                 onTap: () {
                                   controller.setValue(
                                     controller.commercial_LocationHub,
@@ -1059,9 +1067,9 @@ class PostProperty extends StatelessWidget {
                                   );
                                 },
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
+                  ),
                 ),
                 SizedBox(height: 16),
               ],
@@ -1085,19 +1093,17 @@ class PostProperty extends StatelessWidget {
                 buildSectionTitle("Property Condition"),
                 SizedBox(height: 8),
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    children:
                         commercial_propertyComditon
                             .map(
-                              (e) =>
-                              buildChoice(
+                              (e) => buildChoice(
                                 title: e,
                                 selected:
-                                controller
-                                    .commercial_property_condition
-                                    .value ==
+                                    controller
+                                        .commercial_property_condition
+                                        .value ==
                                     e,
                                 onTap: () {
                                   controller.setValue(
@@ -1106,9 +1112,9 @@ class PostProperty extends StatelessWidget {
                                   );
                                 },
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
+                  ),
                 ),
 
                 if (controller.commercial_property_condition.value ==
@@ -1120,16 +1126,18 @@ class PostProperty extends StatelessWidget {
                     hintText: "Carpet Area",
                     icon: Icons.square_foot,
                     validator: (value) {
-
                       if (value == null || value.isEmpty) {
                         return 'Please enter building name';
                       }
-                      final rent =int.parse(value);
-                      final buildArea = int.tryParse(controller.commercial_Square_BuildArea.text) ?? 0;
-                      if(rent>buildArea)
-                        {
-                            return 'Carpet area should not be greater than Build up area';
-                        }
+                      final rent = int.parse(value);
+                      final buildArea =
+                          int.tryParse(
+                            controller.commercial_Square_BuildArea.text,
+                          ) ??
+                          0;
+                      if (rent > buildArea) {
+                        return 'Carpet area should not be greater than Build up area';
+                      }
                       return null;
                     },
                     controller: controller.commercial_Square_CarpetArea,
@@ -1164,14 +1172,16 @@ class PostProperty extends StatelessWidget {
                   hintText: "Carpet Area",
                   icon: Icons.square_foot,
                   validator: (value) {
-
                     if (value == null || value.isEmpty) {
                       return 'Please enter building name';
                     }
-                    final rent =int.parse(value);
-                    final buildArea = int.tryParse(controller.commercial_Square_BuildArea.text) ?? 0;
-                    if(rent>buildArea)
-                    {
+                    final rent = int.parse(value);
+                    final buildArea =
+                        int.tryParse(
+                          controller.commercial_Square_BuildArea.text,
+                        ) ??
+                        0;
+                    if (rent > buildArea) {
                       return 'Carpet area should not be greater than Build up area';
                     }
                     return null;
@@ -1193,12 +1203,11 @@ class PostProperty extends StatelessWidget {
                   controller: controller.commercial_Square_BuildArea,
                   selectedValue: controller.commercial_Square_AreaUnti_Build,
                   validator: (value) {
-                    final rent =int.parse(value??'0');
+                    final rent = int.parse(value ?? '0');
                     if (value == null || value.isEmpty) {
                       return 'Please enter building name';
                     }
-                    if(rent<50 || rent>3000000)
-                    {
+                    if (rent < 50 || rent > 3000000) {
                       return 'Area should be between 50 to 3000000';
                     }
                     return null;
@@ -1213,18 +1222,17 @@ class PostProperty extends StatelessWidget {
               buildSectionTitle("Ownership"),
               SizedBox(height: 8),
               Obx(
-                    () =>
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children:
+                () => Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
                       commercial_ownerShipList
                           .map(
-                            (e) =>
-                            buildChoice(
+                            (e) => buildChoice(
                               title: e,
                               selected:
-                              controller.commercial_ownerShipList.value == e,
+                                  controller.commercial_ownerShipList.value ==
+                                  e,
                               onTap: () {
                                 controller.setValue(
                                   controller.commercial_ownerShipList,
@@ -1232,41 +1240,43 @@ class PostProperty extends StatelessWidget {
                                 );
                               },
                             ),
-                      )
+                          )
                           .toList(),
-                    ),
-              ),
-              Obx(() => controller.seletedOwnerShipInCommercial.value?Padding(
-                padding: const EdgeInsets.only(top: 8, left: 4),
-                child: Text(
-                  'Please select OwnerShip type',
-                  style: TextStyle(
-                    color: Colors.red.shade700,
-                    fontSize: 12,
-                  ),
                 ),
-              )
-                  : const SizedBox.shrink() ,),
+              ),
+              Obx(
+                () =>
+                    controller.seletedOwnerShipInCommercial.value
+                        ? Padding(
+                          padding: const EdgeInsets.only(top: 8, left: 4),
+                          child: Text(
+                            'Please select OwnerShip type',
+                            style: TextStyle(
+                              color: Colors.red.shade700,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )
+                        : const SizedBox.shrink(),
+              ),
               if (controller.commercial_property_condition.value ==
                   "Bare shell") ...[
                 SizedBox(height: 16),
                 buildSectionTitle("Construction status"),
                 SizedBox(height: 8),
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
                         commercial_construction_status
                             .map(
-                              (e) =>
-                              buildChoice(
+                              (e) => buildChoice(
                                 title: e,
                                 selected:
-                                controller
-                                    .commercial_construction_status_value
-                                    .value ==
+                                    controller
+                                        .commercial_construction_status_value
+                                        .value ==
                                     e,
                                 onTap: () {
                                   controller.setValue(
@@ -1276,85 +1286,85 @@ class PostProperty extends StatelessWidget {
                                   );
                                 },
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
-                ),
-                Obx(() => controller.seletedOwnerShipInCommercial.value?Padding(
-                  padding: const EdgeInsets.only(top: 8, left: 4),
-                  child: Text(
-                    'Please select OwnerShip type',
-                    style: TextStyle(
-                      color: Colors.red.shade700,
-                      fontSize: 12,
-                    ),
                   ),
-                )
-                    : const SizedBox.shrink() ,),
+                ),
+                Obx(
+                  () =>
+                      controller.seletedOwnerShipInCommercial.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select OwnerShip type',
+                              style: TextStyle(
+                                color: Colors.red.shade700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
+                ),
               ],
               if (controller.commercial_property_condition.value ==
-                  "Ready to use" &&
+                      "Ready to use" &&
                   controller.selectedIndex.value == 'Office') ...[
                 SizedBox(height: 16),
                 Text("Seats"),
                 SizedBox(height: 8),
                 buildTextField(
-                    'Min Number of seats',
-                    Icons.chair_alt_outlined,
-                    controller.commercial_seats,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter minimum area';
-                      }
+                  'Min Number of seats',
+                  Icons.chair_alt_outlined,
+                  controller.commercial_seats,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter minimum area';
+                    }
 
-                      return null;
-                    },
-                    isPhoneKey: true
+                    return null;
+                  },
+                  isPhoneKey: true,
                 ),
                 SizedBox(height: 16),
                 Text("Cabins"),
                 SizedBox(height: 8),
                 buildTextField(
-                    'Min Number of cabins',
-                    Icons.cabin_outlined,
-                    controller.commercial_cabins,
-                    validator: (value) {
+                  'Min Number of cabins',
+                  Icons.cabin_outlined,
+                  controller.commercial_cabins,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter cabins';
+                    }
+                    final rent = int.parse(value);
+                    if (rent < 0 || rent > 1000) {
+                      return 'Cabins should be between 0 to 1000';
+                    }
 
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter cabins';
-                      }
-                      final rent =int.parse(value);
-                      if(rent<0 || rent>1000)
-                        {
-                          return 'Cabins should be between 0 to 1000';
-                        }
-
-                      return null;
-                    },
-                    // controller.commercial_cabins,
-                    isPhoneKey: true
+                    return null;
+                  },
+                  // controller.commercial_cabins,
+                  isPhoneKey: true,
                 ),
                 SizedBox(height: 16),
                 Text("Meeting Room"),
                 SizedBox(height: 8),
                 buildTextField(
-                    'Number of Meeting Rooms',
-                    validator: (value) {
+                  'Number of Meeting Rooms',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter cabins';
+                    }
+                    final rent = int.parse(value);
+                    if (rent < 0 || rent > 100) {
+                      return 'Meeting should be between 0 to 100';
+                    }
 
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter cabins';
-                      }
-                      final rent =int.parse(value);
-                      if(rent<0 || rent>100)
-                      {
-                        return 'Meeting should be between 0 to 100';
-                      }
-
-                      return null;
-                    },
-                    Icons.meeting_room_outlined,
-                    controller.commercial_meeting_room,
-                    isPhoneKey: true
+                    return null;
+                  },
+                  Icons.meeting_room_outlined,
+                  controller.commercial_meeting_room,
+                  isPhoneKey: true,
                 ),
               ],
 
@@ -1391,12 +1401,17 @@ class PostProperty extends StatelessWidget {
 
               GestureDetector(
                 onTap: () {
-                  int totalFloor = int.tryParse(controller.commercial_total_floor.text) ?? 0;
+                  int totalFloor =
+                      int.tryParse(controller.commercial_total_floor.text) ?? 0;
                   List<String> floorOptions = ['-2', '-1', 'Ground'];
                   for (int i = 1; i <= totalFloor; i++) {
                     floorOptions.add(i.toString());
                   }
-                  _showFloorSelectionBottomSheet(context, controller, floorOptions);
+                  _showFloorSelectionBottomSheet(
+                    context,
+                    controller,
+                    floorOptions,
+                  );
                 },
                 child: AbsorbPointer(
                   child: buildTextField(
@@ -1413,14 +1428,14 @@ class PostProperty extends StatelessWidget {
                   ),
                 ),
               ),
-
             ],
           ),
         );
       } else if (controller.propertyType.value == "Commercial" &&
-          controller.lookingTo.value == "Sell" && controller.selectedIndex.value.isNotEmpty) {
+          controller.lookingTo.value == "Sell" &&
+          controller.selectedIndex.value.isNotEmpty) {
         return Form(
-          key:  formKey,
+          key: formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1432,82 +1447,92 @@ class PostProperty extends StatelessWidget {
                 'Building / Project / Society',
                 Icons.apartment_outlined,
                 controller.commercial_rent_building_Name,
-                  validator: (value) {
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter building name';
+                  }
+                  return null;
+                },
+                onTap: () async {
+                  Prediction selectedCity = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => CommonSearchField(
+                            onCitySelected: (city) {
+                              Navigator.pop(context, city);
+                            },
+                            isFromAddProperty: true,
+                            initialSearchText:
+                                controller.commercial_rent_building_Name.text,
+                            hintText: 'Building / Project / Society',
+                          ),
+                    ),
+                  );
 
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
-                    }
-                    return null;
-                  },
-                  onTap: () async {
-                    Prediction selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CommonSearchField(
-                              onCitySelected: (city) {
-                                Navigator.pop(context, city);
-                              },
-                              isFromAddProperty: true,
-                              initialSearchText: controller
-                                  .commercial_rent_building_Name.text,
-                              hintText: 'Building / Project / Society',
+                  controller.commercial_rent_building_Name.text =
+                      selectedCity.structuredFormatting?.mainText ?? '';
+                  if (controller
+                      .commercial_rent_building_Name
+                      .text
+                      .isNotEmpty) {
+                    controller.commercial_rent_Loaclity_Name.text =
+                        selectedCity.structuredFormatting?.secondaryText ?? '';
+                  }
 
-                            ),
-                      ),
-                    );
-
-                      controller.commercial_rent_building_Name.text =
-                      selectedCity.structuredFormatting?.mainText??'';
-                    if(controller.commercial_rent_building_Name.text.isNotEmpty)
-                      {
-                        controller.commercial_rent_Loaclity_Name.text=selectedCity.structuredFormatting?.secondaryText??'';
-                      }
-
-                    print(
-                        "city ${controller.commercial_rent_building_Name.text}");
-                  },
-                  isEnable: false
+                  print(
+                    "city ${controller.commercial_rent_building_Name.text}",
+                  );
+                },
+                isEnable: false,
               ),
               SizedBox(height: 16),
               const Text('Locality'),
               SizedBox(height: 8),
               buildTextField(
-                  'Locality',
-                  Icons.location_on_outlined,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter locality';
-                    }
-                    return null;
-                  },
-                  controller.commercial_rent_Loaclity_Name,
-                  onTap:(controller.commercial_rent_Loaclity_Name.text.trim().isEmpty)? () async {
-                    Prediction selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CommonSearchField(
-                              onCitySelected: (city) {
-                                Navigator.pop(context, city);
-                              },
-                              isFromAddProperty: true,
-                              initialSearchText: controller
-                                  .commercial_rent_Loaclity_Name.text,
-                              hintText: 'Locality',
-
+                'Locality',
+                Icons.location_on_outlined,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter locality';
+                  }
+                  return null;
+                },
+                controller.commercial_rent_Loaclity_Name,
+                onTap:
+                    (controller.commercial_rent_Loaclity_Name.text
+                            .trim()
+                            .isEmpty)
+                        ? () async {
+                          Prediction selectedCity = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => CommonSearchField(
+                                    onCitySelected: (city) {
+                                      Navigator.pop(context, city);
+                                    },
+                                    isFromAddProperty: true,
+                                    initialSearchText:
+                                        controller
+                                            .commercial_rent_Loaclity_Name
+                                            .text,
+                                    hintText: 'Locality',
+                                  ),
                             ),
-                      ),
-                    );
+                          );
 
-                      controller.commercial_rent_Loaclity_Name.text =
-                      selectedCity.description??'';
+                          controller.commercial_rent_Loaclity_Name.text =
+                              selectedCity.description ?? '';
 
-                    print(
-                        "city ${controller.commercial_rent_Loaclity_Name.text}");
-                  }:null,
-                  isEnable: false
+                          print(
+                            "city ${controller.commercial_rent_Loaclity_Name.text}",
+                          );
+                        }
+                        : null,
+                isEnable: false,
               ),
+
               // SizedBox(height: 16),
               // Text(
               //   'POSSESSTION INFO',
@@ -1516,7 +1541,6 @@ class PostProperty extends StatelessWidget {
               //     fontWeight: FontWeight.w500,
               //   ),
               // ),
-
               if (controller.selectedIndex.value == 'Other') ...[
                 SizedBox(height: 16),
                 const Text('Property Name'),
@@ -1550,17 +1574,16 @@ class PostProperty extends StatelessWidget {
                 SizedBox(height: 8),
                 ////////////////////
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    children:
                         posession_Status.map((e) {
                           return buildChoice(
                             title: e,
                             selected:
-                            controller
-                                .commercial_rent_posessionStatus
-                                .value ==
+                                controller
+                                    .commercial_rent_posessionStatus
+                                    .value ==
                                 e,
                             onTap: () {
                               controller.setValue(
@@ -1570,80 +1593,81 @@ class PostProperty extends StatelessWidget {
                             },
                           );
                         }).toList(),
-                      ),
-                ),
-                Obx(() => controller.selectedPossessionStatus.value?Padding(
-                  padding: const EdgeInsets.only(top: 8, left: 4),
-                  child: Text(
-                    'Please select possession type',
-                    style: TextStyle(
-                      color: Colors.red.shade700,
-                      fontSize: 12,
-                    ),
                   ),
-                )
-                    : const SizedBox.shrink() ,),
+                ),
+                Obx(
+                  () =>
+                      controller.selectedPossessionStatus.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select possession type',
+                              style: TextStyle(
+                                color: Colors.red.shade700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
+                ),
               ],
-              if(controller.commercial_rent_posessionStatus.value ==
-                  "Under Construction")...[
+              if (controller.commercial_rent_posessionStatus.value ==
+                  "Under Construction") ...[
                 SizedBox(height: 16),
                 Text('Possession Date'),
                 SizedBox(height: 8),
-               buildTextField(
-                   validator: (value) {
-                     if (value == null || value.isEmpty) {
-                       return 'Please valid date';
-                     }
+                buildTextField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please valid date';
+                    }
 
-                     return null;
-                   },
-                      'Enter possession Date',
-                      Icons.calendar_month_outlined,
-                      controller.commercial_rent_AvailableFrom,
-                      isEnable: false,
-                      onTap: () async {
-
-                        FocusScope.of(context).unfocus();
-                        DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime(2100),
-                          builder: (context, child) {
-                            return Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: ColorScheme.light(
-                                  primary: ColorRes.primary,
-                                  // header background color
-                                  onPrimary: Colors.white,
-                                  // header text color
-                                  onSurface: Colors.black, // body text color
-                                ),
-                                textButtonTheme: TextButtonThemeData(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: ColorRes.primary,
-                                  ),
-                                ),
+                    return null;
+                  },
+                  'Enter possession Date',
+                  Icons.calendar_month_outlined,
+                  controller.commercial_rent_AvailableFrom,
+                  isEnable: false,
+                  onTap: () async {
+                    FocusScope.of(context).unfocus();
+                    DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2100),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: ColorRes.primary,
+                              // header background color
+                              onPrimary: Colors.white,
+                              // header text color
+                              onSurface: Colors.black, // body text color
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: ColorRes.primary,
                               ),
-                              child: child!,
-                            );
-                          },
+                            ),
+                          ),
+                          child: child!,
                         );
-                        if (picked != null) {
-                          controller.commercial_rent_AvailableFrom.text =
-                          "${picked.day}/${picked.month}/${picked.year}";
-                        }
                       },
+                    );
+                    if (picked != null) {
+                      controller.commercial_rent_AvailableFrom.text =
+                          "${picked.day}/${picked.month}/${picked.year}";
+                    }
+                  },
 
-                      isPhoneKey: true
-                  ),
-
-
+                  isPhoneKey: true,
+                ),
               ],
 
               SizedBox(height: 16),
               if (controller.commercial_rent_posessionStatus.value ==
-                  "Ready to move" &&
+                      "Ready to move" &&
                   controller.selectedIndex.value != "Plot") ...[
                 Text('Age of Property'),
                 SizedBox(height: 8),
@@ -1678,18 +1702,16 @@ class PostProperty extends StatelessWidget {
                 SizedBox(height: 8),
 
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
                         controller.zoneType
                             .map(
-                              (e) =>
-                              buildChoice(
+                              (e) => buildChoice(
                                 title: e,
                                 selected:
-                                controller.commercial_ZoneType.value == e,
+                                    controller.commercial_ZoneType.value == e,
                                 onTap: () {
                                   controller.setValue(
                                     controller.commercial_ZoneType,
@@ -1697,39 +1719,42 @@ class PostProperty extends StatelessWidget {
                                   );
                                 },
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
-                ),
-                Obx(() => controller.selectedZoneTypeInCommercial.value?Padding(
-                  padding: const EdgeInsets.only(top: 8, left: 4),
-                  child: Text(
-                    'Please select Zone type',
-                    style: TextStyle(
-                      color: Colors.red.shade700,
-                      fontSize: 12,
-                    ),
                   ),
-                )
-                    : const SizedBox.shrink() ,),
+                ),
+                Obx(
+                  () =>
+                      controller.selectedZoneTypeInCommercial.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select Zone type',
+                              style: TextStyle(
+                                color: Colors.red.shade700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
+                ),
                 SizedBox(height: 16),
               ],
               if (controller.selectedIndex.value != 'Plot') ...[
                 buildSectionTitle('Location Hub'),
                 SizedBox(height: 8),
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
                         controller.locationHub
                             .map(
-                              (e) =>
-                              buildChoice(
+                              (e) => buildChoice(
                                 title: e,
                                 selected:
-                                controller.commercial_LocationHub.value == e,
+                                    controller.commercial_LocationHub.value ==
+                                    e,
                                 onTap: () {
                                   controller.setValue(
                                     controller.commercial_LocationHub,
@@ -1737,9 +1762,9 @@ class PostProperty extends StatelessWidget {
                                   );
                                 },
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
+                  ),
                 ),
                 SizedBox(height: 16),
               ],
@@ -1763,19 +1788,17 @@ class PostProperty extends StatelessWidget {
                 buildSectionTitle("Property Condition"),
                 SizedBox(height: 8),
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    children:
                         commercial_propertyComditon
                             .map(
-                              (e) =>
-                              buildChoice(
+                              (e) => buildChoice(
                                 title: e,
                                 selected:
-                                controller
-                                    .commercial_property_condition
-                                    .value ==
+                                    controller
+                                        .commercial_property_condition
+                                        .value ==
                                     e,
                                 onTap: () {
                                   controller.setValue(
@@ -1784,9 +1807,9 @@ class PostProperty extends StatelessWidget {
                                   );
                                 },
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
+                  ),
                 ),
 
                 if (controller.commercial_property_condition.value ==
@@ -1798,16 +1821,18 @@ class PostProperty extends StatelessWidget {
                     hintText: "Carpet Area",
                     icon: Icons.square_foot,
                     validator: (value) {
-
                       if (value == null || value.isEmpty) {
                         return 'Please enter building name';
                       }
-                      final rent =int.parse(value);
-                      final buildArea = int.tryParse(controller.commercial_Square_BuildArea.text) ?? 0;
-                      if(rent>buildArea)
-                        {
-                            return 'Carpet area should not be greater than Build up area';
-                        }
+                      final rent = int.parse(value);
+                      final buildArea =
+                          int.tryParse(
+                            controller.commercial_Square_BuildArea.text,
+                          ) ??
+                          0;
+                      if (rent > buildArea) {
+                        return 'Carpet area should not be greater than Build up area';
+                      }
                       return null;
                     },
                     controller: controller.commercial_Square_CarpetArea,
@@ -1842,14 +1867,16 @@ class PostProperty extends StatelessWidget {
                   hintText: "Carpet Area",
                   icon: Icons.square_foot,
                   validator: (value) {
-
                     if (value == null || value.isEmpty) {
                       return 'Please enter building name';
                     }
-                    final rent =int.parse(value);
-                    final buildArea = int.tryParse(controller.commercial_Square_BuildArea.text) ?? 0;
-                    if(rent>buildArea)
-                    {
+                    final rent = int.parse(value);
+                    final buildArea =
+                        int.tryParse(
+                          controller.commercial_Square_BuildArea.text,
+                        ) ??
+                        0;
+                    if (rent > buildArea) {
                       return 'Carpet area should not be greater than Build up area';
                     }
                     return null;
@@ -1871,13 +1898,11 @@ class PostProperty extends StatelessWidget {
                   controller: controller.commercial_Square_BuildArea,
                   selectedValue: controller.commercial_Square_AreaUnti_Build,
                   validator: (value) {
-
                     if (value == null || value.isEmpty) {
                       return 'Please enter building name';
                     }
-                    final rent =int.parse(value);
-                    if(rent<50 || rent>3000000)
-                    {
+                    final rent = int.parse(value);
+                    if (rent < 50 || rent > 3000000) {
                       return 'Area should be between 50 to 3000000';
                     }
                     return null;
@@ -1892,18 +1917,17 @@ class PostProperty extends StatelessWidget {
               buildSectionTitle("Ownership"),
               SizedBox(height: 8),
               Obx(
-                    () =>
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children:
+                () => Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
                       commercial_ownerShipList
                           .map(
-                            (e) =>
-                            buildChoice(
+                            (e) => buildChoice(
                               title: e,
                               selected:
-                              controller.commercial_ownerShipList.value == e,
+                                  controller.commercial_ownerShipList.value ==
+                                  e,
                               onTap: () {
                                 controller.setValue(
                                   controller.commercial_ownerShipList,
@@ -1911,41 +1935,43 @@ class PostProperty extends StatelessWidget {
                                 );
                               },
                             ),
-                      )
+                          )
                           .toList(),
-                    ),
-              ),
-              Obx(() => controller.seletedOwnerShipInCommercial.value?Padding(
-                padding: const EdgeInsets.only(top: 8, left: 4),
-                child: Text(
-                  'Please select OwnerShip type',
-                  style: TextStyle(
-                    color: Colors.red.shade700,
-                    fontSize: 12,
-                  ),
                 ),
-              )
-                  : const SizedBox.shrink() ,),
+              ),
+              Obx(
+                () =>
+                    controller.seletedOwnerShipInCommercial.value
+                        ? Padding(
+                          padding: const EdgeInsets.only(top: 8, left: 4),
+                          child: Text(
+                            'Please select OwnerShip type',
+                            style: TextStyle(
+                              color: Colors.red.shade700,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )
+                        : const SizedBox.shrink(),
+              ),
               if (controller.commercial_property_condition.value ==
                   "Bare shell") ...[
                 SizedBox(height: 16),
                 buildSectionTitle("Construction status"),
                 SizedBox(height: 8),
                 Obx(
-                      () =>
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children:
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
                         commercial_construction_status
                             .map(
-                              (e) =>
-                              buildChoice(
+                              (e) => buildChoice(
                                 title: e,
                                 selected:
-                                controller
-                                    .commercial_construction_status_value
-                                    .value ==
+                                    controller
+                                        .commercial_construction_status_value
+                                        .value ==
                                     e,
                                 onTap: () {
                                   controller.setValue(
@@ -1955,89 +1981,87 @@ class PostProperty extends StatelessWidget {
                                   );
                                 },
                               ),
-                        )
+                            )
                             .toList(),
-                      ),
-                ),
-                Obx(() => controller.selectedConstructionStatusRent_Commercial.value?Padding(
-                  padding: const EdgeInsets.only(top: 8, left: 4),
-                  child: Text(
-                    'Please select Construction Status',
-                    style: TextStyle(
-                      color: Colors.red.shade700,
-                      fontSize: 12,
-                    ),
                   ),
-                )
-                    : const SizedBox.shrink() ,),
+                ),
+                Obx(
+                  () =>
+                      controller.selectedConstructionStatusRent_Commercial.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select Construction Status',
+                              style: TextStyle(
+                                color: Colors.red.shade700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
+                ),
               ],
               if (controller.commercial_property_condition.value ==
-                  "Ready to use" &&
+                      "Ready to use" &&
                   controller.selectedIndex.value == 'Office') ...[
                 SizedBox(height: 16),
                 Text("Seats"),
                 SizedBox(height: 8),
                 buildTextField(
-                    'Min Number of seats',
-                    Icons.chair_alt_outlined,
-                    controller.commercial_seats,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter minimum area';
-                      }
-                      if(int.parse(value)<0)
-                        {
-                          return 'Seats should be greater than 0';
-                        }
+                  'Min Number of seats',
+                  Icons.chair_alt_outlined,
+                  controller.commercial_seats,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter minimum area';
+                    }
+                    if (int.parse(value) < 0) {
+                      return 'Seats should be greater than 0';
+                    }
 
-                      return null;
-                    },
+                    return null;
+                  },
 
-
-                    isPhoneKey: true
+                  isPhoneKey: true,
                 ),
                 SizedBox(height: 16),
                 Text("Cabins"),
                 SizedBox(height: 8),
                 buildTextField(
-                    'Min Number of cabins',
-                    Icons.cabin_outlined,
-                    controller.commercial_cabins,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter minimum area';
-                      }
-                      if(int.parse(value)<0)
-                      {
-                        return 'Cabins should be greater than 0';
-                      }
+                  'Min Number of cabins',
+                  Icons.cabin_outlined,
+                  controller.commercial_cabins,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter minimum area';
+                    }
+                    if (int.parse(value) < 0) {
+                      return 'Cabins should be greater than 0';
+                    }
 
-                      return null;
-                    },
+                    return null;
+                  },
 
-                    isPhoneKey: true
-
-
+                  isPhoneKey: true,
                 ),
                 SizedBox(height: 16),
                 Text("Meeting Room"),
                 SizedBox(height: 8),
                 buildTextField(
-                    'Number of Meeting Rooms',
-                    Icons.meeting_room_outlined,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter minimum area';
-                      }
-                      if(int.parse(value)<0)
-                      {
-                        return 'Meeting should be greater than 0';
-                      }
+                  'Number of Meeting Rooms',
+                  Icons.meeting_room_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter minimum area';
+                    }
+                    if (int.parse(value) < 0) {
+                      return 'Meeting should be greater than 0';
+                    }
 
-                      return null;
-                    },
-                    controller.commercial_meeting_room,
-                    isPhoneKey: true
+                    return null;
+                  },
+                  controller.commercial_meeting_room,
+                  isPhoneKey: true,
                 ),
               ],
 
@@ -2056,14 +2080,17 @@ class PostProperty extends StatelessWidget {
 
               GestureDetector(
                 onTap: () {
-                  int totalFloor = int.tryParse(
-                      controller.commercial_total_floor.text) ?? 0;
+                  int totalFloor =
+                      int.tryParse(controller.commercial_total_floor.text) ?? 0;
                   List<String> floorOptions = ['-2', '-1', 'Ground'];
                   for (int i = 1; i <= totalFloor; i++) {
                     floorOptions.add(i.toString());
                   }
                   _showFloorSelectionBottomSheet(
-                      context, controller, floorOptions);
+                    context,
+                    controller,
+                    floorOptions,
+                  );
                 },
                 child: AbsorbPointer(
                   child: buildTextField(
@@ -2108,7 +2135,6 @@ class TextFieldWithDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-
         /// Text Field
         Expanded(
           child: buildTextField(
@@ -2123,43 +2149,44 @@ class TextFieldWithDropdown extends StatelessWidget {
 
         /// Dropdown
         Obx(
-              () =>
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade400),
-                ),
-                child: DropdownButton<String>(
-                  value: selectedValue.value,
-                  items:
+          () => Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade400),
+            ),
+            child: DropdownButton<String>(
+              value: selectedValue.value,
+              items:
                   dropdownItems
                       .map(
                         (unit) =>
-                        DropdownMenuItem(value: unit, child: Text(unit)),
-                  )
+                            DropdownMenuItem(value: unit, child: Text(unit)),
+                      )
                       .toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      selectedValue.value = value;
-                    }
-                  },
-                  underline: Container(),
-                  style: const TextStyle(fontSize: 12, color: Colors.black),
-                  dropdownColor: Colors.white,
-                ),
-              ),
+              onChanged: (value) {
+                if (value != null) {
+                  selectedValue.value = value;
+                }
+              },
+              underline: Container(),
+              style: const TextStyle(fontSize: 12, color: Colors.black),
+              dropdownColor: Colors.white,
+            ),
+          ),
         ),
       ],
     );
   }
 }
 
-void _showFloorSelectionBottomSheet(BuildContext context,
-    CreatePropertyController controller,
-    List<String> floorOptions,) {
+void _showFloorSelectionBottomSheet(
+  BuildContext context,
+  CreatePropertyController controller,
+  List<String> floorOptions,
+) {
   // Parse total floor from controller (assume it's a TextEditingController)
   int totalFloor = int.tryParse(controller.commercial_total_floor.text) ?? 0;
 
@@ -2168,7 +2195,7 @@ void _showFloorSelectionBottomSheet(BuildContext context,
     '-2',
     '-1',
     'Ground',
-    ...List.generate(totalFloor, (i) => '${i + 1}')
+    ...List.generate(totalFloor, (i) => '${i + 1}'),
   ];
 
   List<String> tempSelectedFloors = List.from(controller.selectedFloors);
@@ -2185,10 +2212,7 @@ void _showFloorSelectionBottomSheet(BuildContext context,
           return Container(
             // Add maximum height constraint
             constraints: BoxConstraints(
-              maxHeight: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.5,
+              maxHeight: MediaQuery.of(context).size.height * 0.5,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -2243,12 +2267,16 @@ void _showFloorSelectionBottomSheet(BuildContext context,
 
                       return Container(
                         margin: EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 2),
+                          horizontal: 12,
+                          vertical: 2,
+                        ),
                         child: CheckboxListTile(
                           title: Text(
                             floor,
                             style: TextStyle(
-                                fontSize: 15, color: Colors.black87),
+                              fontSize: 15,
+                              color: Colors.black87,
+                            ),
                           ),
                           value: isSelected,
                           onChanged: (bool? value) {
@@ -2261,9 +2289,7 @@ void _showFloorSelectionBottomSheet(BuildContext context,
                             });
                           },
                           controlAffinity: ListTileControlAffinity.leading,
-                          activeColor: Theme
-                              .of(context)
-                              .primaryColor,
+                          activeColor: Theme.of(context).primaryColor,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 0,
@@ -2318,9 +2344,7 @@ void _showFloorSelectionBottomSheet(BuildContext context,
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme
-                                  .of(context)
-                                  .primaryColor,
+                              backgroundColor: Theme.of(context).primaryColor,
                               foregroundColor: Colors.white,
                               padding: EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
