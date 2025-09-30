@@ -556,10 +556,7 @@ List<String> possessionCommercialList = ["Ready to move", "Under Construction"];
 
 List<String> genderList = ['Male', 'Female', 'Both'];
 List<String> roomTypeList = [
-  "Private Room",
-  "Double Sharing",
-  "Triple Sharing",
-  "3+ Sharing",
+  "single", "double", "triple", "other"
 ];
 List<String> foodAvailable = ['Yes', 'No'];
 

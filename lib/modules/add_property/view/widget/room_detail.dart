@@ -154,44 +154,44 @@ class RoomDetail extends StatelessWidget {
                                   title: 'Private Room',
                                   selected:
                                       controller.tempRoomType.value ==
-                                      'Private Room',
+                                      'single',
                                   onTap:
                                       () =>
                                           controller.tempRoomType.value =
-                                              'Private Room',
+                                              'single',
                                 ),
                                 buildChoice(
                                   width: 140,
                                   title: 'Double Sharing',
                                   selected:
                                       controller.tempRoomType.value ==
-                                      'Double Sharing',
+                                      'double',
                                   onTap:
                                       () =>
                                           controller.tempRoomType.value =
-                                              'Double Sharing',
+                                              'double',
                                 ),
                                 buildChoice(
                                   title: 'Triple Sharing',
                                   width: 140,
                                   selected:
                                       controller.tempRoomType.value ==
-                                      'Triple Sharing',
+                                      'triple',
                                   onTap:
                                       () =>
                                           controller.tempRoomType.value =
-                                              'Triple Sharing',
+                                              'triple',
                                 ),
                                 buildChoice(
                                   title: '3 + Sharing',
                                   width: 140,
                                   selected:
                                       controller.tempRoomType.value ==
-                                      '3 + Sharing',
+                                      'other',
                                   onTap:
                                       () =>
                                           controller.tempRoomType.value =
-                                              '3 + Sharing',
+                                              'other',
                                 ),
                               ],
                             ),

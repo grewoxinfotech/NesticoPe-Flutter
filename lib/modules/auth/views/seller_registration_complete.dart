@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/validation.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 
 import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../dashboard/views/dashboard_screen.dart';
@@ -64,7 +65,26 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_)async{
+      final user = await SecureStorage.getUserData();
+      if(user!=null && user.user != null ){
+        _usernameController.text = user.user!.username!;
+        _passwordController.text = user.user!.password!;
+        _emailController.text = user.user!.firstName!;
+        _lastNameController.text = user.user!.lastName!;
+        _addressController.text = user.user!.address!;
+        _cityController.text = user.user!.city!;
+        _stateController.text = user.user!.state!;
+        _zipCodeController.text = user.user!.zipCode!;
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false,

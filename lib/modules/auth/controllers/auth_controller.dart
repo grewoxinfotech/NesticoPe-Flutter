@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart'
-    show UserModel, UserRole;
+    show UserModel, UserRole, User;
 import 'package:housing_flutter_app/data/network/auth/service/auth_service.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
@@ -219,6 +219,25 @@ class AuthController extends GetxController {
       final receivedToken = await authService.sellerRegistrationComplete(data);
       if (receivedToken != null) {
         await SecureStorage.saveToken(receivedToken);
+
+
+        // final user = UserModel(
+        //   token: receivedToken,
+        //   user: User(
+        //     address: data[''],
+        //     city: data[''],
+        //     email: data[''],
+        //     firstName: data[''],
+        //     lastName: data[''],
+        //     state: data[''],
+        //     zipCode: data[''],
+        //     address: data[''],
+        //     address: data[''],
+        //     address: data[''],
+        //
+        //   )
+        // );
+        // await SecureStorage.saveUserData(user);
         return true;
       } else {
         print("Registration failed or token not received");

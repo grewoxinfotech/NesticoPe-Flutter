@@ -20,9 +20,9 @@ class PostProperty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> pgFor = ['Girl', 'Boy'];
-    final List<String> bestSuitedFor = ["Students", "Professionals"];
-    final List<String> mealList = ['Breakfast', 'Lunch', "Dinner"];
+    final List<String> pgFor = ["Boys", "Girls", "Co-ed"];
+    final List<String> bestSuitedFor = ["Students", "Working Professionals", "Family", "Other"];
+    final List<String> mealList = ['breakfast', 'lunch', 'dinner', 'all meals'];
     final List<String> furnishingList = [
       'Fully Furnished',
       'Semi Furnished',

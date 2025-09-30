@@ -1435,7 +1435,6 @@ class CreatePropertyController extends GetxController {
         print("Error: Property type or action is empty.");
         return;
       }
-
       if (type == "residential") {
         switch (action) {
           case "rent":
@@ -1444,7 +1443,7 @@ class CreatePropertyController extends GetxController {
           case "sell":
             await _addPropertyResidentialSell();
             break;
-          case "pg":
+          case "pg/co-living":
             await _addPropertyResidentialPg();
             break;
           default:
@@ -1658,8 +1657,7 @@ class CreatePropertyController extends GetxController {
 
   Future<void> _addPropertyResidentialPg() async {
     try {
-      print("Adding Residential Property as PG...");
-      print("Adding Residential Property for Sell...");
+
       debugPrint("Property Type : ${propertyType.value}");
       debugPrint("Looking to Type : ${lookingTo.value}");
       debugPrint("City : ${cityController.text.trim()}");
@@ -1840,7 +1838,7 @@ class CreatePropertyController extends GetxController {
                 : null,
         furnishInfo:
             furnishingType.value.isNotEmpty
-                ? FurnishInfo(furnishType: furnishingType.value)
+                ? PropertyFurnishInfo(furnishType: furnishingType.value)
                 : null,
       ),
       location:
@@ -1942,7 +1940,7 @@ class CreatePropertyController extends GetxController {
                 : null,
         furnishInfo:
             furnishingType.value.isNotEmpty
-                ? FurnishInfo(furnishType: furnishingType.value)
+                ? PropertyFurnishInfo(furnishType: furnishingType.value)
                 : null,
       ),
 
@@ -1970,105 +1968,62 @@ class CreatePropertyController extends GetxController {
   Future<AddPropertyModel> buildPropertyPayloadResidentialPG() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? "";
-
+    print("PG For: ${selectedItems.value}");
     return AddPropertyModel(
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
               : null,
-      listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
-      propertyType:
-          rent_propertyType.value.isNotEmpty
-              ? rent_propertyType.value.toLowerCase()
-              : null,
-      propertyDescription:
-          sell_rent_propertyDescriptionController.text.trim().isNotEmpty
-              ? sell_rent_propertyDescriptionController.text.trim()
-              : null,
+      listingType: (lookingTo.value.isNotEmpty && lookingTo.value.toLowerCase() == "pg/co-living") ? "PG" : null,
+      // TODO: property Type
+      propertyType: "apartment",
       propertyDetails: PropertyDetails(
-        bhk: int.tryParse(bhkType.value),
-        bathroom: rent_Bathroom.value,
-        balcony: rent_Balcony.value,
+        pgInfo: PgInfo(
+          pgName: pgNameController.text.trim(),
+          pgCommonArea: commonAreasList.value.first,
+          // TODO: multiselect
+          pgFor: selectedItems.value.first,
+           pgSuitedFor: bestSuitedList.value.first,
+          pgMealOffered: mealAvailableList.value.first,
+          // TODO: Notice Period and lock in period
+          pgRoomInfo: PgRoomInfo(
 
-        propertyBuiltUpArea:
-            areaController.text.trim().isNotEmpty
-                ? double.tryParse(areaController.text.trim())
-                : null,
-        propertyCarpetArea:
-            carpetAreaController.text.trim().isNotEmpty
-                ? double.tryParse(carpetAreaController.text.trim())
-                : null,
-        propertyBuiltUpAreaUnit:
-            areaUnit.value.isNotEmpty ? removeDots(areaUnit.value) : null,
-        propertyCarpetAreaUnit:
-            carpetAreaUnit.value.isNotEmpty
-                ? removeDots(carpetAreaUnit.value)
-                : null,
-        propertyFacing: rent_facing.value.isNotEmpty ? rent_facing.value : null,
-        amenities:
-            selectedRoomAmenities.value.isNotEmpty
-                ? selectedRoomAmenities.value
-                : null,
+            // TODO: Correct this
+            roomType: rooms.isNotEmpty ? rooms.first.roomType : null,
+            totalBeds: totalRoomsController.text.trim().isNotEmpty ?
+                int.tryParse(totalRoomsController.text.trim()):null,
 
-        floorInfo:
-            (sell_rent_Floor_No.text.trim().isNotEmpty ||
-                    sell_rent_Total_Floor.text.trim().isNotEmpty)
-                ? FloorInfo(
-                  floorNumber: int.tryParse(sell_rent_Floor_No.text.trim()),
-                  totalFloors: int.tryParse(sell_rent_Total_Floor.text.trim()),
-                )
-                : null,
-        possessionInfo: PossessionInfo(
-          propertyAgeInYear:
-              ageOfPropertyController.text.trim().isNotEmpty
-                  ? ageOfPropertyController.text.trim()
-                  : null,
-          possessionStatus: sell_constructionStatus.value,
+          )
+
         ),
-        parkingInfo:
-            (rent_CoveredParking.value.isNotEmpty ||
-                    rent_OpenParking.value.isNotEmpty)
-                ? ParkingInfo(
-                  coveredParking:
-                      int.tryParse(rent_CoveredParking.value) != null &&
-                      int.tryParse(rent_CoveredParking.value)! > 0,
-                  openParking:
-                      int.tryParse(rent_OpenParking.value) != null &&
-                      int.tryParse(rent_OpenParking.value)! > 0,
-                )
-                : null,
         financialInfo:
-            (sell_ExpectedPrice.text.trim().isNotEmpty)
-                ? FinancialInfo(
-                  propertyPrice: double.tryParse(
-                    sell_ExpectedPrice.text.trim(),
+
+              FinancialInfo(
+                  propertyRentPerMonth: double.tryParse(
+                      rooms.first.monthlyRent
                   ),
-                )
-                : null,
-        furnishInfo:
-            furnishingType.value.isNotEmpty
-                ? FurnishInfo(furnishType: furnishingType.value)
-                : null,
+              propertySecurityDeposit: double.tryParse(
+                      rooms.first.deposit
+                  )
+                ),
       ),
 
-      location:
-          rentBuildingController.text.trim().isNotEmpty
-              ? rentBuildingController.text.trim()
-              : null,
+      // location:
+      //     rentBuildingController.text.trim().isNotEmpty
+      //         ? rentBuildingController.text.trim()
+      //         : null,
       city:
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
               : null,
       address:
-          sell_rent_Address.text.trim().isNotEmpty
-              ? sell_rent_Address.text.trim()
+          localityController.text.trim().isNotEmpty
+              ? localityController.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
       ownerName:
           user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
-      reraId:
-          sell_Rera_Id.text.trim().isNotEmpty ? sell_Rera_Id.text.trim() : null,
     );
   }
 }
@@ -2152,15 +2107,16 @@ class AddPropertyModel {
 }
 
 class PropertyDetails {
+  final PgInfo? pgInfo;
   final int? bhk;
   final int? balcony;
   final int? bathroom;
   final List<String>? amenities;
   final FloorInfo? floorInfo;
-  final FurnishInfo? furnishInfo;
+  final PropertyFurnishInfo? furnishInfo;
   final ParkingInfo? parkingInfo;
   final FinancialInfo? financialInfo;
-  final PossessionInfo? possessionInfo; // ← new field
+  final PossessionInfo? possessionInfo;
   final String? propertyFacing;
   final double? propertyCarpetArea;
   final double? propertyBuiltUpArea;
@@ -2168,6 +2124,7 @@ class PropertyDetails {
   final String? propertyBuiltUpAreaUnit;
 
   PropertyDetails({
+    this.pgInfo,
     this.bhk,
     this.balcony,
     this.bathroom,
@@ -2176,7 +2133,7 @@ class PropertyDetails {
     this.furnishInfo,
     this.parkingInfo,
     this.financialInfo,
-    this.possessionInfo, // ← include in constructor
+    this.possessionInfo,
     this.propertyFacing,
     this.propertyCarpetArea,
     this.propertyBuiltUpArea,
@@ -2186,13 +2143,13 @@ class PropertyDetails {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
-
+    if (pgInfo != null) data['pg_info'] = pgInfo!.toJson();
     if (bhk != null) data['bhk'] = bhk;
     if (balcony != null) data['balcony'] = balcony;
     if (bathroom != null) data['bathroom'] = bathroom;
     if (amenities != null) data['amenities'] = amenities;
     if (floorInfo != null) data['floor_info'] = floorInfo!.toJson();
-    if (furnishInfo != null) data['furnish_info'] = furnishInfo!.toJson();
+    if (furnishInfo != null) data['property_furnish_info'] = furnishInfo!.toJson();
     if (parkingInfo != null) data['parking_info'] = parkingInfo!.toJson();
     if (financialInfo != null) data['financial_info'] = financialInfo!.toJson();
     if (possessionInfo != null)
@@ -2242,13 +2199,20 @@ class PossessionInfo {
   };
 }
 
-class FurnishInfo {
+class PropertyFurnishInfo {
   final String? furnishType;
 
-  FurnishInfo({this.furnishType});
+
+  PropertyFurnishInfo({this.furnishType});
+
+  factory PropertyFurnishInfo.fromJson(Map<String, dynamic> json) {
+    return PropertyFurnishInfo(
+      furnishType: json['furnish_type'],
+    );
+  }
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
+    final Map<String, dynamic> data = {};
     if (furnishType != null) data['furnish_type'] = furnishType;
     return data;
   }
@@ -2295,6 +2259,165 @@ class FinancialInfo {
     if (propertySecurityDeposit != null)
       data['property_security_deposit'] = propertySecurityDeposit;
     if (negotiable != null) data['negotiable'] = negotiable;
+    return data;
+  }
+}
+
+class PgInfo {
+  final String? pgName;
+  final String? pgFor;
+  final String? pgSuitedFor;
+  final String? pgMealOffered;
+  final String? pgCommonArea;
+  final String? pgManageBy;
+  final bool? pgOwnerStaysAtPg;
+  final double? mealChargesPerMonth;
+  final double? electricityChargesPerMonth;
+  final PgRules? pgRules;
+  final PgRoomInfo? pgRoomInfo;
+
+  PgInfo({
+    this.pgName,
+    this.pgFor,
+    this.pgSuitedFor,
+    this.pgMealOffered,
+    this.pgCommonArea,
+    this.pgManageBy,
+    this.pgOwnerStaysAtPg,
+    this.mealChargesPerMonth,
+    this.electricityChargesPerMonth,
+    this.pgRules,
+    this.pgRoomInfo,
+  });
+
+  factory PgInfo.fromJson(Map<String, dynamic> json) {
+    return PgInfo(
+      pgName: json['pg_name'],
+      pgFor: json['pg_for'],
+      pgSuitedFor: json['pg_suited_for'],
+      pgMealOffered: json['pg_meal_offered'],
+      pgCommonArea: json['pg_common_area'],
+      pgManageBy: json['pg_manage_by'],
+      pgOwnerStaysAtPg: json['pg_owner_stays_at_pg'],
+      mealChargesPerMonth: json['meal_charges_per_month']?.toDouble(),
+      electricityChargesPerMonth: json['electricity_charges_per_month']?.toDouble(),
+      pgRules: json['pg_rules'] != null ? PgRules.fromJson(json['pg_rules']) : null,
+      pgRoomInfo: json['pg_room_info'] != null ? PgRoomInfo.fromJson(json['pg_room_info']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (pgName != null) data['pg_name'] = pgName;
+    if (pgFor != null) data['pg_for'] = pgFor;
+    if (pgSuitedFor != null) data['pg_suited_for'] = pgSuitedFor;
+    if (pgMealOffered != null) data['pg_meal_offered'] = pgMealOffered;
+    if (pgCommonArea != null) data['pg_common_area'] = pgCommonArea;
+    if (pgManageBy != null) data['pg_manage_by'] = pgManageBy;
+    if (pgOwnerStaysAtPg != null) data['pg_owner_stays_at_pg'] = pgOwnerStaysAtPg;
+    if (mealChargesPerMonth != null) data['meal_charges_per_month'] = mealChargesPerMonth;
+    if (electricityChargesPerMonth != null) data['electricity_charges_per_month'] = electricityChargesPerMonth;
+    if (pgRules != null) data['pg_rules'] = pgRules!.toJson();
+    if (pgRoomInfo != null) data['pg_room_info'] = pgRoomInfo!.toJson();
+    return data;
+  }
+}
+
+class PgRules {
+  final bool? nonVegAllowed;
+  final bool? smokingAllowed;
+  final bool? drinkingAllowed;
+  final bool? petsAllowed;
+  final bool? lateEntryAllowed;
+  final String? lateEntryTime;
+  final bool? visitorAllowed;
+  final bool? gurdianAllowed;
+
+  PgRules({
+    this.nonVegAllowed,
+    this.smokingAllowed,
+    this.drinkingAllowed,
+    this.petsAllowed,
+    this.lateEntryAllowed,
+    this.lateEntryTime,
+    this.visitorAllowed,
+    this.gurdianAllowed,
+  });
+
+  factory PgRules.fromJson(Map<String, dynamic> json) {
+    return PgRules(
+      nonVegAllowed: json['non_veg_allowed'],
+      smokingAllowed: json['smoking_allowed'],
+      drinkingAllowed: json['drinking_allowed'],
+      petsAllowed: json['pets_allowed'],
+      lateEntryAllowed: json['late_entry_allowed'],
+      lateEntryTime: json['late_entry_time'],
+      visitorAllowed: json['visitor_allowed'],
+      gurdianAllowed: json['gurdian_allowed'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (nonVegAllowed != null) data['non_veg_allowed'] = nonVegAllowed;
+    if (smokingAllowed != null) data['smoking_allowed'] = smokingAllowed;
+    if (drinkingAllowed != null) data['drinking_allowed'] = drinkingAllowed;
+    if (petsAllowed != null) data['pets_allowed'] = petsAllowed;
+    if (lateEntryAllowed != null) data['late_entry_allowed'] = lateEntryAllowed;
+    if (lateEntryTime != null) data['late_entry_time'] = lateEntryTime;
+    if (visitorAllowed != null) data['visitor_allowed'] = visitorAllowed;
+    if (gurdianAllowed != null) data['gurdian_allowed'] = gurdianAllowed;
+    return data;
+  }
+}
+
+class PgRoomInfo {
+  final String? roomType;
+  final int? totalBeds;
+  final RoomFacilityInfo? roomFacilityInfo;
+
+  PgRoomInfo({this.roomType, this.totalBeds, this.roomFacilityInfo});
+
+  factory PgRoomInfo.fromJson(Map<String, dynamic> json) {
+    return PgRoomInfo(
+      roomType: json['room_type'],
+      totalBeds: json['total_beds'],
+      roomFacilityInfo: json['room_facility_info'] != null ? RoomFacilityInfo.fromJson(json['room_facility_info']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (roomType != null) data['room_type'] = roomType;
+    if (totalBeds != null) data['total_beds'] = totalBeds;
+    if (roomFacilityInfo != null) data['room_facility_info'] = roomFacilityInfo!.toJson();
+    return data;
+  }
+}
+
+class RoomFacilityInfo {
+  final bool? wifi;
+  final bool? tv;
+  final bool? ac;
+  final String? other;
+
+  RoomFacilityInfo({this.wifi, this.tv, this.ac, this.other});
+
+  factory RoomFacilityInfo.fromJson(Map<String, dynamic> json) {
+    return RoomFacilityInfo(
+      wifi: json['wifi'],
+      tv: json['tv'],
+      ac: json['ac'],
+      other: json['other'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (wifi != null) data['wifi'] = wifi;
+    if (tv != null) data['tv'] = tv;
+    if (ac != null) data['ac'] = ac;
+    if (other != null) data['other'] = other;
     return data;
   }
 }
