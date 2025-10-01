@@ -570,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: ClipRRect(
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: 10,
+                                itemCount: controller.items.length.clamp(0, 10),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 10,
                                 ),

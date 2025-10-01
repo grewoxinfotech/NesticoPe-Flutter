@@ -21,7 +21,12 @@ class PostProperty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> pgFor = ["Boys", "Girls", "Co-ed"];
-    final List<String> bestSuitedFor = ["Students", "Working Professionals", "Family", "Other"];
+    final List<String> bestSuitedFor = [
+      "Students",
+      "Working Professionals",
+      "Family",
+      "Other",
+    ];
     final List<String> mealList = ['breakfast', 'lunch', 'dinner', 'all meals'];
     final List<String> furnishingList = [
       'Fully Furnished',
@@ -1014,7 +1019,7 @@ class PostProperty extends StatelessWidget {
                         controller.zoneType
                             .map(
                               (e) => buildChoice(
-                                title: e,
+                                title: e.capitalize.toString(),
                                 selected:
                                     controller.commercial_ZoneType.value == e,
                                 onTap: () {
@@ -1203,15 +1208,22 @@ class PostProperty extends StatelessWidget {
                   controller: controller.commercial_Square_BuildArea,
                   selectedValue: controller.commercial_Square_AreaUnti_Build,
                   validator: (value) {
-                    final rent = int.parse(value ?? '0');
                     if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
+                      return 'Please enter building area';
                     }
+
+                    final rent = int.tryParse(value);
+                    if (rent == null) {
+                      return 'Please enter a valid number';
+                    }
+
                     if (rent < 50 || rent > 3000000) {
                       return 'Area should be between 50 to 3000000';
                     }
+
                     return null;
                   },
+
                   // RxString
                   dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
                   isPhoneKey: true,
@@ -1709,7 +1721,7 @@ class PostProperty extends StatelessWidget {
                         controller.zoneType
                             .map(
                               (e) => buildChoice(
-                                title: e,
+                                title: e.capitalize.toString(),
                                 selected:
                                     controller.commercial_ZoneType.value == e,
                                 onTap: () {
@@ -2182,6 +2194,197 @@ class TextFieldWithDropdown extends StatelessWidget {
   }
 }
 
+// void _showFloorSelectionBottomSheet(
+//   BuildContext context,
+//   CreatePropertyController controller,
+//   List<String> floorOptions,
+// ) {
+//   // Parse total floor from controller (assume it's a TextEditingController)
+//   int totalFloor = int.tryParse(controller.commercial_total_floor.text) ?? 0;
+//
+//   // Build dynamic floor list
+//   List<String> availableFloors = [
+//     '-2',
+//     '-1',
+//     'Ground',
+//     ...List.generate(totalFloor, (i) => '${i + 1}'),
+//   ];
+//
+//   List<String> tempSelectedFloors = List.from(controller.selectedFloors);
+//
+//   showModalBottomSheet(
+//     context: context,
+//     isScrollControlled: true,
+//     isDismissible: true,
+//     enableDrag: true,
+//     backgroundColor: Colors.transparent,
+//     builder: (BuildContext context) {
+//       return StatefulBuilder(
+//         builder: (BuildContext context, StateSetter setModalState) {
+//           return Container(
+//             // Add maximum height constraint
+//             constraints: BoxConstraints(
+//               maxHeight: MediaQuery.of(context).size.height * 0.5,
+//             ),
+//             decoration: BoxDecoration(
+//               color: Colors.white,
+//               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+//             ),
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 // Drag handle
+//                 Container(
+//                   margin: EdgeInsets.only(top: 6),
+//                   width: 32,
+//                   height: 3,
+//                   decoration: BoxDecoration(
+//                     color: Colors.grey[400],
+//                     borderRadius: BorderRadius.circular(2),
+//                   ),
+//                 ),
+//                 // Header section
+//                 Padding(
+//                   padding: EdgeInsets.fromLTRB(16, 12, 12, 8),
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Text(
+//                         'Select Your Floor',
+//                         style: TextStyle(
+//                           fontSize: 18,
+//                           fontWeight: FontWeight.w600,
+//                           color: Colors.black87,
+//                         ),
+//                       ),
+//                       IconButton(
+//                         onPressed: () => Navigator.pop(context),
+//                         icon: Icon(Icons.close, size: 20),
+//                         padding: EdgeInsets.all(4),
+//                         constraints: BoxConstraints(),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 Divider(height: 1, color: Colors.grey[300]),
+//                 // Floor list - Wrap in Flexible to allow it to take available space
+//                 Flexible(
+//                   child: ListView.builder(
+//                     shrinkWrap: true,
+//                     padding: EdgeInsets.symmetric(vertical: 8),
+//                     itemCount: availableFloors.length,
+//                     itemBuilder: (context, index) {
+//                       String floor = availableFloors[index];
+//                       bool isSelected = tempSelectedFloors.contains(floor);
+//
+//                       return Container(
+//                         margin: EdgeInsets.symmetric(
+//                           horizontal: 12,
+//                           vertical: 2,
+//                         ),
+//                         child: CheckboxListTile(
+//                           title: Text(
+//                             floor,
+//                             style: TextStyle(
+//                               fontSize: 15,
+//                               color: Colors.black87,
+//                             ),
+//                           ),
+//                           value: isSelected,
+//                           onChanged: (bool? value) {
+//                             setModalState(() {
+//                               if (value == true) {
+//                                 tempSelectedFloors.add(floor);
+//                               } else {
+//                                 tempSelectedFloors.remove(floor);
+//                               }
+//                             });
+//                           },
+//                           controlAffinity: ListTileControlAffinity.leading,
+//                           activeColor: Theme.of(context).primaryColor,
+//                           contentPadding: EdgeInsets.symmetric(
+//                             horizontal: 8,
+//                             vertical: 0,
+//                           ),
+//                           dense: true,
+//                           visualDensity: VisualDensity.compact,
+//                         ),
+//                       );
+//                     },
+//                   ),
+//                 ),
+//                 // Bottom action section - Keep this fixed at bottom
+//                 SafeArea(
+//                   child: Padding(
+//                     padding: EdgeInsets.all(16),
+//                     child: Column(
+//                       mainAxisSize: MainAxisSize.min,
+//                       children: [
+//                         if (tempSelectedFloors.isNotEmpty)
+//                           Container(
+//                             width: double.infinity,
+//                             margin: EdgeInsets.only(bottom: 8),
+//                             decoration: BoxDecoration(
+//                               borderRadius: BorderRadius.circular(8),
+//                               color: Colors.grey.shade200,
+//                             ),
+//                             child: TextButton(
+//                               onPressed: () {
+//                                 setModalState(() {
+//                                   tempSelectedFloors.clear();
+//                                 });
+//                               },
+//                               style: TextButton.styleFrom(
+//                                 padding: EdgeInsets.symmetric(vertical: 8),
+//                               ),
+//                               child: Text(
+//                                 'Clear All',
+//                                 style: TextStyle(
+//                                   color: Colors.red,
+//                                   fontSize: 14,
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         SizedBox(
+//                           width: double.infinity,
+//                           child: ElevatedButton(
+//                             onPressed: () {
+//                               controller.updateSelectedFloors(
+//                                 tempSelectedFloors,
+//                               );
+//                               Navigator.pop(context);
+//                             },
+//                             style: ElevatedButton.styleFrom(
+//                               backgroundColor: Theme.of(context).primaryColor,
+//                               foregroundColor: Colors.white,
+//                               padding: EdgeInsets.symmetric(vertical: 12),
+//                               shape: RoundedRectangleBorder(
+//                                 borderRadius: BorderRadius.circular(8),
+//                               ),
+//                             ),
+//                             child: Text(
+//                               'Done',
+//                               style: TextStyle(
+//                                 fontSize: 15,
+//                                 fontWeight: FontWeight.w500,
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           );
+//         },
+//       );
+//     },
+//   );
+// }
+
 void _showFloorSelectionBottomSheet(
   BuildContext context,
   CreatePropertyController controller,
@@ -2192,13 +2395,17 @@ void _showFloorSelectionBottomSheet(
 
   // Build dynamic floor list
   List<String> availableFloors = [
-    '-2',
-    '-1',
-    'Ground',
+    // '-2',
+    // '-1',
+    // 'Ground',
     ...List.generate(totalFloor, (i) => '${i + 1}'),
   ];
 
-  List<String> tempSelectedFloors = List.from(controller.selectedFloors);
+  // Keep only one selected floor
+  String? tempSelectedFloor =
+      controller.selectedFloors.isNotEmpty
+          ? controller.selectedFloors.first
+          : null;
 
   showModalBottomSheet(
     context: context,
@@ -2210,7 +2417,6 @@ void _showFloorSelectionBottomSheet(
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setModalState) {
           return Container(
-            // Add maximum height constraint
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height * 0.5,
             ),
@@ -2231,7 +2437,7 @@ void _showFloorSelectionBottomSheet(
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                // Header section
+                // Header
                 Padding(
                   padding: EdgeInsets.fromLTRB(16, 12, 12, 8),
                   child: Row(
@@ -2255,7 +2461,7 @@ void _showFloorSelectionBottomSheet(
                   ),
                 ),
                 Divider(height: 1, color: Colors.grey[300]),
-                // Floor list - Wrap in Flexible to allow it to take available space
+                // Floor list (single selection)
                 Flexible(
                   child: ListView.builder(
                     shrinkWrap: true,
@@ -2263,14 +2469,12 @@ void _showFloorSelectionBottomSheet(
                     itemCount: availableFloors.length,
                     itemBuilder: (context, index) {
                       String floor = availableFloors[index];
-                      bool isSelected = tempSelectedFloors.contains(floor);
-
                       return Container(
                         margin: EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 2,
                         ),
-                        child: CheckboxListTile(
+                        child: RadioListTile<String>(
                           title: Text(
                             floor,
                             style: TextStyle(
@@ -2278,22 +2482,15 @@ void _showFloorSelectionBottomSheet(
                               color: Colors.black87,
                             ),
                           ),
-                          value: isSelected,
-                          onChanged: (bool? value) {
+                          value: floor,
+                          groupValue: tempSelectedFloor,
+                          onChanged: (value) {
                             setModalState(() {
-                              if (value == true) {
-                                tempSelectedFloors.add(floor);
-                              } else {
-                                tempSelectedFloors.remove(floor);
-                              }
+                              tempSelectedFloor = value;
                             });
                           },
-                          controlAffinity: ListTileControlAffinity.leading,
                           activeColor: Theme.of(context).primaryColor,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 0,
-                          ),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8),
                           dense: true,
                           visualDensity: VisualDensity.compact,
                         ),
@@ -2301,14 +2498,14 @@ void _showFloorSelectionBottomSheet(
                     },
                   ),
                 ),
-                // Bottom action section - Keep this fixed at bottom
+                // Bottom action
                 SafeArea(
                   child: Padding(
                     padding: EdgeInsets.all(16),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (tempSelectedFloors.isNotEmpty)
+                        if (tempSelectedFloor != null)
                           Container(
                             width: double.infinity,
                             margin: EdgeInsets.only(bottom: 8),
@@ -2319,14 +2516,14 @@ void _showFloorSelectionBottomSheet(
                             child: TextButton(
                               onPressed: () {
                                 setModalState(() {
-                                  tempSelectedFloors.clear();
+                                  tempSelectedFloor = null;
                                 });
                               },
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.symmetric(vertical: 8),
                               ),
                               child: Text(
-                                'Clear All',
+                                'Clear Selection',
                                 style: TextStyle(
                                   color: Colors.red,
                                   fontSize: 14,
@@ -2339,7 +2536,9 @@ void _showFloorSelectionBottomSheet(
                           child: ElevatedButton(
                             onPressed: () {
                               controller.updateSelectedFloors(
-                                tempSelectedFloors,
+                                tempSelectedFloor != null
+                                    ? [tempSelectedFloor!]
+                                    : [],
                               );
                               Navigator.pop(context);
                             },
