@@ -2480,14 +2480,14 @@ class CreatePropertyController extends GetxController {
                 : null,
         financialInfo: FinancialInfo(
           //TODO: Implement Remain
-          // propertyRentPerMonth:
-          //     commercial_rent_cost.text.trim().isNotEmpty
-          //         ? double.tryParse(commercial_rent_cost.text.trim())
-          //         : null,
-          propertyPrice:
+          propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
+          // propertyPrice:
+          //     commercial_rent_cost.text.trim().isNotEmpty
+          //         ? double.tryParse(commercial_rent_cost.text.trim())
+          //         : null,
         ),
         // floorInfo: FloorInfo(
         //   totalFloors: commercial_total_floor.text.trim().isNotEmpty ?
