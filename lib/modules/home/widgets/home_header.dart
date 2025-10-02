@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
@@ -105,8 +106,13 @@ class _HomeHeaderState extends State<HomeHeader> {
 
               // SizedBox(width: 8),
               GestureDetector(
-                onTap: (){
-                  Get.to(()=>ProfileScreen(imageUrl: "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",));
+                onTap: () {
+                  Get.to(
+                    () => ProfileScreen(
+                      imageUrl:
+                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                    ),
+                  );
                 },
                 child: Container(
                   width: 45,
@@ -141,14 +147,18 @@ class _HomeHeaderState extends State<HomeHeader> {
               ),
               const SizedBox(width: 8),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   print("Mic tapped");
+                  final user = await SecureStorage.getUserData();
+                  final userType = user!.user!.userType ?? "Buyer";
                   // Get.to(() => const CommonSearchField());
-                  Get.to(
-                    () => CreatePropertyScreen(
+                  Get.to(() {
+                    return CreatePropertyScreen(
                       sellerType: mapUserRoleToSellerType(UserRole.seller),
-                    ),
-                  );
+                      isLogin:
+                          userType.toLowerCase() == "seller" ? true : false,
+                    );
+                  });
                 },
                 child: Container(
                   height: 52,

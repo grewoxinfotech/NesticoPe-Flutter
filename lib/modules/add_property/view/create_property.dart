@@ -1565,11 +1565,13 @@ class CreatePropertyScreen extends StatelessWidget {
                                       onPressed: () {
                                         if (controller
                                                 .stepperSelectedIndex
-                                                .value >
+                                                .value ==
                                             0) {
-                                          controller.previousStep();
-                                        } else {
+                                          // If on the first step, pop the screen
                                           Navigator.pop(context);
+                                        } else {
+                                          // Otherwise, go to previous step
+                                          controller.previousStep();
                                         }
                                       },
                                       icon: const Icon(
@@ -1781,6 +1783,8 @@ class CreatePropertyScreen extends StatelessWidget {
                   ),
             ),
           ),
+
+          // --- Full screen loader overlay ---
           bottomNavigationBar: Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1789,163 +1793,198 @@ class CreatePropertyScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: () {
-                    final step = controller.stepperSelectedIndex.value;
+                  onPressed:
+                      controller.isLoading.value
+                          ? null
+                          : () async {
+                            final step = controller.stepperSelectedIndex.value;
 
-                    // Property type validation
-                    if (step == 0 && controller.propertyType.value.isEmpty) {
-                      controller.showBasicPropertyType.value = true;
-                      return;
-                    } else {
-                      controller.showBasicPropertyType.value = false;
-                    }
+                            // Property type validation
+                            if (step == 0 &&
+                                controller.propertyType.value.isEmpty) {
+                              controller.showBasicPropertyType.value = true;
+                              return;
+                            } else {
+                              controller.showBasicPropertyType.value = false;
+                            }
 
-                    if (step == 0 && controller.lookingTo.value.isEmpty) {
-                      controller.showBasicLookingTo.value = true;
-                      return;
-                    } else {
-                      controller.showBasicLookingTo.value = false;
-                    }
+                            if (step == 0 &&
+                                controller.lookingTo.value.isEmpty) {
+                              controller.showBasicLookingTo.value = true;
+                              return;
+                            } else {
+                              controller.showBasicLookingTo.value = false;
+                            }
 
-                    if (step == 0 &&
-                        controller.selectedIndex.value.isEmpty &&
-                        controller.propertyType.value == 'Commercial') {
-                      controller.hasShownCommercialCategory.value = true;
-                      return;
-                    } else {
-                      controller.hasShownCommercialCategory.value = false;
-                    }
+                            if (step == 0 &&
+                                controller.selectedIndex.value.isEmpty &&
+                                controller.propertyType.value == 'Commercial') {
+                              controller.hasShownCommercialCategory.value =
+                                  true;
+                              return;
+                            } else {
+                              controller.hasShownCommercialCategory.value =
+                                  false;
+                            }
 
-                    // Rent property type validation
-                    if ((controller.lookingTo.value == 'Rent' ||
-                            controller.lookingTo.value == 'Sell') &&
-                        controller.propertyType.value == 'Residential' &&
-                        step == 1 &&
-                        controller.rent_propertyType.value.isEmpty) {
-                      controller.showPropertyTypeError.value = true;
-                      return;
-                    } else {
-                      controller.showPropertyTypeError.value = false;
-                    }
+                            // Rent property type validation
+                            if ((controller.lookingTo.value == 'Rent' ||
+                                    controller.lookingTo.value == 'Sell') &&
+                                controller.propertyType.value ==
+                                    'Residential' &&
+                                step == 1 &&
+                                controller.rent_propertyType.value.isEmpty) {
+                              controller.showPropertyTypeError.value = true;
+                              return;
+                            } else {
+                              controller.showPropertyTypeError.value = false;
+                            }
 
-                    if (controller.lookingTo.value == 'Rent' &&
-                        controller.propertyType.value == 'Residential' &&
-                        step == 2 &&
-                        controller.rent_depositType.value.isEmpty) {
-                      controller.selectedDepositFromPrice.value = true;
-                      return;
-                    } else {
-                      controller.selectedDepositFromPrice.value = false;
-                    }
+                            if (controller.lookingTo.value == 'Rent' &&
+                                controller.propertyType.value ==
+                                    'Residential' &&
+                                step == 2 &&
+                                controller.rent_depositType.value.isEmpty) {
+                              controller.selectedDepositFromPrice.value = true;
+                              return;
+                            } else {
+                              controller.selectedDepositFromPrice.value = false;
+                            }
 
-                    if (controller.lookingTo.value == 'Sell' &&
-                        controller.propertyType.value == 'Residential' &&
-                        step == 2 &&
-                        controller.sell_constructionStatus.value.isEmpty) {
-                      controller.selectedSellFromPriceDetail.value = true;
-                      return;
-                    } else {
-                      controller.selectedSellFromPriceDetail.value = false;
-                    }
+                            if (controller.lookingTo.value == 'Sell' &&
+                                controller.propertyType.value ==
+                                    'Residential' &&
+                                step == 2 &&
+                                controller
+                                    .sell_constructionStatus
+                                    .value
+                                    .isEmpty) {
+                              controller.selectedSellFromPriceDetail.value =
+                                  true;
+                              return;
+                            } else {
+                              controller.selectedSellFromPriceDetail.value =
+                                  false;
+                            }
 
-                    // Commercial property validation
-                    if ((controller.lookingTo.value == 'Sell' ||
-                            controller.lookingTo.value == 'Rent') &&
-                        controller.propertyType.value == 'Commercial' &&
-                        step == 1 &&
-                        controller.commercial_ZoneType.value.isEmpty) {
-                      controller.selectedZoneTypeInCommercial.value = true;
-                    } else {
-                      controller.selectedZoneTypeInCommercial.value = false;
-                    }
+                            // Commercial property validation
+                            if ((controller.lookingTo.value == 'Sell' ||
+                                    controller.lookingTo.value == 'Rent') &&
+                                controller.propertyType.value == 'Commercial' &&
+                                step == 1 &&
+                                controller.commercial_ZoneType.value.isEmpty) {
+                              controller.selectedZoneTypeInCommercial.value =
+                                  true;
+                            } else {
+                              controller.selectedZoneTypeInCommercial.value =
+                                  false;
+                            }
 
-                    if ((controller.lookingTo.value == 'Sell' ||
-                            controller.lookingTo.value == 'Rent') &&
-                        controller.propertyType.value == 'Commercial' &&
-                        step == 1 &&
-                        controller.commercial_ownerShipList.value.isEmpty) {
-                      controller.seletedOwnerShipInCommercial.value = true;
-                    } else {
-                      controller.seletedOwnerShipInCommercial.value = false;
-                    }
+                            if ((controller.lookingTo.value == 'Sell' ||
+                                    controller.lookingTo.value == 'Rent') &&
+                                controller.propertyType.value == 'Commercial' &&
+                                step == 1 &&
+                                controller
+                                    .commercial_ownerShipList
+                                    .value
+                                    .isEmpty) {
+                              controller.seletedOwnerShipInCommercial.value =
+                                  true;
+                            } else {
+                              controller.seletedOwnerShipInCommercial.value =
+                                  false;
+                            }
 
-                    if ((controller.lookingTo.value == 'Sell' ||
-                            controller.lookingTo.value == 'Rent') &&
-                        controller.propertyType.value == 'Commercial' &&
-                        step == 1 &&
-                        controller
-                            .commercial_rent_posessionStatus
-                            .value
-                            .isEmpty) {
-                      controller.selectedPossessionStatus.value = true;
-                    } else {
-                      controller.selectedPossessionStatus.value = false;
-                    }
+                            if ((controller.lookingTo.value == 'Sell' ||
+                                    controller.lookingTo.value == 'Rent') &&
+                                controller.propertyType.value == 'Commercial' &&
+                                step == 1 &&
+                                controller
+                                    .commercial_rent_posessionStatus
+                                    .value
+                                    .isEmpty) {
+                              controller.selectedPossessionStatus.value = true;
+                            } else {
+                              controller.selectedPossessionStatus.value = false;
+                            }
 
-                    if ((controller.lookingTo.value == 'Sell') &&
-                        controller.propertyType.value == 'Commercial' &&
-                        step == 1 &&
-                        controller
-                            .commercial_construction_status_value
-                            .value
-                            .isEmpty) {
-                      controller
-                          .selectedConstructionStatusRent_Commercial
-                          .value = true;
-                    } else {
-                      controller
-                          .selectedConstructionStatusRent_Commercial
-                          .value = false;
-                    }
+                            if ((controller.lookingTo.value == 'Sell') &&
+                                controller.propertyType.value == 'Commercial' &&
+                                step == 1 &&
+                                controller
+                                    .commercial_construction_status_value
+                                    .value
+                                    .isEmpty) {
+                              controller
+                                  .selectedConstructionStatusRent_Commercial
+                                  .value = true;
+                            } else {
+                              controller
+                                  .selectedConstructionStatusRent_Commercial
+                                  .value = false;
+                            }
 
-                    if ((controller.lookingTo.value == 'Sell') &&
-                        controller.propertyType.value == 'Commercial' &&
-                        step == 2 &&
-                        controller.commercial_isPreLeased.value.isEmpty) {
-                      controller.selectedChoiceAnyoneInPriceSection.value =
-                          true;
-                    } else {
-                      controller.selectedChoiceAnyoneInPriceSection.value =
-                          false;
-                    }
+                            if ((controller.lookingTo.value == 'Sell') &&
+                                controller.propertyType.value == 'Commercial' &&
+                                step == 2 &&
+                                controller
+                                    .commercial_isPreLeased
+                                    .value
+                                    .isEmpty) {
+                              controller
+                                  .selectedChoiceAnyoneInPriceSection
+                                  .value = true;
+                            } else {
+                              controller
+                                  .selectedChoiceAnyoneInPriceSection
+                                  .value = false;
+                            }
 
-                    // BHK validation
-                    if ((controller.lookingTo.value == 'Rent' ||
-                            controller.lookingTo.value == 'Sell') &&
-                        controller.propertyType.value == 'Residential' &&
-                        step == 1 &&
-                        controller.bhkType.value.isEmpty) {
-                      controller.showBHKChooseToError.value = true;
-                      return;
-                    } else {
-                      controller.showBHKChooseToError.value = false;
-                    }
+                            // BHK validation
+                            if ((controller.lookingTo.value == 'Rent' ||
+                                    controller.lookingTo.value == 'Sell') &&
+                                controller.propertyType.value ==
+                                    'Residential' &&
+                                step == 1 &&
+                                controller.bhkType.value.isEmpty) {
+                              controller.showBHKChooseToError.value = true;
+                              return;
+                            } else {
+                              controller.showBHKChooseToError.value = false;
+                            }
 
-                    // Validate current step's form before proceeding (only if form key exists)
-                    final hasFormKey =
-                        step < formKeys.length && formKeys[step] != null;
-                    final isValid =
-                        !hasFormKey ||
-                        (formKeys[step]!.currentState?.validate() ?? true);
+                            // Validate current step's form before proceeding (only if form key exists)
+                            final hasFormKey =
+                                step < formKeys.length &&
+                                formKeys[step] != null;
+                            final isValid =
+                                !hasFormKey ||
+                                (formKeys[step]!.currentState?.validate() ??
+                                    true);
 
-                    if (isValid) {
-                      if (controller.stepperSelectedIndex.value <
-                          controller.stepsList.length - 1) {
-                        controller.nextStep();
-                      } else {
-                        controller.addProperty();
-                      }
-                    }
-                  },
+                            if (isValid) {
+                              if (controller.stepperSelectedIndex.value <
+                                  controller.stepsList.length - 1) {
+                                controller.nextStep();
+                              } else {
+                                await controller.addProperty();
+                              }
+                            }
+                          },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorRes.primary,
+                    backgroundColor:
+                        controller.isLoading.value
+                            ? ColorRes.primary.withOpacity(0.5)
+                            : ColorRes.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                     elevation: 2,
                   ),
-                  child: const Text(
-                    "Next, add address & price",
+                  child: Text(
+                    controller.isLoading.value
+                        ? "Adding Property... Wait"
+                        : "Next",
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white,
@@ -1995,7 +2034,12 @@ class CreatePropertyScreen extends StatelessWidget {
                                     ),
                                     alignment: Alignment.center,
                                     child: IconButton(
-                                      onPressed: () => Navigator.pop(context),
+                                      onPressed: () {
+                                        print(
+                                          "gcdsyuhfekewkwdlkjwlk;welkqwel;kmqwedifsgopfiugoiegureoipgokeroijsfd",
+                                        );
+                                        Navigator.pop(context);
+                                      },
                                       icon: const Icon(
                                         Icons.arrow_back,
                                         color: Colors.black,

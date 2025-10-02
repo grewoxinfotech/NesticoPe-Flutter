@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -156,6 +158,19 @@ class PropertyService {
       final response = await http.Response.fromStream(streamedResponse);
 
       debugPrint("Create property response: ${response.body}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomSnackBar.show(
+          Get.overlayContext!,
+          message: "Create Property Successful",
+          type: SnackBarType.success,
+        );
+      } else {
+        CustomSnackBar.show(
+          Get.overlayContext!,
+          message: "Failed to create property. Please try again.",
+          type: SnackBarType.error,
+        );
+      }
 
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {

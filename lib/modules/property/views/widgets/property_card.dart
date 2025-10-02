@@ -145,16 +145,30 @@ class _PropertyCardState extends State<PropertyCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Title
-                  Text(
-                    widget.property.title ?? "-",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: Colors.black87,
+                  if (widget.property.type!.toLowerCase() == "residential")
+                    Text(
+                      "${widget.property.propertyDetails?.bhk ?? 0} BHK ${widget.property.propertyType?.capitalize}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  if (widget.property.type!.toLowerCase() == "commercial")
+                    Text(
+                      "${widget.property.propertyType?.capitalize}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   const SizedBox(height: 4),
 
                   // Location
@@ -239,21 +253,36 @@ class _PropertyCardState extends State<PropertyCard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        Formatter.formatPrice(
-                          widget
-                                  .property
-                                  .propertyDetails
-                                  ?.financialInfo
-                                  ?.price ??
-                              0,
+                      if (widget.property.listingType?.toLowerCase() ==
+                          "rent") ...[
+                        Flexible(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: ColorRes.textColor,
+                                ),
+                              ),
+
+                              Text(" /month", style: TextStyle(fontSize: 10)),
+                            ],
+                          ),
                         ),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: ColorRes.textColor,
+                      ] else ...[
+                        Text(
+                          "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.price ?? 0)}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: ColorRes.textColor,
+                          ),
                         ),
-                      ),
+                      ],
+
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 14,

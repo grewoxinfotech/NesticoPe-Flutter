@@ -1913,9 +1913,11 @@ class PostProperty extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return 'Please enter building name';
                     }
-                    final rent = int.parse(value);
-                    if (rent < 50 || rent > 3000000) {
-                      return 'Area should be between 50 to 3000000';
+                    final rent = int.tryParse(value);
+                    if (rent != null) {
+                      if (rent < 50 || rent > 3000000) {
+                        return 'Area should be between 50 to 3000000';
+                      }
                     }
                     return null;
                   },

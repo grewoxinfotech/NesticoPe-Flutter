@@ -24,6 +24,7 @@ enum SellerType { owner, builder }
 class CreatePropertyController extends GetxController {
   final _propertyService = PropertyService();
   late MultiImagePickerController pickerController;
+  RxBool isLoading = false.obs;
 
   // Reactive states
   var selectedSellerType = SellerType.owner.obs; // New: selected user type
@@ -228,6 +229,7 @@ class CreatePropertyController extends GetxController {
     "agricultural",
     "others",
   ];
+
   // List<String> zoneType = [
   //   "Industrial",
   //   "Commercial",
@@ -541,14 +543,23 @@ class CreatePropertyController extends GetxController {
     }
   }
 
+  // void previousStep() {
+  //   // if (stepperSelectedIndex.value > 0) {
+  //   //   stepperSelectedIndex.value--;
+  //   // }
+  //   if (stepperSelectedIndex.value > 0) {
+  //     stepperSelectedIndex.value--;
+  //
+  //     print('settper ${stepperSelectedIndex.value}');
+  //     if (stepperSelectedIndex.value == 0) {
+  //       clearAllVariablesExceptPropertyType();
+  //     }
+  //   }
+  // }
   void previousStep() {
-    // if (stepperSelectedIndex.value > 0) {
-    //   stepperSelectedIndex.value--;
-    // }
     if (stepperSelectedIndex.value > 0) {
       stepperSelectedIndex.value--;
-
-      print('settper ${stepperSelectedIndex.value}');
+      print('stepper: ${stepperSelectedIndex.value}');
       if (stepperSelectedIndex.value == 0) {
         clearAllVariablesExceptPropertyType();
       }
@@ -1229,26 +1240,182 @@ class CreatePropertyController extends GetxController {
   }
 
   /// Clears all variables except propertyType - called when returning to step 0
+  // void clearAllVariablesExceptPropertyType() {
+  //   if (isProcessing.value) return;
+  //
+  //   try {
+  //     isProcessing.value = true;
+  //
+  //     debugPrint("Clearing all variables except propertyType...");
+  //     String preservedPropertyType = propertyType.value;
+  //     String isLooking = lookingTo.value; // Preserve property type
+  //
+  //     // Clear basic reactive variables (except propertyType)
+  //     isOwner.value = true;
+  //     // propertyType.value = ""; // DON'T clear this
+  //     rent_propertyType.value = "";
+  //     lookingTo.value = "";
+  //     countryCode.value = '+91';
+  //     bhkType.value = "";
+  //     isShareWithAgents.value = false;
+  //     rent_Bathroom.value = 0;
+  //     isLogin.value = false;
+  //     furnishingType.value = "";
+  //     stepIndex.value = 0;
+  //
+  //     // Clear area and property details
+  //     areaUnit.value = "sq.ft.";
+  //     carpetAreaUnit.value = "sq.ft.";
+  //     commercial_plotArea.value = "sq.ft.";
+  //     rent_facing.value = "";
+  //     selectedDate.value = null;
+  //     selectedTime.value = null;
+  //
+  //     // Clear rent specific variables
+  //     rent_Painting_Charges.value = "";
+  //     rent_Parking_Charges.value = "";
+  //     rent_Balcony.value = 0;
+  //     rent_OpenParking.value = '0';
+  //     rent_CoveredParking.value = '0';
+  //     rent_maintenanceChargeType.value = "";
+  //     rent_Pet_Friendly.value = "";
+  //     rent_lockInPeriod.value = "";
+  //     rent_depositType.value = "";
+  //     rent_Selected_Tenants_for_Bachelors.value = "";
+  //
+  //     // Clear commercial properties
+  //     commercial_ZoneType.value = "";
+  //     commercial_LocationHub.value = "";
+  //     commercial_property_condition.value = "";
+  //     commercial_Square_AreaUnti_Build.value = "sq.yd.";
+  //     commercial_Square_AreaUnti_Carpet.value = "sq.yd.";
+  //     commercial_ownerShipList.value = "";
+  //     commercial_construction_status_value.value = '';
+  //     commercial_rent_posessionStatus.value = "";
+  //     selectedFloors.clear();
+  //
+  //     // Clear sell properties
+  //     sell_rent_Servent_Room.value = "";
+  //     sell_constructionStatus.value = "";
+  //
+  //     // Clear other variables
+  //     mealAvailable.value = " ";
+  //     labelOfPhoto.value = "Other";
+  //     selectedIndex.value = "";
+  //     tempRoomType.value = '';
+  //     editingIndex.value = -1;
+  //
+  //     // Clear all text controllers
+  //     phoneController.clear();
+  //     nameController.clear();
+  //     cityController.clear();
+  //     localityController.clear();
+  //     pgNameController.clear();
+  //     totalRoomsController.clear();
+  //     noticPeriodController.clear();
+  //     ageOfPropertyController.clear();
+  //     rentBuildingController.clear();
+  //     lockPeriodController.clear();
+  //     areaController.clear();
+  //     carpetAreaController.clear();
+  //     tempMonthlyRent.clear();
+  //     tempDeposit.clear();
+  //
+  //     // Clear commercial text controllers
+  //     commercial_plot.clear();
+  //     commercial_Property_Name.clear();
+  //     commercial_other_Location.clear();
+  //     commercial_Square_BuildArea.clear();
+  //     commercial_Square_CarpetArea.clear();
+  //     commercial_seats.clear();
+  //     commercial_cabins.clear();
+  //     commercial_meeting_room.clear();
+  //     commercial_total_floor.clear();
+  //     commercial_your_floor.clear();
+  //     commercial_rent_building_Name.clear();
+  //     commercial_rent_Loaclity_Name.clear();
+  //     commercial_rent_AvailableFrom.clear();
+  //     commercial_rent_AgeOfPropertInYear.clear();
+  //
+  //     // Clear rent text controllers
+  //     rent_Custom_Painting_Charges.clear();
+  //     rent_Custom_Parking_Charges.clear();
+  //     rent_Custom_LockIn_Period.clear();
+  //     rent_MonthilyRent.clear();
+  //     rent_SecurityDeposit.clear();
+  //     rent_AvailableFrom.clear();
+  //
+  //     // Clear sell text controllers
+  //     sell_rent_Address.clear();
+  //     sell_rent_Flat_No.clear();
+  //     sell_rent_Floor_No.clear();
+  //     sell_rent_propertyDescriptionController.clear();
+  //     sell_rent_Total_Floor.clear();
+  //     sell_AvailableFrom.clear();
+  //     sell_ExpectedPrice.clear();
+  //     sell_rent_Maintenance_Charges.clear();
+  //     sell_Rera_Id.clear();
+  //
+  //     // Clear all collections
+  //     rooms.clear();
+  //     selectedImages.clear();
+  //     selectedFurnishing.clear();
+  //     selectedRoomAmenities.clear();
+  //     selectedItems.clear();
+  //     mealAvailableList.clear();
+  //     bestSuitedList.clear();
+  //     commonAreasList.clear();
+  //     rent_Legal.clear();
+  //     sell_Brokerage.clear();
+  //     sell_Registration_Charges.clear();
+  //     sell_Amenities_Furniture.clear();
+  //     rent_Rentals.clear();
+  //     rent_Security_DepositType.clear();
+  //     rent_HomeServices.clear();
+  //     rent_Preferred_Tenants.clear();
+  //
+  //     // Clear review model
+  //     review.value = null;
+  //
+  //     // Reset stepper to step 0
+  //     stepperSelectedIndex.value = 0;
+  //
+  //     // Restore property type
+  //     propertyType.value = preservedPropertyType;
+  //     lookingTo.value = isLooking;
+  //
+  //     debugPrint(
+  //       "All variables cleared except propertyType: ${propertyType.value}",
+  //     );
+  //   } finally {
+  //     isProcessing.value = false;
+  //   }
+  // }
+
   void clearAllVariablesExceptPropertyType() {
     if (isProcessing.value) return;
 
     try {
       isProcessing.value = true;
 
-      debugPrint("Clearing all variables except propertyType...");
-      String preservedPropertyType = propertyType.value;
-      String isLooking = lookingTo.value; // Preserve property type
+      debugPrint("Clearing all variables except propertyType and lookingTo...");
 
-      // Clear basic reactive variables (except propertyType)
+      // Preserve these critical values
+      String preservedPropertyType = propertyType.value;
+      String preservedLookingTo = lookingTo.value;
+      String preservedSelectedIndex =
+          selectedIndex.value; // For commercial properties
+
+      // Clear basic reactive variables (except preserved ones)
       isOwner.value = true;
-      // propertyType.value = ""; // DON'T clear this
+      // propertyType.value = ""; // DON'T clear
       rent_propertyType.value = "";
-      lookingTo.value = "";
+      // lookingTo.value = ""; // DON'T clear
       countryCode.value = '+91';
       bhkType.value = "";
       isShareWithAgents.value = false;
       rent_Bathroom.value = 0;
-      isLogin.value = false;
+      // isLogin stays as is
       furnishingType.value = "";
       stepIndex.value = 0;
 
@@ -1290,7 +1457,7 @@ class CreatePropertyController extends GetxController {
       // Clear other variables
       mealAvailable.value = " ";
       labelOfPhoto.value = "Other";
-      selectedIndex.value = "";
+      // selectedIndex.value = ""; // DON'T clear for commercial
       tempRoomType.value = '';
       editingIndex.value = -1;
 
@@ -1325,6 +1492,11 @@ class CreatePropertyController extends GetxController {
       commercial_rent_Loaclity_Name.clear();
       commercial_rent_AvailableFrom.clear();
       commercial_rent_AgeOfPropertInYear.clear();
+      commercial_isPreLeased.value = '';
+      commercial_current_rent_preLeasedTill.clear();
+      commercial_lease_years.clear();
+      commercial_returned_RIO.clear();
+      commercial_rent_cost.clear();
 
       // Clear rent text controllers
       rent_Custom_Painting_Charges.clear();
@@ -1362,19 +1534,39 @@ class CreatePropertyController extends GetxController {
       rent_Security_DepositType.clear();
       rent_HomeServices.clear();
       rent_Preferred_Tenants.clear();
+      selectedCommercialAmenities.clear();
 
-      // Clear review model
+      // Clear review models
       review.value = null;
+      commercialReview.value = null;
+
+      // Clear error flags
+      showPropertyTypeError.value = false;
+      showBHKChooseToError.value = false;
+      showBasicPropertyType.value = false;
+      showBasicLookingTo.value = false;
+      hasShownCommercialCategory.value = false;
+      selectedDepositFromPrice.value = false;
+      selectedSellFromPriceDetail.value = false;
+      selectedZoneTypeInCommercial.value = false;
+      seletedOwnerShipInCommercial.value = false;
+      selectedChoiceAnyoneInPriceSection.value = false;
+      selectedPossessionStatus.value = false;
+      selectedConstructionStatusRent_Commercial.value = false;
 
       // Reset stepper to step 0
       stepperSelectedIndex.value = 0;
 
-      // Restore property type
+      // Restore preserved values
       propertyType.value = preservedPropertyType;
-      lookingTo.value = isLooking;
+      lookingTo.value = preservedLookingTo;
+      if (preservedPropertyType == "Commercial" &&
+          preservedSelectedIndex.isNotEmpty) {
+        selectedIndex.value = preservedSelectedIndex;
+      }
 
       debugPrint(
-        "All variables cleared except propertyType: ${propertyType.value}",
+        "Variables cleared. Preserved - propertyType: ${propertyType.value}, lookingTo: ${lookingTo.value}, selectedIndex: ${selectedIndex.value}",
       );
     } finally {
       isProcessing.value = false;
@@ -1436,6 +1628,8 @@ class CreatePropertyController extends GetxController {
 
   Future<void> addProperty() async {
     try {
+      isLoading.value = true;
+
       final type = propertyType.value.toLowerCase();
       final action = lookingTo.value.toLowerCase();
       final subtype = selectedIndex.value.toLowerCase(); // For commercial cases
@@ -1444,16 +1638,19 @@ class CreatePropertyController extends GetxController {
         print("Error: Property type or action is empty.");
         return;
       }
+
+      bool success = false;
+
       if (type == "residential") {
         switch (action) {
           case "rent":
-            await _addPropertyResidentialRent();
+            success = await _addPropertyResidentialRent();
             break;
           case "sell":
-            await _addPropertyResidentialSell();
+            success = await _addPropertyResidentialSell();
             break;
           case "pg/co-living":
-            await _addPropertyResidentialPg();
+            success = await _addPropertyResidentialPg();
             break;
           default:
             print("Error: Invalid residential action");
@@ -1461,10 +1658,10 @@ class CreatePropertyController extends GetxController {
       } else if (type == "commercial") {
         switch (action) {
           case "rent":
-            await _addPropertyCommercialRent(subtype);
+            success = await _addPropertyCommercialRent(subtype);
             break;
           case "sell":
-            await _addPropertyCommercialSell(subtype);
+            success = await _addPropertyCommercialSell(subtype);
             break;
           default:
             print("Error: Invalid commercial action");
@@ -1472,15 +1669,23 @@ class CreatePropertyController extends GetxController {
       } else {
         print("Error: Invalid property type");
       }
+      if (success) {
+        print("Property added successfully ✅");
+        Get.offAll(() => DashboardScreen());
+      } else {
+        print("Failed to add property ❌");
+      }
     } catch (e) {
       print("Error adding property: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 
   //
   // ---------- RESIDENTIAL ----------
   //
-  Future<void> _addPropertyResidentialRent() async {
+  Future<bool> _addPropertyResidentialRent() async {
     try {
       print("Adding Residential Property for Rent...");
       // debugPrint("Property Type : ${propertyType.value}");
@@ -1573,20 +1778,14 @@ class CreatePropertyController extends GetxController {
         payload.toJson(),
         selectedImages.value,
       );
-      if (success) {
-        print("Residential Rent property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
-        // maybe navigate or show snackbar here
-      } else {
-        print("Failed to add property ❌");
-      }
-      // Call API / Save to DB
+      return success;
     } catch (e) {
       print("Error adding residential rent: $e");
+      return false;
     }
   }
 
-  Future<void> _addPropertyResidentialSell() async {
+  Future<bool> _addPropertyResidentialSell() async {
     try {
       // print("Adding Residential Property for Sell...");
       // debugPrint("Property Type : ${propertyType.value}");
@@ -1650,21 +1849,14 @@ class CreatePropertyController extends GetxController {
         payload.toJson(),
         selectedImages.value,
       );
-      if (success) {
-        print("Residential Rent property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
-        // maybe navigate or show snackbar here
-      } else {
-        print("Failed to add property ❌");
-      }
-      // Call API / Save to DB
-      // Call API / Save to DB
+      return success;
     } catch (e) {
       print("Error adding residential sell: $e");
+      return false;
     }
   }
 
-  Future<void> _addPropertyResidentialPg() async {
+  Future<bool> _addPropertyResidentialPg() async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -1688,58 +1880,54 @@ class CreatePropertyController extends GetxController {
         payload.toJson(),
         selectedImages.value,
       );
-      if (success) {
-        print("Residential Rent property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
-        // maybe navigate or show snackbar here
-      } else {
-        print("Failed to add property ❌");
-      }
-      // Call API / Save to DB
+      return success;
     } catch (e) {
       print("Error adding residential pg: $e");
+      return false;
     }
   }
 
   //
   // ---------- COMMERCIAL RENT ----------
   //
-  Future<void> _addPropertyCommercialRent(String subtype) async {
+  Future<bool> _addPropertyCommercialRent(String subtype) async {
     try {
       switch (subtype) {
         case "plot":
           print("Adding Commercial Rent → Plot");
-          _addPropertyCommercialRentPlot();
+          return await _addPropertyCommercialRentPlot();
           break;
         case "other":
           print("Adding Commercial Rent → Other");
-          _addPropertyCommercialRentOther();
+          return await _addPropertyCommercialRentOther();
           break;
         case "office":
           print("Adding Commercial Rent → Office");
-          _addPropertyCommercialRentOffice();
+          return await _addPropertyCommercialRentOffice();
           break;
         case "showroom":
           print("Adding Commercial Rent → Showroom");
-          _addPropertyCommercialRentShowRoom();
+          return await _addPropertyCommercialRentShowRoom();
           break;
         case "shop":
           print("Adding Commercial Rent → Shop");
-          _addPropertyCommercialRentShop();
+          return await _addPropertyCommercialRentShop();
           break;
         case "warehouse":
           print("Adding Commercial Rent → Warehouse");
-          _addPropertyCommercialRentWarehouse();
+          return await _addPropertyCommercialRentWarehouse();
           break;
         default:
           print("Error: Invalid commercial rent subtype");
+          return false;
       }
     } catch (e) {
       print("Error adding commercial rent: $e");
+      return false;
     }
   }
 
-  Future<void> _addPropertyCommercialRentPlot() async {
+  Future<bool> _addPropertyCommercialRentPlot() async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -1767,20 +1955,14 @@ class CreatePropertyController extends GetxController {
         payload.toJson(),
         selectedImages.value,
       );
-      if (success) {
-        print("Residential Rent property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
-        // maybe navigate or show snackbar here
-      } else {
-        print("Failed to add property ❌");
-      }
-      // Call API / Save to DB
+      return success;
     } catch (e) {
       print("Error adding residential pg: $e");
+      return false;
     }
   }
 
-  Future<void> _addPropertyCommercialRentOther() async {
+  Future<bool> _addPropertyCommercialRentOther() async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -1816,20 +1998,14 @@ class CreatePropertyController extends GetxController {
         payload.toJson(),
         selectedImages.value,
       );
-      if (success) {
-        print("Residential Rent property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
-        // maybe navigate or show snackbar here
-      } else {
-        print("Failed to add property ❌");
-      }
-      // Call API / Save to DB
+      return success;
     } catch (e) {
       print("Error adding residential pg: $e");
+      return false;
     }
   }
 
-  Future<void> _addPropertyCommercialRentOffice() async {
+  Future<bool> _addPropertyCommercialRentOffice() async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -1880,20 +2056,14 @@ class CreatePropertyController extends GetxController {
         payload.toJson(),
         selectedImages.value,
       );
-      if (success) {
-        print("Residential Rent property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
-        // maybe navigate or show snackbar here
-      } else {
-        print("Failed to add property ❌");
-      }
-      // Call API / Save to DB
+      return success;
     } catch (e) {
       print("Error adding residential pg: $e");
+      return false;
     }
   }
 
-  Future<void> _addPropertyCommercialRentShowRoom() async {
+  Future<bool> _addPropertyCommercialRentShowRoom() async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -1929,20 +2099,14 @@ class CreatePropertyController extends GetxController {
         payload.toJson(),
         selectedImages.value,
       );
-      if (success) {
-        print("Residential Rent property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
-        // maybe navigate or show snackbar here
-      } else {
-        print("Failed to add property ❌");
-      }
-      // Call API / Save to DB
+      return success;
     } catch (e) {
       print("Error adding residential pg: $e");
+      return false;
     }
   }
 
-  Future<void> _addPropertyCommercialRentShop() async {
+  Future<bool> _addPropertyCommercialRentShop() async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -1978,49 +2142,43 @@ class CreatePropertyController extends GetxController {
         payload.toJson(),
         selectedImages.value,
       );
-      if (success) {
-        print("Residential Rent property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
-        // maybe navigate or show snackbar here
-      } else {
-        print("Failed to add property ❌");
-      }
-      // // Call API / Save to DB
+      return success;
     } catch (e) {
       print("Error adding residential pg: $e");
+      return false;
     }
   }
 
-  Future<void> _addPropertyCommercialRentWarehouse() async {
+  Future<bool> _addPropertyCommercialRentWarehouse() async {
     try {
-      debugPrint("Property Type : ${propertyType.value}");
-      debugPrint("Looking to Type : ${lookingTo.value}");
-      debugPrint("City : ${cityController.text.trim()}");
-      debugPrint("Sub Category : ${selectedIndex.value}");
-      debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
-      debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
-      debugPrint("Possession Status: ${commercial_rent_posessionStatus.value}");
-      if (commercial_rent_posessionStatus.value == "Ready to move") {
-        debugPrint(
-          "Age of Property : ${commercial_rent_AgeOfPropertInYear.text.trim()}",
-        );
-      }
-      debugPrint(
-        "Available From: ${commercial_rent_AvailableFrom.text.trim()}",
-      );
-      debugPrint("Zone Type : ${commercial_ZoneType.value}");
-      debugPrint("Location Hub : ${commercial_LocationHub.value}");
-
-      debugPrint("Carpet Area : ${commercial_Square_CarpetArea.text.trim()}");
-      debugPrint("Built Up Area : ${commercial_Square_BuildArea.text.trim()}");
-      debugPrint("ownership : ${commercial_ownerShipList.value}");
-
-      debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
-      debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
-      debugPrint("Expected Rent : ${commercial_rent_cost.text.trim()}");
-      debugPrint(
-        "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      );
+      // debugPrint("Property Type : ${propertyType.value}");
+      // debugPrint("Looking to Type : ${lookingTo.value}");
+      // debugPrint("City : ${cityController.text.trim()}");
+      // debugPrint("Sub Category : ${selectedIndex.value}");
+      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
+      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
+      // debugPrint("Possession Status: ${commercial_rent_posessionStatus.value}");
+      // if (commercial_rent_posessionStatus.value == "Ready to move") {
+      //   debugPrint(
+      //     "Age of Property : ${commercial_rent_AgeOfPropertInYear.text.trim()}",
+      //   );
+      // }
+      // debugPrint(
+      //   "Available From: ${commercial_rent_AvailableFrom.text.trim()}",
+      // );
+      // debugPrint("Zone Type : ${commercial_ZoneType.value}");
+      // debugPrint("Location Hub : ${commercial_LocationHub.value}");
+      //
+      // debugPrint("Carpet Area : ${commercial_Square_CarpetArea.text.trim()}");
+      // debugPrint("Built Up Area : ${commercial_Square_BuildArea.text.trim()}");
+      // debugPrint("ownership : ${commercial_ownerShipList.value}");
+      //
+      // debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
+      // debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
+      // debugPrint("Expected Rent : ${commercial_rent_cost.text.trim()}");
+      // debugPrint(
+      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      // );
 
       final payload = await buildPropertyPayloadCommercialRentWarehouse();
       debugPrint("Payload : ${payload.toJson()}");
@@ -2028,49 +2186,339 @@ class CreatePropertyController extends GetxController {
         payload.toJson(),
         selectedImages.value,
       );
-      if (success) {
-        print("Residential Rent property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
-        // maybe navigate or show snackbar here
-      } else {
-        print("Failed to add property ❌");
-      }
-      // // Call API / Save to DB
+      return success;
     } catch (e) {
       print("Error adding residential pg: $e");
+      return false;
     }
   }
 
   //
   // ---------- COMMERCIAL SELL ----------
   //
-  Future<void> _addPropertyCommercialSell(String subtype) async {
+  Future<bool> _addPropertyCommercialSell(String subtype) async {
     try {
       switch (subtype) {
         case "plot":
           print("Adding Commercial Sell → Plot");
-
+          return await _addPropertyCommercialSellPlot();
           break;
         case "other":
           print("Adding Commercial Sell → Other");
+          return await _addPropertyCommercialSellOther();
           break;
         case "office":
           print("Adding Commercial Sell → Office");
+          return await _addPropertyCommercialSellOffice();
           break;
         case "showroom":
           print("Adding Commercial Sell → Showroom");
+          return await _addPropertyCommercialSellShowRoom();
           break;
         case "shop":
           print("Adding Commercial Sell → Shop");
+          return await _addPropertyCommercialSellShop();
           break;
         case "warehouse":
           print("Adding Commercial Sell → Warehouse");
+          return await _addPropertyCommercialSellWarehouse();
           break;
         default:
           print("Error: Invalid commercial sell subtype");
+          return false;
       }
     } catch (e) {
       print("Error adding commercial sell: $e");
+      return false;
+    }
+  }
+
+  Future<bool> _addPropertyCommercialSellPlot() async {
+    try {
+      // debugPrint("Property Type : ${propertyType.value}");
+      // debugPrint("Looking to Type : ${lookingTo.value}");
+      // debugPrint("City : ${cityController.text.trim()}");
+      // debugPrint("Sub Category : ${selectedIndex.value}");
+      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
+      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
+      // debugPrint("Zone Type : ${commercial_ZoneType.value}");
+      // debugPrint("Plot area: ${commercial_plot.text.trim()}");
+      // debugPrint("Plot area Unit : ${commercial_plotArea.value}");
+      // debugPrint("OwnerShip : ${commercial_ownerShipList.value}");
+      // debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
+      // debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
+      // debugPrint("Expected cost : ${commercial_rent_cost.text.trim()}");
+      // debugPrint("is Pre leased : ${commercial_isPreLeased.value}");
+      // if (commercial_isPreLeased.value.toLowerCase() == "yes") {
+      //   debugPrint(
+      //     "current rent per month ${commercial_current_rent_preLeasedTill.text.trim()}",
+      //   );
+      //   debugPrint("Lease Year ${commercial_lease_years.text.trim()}");
+      // } else {
+      //   debugPrint("Expected R.O.I % ${commercial_returned_RIO.text.trim()}");
+      // }
+      // debugPrint(
+      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      // );
+
+      final payload = await buildPropertyPayloadCommercialSellPlot();
+      debugPrint("Payload : ${payload.toJson()}");
+      final success = await _propertyService.createProperty(
+        payload.toJson(),
+        selectedImages.value,
+      );
+      return success;
+    } catch (e) {
+      print("Error adding residential pg: $e");
+      return false;
+    }
+  }
+
+  Future<bool> _addPropertyCommercialSellOther() async {
+    try {
+      // debugPrint("Property Type : ${propertyType.value}");
+      // debugPrint("Looking to Type : ${lookingTo.value}");
+      // debugPrint("City : ${cityController.text.trim()}");
+      // debugPrint("Sub Category : ${selectedIndex.value}");
+      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
+      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
+      // debugPrint("Property Name: : ${commercial_Property_Name.text.trim()}");
+      // debugPrint("Possession Status: ${commercial_rent_posessionStatus.value}");
+      // if (commercial_rent_posessionStatus.value == "Ready to move") {
+      //   debugPrint(
+      //     "Age of Property : ${commercial_rent_AgeOfPropertInYear.text.trim()}",
+      //   );
+      // } else {
+      //   debugPrint(
+      //     "Available From: ${commercial_rent_AvailableFrom.text.trim()}",
+      //   );
+      // }
+      // debugPrint("Zone Type : ${commercial_ZoneType.value}");
+      // debugPrint("Location Hub : ${commercial_LocationHub.value}");
+      // debugPrint("Carpet Area : ${commercial_Square_CarpetArea.text.trim()}");
+      // debugPrint("Built Up Area : ${commercial_Square_BuildArea.text.trim()}");
+      // debugPrint("ownership : ${commercial_ownerShipList.value}");
+      // debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
+      // debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
+      // debugPrint("Expected cost : ${commercial_rent_cost.text.trim()}");
+      // debugPrint("is Pre leased : ${commercial_isPreLeased.value}");
+      // if (commercial_isPreLeased.value.toLowerCase() == "yes") {
+      //   debugPrint(
+      //     "current rent per month ${commercial_current_rent_preLeasedTill.text.trim()}",
+      //   );
+      //   debugPrint("Lease Year ${commercial_lease_years.text.trim()}");
+      // } else {
+      //   debugPrint("Expected R.O.I % ${commercial_returned_RIO.text.trim()}");
+      // }
+      // debugPrint(
+      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      // );
+
+      final payload = await buildPropertyPayloadCommercialSellOther();
+      debugPrint("Payload : ${payload.toJson()}");
+      final success = await _propertyService.createProperty(
+        payload.toJson(),
+        selectedImages.value,
+      );
+      return success;
+    } catch (e) {
+      print("Error adding residential pg: $e");
+      return false;
+    }
+  }
+
+  Future<bool> _addPropertyCommercialSellOffice() async {
+    try {
+      // debugPrint("Property Type : ${propertyType.value}");
+      // debugPrint("Looking to Type : ${lookingTo.value}");
+      // debugPrint("City : ${cityController.text.trim()}");
+      // debugPrint("Sub Category : ${selectedIndex.value}");
+      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
+      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
+      // debugPrint("Possession Status: ${commercial_rent_posessionStatus.value}");
+      // if (commercial_rent_posessionStatus.value == "Ready to move") {
+      //   debugPrint(
+      //     "Age of Property : ${commercial_rent_AgeOfPropertInYear.text.trim()}",
+      //   );
+      // } else {
+      //   debugPrint(
+      //     "Available From: ${commercial_rent_AvailableFrom.text.trim()}",
+      //   );
+      // }
+      // debugPrint("Zone Type : ${commercial_ZoneType.value}");
+      // debugPrint("Location Hub : ${commercial_LocationHub.value}");
+      // debugPrint("Property Condition : ${commercial_property_condition.value}");
+      // if (commercial_property_condition.value == "Ready to use") {
+      //   debugPrint("Carpet Area : ${commercial_Square_CarpetArea.text.trim()}");
+      //   debugPrint(
+      //     "Built Up Area : ${commercial_Square_BuildArea.text.trim()}",
+      //   );
+      //   debugPrint("ownership : ${commercial_ownerShipList.value}");
+      //   debugPrint("Seats : ${commercial_seats.text.trim()}");
+      //   debugPrint("Cabins : ${commercial_cabins.text.trim()}");
+      //   debugPrint("Meeting Rooms : ${commercial_meeting_room.text.trim()}");
+      //   debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
+      //   debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
+      // } else {
+      //   debugPrint(
+      //     "Built Up Area : ${commercial_Square_BuildArea.text.trim()}",
+      //   );
+      //   debugPrint("ownership : ${commercial_ownerShipList.value}");
+      //   debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
+      //   debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
+      // }
+      //
+      // debugPrint("Expected Rent : ${commercial_rent_cost.text.trim()}");
+      // debugPrint(
+      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      // );
+
+      final payload = await buildPropertyPayloadCommercialSellOffice();
+      debugPrint("Payload : ${payload.toJson()}");
+      final success = await _propertyService.createProperty(
+        payload.toJson(),
+        selectedImages.value,
+      );
+      return success;
+    } catch (e) {
+      print("Error adding residential pg: $e");
+      return false;
+    }
+  }
+
+  Future<bool> _addPropertyCommercialSellShowRoom() async {
+    try {
+      // debugPrint("Property Type : ${propertyType.value}");
+      // debugPrint("Looking to Type : ${lookingTo.value}");
+      // debugPrint("City : ${cityController.text.trim()}");
+      // debugPrint("Sub Category : ${selectedIndex.value}");
+      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
+      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
+      // debugPrint("Possession Status: ${commercial_rent_posessionStatus.value}");
+      // if (commercial_rent_posessionStatus.value == "Ready to move") {
+      //   debugPrint(
+      //     "Age of Property : ${commercial_rent_AgeOfPropertInYear.text.trim()}",
+      //   );
+      // } else {
+      //   debugPrint(
+      //     "Available From: ${commercial_rent_AvailableFrom.text.trim()}",
+      //   );
+      // }
+      //
+      // debugPrint("Location Hub : ${commercial_LocationHub.value}");
+      //
+      // debugPrint("Carpet Area : ${commercial_Square_CarpetArea.text.trim()}");
+      // debugPrint("Built Up Area : ${commercial_Square_BuildArea.text.trim()}");
+      // debugPrint("ownership : ${commercial_ownerShipList.value}");
+      //
+      // debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
+      // debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
+      // debugPrint("Expected Rent : ${commercial_rent_cost.text.trim()}");
+      // debugPrint(
+      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      // );
+
+      final payload = await buildPropertyPayloadCommercialSellShowRoom();
+      debugPrint("Payload : ${payload.toJson()}");
+      final success = await _propertyService.createProperty(
+        payload.toJson(),
+        selectedImages.value,
+      );
+      return success;
+    } catch (e) {
+      print("Error adding residential pg: $e");
+      return false;
+    }
+  }
+
+  Future<bool> _addPropertyCommercialSellShop() async {
+    try {
+      // debugPrint("Property Type : ${propertyType.value}");
+      // debugPrint("Looking to Type : ${lookingTo.value}");
+      // debugPrint("City : ${cityController.text.trim()}");
+      // debugPrint("Sub Category : ${selectedIndex.value}");
+      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
+      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
+      // debugPrint("Possession Status: ${commercial_rent_posessionStatus.value}");
+      // if (commercial_rent_posessionStatus.value == "Ready to move") {
+      //   debugPrint(
+      //     "Age of Property : ${commercial_rent_AgeOfPropertInYear.text.trim()}",
+      //   );
+      // } else {
+      //   debugPrint(
+      //     "Available From: ${commercial_rent_AvailableFrom.text.trim()}",
+      //   );
+      // }
+      //
+      // debugPrint("Location Hub : ${commercial_LocationHub.value}");
+      //
+      // debugPrint("Carpet Area : ${commercial_Square_CarpetArea.text.trim()}");
+      // debugPrint("Built Up Area : ${commercial_Square_BuildArea.text.trim()}");
+      // debugPrint("ownership : ${commercial_ownerShipList.value}");
+      //
+      // debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
+      // debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
+      // debugPrint("Expected Rent : ${commercial_rent_cost.text.trim()}");
+      // debugPrint(
+      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      // );
+
+      final payload = await buildPropertyPayloadCommercialSellShop();
+      debugPrint("Payload : ${payload.toJson()}");
+      final success = await _propertyService.createProperty(
+        payload.toJson(),
+        selectedImages.value,
+      );
+      return success;
+    } catch (e) {
+      print("Error adding residential pg: $e");
+      return false;
+    }
+  }
+
+  Future<bool> _addPropertyCommercialSellWarehouse() async {
+    try {
+      // debugPrint("Property Type : ${propertyType.value}");
+      // debugPrint("Looking to Type : ${lookingTo.value}");
+      // debugPrint("City : ${cityController.text.trim()}");
+      // debugPrint("Sub Category : ${selectedIndex.value}");
+      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
+      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
+      // debugPrint("Possession Status: ${commercial_rent_posessionStatus.value}");
+      // if (commercial_rent_posessionStatus.value == "Ready to move") {
+      //   debugPrint(
+      //     "Age of Property : ${commercial_rent_AgeOfPropertInYear.text.trim()}",
+      //   );
+      // } else {
+      //   debugPrint(
+      //     "Available From: ${commercial_rent_AvailableFrom.text.trim()}",
+      //   );
+      // }
+      //
+      // debugPrint("Zone Type : ${commercial_ZoneType.value}");
+      // debugPrint("Location Hub : ${commercial_LocationHub.value}");
+      //
+      // debugPrint("Carpet Area : ${commercial_Square_CarpetArea.text.trim()}");
+      // debugPrint("Built Up Area : ${commercial_Square_BuildArea.text.trim()}");
+      // debugPrint("ownership : ${commercial_ownerShipList.value}");
+      //
+      // debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
+      // debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
+      // debugPrint("Expected Rent : ${commercial_rent_cost.text.trim()}");
+      // debugPrint(
+      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      // );
+
+      final payload = await buildPropertyPayloadCommercialSellWarehouse();
+      debugPrint("Payload : ${payload.toJson()}");
+      final success = await _propertyService.createProperty(
+        payload.toJson(),
+        selectedImages.value,
+      );
+      return success;
+    } catch (e) {
+      print("Error adding residential pg: $e");
+      return false;
     }
   }
 
@@ -2093,7 +2541,7 @@ class CreatePropertyController extends GetxController {
               ? sell_rent_propertyDescriptionController.text.trim()
               : null,
       propertyDetails: PropertyDetails(
-        bhk: int.tryParse(bhkType.value),
+        bhk: int.tryParse(bhkType.value.substring(0, 1)),
         bathroom: rent_Bathroom.value,
         balcony: rent_Balcony.value,
         propertyBuiltUpArea:
@@ -2196,7 +2644,7 @@ class CreatePropertyController extends GetxController {
               ? sell_rent_propertyDescriptionController.text.trim()
               : null,
       propertyDetails: PropertyDetails(
-        bhk: int.tryParse(bhkType.value),
+        bhk: int.tryParse(bhkType.value.substring(0, 1)),
         bathroom: rent_Bathroom.value,
         balcony: rent_Balcony.value,
 
@@ -2253,6 +2701,12 @@ class CreatePropertyController extends GetxController {
                   propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
+                  maintenance:
+                      sell_rent_Maintenance_Charges.text.trim().isNotEmpty
+                          ? double.tryParse(
+                            sell_rent_Maintenance_Charges.text.trim(),
+                          )
+                          : null,
                 )
                 : null,
         furnishInfo:
@@ -2854,7 +3308,10 @@ class CreatePropertyController extends GetxController {
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
               : null,
-      propertyType: selectedIndex.value.isNotEmpty ? "retail_shop" : null,
+      propertyType:
+          selectedIndex.value.isNotEmpty
+              ? selectedIndex.value.toLowerCase()
+              : null,
       propertyDetails: PropertyDetails(
         possessionInfo: PossessionInfo(
           possessionDate:
@@ -2915,6 +3372,688 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
+        ),
+      ),
+
+      location:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
+
+      address:
+          commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+              ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      ownerEmail: user != null ? user.user?.email : "",
+      ownerPhone: user != null ? user.user?.phone : "",
+      ownerName:
+          user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
+    );
+  }
+
+  Future<AddPropertyModel> buildPropertyPayloadCommercialSellPlot() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? "";
+
+    return AddPropertyModel(
+      type:
+          propertyType.value.isNotEmpty
+              ? propertyType.value.toLowerCase()
+              : null,
+      listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
+      city:
+          cityController.text.trim().isNotEmpty
+              ? cityController.text.trim()
+              : null,
+      propertyType:
+          selectedIndex.value.isNotEmpty
+              ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDetails: PropertyDetails(
+        zoneType:
+            commercial_ZoneType.value.isNotEmpty
+                ? commercial_ZoneType.value
+                : null,
+        amenities:
+            selectedCommercialAmenities.value.isNotEmpty
+                ? selectedCommercialAmenities.value
+                : null,
+
+        financialInfo: FinancialInfo(
+          propertyPrice:
+              commercial_rent_cost.text.trim().isNotEmpty
+                  ? double.tryParse(commercial_rent_cost.text.trim())
+                  : null,
+          // TODO: Lease Year
+          propertyRentPerMonth:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          monthlyRent:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          // TODO: R.O.I
+        ),
+        plotInfo: PlotInfo(
+          // TODO: Dynamic
+          // TODO: possession date Available From
+          plotLength: 500,
+          plotWidth: 400,
+          possessionStatus: "In Future",
+          plotArea:
+              commercial_plot.text.trim().isNotEmpty
+                  ? double.tryParse(commercial_plot.text.trim())
+                  : null,
+          plotAreaUnit:
+              commercial_plotArea.value.isNotEmpty
+                  ? commercial_plotArea.value
+                  : null,
+          possessionDate: formatDateForBackend(
+            // commercial_rent_AvailableFrom.text.trim(),
+            DateTime.now().toIso8601String(),
+          ),
+        ),
+      ),
+
+      location:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
+
+      address:
+          commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+              ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      ownerEmail: user != null ? user.user?.email : "",
+      ownerPhone: user != null ? user.user?.phone : "",
+      ownerName:
+          user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
+    );
+  }
+
+  Future<AddPropertyModel> buildPropertyPayloadCommercialSellOther() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? "";
+
+    return AddPropertyModel(
+      // TODO: Building, location hub, ownership, locality
+      type:
+          propertyType.value.isNotEmpty
+              ? propertyType.value.toLowerCase()
+              : null,
+      listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
+      city:
+          cityController.text.trim().isNotEmpty
+              ? cityController.text.trim()
+              : null,
+      propertyType: selectedIndex.value.isNotEmpty ? "others" : null,
+
+      propertyDetails: PropertyDetails(
+        possessionInfo: PossessionInfo(
+          possessionDate:
+              commercial_rent_posessionStatus.value == "Under Construction"
+                  ? commercial_rent_AvailableFrom.text.trim().isNotEmpty
+                      ? formatDateForBackend(
+                        commercial_rent_AvailableFrom.text.trim(),
+                      )
+                      : null
+                  : null,
+          possessionStatus:
+              commercial_rent_posessionStatus.value.isNotEmpty
+                  ? commercial_rent_posessionStatus.value
+                  : null,
+          propertyAgeInYear:
+              commercial_rent_posessionStatus.value == "Ready to move"
+                  ? commercial_rent_AgeOfPropertInYear.text.trim().isNotEmpty
+                      ? commercial_rent_AgeOfPropertInYear.text.trim()
+                      : null
+                  : null,
+        ),
+        zoneType:
+            commercial_ZoneType.value.isNotEmpty
+                ? commercial_ZoneType.value
+                : null,
+        propertyBuiltUpArea:
+            commercial_Square_BuildArea.text.trim().isNotEmpty
+                ? double.tryParse(commercial_Square_BuildArea.text.trim())
+                : null,
+        propertyCarpetArea:
+            commercial_Square_CarpetArea.text.trim().isNotEmpty
+                ? double.tryParse(commercial_Square_CarpetArea.text.trim())
+                : null,
+        propertyBuiltUpAreaUnit:
+            commercial_Square_AreaUnti_Build.value.isNotEmpty
+                ? commercial_Square_AreaUnti_Build.value
+                : null,
+        propertyCarpetAreaUnit:
+            commercial_Square_AreaUnti_Carpet.value.isNotEmpty
+                ? commercial_Square_AreaUnti_Carpet.value
+                : null,
+        floorInfo: FloorInfo(
+          totalFloors:
+              commercial_total_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_total_floor.text.trim())
+                  : null,
+          floorNumber:
+              commercial_your_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_your_floor.text.trim())
+                  : null,
+        ),
+        financialInfo: FinancialInfo(
+          propertyPrice:
+              commercial_rent_cost.text.trim().isNotEmpty
+                  ? double.tryParse(commercial_rent_cost.text.trim())
+                  : null,
+          // TODO: Lease Year
+          propertyRentPerMonth:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          monthlyRent:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          // TODO: R.O.I
+        ),
+
+        amenities:
+            selectedCommercialAmenities.value.isNotEmpty
+                ? selectedCommercialAmenities.value
+                : null,
+      ),
+
+      location:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
+
+      address:
+          commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+              ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      ownerEmail: user != null ? user.user?.email : "",
+      ownerPhone: user != null ? user.user?.phone : "",
+      ownerName:
+          user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
+    );
+  }
+
+  Future<AddPropertyModel> buildPropertyPayloadCommercialSellOffice() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? "";
+
+    return AddPropertyModel(
+      // TODO: Building, location hub, ownership
+      type:
+          propertyType.value.isNotEmpty
+              ? propertyType.value.toLowerCase()
+              : null,
+      listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
+      city:
+          cityController.text.trim().isNotEmpty
+              ? cityController.text.trim()
+              : null,
+      propertyType:
+          selectedIndex.value.isNotEmpty
+              ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDetails: PropertyDetails(
+        possessionInfo: PossessionInfo(
+          possessionDate:
+              commercial_rent_posessionStatus.value == "Under Construction"
+                  ? commercial_rent_AvailableFrom.text.trim().isNotEmpty
+                      ? formatDateForBackend(
+                        commercial_rent_AvailableFrom.text.trim(),
+                      )
+                      : null
+                  : null,
+          possessionStatus:
+              commercial_rent_posessionStatus.value.isNotEmpty
+                  ? commercial_rent_posessionStatus.value
+                  : null,
+          propertyAgeInYear:
+              commercial_rent_posessionStatus.value == "Ready to move"
+                  ? commercial_rent_AgeOfPropertInYear.text.trim().isNotEmpty
+                      ? commercial_rent_AgeOfPropertInYear.text.trim()
+                      : null
+                  : null,
+        ),
+        zoneType:
+            commercial_ZoneType.value.isNotEmpty
+                ? commercial_ZoneType.value
+                : null,
+        propertyCondition:
+            commercial_property_condition.value.isNotEmpty
+                ? commercial_property_condition.value.toLowerCase().replaceAll(
+                  " ",
+                  "_",
+                )
+                : null,
+        propertyBuiltUpArea:
+            commercial_Square_BuildArea.text.trim().isNotEmpty
+                ? double.tryParse(commercial_Square_BuildArea.text.trim())
+                : null,
+        propertyCarpetArea:
+            commercial_property_condition.value == "Ready to use"
+                ? commercial_Square_CarpetArea.text.trim().isNotEmpty
+                    ? double.tryParse(commercial_Square_CarpetArea.text.trim())
+                    : null
+                : null,
+        propertyBuiltUpAreaUnit:
+            commercial_property_condition.value == "Ready to use"
+                ? commercial_Square_AreaUnti_Build.value.isNotEmpty
+                    ? commercial_Square_AreaUnti_Build.value
+                    : null
+                : null,
+        propertyCarpetAreaUnit:
+            commercial_Square_AreaUnti_Carpet.value.isNotEmpty
+                ? commercial_Square_AreaUnti_Carpet.value
+                : null,
+        facilitiesInfo:
+            commercial_property_condition.value == "Ready to use"
+                ? FacilitiesInfo(
+                  minSeats:
+                      commercial_seats.text.trim().isNotEmpty
+                          ? _asInt(commercial_seats.text.trim())
+                          : null,
+                  minSeatsCamel:
+                      commercial_seats.text.trim().isNotEmpty
+                          ? _asInt(commercial_seats.text.trim())
+                          : null,
+                  numberOfCabins:
+                      commercial_cabins.text.trim().isNotEmpty
+                          ? _asInt(commercial_cabins.text.trim())
+                          : null,
+                  numberOfCabinsCamel:
+                      commercial_cabins.text.trim().isNotEmpty
+                          ? _asInt(commercial_cabins.text.trim())
+                          : null,
+                  numberOfMeetingRooms:
+                      commercial_meeting_room.text.trim().isNotEmpty
+                          ? _asInt(commercial_meeting_room.text.trim())
+                          : null,
+                  numberOfMeetingRoomsCamel:
+                      commercial_meeting_room.text.trim().isNotEmpty
+                          ? _asInt(commercial_meeting_room.text.trim())
+                          : null,
+                )
+                : null,
+        floorInfo: FloorInfo(
+          totalFloors:
+              commercial_total_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_total_floor.text.trim())
+                  : null,
+          floorNumber:
+              commercial_your_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_your_floor.text.trim())
+                  : null,
+        ),
+        amenities:
+            selectedCommercialAmenities.value.isNotEmpty
+                ? selectedCommercialAmenities.value
+                : null,
+
+        financialInfo: FinancialInfo(
+          propertyPrice:
+              commercial_rent_cost.text.trim().isNotEmpty
+                  ? double.tryParse(commercial_rent_cost.text.trim())
+                  : null,
+          // TODO: Lease Year
+          propertyRentPerMonth:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          monthlyRent:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          // TODO: R.O.I
+        ),
+      ),
+
+      location:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
+
+      address:
+          commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+              ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      ownerEmail: user != null ? user.user?.email : "",
+      ownerPhone: user != null ? user.user?.phone : "",
+      ownerName:
+          user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
+    );
+  }
+
+  Future<AddPropertyModel> buildPropertyPayloadCommercialSellShowRoom() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? "";
+
+    return AddPropertyModel(
+      // TODO: Building, location hub, ownership
+      type:
+          propertyType.value.isNotEmpty
+              ? propertyType.value.toLowerCase()
+              : null,
+      listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
+      city:
+          cityController.text.trim().isNotEmpty
+              ? cityController.text.trim()
+              : null,
+      propertyType:
+          selectedIndex.value.isNotEmpty
+              ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDetails: PropertyDetails(
+        possessionInfo: PossessionInfo(
+          possessionDate:
+              commercial_rent_posessionStatus.value == "Under Construction"
+                  ? commercial_rent_AvailableFrom.text.trim().isNotEmpty
+                      ? formatDateForBackend(
+                        commercial_rent_AvailableFrom.text.trim(),
+                      )
+                      : null
+                  : null,
+          possessionStatus:
+              commercial_rent_posessionStatus.value.isNotEmpty
+                  ? commercial_rent_posessionStatus.value
+                  : null,
+          propertyAgeInYear:
+              commercial_rent_posessionStatus.value == "Ready to move"
+                  ? commercial_rent_AgeOfPropertInYear.text.trim().isNotEmpty
+                      ? commercial_rent_AgeOfPropertInYear.text.trim()
+                      : null
+                  : null,
+        ),
+
+        propertyBuiltUpArea:
+            commercial_Square_BuildArea.text.trim().isNotEmpty
+                ? double.tryParse(commercial_Square_BuildArea.text.trim())
+                : null,
+        propertyCarpetArea:
+            commercial_Square_CarpetArea.text.trim().isNotEmpty
+                ? double.tryParse(commercial_Square_CarpetArea.text.trim())
+                : null,
+        propertyBuiltUpAreaUnit:
+            commercial_Square_AreaUnti_Build.value.isNotEmpty
+                ? commercial_Square_AreaUnti_Build.value
+                : null,
+        propertyCarpetAreaUnit:
+            commercial_Square_AreaUnti_Carpet.value.isNotEmpty
+                ? commercial_Square_AreaUnti_Carpet.value
+                : null,
+
+        floorInfo: FloorInfo(
+          totalFloors:
+              commercial_total_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_total_floor.text.trim())
+                  : null,
+          floorNumber:
+              commercial_your_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_your_floor.text.trim())
+                  : null,
+        ),
+        amenities:
+            selectedCommercialAmenities.value.isNotEmpty
+                ? selectedCommercialAmenities.value
+                : null,
+
+        financialInfo: FinancialInfo(
+          propertyPrice:
+              commercial_rent_cost.text.trim().isNotEmpty
+                  ? double.tryParse(commercial_rent_cost.text.trim())
+                  : null,
+          // TODO: Lease Year
+          propertyRentPerMonth:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          monthlyRent:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          // TODO: R.O.I
+        ),
+      ),
+
+      location:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
+
+      address:
+          commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+              ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      ownerEmail: user != null ? user.user?.email : "",
+      ownerPhone: user != null ? user.user?.phone : "",
+      ownerName:
+          user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
+    );
+  }
+
+  Future<AddPropertyModel> buildPropertyPayloadCommercialSellShop() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? "";
+
+    return AddPropertyModel(
+      // TODO: Building, location hub, ownership
+      type:
+          propertyType.value.isNotEmpty
+              ? propertyType.value.toLowerCase()
+              : null,
+      listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
+      city:
+          cityController.text.trim().isNotEmpty
+              ? cityController.text.trim()
+              : null,
+      propertyType: selectedIndex.value.isNotEmpty ? "retail_shop" : null,
+      propertyDetails: PropertyDetails(
+        possessionInfo: PossessionInfo(
+          possessionDate:
+              commercial_rent_posessionStatus.value == "Under Construction"
+                  ? commercial_rent_AvailableFrom.text.trim().isNotEmpty
+                      ? formatDateForBackend(
+                        commercial_rent_AvailableFrom.text.trim(),
+                      )
+                      : null
+                  : null,
+          possessionStatus:
+              commercial_rent_posessionStatus.value.isNotEmpty
+                  ? commercial_rent_posessionStatus.value
+                  : null,
+          propertyAgeInYear:
+              commercial_rent_posessionStatus.value == "Ready to move"
+                  ? commercial_rent_AgeOfPropertInYear.text.trim().isNotEmpty
+                      ? commercial_rent_AgeOfPropertInYear.text.trim()
+                      : null
+                  : null,
+        ),
+
+        propertyBuiltUpArea:
+            commercial_Square_BuildArea.text.trim().isNotEmpty
+                ? double.tryParse(commercial_Square_BuildArea.text.trim())
+                : null,
+        propertyCarpetArea:
+            commercial_Square_CarpetArea.text.trim().isNotEmpty
+                ? double.tryParse(commercial_Square_CarpetArea.text.trim())
+                : null,
+        propertyBuiltUpAreaUnit:
+            commercial_Square_AreaUnti_Build.value.isNotEmpty
+                ? commercial_Square_AreaUnti_Build.value
+                : null,
+        propertyCarpetAreaUnit:
+            commercial_Square_AreaUnti_Carpet.value.isNotEmpty
+                ? commercial_Square_AreaUnti_Carpet.value
+                : null,
+
+        floorInfo: FloorInfo(
+          totalFloors:
+              commercial_total_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_total_floor.text.trim())
+                  : null,
+          floorNumber:
+              commercial_your_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_your_floor.text.trim())
+                  : null,
+        ),
+        amenities:
+            selectedCommercialAmenities.value.isNotEmpty
+                ? selectedCommercialAmenities.value
+                : null,
+
+        financialInfo: FinancialInfo(
+          propertyPrice:
+              commercial_rent_cost.text.trim().isNotEmpty
+                  ? double.tryParse(commercial_rent_cost.text.trim())
+                  : null,
+          // TODO: Lease Year
+          propertyRentPerMonth:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          monthlyRent:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          // TODO: R.O.I
+        ),
+      ),
+
+      location:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
+
+      address:
+          commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+              ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      ownerEmail: user != null ? user.user?.email : "",
+      ownerPhone: user != null ? user.user?.phone : "",
+      ownerName:
+          user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
+    );
+  }
+
+  Future<AddPropertyModel> buildPropertyPayloadCommercialSellWarehouse() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? "";
+
+    return AddPropertyModel(
+      // TODO: Building, location hub, ownership
+      type:
+          propertyType.value.isNotEmpty
+              ? propertyType.value.toLowerCase()
+              : null,
+      listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
+      city:
+          cityController.text.trim().isNotEmpty
+              ? cityController.text.trim()
+              : null,
+      propertyType:
+          selectedIndex.value.isNotEmpty
+              ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDetails: PropertyDetails(
+        possessionInfo: PossessionInfo(
+          possessionDate:
+              commercial_rent_posessionStatus.value == "Under Construction"
+                  ? commercial_rent_AvailableFrom.text.trim().isNotEmpty
+                      ? formatDateForBackend(
+                        commercial_rent_AvailableFrom.text.trim(),
+                      )
+                      : null
+                  : null,
+          possessionStatus:
+              commercial_rent_posessionStatus.value.isNotEmpty
+                  ? commercial_rent_posessionStatus.value
+                  : null,
+          propertyAgeInYear:
+              commercial_rent_posessionStatus.value == "Ready to move"
+                  ? commercial_rent_AgeOfPropertInYear.text.trim().isNotEmpty
+                      ? commercial_rent_AgeOfPropertInYear.text.trim()
+                      : null
+                  : null,
+        ),
+        zoneType:
+            commercial_ZoneType.value.isNotEmpty
+                ? commercial_ZoneType.value
+                : null,
+        propertyBuiltUpArea:
+            commercial_Square_BuildArea.text.trim().isNotEmpty
+                ? double.tryParse(commercial_Square_BuildArea.text.trim())
+                : null,
+        propertyCarpetArea:
+            commercial_Square_CarpetArea.text.trim().isNotEmpty
+                ? double.tryParse(commercial_Square_CarpetArea.text.trim())
+                : null,
+        propertyBuiltUpAreaUnit:
+            commercial_Square_AreaUnti_Build.value.isNotEmpty
+                ? commercial_Square_AreaUnti_Build.value
+                : null,
+        propertyCarpetAreaUnit:
+            commercial_Square_AreaUnti_Carpet.value.isNotEmpty
+                ? commercial_Square_AreaUnti_Carpet.value
+                : null,
+
+        floorInfo: FloorInfo(
+          totalFloors:
+              commercial_total_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_total_floor.text.trim())
+                  : null,
+          floorNumber:
+              commercial_your_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_your_floor.text.trim())
+                  : null,
+        ),
+        amenities:
+            selectedCommercialAmenities.value.isNotEmpty
+                ? selectedCommercialAmenities.value
+                : null,
+
+        financialInfo: FinancialInfo(
+          propertyPrice:
+              commercial_rent_cost.text.trim().isNotEmpty
+                  ? double.tryParse(commercial_rent_cost.text.trim())
+                  : null,
+          // TODO: Lease Year
+          propertyRentPerMonth:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          monthlyRent:
+              (commercial_isPreLeased.value.toLowerCase() == "yes")
+                  ? double.tryParse(
+                    commercial_current_rent_preLeasedTill.text.trim(),
+                  )
+                  : null,
+          // TODO: R.O.I
         ),
       ),
 
@@ -3148,7 +4287,8 @@ class PropertyFurnishInfo {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    if (furnishType != null) data['furnish_type'] = furnishType;
+    if (furnishType != null)
+      data['furnish_type'] = furnishType!.toLowerCase().replaceAll(" ", "-");
     return data;
   }
 }
@@ -3169,6 +4309,7 @@ class ParkingInfo {
 
 class FinancialInfo {
   final double? propertyPrice;
+  double? maintenance;
   final double? propertyRentPerMonth;
   final double? pricePerSqft;
   final double? monthlyRent;
@@ -3178,6 +4319,7 @@ class FinancialInfo {
 
   FinancialInfo({
     this.propertyPrice,
+    this.maintenance,
     this.propertyRentPerMonth,
     this.pricePerSqft,
     this.brokerCommission,
@@ -3191,6 +4333,7 @@ class FinancialInfo {
     if (propertyPrice != null) data['property_price'] = propertyPrice;
     if (propertyRentPerMonth != null)
       data['property_rent_per_month'] = propertyRentPerMonth;
+    if (maintenance != null) data['maintenance'] = maintenance;
     if (pricePerSqft != null) data['price_per_sqft'] = pricePerSqft;
     if (brokerCommission != null) data['broker_commission'] = brokerCommission;
     if (propertySecurityDeposit != null)

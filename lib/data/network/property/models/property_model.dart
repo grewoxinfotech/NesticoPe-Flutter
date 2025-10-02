@@ -845,8 +845,7 @@ class Items {
     city = json['city'] as String?;
     state = json['state'] as String?;
     zipCode = json['zipCode'] as String?;
-    location =
-        json['location'] ;
+    location = json['location'];
     nearbyLocations =
         json['nearbyLocations'] != null
             ? (json['nearbyLocations'] as List)
@@ -891,70 +890,6 @@ class Items {
     updatedAt = json['updatedAt'] as String?;
   }
 
-  // Map<String, dynamic> toJson() {
-  //   final Map<String, dynamic> data = {};
-  //   if (propertyMedia != null) data['propertyMedia'] = propertyMedia!.toJson();
-  //   data['id'] = id;
-  //   data['created_by'] = createdBy;
-  //   data['updated_by'] = updatedBy;
-  //   data['title'] = title;
-  //   data['type'] = type;
-  //   data['listingType'] = listingType;
-  //   data['propertyType'] = propertyType;
-  //   data['propertyDescription'] = propertyDescription;
-  //   data['keywords'] = keywords;
-  //   data['propertyImages'] = propertyImages;
-  //   if (propertyDetails != null) {
-  //     data['propertyDetails'] = propertyDetails!.toJson();
-  //   }
-  //   data['address'] = address;
-  //   data['city'] = city;
-  //   data['state'] = state;
-  //   data['zipCode'] = zipCode;
-  //   if (location != null) data['location'] = location;
-  //   if (nearbyLocations != null) {
-  //     data['nearbyLocations'] =
-  //         nearbyLocations!.map((v) => v.toJson()).toList();
-  //   }
-  //   data['reraId'] = reraId;
-  //   data['property_status'] = propertyStatus;
-  //   data['builderName'] = builderName;
-  //   data['projectName'] = projectName;
-  //   data['ownerPhone'] = ownerPhone;
-  //   data['ownerName'] = ownerName;
-  //   data['ownerEmail'] = ownerEmail;
-  //   data['isVerified'] = isVerified;
-  //   data['verifiedBy'] = verifiedBy;
-  //   data['verifiedAt'] = verifiedAt;
-  //   data['totalInquiries'] = totalInquiries;
-  //   data['totalViews'] = totalViews;
-  //   data['approval_status'] = approvalStatus;
-  //   data['approval_comment'] = approvalComment;
-  //   data['approved_by'] = approvedBy;
-  //   data['approved_at'] = approvedAt;
-  //   data['totalFavorites'] = totalFavorites;
-  //   data['totalShares'] = totalShares;
-  //   data['totalVisits'] = totalVisits;
-  //   data['totalSales'] = totalSales;
-  //   data['totalCommissions'] = totalCommissions;
-  //   data['assignedTo'] = assignedTo;
-  //   data['assignmentDate'] = assignmentDate;
-  //   data['assignmentExpiryDate'] = assignmentExpiryDate;
-  //   data['potentialEarnings'] = potentialEarnings;
-  //   data['assignmentStatus'] = assignmentStatus;
-  //   data['performanceScore'] = performanceScore;
-  //   data['expiryDate'] = expiryDate;
-  //   data['lastRenewalDate'] = lastRenewalDate;
-  //   data['renewalCount'] = renewalCount;
-  //   data['isExpired'] = isExpired;
-  //   data['totalReports'] = totalReports;
-  //   data['isHiddenDueToReports'] = isHiddenDueToReports;
-  //   data['lastReportedAt'] = lastReportedAt;
-  //   data['createdAt'] = createdAt;
-  //   data['updatedAt'] = updatedAt;
-  //   return data;
-  // }
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
 
@@ -967,7 +902,8 @@ class Items {
     data['propertyType'] = propertyType ?? "apartment";
     data['propertyDescription'] = propertyDescription ?? "No description";
     if (keywords != null && keywords!.isNotEmpty) data['keywords'] = keywords;
-    if (propertyImages != null && propertyImages!.isNotEmpty) data['propertyImages'] = propertyImages;
+    if (propertyImages != null && propertyImages!.isNotEmpty)
+      data['propertyImages'] = propertyImages;
     if (propertyDetails != null) {
       final details = propertyDetails!.toJson();
       details.removeWhere((key, value) => value == null);
@@ -981,7 +917,8 @@ class Items {
     data['zipCode'] = zipCode ?? "";
     data['location'] = location ?? "";
     if (nearbyLocations != null && nearbyLocations!.isNotEmpty) {
-      data['nearbyLocations'] = nearbyLocations!.map((v) => v.toJson()).toList();
+      data['nearbyLocations'] =
+          nearbyLocations!.map((v) => v.toJson()).toList();
     }
     data['reraId'] = reraId;
     data['property_status'] = propertyStatus;
@@ -1022,22 +959,7 @@ class Items {
 
     return data;
   }
-
 }
-
-// class PropertyMedia {
-//   List<String>? images;
-//   List<String>? videos;
-//
-//   PropertyMedia({this.images, this.videos});
-//
-//   PropertyMedia.fromJson(Map<String, dynamic> json) {
-//     images = (json['images'] as List?)?.map((e) => e as String).toList();
-//     videos = (json['videos'] as List?)?.map((e) => e as String).toList();
-//   }
-//
-//   Map<String, dynamic> toJson() => {'images': images, 'videos': videos};
-// }
 
 class PropertyMedia {
   List<String>? images;
@@ -1059,7 +981,6 @@ class PropertyMedia {
   };
 }
 
-
 class PropertyDetails {
   int? bhk;
   int? balcony;
@@ -1077,6 +998,7 @@ class PropertyDetails {
   double? propertyBuiltUpArea;
   String? propertyCarpetAreaUnit;
   String? propertyBuiltUpAreaUnit;
+  PgInfo? pgInfo;
 
   PropertyDetails({
     this.bhk,
@@ -1094,7 +1016,8 @@ class PropertyDetails {
     this.propertyCarpetArea,
     this.propertyBuiltUpArea,
     this.propertyBuiltUpAreaUnit,
-    this.propertyCarpetAreaUnit
+    this.propertyCarpetAreaUnit,
+    this.pgInfo,
   });
 
   PropertyDetails.fromJson(Map<String, dynamic> json) {
@@ -1108,8 +1031,10 @@ class PropertyDetails {
             ? FloorInfo.fromJson(json['floor_info'] as Map<String, dynamic>)
             : null;
     furnishInfo =
-        json['furnish_info'] != null
-            ? FurnishInfo.fromJson(json['furnish_info'] as Map<String, dynamic>)
+        json['property_furnish_info'] != null
+            ? FurnishInfo.fromJson(
+              json['property_furnish_info'] as Map<String, dynamic>,
+            )
             : null;
     parkingInfo =
         json['parking_info'] != null
@@ -1137,37 +1062,17 @@ class PropertyDetails {
     );
     propertyCarpetAreaUnit = json["property_carpet_area_unit"];
     propertyBuiltUpAreaUnit = json["property_built_up_area_unit"];
+    pgInfo = json['pg_info'] != null ? PgInfo.fromJson(json['pg_info']) : null;
   }
 
-  // Map<String, dynamic> toJson() {
-  //   final Map<String, dynamic> data = {};
-  //   data['bhk'] = bhk;
-  //   data['balcony'] = balcony;
-  //   data['bathroom'] = bathroom;
-  //   data['amenities'] = amenities;
-  //   data['zone_type'] = zoneType;
-  //   if (floorInfo != null) data['floor_info'] = floorInfo!.toJson();
-  //   if (furnishInfo != null) data['furnish_info'] = furnishInfo!.toJson();
-  //   if (parkingInfo != null) data['parking_info'] = parkingInfo!.toJson();
-  //   if (financialInfo != null) data['financial_info'] = financialInfo!.toJson();
-  //   if (possessionInfo != null) {
-  //     data['possession_info'] = possessionInfo!.toJson();
-  //   }
-  //   data['property_facing'] = propertyFacing;
-  //   data['property_condition'] = propertyCondition;
-  //   data['property_carpet_area'] = propertyCarpetArea;
-  //   data['property_built_up_area'] = propertyBuiltUpArea;
-  //   data['property_built_up_area_unit'] = propertyBuiltUpAreaUnit;
-  //   data['property_carpet_area_unit']=propertyCarpetAreaUnit;
-  //   return data;
-  // }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
 
     data['bhk'] = bhk;
     data['balcony'] = balcony;
     data['bathroom'] = bathroom;
-    if (amenities != null && amenities!.isNotEmpty) data['amenities'] = amenities;
+    if (amenities != null && amenities!.isNotEmpty)
+      data['amenities'] = amenities;
     if (zoneType != null) data['zone_type'] = zoneType;
 
     if (floorInfo != null) data['floor_info'] = floorInfo!.toJson();
@@ -1175,7 +1080,7 @@ class PropertyDetails {
       final furnish = furnishInfo!.toJson();
       // remove null fields
       furnish.removeWhere((key, value) => value == null);
-      data['furnish_info'] = furnish;
+      data['property_furnish_info'] = furnish;
     }
     if (parkingInfo != null) {
       final parking = parkingInfo!.toJson();
@@ -1187,18 +1092,23 @@ class PropertyDetails {
       finance.removeWhere((key, value) => value == null);
       data['financial_info'] = finance;
     }
-    if (possessionInfo != null) data['possession_info'] = possessionInfo!.toJson();
+    if (possessionInfo != null)
+      data['possession_info'] = possessionInfo!.toJson();
 
     if (propertyFacing != null) data['property_facing'] = propertyFacing;
-    if (propertyCondition != null) data['property_condition'] = propertyCondition;
-    if (propertyCarpetArea != null) data['property_carpet_area'] = propertyCarpetArea;
-    if (propertyBuiltUpArea != null) data['property_built_up_area'] = propertyBuiltUpArea;
-    if (propertyCarpetAreaUnit != null) data['property_carpet_area_unit'] = propertyCarpetAreaUnit;
-    if (propertyBuiltUpAreaUnit != null) data['property_built_up_area_unit'] = propertyBuiltUpAreaUnit;
-
+    if (propertyCondition != null)
+      data['property_condition'] = propertyCondition;
+    if (propertyCarpetArea != null)
+      data['property_carpet_area'] = propertyCarpetArea;
+    if (propertyBuiltUpArea != null)
+      data['property_built_up_area'] = propertyBuiltUpArea;
+    if (propertyCarpetAreaUnit != null)
+      data['property_carpet_area_unit'] = propertyCarpetAreaUnit;
+    if (propertyBuiltUpAreaUnit != null)
+      data['property_built_up_area_unit'] = propertyBuiltUpAreaUnit;
+    if (pgInfo != null) data['pg_info'] = pgInfo!.toJson();
     return data;
   }
-
 }
 
 class FloorInfo {
@@ -1234,18 +1144,13 @@ class FurnishInfo {
             : null;
   }
 
-  // Map<String, dynamic> toJson() => {
-  //   'furnish_type': furnishType,
-  //   'furnish_details': furnishDetails?.toJson(),
-  // };
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     if (furnishType != null) data['furnish_type'] = furnishType;
-    if (furnishDetails != null) data['furnish_details'] = furnishDetails!.toJson();
+    if (furnishDetails != null)
+      data['furnish_details'] = furnishDetails!.toJson();
     return data;
   }
-
 }
 
 class FurnishDetails {
@@ -1279,7 +1184,10 @@ class ParkingInfo {
     open = json['open_parking'];
   }
 
-  Map<String, dynamic> toJson() => {'covered_parking': covered, 'open_parking': open};
+  Map<String, dynamic> toJson() => {
+    'covered_parking': covered,
+    'open_parking': open,
+  };
 }
 // class ParkingInfo {
 //   int? covered;
@@ -1299,6 +1207,7 @@ class FinancialInfo {
   double price;
   double? maintenance;
   double propertyRentPerMonth;
+  final double? monthlyRent;
   double pricePerSqft;
   double brokerCommission;
   double propertySecurityDeposit;
@@ -1308,6 +1217,7 @@ class FinancialInfo {
     this.price = 0,
     this.maintenance,
     this.propertyRentPerMonth = 0,
+    this.monthlyRent,
     this.pricePerSqft = 0,
     this.brokerCommission = 0,
     this.propertySecurityDeposit = 0,
@@ -1324,6 +1234,7 @@ class FinancialInfo {
           TypeConverter.parseDouble(json['broker_commission']) ?? 0,
       propertySecurityDeposit =
           TypeConverter.parseDouble(json['property_security_deposit']) ?? 0,
+      monthlyRent = TypeConverter.parseDouble(json['monthlyRent']) ?? 0,
       negotiable = json['negotiable'] ?? false;
 
   Map<String, dynamic> toJson() {
@@ -1385,6 +1296,179 @@ class NearbyLocations {
   }
 
   Map<String, dynamic> toJson() => {'name': name, 'distance': distance};
+}
+
+/// PG Information
+
+class PgInfo {
+  final String? pgName;
+  final String? pgFor;
+  final String? pgSuitedFor;
+  final String? pgMealOffered;
+  final String? pgCommonArea;
+  final String? pgManageBy;
+  final bool? pgOwnerStaysAtPg;
+  final double? mealChargesPerMonth;
+  final double? electricityChargesPerMonth;
+  final PgRules? pgRules;
+  final PgRoomInfo? pgRoomInfo;
+
+  PgInfo({
+    this.pgName,
+    this.pgFor,
+    this.pgSuitedFor,
+    this.pgMealOffered,
+    this.pgCommonArea,
+    this.pgManageBy,
+    this.pgOwnerStaysAtPg,
+    this.mealChargesPerMonth,
+    this.electricityChargesPerMonth,
+    this.pgRules,
+    this.pgRoomInfo,
+  });
+
+  factory PgInfo.fromJson(Map<String, dynamic> json) {
+    return PgInfo(
+      pgName: json['pg_name'],
+      pgFor: json['pg_for'],
+      pgSuitedFor: json['pg_suited_for'],
+      pgMealOffered: json['pg_meal_offered'],
+      pgCommonArea: json['pg_common_area'],
+      pgManageBy: json['pg_manage_by'],
+      pgOwnerStaysAtPg: json['pg_owner_stays_at_pg'],
+      mealChargesPerMonth: json['meal_charges_per_month']?.toDouble(),
+      electricityChargesPerMonth:
+          json['electricity_charges_per_month']?.toDouble(),
+      pgRules:
+          json['pg_rules'] != null ? PgRules.fromJson(json['pg_rules']) : null,
+      pgRoomInfo:
+          json['pg_room_info'] != null
+              ? PgRoomInfo.fromJson(json['pg_room_info'])
+              : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (pgName != null) data['pg_name'] = pgName;
+    if (pgFor != null) data['pg_for'] = pgFor;
+    if (pgSuitedFor != null) data['pg_suited_for'] = pgSuitedFor;
+    if (pgMealOffered != null) data['pg_meal_offered'] = pgMealOffered;
+    if (pgCommonArea != null) data['pg_common_area'] = pgCommonArea;
+    if (pgManageBy != null) data['pg_manage_by'] = pgManageBy;
+    if (pgOwnerStaysAtPg != null)
+      data['pg_owner_stays_at_pg'] = pgOwnerStaysAtPg;
+    if (mealChargesPerMonth != null)
+      data['meal_charges_per_month'] = mealChargesPerMonth;
+    if (electricityChargesPerMonth != null)
+      data['electricity_charges_per_month'] = electricityChargesPerMonth;
+    if (pgRules != null) data['pg_rules'] = pgRules!.toJson();
+    if (pgRoomInfo != null) data['pg_room_info'] = pgRoomInfo!.toJson();
+    return data;
+  }
+}
+
+class PgRules {
+  final bool? nonVegAllowed;
+  final bool? smokingAllowed;
+  final bool? drinkingAllowed;
+  final bool? petsAllowed;
+  final bool? lateEntryAllowed;
+  final String? lateEntryTime;
+  final bool? visitorAllowed;
+  final bool? gurdianAllowed;
+
+  PgRules({
+    this.nonVegAllowed,
+    this.smokingAllowed,
+    this.drinkingAllowed,
+    this.petsAllowed,
+    this.lateEntryAllowed,
+    this.lateEntryTime,
+    this.visitorAllowed,
+    this.gurdianAllowed,
+  });
+
+  factory PgRules.fromJson(Map<String, dynamic> json) {
+    return PgRules(
+      nonVegAllowed: json['non_veg_allowed'],
+      smokingAllowed: json['smoking_allowed'],
+      drinkingAllowed: json['drinking_allowed'],
+      petsAllowed: json['pets_allowed'],
+      lateEntryAllowed: json['late_entry_allowed'],
+      lateEntryTime: json['late_entry_time'],
+      visitorAllowed: json['visitor_allowed'],
+      gurdianAllowed: json['gurdian_allowed'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (nonVegAllowed != null) data['non_veg_allowed'] = nonVegAllowed;
+    if (smokingAllowed != null) data['smoking_allowed'] = smokingAllowed;
+    if (drinkingAllowed != null) data['drinking_allowed'] = drinkingAllowed;
+    if (petsAllowed != null) data['pets_allowed'] = petsAllowed;
+    if (lateEntryAllowed != null) data['late_entry_allowed'] = lateEntryAllowed;
+    if (lateEntryTime != null) data['late_entry_time'] = lateEntryTime;
+    if (visitorAllowed != null) data['visitor_allowed'] = visitorAllowed;
+    if (gurdianAllowed != null) data['gurdian_allowed'] = gurdianAllowed;
+    return data;
+  }
+}
+
+class PgRoomInfo {
+  final String? roomType;
+  final int? totalBeds;
+  final RoomFacilityInfo? roomFacilityInfo;
+
+  PgRoomInfo({this.roomType, this.totalBeds, this.roomFacilityInfo});
+
+  factory PgRoomInfo.fromJson(Map<String, dynamic> json) {
+    return PgRoomInfo(
+      roomType: json['room_type'],
+      totalBeds: json['total_beds'],
+      roomFacilityInfo:
+          json['room_facility_info'] != null
+              ? RoomFacilityInfo.fromJson(json['room_facility_info'])
+              : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (roomType != null) data['room_type'] = roomType;
+    if (totalBeds != null) data['total_beds'] = totalBeds;
+    if (roomFacilityInfo != null)
+      data['room_facility_info'] = roomFacilityInfo!.toJson();
+    return data;
+  }
+}
+
+class RoomFacilityInfo {
+  final bool? wifi;
+  final bool? tv;
+  final bool? ac;
+  final String? other;
+
+  RoomFacilityInfo({this.wifi, this.tv, this.ac, this.other});
+
+  factory RoomFacilityInfo.fromJson(Map<String, dynamic> json) {
+    return RoomFacilityInfo(
+      wifi: json['wifi'],
+      tv: json['tv'],
+      ac: json['ac'],
+      other: json['other'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (wifi != null) data['wifi'] = wifi;
+    if (tv != null) data['tv'] = tv;
+    if (ac != null) data['ac'] = ac;
+    if (other != null) data['other'] = other;
+    return data;
+  }
 }
 
 class TypeConverter {
