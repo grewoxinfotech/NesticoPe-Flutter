@@ -13,6 +13,8 @@ import '../../property/controllers/property_controller.dart';
 
 class PropertyDetail extends StatelessWidget {
   List<Map<String, String>>? filters;
+  final bool isAppBarShow;
+  final Color backgroundColor;
   final PropertyController controller = Get.put(PropertyController());
 
   final List<Map<String, dynamic>> properties = [
@@ -82,13 +84,14 @@ class PropertyDetail extends StatelessWidget {
     },
   ];
 
-  PropertyDetail({super.key});
+  PropertyDetail({super.key,  this.isAppBarShow = true,  this.backgroundColor= Colors.white, this.filters});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
-      appBar: AppBar(
+      backgroundColor: backgroundColor,
+
+      appBar: isAppBarShow ? AppBar(
         elevation: 0,
         backgroundColor: ColorRes.white,
         title: const Text(
@@ -109,7 +112,7 @@ class PropertyDetail extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ) : null,
       // body: ListView.builder(
       //   padding:  EdgeInsets.symmetric(
       //     vertical: AppPadding.small,

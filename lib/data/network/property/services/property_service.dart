@@ -93,22 +93,22 @@ class PropertyService {
   }
 
   /// Get single property by ID
-  // Future<Items?> getPropertyById(String id) async {
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse("$baseUrl/$id"),
-  //       headers: await headers(),
-  //     );
-  //
-  //     if (response.statusCode == 200) {
-  //       final jsonData = json.decode(response.body);
-  //       return PropertyModel.fromJson(jsonData).data?.items?.first;
-  //     }
-  //   } catch (e) {
-  //     print("Get property by ID exception: $e");
-  //   }
-  //   return null;
-  // }
+  Future<Items?> getPropertyById(String id) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/$id"),
+        headers: await headers(),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        return PropertyModel.fromJson(jsonData).data?.items?.first;
+      }
+    } catch (e) {
+      print("Get property by ID exception: $e");
+    }
+    return null;
+  }
 
   /// Create new property
   Future<bool> createProperty(
@@ -247,11 +247,36 @@ class PropertyService {
         Uri.parse("$baseUrl/$id/favorite"),
         headers: await headers(),
       );
-      print("response : ${response.body}");
+      print("response : --------------------  ${response.body}");
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
       print("Delete property exception: $e");
       return false;
     }
   }
+
+  Future<List<String>?> getFavorite(String id) async {
+    try {
+      print("baseUrl : $baseUrl/$id");
+      final response = await http.get(
+        Uri.parse("$baseUrl/$id/favorite"),
+        headers: await headers(),
+      );
+      print("response : --------------------  ${response.body}");
+      print("response : --------------------  ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        final favList = data['data']['favorite'] as List<dynamic>;
+        final List<String> favorites = favList.map<String>((e) => e['propertyId'].toString()).toList();
+
+        return favorites;
+      }
+      return null;
+    } catch (e) {
+      print("Get Favorite exception: $e");
+      return null;
+    }
+  }
+
 }

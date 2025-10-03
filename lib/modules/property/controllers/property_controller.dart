@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:housing_flutter_app/app/manager/favorite.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
 
@@ -52,6 +53,8 @@ class PropertyController extends PaginatedController<Items> {
 
   // Optional filters
   Map<String, String>? filters = {};
+  var favoriteIds = <String>{}.obs;
+
 
   @override
   void onInit() {
@@ -71,6 +74,21 @@ class PropertyController extends PaginatedController<Items> {
     items.clear();
 
     refreshList();
+  }
+
+
+  void toggleFavorite(String propertyId) async {
+    if (favoriteIds.contains(propertyId)) {
+      favoriteIds.remove(propertyId);
+      FavoriteManager().removeFavorite(propertyId);
+    } else {
+      favoriteIds.add(propertyId);
+      FavoriteManager().addFavorite(propertyId);
+    }
+    update();
+
+    // Optionally, sync with backend
+    await _service.addFavorite(propertyId);
   }
 
   /// --- Required override from PaginatedController ---
@@ -138,22 +156,29 @@ class PropertyController extends PaginatedController<Items> {
   }
 
   /// Get single property by ID
-  // Future<Items?> getPropertyById(String id) async {
-  //   try {
-  //     final existing = items.firstWhereOrNull((item) => item.id == id);
-  //     if (existing != null) return existing;
-  //
-  //     final property = await _service.getPropertyById(id);
-  //     if (property != null) {
-  //       items.add(property);
-  //       items.refresh();
-  //       return property;
-  //     }
-  //   } catch (e) {
-  //     print("Get property error: $e");
-  //   }
-  //   return null;
-  // }
+  Future<Items?> getPropertyById(String id) async {
+    try {
+      final existing = items.firstWhereOrNull((item) => item.id == id);
+      if (existing != null) return existing;
+
+      final property = await _service.getPropertyById(id);
+      if (property != null) {
+        items.add(property);
+        items.refresh();
+        return property;
+      }
+    } catch (e) {
+      print("Get property error: $e");
+    }
+    return null;
+  }
+
+  Future<void> getFavoriteProperty()async{
+    for(var favorite in favoriteIds){
+       await getPropertyById(favorite);
+    }
+
+  }
 
   /// Create a new property
   // Future<bool> createProperty(Items property) async {
@@ -226,5 +251,15 @@ class PropertyController extends PaginatedController<Items> {
   Future<bool> addFavorite(String id) async {
     final success = await _service.addFavorite(id);
     return success;
+  }
+
+  Future<void> getFavorite(String userId) async {
+    final data = await _service.getFavorite(userId);
+    if(data != null){
+      FavoriteManager().addAllFavorites(data);
+      favoriteIds.addAll(data);
+
+    }
+    // return success;
   }
 }

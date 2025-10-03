@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/widgets/cards/banner_card_with_text.dart';
 import 'package:housing_flutter_app/app/widgets/texts/headline_text.dart';
 import 'package:housing_flutter_app/app/widgets/texts/title_with_disc.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/modules/home/widgets/city_card.dart';
 import 'package:housing_flutter_app/modules/home/widgets/home_header.dart';
@@ -340,6 +341,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      final user = await SecureStorage.getUserData();
+      controller.getFavorite(user?.user?.id ?? '');
+    });
     // Get.lazyPut(() => PropertyController());
     // final PropertyController controller = Get.find();
     return Scaffold(
@@ -578,71 +583,99 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   const SizedBox(height: 12),
 
-                  FutureBuilder(
-                    future: controller.loadInitial(),
-                    builder: (context, asyncSnapshot) {
-                      print('asyncSnapshot: ${asyncSnapshot.connectionState}');
+                  // FutureBuilder(
+                  //   future: controller.loadInitial(),
+                  //   builder: (context, asyncSnapshot) {
+                  //     print('asyncSnapshot: ${asyncSnapshot.connectionState}');
+                  //
+                  //     if (asyncSnapshot.connectionState ==
+                  //         ConnectionState.waiting) {
+                  //       // Show loader while waiting
+                  //       return const Center(child: CircularProgressIndicator());
+                  //     } else if (asyncSnapshot.hasError) {
+                  //       // Show error message if future fails
+                  //       return Center(
+                  //         child: Text(
+                  //           'Error: ${asyncSnapshot.error}',
+                  //           style: const TextStyle(color: Colors.red),
+                  //         ),
+                  //       );
+                  //     } else if (asyncSnapshot.connectionState ==
+                  //         ConnectionState.done) {
+                  //       return Obx(() {
+                  //         if (!controller.isLoading.value &&
+                  //             controller.items.isEmpty) {
+                  //           return const Center(
+                  //             child: Text("No Property found."),
+                  //           );
+                  //         }
+                  //
+                  //         return SizedBox(
+                  //           height: 180,
+                  //           child: ClipRRect(
+                  //             child: ListView.separated(
+                  //               scrollDirection: Axis.horizontal,
+                  //               itemCount: controller.items.length.clamp(0, 10),
+                  //               padding: const EdgeInsets.symmetric(
+                  //                 horizontal: 10,
+                  //               ),
+                  //               separatorBuilder:
+                  //                   (_, __) => const SizedBox(width: 10),
+                  //               itemBuilder: (context, index) {
+                  //                 final property = controller.items[index];
+                  //                 final percentage =
+                  //                     double.tryParse(
+                  //                       propertyPercentage[index],
+                  //                     ) ??
+                  //                     0.0;
+                  //                 final isPositive = percentage >= 10.0;
+                  //                 return TopPropertyByLocation(
+                  //                   property: property,
+                  //                   isPositive: isPositive,
+                  //                   rating: percentage,
+                  //                 );
+                  //               },
+                  //             ),
+                  //           ),
+                  //         );
+                  //       });
+                  //     } else {
+                  //       return const Center(
+                  //         child: Text('No Property Available'),
+                  //       );
+                  //     }
+                  //   },
+                  // ),
 
-                      if (asyncSnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        // Show loader while waiting
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (asyncSnapshot.hasError) {
-                        // Show error message if future fails
-                        return Center(
-                          child: Text(
-                            'Error: ${asyncSnapshot.error}',
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        );
-                      } else if (asyncSnapshot.connectionState ==
-                          ConnectionState.done) {
-                        return Obx(() {
-                          if (!controller.isLoading.value &&
-                              controller.items.isEmpty) {
-                            return const Center(
-                              child: Text("No Property found."),
-                            );
-                          }
-
-                          return SizedBox(
-                            height: 180,
-                            child: ClipRRect(
-                              child: ListView.separated(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: controller.items.length.clamp(0, 10),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                ),
-                                separatorBuilder:
-                                    (_, __) => const SizedBox(width: 10),
-                                itemBuilder: (context, index) {
-                                  final property = controller.items[index];
-                                  final percentage =
-                                      double.tryParse(
-                                        propertyPercentage[index],
-                                      ) ??
-                                      0.0;
-                                  final isPositive = percentage >= 10.0;
-                                  return TopPropertyByLocation(
-                                    property: property,
-                                    isPositive: isPositive,
-                                    rating: percentage,
-                                  );
-                                },
-                              ),
-                            ),
-                          );
-                        });
-                      } else {
-                        return const Center(
-                          child: Text('No Property Available'),
-                        );
-                      }
+            Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (controller.items.isEmpty) {
+                return const Center(child: Text("No Property found."));
+              } else {
+                return SizedBox(
+                  height: 180,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.items.length.clamp(0, 10),
+                    separatorBuilder: (_, __) => const SizedBox(width: 10),
+                    itemBuilder: (context, index) {
+                      final property = controller.items[index];
+                      final percentage = double.tryParse(propertyPercentage[index]) ?? 0.0;
+                      final isPositive = percentage >= 10.0;
+                      return TopPropertyByLocation(
+                        property: property,
+                        rating: percentage,
+                        isPositive: isPositive,
+                      );
                     },
                   ),
+                );
+              }
+            }),
 
-                  const SizedBox(height: 20),
+
+            const SizedBox(height: 20),
 
                   const TitleWithViewAll(
                     title: "Top Rated Localities",

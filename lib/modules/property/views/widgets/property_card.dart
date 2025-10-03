@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import '../../../../app/manager/favorite.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../property_detail_screen.dart';
@@ -30,8 +31,10 @@ class _PropertyCardState extends State<PropertyCard> {
   final controller = Get.find<PropertyController>();
   bool isFavorite = false;
 
+
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onTap:
           () => Get.to(() => PropertyDetailScreen(property: widget.property)),
@@ -118,16 +121,22 @@ class _PropertyCardState extends State<PropertyCard> {
                     right: 12,
                     child: GestureDetector(
                       onTap: () {
-                        controller.addFavorite(widget.property.id ?? '');
-                        setState(() => isFavorite = !isFavorite);
+                        // controller.addFavorite(widget.property.id ?? '');
+                        // setState(() => isFavorite = !isFavorite);
+                        controller.toggleFavorite(widget.property.id ?? '');
                       },
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 18,
-                        child: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : Colors.grey,
-                          size: 20,
+                        child: Obx(
+                          () {
+                            isFavorite = controller.favoriteIds.contains(widget.property.id);
+                            return Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : Colors.grey,
+                            size: 20,
+                          );
+                          },
                         ),
                       ),
                     ),

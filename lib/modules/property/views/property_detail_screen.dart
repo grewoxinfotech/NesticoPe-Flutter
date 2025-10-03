@@ -522,11 +522,17 @@ class PropertyDetailScreen extends StatelessWidget {
                 right: 16,
                 child: Row(
                   children: [
-                    CircularIcon(
-                      icon: Icons.favorite_border_rounded,
-                      backgroundColor: Colors.white,
-                      onPressed: () {
-                        controller.addFavorite(id);
+                    Obx(
+                      () {
+                        final isFavorite = controller.favoriteIds.contains(id);
+                        return CircularIcon(
+                        icon: isFavorite ? Icons.favorite :Icons.favorite_border_rounded,
+                        backgroundColor: Colors.white,
+                        iconColor: isFavorite ? Colors.redAccent: ColorRes.black,
+                        onPressed: () {
+                          controller.toggleFavorite(id);
+                        },
+                      );
                       },
                     ),
                     const SizedBox(width: 12),

@@ -12,6 +12,7 @@ import 'package:housing_flutter_app/modules/property/views/property_detail_scree
 import 'package:housing_flutter_app/utils/common_widget/rera_widget.dart';
 
 import '../../../../app/manager/property/proiperty_feature_manager.dart';
+import '../../../property/controllers/property_controller.dart';
 
 class PropertyCardWidget extends StatefulWidget {
   final Items property;
@@ -50,10 +51,11 @@ class PropertyCardWidget extends StatefulWidget {
 
 class _PropertyCardWidgetState extends State<PropertyCardWidget> {
   final int _currentImageIndex = 0;
-  bool isFavorite = false;
+  // bool isFavorite = false;
   @override
   Widget build(BuildContext context) {
     final features = PropertyFeatureManager.getFeatures(widget.property);
+    final controller = Get.find<PropertyController>();
     // print('Building PropertyCardWidget for ${widget.role}');
     return GestureDetector(
       onTap: () {
@@ -166,17 +168,20 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                   right: 16,
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isFavorite = !isFavorite;
-                      });
+                      controller.toggleFavorite(widget.property.id ?? '');
                     },
                     child: CircleAvatar(
                       radius: 14,
                       backgroundColor: Colors.white,
-                      child: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: ColorRes.primary,
-                        size: 17,
+                      child: Obx(
+                        () {
+                          final isFavorite = controller.favoriteIds.contains(widget.property.id);
+                          return Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: ColorRes.primary,
+                          size: 17,
+                        );
+                        },
                       ),
                     ),
                   ),
