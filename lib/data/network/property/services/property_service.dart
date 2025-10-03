@@ -207,4 +207,51 @@ class PropertyService {
       return false;
     }
   }
+
+  Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
+    try {
+      print("data : ${data}");
+      print("baseUrl : ${baseUrl}/${id}");
+      final response = await http.post(
+        Uri.parse("$baseUrl/$id/inquiry"),
+        headers: await headers(),
+        body: jsonEncode(data),
+      );
+      print("response : ${response.body}");
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print("Delete property exception: $e");
+      return false;
+    }
+  }
+
+  Future<bool> addView(String id) async {
+    try {
+      print("baseUrl : ${baseUrl}/${id}");
+      final response = await http.post(
+        Uri.parse("$baseUrl/$id/view"),
+        headers: await headers(),
+      );
+      print("response : ${response.body}");
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print("Delete property exception: $e");
+      return false;
+    }
+  }
+
+  Future<bool> addFavorite(String id) async {
+    try {
+      print("baseUrl : ${baseUrl}/${id}");
+      final response = await http.post(
+        Uri.parse("$baseUrl/$id/favorite"),
+        headers: await headers(),
+      );
+      print("response : ${response.body}");
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print("Delete property exception: $e");
+      return false;
+    }
+  }
 }

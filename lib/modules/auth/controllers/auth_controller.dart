@@ -58,7 +58,7 @@ class AuthController extends GetxController {
   }
 
   void fillTestCredentials() {
-    emailController.text = "CRM_GrewoxAdmin@yopmail.com";
+    emailController.text = "abc@gmail.com";
     passwordController.text = "CRM_GrewoxAdmin@123";
   }
 
@@ -219,7 +219,6 @@ class AuthController extends GetxController {
       final receivedToken = await authService.sellerRegistrationComplete(data);
       if (receivedToken != null) {
         await SecureStorage.saveToken(receivedToken);
-
 
         // final user = UserModel(
         //   token: receivedToken,

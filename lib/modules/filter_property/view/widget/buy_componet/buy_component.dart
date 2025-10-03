@@ -84,12 +84,6 @@ class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
 Padding buildFilterHeadingPadding(String title) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-    child: buildCommonText(
-      title,
-      15,
-      FontWeight.w600,
-      ColorRes.textColor,
-      1,
-    ),
+    child: buildCommonText(title, 15, FontWeight.w600, ColorRes.textColor, 1),
   );
 }

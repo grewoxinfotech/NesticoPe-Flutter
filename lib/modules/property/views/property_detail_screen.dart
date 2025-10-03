@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/app/manager/string_manager.dart';
 import 'package:housing_flutter_app/app/utils/bottom_sheet_form.dart';
 import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/app/widgets/video_player/custom_video_player.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/recommended_property.dart';
@@ -29,6 +30,7 @@ class PropertyDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.addView(property?.id ?? '');
     print("[DEBUG]=> Property : ${property?.toJson()}");
     print(
       "Proprty Features ${property?.propertyDetails?.amenities}  Property List${property?.propertyDetails}",
@@ -46,7 +48,10 @@ class PropertyDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildMediaBanner(property?.propertyMedia ?? PropertyMedia()),
+              _buildMediaBanner(
+                property?.propertyMedia ?? PropertyMedia(),
+                property?.id ?? '',
+              ),
               _buildTitleSection(property ?? Items()),
               Divider(indent: 18, endIndent: 18, color: Colors.grey.shade300),
 
@@ -222,7 +227,7 @@ class PropertyDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     RecommendedInsights(
-                      nearbyLocations: property!.nearbyLocations!,
+                      nearbyLocations: property?.nearbyLocations ?? [],
                     ),
                   ],
                 );
@@ -313,12 +318,30 @@ class PropertyDetailScreen extends StatelessWidget {
                               onChatPressed: () {
                                 print("WhatsApp button clicked!");
                               },
-                              onContactPressed: () {
-                                // This triggers after validation
-                                print("Contact Owner button clicked!");
-                                // Access entered values if needed
-                                // Example: use controller values
-                                // name: widget._nameController.text
+                              onContactPressed: (name, phone, email) async {
+                                final inquiry = {
+                                  "name": name,
+                                  "phone": phone,
+                                  "email": email,
+                                };
+                                final success = await controller.addInquiry(
+                                  inquiry,
+                                  property?.id ?? '',
+                                );
+                                if (success) {
+                                  CustomSnackBar.show(
+                                    Get.overlayContext!,
+                                    message: "Inquiry Added Successfully",
+                                    type: SnackBarType.success,
+                                  );
+                                  Get.back();
+                                } else {
+                                  CustomSnackBar.show(
+                                    Get.overlayContext!,
+                                    message: "Failed to Submit Inquiry",
+                                    type: SnackBarType.error,
+                                  );
+                                }
                               },
                               onAllowSellerContactChanged: (value) {
                                 print("Allow sellers changed: $value");
@@ -438,7 +461,7 @@ class PropertyDetailScreen extends StatelessWidget {
   //   );
   // }
 
-  Widget _buildMediaBanner(PropertyMedia media) {
+  Widget _buildMediaBanner(PropertyMedia media, String id) {
     final PageController pageController = PageController();
     final images = media.images ?? [];
     final videos = media.videos ?? [];
@@ -502,7 +525,9 @@ class PropertyDetailScreen extends StatelessWidget {
                     CircularIcon(
                       icon: Icons.favorite_border_rounded,
                       backgroundColor: Colors.white,
-                      onPressed: () {},
+                      onPressed: () {
+                        controller.addFavorite(id);
+                      },
                     ),
                     const SizedBox(width: 12),
                     CircularIcon(
@@ -669,16 +694,30 @@ class PropertyDetailScreen extends StatelessWidget {
           //  const SizedBox(height: 6),
 
           // 🔹 Title
-          Text(
-            property.title ?? "-",
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: ColorRes.textPrimary,
+          if (property.type!.toLowerCase() == "residential")
+            Text(
+              "${property.propertyDetails?.bhk ?? 0} BHK ${property.propertyType!.capitalize}",
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+
+                fontSize: 16,
+                color: Colors.black87,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+          if (property.type!.toLowerCase() == "commercial")
+            Text(
+              "${property.propertyType!.capitalize}",
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+
+                fontSize: 16,
+                color: Colors.black87,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
 
           const SizedBox(height: 4),
 

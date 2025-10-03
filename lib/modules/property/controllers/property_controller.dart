@@ -51,12 +51,26 @@ class PropertyController extends PaginatedController<Items> {
   var interestedInHomeLoan = false.obs;
 
   // Optional filters
-  Map<String, String>? filters;
+  Map<String, String>? filters = {};
 
   @override
   void onInit() {
     super.onInit();
     loadInitial(); // Load first page automatically
+  }
+
+  void applyFilter(String key, String val) {
+    filters ??= {};
+    filters!.clear();
+    filters![key] = val;
+
+    // reset pagination state
+    currentPage.value = 1;
+    totalPages.value = 1;
+    hasMore.value = true;
+    items.clear();
+
+    refreshList();
   }
 
   /// --- Required override from PaginatedController ---
@@ -79,7 +93,10 @@ class PropertyController extends PaginatedController<Items> {
   @override
   Future<PaginationResponse<Items>> fetchItems(int page) async {
     try {
-      final response = await _service.fetchProperties(page: page);
+      final response = await _service.fetchProperties(
+        page: page,
+        filters: filters,
+      );
 
       print("Fetched items: ${response.items.length}");
       return response; // ✅ full response with items + meta
@@ -194,5 +211,20 @@ class PropertyController extends PaginatedController<Items> {
   void checkTheSellerType() {
     isDeveloper.value = !isDeveloper.value;
     update();
+  }
+
+  Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
+    final success = await _service.addInquiry(data, id);
+    return success;
+  }
+
+  Future<bool> addView(String id) async {
+    final success = await _service.addView(id);
+    return success;
+  }
+
+  Future<bool> addFavorite(String id) async {
+    final success = await _service.addFavorite(id);
+    return success;
   }
 }

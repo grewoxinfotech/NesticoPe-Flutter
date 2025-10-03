@@ -7,6 +7,8 @@ import 'package:housing_flutter_app/app/constants/svg_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../property_detail_screen.dart';
 
@@ -25,6 +27,7 @@ class PropertyCard extends StatefulWidget {
 }
 
 class _PropertyCardState extends State<PropertyCard> {
+  final controller = Get.find<PropertyController>();
   bool isFavorite = false;
 
   @override
@@ -114,7 +117,10 @@ class _PropertyCardState extends State<PropertyCard> {
                     top: 12,
                     right: 12,
                     child: GestureDetector(
-                      onTap: () => setState(() => isFavorite = !isFavorite),
+                      onTap: () {
+                        controller.addFavorite(widget.property.id ?? '');
+                        setState(() => isFavorite = !isFavorite);
+                      },
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 18,
@@ -195,58 +201,152 @@ class _PropertyCardState extends State<PropertyCard> {
                   ),
 
                   const SizedBox(height: 10),
+                  Facilities(property: widget.property),
 
                   // Property Info Chips
-                  if (widget.property.propertyDetails != null)
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 2),
-                        child: Row(
-                          children: [
-                            if (widget.property.propertyDetails?.bhk != null)
-                              _buildChip(
-                                "${widget.property.propertyDetails!.bhk} BHK",
-                                AppSvgRes.bedroom,
-                                15,
-                                isFirst: true, // first chip → no dot
-                              ),
-
-                            if (widget
-                                    .property
-                                    .propertyDetails
-                                    ?.furnishInfo
-                                    ?.furnishType !=
-                                null)
-                              _buildChip(
-                                widget
-                                        .property
-                                        .propertyDetails!
-                                        .furnishInfo!
-                                        .furnishType ??
-                                    "",
-                                AppSvgRes.furniture,
-                                15,
-                              ),
-
-                            if (widget
-                                    .property
-                                    .propertyDetails
-                                    ?.propertyFacing !=
-                                null)
-                              _buildChip(
-                                widget
-                                    .property
-                                    .propertyDetails!
-                                    .propertyFacing!,
-                                AppSvgRes.direction,
-                                15,
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-
+                  // if (widget.property.type == "residential") ...[
+                  //   if (widget.property.propertyDetails != null)
+                  //     SingleChildScrollView(
+                  //       scrollDirection: Axis.horizontal,
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.only(left: 2),
+                  //         child: Row(
+                  //           children: [
+                  //             if (widget.property.propertyDetails?.bhk != null)
+                  //               _buildChip(
+                  //                 "${widget.property.propertyDetails!.bhk} BHK",
+                  //                 svgIcon: AppSvgRes.bedroom,
+                  //                 15,
+                  //                 isFirst: true, // first chip → no dot
+                  //               ),
+                  //
+                  //             if (widget
+                  //                     .property
+                  //                     .propertyDetails
+                  //                     ?.furnishInfo
+                  //                     ?.furnishType !=
+                  //                 null)
+                  //               _buildChip(
+                  //                 widget
+                  //                         .property
+                  //                         .propertyDetails!
+                  //                         .furnishInfo!
+                  //                         .furnishType ??
+                  //                     "",
+                  //                 15,
+                  //                 svgIcon: AppSvgRes.furniture,
+                  //               ),
+                  //
+                  //             if (widget
+                  //                     .property
+                  //                     .propertyDetails
+                  //                     ?.propertyFacing !=
+                  //                 null)
+                  //               _buildChip(
+                  //                 widget
+                  //                     .property
+                  //                     .propertyDetails!
+                  //                     .propertyFacing!,
+                  //                 svgIcon: AppSvgRes.direction,
+                  //                 15,
+                  //               ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ),
+                  // ] else if (widget.property.type == "commercial" &&
+                  //     widget.property.propertyType?.toLowerCase() ==
+                  //         "office") ...[
+                  //   if (widget.property.propertyDetails?.facilitiesInfo !=
+                  //       null) ...[
+                  //     if (widget.property.propertyDetails != null)
+                  //       SingleChildScrollView(
+                  //         scrollDirection: Axis.horizontal,
+                  //         child: Padding(
+                  //           padding: const EdgeInsets.only(left: 2),
+                  //           child: Row(
+                  //             children: [
+                  //               if (widget
+                  //                       .property
+                  //                       .propertyDetails
+                  //                       ?.facilitiesInfo
+                  //                       ?.minSeats !=
+                  //                   null)
+                  //                 _buildChip(
+                  //                   "${widget.property.propertyDetails!.facilitiesInfo!.minSeats} Seat",
+                  //                   // svgIcon: AppSvgRes.sofa,
+                  //                   15,
+                  //                   isFirst: true, // first chip → no dot
+                  //                   icon: Icons.chair_alt_outlined,
+                  //                 ),
+                  //
+                  //               if (widget
+                  //                       .property
+                  //                       .propertyDetails
+                  //                       ?.facilitiesInfo
+                  //                       ?.numberOfCabins !=
+                  //                   null)
+                  //                 _buildChip(
+                  //                   "${widget.property.propertyDetails!.facilitiesInfo!.numberOfCabins.toString() ?? ""} Cabin",
+                  //                   // svgIcon: AppSvgRes.office,
+                  //                   15,
+                  //                   icon: Icons.cabin_outlined,
+                  //                 ),
+                  //
+                  //               if (widget
+                  //                       .property
+                  //                       .propertyDetails
+                  //                       ?.facilitiesInfo
+                  //                       ?.numberOfMeetingRooms !=
+                  //                   null)
+                  //                 _buildChip(
+                  //                   "${widget.property.propertyDetails!.facilitiesInfo!.numberOfMeetingRooms.toString()} Meeting Room",
+                  //                   // svgIcon: AppSvgRes.intercom,
+                  //                   15,
+                  //                   icon: Icons.meeting_room_outlined,
+                  //                 ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ),
+                  //   ] else ...[
+                  //     SingleChildScrollView(
+                  //       scrollDirection: Axis.horizontal,
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.only(left: 2),
+                  //         child: Row(
+                  //           children: [
+                  //             if (widget
+                  //                     .property
+                  //                     .propertyDetails
+                  //                     ?.propertyBuiltUpArea !=
+                  //                 null)
+                  //               _buildChip(
+                  //                 "${widget.property.propertyDetails!.propertyBuiltUpArea} sq.ft.",
+                  //                 // svgIcon: AppSvgRes.sofa,
+                  //                 15,
+                  //                 isFirst: true, // first chip → no dot
+                  //                 icon: Icons.square_foot_outlined,
+                  //               ),
+                  //
+                  //             if (widget
+                  //                     .property
+                  //                     .propertyDetails
+                  //                     ?.floorInfo
+                  //                     ?.totalFloors !=
+                  //                 null)
+                  //               _buildChip(
+                  //                 "${widget.property.propertyDetails?.floorInfo?.totalFloors.toString() ?? ""} Floors",
+                  //                 // svgIcon: AppSvgRes.office,
+                  //                 15,
+                  //                 icon: Icons.elevator_outlined,
+                  //               ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ],
                   const SizedBox(height: 10),
 
                   // Price & CTA
@@ -357,8 +457,10 @@ class _PropertyCardState extends State<PropertyCard> {
 
   Widget _buildChip(
     String text,
-    String svgIcon,
+
     double size, {
+    String? svgIcon,
+    IconData? icon,
     bool isFirst = false,
   }) {
     return Padding(
@@ -369,7 +471,9 @@ class _PropertyCardState extends State<PropertyCard> {
             const Text('•', style: TextStyle(fontSize: 10)),
             const SizedBox(width: 2),
           ],
-          AppSvgIcon(assetName: svgIcon, size: size),
+          svgIcon == null
+              ? Icon(icon, size: size, color: ColorRes.primary)
+              : AppSvgIcon(assetName: svgIcon, size: size),
           const SizedBox(width: 4),
           Text(
             text,
@@ -381,6 +485,95 @@ class _PropertyCardState extends State<PropertyCard> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class Facilities extends StatelessWidget {
+  final Items property;
+  final Color bgColor;
+  final Color txtColor;
+
+  Facilities({
+    super.key,
+    required this.property,
+    this.bgColor = const Color(0xFFDBEAFE),
+    this.txtColor = const Color(0xFF2563EB),
+  });
+
+  // Map detail keys to icons
+  final Map<String, IconData> iconMap = {
+    "BHK": Icons.bed,
+    "Furnishing": Icons.chair_alt,
+    "Built-up Area": Icons.zoom_out_map_outlined,
+    "Carpet Area": Icons.square_foot,
+    "Floor": Icons.layers_outlined,
+    "Age of Property": Icons.date_range,
+    "Rent": Icons.attach_money,
+    "Price": Icons.price_change,
+    "Possession": Icons.home_work,
+    "Amenities": Icons.checklist_rtl,
+    "Parking": Icons.local_parking,
+    "Facing": Icons.explore,
+    "Condition": Icons.handyman,
+    // Add more mappings if needed
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final highlights = PropertyHighlightManager(property).getHighlights();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(highlights.length > 3 ? 3 : highlights.length, (
+          index,
+        ) {
+          final item = highlights[index];
+          final key = item.keys.first;
+          final value = item.values.first;
+          final icon = iconMap[key];
+
+          return Row(
+            children: [
+              if (index != 0) ...[
+                const Text('  •', style: TextStyle(fontSize: 10)),
+                const SizedBox(width: 6),
+              ],
+              _buildChip(
+                value.toString(),
+                16, // icon size
+                icon: icon,
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildChip(
+    String text,
+    double size, {
+    String? svgIcon,
+    IconData? icon,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        svgIcon == null
+            ? Icon(icon, size: size, color: ColorRes.primary)
+            : AppSvgIcon(assetName: svgIcon, size: size),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: ColorRes.grey,
+          ),
+        ),
+      ],
     );
   }
 }

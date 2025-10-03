@@ -37,30 +37,34 @@ class HomeScreen extends StatefulWidget {
     super.key,
     this.propertyTypes = const [
       {
+        "title": "Apartment",
+        "image":
+            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80",
+      },
+      {
+        "title": "Independent House",
+        "image":
+            "https://images.unsplash.com/photo-1600607687939-ce8a6c25118d?auto=format&fit=crop&w=600&q=80",
+      },
+      {
+        "title": "Duplex",
+        "image":
+            "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=600&q=80",
+      },
+      {
+        "title": "Independent Floor",
+        "image":
+            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
+      },
+      {
         "title": "Villa",
         "image":
             "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
       },
       {
-        "title": "Plot",
+        "title": "Penthouse",
         "image":
-            "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
-      },
-
-      {
-        "title": "PG",
-        "image":
-            "https://pgproperty.sg/wp-content/uploads/2022/11/the-crest-488x326.jpg",
-      },
-      {
-        "title": "Shop",
-        "image":
-            "https://5.imimg.com/data5/XH/NE/SW/SELLER-48886426/shop-for-sale-in-jaipur-commercial.jpg",
-      },
-      {
-        "title": "Office",
-        "image":
-            "https://img.etimg.com/thumb/width-1200,height-1200,imgsize-76402,resizemode-75,msid-111456711/industry/services/property-/-cstruction/india-office-property-market-surges-with-record-gross-leasing-in-2024-first-half.jpg",
+            "https://images.unsplash.com/photo-1592833157880-bd19a966a1c7?auto=format&fit=crop&w=600&q=80",
       },
       {
         "title": "Studio",
@@ -68,17 +72,47 @@ class HomeScreen extends StatefulWidget {
             "https://homebazaar-blog.s3.ap-south-1.amazonaws.com/knowledge/wp-content/uploads/2022/10/24122439/FeatureImage_Overview-Of-A-Studio-Apartment.webp",
       },
       {
+        "title": "Plot",
+        "image":
+            "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
+      },
+      {
+        "title": "Farm House",
+        "image":
+            "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=600&q=80",
+      },
+      {
+        "title": "Agricultural Land",
+        "image":
+            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
+      },
+      {
+        "title": "Office",
+        "image":
+            "https://img.etimg.com/thumb/width-1200,height-1200,imgsize-76402,resizemode-75,msid-111456711/industry/services/property-/-cstruction/india-office-property-market-surges-with-record-gross-leasing-in-2024-first-half.jpg",
+      },
+      {
+        "title": "Retail Shop",
+        "image":
+            "https://5.imimg.com/data5/XH/NE/SW/SELLER-48886426/shop-for-sale-in-jaipur-commercial.jpg",
+      },
+      {
+        "title": "Showroom",
+        "image":
+            "https://www.99acres.com/microsite/articles/files/2022/08/showroom.jpg",
+      },
+      {
         "title": "Warehouse",
         "image":
             "https://3.imimg.com/data3/SR/MV/MY-12088584/warehouses-for-sale-500x500.jpg",
       },
       {
-        "title": "Apartment",
+        "title": "PG",
         "image":
-            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80",
+            "https://pgproperty.sg/wp-content/uploads/2022/11/the-crest-488x326.jpg",
       },
       {
-        "title": "Commercial",
+        "title": "Others",
         "image":
             "https://www.ashwinshethgroup.com/wp-content/uploads/2022/11/Commercial-property-buying-guidelines-1400x700-1.webp",
       },
@@ -336,9 +370,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         return GestureDetector(
                           onTap: () {
+                            final filterValue = type['title']!
+                                .toLowerCase()
+                                .replaceAll(" ", "_");
+                            controller.applyFilter("propertyType", filterValue);
+
                             setState(() {
                               selectedIndex = index;
                             });
+                            // controller.refreshList();
                             print("Selected: ${type['title']}");
                           },
                           child: IntrinsicWidth(

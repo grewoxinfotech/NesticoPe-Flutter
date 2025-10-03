@@ -106,20 +106,20 @@ class PropertyDetailManager {
     }
 
     // ----- COMMON DETAILS -----
-    if (pd.amenities != null && pd.amenities!.isNotEmpty) {
-      details.add({
-        "Amenities": pd.amenities!
-            .map((e) => e.replaceAll('_', ' ').capitalize())
-            .join(", "),
-      });
-    }
+    // if (pd.amenities != null && pd.amenities!.isNotEmpty) {
+    //   details.add({
+    //     "Amenities": pd.amenities!
+    //         .map((e) => e.replaceAll('_', ' ').capitalize)
+    //         .join(", "),
+    //   });
+    // }
 
     if (pd.parkingInfo != null) {
       final parking = pd.parkingInfo!;
       if ((parking.covered ?? false) || (parking.open ?? false)) {
         details.add({
           "Parking":
-          "${(parking.covered ?? false) ? "1 Covered" : "0 Covered"}, ${(parking.open ?? false) ? "1 Open" : "0 Open"}",
+              "${(parking.covered ?? false) ? "1 Covered" : "0 Covered"}, ${(parking.open ?? false) ? "1 Open" : "0 Open"}",
         });
       }
     }
@@ -155,7 +155,7 @@ class PropertyDetailManager {
   }
 }
 
-extension StringCasingExtension on String {
-  String capitalize() =>
-      "${this[0].toUpperCase()}${substring(1).replaceAll('_', ' ')}";
-}
+// extension StringCasingExtension on String {
+//   String capitalize() =>
+//       "${this[0].toUpperCase()}${substring(1).replaceAll('_', ' ')}";
+// }

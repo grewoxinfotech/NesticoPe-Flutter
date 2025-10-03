@@ -8,9 +8,11 @@ import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.d
 import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
 
 import '../../../data/network/property/models/property_model.dart';
+
 import '../../property/controllers/property_controller.dart';
 
 class PropertyDetail extends StatelessWidget {
+  List<Map<String, String>>? filters;
   final PropertyController controller = Get.put(PropertyController());
 
   final List<Map<String, dynamic>> properties = [
@@ -78,14 +80,6 @@ class PropertyDetail extends StatelessWidget {
         'https://picsum.photos/seed/city3/600/400',
       ],
     },
-  ];
-  final List<String> propertyFeatures = [
-    "Ready to Move",
-    "0.0 INR",
-    "0 of 2",
-    "5800.0 sq.ft.",
-    "2 BHK",
-    "Semi-Furnished",
   ];
 
   PropertyDetail({super.key});

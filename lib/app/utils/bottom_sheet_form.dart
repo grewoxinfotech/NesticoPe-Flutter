@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 
 class ContactOwnerBottom extends StatefulWidget {
@@ -30,7 +31,7 @@ class ContactOwnerBottom extends StatefulWidget {
 
   // Callbacks
   final VoidCallback? onChatPressed;
-  final VoidCallback? onContactPressed;
+  final Function(String? name, String? phone, String? email)? onContactPressed;
   final ValueChanged<bool?>? onAllowSellerContactChanged;
   final ValueChanged<bool?>? onHomeLoanInterestChanged;
 
@@ -85,11 +86,24 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
   @override
   void initState() {
     super.initState();
+
     _nameController = TextEditingController();
     _phoneController = TextEditingController();
     _emailController = TextEditingController();
+
     _allowSellerContact = widget.allowSellerContact;
     _homeLoanInterest = widget.homeLoanInterest;
+
+    loadData(); // load actual user data asynchronously
+  }
+
+  Future<void> loadData() async {
+    final user = await SecureStorage.getUserData();
+    if (user != null) {
+      _nameController.text = user.user?.username ?? '';
+      _phoneController.text = user.user?.phone ?? '';
+      _emailController.text = user.user?.email ?? '';
+    }
   }
 
   @override
@@ -104,7 +118,11 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
     if (_formKey.currentState!.validate()) {
       // All fields valid
       if (widget.onContactPressed != null) {
-        widget.onContactPressed!();
+        widget.onContactPressed!(
+          _nameController.text.trim(),
+          _phoneController.text.trim(),
+          _emailController.text.trim(),
+        );
       }
     } else {
       // Show error if needed

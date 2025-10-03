@@ -999,6 +999,7 @@ class PropertyDetails {
   String? propertyCarpetAreaUnit;
   String? propertyBuiltUpAreaUnit;
   PgInfo? pgInfo;
+  FacilitiesInfo? facilitiesInfo;
 
   PropertyDetails({
     this.bhk,
@@ -1018,6 +1019,7 @@ class PropertyDetails {
     this.propertyBuiltUpAreaUnit,
     this.propertyCarpetAreaUnit,
     this.pgInfo,
+    this.facilitiesInfo,
   });
 
   PropertyDetails.fromJson(Map<String, dynamic> json) {
@@ -1063,6 +1065,10 @@ class PropertyDetails {
     propertyCarpetAreaUnit = json["property_carpet_area_unit"];
     propertyBuiltUpAreaUnit = json["property_built_up_area_unit"];
     pgInfo = json['pg_info'] != null ? PgInfo.fromJson(json['pg_info']) : null;
+    facilitiesInfo =
+        json['facilities_info'] != null
+            ? FacilitiesInfo.fromJson(json['facilities_info'])
+            : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -1096,6 +1102,7 @@ class PropertyDetails {
       data['possession_info'] = possessionInfo!.toJson();
 
     if (propertyFacing != null) data['property_facing'] = propertyFacing;
+    if (facilitiesInfo != null) data['facilities_info'] = facilitiesInfo;
     if (propertyCondition != null)
       data['property_condition'] = propertyCondition;
     if (propertyCarpetArea != null)
@@ -1171,6 +1178,51 @@ class FurnishDetails {
     'wardrobes': wardrobes,
     'ac_installed': acInstalled,
   };
+}
+
+class FacilitiesInfo {
+  // snake_case
+  final int? minSeats;
+  final int? numberOfCabins;
+  final int? numberOfMeetingRooms;
+
+  // camelCase duplicates also allowed by schema
+  final int? minSeatsCamel;
+  final int? numberOfCabinsCamel;
+  final int? numberOfMeetingRoomsCamel;
+
+  FacilitiesInfo({
+    this.minSeats,
+    this.numberOfCabins,
+    this.numberOfMeetingRooms,
+    this.minSeatsCamel,
+    this.numberOfCabinsCamel,
+    this.numberOfMeetingRoomsCamel,
+  });
+
+  Map<String, dynamic> toJson() => {
+    if (minSeats != null) 'min_seats': minSeats,
+    if (numberOfCabins != null) 'number_of_cabins': numberOfCabins,
+    if (numberOfMeetingRooms != null)
+      'number_of_meeting_rooms': numberOfMeetingRooms,
+    if (minSeatsCamel != null) 'minSeats': minSeatsCamel,
+    if (numberOfCabinsCamel != null) 'numberOfCabins': numberOfCabinsCamel,
+    if (numberOfMeetingRoomsCamel != null)
+      'numberOfMeetingRooms': numberOfMeetingRoomsCamel,
+  };
+
+  factory FacilitiesInfo.fromJson(Map<String, dynamic> json) => FacilitiesInfo(
+    minSeats: TypeConverter.parseInt(json['min_seats']),
+    numberOfCabins: TypeConverter.parseInt(json['number_of_cabins']),
+    numberOfMeetingRooms: TypeConverter.parseInt(
+      json['number_of_meeting_rooms'],
+    ),
+    minSeatsCamel: TypeConverter.parseInt(json['minSeats']),
+    numberOfCabinsCamel: TypeConverter.parseInt(json['numberOfCabins']),
+    numberOfMeetingRoomsCamel: TypeConverter.parseInt(
+      json['numberOfMeetingRooms'],
+    ),
+  );
 }
 
 class ParkingInfo {
