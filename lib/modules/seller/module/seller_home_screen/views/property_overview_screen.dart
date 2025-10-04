@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+
+import '../../../../../app/manager/property/property_pricemanager.dart';
+import '../../../../../app/manager/property_highlight_manager.dart';
+import '../../../../../app/utils/svg_widget.dart';
+import '../../../../../data/network/property/models/property_model.dart';
 
 class PropertyOverviewScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> properties;
+  // final List<Map<String, dynamic>> properties;
+  final List<Items> properties;
 
   const PropertyOverviewScreen({super.key, required this.properties});
 
@@ -36,9 +44,14 @@ class PropertyOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPropertyCard(Map<String, dynamic> property) {
-    final bool isSold = property['status'] == 'Sold';
-    final bool isFeatured = property['featured'] ?? false;
+  Widget _buildPropertyCard(Items property) {
+    final bool isSold = property.propertyStatus == 'Sold';
+    final priceManager = PropertyPriceManager(
+      listingType: property.listingType ?? "",
+      financialInfo: property.propertyDetails?.financialInfo ?? FinancialInfo(),
+    );
+
+    // final bool isFeatured = property['featured'] ?? false;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -65,24 +78,11 @@ class PropertyOverviewScreen extends StatelessWidget {
                   Container(
                     height: 200,
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      image:
-                          property['image'] != null
-                              ? DecorationImage(
-                                image: NetworkImage(property['image']),
-                                fit: BoxFit.cover,
-                              )
-                              : null,
+                    child: CustomImage(
+                      type: CustomImageType.network,
+                      src: property.propertyMedia?.images?.first ?? '',
+                      fit: BoxFit.cover,
                     ),
-                    child:
-                        property['image'] == null
-                            ? const Icon(
-                              Icons.home,
-                              size: 60,
-                              color: Colors.grey,
-                            )
-                            : null,
                   ),
                   // Status Badge
                   Positioned(
@@ -98,7 +98,7 @@ class PropertyOverviewScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        property['status'] ?? 'Available',
+                        property.propertyStatus?.capitalize ?? 'Available',
                         style: TextStyle(
                           color: isSold ? Colors.white : ColorRes.primary,
                           fontSize: 12,
@@ -107,6 +107,30 @@ class PropertyOverviewScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  if (property.listingType != null)
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          property.listingType!.capitalize.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
                   // Featured Badge
                 ],
               ),
@@ -127,7 +151,7 @@ class PropertyOverviewScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                property['title'] ?? 'Property Title',
+                                property.propertyType ?? 'Property Title',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -145,7 +169,7 @@ class PropertyOverviewScreen extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      property['location'] ?? 'Location',
+                                      property.location ?? 'Location',
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.grey[600],
@@ -167,7 +191,7 @@ class PropertyOverviewScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            property['price'] ?? '\$0',
+                            priceManager.displayPrice,
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -181,24 +205,27 @@ class PropertyOverviewScreen extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     // Property Features
-                    Row(
-                      children: [
-                        _buildFeatureChip(
-                          Icons.hotel,
-                          '${property['bedrooms'] ?? 0} Beds',
-                        ),
-                        const SizedBox(width: 8),
-                        _buildFeatureChip(
-                          Icons.bathtub,
-                          '${property['bathrooms'] ?? 0} Baths',
-                        ),
-                        const SizedBox(width: 8),
-                        _buildFeatureChip(
-                          Icons.square_foot,
-                          property['area'] ?? '0 sq ft',
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     _buildFeatureChip(
+                    //       Icons.hotel,
+                    //       '${property.propertyDetails?.bhk ?? 0} BHK',
+                    //     ),
+                    //     const SizedBox(width: 8),
+                    //     _buildFeatureChip(
+                    //       Icons.bathtub,
+                    //       '${property.propertyDetails?.bathroom ?? 0} Baths',
+                    //     ),
+                    //     const SizedBox(width: 8),
+                    //     _buildFeatureChip(
+                    //       Icons.square_foot,
+                    //       property.propertyDetails?.propertyBuiltUpArea
+                    //               .toString() ??
+                    //           '0 sq ft',
+                    //     ),
+                    //   ],
+                    // ),
+                    Facilities(property: property),
 
                     const SizedBox(height: 16),
 
@@ -213,34 +240,34 @@ class PropertyOverviewScreen extends StatelessWidget {
                       children: [
                         _buildAnalyticsItem(
                           Icons.visibility,
-                          _formatNumber(property['views'] ?? 0),
+                          _formatNumber(property.totalViews ?? 0),
                           'Views',
                           ColorRes.primary,
                         ),
                         _buildAnalyticsItem(
                           Icons.favorite,
-                          _formatNumber(property['likes'] ?? 0),
+                          _formatNumber(property.totalFavorites ?? 0),
                           'Likes',
                           ColorRes.primary,
                         ),
                         _buildAnalyticsItem(
                           Icons.share,
-                          _formatNumber(property['shares'] ?? 0),
+                          _formatNumber(property.totalShares ?? 0),
                           'Shares',
                           ColorRes.primary,
                         ),
                         _buildAnalyticsItem(
                           Icons.people,
-                          _formatNumber(property['visits'] ?? 0),
+                          _formatNumber(property.totalVisits ?? 0),
                           'Visits',
                           ColorRes.primary,
                         ),
-                        _buildAnalyticsItem(
-                          Icons.contact_phone,
-                          _formatNumber(property['totalLeads'] ?? 0),
-                          'Leads',
-                          ColorRes.primary,
-                        ),
+                        // _buildAnalyticsItem(
+                        //   Icons.contact_phone,
+                        //   _formatNumber(property.tot ?? 0),
+                        //   'Leads',
+                        //   ColorRes.primary,
+                        // ),
                       ],
                     ),
                   ],
@@ -323,5 +350,101 @@ class PropertyOverviewScreen extends StatelessWidget {
       return '${(number / 1000).toStringAsFixed(1)}K';
     }
     return number.toString();
+  }
+}
+
+class Facilities extends StatelessWidget {
+  final Items property;
+  final Color bgColor;
+  final Color txtColor;
+
+  Facilities({
+    super.key,
+    required this.property,
+    this.bgColor = const Color(0xFFDBEAFE),
+    this.txtColor = const Color(0xFF2563EB),
+  });
+
+  // Map detail keys to icons
+  final Map<String, IconData> iconMap = {
+    "BHK": Icons.bed,
+    "Furnishing": Icons.chair_alt,
+    "Built-up Area": Icons.zoom_out_map_outlined,
+    "Carpet Area": Icons.square_foot,
+    "Floor": Icons.layers_outlined,
+    "Age of Property": Icons.date_range,
+    "Rent": Icons.attach_money,
+    "Price": Icons.price_change,
+    "Possession": Icons.home_work,
+    "Amenities": Icons.checklist_rtl,
+    "Parking": Icons.local_parking,
+    "Facing": Icons.explore,
+    "Condition": Icons.handyman,
+    // Add more mappings if needed
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final highlights = PropertyHighlightManager(property).getHighlights();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(highlights.length > 3 ? 3 : highlights.length, (
+          index,
+        ) {
+          final item = highlights[index];
+          final key = item.keys.first;
+          final value = item.values.first;
+          final icon = iconMap[key];
+
+          return Row(
+            children: [
+              if (index != 0) ...[
+                const Text('  •', style: TextStyle(fontSize: 10)),
+                const SizedBox(width: 6),
+              ],
+              _buildChip(
+                value.toString(),
+                16, // icon size
+                icon: icon,
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildChip(
+    String text,
+    double size, {
+    String? svgIcon,
+    IconData? icon,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          svgIcon == null
+              ? Icon(icon, size: size, color: ColorRes.primary)
+              : AppSvgIcon(assetName: svgIcon, size: size),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: ColorRes.grey,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

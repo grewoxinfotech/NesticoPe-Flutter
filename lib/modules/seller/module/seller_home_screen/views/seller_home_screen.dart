@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/home/views/home_screen.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/widgets/texts/headline_text.dart';
+import '../../../../../data/network/property/models/property_model.dart';
 import '../../../../profile/views/profile_screen.dart';
 
 final List<Map<String, dynamic>> addonData = [
@@ -188,8 +191,28 @@ final List<Map<String, dynamic>> propertiesOverview = [
   },
 ];
 
-class SellerHomeScreen extends StatelessWidget {
+class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
+
+  @override
+  State<SellerHomeScreen> createState() => _SellerHomeScreenState();
+}
+
+class _SellerHomeScreenState extends State<SellerHomeScreen> {
+  final controller = Get.find<PropertyController>();
+
+  @override
+  void initState() {
+    loadPropertyBySeller();
+    super.initState();
+  }
+
+  Future<void> loadPropertyBySeller() async {
+    final user = await SecureStorage.getUserData();
+    if (user != null) {
+      controller.applyFilter("created_by", user.user?.id.toString() ?? "");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -338,7 +361,23 @@ class SellerHomeScreen extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              child: OverViewCard(),
+                              child: Obx(() {
+                                if (controller.isLoading.value &&
+                                    controller.items.isEmpty) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+
+                                if (!controller.isLoading.value &&
+                                    controller.items.isEmpty) {
+                                  return const Center(
+                                    child: Text("No Property found."),
+                                  );
+                                }
+
+                                return OverViewCard(property: controller.items);
+                              }),
                             ),
                             SizedBox(height: 20),
                             Padding(
@@ -406,7 +445,9 @@ class SellerHomeScreen extends StatelessWidget {
 }
 
 class OverViewCard extends StatelessWidget {
-  const OverViewCard({super.key});
+  final List<Items> property;
+
+  const OverViewCard({super.key, required this.property});
 
   @override
   Widget build(BuildContext context) {
@@ -456,11 +497,7 @@ class OverViewCard extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(
-                      () => PropertyOverviewScreen(
-                        properties: propertiesOverview,
-                      ),
-                    );
+                    Get.to(() => PropertyOverviewScreen(properties: property));
                   },
                   child: Text(
                     "Explore>",

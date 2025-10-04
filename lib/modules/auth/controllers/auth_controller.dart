@@ -58,7 +58,8 @@ class AuthController extends GetxController {
   }
 
   void fillTestCredentials() {
-    emailController.text = "abc@gmail.com";
+    emailController.text = "Superchc@gmail.com";
+    // emailController.text = "abc@gmail.com";
     passwordController.text = "CRM_GrewoxAdmin@123";
   }
 

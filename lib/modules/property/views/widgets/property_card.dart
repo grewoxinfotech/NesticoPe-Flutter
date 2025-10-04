@@ -9,6 +9,7 @@ import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import '../../../../app/manager/favorite.dart';
+import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../property_detail_screen.dart';
@@ -34,6 +35,11 @@ class _PropertyCardState extends State<PropertyCard> {
 
   @override
   Widget build(BuildContext context) {
+    final priceManager = PropertyPriceManager(
+      listingType: widget.property.listingType ?? "",
+      financialInfo:
+          widget.property.propertyDetails?.financialInfo ?? FinancialInfo(),
+    );
 
     return GestureDetector(
       onTap:
