@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:housing_flutter_app/app/utils/dummy_data.dart';
+import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
 
 import '../../buy_componet/buy_component.dart';
@@ -7,7 +10,8 @@ import '../../common_component/budget_filter.dart';
 import '../../common_component/listed_by.dart';
 
 class RentCommercialProperty extends StatefulWidget {
-  const RentCommercialProperty({super.key});
+  const RentCommercialProperty({super.key, required this.controllerForFilter});
+  final PropertyFilterControllerForFilter controllerForFilter;
 
   @override
   State<RentCommercialProperty> createState() => _RentCommercialPropertyState();
@@ -18,12 +22,7 @@ class _RentCommercialPropertyState extends State<RentCommercialProperty> {
   String possessionType = "Ready to move";
   String selectedLeased = 'Pre-Leased';
   int selectedAvailable = 0;
-  List<String> availableList = [
-    'Within a week',
-    'Within 15 days',
-    'Within a month',
-    'After a month',
-  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +31,10 @@ class _RentCommercialPropertyState extends State<RentCommercialProperty> {
       children: [
         buildFilterHeadingPadding("Property Type"),
         const SizedBox(height: 7),
-        ListedBy(listedByList: buyCommercialPropertyType),
+        ListedBy(listedByList: widget.controllerForFilter.buyCommercialPropertyType,onTap: (items) {
+          debugPrint('Rent Commercial property $items');
+
+        },controllerForFilter: widget.controllerForFilter,selectedString: widget.controllerForFilter.buySelectedCommercialPropertyTyp,),
         const SizedBox(height: 7),
         buildFilterHeadingPadding('Budget'),
         BudgetFilter(
@@ -62,33 +64,35 @@ class _RentCommercialPropertyState extends State<RentCommercialProperty> {
         const SizedBox(height: 7),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              ...List.generate(availableList.length, (index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedAvailable = index;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: buildFilterPropertyTypes(
-                      title: availableList[index],
-                      isSelected: selectedAvailable == index,
-                      isExpanded: false,
+          child: Obx(
+            () =>  Row(
+              children: [
+                ...List.generate(widget.controllerForFilter.availableList.length, (index) {
+                  return GestureDetector(
+                    onTap: () {
+                      widget.controllerForFilter.updateFilter(widget.controllerForFilter.availableSelectedList, widget.controllerForFilter.availableList[index]);
+                      debugPrint('Available ${widget.controllerForFilter.availableSelectedList.value}');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: buildFilterPropertyTypes(
+                        title: widget.controllerForFilter.availableList[index],
+                        isSelected: widget.controllerForFilter.availableSelectedList.value == widget.controllerForFilter.availableList[index],
+                        isExpanded: false,
+                      ),
                     ),
-                  ),
-                );
-              }),
-            ],
+                  );
+                }),
+                SizedBox(width: 10,)
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 7),
-        buildFilterHeadingPadding("Listed By"),
-
-        const SizedBox(height: 7),
-        ListedBy(listedByList: listedByList),
+        // const SizedBox(height: 7),
+        // buildFilterHeadingPadding("Listed By"),
+        //
+        // const SizedBox(height: 7),
+        // ListedBy(listedByList: listedByList),
         const SizedBox(height: 7),
       ],
     );

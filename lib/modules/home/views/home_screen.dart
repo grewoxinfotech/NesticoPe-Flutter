@@ -28,8 +28,11 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/constants/color_res.dart';
+import '../../../app/utils/file_upload_section/file_upload_section.dart';
+import '../../dashboard/views/dashboard_screen.dart';
 import '../../property/views/widgets/city_filter.dart';
 import '../../property/views/widgets/property_card.dart';
+import '../../reseller/view/property_reseller.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Map<String, String>> propertyTypes;
@@ -959,18 +962,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   //   ),
                   // ),
                   const SizedBox(height: 20),
-                  const TitleWithViewAll(
+                  TitleWithViewAll(
                     title: "Recommended Sellers",
                     showViewAll: true,
+
+                    onViewAll: () {
+                      Get.to(() =>  FileUploadSection());
+                    },
                   ),
                   const SizedBox(height: 12),
 
                   SellerListWidget(propertyList: dummySellerList),
 
                   const SizedBox(height: 32),
-                  const TitleWithViewAll(
+                   TitleWithViewAll(
                     title: "Recommended Insights",
                     showViewAll: true,
+                    onViewAll: () {
+                      Get.to(()=>MainNavigationScreen());
+                    },
                   ),
                   SizedBox(height: AppSpacing.medium),
 

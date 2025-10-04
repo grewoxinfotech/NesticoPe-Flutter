@@ -40,8 +40,9 @@ class TitleWithViewAll extends StatelessWidget {
               child: const Text(
                 "See All",
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.blue,
+                    fontWeight: FontWeight.w500,
+                    color: ColorRes.primary,
+                    fontSize: 12
                 ),
               ),
             ),

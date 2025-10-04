@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/dummy_data.dart';
+import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/commercial_property_filter/component/buy_commercial.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
 
 import 'component/rent_commercial_property.dart';
 
-class CommercialPropertyFilter extends StatefulWidget {
-  const CommercialPropertyFilter({super.key});
+class CommercialPropertyFilter extends StatelessWidget {
 
-  @override
-  State<CommercialPropertyFilter> createState() =>
-      _CommercialPropertyFilterState();
-}
-
-class _CommercialPropertyFilterState extends State<CommercialPropertyFilter> {
-  int selectedIndex = 0;
+  const CommercialPropertyFilter({super.key, required this.controller});
+  final PropertyFilterControllerForFilter controller;
 
   @override
   Widget build(BuildContext context) {
@@ -26,36 +22,39 @@ class _CommercialPropertyFilterState extends State<CommercialPropertyFilter> {
         const SizedBox(height: 7),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(subCategory.length, (index) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                  },
-                  child: buildFilterPropertyTypes(
-                    title: propertyType[index],
-                    isSelected: selectedIndex == index,
-                    isExpanded: true,
+          child: Obx(
+            () =>  Row(
+              children: List.generate(controller.commercialSubCategory.length, (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                     controller.updateFilter(controller.commercialSelectedSubCategory, controller.commercialSubCategory[index]);
+debugPrint('category ${controller.commercialSelectedSubCategory.value}');
+                    },
+                    child: buildFilterPropertyTypes(
+                      title: controller.commercialSubCategory[index],
+                      isSelected: controller.commercialSelectedSubCategory.value ==controller.commercialSubCategory[index] ,
+                      isExpanded: true,
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
         ),
         const SizedBox(height: 7),
         SingleChildScrollView(
-          child: Column(
-            children: [
-              if (subCategory[selectedIndex] == 'Buy') ...[
-                const BuyCommercial(),
-              ] else ...[
-                const RentCommercialProperty(),
+          child: Obx(
+            () =>  Column(
+              children: [
+                if (controller.commercialSelectedSubCategory.value == 'Buy') ...[
+                   BuyCommercial(controllerForFilter: controller,),
+                ] else ...[
+                   RentCommercialProperty(controllerForFilter: controller,),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ],

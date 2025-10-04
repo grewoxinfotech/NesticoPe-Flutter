@@ -439,26 +439,7 @@ List<Map<String, dynamic>> propertyList = [
   },
 ];
 
-List builderList = [
-  {
-    "title": "ABC Builders",
-    "establish_year": 1995,
-    "projects_count": 12,
-    "image": "assets/logo/Avant.jpg",
-  },
-  {
-    "title": "XYZ Constructions",
-    "establish_year": 2002,
-    "projects_count": 7,
-    "image": "assets/logo/professional.jpg",
-  },
-  {
-    "title": "Dream Homes Pvt Ltd",
-    "establish_year": 2010,
-    "projects_count": 4,
-    "image": "assets/logo/xYZ.jpg",
-  },
-];
+
 
 final stats = [
   {
@@ -489,30 +470,10 @@ final stats = [
   },
 ];
 
-List<String> propertyType = ['Buy', 'Rent', 'Commercial', 'PG/Co-living'];
 
-List<String> bHkType = [
-  "All",
-  "1 Rk",
-  "1 BHK",
-  "2 BHK",
-  "3 BHK",
-  "4 BHK",
-  "5 BHK",
-  "5+ BHK",
-];
 
-List<String> propertyTypesList = [
-  "All",
-  "Apartments",
-  "Independent House",
-  "Plot",
-  "Studio",
-  "Duplex",
-  "PentHouse",
-  "Builder Floor",
-  "Villa",
-];
+
+
 
 List<String> listedByList = [
   "All",
@@ -522,43 +483,17 @@ List<String> listedByList = [
   "Expert Pro Agent",
 ];
 
-List<String> constructionStatus = [
-  'All',
-  'Ready to move',
-  "Under Construction",
-  "New Launch",
-];
 
-List<String> furnishingType = [
-  "All",
-  "Unfurnished",
-  "Semi Furnished",
-  "Fully Furnished",
-];
+
+
 List<String> subCategory = ['Buy', 'Lease'];
 
-List<String> buyCommercialPropertyType = [
-  "Ready to use Office Space",
-  "Bare Shell Office Space",
-  "Shop",
-  "Showroom",
-  "Commercial Plot",
-  "WareHouse",
-  "Others",
-];
-List<String> saleTypeCommercialProperty = [
-  "New Properties",
-  "Resale Properties",
-];
 
-List<String> leaseTypeCommercialProperty = ['Pre-Leased', 'Non-Leased'];
-List<String> possessionCommercialList = ["Ready to move", "Under Construction"];
 
-List<String> genderList = ['Male', 'Female', 'Both'];
-List<String> roomTypeList = [
-  "single", "double", "triple", "other"
-];
-List<String> foodAvailable = ['Yes', 'No'];
+
+
+
+
 
 List<String> localityList = [
   'Andheri West',

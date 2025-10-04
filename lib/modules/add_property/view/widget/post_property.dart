@@ -406,6 +406,8 @@ class PostProperty extends StatelessWidget {
                         },
 
                         // isEnable: false,
+                        // isEnable:      ,
+
                       ),
                       const SizedBox(height: 16),
                       buildTextField(

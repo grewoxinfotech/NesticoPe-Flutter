@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
 class BudgetFilter extends StatelessWidget {
@@ -33,7 +34,7 @@ class BudgetFilter extends StatelessWidget {
           child: Row(
             children: [
               buildCommonText(
-                '$minLabel : ${values.start.toStringAsFixed(1)} $minQuantityLabel',
+                '$minLabel : ${Formatter.formatPrice(values.start)}',
                 11,
                 FontWeight.w500,
                 ColorRes.primary,
@@ -41,7 +42,7 @@ class BudgetFilter extends StatelessWidget {
               ),
               const Spacer(),
               buildCommonText(
-                '$maxLabel : ${values.end.toStringAsFixed(1)} $maxQuantityLabel',
+                '$maxLabel : ${Formatter.formatPrice(values.end)}',
                 11,
                 FontWeight.w500,
                 ColorRes.primary,

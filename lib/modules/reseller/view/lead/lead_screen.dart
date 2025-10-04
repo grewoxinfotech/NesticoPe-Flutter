@@ -1,0 +1,2218 @@
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+
+import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../utils/global.dart';
+import '../../../add_property/view/create_property.dart';
+import '../../controller/dashborad_controller/dashboard_controller.dart';
+import '../../model/dashboard/dashboard_model.dart';
+import '../lead_overview/lead_detail.dart';
+//ur import path
+
+// class ResellerLeadScreen extends StatelessWidget {
+//   const ResellerLeadScreen({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final controller = Get.find<DashboardController>();
+//
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         title: Text(
+//           'Property Buyer Leads',
+//           style: TextStyle(
+//             fontWeight: AppFontWeights.bold,
+//             fontSize: getResponsiveFontSize(
+//               context,
+//               AppFontSizes.large,
+//               AppFontSizes.body,
+//             ),
+//           ),
+//         ),
+//         automaticallyImplyLeading: false,
+//         backgroundColor: Colors.white,
+//         elevation: 0,
+//         actions: [
+//           IconButton(
+//             icon: const Icon(Icons.add),
+//             onPressed: () {
+//               FocusScope.of(context).unfocus();
+//               showLeadForm(context, controller);
+//             },
+//           ),
+//
+//           // PopupMenuButton<String>(
+//           //   onSelected: (value) {
+//           //     controller.updateLeadStage(value);
+//           //   },
+//           //   itemBuilder:
+//           //       (context) =>
+//           //   [
+//           //     const PopupMenuItem(value: 'Status', child: Text('Status')),
+//           //     const PopupMenuItem(value: 'Stage', child: Text('Stage')),
+//           //   ],
+//           //   icon: const Icon(Icons.filter_list, color: ColorRes.primary),
+//           //
+//           //   // ✅ Decoration of popup menu
+//           //   color: Colors.white,
+//           //   // background color of menu
+//           //   elevation: 8,
+//           //   // shadow depth
+//           //   shape: RoundedRectangleBorder(
+//           //     borderRadius: BorderRadius.circular(12), // rounded corners
+//           //     side: BorderSide(color: Colors.grey.shade300, width: 1), // border
+//           //   ),
+//           // ),
+//
+//           PopupMenuButton<String>(
+//             onSelected: (value) {
+//               controller.updateLeadStage(value);
+//               // Reset category to 'All' when switching filter type
+//               controller.updateLeadCategory('All');
+//             },
+//             itemBuilder: (context) => [
+//               const PopupMenuItem(value: 'Status', child: Text('Status')),
+//               const PopupMenuItem(value: 'Stage', child: Text('Stage')),
+//             ],
+//             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
+//             color: Colors.white,
+//             elevation: 8,
+//             shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(12),
+//               side: BorderSide(color: Colors.grey.shade300, width: 1),
+//             ),
+//           )
+//         ],
+//       ),
+//       body: Obx(() {
+//         // if (controller.isLoading.value && controller.recentLeads.isEmpty) {
+//         //   return const Center(child: CircularProgressIndicator());
+//         // }
+//         //
+//         // // build filtered list here
+//         // final allLeads = controller.recentLeads;
+//         // final query = controller.searchQuery.value.toLowerCase();
+//         // final category = controller.selectedCategoryInLead.value;
+//         //
+//         // final filteredLeads =
+//         //     allLeads.where((lead) {
+//         //       // search by name OR company
+//         //       final matchesSearch =
+//         //           query.isEmpty ||
+//         //           lead.name.toLowerCase().contains(query) ||
+//         //           lead.company.toLowerCase().contains(query);
+//         //
+//         //       // match category (status)
+//         //       final matchesCategory =
+//         //           category == 'All' || _getStatusText(lead.status) == category;
+//         //
+//         //       return matchesSearch && matchesCategory;
+//         //     }).toList();
+//         //======================================================djfheyrufgrfgweryufgfygfwy7fg
+//
+//
+//         //
+//         // if (controller.isLoading.value && controller.recentLeads.isEmpty) {
+//         //   return const Center(child: CircularProgressIndicator());
+//         // }
+//         //
+//         // // Updated filtering logic
+//         // final allLeads = controller.recentLeads;
+//         // final query = controller.searchQuery.value.toLowerCase();
+//         // final category = controller.selectedCategoryInLead.value;
+//         // final filterType = controller.selectedStage
+//         //     .value; // 'Status' or 'Stage'
+//         //
+//         // final filteredLeads = allLeads.where((lead) {
+//         //   // Search by name OR company
+//         //   final matchesSearch = query.isEmpty ||
+//         //       lead.name.toLowerCase().contains(query) ||
+//         //       lead.company.toLowerCase().contains(query);
+//         //
+//         //   // Match category based on filter type
+//         //   bool matchesCategory = category == 'All';
+//         //
+//         //   if (!matchesCategory) {
+//         //     if (filterType == 'Stage') {
+//         //       // Filter by stage
+//         //       matchesCategory = _getStageText(lead.stage) == category;
+//         //     } else {
+//         //       // Filter by status (default)
+//         //       matchesCategory = _getStatusText(lead.status) == category;
+//         //     }
+//         //   }
+//         //
+//         //   return matchesSearch && matchesCategory;
+//         // }).toList();
+//
+//         if (controller.isLoading.value && controller.recentLeads.isEmpty) {
+//           return const Center(child: CircularProgressIndicator());
+//         }
+//
+//         // Use the controller's getFilteredLeads() method
+//         final filteredLeads = controller.getFilteredLeads();
+//
+//
+//         return Column(
+//           children: [
+//             _buildSearchAndFilter(context, controller),
+//             _buildStatusFilter(context, controller),
+//             Expanded(
+//               child:
+//               filteredLeads.isEmpty
+//                   ? _buildEmptyState(context)
+//                   : ListView.separated(
+//                 padding: EdgeInsets.all(getResponsivePadding(context)),
+//                 itemCount: filteredLeads.length,
+//                 separatorBuilder:
+//                     (context, index) =>
+//                     SizedBox(height: getResponsiveSpacing(context)),
+//                 itemBuilder: (context, index) {
+//                   final lead = filteredLeads[index];
+//                   return _buildLeadCard(context, lead, controller);
+//                 },
+//               ),
+//             ),
+//           ],
+//         );
+//       }),
+//     );
+//   }
+//
+//   Widget _buildSearchAndFilter(BuildContext context,
+//       DashboardController controller,) {
+//     return Container(
+//       margin: EdgeInsets.all(getResponsivePadding(context)),
+//       padding: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(14),
+//         border: Border.all(color: Colors.grey.shade300, width: 1),
+//       ),
+//       child: TextField(
+//         onChanged: controller.updateSearch,
+//         style: TextStyle(fontSize: AppFontSizes.medium),
+//         decoration: InputDecoration(
+//           hintText: 'Search buyer leads...',
+//           hintStyle: TextStyle(fontSize: AppFontSizes.medium),
+//           prefixIcon: const Icon(Icons.search),
+//           border: InputBorder.none,
+//           contentPadding: const EdgeInsets.symmetric(vertical: 16),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildStatusFilter(BuildContext context,
+//       DashboardController controller,) {
+//     return Obx(() {
+//       debugPrint('Leads of Stage ${controller.selectedStage.value}');
+//       final statuses = (controller.selectedStage.value == 'Stage')
+//           ? [
+//         'All',
+//         'New Lead',
+//         'Contacted',
+//         'Interested',
+//         'Site Visit',
+//         'Sell',
+//       ]
+//           : [
+//         'All',
+//         'New',
+//         'Contacted',
+//         'Qualified',
+//         'Negotiating',
+//         'Lost',
+//         'Converted',
+//       ];
+//
+//       final isCompact = MediaQuery
+//           .of(context)
+//           .size
+//           .width < 600;
+//
+//       return Container(
+//         height: isCompact ? 48 : 52,
+//         margin: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
+//         child: ListView.separated(
+//           padding: EdgeInsets.zero,
+//           scrollDirection: Axis.horizontal,
+//           itemCount: statuses.length,
+//           separatorBuilder: (_, __) => const SizedBox(width: 8),
+//           itemBuilder: (context, index) {
+//             final status = statuses[index];
+//             final isSelected = controller.selectedCategoryInLead.value ==
+//                 status;
+//
+//             return InkWell(
+//               borderRadius: BorderRadius.circular(20),
+//               onTap: () => controller.updateLeadCategory(status),
+//               child: Container(
+//                 padding: EdgeInsets.symmetric(horizontal: isCompact ? 12 : 14),
+//                 decoration: BoxDecoration(
+//                   color: isSelected ? ColorRes.primary : Colors.white,
+//                   borderRadius: BorderRadius.circular(12),
+//                   border: Border.all(
+//                     color: isSelected
+//                         ? ColorRes.primary
+//                         : ColorRes.grey.withOpacity(0.3),
+//                     width: 1,
+//                   ),
+//                 ),
+//                 alignment: Alignment.center,
+//                 child: Text(
+//                   status,
+//                   style: TextStyle(
+//                     fontSize: isCompact ? AppFontSizes.caption : AppFontSizes
+//                         .small,
+//                     color: isSelected ? ColorRes.white : Colors.grey[700],
+//                     fontWeight: isSelected
+//                         ? AppFontWeights.semiBold
+//                         : AppFontWeights.regular,
+//                   ),
+//                 ),
+//               ),
+//             );
+//           },
+//         ),
+//       );
+//     });
+//   }
+// }
+//
+//
+// Widget _buildEmptyState(BuildContext context) {
+//   return Center(
+//     child: Column(
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       children: [
+//         Icon(Icons.real_estate_agent, size: 64, color: Colors.grey[400]),
+//         const SizedBox(height: 16),
+//         Text(
+//           'No buyer leads found',
+//           style: TextStyle(
+//             fontSize: AppFontSizes.large,
+//             color: Colors.grey[600],
+//             fontWeight: AppFontWeights.medium,
+//           ),
+//         ),
+//         const SizedBox(height: 8),
+//         Padding(
+//           padding: const EdgeInsets.symmetric(horizontal: 32),
+//           child: Text(
+//             'Add your first property buyer to get started',
+//             style: TextStyle(
+//               fontSize: AppFontSizes.medium,
+//               color: Colors.grey[500],
+//             ),
+//             textAlign: TextAlign.center,
+//           ),
+//         ),
+//       ],
+//     ),
+//   );
+// }
+//
+// Widget _buildLeadCard(
+//   BuildContext context,
+//   Lead lead,
+//   DashboardController controller,
+// ) {
+//   final isCompact = MediaQuery.of(context).size.width < 600;
+//   final cardPadding = isCompact ? 12.0 : 16.0;
+//
+//   return Container(
+//     padding: EdgeInsets.all(cardPadding),
+//     decoration: BoxDecoration(
+//       color: Colors.white,
+//       borderRadius: BorderRadius.circular(12),
+//       border: Border.all(color: Colors.grey.shade300, width: 1),
+//     ),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         // Header Row with Avatar and Basic Info
+//         Row(
+//           children: [
+//             // Column 1: Avatar
+//             CircleAvatar(
+//               radius: isCompact ? 18 : 20,
+//               backgroundColor: ColorRes.primary.withOpacity(0.2),
+//               child: Text(
+//                 lead.name.split(' ').map((e) => e[0]).join().toUpperCase(),
+//                 style: TextStyle(
+//                   color: ColorRes.primary,
+//                   fontWeight: AppFontWeights.bold,
+//                   fontSize:
+//                       isCompact ? AppFontSizes.small : AppFontSizes.medium,
+//                 ),
+//               ),
+//             ),
+//             SizedBox(width: isCompact ? 8 : 12),
+//
+//             // Column 2: Lead Details
+//             Expanded(
+//               flex: 2,
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   // Name
+//                   SizedBox(
+//                     width: 180,
+//                     child: Text(
+//                       lead.name,
+//                       style: TextStyle(
+//                         fontSize:
+//                             isCompact ? AppFontSizes.medium : AppFontSizes.body,
+//                         fontWeight: AppFontWeights.bold,
+//                         color: ColorRes.textColor,
+//                       ),
+//                       maxLines: 1,
+//                       overflow: TextOverflow.ellipsis,
+//                     ),
+//                   ),
+//                   SizedBox(height: 2),
+//
+//                   // Company with location icon
+//                   SizedBox(
+//                     width: 180,
+//                     child: Text(
+//                       '${lead.company}',
+//                       style: TextStyle(
+//                         fontSize:
+//                             isCompact
+//                                 ? AppFontSizes.extraSmall
+//                                 : AppFontSizes.small,
+//                         color: Colors.grey[700],
+//                         fontWeight: AppFontWeights.regular,
+//                       ),
+//                       maxLines: 1,
+//                       overflow: TextOverflow.ellipsis,
+//                     ),
+//                   ),
+//                   SizedBox(height: 2),
+//
+//                   // Email
+//                   if (lead.email.isNotEmpty) ...[
+//                     SizedBox(height: 4),
+//                     Row(
+//                       children: [
+//                         Expanded(
+//                           child: Text(
+//                             lead.email,
+//                             style: TextStyle(
+//                               fontSize: AppFontSizes.extraSmall,
+//                               color: Colors.grey[600],
+//                               fontWeight: AppFontWeights.regular,
+//                             ),
+//                             maxLines: 1,
+//                             overflow: TextOverflow.ellipsis,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ],
+//                 ],
+//               ),
+//             ),
+//
+//             // Column 3: Budget & Time Info
+//             Column(
+//               crossAxisAlignment: CrossAxisAlignment.end,
+//               children: [
+//                 Text(
+//                   'Budget',
+//                   style: TextStyle(
+//                     fontSize: AppFontSizes.extraSmall,
+//                     color: Colors.grey[800],
+//                     fontWeight: AppFontWeights.regular,
+//                   ),
+//                 ),
+//                 SizedBox(height: 4),
+//                 Text(
+//                   '${Formatter.formatPrice(lead.estimatedValue)}',
+//                   style: TextStyle(
+//                     fontSize:
+//                         isCompact ? AppFontSizes.medium : AppFontSizes.body,
+//                     fontWeight: AppFontWeights.semiBold,
+//                     color: Colors.green,
+//                   ),
+//                 ),
+//                 SizedBox(height: 4),
+//                 Text(
+//                   _formatTime(lead.createdAt),
+//                   style: TextStyle(
+//                     fontSize: AppFontSizes.caption,
+//                     color: Colors.grey[600],
+//                     fontWeight: AppFontWeights.regular,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//
+//         SizedBox(height: isCompact ? 8 : 12),
+//         Divider(color: Colors.grey, thickness: 0.5),
+//         SizedBox(height: isCompact ? 8 : 12),
+//
+//         // Bottom Row with Status and Actions
+//   //       Row(
+//   //         children: [
+//   //           // Enhanced Status with more details
+//   //           Container(
+//   //             padding: EdgeInsets.symmetric(
+//   //               horizontal: isCompact ? 12 : 16,
+//   //               vertical: isCompact ? 6 : 10,
+//   //             ),
+//   //             decoration: BoxDecoration(
+//   //
+//   //               color:  (controller.selectedStage.value == 'Stage')?_getStageColor(lead.stage).withOpacity(0.08): _getStatusColor(lead.status).withOpacity(0.08),
+//   //               borderRadius: BorderRadius.circular(8),
+//   //               border: Border.all(
+//   //                 color:  (controller.selectedStage.value == 'Stage')?_getStageColor(lead.stage).withOpacity(0.3): _getStatusColor(lead.status).withOpacity(0.3),
+//   //                 width: 1,
+//   //               ),
+//   //             ),
+//   //             child: Text(
+//   // (controller.selectedStage.value == 'Stage')?_getStageText(lead.stage):_getStatusText(lead.status),
+//   //               style: TextStyle(
+//   //                 fontSize:
+//   //                     isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+//   //                 color: _getStatusColor(lead.status),
+//   //                 fontWeight: AppFontWeights.bold,
+//   //               ),
+//   //               overflow: TextOverflow.ellipsis,
+//   //             ),
+//   //           ),
+//   //
+//   //           // SizedBox(width: isCompact ? 12 : 16),
+//   //           Spacer(),
+//   //           // Enhanced Action Buttons with animations
+//   //           Row(
+//   //             children: [
+//   //               buildActionButton(
+//   //                 icon: Icons.visibility,
+//   //                 color: Colors.blue,
+//   //                 // onPressed: () => showLeadDetails(context, lead),
+//   //                 onPressed: () {
+//   //                   // Navigate to detail screen
+//   //                   Get.to(() => LeadDetailScreen(lead: dummyResellerLead));
+//   //                 },
+//   //                 tooltip: 'View Details',
+//   //                 isCompact: isCompact,
+//   //               ),
+//   //               SizedBox(width: 8),
+//   //
+//   //               buildActionButton(
+//   //                 icon: Icons.edit,
+//   //                 color: Colors.orange,
+//   //                 onPressed:
+//   //                     () => showLeadForm(context, controller, lead: lead),
+//   //                 tooltip: 'Edit Lead',
+//   //                 isCompact: isCompact,
+//   //               ),
+//   //               SizedBox(width: 8),
+//   //
+//   //               buildActionButton(
+//   //                 icon: Icons.delete,
+//   //                 color: Colors.red,
+//   //                 onPressed:
+//   //                     () => showDeleteConfirmation(context, lead, controller),
+//   //                 tooltip: 'Delete Lead',
+//   //                 isCompact: isCompact,
+//   //               ),
+//   //             ],
+//   //           ),
+//   //         ],
+//   //       ),
+//
+//
+//         Row(
+//           children: [
+//             // Enhanced Status with more details - WRAPPED IN OBX
+//             Obx(() {
+//               final isStageFilter = controller.selectedStage.value == 'Stage';
+//               final badgeColor = isStageFilter
+//                   ? _getStageColor(lead.stage)
+//                   : _getStatusColor(lead.status);
+//               final badgeText = isStageFilter
+//                   ? _getStageText(lead.stage)
+//                   : _getStatusText(lead.status);
+//
+//               return Container(
+//                 padding: EdgeInsets.symmetric(
+//                   horizontal: isCompact ? 12 : 16,
+//                   vertical: isCompact ? 6 : 10,
+//                 ),
+//                 decoration: BoxDecoration(
+//                   color: badgeColor.withOpacity(0.08),
+//                   borderRadius: BorderRadius.circular(8),
+//                   border: Border.all(
+//                     color: badgeColor.withOpacity(0.3),
+//                     width: 1,
+//                   ),
+//                 ),
+//                 child: Text(
+//                   badgeText,
+//                   style: TextStyle(
+//                     fontSize: isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+//                     color: badgeColor,
+//                     fontWeight: AppFontWeights.bold,
+//                   ),
+//                   overflow: TextOverflow.ellipsis,
+//                 ),
+//               );
+//             }),
+//
+//             Spacer(),
+//             // Enhanced Action Buttons with animations
+//             Row(
+//               children: [
+//                 buildActionButton(
+//                   icon: Icons.visibility,
+//                   color: Colors.blue,
+//                   onPressed: () {
+//                     Get.to(() => LeadDetailScreen(lead: dummyResellerLead));
+//                   },
+//                   tooltip: 'View Details',
+//                   isCompact: isCompact,
+//                 ),
+//                 SizedBox(width: 8),
+//                 buildActionButton(
+//                   icon: Icons.edit,
+//                   color: Colors.orange,
+//                   onPressed: () => showLeadForm(context, controller, lead: lead),
+//                   tooltip: 'Edit Lead',
+//                   isCompact: isCompact,
+//                 ),
+//                 SizedBox(width: 8),
+//                 buildActionButton(
+//                   icon: Icons.delete,
+//                   color: Colors.red,
+//                   onPressed: () => showDeleteConfirmation(context, lead, controller),
+//                   tooltip: 'Delete Lead',
+//                   isCompact: isCompact,
+//                 ),
+//               ],
+//             ),
+//           ],
+//         )
+//       ],
+//     ),
+//   );
+// }
+
+
+class ResellerLeadScreen extends StatelessWidget {
+  final bool isViewAll;
+  const ResellerLeadScreen({super.key, this.isViewAll=false});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.find<DashboardController>();
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: (isViewAll)?IconButton(onPressed: () {
+Navigator.of(context).pop();
+        }, icon: Icon(Icons.arrow_back)):null,
+        title: Text(
+          'Property Buyer Leads',
+          style: TextStyle(
+            fontWeight: AppFontWeights.bold,
+            fontSize: getResponsiveFontSize(
+              context,
+              AppFontSizes.large,
+              AppFontSizes.body,
+            ),
+          ),
+        ),
+        automaticallyImplyLeading: (isViewAll),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              FocusScope.of(context).unfocus();
+              showLeadForm(context, controller);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.filter_list, color: ColorRes.primary),
+            onPressed: () {
+              showFilterBottomSheet(context, controller);
+            },
+          ),
+        ],
+      ),
+      body: Obx(() {
+        if (controller.isLoading.value && controller.recentLeads.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final filteredLeads = controller.getFilteredLeads();
+
+        return Column(
+          children: [
+            _buildSearchAndFilter(context, controller),
+            _buildSelectedFiltersChips(context, controller),
+            Expanded(
+              child: filteredLeads.isEmpty
+                  ? _buildEmptyState(context)
+                  : ListView.separated(
+                padding: EdgeInsets.all(getResponsivePadding(context)),
+                itemCount: filteredLeads.length,
+                separatorBuilder: (context, index) =>
+                    SizedBox(height: getResponsiveSpacing(context)),
+                itemBuilder: (context, index) {
+                  final lead = filteredLeads[index];
+                  return _buildLeadCard(context, lead, controller);
+                },
+              ),
+            ),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _buildSearchAndFilter(
+      BuildContext context,
+      DashboardController controller,
+      ) {
+    return Container(
+      margin: EdgeInsets.all(getResponsivePadding(context)),
+      padding: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      child: TextField(
+        onChanged: controller.updateSearch,
+        style: TextStyle(fontSize: AppFontSizes.medium),
+        decoration: InputDecoration(
+          hintText: 'Search buyer leads...',
+          hintStyle: TextStyle(fontSize: AppFontSizes.medium),
+          prefixIcon: const Icon(Icons.search),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+      ),
+    );
+  }
+  //
+  // Widget _buildSelectedFiltersChips(
+  //     BuildContext context,
+  //     DashboardController controller,
+  //     ) {
+  //   return Obx(() {
+  //     final selectedFilters = controller.selectedLeadFilters;
+  //
+  //     if (selectedFilters.isEmpty) {
+  //       return const SizedBox.shrink();
+  //     }
+  //
+  //     return Container(
+  //       height: 48,
+  //       margin: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
+  //       child: ListView.separated(
+  //         padding: EdgeInsets.zero,
+  //         scrollDirection: Axis.horizontal,
+  //         itemCount: selectedFilters.length,
+  //         separatorBuilder: (_, __) => const SizedBox(width: 8),
+  //         itemBuilder: (context, index) {
+  //           final filter = selectedFilters[index];
+  //           return Chip(
+  //             label: Text(
+  //               filter,
+  //               style: TextStyle(
+  //                 fontSize: AppFontSizes.caption,
+  //                 color: Colors.white,
+  //                 fontWeight: AppFontWeights.medium,
+  //               ),
+  //             ),
+  //             deleteIcon: const Icon(Icons.close, size: 16, color: Colors.white),
+  //             onDeleted: () {
+  //               controller.removeLeadFilter(filter);
+  //             },
+  //             backgroundColor: ColorRes.primary,
+  //             padding: const EdgeInsets.symmetric(horizontal: 8),
+  //           );
+  //         },
+  //       ),
+  //     );
+  //   });
+  // }
+
+
+  Widget _buildSelectedFiltersChips(
+      BuildContext context,
+      DashboardController controller,
+      ) {
+    return Obx(() {
+      final selectedFilters = controller.selectedLeadFilters;
+
+      if (selectedFilters.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: getResponsivePadding(context),
+          vertical: 8,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Active Filters:',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const Spacer(),
+                TextButton.icon(
+                  onPressed: () {
+                    controller.clearLeadFilters();
+                  },
+                  label: Text(
+                    'Clear All',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      color: ColorRes.primary,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                spacing: 8,
+                // runSpacing: 8,
+                children: selectedFilters.map((filter) {
+                  // Split filter into type and value
+                  final parts = filter.split(':');
+                  final filterType = parts[0]; // Stage or Status
+                  final filterValue = parts[1]; // New Lead, Contacted, etc.
+
+                  // Get color based on type
+                  final chipColor = filterType == 'Stage'
+                      ? ColorRes.primary
+                      : Colors.green;
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: chipColor.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: chipColor.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Filter type badge
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: chipColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              filterType,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.extraSmall,
+                                color: Colors.white,
+                                fontWeight: AppFontWeights.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          // Filter value
+                          Text(
+                            filterValue,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              color: chipColor,
+                              fontWeight: AppFontWeights.semiBold,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          // Remove button
+                          InkWell(
+                            onTap: () {
+                              controller.removeLeadFilter(filter);
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              child: Icon(
+                                Icons.close,
+                                size: 14,
+                                color: chipColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.real_estate_agent, size: 64, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            'No buyer leads found',
+            style: TextStyle(
+              fontSize: AppFontSizes.large,
+              color: Colors.grey[600],
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              'Add your first property buyer to get started',
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                color: Colors.grey[500],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLeadCard(
+      BuildContext context,
+      Lead lead,
+      DashboardController controller,
+      ) {
+    final isCompact = MediaQuery.of(context).size.width < 600;
+    final cardPadding = isCompact ? 12.0 : 16.0;
+
+    return Container(
+      padding: EdgeInsets.all(cardPadding),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: isCompact ? 18 : 20,
+                backgroundColor: ColorRes.primary.withOpacity(0.2),
+                child: Text(
+      getInitials(lead.name),
+                  style: TextStyle(
+                    color: ColorRes.primary,
+                    fontWeight: AppFontWeights.bold,
+                    fontSize: isCompact ? AppFontSizes.small : AppFontSizes.medium,
+                  ),
+                ),
+              ),
+              SizedBox(width: isCompact ? 8 : 12),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        lead.name,
+                        style: TextStyle(
+                          fontSize: isCompact ? AppFontSizes.medium : AppFontSizes.body,
+                          fontWeight: AppFontWeights.bold,
+                          color: ColorRes.textColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        '${lead.company}',
+                        style: TextStyle(
+                          fontSize: isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+                          color: Colors.grey[700],
+                          fontWeight: AppFontWeights.regular,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (lead.email.isNotEmpty) ...[
+                      SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              lead.email,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.extraSmall,
+                                color: Colors.grey[600],
+                                fontWeight: AppFontWeights.regular,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Budget',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.extraSmall,
+                      color: Colors.grey[800],
+                      fontWeight: AppFontWeights.regular,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '${Formatter.formatPrice(lead.estimatedValue)}',
+                    style: TextStyle(
+                      fontSize: isCompact ? AppFontSizes.medium : AppFontSizes.body,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    _formatTime(lead.createdAt),
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      color: Colors.grey[600],
+                      fontWeight: AppFontWeights.regular,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: isCompact ? 8 : 12),
+          Divider(color: Colors.grey, thickness: 0.5),
+          SizedBox(height: isCompact ? 8 : 12),
+          // Row(
+          //   children: [
+          //     Obx(() {
+          //       final isStageFilter = controller.selectedStage.value == 'Stage';
+          //       final badgeColor = isStageFilter
+          //           ? _getStageColor(lead.stage)
+          //           : _getStatusColor(lead.status);
+          //       final badgeText = isStageFilter
+          //           ? _getStageText(lead.stage)
+          //           : _getStatusText(lead.status);
+          //
+          //       return Container(
+          //         padding: EdgeInsets.symmetric(
+          //           horizontal: isCompact ? 12 : 16,
+          //           vertical: isCompact ? 6 : 10,
+          //         ),
+          //         decoration: BoxDecoration(
+          //           color: badgeColor.withOpacity(0.08),
+          //           borderRadius: BorderRadius.circular(8),
+          //           border: Border.all(
+          //             color: badgeColor.withOpacity(0.3),
+          //             width: 1,
+          //           ),
+          //         ),
+          //         child: Text(
+          //           badgeText,
+          //           style: TextStyle(
+          //             fontSize: isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+          //             color: badgeColor,
+          //             fontWeight: AppFontWeights.bold,
+          //           ),
+          //           overflow: TextOverflow.ellipsis,
+          //         ),
+          //       );
+          //     }),
+          //     Spacer(),
+          //     Row(
+          //       children: [
+          //         buildActionButton(
+          //           icon: Icons.visibility,
+          //           color: Colors.blue,
+          //           onPressed: () {
+          //             Get.to(() => LeadDetailScreen(lead: dummyResellerLead));
+          //           },
+          //           tooltip: 'View Details',
+          //           isCompact: isCompact,
+          //         ),
+          //         SizedBox(width: 8),
+          //         buildActionButton(
+          //           icon: Icons.edit,
+          //           color: Colors.orange,
+          //           onPressed: () => showLeadForm(context, controller, lead: lead),
+          //           tooltip: 'Edit Lead',
+          //           isCompact: isCompact,
+          //         ),
+          //         SizedBox(width: 8),
+          //         buildActionButton(
+          //           icon: Icons.delete,
+          //           color: Colors.red,
+          //           onPressed: () => showDeleteConfirmation(context, lead, controller),
+          //           tooltip: 'Delete Lead',
+          //           isCompact: isCompact,
+          //         ),
+          //       ],
+          //     ),
+          //   ],
+          // )
+
+
+          Row(
+            children: [
+              // Status Badge
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isCompact ? 10 : 14,
+                  vertical: isCompact ? 6 : 8,
+                ),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(lead.status).withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: _getStatusColor(lead.status).withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  _getStatusText(lead.status),
+                  style: TextStyle(
+                    fontSize: isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+                    color: _getStatusColor(lead.status),
+                    fontWeight: AppFontWeights.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(width: 8),
+              // Stage Badge
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isCompact ? 10 : 14,
+                  vertical: isCompact ? 6 : 8,
+                ),
+                decoration: BoxDecoration(
+                  color: _getStageColor(lead.stage).withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: _getStageColor(lead.stage).withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  _getStageText(lead.stage),
+                  style: TextStyle(
+                    fontSize: isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+                    color: _getStageColor(lead.stage),
+                    fontWeight: AppFontWeights.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Spacer(),
+              Row(
+                children: [
+                  buildActionButton(
+                    icon: Icons.visibility,
+                    color: Colors.blue,
+                    onPressed: () {
+                      Get.to(() => LeadDetailScreen(lead: dummyResellerLead,isFromLead: true,));
+                    },
+                    tooltip: 'View Details',
+                    isCompact: isCompact,
+                  ),
+                  SizedBox(width: 8),
+                  buildActionButton(
+                    icon: Icons.edit,
+                    color: Colors.orange,
+                    onPressed: () => showLeadForm(context, controller, lead: lead),
+                    tooltip: 'Edit Lead',
+                    isCompact: isCompact,
+                  ),
+                  SizedBox(width: 8),
+                  buildActionButton(
+                    icon: Icons.delete,
+                    color: Colors.red,
+                    onPressed: () => showDeleteConfirmation(context, lead, controller),
+                    tooltip: 'Delete Lead',
+                    isCompact: isCompact,
+                  ),
+                ],
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+void showFilterBottomSheet(BuildContext context, DashboardController controller) {
+  // Create temporary lists to store selections
+  final RxList<String> tempSelectedFilters = <String>[
+    ...controller.selectedLeadFilters
+  ].obs;
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => StatefulBuilder(
+      builder: (context, setState) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.75,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Filter Leads',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            tempSelectedFilters.clear();
+                            controller.clearLeadFilters();
+                            setState(() {});
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.red[400],
+
+                          ),
+                          child: Text(
+                            'Clear All',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,fontSize: 12
+                              )
+                          ),
+                        ),
+
+
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              Divider(height: 1, color: Colors.grey[300]),
+
+              // Filter content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Stage Section
+                      _buildFilterSection(
+                        context: context,
+                        title: 'Stage',
+                        icon: Icons.stairs,
+                        filterType: 'Stage',
+                        options: [
+                          'New Lead',
+                          'Contacted',
+                          'Interested',
+                          'Site Visit',
+                          'Sell',
+                        ],
+                        tempSelectedFilters: tempSelectedFilters,
+                        setState: setState,
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Status Section
+                      _buildFilterSection(
+                        context: context,
+                        title: 'Status',
+                        icon: Icons.flag,
+                        filterType: 'Status',
+                        options: [
+                          'New',
+                          'Contacted',
+                          'Qualified',
+                          'Negotiating',
+                          'Lost',
+                          'Converted',
+                        ],
+                        tempSelectedFilters: tempSelectedFilters,
+                        setState: setState,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Apply button
+              SafeArea(
+
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Apply filters to controller
+                      controller.selectedLeadFilters.clear();
+                      controller.selectedLeadFilters.addAll(tempSelectedFilters);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.all(16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: Obx(() => Text(
+                      'Apply Filters (${tempSelectedFilters.length})',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.body,
+                        fontWeight: AppFontWeights.bold,
+                      ),
+                    )),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+
+Widget _buildFilterSection({
+  required BuildContext context,
+  required String title,
+  required IconData icon,
+  required String filterType,
+  required List<String> options,
+  required RxList<String> tempSelectedFilters,
+  required StateSetter setState,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Section header
+      Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: ColorRes.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              size: 18,
+              color: ColorRes.primary,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: ColorRes.textColor,
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 16),
+
+      // Filter chips
+      Wrap(
+        spacing: 8,
+        runSpacing: -4,
+        children: options.map((option) {
+          return Obx(() {
+            final fullFilterKey = '$filterType:$option';
+            final isSelected = tempSelectedFilters.contains(fullFilterKey);
+
+            return FilterChip(
+              label: Text(option),
+              selected: isSelected,
+              onSelected: (selected) {
+                if (selected) {
+                  if (!tempSelectedFilters.contains(fullFilterKey)) {
+                    tempSelectedFilters.add(fullFilterKey);
+                  }
+                } else {
+                  tempSelectedFilters.remove(fullFilterKey);
+                }
+                setState(() {});
+              },
+              selectedColor: ColorRes.primary.withOpacity(0.15),
+              checkmarkColor: ColorRes.primary,
+              backgroundColor: Colors.grey[100],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: isSelected ? ColorRes.primary : Colors.grey[300]!,
+                  width: isSelected ? 1.5 : 1,
+                ),
+              ),
+              labelStyle: TextStyle(
+                color: isSelected ? ColorRes.primary : Colors.black87,
+                fontWeight: isSelected
+                    ? AppFontWeights.semiBold
+                    : AppFontWeights.regular,
+                fontSize: AppFontSizes.small,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            );
+          });
+        }).toList(),
+      ),
+    ],
+  );
+}
+// Keep all other functions (showLeadForm, _buildFormField, showLeadDetails, etc.) unchanged
+// ... (rest of the helper functions remain the same)
+
+void showLeadForm(
+  BuildContext context,
+  DashboardController controller, {
+  Lead? lead,
+}) {
+  final formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController(text: lead?.name ?? '');
+  final locationController = TextEditingController(text: lead?.company ?? '');
+  final emailController = TextEditingController(text: lead?.email ?? '');
+  final phoneController = TextEditingController(text: lead?.phone ?? '');
+  final resellerTextController=TextEditingController(text: 'Reseller ID');
+  final budgetController = TextEditingController(
+    text: lead?.estimatedValue.toString() ?? '',
+  );
+  final notesController = TextEditingController(text: lead?.notes ?? '');
+  final statusController = ValueNotifier<LeadStatus>(
+    lead?.status ?? LeadStatus.new_,
+  );
+  final stageController=ValueNotifier<LeadStage>(lead?.stage??LeadStage.newLead);
+  final propertyController = ValueNotifier<String?>(lead?.property ?? null);
+
+
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder:
+        (context) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.9,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(getResponsivePadding(context)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          lead == null
+                              ? 'Add New Buyer Lead'
+                              : 'Edit Buyer Lead',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textColor,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(getResponsivePadding(context)),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildFormField(
+                            context: context,
+                            controller: nameController,
+                            label: 'Buyer Name',
+                            icon: Icons.person_outline,
+                            validator:
+                                (value) =>
+                                    value?.isEmpty ?? true
+                                        ? 'Name is required'
+                                        : null,
+                          ),
+                          SizedBox(height: getResponsiveSpacing(context)),
+                          _buildFormField(
+                            context: context,
+                            controller: locationController,
+                            label: 'Preferred Location',
+                            icon: Icons.location_city_outlined,
+                            validator:
+                                (value) =>
+                                    value?.isEmpty ?? true
+                                        ? 'Location is required'
+                                        : null,
+                          ),
+                          SizedBox(height: getResponsiveSpacing(context)),
+                          _buildFormField(
+                            context: context,
+                            controller: emailController,
+                            label: 'Email',
+                            icon: Icons.email_outlined,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value?.isEmpty ?? true)
+                                return 'Email is required';
+                              if (!GetUtils.isEmail(value!))
+                                return 'Enter a valid email';
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: getResponsiveSpacing(context)),
+                    _buildFormField(context: context, controller: resellerTextController, label: 'Reseller ID', icon: Icons.perm_identity_outlined,isEnable: false),
+                          SizedBox(height: getResponsiveSpacing(context)),
+                          _buildFormField(
+                            context: context,
+                            controller: phoneController,
+                            label: 'Phone',
+                            icon: Icons.phone_outlined,
+                            keyboardType: TextInputType.phone,
+                          ),
+
+                          SizedBox(height: getResponsiveSpacing(context)),
+                          ValueListenableBuilder<String?>(
+                            valueListenable: propertyController,
+                            builder: (context, selectedProperty, _) {
+                              // Build a list of property titles (ensure uniqueness)
+                              final propertyTitles = controller.dummyResellerLeads
+                                  .map((lead) => lead.customFields.title)
+                                  .toSet()
+                                  .toList();
+
+                              // Ensure currently selected value is actually in the list
+                              final currentValue = propertyTitles.contains(selectedProperty)
+                                  ? selectedProperty
+                                  : null;
+
+                              // Define one border style and reuse it everywhere
+                              final OutlineInputBorder commonBorder = OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: ColorRes.grey.withOpacity(0.3),
+                                  width: 1,
+                                ),
+                              );
+
+                              return SizedBox(
+                                height: 50,
+                                child: DropdownButtonFormField<String>(
+                                  value: currentValue,
+                                  decoration: InputDecoration(
+                                    labelText: 'Select Property',
+                                    labelStyle: const TextStyle(fontSize: 12),
+                                    prefixIcon: const Icon(Icons.home_outlined, size: 20),
+                                    border: commonBorder,
+                                    enabledBorder: commonBorder,
+                                    focusedBorder: commonBorder.copyWith(
+                                      borderSide: BorderSide(
+                                        color: ColorRes.grey.withOpacity(0.5), // optional darker on focus
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    disabledBorder: commonBorder,
+                                    errorBorder: commonBorder.copyWith(
+                                      borderSide: const BorderSide(color: Colors.red, width: 1),
+                                    ),
+                                    focusedErrorBorder: commonBorder.copyWith(
+                                      borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                                    ),
+                                  ),
+                                  items: propertyTitles.map(
+                                        (title) {
+                                      return DropdownMenuItem<String>(
+                                        value: title,
+                                        child: SizedBox(
+                                          width: 200,
+                                          child: Text(
+                                            title,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ).toList(),
+                                  onChanged: (value) {
+                                    propertyController.value = value;
+                                    debugPrint('${propertyController.value}');
+                                  },
+                                  validator: (value) =>
+                                  (value == null || value.isEmpty) ? 'Please select a property' : null,
+                                ),
+                              );
+                            },
+                          ),
+
+                          SizedBox(height: getResponsiveSpacing(context)),
+                          SizedBox(
+                            height: 50,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ValueListenableBuilder<LeadStatus>(
+                                    valueListenable: statusController,
+
+                                    builder: (context, status, child) {
+                                      return DropdownButtonFormField<LeadStatus>(
+                                        value: status,
+
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          color: Colors.black87,
+                                        ),
+                                        decoration: InputDecoration(
+                                          labelText: 'Status',
+                                          labelStyle: TextStyle(
+                                            fontSize: AppFontSizes.small,
+                                          ),
+
+                                          prefixIcon: const Icon(Icons.flag_outlined,size: 20,),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              width: 1,
+                                              color: ColorRes.grey.withOpacity(0.3),
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              width: 1,
+                                              color: ColorRes.primary,
+                                            ),
+                                          ),
+                                          disabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              width: 1,
+                                              color: ColorRes.grey.withOpacity(0.3),
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              width: 1,
+                                              color: ColorRes.grey.withOpacity(0.3),
+                                            ),
+                                          ),
+                                        ),
+                                        items:
+                                        LeadStatus.values.map((status) {
+                                          return DropdownMenuItem(
+                                            value: status,
+                                            child: Text(_getStatusText(status)),
+                                          );
+                                        }).toList(),
+                                        onChanged:
+                                            (value) => statusController.value = value!,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: 8,
+                                ),
+                                Expanded(
+                                  child: ValueListenableBuilder<LeadStage>(
+                                    valueListenable: stageController,
+
+                                    builder: (context, stage, child) {
+                                      return DropdownButtonFormField<LeadStage>(
+
+                                        value: stage,
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          color: Colors.black87,
+                                        ),
+                                        decoration: InputDecoration(
+                                          labelText: 'Stages',
+                                          labelStyle: TextStyle(
+                                            fontSize: AppFontSizes.small,
+                                          ),
+                                          prefixIcon: const Icon(Icons.show_chart),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              width: 1,
+                                              color: ColorRes.grey.withOpacity(0.3),
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              width: 1,
+                                              color: ColorRes.primary,
+                                            ),
+                                          ),
+                                          disabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              width: 1,
+                                              color: ColorRes.grey.withOpacity(0.3),
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              width: 1,
+                                              color: ColorRes.grey.withOpacity(0.3),
+                                            ),
+                                          ),
+                                        ),
+                                        items:
+                                        LeadStage.values.map((stage) {
+                                          return DropdownMenuItem(
+                                            value: stage,
+                                            child: Text(_getStageText(stage)),
+                                          );
+                                        }).toList(),
+                                        onChanged:
+                                            (value) => stageController.value = value!,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: getResponsiveSpacing(context)),
+                          _buildFormField(
+                            context: context,
+
+                            controller: notesController,
+                            label: 'Requirements & Notes',
+                            icon: Icons.note_outlined,
+                            maxLines: 4,
+                          ),
+
+                          const SizedBox(height: 24),
+                          SafeArea(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  final newLead = Lead(
+                                    id:
+                                        lead?.id ??
+                                        DateTime.now().millisecondsSinceEpoch
+                                            .toString(),
+                                    name: nameController.text,
+                                    company: locationController.text,
+                                    email: emailController.text,
+                                    phone: phoneController.text,
+                                    estimatedValue: double.parse(
+                                      budgetController.text,
+                                    ),
+                                    status: statusController.value,
+                                    notes: notesController.text,
+                                    createdAt: lead?.createdAt ?? DateTime.now(), stage: stageController.value,
+                                  );
+                            
+                                  if (lead == null) {
+                                    controller.recentLeads.add(newLead);
+                                    Get.snackbar(
+                                      'Success',
+                                      'Buyer lead added successfully',
+                                      backgroundColor: Colors.green,
+                                      colorText: Colors.white,
+                                    );
+                                  } else {
+                                    final index = controller.recentLeads
+                                        .indexWhere((l) => l.id == lead.id);
+                                    if (index != -1) {
+                                      controller.recentLeads[index] = newLead;
+                                      Get.snackbar(
+                                        'Success',
+                                        'Buyer lead updated successfully',
+                                        backgroundColor: Colors.green,
+                                        colorText: Colors.white,
+                                      );
+                                    }
+                                  }
+                                  Navigator.pop(context);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                lead == null
+                                    ? 'Add Buyer Lead'
+                                    : 'Update Buyer Lead',
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+  );
+}
+
+Widget _buildFormField({
+  required BuildContext context,
+  required TextEditingController controller,
+  required String label,
+  required IconData icon,
+  TextInputType? keyboardType,
+  String? Function(String?)? validator,
+  int maxLines = 1,
+  bool isEnable=true,
+}) {
+  return TextFormField(
+    minLines: 1,
+    enabled: isEnable,
+    controller: controller,
+    style: TextStyle(fontSize: AppFontSizes.small),
+    decoration: InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(fontSize: AppFontSizes.small),
+      prefixIcon: Icon(icon, size: 18),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(width: 1, color: ColorRes.grey.withOpacity(0.3)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(width: 1, color: ColorRes.primary),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(width: 1, color: ColorRes.grey.withOpacity(0.3)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(width: 1, color: ColorRes.grey.withOpacity(0.3)),
+      ),
+    ),
+    keyboardType: keyboardType,
+    validator: validator,
+    maxLines: maxLines,
+  );
+}
+
+void showLeadDetails(BuildContext context, Lead lead) {
+  showDialog(
+    context: context,
+
+    builder:
+        (context) => AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text(
+            lead.name,
+            style: TextStyle(
+              fontSize: AppFontSizes.large,
+              fontWeight: AppFontWeights.bold,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailRow(context, 'Location', lead.company),
+              _buildDetailRow(context, 'Email', lead.email),
+              _buildDetailRow(context, 'Phone', lead.phone),
+              _buildDetailRow(
+                context,
+                'Budget',
+                '${Formatter.formatPrice(lead.estimatedValue)}',
+              ),
+              _buildDetailRow(context, 'Status', _getStatusText(lead.status)),
+              _buildDetailRow(context, 'Added', _formatTime(lead.createdAt)),
+              if (lead.notes.isNotEmpty)
+                _buildDetailRow(context, 'Notes', lead.notes),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Close',
+                style: TextStyle(fontSize: AppFontSizes.medium),
+              ),
+            ),
+          ],
+        ),
+  );
+}
+
+Widget _buildDetailRow(BuildContext context, String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 70,
+          child: Text(
+            '$label:',
+            style: TextStyle(
+              fontWeight: AppFontWeights.bold,
+              fontSize: AppFontSizes.small,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(value, style: TextStyle(fontSize: AppFontSizes.small)),
+        ),
+      ],
+    ),
+  );
+}
+
+
+
+void showDeleteConfirmation(
+  BuildContext context,
+  Lead lead,
+  DashboardController controller,
+) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: ColorRes.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Delete Buyer Lead',
+          style: TextStyle(
+            fontSize: AppFontSizes.large,
+            fontWeight: AppFontWeights.bold,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete ${lead.name}?',
+          style: TextStyle(
+            fontSize: AppFontSizes.medium,
+            color: Colors.grey[700],
+          ),
+        ),
+        actions: [
+          // Cancel Button
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.medium,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+
+          // Delete Button
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              controller.recentLeads.removeWhere((l) => l.id == lead.id);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Buyer lead deleted successfully'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            },
+            child: Text(
+              'Delete',
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.bold,
+                color: Colors.red,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+double getResponsivePadding(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+  if (width < 600) return 12.0;
+  if (width < 900) return 16.0;
+  return 20.0;
+}
+
+double getResponsiveSpacing(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+  return width < 600 ? 12.0 : 16.0;
+}
+
+double getResponsiveFontSize(
+  BuildContext context,
+  double regular,
+  double compact,
+) {
+  return MediaQuery.of(context).size.width < 600 ? compact : regular;
+}
+
+// Status color methods
+Color _getStatusColor(LeadStatus status) {
+  switch (status) {
+    case LeadStatus.new_: // 'New'
+      return Colors.blue;
+    case LeadStatus.contacted:
+      return Colors.orange;
+    case LeadStatus.qualified:
+      return Colors.purple;
+    case LeadStatus.negotiation:
+      return Colors.indigo;
+    case LeadStatus.lost:
+      return Colors.red;
+    case LeadStatus.convert:
+      return Colors.teal;
+    case LeadStatus.all:
+    default:
+      return Colors.grey;
+  }
+}
+
+String _getStatusText(LeadStatus status) {
+  switch (status) {
+    case LeadStatus.new_:
+      return 'New';
+    case LeadStatus.contacted:
+      return 'Contacted';
+    case LeadStatus.qualified:
+      return 'Qualified';
+    case LeadStatus.negotiation:
+      return 'Negotiating';
+    case LeadStatus.lost:
+      return 'Lost';
+    case LeadStatus.convert:
+      return 'Converted';
+    case LeadStatus.all:
+    default:
+      return 'All';
+  }
+}
+
+Color _getStageColor(LeadStage stage) {
+  switch (stage) {
+    case LeadStage.newLead: // 'New Lead'
+      return Colors.blue;
+    case LeadStage.contacted:
+      return Colors.orange;
+    case LeadStage.interested:
+      return Colors.purple;
+    case LeadStage.siteVisit:
+      return Colors.indigo;
+    case LeadStage.sell:
+      return Colors.green;
+    case LeadStage.all:
+    default:
+      return Colors.grey;
+  }
+}
+
+String _getStageText(LeadStage stage) {
+  switch (stage) {
+    case LeadStage.newLead:
+      return 'New Lead';
+    case LeadStage.contacted:
+      return 'Contacted';
+    case LeadStage.interested:
+      return 'Interested';
+    case LeadStage.siteVisit:
+      return 'Site Visit';
+    case LeadStage.sell:
+      return 'Sell';
+    case LeadStage.all:
+    default:
+      return 'All';
+  }
+}
+
+
+String _formatTime(DateTime dateTime) {
+  final now = DateTime.now();
+  final difference = now.difference(dateTime);
+
+  if (difference.inDays > 0) {
+    return '${difference.inDays}d ago';
+  } else if (difference.inHours > 0) {
+    return '${difference.inHours}h ago';
+  } else {
+    return '${difference.inMinutes}m ago';
+  }
+}
+
+Widget buildActionButton({
+  required IconData icon,
+  required Color color,
+  required VoidCallback onPressed,
+  required String tooltip,
+  required bool isCompact,
+}) {
+  return Tooltip(
+    message: tooltip,
+    child: InkWell(
+      onTap: onPressed,
+      child: Container(
+        padding: EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withOpacity(0.3), width: 1),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: Icon(icon, size: isCompact ? 15 : 14, color: color),
+        ),
+      ),
+    ),
+  );
+}
+String getInitials(String name) {
+  if (name.trim().isEmpty) return ''; // no initials at all
+  // Split by whitespace and take first char of first two non-empty parts
+  final parts = name.trim().split(RegExp(r'\s+'));
+  if (parts.length == 1) {
+    return parts.first[0].toUpperCase();
+  } else {
+    final firstInitial = parts[0].isNotEmpty ? parts[0][0] : '';
+    final secondInitial = parts[1].isNotEmpty ? parts[1][0] : '';
+    return (firstInitial + secondInitial).toUpperCase();
+  }
+}

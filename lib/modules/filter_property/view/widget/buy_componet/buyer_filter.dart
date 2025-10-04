@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:housing_flutter_app/app/utils/dummy_data.dart';
+import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 
 import '../common_component/bhk_list.dart';
 import '../common_component/budget_filter.dart';
 import '../common_component/listed_by.dart';
 import 'buy_component.dart';
 
-class BuyFilters extends StatefulWidget {
-  const BuyFilters({super.key});
+class BuyFilters extends StatelessWidget {
+  final PropertyFilterControllerForFilter controllerForFilter;
 
-  @override
-  State<BuyFilters> createState() => _BuyFiltersState();
-}
-
-class _BuyFiltersState extends State<BuyFilters> {
-  List<String> bHKList = [];
-  double min = 0.0;
-  double max = 20.0;
-  RangeValues rangeValues = const RangeValues(2, 10);
+  const BuyFilters({super.key, required this.controllerForFilter});
 
   @override
   Widget build(BuildContext context) {
@@ -27,59 +21,65 @@ class _BuyFiltersState extends State<BuyFilters> {
       children: [
         buildFilterHeadingPadding('Budget Range'),
 
-        BudgetFilter(
-          maxQuantityLabel: 'Cr+',
-          minQuantityLabel: 'L',
-          maxLabel: 'Max',
-          minLabel: 'Min',
-          minValue: min,
-          maxValue: max,
-          values: rangeValues,
-          onChanged: (newValues) {
-            setState(() {
-              rangeValues = newValues;
-            });
-          },
+        Obx(
+          () => BudgetFilter(
+            maxQuantityLabel: 'Cr+',
+            minQuantityLabel: 'L',
+            maxLabel: 'Max',
+            minLabel: 'Min',
+            minValue: controllerForFilter.min.value,
+            maxValue: controllerForFilter.max.value,
+            values: controllerForFilter.rangeValues,
+            // Now this works with the getter
+            onChanged: (newValues) {
+              controllerForFilter.buyerPriceRange(newValues);
+            },
+          ),
         ),
         const SizedBox(height: 7),
 
         buildFilterHeadingPadding('BHK Type'),
         const SizedBox(height: 7),
         BHKTypes(
-          bHKList: bHkType,
+          bHKList: controllerForFilter.bHkType,
           onSelectionChanged: (index) {
-            print(index);
+            debugPrint('BHK Type $index');
           },
+          controllerForFilter: controllerForFilter,
         ),
         const SizedBox(height: 7),
 
         buildFilterHeadingPadding('Property Types'),
         const SizedBox(height: 7),
         FilterPropertyTypesList(
-          items: propertyTypesList,
+          items: controllerForFilter.propertyTypesList,
+          controllerForFilter: controllerForFilter,
+          selectedItems: controllerForFilter.subpropertyType,
           onSelectionChanged: (index) {
-            setState(() {});
+            debugPrint('Sub property Type $index');
           },
         ),
         const SizedBox(height: 7),
 
-        buildFilterHeadingPadding('Listed By'),
-        const SizedBox(height: 7),
-        ListedBy(
-          listedByList: listedByList,
-          onTap: (index) {
-            setState(() {});
-          },
-        ),
-        const SizedBox(height: 7),
+        // buildFilterHeadingPadding('Listed By'),
+        // const SizedBox(height: 7),
+        // ListedBy(
+        //   listedByList: listedByList,
+        //   onTap: (index) {
+        //     setState(() {});
+        //   },
+        // ),
+        // const SizedBox(height: 7),
 
         buildFilterHeadingPadding('Construction Status'),
         const SizedBox(height: 7),
         ListedBy(
-          listedByList: constructionStatus,
+          listedByList: controllerForFilter.constructionStatus,
+          selectedString: controllerForFilter.constructionStatusInBuy,
           onTap: (index) {
-            setState(() {});
+            debugPrint('Construction Status $index');
           },
+          controllerForFilter: controllerForFilter,
         ),
       ],
     );

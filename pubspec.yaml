@@ -20,6 +20,7 @@ dependencies:
   intl:
   image_picker:
   permission_handler:
+  dropdown_search:
   get:
   connectivity_plus:
   internet_connection_checker_plus:
@@ -43,6 +44,10 @@ dependencies:
   http_parser:
   mime:
   
+  file_picker:
+  pdfx:
+  open_filex:
+
 
 dev_dependencies:
   flutter_test:

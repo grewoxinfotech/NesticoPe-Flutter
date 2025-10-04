@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
 
@@ -7,11 +9,15 @@ class FilterPropertyTypesList extends StatefulWidget {
   const FilterPropertyTypesList({
     super.key,
     required this.items,
-    this.onSelectionChanged,
+    required this.onSelectionChanged,
+    required this.controllerForFilter, required this.selectedItems,
+
   });
 
   final List<String> items;
-  final Function(List<String> selectedItems)? onSelectionChanged;
+  final Function(String? selectedItems) onSelectionChanged;
+  final PropertyFilterControllerForFilter controllerForFilter;
+  final RxString selectedItems;
 
   @override
   State<FilterPropertyTypesList> createState() =>
@@ -19,40 +25,6 @@ class FilterPropertyTypesList extends StatefulWidget {
 }
 
 class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
-  List<String> selectedItems = [];
-
-  void toggleSelection(int index) {
-    String value = widget.items[index];
-
-    setState(() {
-      if (value == "All") {
-        if (selectedItems.length == widget.items.length) {
-          selectedItems.clear();
-        } else {
-          selectedItems.clear();
-          selectedItems.addAll(widget.items);
-        }
-      } else {
-        if (selectedItems.contains(value)) {
-          selectedItems.remove(value);
-        } else {
-          selectedItems.add(value);
-        }
-
-        if (selectedItems.length != widget.items.length &&
-            selectedItems.contains("All")) {
-          selectedItems.remove("All");
-        }
-        if (selectedItems.length == widget.items.length - 1 &&
-            !selectedItems.contains("All")) {
-          selectedItems.add("All");
-        }
-      }
-    });
-
-    widget.onSelectionChanged?.call(selectedItems);
-  }
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -63,15 +35,25 @@ class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
         shrinkWrap: true,
         itemCount: widget.items.length,
         itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () => toggleSelection(index),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: buildFilterPropertyTypes(
-                title: widget.items[index],
-                isSelected: selectedItems.contains(widget.items[index]),
-                isExpanded: false,
-                paddingHorizontal: 20,
+          return Obx(
+            ()=> GestureDetector(
+              onTap: () {
+                widget.controllerForFilter.updateFilter(
+                  widget.selectedItems,
+                  widget.items[index],
+                );
+                widget.onSelectionChanged(widget.items[index]);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: buildFilterPropertyTypes(
+                  title: widget.items[index],
+                  isSelected:
+                      widget.selectedItems.value ==
+                      widget.items[index],
+                  isExpanded: false,
+                  paddingHorizontal: 20,
+                ),
               ),
             ),
           );

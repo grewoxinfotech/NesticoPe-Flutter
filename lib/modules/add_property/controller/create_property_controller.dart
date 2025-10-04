@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -26,6 +29,11 @@ class CreatePropertyController extends GetxController {
   late MultiImagePickerController pickerController;
   RxBool isLoading = false.obs;
 
+
+
+
+  ////////////document upload //////////////////
+  RxList<File>? files=<File>[].obs;
   // Reactive states
   var selectedSellerType = SellerType.owner.obs; // New: selected user type
   var isOwner = true.obs;
@@ -40,6 +48,7 @@ class CreatePropertyController extends GetxController {
   var furnishingType = "".obs;
   var stepIndex = 0.obs;
   var rent_Painting_Charges = "".obs;
+
   var areaUnit = "sq.ft.".obs;
   var commercial_plotArea = "sq.ft.".obs;
   var commercial_plot = TextEditingController();
@@ -454,6 +463,45 @@ class CreatePropertyController extends GetxController {
         print("Removed Furnishing: ${item.key}");
       }
       selectedFurnishing.refresh();
+    }
+  }
+
+  Future<void> pickFiles() async {
+    // Open the file picker
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      // allowMultiple: true, // uncomment to select multiple files
+      // default: pick any file type
+      type: FileType.custom, // use custom to restrict to extensions
+      allowedExtensions: ['pdf'], // only these extensions
+    );
+
+    if (result != null) {
+      // For single file:
+      // String? filePath = result.files.single.path;
+      // String fileName = result.files.single.name;
+      //
+      // print('Picked file: $fileName at $filePath');
+      //
+      // // If you want a list of files (for multiple selection):
+      // List<PlatformFile> files = result.files;
+
+      try {
+        if (result != null) {
+          files?.value = result.paths.map((path) => File(path!)).toList();
+          for (var file in files??[]) {
+            print('${file.uri} - ${file.path}');
+          }
+
+        } else {
+          print("Error picking files: ");
+          // User canceled the picker
+        }
+      } catch (e) {
+        print("Error picking files: $e");
+      }
+    } else {
+      // User canceled the picker
+      print('No file selected');
     }
   }
 

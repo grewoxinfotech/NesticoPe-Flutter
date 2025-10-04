@@ -13,7 +13,9 @@
         "connectivity_plus",
         "cupertino_icons",
         "dropdown_button2",
+        "dropdown_search",
         "easy_stepper",
+        "file_picker",
         "fl_chart",
         "flutter",
         "flutter_secure_storage",
@@ -29,6 +31,8 @@
         "intl",
         "mime",
         "multi_image_picker_view",
+        "open_filex",
+        "pdfx",
         "permission_handler",
         "persistent_bottom_nav_bar",
         "provider",
@@ -109,6 +113,47 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "open_filex",
+      "version": "4.7.0",
+      "dependencies": [
+        "ffi",
+        "flutter"
+      ]
+    },
+    {
+      "name": "pdfx",
+      "version": "2.9.2",
+      "dependencies": [
+        "extension",
+        "flutter",
+        "flutter_web_plugins",
+        "meta",
+        "photo_view",
+        "plugin_platform_interface",
+        "synchronized",
+        "universal_platform",
+        "uuid",
+        "vector_math",
+        "web"
+      ]
+    },
+    {
+      "name": "file_picker",
+      "version": "10.3.3",
+      "dependencies": [
+        "cross_file",
+        "dbus",
+        "ffi",
+        "flutter",
+        "flutter_plugin_android_lifecycle",
+        "flutter_web_plugins",
+        "path",
+        "plugin_platform_interface",
+        "web",
+        "win32"
       ]
     },
     {
@@ -321,6 +366,13 @@
       "dependencies": [
         "flutter",
         "web"
+      ]
+    },
+    {
+      "name": "dropdown_search",
+      "version": "6.0.2",
+      "dependencies": [
+        "flutter"
       ]
     },
     {
@@ -779,6 +831,96 @@
       ]
     },
     {
+      "name": "ffi",
+      "version": "2.1.4",
+      "dependencies": []
+    },
+    {
+      "name": "web",
+      "version": "1.1.1",
+      "dependencies": []
+    },
+    {
+      "name": "photo_view",
+      "version": "0.15.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "universal_platform",
+      "version": "1.1.0",
+      "dependencies": []
+    },
+    {
+      "name": "synchronized",
+      "version": "3.4.0",
+      "dependencies": []
+    },
+    {
+      "name": "extension",
+      "version": "0.6.0",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
+      "name": "uuid",
+      "version": "4.5.1",
+      "dependencies": [
+        "crypto",
+        "fixnum",
+        "meta",
+        "sprintf"
+      ]
+    },
+    {
+      "name": "plugin_platform_interface",
+      "version": "2.1.8",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "dbus",
+      "version": "0.7.11",
+      "dependencies": [
+        "args",
+        "ffi",
+        "meta",
+        "xml"
+      ]
+    },
+    {
+      "name": "cross_file",
+      "version": "0.3.4+2",
+      "dependencies": [
+        "meta",
+        "web"
+      ]
+    },
+    {
+      "name": "win32",
+      "version": "5.14.0",
+      "dependencies": [
+        "ffi"
+      ]
+    },
+    {
+      "name": "flutter_plugin_android_lifecycle",
+      "version": "2.0.30",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "typed_data",
       "version": "1.4.0",
       "dependencies": [
@@ -799,13 +941,6 @@
         "collection",
         "path",
         "term_glyph"
-      ]
-    },
-    {
-      "name": "flutter_web_plugins",
-      "version": "0.0.0",
-      "dependencies": [
-        "flutter"
       ]
     },
     {
@@ -834,11 +969,6 @@
         "flutter",
         "speech_to_text_platform_interface"
       ]
-    },
-    {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
     },
     {
       "name": "pedantic",
@@ -913,18 +1043,6 @@
       ]
     },
     {
-      "name": "win32",
-      "version": "5.14.0",
-      "dependencies": [
-        "ffi"
-      ]
-    },
-    {
-      "name": "ffi",
-      "version": "2.1.4",
-      "dependencies": []
-    },
-    {
       "name": "file",
       "version": "7.0.1",
       "dependencies": [
@@ -943,14 +1061,6 @@
         "path_provider",
         "plugin_platform_interface",
         "uuid"
-      ]
-    },
-    {
-      "name": "cross_file",
-      "version": "0.3.4+2",
-      "dependencies": [
-        "meta",
-        "web"
       ]
     },
     {
@@ -1368,29 +1478,26 @@
       ]
     },
     {
+      "name": "sprintf",
+      "version": "7.0.0",
+      "dependencies": []
+    },
+    {
+      "name": "xml",
+      "version": "6.6.1",
+      "dependencies": [
+        "collection",
+        "meta",
+        "petitparser"
+      ]
+    },
+    {
       "name": "archive",
       "version": "4.0.7",
       "dependencies": [
         "crypto",
         "path",
         "posix"
-      ]
-    },
-    {
-      "name": "plugin_platform_interface",
-      "version": "2.1.8",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
-      "name": "uuid",
-      "version": "4.5.1",
-      "dependencies": [
-        "crypto",
-        "fixnum",
-        "meta",
-        "sprintf"
       ]
     },
     {
@@ -1447,30 +1554,11 @@
       ]
     },
     {
-      "name": "xml",
-      "version": "6.6.1",
-      "dependencies": [
-        "collection",
-        "meta",
-        "petitparser"
-      ]
-    },
-    {
       "name": "path_parsing",
       "version": "1.1.0",
       "dependencies": [
         "meta",
         "vector_math"
-      ]
-    },
-    {
-      "name": "dbus",
-      "version": "0.7.11",
-      "dependencies": [
-        "args",
-        "ffi",
-        "meta",
-        "xml"
       ]
     },
     {
@@ -1511,13 +1599,6 @@
       ]
     },
     {
-      "name": "flutter_plugin_android_lifecycle",
-      "version": "2.0.30",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
       "name": "sqflite",
       "version": "2.4.2",
       "dependencies": [
@@ -1554,6 +1635,14 @@
       "dependencies": []
     },
     {
+      "name": "petitparser",
+      "version": "7.0.1",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
+    },
+    {
       "name": "posix",
       "version": "6.0.3",
       "dependencies": [
@@ -1561,11 +1650,6 @@
         "meta",
         "path"
       ]
-    },
-    {
-      "name": "sprintf",
-      "version": "7.0.0",
-      "dependencies": []
     },
     {
       "name": "platform",
@@ -1578,14 +1662,6 @@
       "dependencies": [
         "meta",
         "path"
-      ]
-    },
-    {
-      "name": "petitparser",
-      "version": "7.0.1",
-      "dependencies": [
-        "collection",
-        "meta"
       ]
     },
     {
@@ -1628,11 +1704,6 @@
         "sqflite_common",
         "sqflite_platform_interface"
       ]
-    },
-    {
-      "name": "synchronized",
-      "version": "3.4.0",
-      "dependencies": []
     }
   ],
   "configVersion": 1

@@ -1,48 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
 
-class BHKTypes extends StatefulWidget {
-  const BHKTypes({super.key, required this.bHKList, this.onSelectionChanged});
+class BHKTypes extends StatelessWidget {
+   BHKTypes({super.key, required this.bHKList, required this.onSelectionChanged, required this.controllerForFilter});
 
   final List<String> bHKList;
-  final Function(List<String> selectedItems)? onSelectionChanged;
+  final Function(String? selectedItems) onSelectionChanged;
+  final PropertyFilterControllerForFilter controllerForFilter;
 
-  @override
-  State<BHKTypes> createState() => _BHKTypesState();
-}
 
-class _BHKTypesState extends State<BHKTypes> {
-  List<String> selectedItems = [];
-
-  void toggleSelection(int index) {
-    String value = widget.bHKList[index];
-
-    setState(() {
-      if (value == "All") {
-        if (selectedItems.length == widget.bHKList.length) {
-          selectedItems.clear();
-        } else {
-          selectedItems.clear();
-          selectedItems.addAll(widget.bHKList);
-        }
-      } else {
-        if (selectedItems.contains(value)) {
-          selectedItems.remove(value);
-        } else {
-          selectedItems.add(value);
-        }
-        if (selectedItems.length != widget.bHKList.length &&
-            selectedItems.contains("All")) {
-          selectedItems.remove("All");
-        }
-        if (selectedItems.length == widget.bHKList.length - 1 &&
-            !selectedItems.contains("All")) {
-          selectedItems.add("All");
-        }
-      }
-    });
-    widget.onSelectionChanged?.call(selectedItems);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,16 +19,20 @@ class _BHKTypesState extends State<BHKTypes> {
       padding: const EdgeInsets.only(left: 8),
       child: Row(
         children: List.generate(
-          widget.bHKList.length,
-          (index) => Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: GestureDetector(
-              onTap: () => toggleSelection(index),
-              child: buildFilterPropertyTypes(
-                title: widget.bHKList[index],
-                isSelected: selectedItems.contains(widget.bHKList[index]),
-                isExpanded: true,
-                width: 80,
+          bHKList.length,
+          (index) => Obx(
+            () =>  Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
+                onTap: () { controllerForFilter.updateFilter(controllerForFilter.bhkType,bHKList[index]);
+                  onSelectionChanged(bHKList[index]);
+                  },
+                child: buildFilterPropertyTypes(
+                  title: bHKList[index],
+                  isSelected: controllerForFilter.bhkType.value==bHKList[index],
+                  isExpanded: true,
+                  width: 80,
+                ),
               ),
             ),
           ),

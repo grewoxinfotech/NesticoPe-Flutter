@@ -222,16 +222,20 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/modules/filter_property/controller/filter_controller.dart';
+import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/buy_componet/buyer_filter.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/commercial_property_filter/commercial_property_filter.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/pg_property/pg_co_living.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/rent_component/rented_filter.dart';
 import 'package:housing_flutter_app/modules/property_price_trend/view/widget/filter_type.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
 
 class RealEstateFilterScreen extends StatelessWidget {
-  // Controller initialized once
-  final FilterController filterController = Get.put(FilterController());
+   RealEstateFilterScreen({super.key});
+
+ final PropertyFilterControllerForFilter controllerForFilter=Get.put(PropertyFilterControllerForFilter());
 
   @override
   Widget build(BuildContext context) {
@@ -254,36 +258,30 @@ class RealEstateFilterScreen extends StatelessWidget {
             const SizedBox(height: 7),
             buildFilterHeadingPadding('Types of properties'),
             const SizedBox(height: 7),
-
-            // Property type selection row wrapped in Obx
-            Obx(
-              () => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    children: List.generate(propertyType.length, (index) {
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8), // only at edges
+                child: Obx(
+                  () =>  Row(
+                    children: List.generate(controllerForFilter.propertyType.length, (index) {
                       return Row(
                         children: [
                           GestureDetector(
                             onTap: () {
-                              filterController.selectedPropertyTypeIndex.value =
-                                  index;
+                           controllerForFilter.changePropertyType(index);
                             },
                             child: buildFilterPropertyTypes(
-                              title: propertyType[index],
+                              title: controllerForFilter.propertyType[index],
                               height: 50,
                               width: 90,
-                              isSelected:
-                                  filterController
-                                      .selectedPropertyTypeIndex
-                                      .value ==
-                                  index,
+
+                              isSelected: controllerForFilter.selectedPropertyTypeIndex.value == index,
                               isExpanded: true,
                             ),
                           ),
-                          if (index != propertyType.length - 1)
-                            const SizedBox(width: 8),
+                          if (index != controllerForFilter.propertyType.length - 1)
+                            const SizedBox(width: 8), // spacing only between items
                         ],
                       );
                     }),
@@ -292,98 +290,25 @@ class RealEstateFilterScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 15),
-            buildFilterHeadingPadding('Localities'),
             const SizedBox(height: 7),
-
-            Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 8),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(AppRadius.small),
-                    border: Border.all(color: Colors.grey.shade300, width: 1),
-                    color: Colors.grey.shade100,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 5,
-                    children: [
-                      const Icon(
-                        Icons.location_on,
-                        color: ColorRes.primary,
-                        size: 13,
-                      ),
-                      buildCommonText(
-                        'Add more',
-                        12,
-                        FontWeight.w600,
-                        ColorRes.textColor,
-                        1,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-
-                // Flexible scroll for locality list
-                Flexible(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: List.generate(localityList.length, (index) {
-                        return Container(
-                          margin: const EdgeInsets.only(right: 8),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              AppRadius.small,
-                            ),
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                              width: 1,
-                            ),
-                            color: ColorRes.primary,
-                          ),
-                          child: buildCommonText(
-                            localityList[index],
-                            12,
-                            FontWeight.w500,
-                            Colors.white,
-                            1,
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
-                ),
-              ],
+            Obx(
+              () =>  Column(
+                children: [
+                  if (controllerForFilter.propertyType[controllerForFilter.selectedPropertyTypeIndex.value] == "Buy") ...[
+                     BuyFilters(controllerForFilter: controllerForFilter,),
+                  ] else if (controllerForFilter.propertyType[controllerForFilter.selectedPropertyTypeIndex.value] ==
+                      "Rent") ...[
+                     RentFilter(controllerForFilter: controllerForFilter,),
+                  ] else if (controllerForFilter.propertyType[controllerForFilter.selectedPropertyTypeIndex.value] ==
+                      "Commercial") ...[
+                     CommercialPropertyFilter(controller:controllerForFilter ,),
+                  ] else if (controllerForFilter.propertyType[controllerForFilter.selectedPropertyTypeIndex.value] ==
+                      "PG/Co-living") ...[
+                     PgCoLiving(controllerForFilter: controllerForFilter,),
+                  ],
+                ],
+              ),
             ),
-
-            const SizedBox(height: 7),
-
-            // Dynamic filters based on property type
-            Obx(() {
-              final selectedType =
-                  propertyType[filterController
-                      .selectedPropertyTypeIndex
-                      .value];
-
-              if (selectedType == "Buy") return const BuyFilters();
-              if (selectedType == "Rent") return const RentFilter();
-              if (selectedType == "Commercial")
-                return const CommercialPropertyFilter();
-              if (selectedType == "PG/Co-living") return const PgCoLiving();
-
-              return const SizedBox();
-            }),
           ],
         ),
       ),

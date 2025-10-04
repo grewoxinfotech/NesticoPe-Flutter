@@ -55,6 +55,8 @@ class AppSvgRes {
   static const String ups="ups";
   static const String vastu="vastu";
   static const String water_storage="water-storage";
+  static const String bbq_area="bbq-area";
+  static const String home_theater='home-theater';
 
 
 

@@ -1,3 +1,5 @@
+import '../modules/reseller/model/reseller_lead_model/reseller_lead_overview.dart';
+
 List<Map<String, dynamic>> propertyList = [
   {
     "id": 1,
@@ -565,3 +567,89 @@ final Map<String, List<String>> popularCitiesWithAreas = {
 };
 
 String popularCities = 'Mumbai';
+
+
+
+final dummyResellerLead = ResellerLeadOverview(
+  id: "wZuCaH0VeeY2MmHGfDsl7Xu",
+  createdBy: "Dn6Qh1b5eErAyjNUR8feRWC",
+  updatedBy: "Agent123", // was null
+  name: "John Doe",
+  email: "john.doe@example.com",
+  phone: "9876543210",
+  propertyId: "PcXNBFWtmuCNN1mpFbjeeZn",
+  resellerId: "T3PWXm5AlA7XUEP1Iv5EK2v",
+  source: "direct",
+  status: "new",
+  stage: "new_lead",
+  notes: "Interested in scheduling a site visit next week", // was null
+  lastContactedAt: DateTime.parse("2025-09-28T15:30:00.000Z"), // was null
+  isFake: false,
+  fakeReason: "", // was null
+  markedFakeBy: "", // was null
+  markedFakeAt: DateTime.parse("2025-09-26T11:48:01.000Z"), // could also keep null
+  customFields: ResellerLeadCustomFields(
+    city: "Udaipur",
+    type: "residential",
+    state: "Rajasthan",
+    title: "Luxury Lakeside Villa with Private Pool",
+    address: "42 Lake View Road, Villa Enclave",
+    zipCode: "313001",
+    builderName: "Prestige Luxury Homes",
+    listingType: "Sell",
+    projectName: "Lake Shore Villas",
+    propertyType: "villa",
+    propertyDetails: ResellerLeadPropertyDetails(
+      bhk: 5,
+      balcony: 3,
+      bathroom: 6,
+      amenities: [
+        "Swimming Pool",
+        "Garden",
+        "Security",
+        "Gym",
+        "Home Theater",
+        "BBQ Area"
+      ],
+      zoneType: "Residential",
+      floorInfo: ResellerLeadFloorInfo(
+        floorNumber: 0,
+        totalFloors: 2,
+      ),
+      furnishInfo: ResellerLeadFurnishInfo(
+        furnishType: "fully-furnished",
+        furnishDetails: ResellerLeadFurnishDetails(
+          bed: 5,
+          fan: 10,
+          other: "Home theater, Wine cellar, Library",
+          balcony: true,
+          kitchen: true,
+          bathroom: true,
+        ),
+      ),
+      parkingInfo: ResellerLeadParkingInfo(
+        openParking: true,
+        coveredParking: true,
+      ),
+      financialInfo: ResellerLeadFinancialInfo(
+        negotiable: true,
+        propertyPrice: 65000000,
+        brokerCommission: 200000,
+      ),
+      possessionInfo: ResellerLeadPossessionInfo(
+        possessionStatus: "Ready to Move",
+        propertyAgeInYears: 2,
+      ),
+      propertyFacing: "East",
+      propertyCondition: "ready-to-move",
+      propertyCarpetArea: 4500,
+      propertyBuiltUpArea: 5800,
+    ),
+  ),
+  createdAt: DateTime.parse("2025-09-26T11:48:01.000Z"),
+  updatedAt: DateTime.parse("2025-09-26T11:48:01.000Z"),
+);
+
+
+// Example: list of dummy leads
+
