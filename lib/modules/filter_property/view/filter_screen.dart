@@ -230,12 +230,15 @@ import 'package:housing_flutter_app/modules/filter_property/view/widget/rent_com
 import 'package:housing_flutter_app/modules/property_price_trend/view/widget/filter_type.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
+import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart'
+    hide buildFilterPropertyTypes;
 
 class RealEstateFilterScreen extends StatelessWidget {
-   RealEstateFilterScreen({super.key});
+  RealEstateFilterScreen({super.key});
 
- final PropertyFilterControllerForFilter controllerForFilter=Get.put(PropertyFilterControllerForFilter());
+  final PropertyFilterControllerForFilter controllerForFilter = Get.put(
+    PropertyFilterControllerForFilter(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -261,30 +264,42 @@ class RealEstateFilterScreen extends StatelessWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8), // only at edges
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                ), // only at edges
                 child: Obx(
-                  () =>  Row(
-                    children: List.generate(controllerForFilter.propertyType.length, (index) {
-                      return Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                           controllerForFilter.changePropertyType(index);
-                            },
-                            child: buildFilterPropertyTypes(
-                              title: controllerForFilter.propertyType[index],
-                              height: 50,
-                              width: 90,
+                  () => Row(
+                    children: List.generate(
+                      controllerForFilter.propertyType.length,
+                      (index) {
+                        return Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                controllerForFilter.changePropertyType(index);
+                              },
+                              child: buildFilterPropertyTypes(
+                                title: controllerForFilter.propertyType[index],
+                                height: 50,
+                                width: 90,
 
-                              isSelected: controllerForFilter.selectedPropertyTypeIndex.value == index,
-                              isExpanded: true,
+                                isSelected:
+                                    controllerForFilter
+                                        .selectedPropertyTypeIndex
+                                        .value ==
+                                    index,
+                                isExpanded: true,
+                              ),
                             ),
-                          ),
-                          if (index != controllerForFilter.propertyType.length - 1)
-                            const SizedBox(width: 8), // spacing only between items
-                        ],
-                      );
-                    }),
+                            if (index !=
+                                controllerForFilter.propertyType.length - 1)
+                              const SizedBox(
+                                width: 8,
+                              ), // spacing only between items
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -292,19 +307,31 @@ class RealEstateFilterScreen extends StatelessWidget {
 
             const SizedBox(height: 7),
             Obx(
-              () =>  Column(
+              () => Column(
                 children: [
-                  if (controllerForFilter.propertyType[controllerForFilter.selectedPropertyTypeIndex.value] == "Buy") ...[
-                     BuyFilters(controllerForFilter: controllerForFilter,),
-                  ] else if (controllerForFilter.propertyType[controllerForFilter.selectedPropertyTypeIndex.value] ==
+                  if (controllerForFilter.propertyType[controllerForFilter
+                          .selectedPropertyTypeIndex
+                          .value] ==
+                      "Buy") ...[
+                    BuyFilters(controllerForFilter: controllerForFilter),
+                  ] else if (controllerForFilter
+                          .propertyType[controllerForFilter
+                          .selectedPropertyTypeIndex
+                          .value] ==
                       "Rent") ...[
-                     RentFilter(controllerForFilter: controllerForFilter,),
-                  ] else if (controllerForFilter.propertyType[controllerForFilter.selectedPropertyTypeIndex.value] ==
+                    RentFilter(controllerForFilter: controllerForFilter),
+                  ] else if (controllerForFilter
+                          .propertyType[controllerForFilter
+                          .selectedPropertyTypeIndex
+                          .value] ==
                       "Commercial") ...[
-                     CommercialPropertyFilter(controller:controllerForFilter ,),
-                  ] else if (controllerForFilter.propertyType[controllerForFilter.selectedPropertyTypeIndex.value] ==
+                    CommercialPropertyFilter(controller: controllerForFilter),
+                  ] else if (controllerForFilter
+                          .propertyType[controllerForFilter
+                          .selectedPropertyTypeIndex
+                          .value] ==
                       "PG/Co-living") ...[
-                     PgCoLiving(controllerForFilter: controllerForFilter,),
+                    PgCoLiving(controllerForFilter: controllerForFilter),
                   ],
                 ],
               ),

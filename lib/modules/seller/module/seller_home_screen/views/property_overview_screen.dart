@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/modules/seller/view/widget/property_overview_seller.dart';
 
 import '../../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../../app/manager/property_highlight_manager.dart';
 import '../../../../../app/utils/svg_widget.dart';
 import '../../../../../data/network/property/models/property_model.dart';
+import '../../../../reseller/view/lead_overview/lead_detail.dart';
 
 class PropertyOverviewScreen extends StatelessWidget {
   // final List<Map<String, dynamic>> properties;
@@ -53,227 +55,232 @@ class PropertyOverviewScreen extends StatelessWidget {
 
     // final bool isFeatured = property['featured'] ?? false;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Material(
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Property Image with Status Badge
-              Stack(
-                children: [
-                  Container(
-                    height: 200,
-                    width: double.infinity,
-                    child: CustomImage(
-                      type: CustomImageType.network,
-                      src: property.propertyMedia?.images?.first ?? '',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  // Status Badge
-                  Positioned(
-                    top: 12,
-                    left: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSold ? Colors.red : ColorRes.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        property.propertyStatus?.capitalize ?? 'Available',
-                        style: TextStyle(
-                          color: isSold ? Colors.white : ColorRes.primary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => PropertyOverviewSellerScreen(property: property));
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Material(
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Property Image with Status Badge
+                Stack(
+                  children: [
+                    Container(
+                      height: 200,
+                      width: double.infinity,
+                      child: CustomImage(
+                        type: CustomImageType.network,
+                        src: property.propertyMedia?.images?.first ?? '',
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-
-                  if (property.listingType != null)
+                    // Status Badge
                     Positioned(
                       top: 12,
-                      right: 12,
+                      left: 12,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: ColorRes.primary,
+                          color: isSold ? Colors.red : ColorRes.white,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          property.listingType!.capitalize.toString(),
+                          property.propertyStatus?.capitalize ?? 'Available',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: isSold ? Colors.white : ColorRes.primary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
                     ),
-                  // Featured Badge
-                ],
-              ),
 
-              // Property Details
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title and Price
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                property.propertyType ?? 'Property Title',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on,
-                                    size: 14,
-                                    color: Colors.grey,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Expanded(
-                                    child: Text(
-                                      property.location ?? 'Location',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
+                    if (property.listingType != null)
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                            horizontal: 8,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.blue[50],
+                            color: ColorRes.primary,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            priceManager.displayPrice,
+                            property.listingType!.capitalize.toString(),
                             style: TextStyle(
+                              color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: Colors.blue[700],
                             ),
                           ),
                         ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Property Features
-                    // Row(
-                    //   children: [
-                    //     _buildFeatureChip(
-                    //       Icons.hotel,
-                    //       '${property.propertyDetails?.bhk ?? 0} BHK',
-                    //     ),
-                    //     const SizedBox(width: 8),
-                    //     _buildFeatureChip(
-                    //       Icons.bathtub,
-                    //       '${property.propertyDetails?.bathroom ?? 0} Baths',
-                    //     ),
-                    //     const SizedBox(width: 8),
-                    //     _buildFeatureChip(
-                    //       Icons.square_foot,
-                    //       property.propertyDetails?.propertyBuiltUpArea
-                    //               .toString() ??
-                    //           '0 sq ft',
-                    //     ),
-                    //   ],
-                    // ),
-                    Facilities(property: property),
-
-                    const SizedBox(height: 16),
-
-                    // Divider
-                    Container(height: 1, color: Colors.grey[200]),
-
-                    const SizedBox(height: 16),
-
-                    // Analytics Overview
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildAnalyticsItem(
-                          Icons.visibility,
-                          _formatNumber(property.totalViews ?? 0),
-                          'Views',
-                          ColorRes.primary,
-                        ),
-                        _buildAnalyticsItem(
-                          Icons.favorite,
-                          _formatNumber(property.totalFavorites ?? 0),
-                          'Likes',
-                          ColorRes.primary,
-                        ),
-                        _buildAnalyticsItem(
-                          Icons.share,
-                          _formatNumber(property.totalShares ?? 0),
-                          'Shares',
-                          ColorRes.primary,
-                        ),
-                        _buildAnalyticsItem(
-                          Icons.people,
-                          _formatNumber(property.totalVisits ?? 0),
-                          'Visits',
-                          ColorRes.primary,
-                        ),
-                        // _buildAnalyticsItem(
-                        //   Icons.contact_phone,
-                        //   _formatNumber(property.tot ?? 0),
-                        //   'Leads',
-                        //   ColorRes.primary,
-                        // ),
-                      ],
-                    ),
+                      ),
+                    // Featured Badge
                   ],
                 ),
-              ),
-            ],
+
+                // Property Details
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title and Price
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  property.propertyType ?? 'Property Title',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      size: 14,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        property.location ?? 'Location',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[50],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              priceManager.displayPrice,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blue[700],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Property Features
+                      // Row(
+                      //   children: [
+                      //     _buildFeatureChip(
+                      //       Icons.hotel,
+                      //       '${property.propertyDetails?.bhk ?? 0} BHK',
+                      //     ),
+                      //     const SizedBox(width: 8),
+                      //     _buildFeatureChip(
+                      //       Icons.bathtub,
+                      //       '${property.propertyDetails?.bathroom ?? 0} Baths',
+                      //     ),
+                      //     const SizedBox(width: 8),
+                      //     _buildFeatureChip(
+                      //       Icons.square_foot,
+                      //       property.propertyDetails?.propertyBuiltUpArea
+                      //               .toString() ??
+                      //           '0 sq ft',
+                      //     ),
+                      //   ],
+                      // ),
+                      Facilities(property: property),
+
+                      const SizedBox(height: 16),
+
+                      // Divider
+                      Container(height: 1, color: Colors.grey[200]),
+
+                      const SizedBox(height: 16),
+
+                      // Analytics Overview
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildAnalyticsItem(
+                            Icons.visibility,
+                            _formatNumber(property.totalViews ?? 0),
+                            'Views',
+                            ColorRes.primary,
+                          ),
+                          _buildAnalyticsItem(
+                            Icons.favorite,
+                            _formatNumber(property.totalFavorites ?? 0),
+                            'Likes',
+                            ColorRes.primary,
+                          ),
+                          _buildAnalyticsItem(
+                            Icons.share,
+                            _formatNumber(property.totalShares ?? 0),
+                            'Shares',
+                            ColorRes.primary,
+                          ),
+                          _buildAnalyticsItem(
+                            Icons.people,
+                            _formatNumber(property.totalVisits ?? 0),
+                            'Visits',
+                            ColorRes.primary,
+                          ),
+                          // _buildAnalyticsItem(
+                          //   Icons.contact_phone,
+                          //   _formatNumber(property.tot ?? 0),
+                          //   'Leads',
+                          //   ColorRes.primary,
+                          // ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

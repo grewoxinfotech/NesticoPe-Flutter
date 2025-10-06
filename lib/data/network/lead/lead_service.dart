@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../modules/seller/module/lead_screen/model/lead_model.dart';
@@ -24,6 +25,7 @@ class LeadService {
     int page = 1,
     Map<String, String>? filters,
   }) async {
+    final user = await SecureStorage.getUserData();
     try {
       Map<String, String> queryParameters;
 
@@ -39,7 +41,9 @@ class LeadService {
         queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
       }
 
-      final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+      final uri = Uri.parse(
+        "$baseUrl/sellerleads/${user?.user?.id ?? ''}",
+      ).replace(queryParameters: queryParameters);
       print("Leads API URL: $uri");
       final response = await http.get(uri, headers: await headers());
 

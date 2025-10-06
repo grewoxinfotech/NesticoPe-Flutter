@@ -5,6 +5,8 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/home/views/home_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/seller/controllers/seller_overview_controller.dart';
+import 'package:housing_flutter_app/modules/seller/model/overview_model.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
@@ -216,6 +218,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => SellerOverviewController());
+    final overviewController = Get.find<SellerOverviewController>();
     return Scaffold(
       body: SafeArea(
         top: false,
@@ -376,7 +380,10 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   );
                                 }
 
-                                return OverViewCard(property: controller.items);
+                                return OverViewCard(
+                                  property: controller.items,
+                                  overview: overviewController.overviewModel,
+                                );
                               }),
                             ),
                             SizedBox(height: 20),
@@ -444,23 +451,197 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
   }
 }
 
+// class OverViewCard extends StatelessWidget {
+//   final List<Items> property;
+//   final SellerOverviewModel overview;
+//
+//   const OverViewCard({
+//     super.key,
+//     required this.property,
+//     required this.overview,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final List<Map<String, dynamic>> overviewData = const [
+//       {
+//         "title": "Views",
+//         "value": "12.4K",
+//         "icon": Icons.remove_red_eye_outlined,
+//       },
+//       {"title": "Likes", "value": "2.3K", "icon": Icons.favorite_border},
+//       {"title": "Shares", "value": "540", "icon": Icons.share_outlined},
+//       {"title": "Visits", "value": "8.9K", "icon": Icons.travel_explore},
+//       {"title": "Total Leads", "value": "1.1K", "icon": Icons.people_alt},
+//     ];
+//
+//     return Container(
+//       width: double.infinity,
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(20),
+//         border: Border.all(color: Colors.grey[300]!),
+//         color: Colors.white,
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Padding(
+//             padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Row(
+//                   children: [
+//                     Icon(
+//                       Icons.dashboard_customize,
+//                       color: Colors.blue.shade700,
+//                       size: 22,
+//                     ),
+//                     const SizedBox(width: 8),
+//                     const Text(
+//                       "Overview",
+//                       style: TextStyle(
+//                         fontSize: 20,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 GestureDetector(
+//                   onTap: () {
+//                     Get.to(() => PropertyOverviewScreen(properties: property));
+//                   },
+//                   child: Text(
+//                     "Explore>",
+//                     style: TextStyle(
+//                       color: ColorRes.primary,
+//                       fontWeight: FontWeight.w600,
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           // const SizedBox(height: 20),
+//           Padding(
+//             padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8),
+//             child: GridView.builder(
+//               shrinkWrap: true,
+//               physics: const NeverScrollableScrollPhysics(),
+//               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//                 crossAxisCount: 2,
+//                 crossAxisSpacing: 8,
+//                 mainAxisSpacing: 8,
+//                 childAspectRatio: 120 / 50,
+//               ),
+//               itemCount: overviewData.length,
+//               itemBuilder: (context, index) {
+//                 final item = overviewData[index];
+//                 return Container(
+//                   padding: const EdgeInsets.symmetric(
+//                     vertical: 10,
+//                     horizontal: 12,
+//                   ),
+//                   decoration: BoxDecoration(
+//                     color: Colors.transparent,
+//                     borderRadius: BorderRadius.circular(14),
+//                     border: Border.all(color: Colors.grey[300]!),
+//                   ),
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.start,
+//                     children: [
+//                       Icon(
+//                         item["icon"] as IconData,
+//                         size: 20,
+//                         color: ColorRes.primary,
+//                       ),
+//                       const SizedBox(width: 10),
+//                       Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           Text(
+//                             item["title"]!,
+//                             style: TextStyle(
+//                               fontSize: 11,
+//                               color: Colors.grey.shade600,
+//                             ),
+//                           ),
+//                           Text(
+//                             item["value"]!,
+//                             style: const TextStyle(
+//                               fontSize: 15,
+//                               fontWeight: FontWeight.bold,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
 class OverViewCard extends StatelessWidget {
   final List<Items> property;
+  final SellerOverviewModel overview;
 
-  const OverViewCard({super.key, required this.property});
+  const OverViewCard({
+    super.key,
+    required this.property,
+    required this.overview,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> overviewData = const [
+    final data = overview.data;
+
+    // 📊 Safely extract values with fallback defaults
+    final totalViews =
+        data?.propertyMetrics?.viewsHistory?.fold<int>(
+          0,
+          (sum, item) => sum + (item.views ?? 0),
+        ) ??
+        0;
+    final totalLeads = data?.leadAnalytics?.totalLeads ?? 0;
+    final totalVisits = data?.engagementMetrics?.totalVisits ?? 0;
+    final convertedVisits = data?.engagementMetrics?.convertedVisits ?? 0;
+
+    final double visitConversionRate =
+        data?.engagementMetrics?.visitConversionRate.toDouble() ?? 0;
+
+    final overviewData = [
       {
         "title": "Views",
-        "value": "12.4K",
+        "value": _formatValue(totalViews),
         "icon": Icons.remove_red_eye_outlined,
       },
-      {"title": "Likes", "value": "2.3K", "icon": Icons.favorite_border},
-      {"title": "Shares", "value": "540", "icon": Icons.share_outlined},
-      {"title": "Visits", "value": "8.9K", "icon": Icons.travel_explore},
-      {"title": "Total Leads", "value": "1.1K", "icon": Icons.people_alt},
+      {
+        "title": "Visits",
+        "value": _formatValue(totalVisits),
+        "icon": Icons.travel_explore,
+      },
+      {
+        "title": "Converted Visits",
+        "value": _formatValue(convertedVisits),
+        "icon": Icons.check_circle_outline,
+      },
+      {
+        "title": "Leads",
+        "value": _formatValue(totalLeads),
+        "icon": Icons.people_alt_outlined,
+      },
+      {
+        "title": "Conversion Rate",
+        "value": "${visitConversionRate.toStringAsFixed(1)}%",
+        "icon": Icons.trending_up_outlined,
+      },
     ];
 
     return Container(
@@ -473,6 +654,7 @@ class OverViewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// 🔹 Header
           Padding(
             padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
             child: Row(
@@ -500,7 +682,7 @@ class OverViewCard extends StatelessWidget {
                     Get.to(() => PropertyOverviewScreen(properties: property));
                   },
                   child: Text(
-                    "Explore>",
+                    "Explore >",
                     style: TextStyle(
                       color: ColorRes.primary,
                       fontWeight: FontWeight.w600,
@@ -510,7 +692,8 @@ class OverViewCard extends StatelessWidget {
               ],
             ),
           ),
-          // const SizedBox(height: 20),
+
+          /// 🔹 Grid Section
           Padding(
             padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8),
             child: GridView.builder(
@@ -549,14 +732,14 @@ class OverViewCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            item["title"]!,
+                            item["title"].toString() ?? "",
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.grey.shade600,
                             ),
                           ),
                           Text(
-                            item["value"]!,
+                            item["value"].toString() ?? '',
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -573,6 +756,14 @@ class OverViewCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// 🔹 Helper to format large numbers (K, L, Cr)
+  String _formatValue(num value) {
+    if (value >= 10000000) return "${(value / 10000000).toStringAsFixed(1)}Cr";
+    if (value >= 100000) return "${(value / 100000).toStringAsFixed(1)}L";
+    if (value >= 1000) return "${(value / 1000).toStringAsFixed(1)}K";
+    return value.toStringAsFixed(0);
   }
 }
 

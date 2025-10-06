@@ -118,12 +118,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
+import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import '../../../app/constants/size_manager.dart';
+import '../../../data/database/secure_storage_service.dart';
 import '../../../widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../widgets/drawer/drawer.dart';
 import '../../home/views/home_screen.dart';
+import '../../property/controllers/property_controller.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import '../../seller/module/lead_screen/views/lead_screen.dart';
 
@@ -132,8 +135,28 @@ import '../../seller/module/package_screen/views/package_screen.dart';
 import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
 import '../../seller/seller_listing/view/seller_listing_view.dart';
 
-class SellerDashboardScreen extends StatelessWidget {
+class SellerDashboardScreen extends StatefulWidget {
   const SellerDashboardScreen({super.key});
+
+  @override
+  State<SellerDashboardScreen> createState() => _SellerDashboardScreenState();
+}
+
+class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
+  final controller = Get.find<PropertyController>();
+
+  @override
+  void initState() {
+    loadPropertyBySeller();
+    super.initState();
+  }
+
+  Future<void> loadPropertyBySeller() async {
+    final user = await SecureStorage.getUserData();
+    if (user != null) {
+      controller.applyFilter("created_by", user.user?.id.toString() ?? "");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -357,7 +380,18 @@ class SellerDashboardScreen extends StatelessWidget {
           //   ),
           // );
           case 2:
-            return SellerListingView();
+            return Obx(() {
+              if (controller.isLoading.value && controller.items.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (!controller.isLoading.value && controller.items.isEmpty) {
+                return const Center(child: Text("No Property found."));
+              }
+
+              return PropertyOverviewScreen(properties: controller.items);
+            });
+          // return SellerListingView();
           case 3:
             return SubscriptionPlansScreen();
           case 4:

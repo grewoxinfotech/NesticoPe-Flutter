@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../widgets/dialogs/delete_dialog.dart';
 import '../../../widgets/drawer/drawer.dart';
@@ -472,13 +474,19 @@ class DashboardScreen extends StatelessWidget {
           return Center(
             child: ElevatedButton(
               onPressed: () {
-                Get.offAll(() => SellerDashboardScreen());
+                Get.offAll(
+                  () => SellerDashboardScreen(),
+                  binding: BindingsBuilder(() {
+                    Get.lazyPut<PropertyController>(() => PropertyController());
+                  }),
+                );
               },
+
               child: Text("Seller"),
             ),
           );
         } else if (navigationController.currentIndex.value == 2) {
-          return SellerListingView();
+          return Container(child: Center(child: Text("Coming soon")));
         } else if (navigationController.currentIndex.value == 3) {
           return InsightsScreen();
         } else if (navigationController.currentIndex.value == 4) {
