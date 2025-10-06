@@ -436,10 +436,6 @@
 //   }
 // }
 
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -452,6 +448,7 @@ import 'package:housing_flutter_app/modules/filter_property/view/widget/commerci
 import 'package:housing_flutter_app/modules/filter_property/view/widget/location_dropdown.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/pg_property/pg_co_living.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/rent_component/rented_filter.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property_price_trend/view/widget/filter_type.dart'
     hide buildFilterPropertyTypes;
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
@@ -460,7 +457,14 @@ import 'package:housing_flutter_app/modules/search_property/widget/suggested_lis
     hide buildFilterPropertyTypes;
 
 class RealEstateFilterScreen extends StatelessWidget {
-  RealEstateFilterScreen({super.key});
+  final bool showSearchById;
+  final bool showStatusFilter;
+
+  RealEstateFilterScreen({
+    super.key,
+    this.showSearchById = false,
+    this.showStatusFilter = false,
+  });
 
   final PropertyFilterControllerForFilter controllerForFilter = Get.put(
     PropertyFilterControllerForFilter(),
@@ -506,17 +510,60 @@ class RealEstateFilterScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Search by ID
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 12, 10, 8),
-              child: buildTextField(
-                'Search by ID',
-                Icons.search,
-                controllerForFilter.searchFilterByID,
-                maxLines: 1,
-                minLines: 1,
-                onTap: () {},
+            if (showSearchById)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 12, 10, 8),
+                child: buildTextField(
+                  'Search by ID',
+                  Icons.search,
+                  controllerForFilter.searchFilterByID,
+                  maxLines: 1,
+                  minLines: 1,
+                  onTap: () {},
+                ),
               ),
-            ),
+
+            // State Dropdown
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            //   child: SearchableDropdownWidget(
+            //     label: 'State',
+            //     hint: 'Select your state',
+            //     items: controllerForFilter.states,
+            //     selectedValue: controllerForFilter.selectedState,
+            //     prefixIcon: Icons.location_city,
+            //     onChanged: (value) {
+            //       controllerForFilter.updateState(value);
+            //     },
+            //   ),
+            // ),
+            //
+            // // City Dropdown
+            // Obx(
+            //   () => Padding(
+            //     padding: const EdgeInsets.symmetric(
+            //       horizontal: 10,
+            //       vertical: 8,
+            //     ),
+            //     child: SearchableDropdownWidget(
+            //       label: 'City',
+            //       hint:
+            //           controllerForFilter.selectedState.value.isEmpty
+            //               ? 'Select state first'
+            //               : 'Select your city',
+            //       items: controllerForFilter.availableCities,
+            //       selectedValue: controllerForFilter.selectedCity,
+            //       prefixIcon: Icons.location_on,
+            //       enabled: controllerForFilter.selectedState.value.isNotEmpty,
+            //       onChanged:
+            //           controllerForFilter.selectedState.value.isEmpty
+            //               ? null
+            //               : (value) {
+            //                 controllerForFilter.updateCity(value);
+            //               },
+            //     ),
+            //   ),
+            // ),
 
             // State Dropdown
             Padding(
@@ -524,49 +571,58 @@ class RealEstateFilterScreen extends StatelessWidget {
               child: SearchableDropdownWidget(
                 label: 'State',
                 hint: 'Select your state',
-                items: controllerForFilter.states,
+                items: controllerForFilter.availableStates, // now RxList
                 selectedValue: controllerForFilter.selectedState,
                 prefixIcon: Icons.location_city,
                 onChanged: (value) {
-                  controllerForFilter.updateState(value);
+                  if (value != null) controllerForFilter.updateState(value);
                 },
               ),
             ),
 
             // City Dropdown
             Obx(
-                  () => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              () => Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 child: SearchableDropdownWidget(
                   label: 'City',
-                  hint: controllerForFilter.selectedState.value.isEmpty
-                      ? 'Select state first'
-                      : 'Select your city',
+                  hint:
+                      controllerForFilter.selectedState.value.isEmpty
+                          ? 'Select state first'
+                          : 'Select your city',
                   items: controllerForFilter.availableCities,
                   selectedValue: controllerForFilter.selectedCity,
                   prefixIcon: Icons.location_on,
                   enabled: controllerForFilter.selectedState.value.isNotEmpty,
-                  onChanged: controllerForFilter.selectedState.value.isEmpty
-                      ? null
-                      : (value) {
-                    controllerForFilter.updateCity(value);
-                  },
+                  onChanged:
+                      controllerForFilter.selectedState.value.isEmpty
+                          ? null
+                          : (value) {
+                            if (value != null)
+                              controllerForFilter.updateCity(value);
+                          },
                 ),
               ),
             ),
+
             const SizedBox(height: 7),
 
-            buildPropertyFilterHeadingPadding('Property Status'),
-            const SizedBox(height: 7),
-            FilterPropertyTypesList(
-              items: controllerForFilter.statusOfApplicant,
-              controllerForFilter: controllerForFilter,
-              selectedItems: controllerForFilter.statusApplicateIndex,
-              onSelectionChanged: (index) {
-                debugPrint('Status Type property Type $index');
-              },
-            ),
-            const SizedBox(height: 16),
+            if (showStatusFilter) ...[
+              buildPropertyFilterHeadingPadding('Property Status'),
+              const SizedBox(height: 7),
+              FilterPropertyTypesList(
+                items: controllerForFilter.statusOfApplicant,
+                controllerForFilter: controllerForFilter,
+                selectedItems: controllerForFilter.statusApplicateIndex,
+                onSelectionChanged: (index) {
+                  debugPrint('Status Type property Type $index');
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
             buildPropertyFilterHeadingPadding('Verified Status'),
             const SizedBox(height: 7),
             FilterPropertyTypesList(
@@ -595,19 +651,21 @@ class RealEstateFilterScreen extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Obx(
-                    () => Row(
+                () => Row(
                   children: List.generate(
                     controllerForFilter.propertyType.length,
-                        (index) {
+                    (index) {
                       final isSelected =
                           controllerForFilter.selectedPropertyTypeIndex.value ==
-                              index;
+                          index;
                       return Padding(
                         padding: EdgeInsets.only(
-                          right: index !=
-                              controllerForFilter.propertyType.length - 1
-                              ? 12
-                              : 0,
+                          right:
+                              index !=
+                                      controllerForFilter.propertyType.length -
+                                          1
+                                  ? 12
+                                  : 0,
                         ),
                         child: GestureDetector(
                           onTap: () {
@@ -619,11 +677,13 @@ class RealEstateFilterScreen extends StatelessWidget {
                               vertical: 12,
                             ),
                             decoration: BoxDecoration(
-                              color: isSelected ? ColorRes.primary : Colors.white,
+                              color:
+                                  isSelected ? ColorRes.primary : Colors.white,
                               border: Border.all(
-                                color: isSelected
-                                    ? Colors.transparent
-                                    : Colors.grey.shade300,
+                                color:
+                                    isSelected
+                                        ? Colors.transparent
+                                        : Colors.grey.shade300,
                                 width: 1.5,
                               ),
                               borderRadius: BorderRadius.circular(12),
@@ -647,29 +707,32 @@ class RealEstateFilterScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Dynamic Filter Content
-            Obx(
-                  () {
-                if (controllerForFilter.propertyType[
-                controllerForFilter.selectedPropertyTypeIndex.value] ==
-                    "Buy") {
-                  return BuyFilters(controllerForFilter: controllerForFilter);
-                } else if (controllerForFilter.propertyType[
-                controllerForFilter.selectedPropertyTypeIndex.value] ==
-                    "Rent") {
-                  return RentFilter(controllerForFilter: controllerForFilter);
-                } else if (controllerForFilter.propertyType[
-                controllerForFilter.selectedPropertyTypeIndex.value] ==
-                    "Commercial") {
-                  return CommercialPropertyFilter(
-                      controller: controllerForFilter);
-                } else if (controllerForFilter.propertyType[
-                controllerForFilter.selectedPropertyTypeIndex.value] ==
-                    "PG/Co-living") {
-                  return PgCoLiving(controllerForFilter: controllerForFilter);
-                }
-                return const SizedBox.shrink();
-              },
-            ),
+            Obx(() {
+              if (controllerForFilter.propertyType[controllerForFilter
+                      .selectedPropertyTypeIndex
+                      .value] ==
+                  "Buy") {
+                return BuyFilters(controllerForFilter: controllerForFilter);
+              } else if (controllerForFilter.propertyType[controllerForFilter
+                      .selectedPropertyTypeIndex
+                      .value] ==
+                  "Rent") {
+                return RentFilter(controllerForFilter: controllerForFilter);
+              } else if (controllerForFilter.propertyType[controllerForFilter
+                      .selectedPropertyTypeIndex
+                      .value] ==
+                  "Commercial") {
+                return CommercialPropertyFilter(
+                  controller: controllerForFilter,
+                );
+              } else if (controllerForFilter.propertyType[controllerForFilter
+                      .selectedPropertyTypeIndex
+                      .value] ==
+                  "PG/Co-living") {
+                return PgCoLiving(controllerForFilter: controllerForFilter);
+              }
+              return const SizedBox.shrink();
+            }),
             const SizedBox(height: 100),
           ],
         ),
@@ -731,13 +794,20 @@ class RealEstateFilterScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
+                      final controller = Get.find<PropertyController>();
                       final filters = controllerForFilter.getAllFilters();
-                      debugPrint('================= Current Filters =================');
-                      filters.forEach((key, value) {
-                        debugPrint('$key : $value');
-                      });
-                      debugPrint('===================================================');
-
+                      final stringFilters = convertFiltersToString(filters);
+                      controller.applyFilters(stringFilters);
+                      Get.back(result: stringFilters);
+                      // debugPrint(
+                      //   '================= Current Filters =================',
+                      // );
+                      // filters.forEach((key, value) {
+                      //   debugPrint('$key : $value');
+                      // });
+                      // debugPrint(
+                      //   '===================================================',
+                      // );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -761,5 +831,24 @@ class RealEstateFilterScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Map<String, String> convertFiltersToString(Map<String, dynamic> filters) {
+    Map<String, String> result = {};
+
+    filters.forEach((key, value) {
+      if (value == null) return;
+
+      if (value is Map || value is List) {
+        // Convert nested map or list to JSON string
+        result[key] =
+            value.isEmpty ? '' : value.toString().replaceAll("'", '"');
+      } else {
+        // Convert other values to string
+        result[key] = value.toString();
+      }
+    });
+
+    return result;
   }
 }

@@ -83,61 +83,94 @@ class PropertyDetail extends StatelessWidget {
       ],
     },
   ];
+  RxMap<String, String> selectedFilters = <String, String>{}.obs;
 
-  PropertyDetail({super.key,  this.isAppBarShow = true,  this.backgroundColor= Colors.white, this.filters});
+  PropertyDetail({
+    super.key,
+    this.isAppBarShow = true,
+    this.backgroundColor = Colors.white,
+    this.filters,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
 
-      appBar: isAppBarShow ? AppBar(
-        elevation: 0,
-        backgroundColor: ColorRes.white,
-        title: const Text(
-          "Property List",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: ColorRes.textColor,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: GestureDetector(
-              onTap: () {
-                Get.to(() => RealEstateFilterScreen());
-              },
-              child: Icon(Icons.filter_list),
-            ),
-          ),
-        ],
-      ) : null,
-      // body: ListView.builder(
-      //   padding:  EdgeInsets.symmetric(
-      //     vertical: AppPadding.small,
-      //     horizontal: AppPadding.small,
-      //   ),
-      //   itemCount: properties.length,
-      //   itemBuilder: (context, index) {
-      //     final property = properties[index];
-      //     final item = items[index];
-      //     return PropertyCardWidget(
-      //       property: item,
-      //       // imageUrl: property['imageUrl'],
-      //       // features: propertyFeatures,
-      //       // apartments: property['apartments'],
-      //       // images: property['images'],
-      //       // title: property['title'],
-      //       // location: property['location'],
-      //       // price: 'Ready To Move',
-      //       // ownerName: property['ownerName'],
-      //       // ownerAvatar: property['ownerAvatar'],
-      //       role: property['role'],
-      //       // beds: '2 BHK Apartment',
-      //     );
-      //   },
-      // ),
+      appBar:
+          isAppBarShow
+              ? AppBar(
+                elevation: 0,
+                backgroundColor: ColorRes.white,
+                title: const Text(
+                  "Property List",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: ColorRes.textColor,
+                  ),
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        final result = await Get.to<RxMap<String, String>>(
+                          () => RealEstateFilterScreen(),
+                        );
+                        if (result != null) {
+                          selectedFilters.clear();
+                          selectedFilters.addAll(result);
+                        }
+                      },
+
+                      child: Icon(Icons.filter_list),
+                    ),
+                  ),
+                ],
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(50),
+                  child: Obx(() {
+                    if (selectedFilters.isEmpty) return const SizedBox.shrink();
+                    return Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      color: Colors.grey[100],
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children:
+                              selectedFilters.entries.map((e) {
+                                if (e.value.isEmpty)
+                                  return const SizedBox.shrink();
+                                return Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[100],
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    "${e.key}: ${e.value}",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              )
+              : null,
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
           return const Center(child: CircularProgressIndicator());

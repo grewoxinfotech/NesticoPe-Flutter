@@ -41,19 +41,18 @@ class SearchableDropdownWidget extends StatelessWidget {
 
         // Dropdown Button
         Obx(
-              () => InkWell(
-            onTap: enabled && onChanged != null
-                ? () => _showBottomSheet(context)
-                : null,
+          () => InkWell(
+            onTap:
+                enabled && onChanged != null
+                    ? () => _showBottomSheet(context)
+                    : null,
             borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(
-                  color: enabled
-                      ? Colors.grey.shade300
-                      : Colors.grey.shade200,
+                  color: enabled ? Colors.grey.shade300 : Colors.grey.shade200,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -62,17 +61,16 @@ class SearchableDropdownWidget extends StatelessWidget {
                 children: [
                   Icon(
                     prefixIcon,
-                    color: selectedValue.value.isNotEmpty
-                        ? ColorRes.primary
-                        : Colors.grey.shade400,
+                    color:
+                        selectedValue.value.isNotEmpty
+                            ? ColorRes.primary
+                            : Colors.grey.shade400,
                     size: 20,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: buildCommonText(
-                      selectedValue.value.isEmpty
-                          ? hint
-                          : selectedValue.value,
+                      selectedValue.value.isEmpty ? hint : selectedValue.value,
                       15,
                       FontWeight.w500,
                       selectedValue.value.isEmpty
@@ -93,30 +91,30 @@ class SearchableDropdownWidget extends StatelessWidget {
         ),
 
         // Selected Indicator
-        Obx(
-              () => selectedValue.value.isNotEmpty
-              ? Padding(
-            padding: const EdgeInsets.only(top: 8, left: 4),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.check_circle,
-                  size: 14,
-                  color: ColorRes.primary,
-                ),
-                const SizedBox(width: 4),
-                buildCommonText(
-                  'Selected: ${selectedValue.value}',
-                  12,
-                  FontWeight.w500,
-                  ColorRes.primary,
-                  1,
-                ),
-              ],
-            ),
-          )
-              : const SizedBox.shrink(),
-        ),
+        // Obx(
+        //       () => selectedValue.value.isNotEmpty
+        //       ? Padding(
+        //     padding: const EdgeInsets.only(top: 8, left: 4),
+        //     child: Row(
+        //       children: [
+        //         Icon(
+        //           Icons.check_circle,
+        //           size: 14,
+        //           color: ColorRes.primary,
+        //         ),
+        //         const SizedBox(width: 4),
+        //         buildCommonText(
+        //           'Selected: ${selectedValue.value}',
+        //           12,
+        //           FontWeight.w500,
+        //           ColorRes.primary,
+        //           1,
+        //         ),
+        //       ],
+        //     ),
+        //   )
+        //       : const SizedBox.shrink(),
+        // ),
       ],
     );
   }
@@ -183,10 +181,14 @@ class SearchableDropdownWidget extends StatelessWidget {
                   if (query.isEmpty) {
                     filteredItems.value = items;
                   } else {
-                    filteredItems.value = items
-                        .where((item) =>
-                        item.toLowerCase().contains(query.toLowerCase()))
-                        .toList();
+                    filteredItems.value =
+                        items
+                            .where(
+                              (item) => item.toLowerCase().contains(
+                                query.toLowerCase(),
+                              ),
+                            )
+                            .toList();
                   }
                 },
                 decoration: InputDecoration(
@@ -200,19 +202,20 @@ class SearchableDropdownWidget extends StatelessWidget {
                     color: Colors.grey.shade400,
                     size: 20,
                   ),
-                  suffixIcon: searchController.text.isNotEmpty
-                      ? IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      color: Colors.grey.shade400,
-                      size: 20,
-                    ),
-                    onPressed: () {
-                      searchController.clear();
-                      filteredItems.value = items;
-                    },
-                  )
-                      : null,
+                  suffixIcon:
+                      searchController.text.isNotEmpty
+                          ? IconButton(
+                            icon: Icon(
+                              Icons.clear,
+                              color: Colors.grey.shade400,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              searchController.clear();
+                              filteredItems.value = items;
+                            },
+                          )
+                          : null,
                   filled: true,
                   fillColor: Colors.grey.shade50,
                   border: OutlineInputBorder(
@@ -237,87 +240,92 @@ class SearchableDropdownWidget extends StatelessWidget {
 
             // Results count
             Obx(
-                  () => filteredItems.isNotEmpty
-                  ? Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 8,
-                ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: buildCommonText(
-                    '${filteredItems.length} ${filteredItems.length == 1 ? 'result' : 'results'} found',
-                    12,
-                    FontWeight.w500,
-                    Colors.grey.shade600,
-                    1,
-                  ),
-                ),
-              )
-                  : const SizedBox.shrink(),
+              () =>
+                  filteredItems.isNotEmpty
+                      ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: buildCommonText(
+                            '${filteredItems.length} ${filteredItems.length == 1 ? 'result' : 'results'} found',
+                            12,
+                            FontWeight.w500,
+                            Colors.grey.shade600,
+                            1,
+                          ),
+                        ),
+                      )
+                      : const SizedBox.shrink(),
             ),
 
-             Divider(height: 0.5,color: Colors.grey.shade200,),
+            Divider(height: 0.5, color: Colors.grey.shade200),
 
             // List of items
             Expanded(
               child: Obx(
-                    () => filteredItems.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  itemCount: filteredItems.length,
-                  itemBuilder: (context, index) {
-                    final item = filteredItems[index];
-                    final isSelected = selectedValue.value == item;
+                () =>
+                    filteredItems.isEmpty
+                        ? _buildEmptyState()
+                        : ListView.builder(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          itemCount: filteredItems.length,
+                          itemBuilder: (context, index) {
+                            final item = filteredItems[index];
+                            final isSelected = selectedValue.value == item;
 
-                    return InkWell(
-                      onTap: () {
-                        if (onChanged != null) {
-                          onChanged!(item);
-                        }
-                        Get.back();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? ColorRes.primary.withOpacity(0.05)
-                              : Colors.transparent,
-                        ),
-                        child: Row(
-                          children: [
-                            if (isSelected)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 12),
-                                child: Icon(
-                                  Icons.check_circle,
-                                  color: ColorRes.primary,
-                                  size: 20,
+                            return InkWell(
+                              onTap: () {
+                                if (onChanged != null) {
+                                  onChanged!(item);
+                                }
+                                Get.back();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 14,
+                                ),
+                                decoration: BoxDecoration(
+                                  color:
+                                      isSelected
+                                          ? ColorRes.primary.withOpacity(0.05)
+                                          : Colors.transparent,
+                                ),
+                                child: Row(
+                                  children: [
+                                    if (isSelected)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 12,
+                                        ),
+                                        child: Icon(
+                                          Icons.check_circle,
+                                          color: ColorRes.primary,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    Expanded(
+                                      child: buildCommonText(
+                                        item,
+                                        15,
+                                        isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                        isSelected
+                                            ? ColorRes.primary
+                                            : ColorRes.textColor,
+                                        1,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            Expanded(
-                              child: buildCommonText(
-                                item,
-                                15,
-                                isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
-                                isSelected
-                                    ? ColorRes.primary
-                                    : ColorRes.textColor,
-                                1,
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
-                      ),
-                    );
-                  },
-                ),
               ),
             ),
           ],
@@ -332,11 +340,7 @@ class SearchableDropdownWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: Colors.grey.shade300,
-          ),
+          Icon(Icons.search_off, size: 64, color: Colors.grey.shade300),
           const SizedBox(height: 16),
           buildCommonText(
             'No results found',
@@ -358,4 +362,3 @@ class SearchableDropdownWidget extends StatelessWidget {
     );
   }
 }
-

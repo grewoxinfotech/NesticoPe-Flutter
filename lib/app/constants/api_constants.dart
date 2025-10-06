@@ -16,33 +16,32 @@ class ApiConstants {
   // Lead
   static const String leads = "$baseURL/lead";
 
+  //---------------------------------other-----------------------------//
 
-
-//---------------------------------other-----------------------------//
-
+  static const String cityInsights = "$baseURL/cityInsights/existing/city";
 
   static const String logoutEndpoint = "/auth/logout";
   static const String resetPasswordEndpoint = "/auth/reset-password";
-  
+
   // User Endpoints
   static const String userEndpoint = "/user";
   static const String userProfileEndpoint = "/user/profile";
-  
+
   // Property Endpoints
   static const String propertiesEndpoint = "/properties";
   static const String featuredPropertiesEndpoint = "/properties/featured";
   static const String recommendedPropertiesEndpoint = "/properties/recommended";
   static const String propertiesByCategoryEndpoint = "/properties/category";
-  
+
   // Bookings Endpoints
   static const String bookingsEndpoint = "/bookings";
-  
+
   // Favorites Endpoints
   static const String favoritesEndpoint = "/favorites";
-  
+
   // Reviews Endpoints
   static const String reviewsEndpoint = "/reviews";
-  
+
   // headers from api
   static const String contentType = "Content-type";
   static const String applicationJson = "application/json";
@@ -57,8 +56,8 @@ class ApiConstants {
   }
 
   static Future<Map<String, String>> getHeadersWithoutToken() async {
-   // final token = await SecureStorage.getToken();
-   // print("header_token: $token");
+    // final token = await SecureStorage.getToken();
+    // print("header_token: $token");
     return {contentType: applicationJson};
   }
-} 
+}

@@ -306,86 +306,86 @@ class _PgCoLivingState extends State<PgCoLiving> {
         //     )
         //
         // ),
-        SizedBox(
-           height: 50,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.only(right: 10),
-            shrinkWrap: true,
-            itemCount: widget.controllerForFilter.builderList.length,
-            itemBuilder: (context, index) {
-              final builder = widget.controllerForFilter.builderList[index];
-
-              return Obx(() {
-                final isSelected =
-                    widget.controllerForFilter.selectedMap['title'] ==
-                    builder['title'];
-                return Padding(
-                  padding: EdgeInsets.only(
-                  left: 10
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      widget.controllerForFilter.selectedMap.value = builder;
-                      debugPrint(
-                        'Selected builder: ${widget.controllerForFilter.selectedMap.value}',
-                      );
-                    },
-                    child: Container(
-                      // duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-
-                        color: isSelected ? ColorRes.primary.withOpacity(0.1) : Colors.white,
-                        border: Border.all(
-                          color:
-                              isSelected
-                                  ? ColorRes.primary
-                                  : Colors.grey.shade300,
-                          width: isSelected?1.8:1.5,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color:
-                                  isSelected
-                                      ? ColorRes.primary.withOpacity(0.2)
-                                      : Colors.transparent,
-
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Image.asset(
-                              builder['image'],
-                              height: 15,
-                              width: 15,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          buildCommonText(
-                            builder['title'],
-                            12,
-                            FontWeight.w500,
-                            isSelected ? ColorRes.primary : ColorRes.textColor,
-                            1,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              });
-            },
-          ),
-        ),
+        // SizedBox(
+        //    height: 50,
+        //   child: ListView.builder(
+        //     scrollDirection: Axis.horizontal,
+        //     padding: EdgeInsets.only(right: 10),
+        //     shrinkWrap: true,
+        //     itemCount: widget.controllerForFilter.builderList.length,
+        //     itemBuilder: (context, index) {
+        //       final builder = widget.controllerForFilter.builderList[index];
+        //
+        //       return Obx(() {
+        //         final isSelected =
+        //             widget.controllerForFilter.selectedMap['title'] ==
+        //             builder['title'];
+        //         return Padding(
+        //           padding: EdgeInsets.only(
+        //           left: 10
+        //           ),
+        //           child: GestureDetector(
+        //             onTap: () {
+        //               widget.controllerForFilter.selectedMap.value = builder;
+        //               debugPrint(
+        //                 'Selected builder: ${widget.controllerForFilter.selectedMap.value}',
+        //               );
+        //             },
+        //             child: Container(
+        //               // duration: const Duration(milliseconds: 200),
+        //               padding: const EdgeInsets.symmetric(
+        //                 horizontal: 14,
+        //                 vertical: 10,
+        //               ),
+        //               decoration: BoxDecoration(
+        //
+        //                 color: isSelected ? ColorRes.primary.withOpacity(0.1) : Colors.white,
+        //                 border: Border.all(
+        //                   color:
+        //                       isSelected
+        //                           ? ColorRes.primary
+        //                           : Colors.grey.shade300,
+        //                   width: isSelected?1.8:1.5,
+        //                 ),
+        //                 borderRadius: BorderRadius.circular(10),
+        //
+        //               ),
+        //               child: Row(
+        //                 mainAxisSize: MainAxisSize.min,
+        //                 children: [
+        //                   Container(
+        //                     padding: const EdgeInsets.all(4),
+        //                     decoration: BoxDecoration(
+        //                       color:
+        //                           isSelected
+        //                               ? ColorRes.primary.withOpacity(0.2)
+        //                               : Colors.transparent,
+        //
+        //                       borderRadius: BorderRadius.circular(6),
+        //                     ),
+        //                     child: Image.asset(
+        //                       builder['image'],
+        //                       height: 15,
+        //                       width: 15,
+        //                     ),
+        //                   ),
+        //                   const SizedBox(width: 8),
+        //                   buildCommonText(
+        //                     builder['title'],
+        //                     12,
+        //                     FontWeight.w500,
+        //                     isSelected ? ColorRes.primary : ColorRes.textColor,
+        //                     1,
+        //                   ),
+        //                 ],
+        //               ),
+        //             ),
+        //           ),
+        //         );
+        //       });
+        //     },
+        //   ),
+        // ),
       ],
     );
   }

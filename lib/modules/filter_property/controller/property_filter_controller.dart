@@ -1,74 +1,63 @@
-
-
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'city_insigths_controller.dart';
 
 class PropertyFilterControllerForFilter extends GetxController {
   ///=====================================Property Type Selection=====================
   RxInt selectedPropertyTypeIndex = 0.obs;
-  RxList<String> propertyType = ['Buy', 'Rent', 'Commercial', 'PG/Co-living'].obs;
-  RxList<String> verificationStatus=<String>['Verified','Non-verified'].obs;
-  RxString verifiedStatusIndex=''.obs;
-  RxString statusApplicateIndex=''.obs;
-  RxList<String> statusOfApplicant=<String>['Approved','Rejected','Pending'].obs;
-  var searchFilterByID=TextEditingController();
+  RxList<String> propertyType =
+      ['Buy', 'Rent', 'Commercial', 'PG/Co-living'].obs;
+  RxList<String> verificationStatus = <String>['Verified', 'Non-verified'].obs;
+  RxString verifiedStatusIndex = ''.obs;
+  RxString statusApplicateIndex = ''.obs;
+  RxList<String> statusOfApplicant =
+      <String>['Approved', 'Rejected', 'Pending'].obs;
+  var searchFilterByID = TextEditingController();
 
   ///=====================================BUY PROPERTIES=====================
-  RxList<String> constructionStatus = <String>[
-    'Ready to move',
-    "Under Construction",
-    "New Launch",
-  ].obs;
+  RxList<String> constructionStatus =
+      <String>['Ready to move', "Under Construction", "New Launch"].obs;
 
   RxDouble min = 1000000.0.obs;
   RxDouble max = 200000000.0.obs;
-  final Rx<RangeValues> _rangeValues = const RangeValues(1000000, 200000000).obs;
+  final Rx<RangeValues> _rangeValues =
+      const RangeValues(1000000, 200000000).obs;
 
   RxString bhkType = ''.obs;
   RxString subpropertyType = ''.obs;
   RxString constructionStatusInBuy = ''.obs;
 
-  RxList<String> bHkType = <String>[
-    "1 BHK",
-    "2 BHK",
-    "3 BHK",
-    "4 BHK",
-    "5 BHK",
-    "5+ BHK",
-  ].obs;
+  RxList<String> bHkType =
+      <String>["1 BHK", "2 BHK", "3 BHK", "4 BHK", "5 BHK", "5+ BHK"].obs;
 
-  RxList<String> propertyTypesList = <String>[
-    "Apartments",
-    "Independent House",
-    "Plot",
-    "Studio",
-    "Duplex",
-    "PentHouse",
-    "Builder Floor",
-    "Villa",
-  ].obs;
+  RxList<String> propertyTypesList =
+      <String>[
+        "Apartments",
+        "Independent House",
+        "Plot",
+        "Studio",
+        "Duplex",
+        "PentHouse",
+        "Builder Floor",
+        "Villa",
+      ].obs;
 
   ///=====================================RENT PROPERTIES=====================
   RxDouble rentMin = 5000.0.obs;
   RxDouble rentMax = 500000.0.obs;
   Rx<RangeValues> rentRangeValues = const RangeValues(5000, 500000).obs;
 
-  RxList<String> furnishingType = <String>[
-    "Unfurnished",
-    "Semi Furnished",
-    "Fully Furnished",
-  ].obs;
+  RxList<String> furnishingType =
+      <String>["Unfurnished", "Semi Furnished", "Fully Furnished"].obs;
   RxString rentFurnishing = ''.obs;
 
   ///=====================================COMMERCIAL PROPERTIES=====================
   // Commercial Buy
   RxDouble commercialMin = 2000000.0.obs;
   RxDouble commercialMax = 300000000.0.obs;
-  Rx<RangeValues> commercialRangeValues = const RangeValues(2000000, 300000000).obs;
+  Rx<RangeValues> commercialRangeValues =
+      const RangeValues(2000000, 300000000).obs;
 
   // Commercial Area
   RxDouble areaMin = 200.0.obs;
@@ -83,46 +72,50 @@ class PropertyFilterControllerForFilter extends GetxController {
   // Commercial Rent
   RxDouble commercialRentMin = 100000.0.obs;
   RxDouble commercialRentMax = 600000.0.obs;
-  Rx<RangeValues> commercialRentRangeValue = const RangeValues(100000.0, 600000.0).obs;
+  Rx<RangeValues> commercialRentRangeValue =
+      const RangeValues(100000.0, 600000.0).obs;
 
   // Commercial Rent Area
   RxDouble commercialRentAreaMin = 200.0.obs;
   RxDouble commercialRentAreaMax = 5000.0.obs;
-  Rx<RangeValues> commercialRentAreaRangeValue = const RangeValues(200.0, 5000.0).obs;
+  Rx<RangeValues> commercialRentAreaRangeValue =
+      const RangeValues(200.0, 5000.0).obs;
 
   // Commercial Categories
   RxList<String> commercialSubCategory = <String>['Buy', 'Rent'].obs;
   RxString commercialSelectedSubCategory = ''.obs;
 
-  RxList<String> buyCommercialPropertyType = <String>[
-    "Ready to use Office Space",
-    "Bare Shell Office Space",
-    "Shop",
-    "Showroom",
-    "Commercial Plot",
-    "WareHouse",
-    "Others",
-  ].obs;
+  RxList<String> buyCommercialPropertyType =
+      <String>[
+        "Ready to use Office Space",
+        "Bare Shell Office Space",
+        "Shop",
+        "Showroom",
+        "Commercial Plot",
+        "WareHouse",
+        "Others",
+      ].obs;
   RxString buySelectedCommercialPropertyTyp = ''.obs;
 
-  RxList<String> saleTypeCommercialProperty = <String>[
-    "New Properties",
-    "Resale Properties",
-  ].obs;
+  RxList<String> saleTypeCommercialProperty =
+      <String>["New Properties", "Resale Properties"].obs;
   RxString selectedSalesType = ''.obs;
 
-  RxList<String> leaseTypeCommercialProperty = <String>['Pre-Leased', 'Non-Leased'].obs;
+  RxList<String> leaseTypeCommercialProperty =
+      <String>['Pre-Leased', 'Non-Leased'].obs;
   RxString selectedCommercialLeased = ''.obs;
 
-  List<String> possessionCommercialList = <String>["Ready to move", "Under Construction"].obs;
+  List<String> possessionCommercialList =
+      <String>["Ready to move", "Under Construction"].obs;
   RxString selectedCommercialPossession = ''.obs;
 
-  RxList<String> availableList = <String>[
-    'Within a week',
-    'Within 15 days',
-    'Within a month',
-    'After a month',
-  ].obs;
+  RxList<String> availableList =
+      <String>[
+        'Within a week',
+        'Within 15 days',
+        'Within a month',
+        'After a month',
+      ].obs;
   RxString availableSelectedList = ''.obs;
 
   ///=====================================PG/CO-LIVING=====================
@@ -133,39 +126,88 @@ class PropertyFilterControllerForFilter extends GetxController {
   RxList<String> genderList = <String>['Male', 'Female', 'Both'].obs;
   RxString genderSelected = ''.obs;
 
-  RxList<String> roomTypeList = <String>[
-    "Private Room",
-    "Double Sharing",
-    "Triple Sharing",
-    "3+ Sharing",
-  ].obs;
+  RxList<String> roomTypeList =
+      <String>[
+        "Private Room",
+        "Double Sharing",
+        "Triple Sharing",
+        "3+ Sharing",
+      ].obs;
   RxString roomSelectedType = ''.obs;
 
   RxList<String> foodAvailable = <String>['Yes', 'No'].obs;
   RxString foodSelected = ''.obs;
 
   ///=====================================BUILDER DATA=====================
-  RxList<Map<String, dynamic>> builderList = <Map<String, dynamic>>[
-    {
-      "title": "ABC Builders",
-      "establish_year": 1995,
-      "projects_count": 12,
-      "image": "assets/logo/Avant.jpg",
-    },
-    {
-      "title": "XYZ Constructions",
-      "establish_year": 2002,
-      "projects_count": 7,
-      "image": "assets/logo/professional.jpg",
-    },
-    {
-      "title": "Dream Homes Pvt Ltd",
-      "establish_year": 2010,
-      "projects_count": 4,
-      "image": "assets/logo/xYZ.jpg",
-    },
-  ].obs;
+  RxList<Map<String, dynamic>> builderList =
+      <Map<String, dynamic>>[
+        {
+          "title": "ABC Builders",
+          "establish_year": 1995,
+          "projects_count": 12,
+          "image": "assets/logo/Avant.jpg",
+        },
+        {
+          "title": "XYZ Constructions",
+          "establish_year": 2002,
+          "projects_count": 7,
+          "image": "assets/logo/professional.jpg",
+        },
+        {
+          "title": "Dream Homes Pvt Ltd",
+          "establish_year": 2010,
+          "projects_count": 4,
+          "image": "assets/logo/xYZ.jpg",
+        },
+      ].obs;
   RxMap<String, dynamic> selectedMap = <String, dynamic>{}.obs;
+
+  ///=====================================STATE & CITY=====================
+  RxString selectedState = ''.obs;
+  RxString selectedCity = ''.obs;
+
+  // CityController to fetch states and cities dynamically
+  final CityController cityController = Get.put(CityController());
+
+  // Available states (unique)
+  RxList<String> availableStates = <String>[].obs;
+  RxList<String> availableCities = <String>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Fetch city data
+    fetchCities();
+  }
+
+  void fetchCities() async {
+    await cityController.fetchCities();
+
+    // Set unique states
+    availableStates.value = cityController.uniqueStates;
+
+    // If a state is selected, update cities
+    selectedState.listen((state) {
+      availableCities.value =
+          cityController.stateCityMap[state]
+              ?.map((city) => city.city)
+              .toList() ??
+          [];
+      selectedCity.value = ''; // reset city when state changes
+    });
+  }
+
+  void updateState(String? state) {
+    if (state != null) {
+      selectedState.value = state;
+    }
+  }
+
+  void updateCity(String? city) {
+    if (city != null) {
+      selectedCity.value = city;
+    }
+  }
 
   ///=====================================GETTERS=====================
   RangeValues get rangeValues => _rangeValues.value;
@@ -179,50 +221,72 @@ class PropertyFilterControllerForFilter extends GetxController {
     // Reset range values based on selected property type to prevent out-of-bounds errors
     switch (propertyType[index]) {
       case 'Buy':
-      // Ensure Buy range values are within bounds
-        if (_rangeValues.value.start < min.value || _rangeValues.value.end > max.value) {
+        // Ensure Buy range values are within bounds
+        if (_rangeValues.value.start < min.value ||
+            _rangeValues.value.end > max.value) {
           _rangeValues.value = RangeValues(min.value, max.value);
         }
         break;
       case 'Rent':
-      // Ensure Rent range values are within bounds
-        if (rentRangeValues.value.start < rentMin.value || rentRangeValues.value.end > rentMax.value) {
+        // Ensure Rent range values are within bounds
+        if (rentRangeValues.value.start < rentMin.value ||
+            rentRangeValues.value.end > rentMax.value) {
           rentRangeValues.value = RangeValues(rentMin.value, rentMax.value);
         }
         break;
       case 'Commercial':
-      // Reset commercial values based on sub-category
-        if (commercialSelectedSubCategory.value == 'Buy' || commercialSelectedSubCategory.value.isEmpty) {
-          if (commercialRangeValues.value.start < commercialMin.value || commercialRangeValues.value.end > commercialMax.value) {
-            commercialRangeValues.value = RangeValues(commercialMin.value, commercialMax.value);
+        // Reset commercial values based on sub-category
+        if (commercialSelectedSubCategory.value == 'Buy' ||
+            commercialSelectedSubCategory.value.isEmpty) {
+          if (commercialRangeValues.value.start < commercialMin.value ||
+              commercialRangeValues.value.end > commercialMax.value) {
+            commercialRangeValues.value = RangeValues(
+              commercialMin.value,
+              commercialMax.value,
+            );
           }
         } else {
-          if (commercialRentRangeValue.value.start < commercialRentMin.value || commercialRentRangeValue.value.end > commercialRentMax.value) {
-            commercialRentRangeValue.value = RangeValues(commercialRentMin.value, commercialRentMax.value);
+          if (commercialRentRangeValue.value.start < commercialRentMin.value ||
+              commercialRentRangeValue.value.end > commercialRentMax.value) {
+            commercialRentRangeValue.value = RangeValues(
+              commercialRentMin.value,
+              commercialRentMax.value,
+            );
           }
         }
         // Reset area values
-        if (areaRangeValues.value.start < areaMin.value || areaRangeValues.value.end > areaMax.value) {
+        if (areaRangeValues.value.start < areaMin.value ||
+            areaRangeValues.value.end > areaMax.value) {
           areaRangeValues.value = RangeValues(areaMin.value, areaMax.value);
         }
         // Reset ROI values
-        if (roiRangeValue.value.start < roiMin.value || roiRangeValue.value.end > roiMax.value) {
+        if (roiRangeValue.value.start < roiMin.value ||
+            roiRangeValue.value.end > roiMax.value) {
           roiRangeValue.value = RangeValues(roiMin.value, roiMax.value);
         }
         // Reset commercial rent area values
-        if (commercialRentAreaRangeValue.value.start < commercialRentAreaMin.value || commercialRentAreaRangeValue.value.end > commercialRentAreaMax.value) {
-          commercialRentAreaRangeValue.value = RangeValues(commercialRentAreaMin.value, commercialRentAreaMax.value);
+        if (commercialRentAreaRangeValue.value.start <
+                commercialRentAreaMin.value ||
+            commercialRentAreaRangeValue.value.end >
+                commercialRentAreaMax.value) {
+          commercialRentAreaRangeValue.value = RangeValues(
+            commercialRentAreaMin.value,
+            commercialRentAreaMax.value,
+          );
         }
         break;
       case 'PG/Co-living':
-      // Ensure PG range values are within bounds
-        if (pgRangeValues.value.start < pgMin.value || pgRangeValues.value.end > pgMax.value) {
+        // Ensure PG range values are within bounds
+        if (pgRangeValues.value.start < pgMin.value ||
+            pgRangeValues.value.end > pgMax.value) {
           pgRangeValues.value = RangeValues(pgMin.value, pgMax.value);
         }
         break;
     }
 
-    print('Property type changed to: ${propertyType[selectedPropertyTypeIndex.value]}');
+    print(
+      'Property type changed to: ${propertyType[selectedPropertyTypeIndex.value]}',
+    );
     resetFilters();
   }
 
@@ -243,15 +307,27 @@ class PropertyFilterControllerForFilter extends GetxController {
 
   /// Commercial buy price range with validation
   void changeTheValueOfCommercial(RangeValues value) {
-    final clampedStart = value.start.clamp(commercialMin.value, commercialMax.value);
-    final clampedEnd = value.end.clamp(commercialMin.value, commercialMax.value);
+    final clampedStart = value.start.clamp(
+      commercialMin.value,
+      commercialMax.value,
+    );
+    final clampedEnd = value.end.clamp(
+      commercialMin.value,
+      commercialMax.value,
+    );
     commercialRangeValues.value = RangeValues(clampedStart, clampedEnd);
   }
 
   /// Commercial rent price range with validation
   void changeCommercialRent(RangeValues value) {
-    final clampedStart = value.start.clamp(commercialRentMin.value, commercialRentMax.value);
-    final clampedEnd = value.end.clamp(commercialRentMin.value, commercialRentMax.value);
+    final clampedStart = value.start.clamp(
+      commercialRentMin.value,
+      commercialRentMax.value,
+    );
+    final clampedEnd = value.end.clamp(
+      commercialRentMin.value,
+      commercialRentMax.value,
+    );
     commercialRentRangeValue.value = RangeValues(clampedStart, clampedEnd);
   }
 
@@ -264,8 +340,14 @@ class PropertyFilterControllerForFilter extends GetxController {
 
   /// Commercial rent area range with validation
   void changeCommercialAreaRent(RangeValues value) {
-    final clampedStart = value.start.clamp(commercialRentAreaMin.value, commercialRentAreaMax.value);
-    final clampedEnd = value.end.clamp(commercialRentAreaMin.value, commercialRentAreaMax.value);
+    final clampedStart = value.start.clamp(
+      commercialRentAreaMin.value,
+      commercialRentAreaMax.value,
+    );
+    final clampedEnd = value.end.clamp(
+      commercialRentAreaMin.value,
+      commercialRentAreaMax.value,
+    );
     commercialRentAreaRangeValue.value = RangeValues(clampedStart, clampedEnd);
   }
 
@@ -323,12 +405,9 @@ class PropertyFilterControllerForFilter extends GetxController {
   //   selectedMap.value = {};
   // }
 
-
-
   /// Reset all filters to default
   void resetFilters() {
     // Reset property type selection
-
 
     // Reset Buy filters
     _rangeValues.value = RangeValues(min.value, max.value);
@@ -341,10 +420,19 @@ class PropertyFilterControllerForFilter extends GetxController {
     rentFurnishing.value = '';
 
     // Reset Commercial filters
-    commercialRangeValues.value = RangeValues(commercialMin.value, commercialMax.value);
-    commercialRentRangeValue.value = RangeValues(commercialRentMin.value, commercialRentMax.value);
+    commercialRangeValues.value = RangeValues(
+      commercialMin.value,
+      commercialMax.value,
+    );
+    commercialRentRangeValue.value = RangeValues(
+      commercialRentMin.value,
+      commercialRentMax.value,
+    );
     areaRangeValues.value = RangeValues(areaMin.value, areaMax.value);
-    commercialRentAreaRangeValue.value = RangeValues(commercialRentAreaMin.value, commercialRentAreaMax.value);
+    commercialRentAreaRangeValue.value = RangeValues(
+      commercialRentAreaMin.value,
+      commercialRentAreaMax.value,
+    );
     roiRangeValue.value = RangeValues(roiMin.value, roiMax.value);
     commercialSelectedSubCategory.value = '';
     buySelectedCommercialPropertyTyp.value = '';
@@ -365,252 +453,339 @@ class PropertyFilterControllerForFilter extends GetxController {
     // Note: searchFilterByID, selectedState, selectedCity, verifiedStatusIndex, and statusApplicateIndex are NOT reset
   }
 
-  RxString selectedState = ''.obs;
-  RxString selectedCity = ''.obs;
+  // RxString selectedState = ''.obs;
+  // RxString selectedCity = ''.obs;
+  //
+  // // Sample Indian states
+  // final List<String> states = [
+  //   'Andhra Pradesh',
+  //   'Arunachal Pradesh',
+  //   'Assam',
+  //   'Bihar',
+  //   'Chhattisgarh',
+  //   'Goa',
+  //   'Gujarat',
+  //   'Haryana',
+  //   'Himachal Pradesh',
+  //   'Jharkhand',
+  //   'Karnataka',
+  //   'Kerala',
+  //   'Madhya Pradesh',
+  //   'Maharashtra',
+  //   'Manipur',
+  //   'Meghalaya',
+  //   'Mizoram',
+  //   'Nagaland',
+  //   'Odisha',
+  //   'Punjab',
+  //   'Rajasthan',
+  //   'Sikkim',
+  //   'Tamil Nadu',
+  //   'Telangana',
+  //   'Tripura',
+  //   'Uttar Pradesh',
+  //   'Uttarakhand',
+  //   'West Bengal',
+  // ];
+  //
+  // // Cities by state
+  // final Map<String, List<String>> citiesByState = {
+  //   'Gujarat': [
+  //     'Ahmedabad',
+  //     'Surat',
+  //     'Vadodara',
+  //     'Rajkot',
+  //     'Bhavnagar',
+  //     'Jamnagar',
+  //     'Junagadh',
+  //     'Gandhinagar',
+  //     'Anand',
+  //     'Nadiad',
+  //     'Morbi',
+  //     'Bharuch',
+  //     'Vapi',
+  //   ],
+  //   'Maharashtra': [
+  //     'Mumbai',
+  //     'Pune',
+  //     'Nagpur',
+  //     'Thane',
+  //     'Nashik',
+  //     'Aurangabad',
+  //     'Solapur',
+  //     'Kolhapur',
+  //     'Amravati',
+  //     'Navi Mumbai',
+  //   ],
+  //   'Karnataka': [
+  //     'Bangalore',
+  //     'Mysore',
+  //     'Mangalore',
+  //     'Hubli',
+  //     'Belgaum',
+  //     'Dharwad',
+  //     'Gulbarga',
+  //     'Bellary',
+  //   ],
+  //   'Tamil Nadu': [
+  //     'Chennai',
+  //     'Coimbatore',
+  //     'Madurai',
+  //     'Tiruchirappalli',
+  //     'Salem',
+  //     'Tirunelveli',
+  //     'Erode',
+  //     'Vellore',
+  //   ],
+  //   'Telangana': [
+  //     'Hyderabad',
+  //     'Warangal',
+  //     'Nizamabad',
+  //     'Karimnagar',
+  //     'Khammam',
+  //     'Ramagundam',
+  //   ],
+  //   'Rajasthan': [
+  //     'Jaipur',
+  //     'Jodhpur',
+  //     'Udaipur',
+  //     'Kota',
+  //     'Ajmer',
+  //     'Bikaner',
+  //     'Alwar',
+  //     'Bharatpur',
+  //   ],
+  //   'Uttar Pradesh': [
+  //     'Lucknow',
+  //     'Kanpur',
+  //     'Ghaziabad',
+  //     'Agra',
+  //     'Varanasi',
+  //     'Meerut',
+  //     'Prayagraj',
+  //     'Noida',
+  //     'Greater Noida',
+  //   ],
+  //   'West Bengal': [
+  //     'Kolkata',
+  //     'Howrah',
+  //     'Durgapur',
+  //     'Asansol',
+  //     'Siliguri',
+  //     'Darjeeling',
+  //   ],
+  //   'Delhi': [
+  //     'New Delhi',
+  //     'Central Delhi',
+  //     'North Delhi',
+  //     'South Delhi',
+  //     'East Delhi',
+  //     'West Delhi',
+  //   ],
+  //   'Haryana': [
+  //     'Gurugram',
+  //     'Faridabad',
+  //     'Panipat',
+  //     'Ambala',
+  //     'Yamunanagar',
+  //     'Rohtak',
+  //     'Hisar',
+  //   ],
+  //   'Punjab': [
+  //     'Chandigarh',
+  //     'Ludhiana',
+  //     'Amritsar',
+  //     'Jalandhar',
+  //     'Patiala',
+  //     'Bathinda',
+  //     'Mohali',
+  //   ],
+  //   'Kerala': [
+  //     'Thiruvananthapuram',
+  //     'Kochi',
+  //     'Kozhikode',
+  //     'Thrissur',
+  //     'Kollam',
+  //     'Palakkad',
+  //     'Kannur',
+  //   ],
+  //   'Madhya Pradesh': [
+  //     'Bhopal',
+  //     'Indore',
+  //     'Jabalpur',
+  //     'Gwalior',
+  //     'Ujjain',
+  //     'Sagar',
+  //     'Ratlam',
+  //   ],
+  // };
+  //
+  // // Get cities for selected state
+  // List<String> get availableCities {
+  //   if (selectedState.value.isEmpty) return [];
+  //   return citiesByState[selectedState.value] ?? [];
+  // }
+  //
+  // // Update state and reset city
+  // void updateState(String? state) {
+  //   if (state != null) {
+  //     selectedState.value = state;
+  //     selectedCity.value = ''; // Reset city when state changes
+  //   }
+  // }
+  //
+  // // Update city
+  // void updateCity(String? city) {
+  //   if (city != null) {
+  //     selectedCity.value = city;
+  //   }
+  // }
 
-  // Sample Indian states
-  final List<String> states = [
-    'Andhra Pradesh',
-    'Arunachal Pradesh',
-    'Assam',
-    'Bihar',
-    'Chhattisgarh',
-    'Goa',
-    'Gujarat',
-    'Haryana',
-    'Himachal Pradesh',
-    'Jharkhand',
-    'Karnataka',
-    'Kerala',
-    'Madhya Pradesh',
-    'Maharashtra',
-    'Manipur',
-    'Meghalaya',
-    'Mizoram',
-    'Nagaland',
-    'Odisha',
-    'Punjab',
-    'Rajasthan',
-    'Sikkim',
-    'Tamil Nadu',
-    'Telangana',
-    'Tripura',
-    'Uttar Pradesh',
-    'Uttarakhand',
-    'West Bengal',
-  ];
+  // Map<String, dynamic> getAllFilters() {
+  //   return {
+  //     // Common
+  //     'selectedPropertyTypeIndex': selectedPropertyTypeIndex.value,
+  //     'propertyType': propertyType[selectedPropertyTypeIndex.value],
+  //     'verifiedStatusIndex': verifiedStatusIndex.value,
+  //     'statusApplicateIndex': statusApplicateIndex.value,
+  //     'searchFilterByID': searchFilterByID.text,
+  //
+  //     // Buy
+  //     'buyRangeValues': {
+  //       'min': _rangeValues.value.start,
+  //       'max': _rangeValues.value.end,
+  //     },
+  //     'bhkType': bhkType.value,
+  //     'subpropertyType': subpropertyType.value,
+  //     'constructionStatusInBuy': constructionStatusInBuy.value,
+  //
+  //     // Rent
+  //     'rentRangeValues': {
+  //       'min': rentRangeValues.value.start,
+  //       'max': rentRangeValues.value.end,
+  //     },
+  //     'rentFurnishing': rentFurnishing.value,
+  //
+  //     // Commercial Buy / Rent
+  //     'commercialRangeValues': {
+  //       'min': commercialRangeValues.value.start,
+  //       'max': commercialRangeValues.value.end,
+  //     },
+  //     'commercialRentRangeValue': {
+  //       'min': commercialRentRangeValue.value.start,
+  //       'max': commercialRentRangeValue.value.end,
+  //     },
+  //     'areaRangeValues': {
+  //       'min': areaRangeValues.value.start,
+  //       'max': areaRangeValues.value.end,
+  //     },
+  //     'commercialRentAreaRangeValue': {
+  //       'min': commercialRentAreaRangeValue.value.start,
+  //       'max': commercialRentAreaRangeValue.value.end,
+  //     },
+  //     'roiRangeValue': {
+  //       'min': roiRangeValue.value.start,
+  //       'max': roiRangeValue.value.end,
+  //     },
+  //     'commercialSelectedSubCategory': commercialSelectedSubCategory.value,
+  //     'buySelectedCommercialPropertyTyp':
+  //         buySelectedCommercialPropertyTyp.value,
+  //     'selectedSalesType': selectedSalesType.value,
+  //     'selectedCommercialLeased': selectedCommercialLeased.value,
+  //     'selectedCommercialPossession': selectedCommercialPossession.value,
+  //     'availableSelectedList': availableSelectedList.value,
+  //
+  //     // PG/Co-living
+  //     'pgRangeValues': {
+  //       'min': pgRangeValues.value.start,
+  //       'max': pgRangeValues.value.end,
+  //     },
+  //     'genderSelected': genderSelected.value,
+  //     'roomSelectedType': roomSelectedType.value,
+  //     'foodSelected': foodSelected.value,
+  //
+  //     // Builder
+  //     'selectedMap': selectedMap,
+  //
+  //     // Location
+  //     'selectedState': selectedState.value,
+  //     'selectedCity': selectedCity.value,
+  //   };
+  // }
 
-  // Cities by state
-  final Map<String, List<String>> citiesByState = {
-    'Gujarat': [
-      'Ahmedabad',
-      'Surat',
-      'Vadodara',
-      'Rajkot',
-      'Bhavnagar',
-      'Jamnagar',
-      'Junagadh',
-      'Gandhinagar',
-      'Anand',
-      'Nadiad',
-      'Morbi',
-      'Bharuch',
-      'Vapi',
-    ],
-    'Maharashtra': [
-      'Mumbai',
-      'Pune',
-      'Nagpur',
-      'Thane',
-      'Nashik',
-      'Aurangabad',
-      'Solapur',
-      'Kolhapur',
-      'Amravati',
-      'Navi Mumbai',
-    ],
-    'Karnataka': [
-      'Bangalore',
-      'Mysore',
-      'Mangalore',
-      'Hubli',
-      'Belgaum',
-      'Dharwad',
-      'Gulbarga',
-      'Bellary',
-    ],
-    'Tamil Nadu': [
-      'Chennai',
-      'Coimbatore',
-      'Madurai',
-      'Tiruchirappalli',
-      'Salem',
-      'Tirunelveli',
-      'Erode',
-      'Vellore',
-    ],
-    'Telangana': [
-      'Hyderabad',
-      'Warangal',
-      'Nizamabad',
-      'Karimnagar',
-      'Khammam',
-      'Ramagundam',
-    ],
-    'Rajasthan': [
-      'Jaipur',
-      'Jodhpur',
-      'Udaipur',
-      'Kota',
-      'Ajmer',
-      'Bikaner',
-      'Alwar',
-      'Bharatpur',
-    ],
-    'Uttar Pradesh': [
-      'Lucknow',
-      'Kanpur',
-      'Ghaziabad',
-      'Agra',
-      'Varanasi',
-      'Meerut',
-      'Prayagraj',
-      'Noida',
-      'Greater Noida',
-    ],
-    'West Bengal': [
-      'Kolkata',
-      'Howrah',
-      'Durgapur',
-      'Asansol',
-      'Siliguri',
-      'Darjeeling',
-    ],
-    'Delhi': [
-      'New Delhi',
-      'Central Delhi',
-      'North Delhi',
-      'South Delhi',
-      'East Delhi',
-      'West Delhi',
-    ],
-    'Haryana': [
-      'Gurugram',
-      'Faridabad',
-      'Panipat',
-      'Ambala',
-      'Yamunanagar',
-      'Rohtak',
-      'Hisar',
-    ],
-    'Punjab': [
-      'Chandigarh',
-      'Ludhiana',
-      'Amritsar',
-      'Jalandhar',
-      'Patiala',
-      'Bathinda',
-      'Mohali',
-    ],
-    'Kerala': [
-      'Thiruvananthapuram',
-      'Kochi',
-      'Kozhikode',
-      'Thrissur',
-      'Kollam',
-      'Palakkad',
-      'Kannur',
-    ],
-    'Madhya Pradesh': [
-      'Bhopal',
-      'Indore',
-      'Jabalpur',
-      'Gwalior',
-      'Ujjain',
-      'Sagar',
-      'Ratlam',
-    ],
-  };
-
-  // Get cities for selected state
-  List<String> get availableCities {
-    if (selectedState.value.isEmpty) return [];
-    return citiesByState[selectedState.value] ?? [];
-  }
-
-  // Update state and reset city
-  void updateState(String? state) {
-    if (state != null) {
-      selectedState.value = state;
-      selectedCity.value = ''; // Reset city when state changes
-    }
-  }
-
-  // Update city
-  void updateCity(String? city) {
-    if (city != null) {
-      selectedCity.value = city;
-    }
-  }
   Map<String, dynamic> getAllFilters() {
-    return {
+    Map<String, dynamic> filters = {
       // Common
-      'selectedPropertyTypeIndex': selectedPropertyTypeIndex.value,
-      'propertyType': propertyType[selectedPropertyTypeIndex.value],
-      'verifiedStatusIndex': verifiedStatusIndex.value,
+      'listingType': propertyType[selectedPropertyTypeIndex.value],
+      'isVerified': verifiedStatusIndex.value == "Verified" ? true : false,
       'statusApplicateIndex': statusApplicateIndex.value,
-      'statusOfApplicant': statusOfApplicant,
       'searchFilterByID': searchFilterByID.text,
 
       // Buy
-      'buyRangeValues': {
-        'min': _rangeValues.value.start,
-        'max': _rangeValues.value.end,
-      },
-      'bhkType': bhkType.value,
-      'subpropertyType': subpropertyType.value,
-      'constructionStatusInBuy': constructionStatusInBuy.value,
+      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() == "buy")
+        'priceRange': {
+          'min': _rangeValues.value.start,
+          'max': _rangeValues.value.end,
+        },
+      'bhk': bhkType.value,
+      'propertyType': subpropertyType.value,
+      'possession_status': constructionStatusInBuy.value
+          .toLowerCase()
+          .replaceAll(" ", "_"),
 
       // Rent
-      'rentRangeValues': {
-        'min': rentRangeValues.value.start,
-        'max': rentRangeValues.value.end,
-      },
+      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() == "rent")
+        'rentRangeValues': {
+          'min': rentRangeValues.value.start,
+          'max': rentRangeValues.value.end,
+        },
       'rentFurnishing': rentFurnishing.value,
 
       // Commercial Buy / Rent
-      'commercialRangeValues': {
-        'min': commercialRangeValues.value.start,
-        'max': commercialRangeValues.value.end,
-      },
-      'commercialRentRangeValue': {
-        'min': commercialRentRangeValue.value.start,
-        'max': commercialRentRangeValue.value.end,
-      },
-      'areaRangeValues': {
-        'min': areaRangeValues.value.start,
-        'max': areaRangeValues.value.end,
-      },
-      'commercialRentAreaRangeValue': {
-        'min': commercialRentAreaRangeValue.value.start,
-        'max': commercialRentAreaRangeValue.value.end,
-      },
-      'roiRangeValue': {
-        'min': roiRangeValue.value.start,
-        'max': roiRangeValue.value.end,
-      },
+      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
+          "commercial")
+        'commercialRangeValues': {
+          'min': commercialRangeValues.value.start,
+          'max': commercialRangeValues.value.end,
+        },
+      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
+          "commercial")
+        'commercialRentRangeValue': {
+          'min': commercialRentRangeValue.value.start,
+          'max': commercialRentRangeValue.value.end,
+        },
+      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
+          "commercial")
+        'areaRangeValues': {
+          'min': areaRangeValues.value.start,
+          'max': areaRangeValues.value.end,
+        },
+      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
+          "commercial")
+        'commercialRentAreaRangeValue': {
+          'min': commercialRentAreaRangeValue.value.start,
+          'max': commercialRentAreaRangeValue.value.end,
+        },
+      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
+          "commercial")
+        'roiRangeValue': {
+          'min': roiRangeValue.value.start,
+          'max': roiRangeValue.value.end,
+        },
       'commercialSelectedSubCategory': commercialSelectedSubCategory.value,
-      'buySelectedCommercialPropertyTyp': buySelectedCommercialPropertyTyp.value,
+      'buySelectedCommercialPropertyTyp':
+          buySelectedCommercialPropertyTyp.value,
       'selectedSalesType': selectedSalesType.value,
       'selectedCommercialLeased': selectedCommercialLeased.value,
       'selectedCommercialPossession': selectedCommercialPossession.value,
       'availableSelectedList': availableSelectedList.value,
 
       // PG/Co-living
-      'pgRangeValues': {
-        'min': pgRangeValues.value.start,
-        'max': pgRangeValues.value.end,
-      },
+      if (propertyType[selectedPropertyTypeIndex.value] == "PG/Co-living")
+        'pgRangeValues': {
+          'min': pgRangeValues.value.start,
+          'max': pgRangeValues.value.end,
+        },
       'genderSelected': genderSelected.value,
       'roomSelectedType': roomSelectedType.value,
       'foodSelected': foodSelected.value,
@@ -619,11 +794,28 @@ class PropertyFilterControllerForFilter extends GetxController {
       'selectedMap': selectedMap,
 
       // Location
-      'selectedState': selectedState.value,
-      'selectedCity': selectedCity.value,
+      'state': selectedState.value,
+      'city': selectedCity.value,
     };
-  }
 
+    // Recursive cleaner
+    dynamic clean(dynamic value) {
+      if (value == null) return null;
+      if (value is String && value.isEmpty) return null;
+      if (value is Iterable && value.isEmpty) return null;
+      if (value is Map) {
+        value = Map.from(value)..removeWhere((k, v) => clean(v) == null);
+        return value.isEmpty ? null : value;
+      }
+      return value;
+    }
+
+    // Clean top-level map
+    filters = filters.map((k, v) => MapEntry(k, clean(v)))
+      ..removeWhere((k, v) => v == null);
+
+    return filters;
+  }
 
   @override
   void onClose() {
