@@ -224,8 +224,10 @@ class PropertyController extends PaginatedController<Items> {
 
   /// Apply filters and refresh
   Future<void> applyFilters(Map<String, String> newFilters) async {
+    isLoading.value = true;
     filters = newFilters;
     await refreshList();
+    isLoading.value=false;
   }
 
   void lessOrReadMore() {

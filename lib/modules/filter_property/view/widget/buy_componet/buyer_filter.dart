@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 
 import '../common_component/bhk_list.dart';
@@ -70,7 +69,6 @@ class BuyFilters extends StatelessWidget {
         //   },
         // ),
         // const SizedBox(height: 7),
-
         buildPropertyFilterHeadingPadding('Construction Status'),
         const SizedBox(height: 7),
         ListedBy(

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/common_component/listed_by.dart';
-import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
 import '../../buy_componet/buy_component.dart';
 import '../../common_component/budget_filter.dart';
@@ -28,7 +26,6 @@ class _BuyCommercialState extends State<BuyCommercial> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         buildPropertyFilterHeadingPadding("Property Type"),
         const SizedBox(height: 7),
         ListedBy(
@@ -50,7 +47,6 @@ class _BuyCommercialState extends State<BuyCommercial> {
           filterControllerForFilter: widget.controllerForFilter,
           selectedItem: widget.controllerForFilter.selectedSalesType,
           onSelected: (type) {
-
             debugPrint('Sale Type Commercial $type');
 
             setState(() {
@@ -62,7 +58,7 @@ class _BuyCommercialState extends State<BuyCommercial> {
         const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Budget'),
         Obx(
-          () =>  BudgetFilter(
+          () => BudgetFilter(
             minValue: widget.controllerForFilter.commercialMin.value,
             maxValue: widget.controllerForFilter.commercialMax.value,
             values: widget.controllerForFilter.commercialRangeValues.value,
@@ -78,7 +74,7 @@ class _BuyCommercialState extends State<BuyCommercial> {
 
         buildPropertyFilterHeadingPadding('Build-up Area'),
         Obx(
-          () =>  BudgetFilter(
+          () => BudgetFilter(
             minValue: widget.controllerForFilter.areaMin.value,
             maxValue: widget.controllerForFilter.areaMax.value,
             values: widget.controllerForFilter.areaRangeValues.value,
@@ -109,7 +105,7 @@ class _BuyCommercialState extends State<BuyCommercial> {
         const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Roi % p.a'),
         Obx(
-          () =>  BudgetFilter(
+          () => BudgetFilter(
             minValue: widget.controllerForFilter.roiMin.value,
             maxValue: widget.controllerForFilter.roiMax.value,
             values: widget.controllerForFilter.roiRangeValue.value,

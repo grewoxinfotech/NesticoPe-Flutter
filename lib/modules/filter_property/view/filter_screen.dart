@@ -448,13 +448,8 @@ import 'package:housing_flutter_app/modules/filter_property/view/widget/commerci
 import 'package:housing_flutter_app/modules/filter_property/view/widget/location_dropdown.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/pg_property/pg_co_living.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/rent_component/rented_filter.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/property_price_trend/view/widget/filter_type.dart'
-    hide buildFilterPropertyTypes;
+import 'dart:convert';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
-import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart'
-    hide buildFilterPropertyTypes;
 
 class RealEstateFilterScreen extends StatelessWidget {
   final bool showSearchById;
@@ -491,7 +486,7 @@ class RealEstateFilterScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              // Reset all filters
+              controllerForFilter.resetAllFilters();
             },
             child: Text(
               'Reset',
@@ -706,12 +701,68 @@ class RealEstateFilterScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
+            // Selected filters as chips
+            Obx(() {
+              final chips = controllerForFilter.getSelectedFilterChips();
+              if (chips.isEmpty) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        buildCommonText(
+                          'Selected',
+                          14,
+                          FontWeight.w600,
+                          ColorRes.textColor.withOpacity(0.7),
+                          1,
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: controllerForFilter.resetAllFilters,
+                          child: Text(
+                            'Clear all',
+                            style: TextStyle(
+                              color: ColorRes.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final chip in chips)
+                          Chip(
+                            label: Text(chip['label'] ?? ''),
+                            deleteIcon: const Icon(Icons.close, size: 16),
+                            onDeleted: () {
+                              final key = chip['key'];
+                              if (key != null) {
+                                controllerForFilter.clearFilterByKey(key);
+                              }
+                            },
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }),
+
+            const SizedBox(height: 16),
+
             // Dynamic Filter Content
             Obx(() {
               if (controllerForFilter.propertyType[controllerForFilter
                       .selectedPropertyTypeIndex
                       .value] ==
-                  "Buy") {
+                  "Sell") {
                 return BuyFilters(controllerForFilter: controllerForFilter);
               } else if (controllerForFilter.propertyType[controllerForFilter
                       .selectedPropertyTypeIndex
@@ -794,10 +845,8 @@ class RealEstateFilterScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      final controller = Get.find<PropertyController>();
                       final filters = controllerForFilter.getAllFilters();
                       final stringFilters = convertFiltersToString(filters);
-                      controller.applyFilters(stringFilters);
                       Get.back(result: stringFilters);
                       // debugPrint(
                       //   '================= Current Filters =================',
@@ -834,18 +883,22 @@ class RealEstateFilterScreen extends StatelessWidget {
   }
 
   Map<String, String> convertFiltersToString(Map<String, dynamic> filters) {
-    Map<String, String> result = {};
+    final Map<String, String> result = {};
 
     filters.forEach((key, value) {
       if (value == null) return;
 
+      // 🔁 Rename rentRangeValues → priceRange for backend compatibility
+      String mappedKey = key == 'rentRangeValues' ? 'priceRange' : key;
+
       if (value is Map || value is List) {
-        // Convert nested map or list to JSON string
-        result[key] =
-            value.isEmpty ? '' : value.toString().replaceAll("'", '"');
+        if (value.isEmpty) return;
+        // ✅ Proper JSON encoding instead of toString()
+        result[mappedKey] = jsonEncode(value);
       } else {
-        // Convert other values to string
-        result[key] = value.toString();
+        // ✅ Skip empty strings or invalid values
+        if (value.toString().trim().isEmpty) return;
+        result[mappedKey] = value.toString();
       }
     });
 

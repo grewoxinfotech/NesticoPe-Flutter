@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 
 import '../common_component/bhk_list.dart';
@@ -20,14 +19,17 @@ class RentFilter extends StatelessWidget {
       children: [
         buildPropertyFilterHeadingPadding('BHK Type'),
         const SizedBox(height: 7),
-        BHKTypes(bHKList: controllerForFilter.bHkType,controllerForFilter: controllerForFilter,onSelectionChanged: (selectedItems) {
-debugPrint('rent bhk $selectedItems');
-        },),
+        BHKTypes(
+          bHKList: controllerForFilter.bHkType,
+          controllerForFilter: controllerForFilter,
+          onSelectionChanged: (selectedItems) {
+            debugPrint('rent bhk $selectedItems');
+          },
+        ),
         const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Rent Range'),
         Obx(
-          () =>
-          BudgetFilter(
+          () => BudgetFilter(
             maxQuantityLabel: 'Cr+',
             minQuantityLabel: 'L',
             maxLabel: 'Max',
@@ -36,9 +38,10 @@ debugPrint('rent bhk $selectedItems');
             maxValue: controllerForFilter.rentMax.value,
             values: controllerForFilter.rentRangeValues.value,
             onChanged: (newValues) {
-          controllerForFilter.dynamicRentChangeValue(newValues);
-          print(" Rent Range value ${controllerForFilter.rentMin.value}  ${controllerForFilter.rentMax.value} ${controllerForFilter.rentRangeValues.value}");
-
+              controllerForFilter.dynamicRentChangeValue(newValues);
+              print(
+                " Rent Range value ${controllerForFilter.rentMin.value}  ${controllerForFilter.rentMax.value} ${controllerForFilter.rentRangeValues.value}",
+              );
             },
           ),
         ),
@@ -49,9 +52,14 @@ debugPrint('rent bhk $selectedItems');
         // const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Furnishing Type'),
         const SizedBox(height: 7),
-        ListedBy(listedByList: controllerForFilter.furnishingType,onTap: (items) {
-debugPrint('Furnishing $items');
-        },controllerForFilter: controllerForFilter,selectedString: controllerForFilter.rentFurnishing,),
+        ListedBy(
+          listedByList: controllerForFilter.furnishingType,
+          onTap: (items) {
+            debugPrint('Furnishing $items');
+          },
+          controllerForFilter: controllerForFilter,
+          selectedString: controllerForFilter.rentFurnishing,
+        ),
       ],
     );
   }

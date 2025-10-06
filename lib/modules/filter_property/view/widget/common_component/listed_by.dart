@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 
-import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
-
 import '../../../../../app/constants/color_res.dart';
 import '../../../../search_property/view/search_screen.dart';
 
@@ -63,9 +61,6 @@ import '../../../../search_property/view/search_screen.dart';
 //   }
 // }
 
-
-
-
 class ListedBy extends StatefulWidget {
   const ListedBy({
     super.key,
@@ -95,57 +90,55 @@ class _ListedByState extends State<ListedBy> {
         padding: EdgeInsets.only(right: 10),
         itemCount: widget.listedByList.length,
         itemBuilder: (context, index) {
-          return Obx(
-                () {
-              final isSelected = widget.selectedString.value == widget.listedByList[index];
-              return Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: GestureDetector(
-                  onTap: () {
-                    widget.controllerForFilter.updateFilter(
-                      widget.selectedString,
-                      widget.listedByList[index],
-                    );
-                    widget.onTap(widget.listedByList[index]);
-                  },
-                  child: Container(
-                    // duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 10,
+          return Obx(() {
+            final isSelected =
+                widget.selectedString.value == widget.listedByList[index];
+            return Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: GestureDetector(
+                onTap: () {
+                  widget.controllerForFilter.updateFilter(
+                    widget.selectedString,
+                    widget.listedByList[index],
+                  );
+                  widget.onTap(widget.listedByList[index]);
+                },
+                child: Container(
+                  // duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color:
+                        isSelected
+                            ? ColorRes.primary.withOpacity(0.1)
+                            : Colors.white,
+                    border: Border.all(
+                      color:
+                          isSelected ? ColorRes.primary : Colors.grey.shade300,
+                      width: isSelected ? 1.8 : 1.5,
                     ),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? ColorRes.primary.withOpacity(0.1)
-                          : Colors.white,
-                      border: Border.all(
-                        color: isSelected
-                            ? ColorRes.primary
-                            : Colors.grey.shade300,
-                        width: isSelected ? 1.8 : 1.5,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildCommonText(
+                        widget.listedByList[index],
+                        12,
+                        FontWeight.w500,
+                        isSelected ? ColorRes.primary : ColorRes.textColor,
+                        1,
                       ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        buildCommonText(
-                          widget.listedByList[index],
-                          12,
-                          FontWeight.w500,
-                          isSelected ? ColorRes.primary : ColorRes.textColor,
-                          1,
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
-              );
-            },
-          );
+              ),
+            );
+          });
         },
       ),
     );
   }
 }
-

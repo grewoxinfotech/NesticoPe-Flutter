@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 
 import 'city_insigths_controller.dart';
 
@@ -7,7 +8,7 @@ class PropertyFilterControllerForFilter extends GetxController {
   ///=====================================Property Type Selection=====================
   RxInt selectedPropertyTypeIndex = 0.obs;
   RxList<String> propertyType =
-      ['Buy', 'Rent', 'Commercial', 'PG/Co-living'].obs;
+      ['Sell', 'Rent', 'Commercial'].obs;
   RxList<String> verificationStatus = <String>['Verified', 'Non-verified'].obs;
   RxString verifiedStatusIndex = ''.obs;
   RxString statusApplicateIndex = ''.obs;
@@ -220,7 +221,7 @@ class PropertyFilterControllerForFilter extends GetxController {
 
     // Reset range values based on selected property type to prevent out-of-bounds errors
     switch (propertyType[index]) {
-      case 'Buy':
+      case 'Sell':
         // Ensure Buy range values are within bounds
         if (_rangeValues.value.start < min.value ||
             _rangeValues.value.end > max.value) {
@@ -405,10 +406,8 @@ class PropertyFilterControllerForFilter extends GetxController {
   //   selectedMap.value = {};
   // }
 
-  /// Reset all filters to default
+  /// Reset most filters to defaults (used when switching property type)
   void resetFilters() {
-    // Reset property type selection
-
     // Reset Buy filters
     _rangeValues.value = RangeValues(min.value, max.value);
     bhkType.value = '';
@@ -449,8 +448,182 @@ class PropertyFilterControllerForFilter extends GetxController {
 
     // Reset builder selection
     selectedMap.value = {};
+  }
 
-    // Note: searchFilterByID, selectedState, selectedCity, verifiedStatusIndex, and statusApplicateIndex are NOT reset
+  /// Reset ALL filters including search, verification and location (used by Reset button)
+  void resetAllFilters() {
+    resetFilters();
+    // Common
+    verifiedStatusIndex.value = '';
+    statusApplicateIndex.value = '';
+    searchFilterByID.clear();
+
+    // Location
+    selectedState.value = '';
+    selectedCity.value = '';
+  }
+
+  /// Clear a specific filter by key used in getAllFilters()
+  void clearFilterByKey(String key) {
+    switch (key) {
+      case 'listingType':
+        // Keep property type selection as-is to avoid confusing tab jump.
+        break;
+      case 'isVerified':
+        verifiedStatusIndex.value = '';
+        break;
+      case 'approval_status':
+        statusApplicateIndex.value = '';
+        break;
+      case 'propertyId':
+        searchFilterByID.clear();
+        break;
+      case 'priceRange':
+        _rangeValues.value = RangeValues(min.value, max.value);
+        break;
+      case 'bhk':
+        bhkType.value = '';
+        break;
+      case 'propertyType':
+        subpropertyType.value = '';
+        buySelectedCommercialPropertyTyp.value = '';
+        break;
+      case 'possession_status':
+        constructionStatusInBuy.value = '';
+        break;
+      case 'rentRangeValues':
+        rentRangeValues.value = RangeValues(rentMin.value, rentMax.value);
+        break;
+      case 'furnish_type':
+        rentFurnishing.value = '';
+        break;
+      case 'commercialRangeValues':
+        commercialRangeValues.value = RangeValues(
+          commercialMin.value,
+          commercialMax.value,
+        );
+        break;
+      case 'commercialRentRangeValue':
+        commercialRentRangeValue.value = RangeValues(
+          commercialRentMin.value,
+          commercialRentMax.value,
+        );
+        break;
+      case 'areaRangeValues':
+        areaRangeValues.value = RangeValues(areaMin.value, areaMax.value);
+        break;
+      case 'commercialRentAreaRangeValue':
+        commercialRentAreaRangeValue.value = RangeValues(
+          commercialRentAreaMin.value,
+          commercialRentAreaMax.value,
+        );
+        break;
+      case 'roiRangeValue':
+        roiRangeValue.value = RangeValues(roiMin.value, roiMax.value);
+        break;
+      case 'commercialSelectedSubCategory':
+        commercialSelectedSubCategory.value = '';
+        break;
+      case 'buySelectedCommercialPropertyTyp':
+        buySelectedCommercialPropertyTyp.value = '';
+        break;
+      case 'property_condition':
+        buySelectedCommercialPropertyTyp.value = '';
+        break;
+      case 'selectedSalesType':
+        selectedSalesType.value = '';
+        break;
+      case 'selectedCommercialLeased':
+        selectedCommercialLeased.value = '';
+        break;
+      case 'selectedCommercialPossession':
+        selectedCommercialPossession.value = '';
+        break;
+      case 'availableSelectedList':
+        availableSelectedList.value = '';
+        break;
+      case 'pgRangeValues':
+        pgRangeValues.value = RangeValues(pgMin.value, pgMax.value);
+        break;
+      case 'genderSelected':
+        genderSelected.value = '';
+        break;
+      case 'roomSelectedType':
+        roomSelectedType.value = '';
+        break;
+      case 'foodSelected':
+        foodSelected.value = '';
+        break;
+      case 'selectedMap':
+        selectedMap.value = {};
+        break;
+      case 'state':
+        selectedState.value = '';
+        break;
+      case 'city':
+        selectedCity.value = '';
+        break;
+      default:
+        break;
+    }
+  }
+
+  /// Get selected filters as readable chip labels with keys for clearing
+  List<Map<String, String>> getSelectedFilterChips() {
+    final filters = getAllFilters();
+    final List<Map<String, String>> chips = [];
+
+    String priceLabel(double a, double b) =>
+        '${Formatter.formatPrice(a)} - ${Formatter.formatPrice(b)}';
+
+    filters.forEach((key, value) {
+      if (value == null) return;
+      switch (key) {
+        case 'isVerified':
+          chips.add({
+            'key': key,
+            'label': 'Verified: ${value == true ? 'Yes' : 'No'}',
+          });
+          break;
+        case 'approval_status':
+          chips.add({'key': key, 'label': 'Status: $value'});
+          break;
+        case 'propertyId':
+          chips.add({'key': key, 'label': 'ID: $value'});
+          break;
+        case 'priceRange':
+          final minV = (value['min'] as num).toDouble();
+          final maxV = (value['max'] as num).toDouble();
+          chips.add({'key': key, 'label': 'Price: ${priceLabel(minV, maxV)}'});
+          break;
+        case 'bhk':
+          chips.add({'key': key, 'label': 'BHK: $value'});
+          break;
+        case 'propertyType':
+          chips.add({'key': key, 'label': 'Type: $value'});
+          break;
+        case 'possession_status':
+          chips.add({'key': key, 'label': 'Possession: $value'});
+          break;
+        case 'furnish_type':
+          chips.add({'key': key, 'label': 'Furnish: $value'});
+          break;
+        case 'property_condition':
+          chips.add({'key': key, 'label': 'Condition: $value'});
+          break;
+        case 'state':
+          chips.add({'key': key, 'label': 'State: $value'});
+          break;
+        case 'city':
+          chips.add({'key': key, 'label': 'City: $value'});
+          break;
+        default:
+          // Skip other internal keys not displayed as chips
+          break;
+      }
+    });
+
+    return chips;
   }
 
   // RxString selectedState = ''.obs;
@@ -714,88 +887,177 @@ class PropertyFilterControllerForFilter extends GetxController {
   // }
 
   Map<String, dynamic> getAllFilters() {
-    Map<String, dynamic> filters = {
-      // Common
-      'listingType': propertyType[selectedPropertyTypeIndex.value],
-      'isVerified': verifiedStatusIndex.value == "Verified" ? true : false,
-      'statusApplicateIndex': statusApplicateIndex.value,
-      'searchFilterByID': searchFilterByID.text,
+    // Helpers
+    String slug(String? s) =>
+        (s ?? '').trim().toLowerCase().replaceAll(' ', '_');
+    String hyphenSlug(String? s) => (s ?? '')
+        .trim()
+        .toLowerCase()
+        .replaceAll(' ', '-')
+        .replaceAll('_', '-');
 
-      // Buy
-      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() == "buy")
-        'priceRange': {
-          'min': _rangeValues.value.start,
-          'max': _rangeValues.value.end,
-        },
-      'bhk': bhkType.value,
-      'propertyType': subpropertyType.value,
-      'possession_status': constructionStatusInBuy.value
-          .toLowerCase()
-          .replaceAll(" ", "_"),
+    String? mapListingType() {
+      final tab = propertyType[selectedPropertyTypeIndex.value];
+      if (tab == 'Sell') return 'Sell';
+      if (tab == 'Rent') return 'Rent';
+      if (tab == 'Commercial') {
+        if (commercialSelectedSubCategory.value.toLowerCase() == 'rent') {
+          return 'Rent';
+        }
+        return 'Sell';
+      }
+      if (tab == 'PG/Co-living') return 'Rent';
+      return null;
+    }
 
-      // Rent
-      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() == "rent")
-        'rentRangeValues': {
+    // Map UI property type labels to backend slugs
+    String? mapPropertyType() {
+      final tab = propertyType[selectedPropertyTypeIndex.value];
+      if (tab == 'Commercial') {
+        final t = buySelectedCommercialPropertyTyp.value;
+        switch (t) {
+          case 'Ready to use Office Space':
+          case 'Bare Shell Office Space':
+            return 'office';
+          case 'Shop':
+            return 'retail_shop';
+          case 'Showroom':
+            return 'showroom';
+          case 'Commercial Plot':
+            return 'plot';
+          case 'WareHouse':
+            return 'warehouse';
+          case 'Others':
+            return 'others';
+          default:
+            return null;
+        }
+      } else {
+        final t = subpropertyType.value;
+        switch (t) {
+          case 'Apartments':
+            return 'apartment';
+          case 'Independent House':
+            return 'independent_house';
+          case 'Plot':
+            return 'plot';
+          case 'Studio':
+            return 'studio';
+          case 'Duplex':
+            return 'duplex';
+          case 'PentHouse':
+            return 'penthouse';
+          case 'Builder Floor':
+            return 'builder_floor';
+          case 'Villa':
+            return 'villa';
+          default:
+            return null;
+        }
+      }
+    }
+
+    // Extract BHK number (e.g., "2 BHK" -> 2)
+    String? mapBhk() {
+      if (bhkType.value.isEmpty) return null;
+      final digits = RegExp(r'\d+').firstMatch(bhkType.value)?.group(0);
+      return digits;
+    }
+
+    // Map furnishing
+    String? mapFurnishType() {
+      if (rentFurnishing.value.isEmpty) return null;
+      final v = hyphenSlug(rentFurnishing.value);
+      // normalize common variants
+      if (v.contains('semi')) return 'semi-furnished';
+      if (v.contains('fully')) return 'fully-furnished';
+      if (v.contains('un')) return 'unfurnished';
+      return v;
+    }
+
+    // Compute priceRange based on context
+    Map<String, dynamic>? mapPriceRange() {
+      final tab = propertyType[selectedPropertyTypeIndex.value];
+      if (tab == 'Sell') {
+        return {'min': _rangeValues.value.start, 'max': _rangeValues.value.end};
+      } else if (tab == 'Rent') {
+        return {
           'min': rentRangeValues.value.start,
           'max': rentRangeValues.value.end,
-        },
-      'rentFurnishing': rentFurnishing.value,
-
-      // Commercial Buy / Rent
-      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
-          "commercial")
-        'commercialRangeValues': {
-          'min': commercialRangeValues.value.start,
-          'max': commercialRangeValues.value.end,
-        },
-      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
-          "commercial")
-        'commercialRentRangeValue': {
-          'min': commercialRentRangeValue.value.start,
-          'max': commercialRentRangeValue.value.end,
-        },
-      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
-          "commercial")
-        'areaRangeValues': {
-          'min': areaRangeValues.value.start,
-          'max': areaRangeValues.value.end,
-        },
-      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
-          "commercial")
-        'commercialRentAreaRangeValue': {
-          'min': commercialRentAreaRangeValue.value.start,
-          'max': commercialRentAreaRangeValue.value.end,
-        },
-      if (propertyType[selectedPropertyTypeIndex.value].toLowerCase() ==
-          "commercial")
-        'roiRangeValue': {
-          'min': roiRangeValue.value.start,
-          'max': roiRangeValue.value.end,
-        },
-      'commercialSelectedSubCategory': commercialSelectedSubCategory.value,
-      'buySelectedCommercialPropertyTyp':
-          buySelectedCommercialPropertyTyp.value,
-      'selectedSalesType': selectedSalesType.value,
-      'selectedCommercialLeased': selectedCommercialLeased.value,
-      'selectedCommercialPossession': selectedCommercialPossession.value,
-      'availableSelectedList': availableSelectedList.value,
-
-      // PG/Co-living
-      if (propertyType[selectedPropertyTypeIndex.value] == "PG/Co-living")
-        'pgRangeValues': {
+        };
+      } else if (tab == 'Commercial') {
+        if (commercialSelectedSubCategory.value.toLowerCase() == 'rent') {
+          return {
+            'min': commercialRentRangeValue.value.start,
+            'max': commercialRentRangeValue.value.end,
+          };
+        } else {
+          return {
+            'min': commercialRangeValues.value.start,
+            'max': commercialRangeValues.value.end,
+          };
+        }
+      } else if (tab == 'PG/Co-living') {
+        return {
           'min': pgRangeValues.value.start,
           'max': pgRangeValues.value.end,
-        },
-      'genderSelected': genderSelected.value,
-      'roomSelectedType': roomSelectedType.value,
-      'foodSelected': foodSelected.value,
+        };
+      }
+      return null;
+    }
 
-      // Builder
-      'selectedMap': selectedMap,
+    // Optionally set property_condition for commercial office
+    String? mapPropertyCondition() {
+      if (propertyType[selectedPropertyTypeIndex.value] != 'Commercial') {
+        return null;
+      }
+      final t = buySelectedCommercialPropertyTyp.value;
+      if (t == 'Ready to use Office Space') return 'ready_to_use';
+      if (t == 'Bare Shell Office Space') return 'bare_shell';
+      return null;
+    }
+
+    final mappedListingType = mapListingType();
+    final mappedPropertyType = mapPropertyType();
+    final priceRange = mapPriceRange();
+    final propertyCondition = mapPropertyCondition();
+
+    Map<String, dynamic> filters = {
+      // Core
+      if (mappedListingType != null) 'listingType': mappedListingType,
+      if (mappedPropertyType != null) 'propertyType': mappedPropertyType,
+      if (priceRange != null) 'priceRange': priceRange,
+
+      // Flags
+      if (verifiedStatusIndex.value.isNotEmpty)
+        'isVerified': verifiedStatusIndex.value == 'Verified',
+      if (statusApplicateIndex.value.isNotEmpty)
+        'approval_status': slug(statusApplicateIndex.value),
+
+      // Search by property id
+      if (searchFilterByID.text.trim().isNotEmpty)
+        'propertyId': searchFilterByID.text.trim(),
+
+      // BHK for residential
+      if (mapBhk() != null) 'bhk': mapBhk(),
+
+      // Possession status (buy)
+      if (constructionStatusInBuy.value.isNotEmpty)
+        'possession_status': slug(constructionStatusInBuy.value),
+
+      // Furnishing (rent)
+      if (mapFurnishType() != null) 'furnish_type': mapFurnishType(),
 
       // Location
-      'state': selectedState.value,
-      'city': selectedCity.value,
+      if (selectedState.value.isNotEmpty) 'state': selectedState.value,
+      if (selectedCity.value.isNotEmpty) 'city': selectedCity.value,
+
+      // Commercial-specific extras (optional, only when known)
+      if (propertyCondition != null) 'property_condition': propertyCondition,
+
+      // Type (only when Commercial tab)
+      if (propertyType[selectedPropertyTypeIndex.value] == 'Commercial')
+        'type': 'commercial',
     };
 
     // Recursive cleaner

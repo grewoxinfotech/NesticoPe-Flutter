@@ -70,6 +70,7 @@ class PropertyService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+      print("uri: $uri");
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {

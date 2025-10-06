@@ -102,6 +102,12 @@ class PropertyDetail extends StatelessWidget {
               ? AppBar(
                 elevation: 0,
                 backgroundColor: ColorRes.white,
+                leading: GestureDetector(
+                  onTap: (){
+                    controller.loadInitial();
+                    Get.back();
+                  },
+                    child: Icon(Icons.arrow_back)),
                 title: const Text(
                   "Property List",
                   style: TextStyle(
@@ -114,12 +120,14 @@ class PropertyDetail extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 12.0),
                     child: GestureDetector(
                       onTap: () async {
-                        final result = await Get.to<RxMap<String, String>>(
+                        final result = await Get.to<Map<String, String>>(
                           () => RealEstateFilterScreen(),
                         );
+                        debugPrint("result $result");
                         if (result != null) {
                           selectedFilters.clear();
                           selectedFilters.addAll(result);
+                          controller.applyFilters(selectedFilters);
                         }
                       },
 
@@ -127,53 +135,81 @@ class PropertyDetail extends StatelessWidget {
                     ),
                   ),
                 ],
-                bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(50),
-                  child: Obx(() {
-                    if (selectedFilters.isEmpty) return const SizedBox.shrink();
-                    return Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      color: Colors.grey[100],
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children:
-                              selectedFilters.entries.map((e) {
-                                if (e.value.isEmpty)
-                                  return const SizedBox.shrink();
-                                return Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue[100],
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    "${e.key}: ${e.value}",
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              )
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(40),
+              child: Obx(() {
+                if (selectedFilters.isEmpty) return const SizedBox.shrink();
+
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  width: double.infinity,
+                  alignment: Alignment.centerLeft,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: selectedFilters.entries.map((entry) {
+                        final key = entry.key;
+                        final value = entry.value;
+
+                        if (value == null ||
+                            (value is String && value.trim().isEmpty) ||
+                            (value is Map && value.isEmpty)) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: ColorRes.primary.withOpacity(0.3)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "$key: $value",
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              GestureDetector(
+                                onTap: () {
+                                  // 🧹 Remove the selected filter on tap
+                                  selectedFilters.remove(key);
+                                  controller.applyFilters(selectedFilters);
+
+                                },
+                                child: const Icon(
+                                  Icons.close,
+                                  size: 16,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              }),
+            ),
+
+          )
               : null,
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
           return const Center(child: CircularProgressIndicator());
+        }
+
+        if(controller.isLoading.value){
+          return const Center(child: CircularProgressIndicator());
+
         }
 
         if (!controller.isLoading.value && controller.items.isEmpty) {

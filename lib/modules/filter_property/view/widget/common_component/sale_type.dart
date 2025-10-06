@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
-import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
 
 import '../../../../../app/constants/color_res.dart';
 import '../../../../search_property/view/search_screen.dart';
@@ -55,9 +54,6 @@ import '../../../../search_property/view/search_screen.dart';
 //   }
 // }
 
-
-
-
 class SelectableWrap extends StatelessWidget {
   final List<String> items;
   final RxString selectedItem;
@@ -81,56 +77,58 @@ class SelectableWrap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-          () => Padding(
-            padding: const EdgeInsets.only(left: 8.0,right: 8),
-            child: Wrap(
-                    spacing: 10,
-                    runSpacing: runSpacing,
-                    children: items.map((type) {
-            final isSelected = selectedItem.value == type;
-            return GestureDetector(
-              onTap: () {
-                filterControllerForFilter.updateFilter(selectedItem, type);
-                onSelected(type);
-              },
-              child: Container(
-                height: 42,
-                // duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? ColorRes.primary.withOpacity(0.1)
-                      : Colors.white,
-                  border: Border.all(
-                    color: isSelected
-                        ? ColorRes.primary
-                        : Colors.grey.shade300,
-                    width: isSelected ? 1.8 : 1.5,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-
-                    buildCommonText(
-                      type,
-                      12,
-                      FontWeight.w500,
-                      isSelected ? ColorRes.primary : ColorRes.textColor,
-                      1,
+      () => Padding(
+        padding: const EdgeInsets.only(left: 8.0, right: 8),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: runSpacing,
+          children:
+              items.map((type) {
+                final isSelected = selectedItem.value == type;
+                return GestureDetector(
+                  onTap: () {
+                    filterControllerForFilter.updateFilter(selectedItem, type);
+                    onSelected(type);
+                  },
+                  child: Container(
+                    height: 42,
+                    // duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
                     ),
-                  ],
-                ),
-              ),
-            );
-                    }).toList(),
+                    decoration: BoxDecoration(
+                      color:
+                          isSelected
+                              ? ColorRes.primary.withOpacity(0.1)
+                              : Colors.white,
+                      border: Border.all(
+                        color:
+                            isSelected
+                                ? ColorRes.primary
+                                : Colors.grey.shade300,
+                        width: isSelected ? 1.8 : 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        buildCommonText(
+                          type,
+                          12,
+                          FontWeight.w500,
+                          isSelected ? ColorRes.primary : ColorRes.textColor,
+                          1,
+                        ),
+                      ],
+                    ),
                   ),
-          ),
+                );
+              }).toList(),
+        ),
+      ),
     );
   }
 }

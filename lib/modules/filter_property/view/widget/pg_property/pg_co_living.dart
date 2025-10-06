@@ -159,13 +159,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/buy_componet/buy_component.dart';
-import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart'
-    hide buildFilterHeadingPadding;
 import '../common_component/budget_filter.dart';
 import '../common_component/sale_type.dart';
 

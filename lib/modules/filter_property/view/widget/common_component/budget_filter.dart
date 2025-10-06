@@ -63,8 +63,6 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 //   }
 // }
 
-
-
 class BudgetFilter extends StatelessWidget {
   final double minValue;
   final double maxValue;
@@ -193,9 +191,7 @@ class BudgetFilter extends StatelessWidget {
                 enabledThumbRadius: 10,
                 elevation: 2,
               ),
-              overlayShape: const RoundSliderOverlayShape(
-                overlayRadius: 20,
-              ),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
               rangeThumbShape: const RoundRangeSliderThumbShape(
                 enabledThumbRadius: 10,
                 elevation: 2,
