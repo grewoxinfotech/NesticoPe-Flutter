@@ -23,29 +23,6 @@ class Formatter {
     return '₹$value';
   }
 
-  // static String formatPrice(num price) {
-  //   String suffix = '';
-  //   num value = price;
-  //
-  //   if (price >= 1000000000 || price <= -1000000000) {
-  //     value = price / 1000000000;
-  //     suffix = 'B';
-  //   } else if (price >= 1000000 || price <= -1000000) {
-  //     value = price / 1000000;
-  //     suffix = 'M';
-  //   } else if (price >= 1000 || price <= -1000) {
-  //     value = price / 1000;
-  //     suffix = 'K';
-  //   }
-  //
-  //   // Remove trailing .0
-  //   String formatted = value.toStringAsFixed(1);
-  //   if (formatted.endsWith('.0')) {
-  //     formatted = formatted.substring(0, formatted.length - 2);
-  //   }
-  //
-  //   return '$formatted$suffix';
-  // }
 
   static String formatPrice(num price) {
     String suffix = '';
@@ -54,24 +31,22 @@ class Formatter {
 
     if (price >= 10000000 || price <= -10000000) {
       // 1 Crore = 1 Cr = 10,000,000
-
       value = price / 10000000;
       suffix = 'Cr';
     } else if (price >= 100000 || price <= -100000) {
       // 1 Lakh = 1 Lac = 100,000
-
       value = price / 100000;
       suffix = 'L';
     } else if (price >= 1000 || price <= -1000) {
       // 1 Thousand
-
       value = price / 1000;
       suffix = 'K';
     } else {
-      return '$prefix  $price'; // less than 1k, return as is
+      // Less than 1k, return with 2 decimal places
+      return '$prefix ${price.toStringAsFixed(2)}';
     }
 
-    // Remove trailing .0
+    // Remove trailing .0 for larger amounts
     String formatted = value.toStringAsFixed(1);
     if (formatted.endsWith('.0')) {
       formatted = formatted.substring(0, formatted.length - 2);

@@ -19,7 +19,7 @@ class BuyFilters extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildFilterHeadingPadding('Budget Range'),
+        buildPropertyFilterHeadingPadding('Budget Range'),
 
         Obx(
           () => BudgetFilter(
@@ -38,7 +38,7 @@ class BuyFilters extends StatelessWidget {
         ),
         const SizedBox(height: 7),
 
-        buildFilterHeadingPadding('BHK Type'),
+        buildPropertyFilterHeadingPadding('BHK Type'),
         const SizedBox(height: 7),
         BHKTypes(
           bHKList: controllerForFilter.bHkType,
@@ -49,7 +49,7 @@ class BuyFilters extends StatelessWidget {
         ),
         const SizedBox(height: 7),
 
-        buildFilterHeadingPadding('Property Types'),
+        buildPropertyFilterHeadingPadding('Property Types'),
         const SizedBox(height: 7),
         FilterPropertyTypesList(
           items: controllerForFilter.propertyTypesList,
@@ -71,7 +71,7 @@ class BuyFilters extends StatelessWidget {
         // ),
         // const SizedBox(height: 7),
 
-        buildFilterHeadingPadding('Construction Status'),
+        buildPropertyFilterHeadingPadding('Construction Status'),
         const SizedBox(height: 7),
         ListedBy(
           listedByList: controllerForFilter.constructionStatus,

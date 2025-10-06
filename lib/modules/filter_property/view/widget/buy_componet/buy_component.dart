@@ -5,13 +5,80 @@ import 'package:housing_flutter_app/modules/filter_property/controller/property_
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
 
+// class FilterPropertyTypesList extends StatefulWidget {
+//   const FilterPropertyTypesList({
+//     super.key,
+//     required this.items,
+//     required this.onSelectionChanged,
+//     required this.controllerForFilter, required this.selectedItems,
+//
+//   });
+//
+//   final List<String> items;
+//   final Function(String? selectedItems) onSelectionChanged;
+//   final PropertyFilterControllerForFilter controllerForFilter;
+//   final RxString selectedItems;
+//
+//   @override
+//   State<FilterPropertyTypesList> createState() =>
+//       _FilterPropertyTypesListState();
+// }
+//
+// class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       height: 35,
+//       child: ListView.builder(
+//         scrollDirection: Axis.horizontal,
+//         padding: const EdgeInsets.only(right: 8),
+//         shrinkWrap: true,
+//         itemCount: widget.items.length,
+//         itemBuilder: (context, index) {
+//           return Obx(
+//             ()=> GestureDetector(
+//               onTap: () {
+//                 widget.controllerForFilter.updateFilter(
+//                   widget.selectedItems,
+//                   widget.items[index],
+//                 );
+//                 widget.onSelectionChanged(widget.items[index]);
+//               },
+//               child: Padding(
+//                 padding: const EdgeInsets.only(left: 8),
+//                 child: buildFilterPropertyTypes(
+//                   title: widget.items[index],
+//                   isSelected:
+//                       widget.selectedItems.value ==
+//                       widget.items[index],
+//                   isExpanded: false,
+//                   paddingHorizontal: 20,
+//                 ),
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
+// Padding buildFilterHeadingPadding(String title) {
+//   return Padding(
+//     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+//     child: buildCommonText(title, 15, FontWeight.w600, ColorRes.textColor, 1),
+//   );
+// }
+
+
+
 class FilterPropertyTypesList extends StatefulWidget {
   const FilterPropertyTypesList({
     super.key,
     required this.items,
     required this.onSelectionChanged,
-    required this.controllerForFilter, required this.selectedItems,
-
+    required this.controllerForFilter,
+    required this.selectedItems,
   });
 
   final List<String> items;
@@ -28,34 +95,61 @@ class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 35,
+      height: 42,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(right: 8),
+        padding: EdgeInsets.only(right: 10),
         shrinkWrap: true,
         itemCount: widget.items.length,
         itemBuilder: (context, index) {
           return Obx(
-            ()=> GestureDetector(
-              onTap: () {
-                widget.controllerForFilter.updateFilter(
-                  widget.selectedItems,
-                  widget.items[index],
-                );
-                widget.onSelectionChanged(widget.items[index]);
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: buildFilterPropertyTypes(
-                  title: widget.items[index],
-                  isSelected:
-                      widget.selectedItems.value ==
+                () {
+              final isSelected = widget.selectedItems.value == widget.items[index];
+              return Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: GestureDetector(
+                  onTap: () {
+                    widget.controllerForFilter.updateFilter(
+                      widget.selectedItems,
                       widget.items[index],
-                  isExpanded: false,
-                  paddingHorizontal: 20,
+                    );
+                    widget.onSelectionChanged(widget.items[index]);
+                  },
+                  child: Container(
+                    // duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? ColorRes.primary.withOpacity(0.1)
+                          : Colors.white,
+                      border: Border.all(
+                        color: isSelected
+                            ? ColorRes.primary
+                            : Colors.grey.shade300,
+                        width: isSelected ? 1.8 : 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        buildCommonText(
+                          widget.items[index],
+                          12,
+                          FontWeight.w500,
+                          isSelected ? ColorRes.primary : ColorRes.textColor,
+                          1,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),
@@ -63,9 +157,17 @@ class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
   }
 }
 
-Padding buildFilterHeadingPadding(String title) {
+
+
+Padding buildPropertyFilterHeadingPadding(String title) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-    child: buildCommonText(title, 15, FontWeight.w600, ColorRes.textColor, 1),
+    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+    child: buildCommonText(
+      title,
+      14,
+      FontWeight.w600,
+      ColorRes.textColor,
+      1,
+    ),
   );
 }

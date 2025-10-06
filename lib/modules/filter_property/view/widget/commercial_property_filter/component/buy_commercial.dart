@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/modules/filter_property/controller/property_
 import 'package:housing_flutter_app/modules/filter_property/view/widget/common_component/listed_by.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../buy_componet/buy_component.dart';
 import '../../common_component/budget_filter.dart';
 import '../../common_component/sale_type.dart';
 
@@ -27,7 +28,8 @@ class _BuyCommercialState extends State<BuyCommercial> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildFilterHeadingPadding("Property Type"),
+
+        buildPropertyFilterHeadingPadding("Property Type"),
         const SizedBox(height: 7),
         ListedBy(
           listedByList: widget.controllerForFilter.buyCommercialPropertyType,
@@ -40,7 +42,7 @@ class _BuyCommercialState extends State<BuyCommercial> {
         ),
         const SizedBox(height: 7),
 
-        buildFilterHeadingPadding("Sale Type"),
+        buildPropertyFilterHeadingPadding("Sale Type"),
         const SizedBox(height: 7),
 
         SelectableWrap(
@@ -58,31 +60,39 @@ class _BuyCommercialState extends State<BuyCommercial> {
         ),
 
         const SizedBox(height: 7),
-        buildFilterHeadingPadding('Budget'),
-        BudgetFilter(
-          minValue: 0.0,
-          maxValue: 20,
-          values: const RangeValues(1, 20),
-          onChanged: (value) {},
-          minLabel: 'Min',
-          maxLabel: 'Max',
-          minQuantityLabel: 'L',
-          maxQuantityLabel: 'Cr+',
+        buildPropertyFilterHeadingPadding('Budget'),
+        Obx(
+          () =>  BudgetFilter(
+            minValue: widget.controllerForFilter.commercialMin.value,
+            maxValue: widget.controllerForFilter.commercialMax.value,
+            values: widget.controllerForFilter.commercialRangeValues.value,
+            onChanged: (value) {
+              widget.controllerForFilter.changeTheValueOfCommercial(value);
+            },
+            minLabel: 'Min',
+            maxLabel: 'Max',
+            minQuantityLabel: 'L',
+            maxQuantityLabel: 'Cr+',
+          ),
         ),
 
-        buildFilterHeadingPadding('Build-up Area'),
-        BudgetFilter(
-          minValue: 0.0,
-          maxValue: 4950,
-          values: const RangeValues(50, 2000),
-          onChanged: (value) {},
-          minLabel: 'Min',
-          maxLabel: 'Max',
-          minQuantityLabel: 'sqft',
-          maxQuantityLabel: 'sqft+',
+        buildPropertyFilterHeadingPadding('Build-up Area'),
+        Obx(
+          () =>  BudgetFilter(
+            minValue: widget.controllerForFilter.areaMin.value,
+            maxValue: widget.controllerForFilter.areaMax.value,
+            values: widget.controllerForFilter.areaRangeValues.value,
+            onChanged: (value) {
+              widget.controllerForFilter.changeCommercialArea(value);
+            },
+            minLabel: 'Min',
+            maxLabel: 'Max',
+            minQuantityLabel: 'sqft',
+            maxQuantityLabel: 'sqft+',
+          ),
         ),
 
-        buildFilterHeadingPadding("Possession"),
+        buildPropertyFilterHeadingPadding("Possession"),
         const SizedBox(height: 7),
         SelectableWrap(
           items: widget.controllerForFilter.possessionCommercialList,
@@ -97,18 +107,22 @@ class _BuyCommercialState extends State<BuyCommercial> {
         // const SizedBox(height: 7),
         // ListedBy(listedByList: listedByList),
         const SizedBox(height: 7),
-        buildFilterHeadingPadding('Roi % p.a'),
-        BudgetFilter(
-          minValue: 0.0,
-          maxValue: 10,
-          values: const RangeValues(4, 8),
-          onChanged: (value) {},
-          minLabel: 'Min',
-          maxLabel: 'Max',
-          minQuantityLabel: '%',
-          maxQuantityLabel: '%+',
+        buildPropertyFilterHeadingPadding('Roi % p.a'),
+        Obx(
+          () =>  BudgetFilter(
+            minValue: widget.controllerForFilter.roiMin.value,
+            maxValue: widget.controllerForFilter.roiMax.value,
+            values: widget.controllerForFilter.roiRangeValue.value,
+            onChanged: (value) {
+              widget.controllerForFilter.changeCommercialRoi(value);
+            },
+            minLabel: 'Min',
+            maxLabel: 'Max',
+            minQuantityLabel: '%',
+            maxQuantityLabel: '%+',
+          ),
         ),
-        buildFilterHeadingPadding("Leased"),
+        buildPropertyFilterHeadingPadding("Leased"),
         SelectableWrap(
           items: widget.controllerForFilter.leaseTypeCommercialProperty,
           filterControllerForFilter: widget.controllerForFilter,

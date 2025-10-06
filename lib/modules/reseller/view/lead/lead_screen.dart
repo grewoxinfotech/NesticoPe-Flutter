@@ -10,602 +10,7 @@ import '../../../add_property/view/create_property.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../lead_overview/lead_detail.dart';
-//ur import path
 
-// class ResellerLeadScreen extends StatelessWidget {
-//   const ResellerLeadScreen({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final controller = Get.find<DashboardController>();
-//
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       appBar: AppBar(
-//         title: Text(
-//           'Property Buyer Leads',
-//           style: TextStyle(
-//             fontWeight: AppFontWeights.bold,
-//             fontSize: getResponsiveFontSize(
-//               context,
-//               AppFontSizes.large,
-//               AppFontSizes.body,
-//             ),
-//           ),
-//         ),
-//         automaticallyImplyLeading: false,
-//         backgroundColor: Colors.white,
-//         elevation: 0,
-//         actions: [
-//           IconButton(
-//             icon: const Icon(Icons.add),
-//             onPressed: () {
-//               FocusScope.of(context).unfocus();
-//               showLeadForm(context, controller);
-//             },
-//           ),
-//
-//           // PopupMenuButton<String>(
-//           //   onSelected: (value) {
-//           //     controller.updateLeadStage(value);
-//           //   },
-//           //   itemBuilder:
-//           //       (context) =>
-//           //   [
-//           //     const PopupMenuItem(value: 'Status', child: Text('Status')),
-//           //     const PopupMenuItem(value: 'Stage', child: Text('Stage')),
-//           //   ],
-//           //   icon: const Icon(Icons.filter_list, color: ColorRes.primary),
-//           //
-//           //   // ✅ Decoration of popup menu
-//           //   color: Colors.white,
-//           //   // background color of menu
-//           //   elevation: 8,
-//           //   // shadow depth
-//           //   shape: RoundedRectangleBorder(
-//           //     borderRadius: BorderRadius.circular(12), // rounded corners
-//           //     side: BorderSide(color: Colors.grey.shade300, width: 1), // border
-//           //   ),
-//           // ),
-//
-//           PopupMenuButton<String>(
-//             onSelected: (value) {
-//               controller.updateLeadStage(value);
-//               // Reset category to 'All' when switching filter type
-//               controller.updateLeadCategory('All');
-//             },
-//             itemBuilder: (context) => [
-//               const PopupMenuItem(value: 'Status', child: Text('Status')),
-//               const PopupMenuItem(value: 'Stage', child: Text('Stage')),
-//             ],
-//             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
-//             color: Colors.white,
-//             elevation: 8,
-//             shape: RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(12),
-//               side: BorderSide(color: Colors.grey.shade300, width: 1),
-//             ),
-//           )
-//         ],
-//       ),
-//       body: Obx(() {
-//         // if (controller.isLoading.value && controller.recentLeads.isEmpty) {
-//         //   return const Center(child: CircularProgressIndicator());
-//         // }
-//         //
-//         // // build filtered list here
-//         // final allLeads = controller.recentLeads;
-//         // final query = controller.searchQuery.value.toLowerCase();
-//         // final category = controller.selectedCategoryInLead.value;
-//         //
-//         // final filteredLeads =
-//         //     allLeads.where((lead) {
-//         //       // search by name OR company
-//         //       final matchesSearch =
-//         //           query.isEmpty ||
-//         //           lead.name.toLowerCase().contains(query) ||
-//         //           lead.company.toLowerCase().contains(query);
-//         //
-//         //       // match category (status)
-//         //       final matchesCategory =
-//         //           category == 'All' || _getStatusText(lead.status) == category;
-//         //
-//         //       return matchesSearch && matchesCategory;
-//         //     }).toList();
-//         //======================================================djfheyrufgrfgweryufgfygfwy7fg
-//
-//
-//         //
-//         // if (controller.isLoading.value && controller.recentLeads.isEmpty) {
-//         //   return const Center(child: CircularProgressIndicator());
-//         // }
-//         //
-//         // // Updated filtering logic
-//         // final allLeads = controller.recentLeads;
-//         // final query = controller.searchQuery.value.toLowerCase();
-//         // final category = controller.selectedCategoryInLead.value;
-//         // final filterType = controller.selectedStage
-//         //     .value; // 'Status' or 'Stage'
-//         //
-//         // final filteredLeads = allLeads.where((lead) {
-//         //   // Search by name OR company
-//         //   final matchesSearch = query.isEmpty ||
-//         //       lead.name.toLowerCase().contains(query) ||
-//         //       lead.company.toLowerCase().contains(query);
-//         //
-//         //   // Match category based on filter type
-//         //   bool matchesCategory = category == 'All';
-//         //
-//         //   if (!matchesCategory) {
-//         //     if (filterType == 'Stage') {
-//         //       // Filter by stage
-//         //       matchesCategory = _getStageText(lead.stage) == category;
-//         //     } else {
-//         //       // Filter by status (default)
-//         //       matchesCategory = _getStatusText(lead.status) == category;
-//         //     }
-//         //   }
-//         //
-//         //   return matchesSearch && matchesCategory;
-//         // }).toList();
-//
-//         if (controller.isLoading.value && controller.recentLeads.isEmpty) {
-//           return const Center(child: CircularProgressIndicator());
-//         }
-//
-//         // Use the controller's getFilteredLeads() method
-//         final filteredLeads = controller.getFilteredLeads();
-//
-//
-//         return Column(
-//           children: [
-//             _buildSearchAndFilter(context, controller),
-//             _buildStatusFilter(context, controller),
-//             Expanded(
-//               child:
-//               filteredLeads.isEmpty
-//                   ? _buildEmptyState(context)
-//                   : ListView.separated(
-//                 padding: EdgeInsets.all(getResponsivePadding(context)),
-//                 itemCount: filteredLeads.length,
-//                 separatorBuilder:
-//                     (context, index) =>
-//                     SizedBox(height: getResponsiveSpacing(context)),
-//                 itemBuilder: (context, index) {
-//                   final lead = filteredLeads[index];
-//                   return _buildLeadCard(context, lead, controller);
-//                 },
-//               ),
-//             ),
-//           ],
-//         );
-//       }),
-//     );
-//   }
-//
-//   Widget _buildSearchAndFilter(BuildContext context,
-//       DashboardController controller,) {
-//     return Container(
-//       margin: EdgeInsets.all(getResponsivePadding(context)),
-//       padding: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(14),
-//         border: Border.all(color: Colors.grey.shade300, width: 1),
-//       ),
-//       child: TextField(
-//         onChanged: controller.updateSearch,
-//         style: TextStyle(fontSize: AppFontSizes.medium),
-//         decoration: InputDecoration(
-//           hintText: 'Search buyer leads...',
-//           hintStyle: TextStyle(fontSize: AppFontSizes.medium),
-//           prefixIcon: const Icon(Icons.search),
-//           border: InputBorder.none,
-//           contentPadding: const EdgeInsets.symmetric(vertical: 16),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _buildStatusFilter(BuildContext context,
-//       DashboardController controller,) {
-//     return Obx(() {
-//       debugPrint('Leads of Stage ${controller.selectedStage.value}');
-//       final statuses = (controller.selectedStage.value == 'Stage')
-//           ? [
-//         'All',
-//         'New Lead',
-//         'Contacted',
-//         'Interested',
-//         'Site Visit',
-//         'Sell',
-//       ]
-//           : [
-//         'All',
-//         'New',
-//         'Contacted',
-//         'Qualified',
-//         'Negotiating',
-//         'Lost',
-//         'Converted',
-//       ];
-//
-//       final isCompact = MediaQuery
-//           .of(context)
-//           .size
-//           .width < 600;
-//
-//       return Container(
-//         height: isCompact ? 48 : 52,
-//         margin: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
-//         child: ListView.separated(
-//           padding: EdgeInsets.zero,
-//           scrollDirection: Axis.horizontal,
-//           itemCount: statuses.length,
-//           separatorBuilder: (_, __) => const SizedBox(width: 8),
-//           itemBuilder: (context, index) {
-//             final status = statuses[index];
-//             final isSelected = controller.selectedCategoryInLead.value ==
-//                 status;
-//
-//             return InkWell(
-//               borderRadius: BorderRadius.circular(20),
-//               onTap: () => controller.updateLeadCategory(status),
-//               child: Container(
-//                 padding: EdgeInsets.symmetric(horizontal: isCompact ? 12 : 14),
-//                 decoration: BoxDecoration(
-//                   color: isSelected ? ColorRes.primary : Colors.white,
-//                   borderRadius: BorderRadius.circular(12),
-//                   border: Border.all(
-//                     color: isSelected
-//                         ? ColorRes.primary
-//                         : ColorRes.grey.withOpacity(0.3),
-//                     width: 1,
-//                   ),
-//                 ),
-//                 alignment: Alignment.center,
-//                 child: Text(
-//                   status,
-//                   style: TextStyle(
-//                     fontSize: isCompact ? AppFontSizes.caption : AppFontSizes
-//                         .small,
-//                     color: isSelected ? ColorRes.white : Colors.grey[700],
-//                     fontWeight: isSelected
-//                         ? AppFontWeights.semiBold
-//                         : AppFontWeights.regular,
-//                   ),
-//                 ),
-//               ),
-//             );
-//           },
-//         ),
-//       );
-//     });
-//   }
-// }
-//
-//
-// Widget _buildEmptyState(BuildContext context) {
-//   return Center(
-//     child: Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         Icon(Icons.real_estate_agent, size: 64, color: Colors.grey[400]),
-//         const SizedBox(height: 16),
-//         Text(
-//           'No buyer leads found',
-//           style: TextStyle(
-//             fontSize: AppFontSizes.large,
-//             color: Colors.grey[600],
-//             fontWeight: AppFontWeights.medium,
-//           ),
-//         ),
-//         const SizedBox(height: 8),
-//         Padding(
-//           padding: const EdgeInsets.symmetric(horizontal: 32),
-//           child: Text(
-//             'Add your first property buyer to get started',
-//             style: TextStyle(
-//               fontSize: AppFontSizes.medium,
-//               color: Colors.grey[500],
-//             ),
-//             textAlign: TextAlign.center,
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-// }
-//
-// Widget _buildLeadCard(
-//   BuildContext context,
-//   Lead lead,
-//   DashboardController controller,
-// ) {
-//   final isCompact = MediaQuery.of(context).size.width < 600;
-//   final cardPadding = isCompact ? 12.0 : 16.0;
-//
-//   return Container(
-//     padding: EdgeInsets.all(cardPadding),
-//     decoration: BoxDecoration(
-//       color: Colors.white,
-//       borderRadius: BorderRadius.circular(12),
-//       border: Border.all(color: Colors.grey.shade300, width: 1),
-//     ),
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         // Header Row with Avatar and Basic Info
-//         Row(
-//           children: [
-//             // Column 1: Avatar
-//             CircleAvatar(
-//               radius: isCompact ? 18 : 20,
-//               backgroundColor: ColorRes.primary.withOpacity(0.2),
-//               child: Text(
-//                 lead.name.split(' ').map((e) => e[0]).join().toUpperCase(),
-//                 style: TextStyle(
-//                   color: ColorRes.primary,
-//                   fontWeight: AppFontWeights.bold,
-//                   fontSize:
-//                       isCompact ? AppFontSizes.small : AppFontSizes.medium,
-//                 ),
-//               ),
-//             ),
-//             SizedBox(width: isCompact ? 8 : 12),
-//
-//             // Column 2: Lead Details
-//             Expanded(
-//               flex: 2,
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   // Name
-//                   SizedBox(
-//                     width: 180,
-//                     child: Text(
-//                       lead.name,
-//                       style: TextStyle(
-//                         fontSize:
-//                             isCompact ? AppFontSizes.medium : AppFontSizes.body,
-//                         fontWeight: AppFontWeights.bold,
-//                         color: ColorRes.textColor,
-//                       ),
-//                       maxLines: 1,
-//                       overflow: TextOverflow.ellipsis,
-//                     ),
-//                   ),
-//                   SizedBox(height: 2),
-//
-//                   // Company with location icon
-//                   SizedBox(
-//                     width: 180,
-//                     child: Text(
-//                       '${lead.company}',
-//                       style: TextStyle(
-//                         fontSize:
-//                             isCompact
-//                                 ? AppFontSizes.extraSmall
-//                                 : AppFontSizes.small,
-//                         color: Colors.grey[700],
-//                         fontWeight: AppFontWeights.regular,
-//                       ),
-//                       maxLines: 1,
-//                       overflow: TextOverflow.ellipsis,
-//                     ),
-//                   ),
-//                   SizedBox(height: 2),
-//
-//                   // Email
-//                   if (lead.email.isNotEmpty) ...[
-//                     SizedBox(height: 4),
-//                     Row(
-//                       children: [
-//                         Expanded(
-//                           child: Text(
-//                             lead.email,
-//                             style: TextStyle(
-//                               fontSize: AppFontSizes.extraSmall,
-//                               color: Colors.grey[600],
-//                               fontWeight: AppFontWeights.regular,
-//                             ),
-//                             maxLines: 1,
-//                             overflow: TextOverflow.ellipsis,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ],
-//                 ],
-//               ),
-//             ),
-//
-//             // Column 3: Budget & Time Info
-//             Column(
-//               crossAxisAlignment: CrossAxisAlignment.end,
-//               children: [
-//                 Text(
-//                   'Budget',
-//                   style: TextStyle(
-//                     fontSize: AppFontSizes.extraSmall,
-//                     color: Colors.grey[800],
-//                     fontWeight: AppFontWeights.regular,
-//                   ),
-//                 ),
-//                 SizedBox(height: 4),
-//                 Text(
-//                   '${Formatter.formatPrice(lead.estimatedValue)}',
-//                   style: TextStyle(
-//                     fontSize:
-//                         isCompact ? AppFontSizes.medium : AppFontSizes.body,
-//                     fontWeight: AppFontWeights.semiBold,
-//                     color: Colors.green,
-//                   ),
-//                 ),
-//                 SizedBox(height: 4),
-//                 Text(
-//                   _formatTime(lead.createdAt),
-//                   style: TextStyle(
-//                     fontSize: AppFontSizes.caption,
-//                     color: Colors.grey[600],
-//                     fontWeight: AppFontWeights.regular,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ],
-//         ),
-//
-//         SizedBox(height: isCompact ? 8 : 12),
-//         Divider(color: Colors.grey, thickness: 0.5),
-//         SizedBox(height: isCompact ? 8 : 12),
-//
-//         // Bottom Row with Status and Actions
-//   //       Row(
-//   //         children: [
-//   //           // Enhanced Status with more details
-//   //           Container(
-//   //             padding: EdgeInsets.symmetric(
-//   //               horizontal: isCompact ? 12 : 16,
-//   //               vertical: isCompact ? 6 : 10,
-//   //             ),
-//   //             decoration: BoxDecoration(
-//   //
-//   //               color:  (controller.selectedStage.value == 'Stage')?_getStageColor(lead.stage).withOpacity(0.08): _getStatusColor(lead.status).withOpacity(0.08),
-//   //               borderRadius: BorderRadius.circular(8),
-//   //               border: Border.all(
-//   //                 color:  (controller.selectedStage.value == 'Stage')?_getStageColor(lead.stage).withOpacity(0.3): _getStatusColor(lead.status).withOpacity(0.3),
-//   //                 width: 1,
-//   //               ),
-//   //             ),
-//   //             child: Text(
-//   // (controller.selectedStage.value == 'Stage')?_getStageText(lead.stage):_getStatusText(lead.status),
-//   //               style: TextStyle(
-//   //                 fontSize:
-//   //                     isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
-//   //                 color: _getStatusColor(lead.status),
-//   //                 fontWeight: AppFontWeights.bold,
-//   //               ),
-//   //               overflow: TextOverflow.ellipsis,
-//   //             ),
-//   //           ),
-//   //
-//   //           // SizedBox(width: isCompact ? 12 : 16),
-//   //           Spacer(),
-//   //           // Enhanced Action Buttons with animations
-//   //           Row(
-//   //             children: [
-//   //               buildActionButton(
-//   //                 icon: Icons.visibility,
-//   //                 color: Colors.blue,
-//   //                 // onPressed: () => showLeadDetails(context, lead),
-//   //                 onPressed: () {
-//   //                   // Navigate to detail screen
-//   //                   Get.to(() => LeadDetailScreen(lead: dummyResellerLead));
-//   //                 },
-//   //                 tooltip: 'View Details',
-//   //                 isCompact: isCompact,
-//   //               ),
-//   //               SizedBox(width: 8),
-//   //
-//   //               buildActionButton(
-//   //                 icon: Icons.edit,
-//   //                 color: Colors.orange,
-//   //                 onPressed:
-//   //                     () => showLeadForm(context, controller, lead: lead),
-//   //                 tooltip: 'Edit Lead',
-//   //                 isCompact: isCompact,
-//   //               ),
-//   //               SizedBox(width: 8),
-//   //
-//   //               buildActionButton(
-//   //                 icon: Icons.delete,
-//   //                 color: Colors.red,
-//   //                 onPressed:
-//   //                     () => showDeleteConfirmation(context, lead, controller),
-//   //                 tooltip: 'Delete Lead',
-//   //                 isCompact: isCompact,
-//   //               ),
-//   //             ],
-//   //           ),
-//   //         ],
-//   //       ),
-//
-//
-//         Row(
-//           children: [
-//             // Enhanced Status with more details - WRAPPED IN OBX
-//             Obx(() {
-//               final isStageFilter = controller.selectedStage.value == 'Stage';
-//               final badgeColor = isStageFilter
-//                   ? _getStageColor(lead.stage)
-//                   : _getStatusColor(lead.status);
-//               final badgeText = isStageFilter
-//                   ? _getStageText(lead.stage)
-//                   : _getStatusText(lead.status);
-//
-//               return Container(
-//                 padding: EdgeInsets.symmetric(
-//                   horizontal: isCompact ? 12 : 16,
-//                   vertical: isCompact ? 6 : 10,
-//                 ),
-//                 decoration: BoxDecoration(
-//                   color: badgeColor.withOpacity(0.08),
-//                   borderRadius: BorderRadius.circular(8),
-//                   border: Border.all(
-//                     color: badgeColor.withOpacity(0.3),
-//                     width: 1,
-//                   ),
-//                 ),
-//                 child: Text(
-//                   badgeText,
-//                   style: TextStyle(
-//                     fontSize: isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
-//                     color: badgeColor,
-//                     fontWeight: AppFontWeights.bold,
-//                   ),
-//                   overflow: TextOverflow.ellipsis,
-//                 ),
-//               );
-//             }),
-//
-//             Spacer(),
-//             // Enhanced Action Buttons with animations
-//             Row(
-//               children: [
-//                 buildActionButton(
-//                   icon: Icons.visibility,
-//                   color: Colors.blue,
-//                   onPressed: () {
-//                     Get.to(() => LeadDetailScreen(lead: dummyResellerLead));
-//                   },
-//                   tooltip: 'View Details',
-//                   isCompact: isCompact,
-//                 ),
-//                 SizedBox(width: 8),
-//                 buildActionButton(
-//                   icon: Icons.edit,
-//                   color: Colors.orange,
-//                   onPressed: () => showLeadForm(context, controller, lead: lead),
-//                   tooltip: 'Edit Lead',
-//                   isCompact: isCompact,
-//                 ),
-//                 SizedBox(width: 8),
-//                 buildActionButton(
-//                   icon: Icons.delete,
-//                   color: Colors.red,
-//                   onPressed: () => showDeleteConfirmation(context, lead, controller),
-//                   tooltip: 'Delete Lead',
-//                   isCompact: isCompact,
-//                 ),
-//               ],
-//             ),
-//           ],
-//         )
-//       ],
-//     ),
-//   );
-// }
 
 
 class ResellerLeadScreen extends StatelessWidget {
@@ -708,49 +113,7 @@ Navigator.of(context).pop();
       ),
     );
   }
-  //
-  // Widget _buildSelectedFiltersChips(
-  //     BuildContext context,
-  //     DashboardController controller,
-  //     ) {
-  //   return Obx(() {
-  //     final selectedFilters = controller.selectedLeadFilters;
-  //
-  //     if (selectedFilters.isEmpty) {
-  //       return const SizedBox.shrink();
-  //     }
-  //
-  //     return Container(
-  //       height: 48,
-  //       margin: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
-  //       child: ListView.separated(
-  //         padding: EdgeInsets.zero,
-  //         scrollDirection: Axis.horizontal,
-  //         itemCount: selectedFilters.length,
-  //         separatorBuilder: (_, __) => const SizedBox(width: 8),
-  //         itemBuilder: (context, index) {
-  //           final filter = selectedFilters[index];
-  //           return Chip(
-  //             label: Text(
-  //               filter,
-  //               style: TextStyle(
-  //                 fontSize: AppFontSizes.caption,
-  //                 color: Colors.white,
-  //                 fontWeight: AppFontWeights.medium,
-  //               ),
-  //             ),
-  //             deleteIcon: const Icon(Icons.close, size: 16, color: Colors.white),
-  //             onDeleted: () {
-  //               controller.removeLeadFilter(filter);
-  //             },
-  //             backgroundColor: ColorRes.primary,
-  //             padding: const EdgeInsets.symmetric(horizontal: 8),
-  //           );
-  //         },
-  //       ),
-  //     );
-  //   });
-  // }
+
 
 
   Widget _buildSelectedFiltersChips(
@@ -1459,17 +822,448 @@ Widget _buildFilterSection({
 // Keep all other functions (showLeadForm, _buildFormField, showLeadDetails, etc.) unchanged
 // ... (rest of the helper functions remain the same)
 
+// void showLeadForm(
+//   BuildContext context,
+//   DashboardController controller, {
+//   Lead? lead,
+// }) {
+//   final formKey = GlobalKey<FormState>();
+//   final nameController = TextEditingController(text: lead?.name ?? '');
+//   final locationController = TextEditingController(text: lead?.company ?? '');
+//   final emailController = TextEditingController(text: lead?.email ?? '');
+//   final phoneController = TextEditingController(text: lead?.phone ?? '');
+//   final resellerTextController=TextEditingController(text: 'Reseller ID');
+//   final budgetController = TextEditingController(
+//     text: lead?.estimatedValue.toString() ?? '',
+//   );
+//   final notesController = TextEditingController(text: lead?.notes ?? '');
+//   final statusController = ValueNotifier<LeadStatus>(
+//     lead?.status ?? LeadStatus.new_,
+//   );
+//   final stageController=ValueNotifier<LeadStage>(lead?.stage??LeadStage.newLead);
+//   final propertyController = ValueNotifier<String?>(lead?.property ?? null);
+//
+//
+//
+//   showModalBottomSheet(
+//     context: context,
+//     isScrollControlled: true,
+//     backgroundColor: Colors.transparent,
+//     builder:
+//         (context) => Padding(
+//           padding: EdgeInsets.only(
+//             bottom: MediaQuery.of(context).viewInsets.bottom,
+//           ),
+//           child: Container(
+//             height: MediaQuery.of(context).size.height * 0.9,
+//             decoration: const BoxDecoration(
+//               color: Colors.white,
+//               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+//             ),
+//             child: Column(
+//               children: [
+//                 Container(
+//                   width: 40,
+//                   height: 4,
+//                   margin: const EdgeInsets.symmetric(vertical: 8),
+//                   decoration: BoxDecoration(
+//                     color: Colors.grey[300],
+//                     borderRadius: BorderRadius.circular(2),
+//                   ),
+//                 ),
+//                 Padding(
+//                   padding: EdgeInsets.all(getResponsivePadding(context)),
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Flexible(
+//                         child: Text(
+//                           lead == null
+//                               ? 'Add New Buyer Lead'
+//                               : 'Edit Buyer Lead',
+//                           style: TextStyle(
+//                             fontSize: 16,
+//                             fontWeight: AppFontWeights.semiBold,
+//                             color: ColorRes.textColor,
+//                           ),
+//                           overflow: TextOverflow.ellipsis,
+//                         ),
+//                       ),
+//                       IconButton(
+//                         icon: const Icon(Icons.close),
+//                         onPressed: () => Navigator.pop(context),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 Expanded(
+//                   child: SingleChildScrollView(
+//                     padding: EdgeInsets.all(getResponsivePadding(context)),
+//                     child: Form(
+//                       key: formKey,
+//                       child: Column(
+//                         mainAxisSize: MainAxisSize.min,
+//                         crossAxisAlignment: CrossAxisAlignment.stretch,
+//                         children: [
+//                           _buildFormField(
+//                             context: context,
+//                             controller: nameController,
+//                             label: 'Buyer Name',
+//                             icon: Icons.person_outline,
+//                             validator:
+//                                 (value) =>
+//                                     value?.isEmpty ?? true
+//                                         ? 'Name is required'
+//                                         : null,
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           _buildFormField(
+//                             context: context,
+//                             controller: locationController,
+//                             label: 'Preferred Location',
+//                             icon: Icons.location_city_outlined,
+//                             validator:
+//                                 (value) =>
+//                                     value?.isEmpty ?? true
+//                                         ? 'Location is required'
+//                                         : null,
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           _buildFormField(
+//                             context: context,
+//                             controller: emailController,
+//                             label: 'Email',
+//                             icon: Icons.email_outlined,
+//                             keyboardType: TextInputType.emailAddress,
+//                             validator: (value) {
+//                               if (value?.isEmpty ?? true)
+//                                 return 'Email is required';
+//                               if (!GetUtils.isEmail(value!))
+//                                 return 'Enter a valid email';
+//                               return null;
+//                             },
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                     _buildFormField(context: context, controller: resellerTextController, label: 'Reseller ID', icon: Icons.perm_identity_outlined,isEnable: false),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           _buildFormField(
+//                             context: context,
+//                             controller: phoneController,
+//                             label: 'Phone',
+//                             icon: Icons.phone_outlined,
+//                             keyboardType: TextInputType.phone,
+//                           ),
+//
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           ValueListenableBuilder<String?>(
+//                             valueListenable: propertyController,
+//                             builder: (context, selectedProperty, _) {
+//                               // Build a list of property titles (ensure uniqueness)
+//                               final propertyTitles = controller.dummyResellerLeads
+//                                   .map((lead) => lead.customFields.title)
+//                                   .toSet()
+//                                   .toList();
+//
+//                               // Ensure currently selected value is actually in the list
+//                               final currentValue = propertyTitles.contains(selectedProperty)
+//                                   ? selectedProperty
+//                                   : null;
+//
+//                               // Define one border style and reuse it everywhere
+//                               final OutlineInputBorder commonBorder = OutlineInputBorder(
+//                                 borderRadius: BorderRadius.circular(12),
+//                                 borderSide: BorderSide(
+//                                   color: ColorRes.grey.withOpacity(0.3),
+//                                   width: 1,
+//                                 ),
+//                               );
+//
+//                               return SizedBox(
+//                                 height: 50,
+//                                 child: DropdownButtonFormField<String>(
+//                                   value: currentValue,
+//                                   decoration: InputDecoration(
+//                                     labelText: 'Select Property',
+//                                     labelStyle: const TextStyle(fontSize: 12),
+//                                     prefixIcon: const Icon(Icons.home_outlined, size: 20),
+//                                     border: commonBorder,
+//                                     enabledBorder: commonBorder,
+//                                     focusedBorder: commonBorder.copyWith(
+//                                       borderSide: BorderSide(
+//                                         color: ColorRes.grey.withOpacity(0.5), // optional darker on focus
+//                                         width: 1.5,
+//                                       ),
+//                                     ),
+//                                     disabledBorder: commonBorder,
+//                                     errorBorder: commonBorder.copyWith(
+//                                       borderSide: const BorderSide(color: Colors.red, width: 1),
+//                                     ),
+//                                     focusedErrorBorder: commonBorder.copyWith(
+//                                       borderSide: const BorderSide(color: Colors.red, width: 1.5),
+//                                     ),
+//                                   ),
+//                                   items: propertyTitles.map(
+//                                         (title) {
+//                                       return DropdownMenuItem<String>(
+//                                         value: title,
+//                                         child: SizedBox(
+//                                           width: 200,
+//                                           child: Text(
+//                                             title,
+//                                             maxLines: 1,
+//                                             overflow: TextOverflow.ellipsis,
+//                                             style: const TextStyle(
+//                                               fontSize: 12,
+//                                               fontWeight: FontWeight.w500,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       );
+//                                     },
+//                                   ).toList(),
+//                                   onChanged: (value) {
+//                                     propertyController.value = value;
+//                                     debugPrint('${propertyController.value}');
+//                                   },
+//                                   validator: (value) =>
+//                                   (value == null || value.isEmpty) ? 'Please select a property' : null,
+//                                 ),
+//                               );
+//                             },
+//                           ),
+//
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           SizedBox(
+//                             height: 50,
+//                             child: Row(
+//                               children: [
+//                                 Expanded(
+//                                   child: ValueListenableBuilder<LeadStatus>(
+//                                     valueListenable: statusController,
+//
+//                                     builder: (context, status, child) {
+//                                       return DropdownButtonFormField<LeadStatus>(
+//                                         value: status,
+//
+//                                         style: TextStyle(
+//                                           fontSize: AppFontSizes.small,
+//                                           color: Colors.black87,
+//                                         ),
+//                                         decoration: InputDecoration(
+//                                           labelText: 'Status',
+//                                           labelStyle: TextStyle(
+//                                             fontSize: AppFontSizes.small,
+//                                           ),
+//
+//                                           prefixIcon: const Icon(Icons.flag_outlined,size: 20,),
+//                                           border: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(12),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(0.3),
+//                                             ),
+//                                           ),
+//                                           focusedBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(12),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.primary,
+//                                             ),
+//                                           ),
+//                                           disabledBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(12),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(0.3),
+//                                             ),
+//                                           ),
+//                                           enabledBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(12),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(0.3),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         items:
+//                                         LeadStatus.values.map((status) {
+//                                           return DropdownMenuItem(
+//                                             value: status,
+//                                             child: Text(_getStatusText(status)),
+//                                           );
+//                                         }).toList(),
+//                                         onChanged:
+//                                             (value) => statusController.value = value!,
+//                                       );
+//                                     },
+//                                   ),
+//                                 ),
+//                                 SizedBox(width: 8,
+//                                 ),
+//                                 Expanded(
+//                                   child: ValueListenableBuilder<LeadStage>(
+//                                     valueListenable: stageController,
+//
+//                                     builder: (context, stage, child) {
+//                                       return DropdownButtonFormField<LeadStage>(
+//
+//                                         value: stage,
+//                                         style: TextStyle(
+//                                           fontSize: AppFontSizes.small,
+//                                           color: Colors.black87,
+//                                         ),
+//                                         decoration: InputDecoration(
+//                                           labelText: 'Stages',
+//                                           labelStyle: TextStyle(
+//                                             fontSize: AppFontSizes.small,
+//                                           ),
+//                                           prefixIcon: const Icon(Icons.show_chart),
+//                                           border: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(12),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(0.3),
+//                                             ),
+//                                           ),
+//                                           focusedBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(12),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.primary,
+//                                             ),
+//                                           ),
+//                                           disabledBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(12),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(0.3),
+//                                             ),
+//                                           ),
+//                                           enabledBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(12),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(0.3),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         items:
+//                                         LeadStage.values.map((stage) {
+//                                           return DropdownMenuItem(
+//                                             value: stage,
+//                                             child: Text(_getStageText(stage)),
+//                                           );
+//                                         }).toList(),
+//                                         onChanged:
+//                                             (value) => stageController.value = value!,
+//                                       );
+//                                     },
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           _buildFormField(
+//                             context: context,
+//
+//                             controller: notesController,
+//                             label: 'Requirements & Notes',
+//                             icon: Icons.note_outlined,
+//                             maxLines: 4,
+//                           ),
+//
+//                           const SizedBox(height: 24),
+//                           SafeArea(
+//                             child: ElevatedButton(
+//                               onPressed: () {
+//                                 if (formKey.currentState!.validate()) {
+//                                   final newLead = Lead(
+//                                     id:
+//                                         lead?.id ??
+//                                         DateTime.now().millisecondsSinceEpoch
+//                                             .toString(),
+//                                     name: nameController.text,
+//                                     company: locationController.text,
+//                                     email: emailController.text,
+//                                     phone: phoneController.text,
+//                                     estimatedValue: double.parse(
+//                                       budgetController.text,
+//                                     ),
+//                                     status: statusController.value,
+//                                     notes: notesController.text,
+//                                     createdAt: lead?.createdAt ?? DateTime.now(), stage: stageController.value,
+//                                   );
+//
+//                                   if (lead == null) {
+//                                     controller.recentLeads.add(newLead);
+//                                     Get.snackbar(
+//                                       'Success',
+//                                       'Buyer lead added successfully',
+//                                       backgroundColor: Colors.green,
+//                                       colorText: Colors.white,
+//                                     );
+//                                   } else {
+//                                     final index = controller.recentLeads
+//                                         .indexWhere((l) => l.id == lead.id);
+//                                     if (index != -1) {
+//                                       controller.recentLeads[index] = newLead;
+//                                       Get.snackbar(
+//                                         'Success',
+//                                         'Buyer lead updated successfully',
+//                                         backgroundColor: Colors.green,
+//                                         colorText: Colors.white,
+//                                       );
+//                                     }
+//                                   }
+//                                   Navigator.pop(context);
+//                                 }
+//                               },
+//                               style: ElevatedButton.styleFrom(
+//                                 backgroundColor: Colors.blue,
+//                                 foregroundColor: Colors.white,
+//                                 padding: const EdgeInsets.symmetric(vertical: 16),
+//                                 shape: RoundedRectangleBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                 ),
+//                               ),
+//                               child: Text(
+//                                 lead == null
+//                                     ? 'Add Buyer Lead'
+//                                     : 'Update Buyer Lead',
+//                                 style: TextStyle(
+//                                   fontSize: AppFontSizes.body,
+//                                   fontWeight: AppFontWeights.bold,
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//   );
+// }
+
+
+
+
 void showLeadForm(
-  BuildContext context,
-  DashboardController controller, {
-  Lead? lead,
-}) {
+    BuildContext context,
+    DashboardController controller, {
+      Lead? lead,
+    }) {
   final formKey = GlobalKey<FormState>();
   final nameController = TextEditingController(text: lead?.name ?? '');
   final locationController = TextEditingController(text: lead?.company ?? '');
   final emailController = TextEditingController(text: lead?.email ?? '');
   final phoneController = TextEditingController(text: lead?.phone ?? '');
-  final resellerTextController=TextEditingController(text: 'Reseller ID');
+  final resellerTextController = TextEditingController(text: 'Reseller ID');
   final budgetController = TextEditingController(
     text: lead?.estimatedValue.toString() ?? '',
   );
@@ -1477,413 +1271,394 @@ void showLeadForm(
   final statusController = ValueNotifier<LeadStatus>(
     lead?.status ?? LeadStatus.new_,
   );
-  final stageController=ValueNotifier<LeadStage>(lead?.stage??LeadStage.newLead);
-  final propertyController = ValueNotifier<String?>(lead?.property ?? null);
+  final stageController = ValueNotifier<LeadStage>(lead?.stage ?? LeadStage.newLead);
 
+  // FIX: Initialize property with null if empty or not found in list
+  final propertyTitles = controller.dummyResellerLeads
+      .map((lead) => lead.customFields.title)
+      .toSet()
+      .toList();
 
+  final initialProperty = (lead?.property != null &&
+      lead!.property.isNotEmpty &&
+      propertyTitles.contains(lead.property))
+      ? lead.property
+      : null;
+
+  final propertyController = ValueNotifier<String?>(initialProperty);
 
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder:
-        (context) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.9,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    builder: (context) => Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.9,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
-            child: Column(
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
+            Padding(
+              padding: EdgeInsets.all(getResponsivePadding(context)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Text(
+                      lead == null ? 'Add New Buyer Lead' : 'Edit Buyer Lead',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textColor,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(getResponsivePadding(context)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(getResponsivePadding(context)),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Flexible(
-                        child: Text(
-                          lead == null
-                              ? 'Add New Buyer Lead'
-                              : 'Edit Buyer Lead',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textColor,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                      _buildFormField(
+                        context: context,
+                        controller: nameController,
+                        label: 'Buyer Name',
+                        icon: Icons.person_outline,
+                        validator: (value) =>
+                        value?.isEmpty ?? true ? 'Name is required' : null,
+                      ),
+                      SizedBox(height: getResponsiveSpacing(context)),
+                      _buildFormField(
+                        context: context,
+                        controller: locationController,
+                        label: 'Preferred Location',
+                        icon: Icons.location_city_outlined,
+                        validator: (value) =>
+                        value?.isEmpty ?? true ? 'Location is required' : null,
+                      ),
+                      SizedBox(height: getResponsiveSpacing(context)),
+                      _buildFormField(
+                        context: context,
+                        controller: emailController,
+                        label: 'Email',
+                        icon: Icons.email_outlined,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value?.isEmpty ?? true) return 'Email is required';
+                          if (!GetUtils.isEmail(value!)) return 'Enter a valid email';
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: getResponsiveSpacing(context)),
+                      _buildFormField(
+                        context: context,
+                        controller: resellerTextController,
+                        label: 'Reseller ID',
+                        icon: Icons.perm_identity_outlined,
+                        isEnable: false,
+                      ),
+                      SizedBox(height: getResponsiveSpacing(context)),
+                      _buildFormField(
+                        context: context,
+                        controller: phoneController,
+                        label: 'Phone',
+                        icon: Icons.phone_outlined,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      SizedBox(height: getResponsiveSpacing(context)),
+
+                      // FIXED PROPERTY DROPDOWN
+                      ValueListenableBuilder<String?>(
+                        valueListenable: propertyController,
+                        builder: (context, selectedProperty, _) {
+                          final currentValue = propertyTitles.contains(selectedProperty)
+                              ? selectedProperty
+                              : null;
+
+                          final OutlineInputBorder commonBorder = OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: ColorRes.grey.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          );
+
+                          return SizedBox(
+                            height: 50,
+                            child: DropdownButtonFormField<String>(
+                              value: currentValue,
+                              decoration: InputDecoration(
+                                labelText: 'Select Property',
+                                labelStyle: const TextStyle(fontSize: 12),
+                                prefixIcon: const Icon(Icons.home_outlined, size: 20),
+                                border: commonBorder,
+                                enabledBorder: commonBorder,
+                                focusedBorder: commonBorder.copyWith(
+                                  borderSide: BorderSide(
+                                    color: ColorRes.primary,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                disabledBorder: commonBorder,
+                                errorBorder: commonBorder.copyWith(
+                                  borderSide: const BorderSide(color: Colors.red, width: 1),
+                                ),
+                                focusedErrorBorder: commonBorder.copyWith(
+                                  borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                                ),
+                              ),
+                              isExpanded: true,
+                              items: propertyTitles.map((title) {
+                                return DropdownMenuItem<String>(
+                                  value: title,
+                                  child: Text(
+                                    title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                propertyController.value = value;
+                                debugPrint('Selected property: $value');
+                              },
+                              validator: (value) =>
+                              (value == null || value.isEmpty)
+                                  ? 'Please select a property'
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+
+                      SizedBox(height: getResponsiveSpacing(context)),
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ValueListenableBuilder<LeadStatus>(
+                                valueListenable: statusController,
+                                builder: (context, status, child) {
+                                  return DropdownButtonFormField<LeadStatus>(
+                                    value: status,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.small,
+                                      color: Colors.black87,
+                                    ),
+                                    decoration: InputDecoration(
+                                      labelText: 'Status',
+                                      labelStyle: TextStyle(
+                                        fontSize: AppFontSizes.small,
+                                      ),
+                                      prefixIcon: const Icon(Icons.flag_outlined, size: 20),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          width: 1,
+                                          color: ColorRes.grey.withOpacity(0.3),
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          width: 1,
+                                          color: ColorRes.primary,
+                                        ),
+                                      ),
+                                      disabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          width: 1,
+                                          color: ColorRes.grey.withOpacity(0.3),
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          width: 1,
+                                          color: ColorRes.grey.withOpacity(0.3),
+                                        ),
+                                      ),
+                                    ),
+                                    items: LeadStatus.values.map((status) {
+                                      return DropdownMenuItem(
+                                        value: status,
+                                        child: Text(_getStatusText(status)),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) => statusController.value = value!,
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: ValueListenableBuilder<LeadStage>(
+                                valueListenable: stageController,
+                                builder: (context, stage, child) {
+                                  return DropdownButtonFormField<LeadStage>(
+                                    value: stage,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.small,
+                                      color: Colors.black87,
+                                    ),
+                                    decoration: InputDecoration(
+                                      labelText: 'Stages',
+                                      labelStyle: TextStyle(
+                                        fontSize: AppFontSizes.small,
+                                      ),
+                                      prefixIcon: const Icon(Icons.show_chart),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          width: 1,
+                                          color: ColorRes.grey.withOpacity(0.3),
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          width: 1,
+                                          color: ColorRes.primary,
+                                        ),
+                                      ),
+                                      disabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          width: 1,
+                                          color: ColorRes.grey.withOpacity(0.3),
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          width: 1,
+                                          color: ColorRes.grey.withOpacity(0.3),
+                                        ),
+                                      ),
+                                    ),
+                                    items: LeadStage.values.map((stage) {
+                                      return DropdownMenuItem(
+                                        value: stage,
+                                        child: Text(_getStageText(stage)),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) => stageController.value = value!,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
+                      SizedBox(height: getResponsiveSpacing(context)),
+                      _buildFormField(
+                        context: context,
+                        controller: notesController,
+                        label: 'Requirements & Notes',
+                        icon: Icons.note_outlined,
+                        maxLines: 4,
+                      ),
+                      const SizedBox(height: 24),
+                      SafeArea(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              final newLead = Lead(
+                                id: lead?.id ??
+                                    DateTime.now().millisecondsSinceEpoch.toString(),
+                                name: nameController.text,
+                                company: locationController.text,
+                                email: emailController.text,
+                                phone: phoneController.text,
+                                estimatedValue: double.parse(budgetController.text),
+                                status: statusController.value,
+                                notes: notesController.text,
+                                property: propertyController.value ?? '', // Save selected property
+                                createdAt: lead?.createdAt ?? DateTime.now(),
+                                stage: stageController.value,
+                              );
+
+                              if (lead == null) {
+                                controller.recentLeads.add(newLead);
+                                Get.snackbar(
+                                  'Success',
+                                  'Buyer lead added successfully',
+                                  backgroundColor: Colors.green,
+                                  colorText: Colors.white,
+                                );
+                              } else {
+                                final index = controller.recentLeads
+                                    .indexWhere((l) => l.id == lead.id);
+                                if (index != -1) {
+                                  controller.recentLeads[index] = newLead;
+                                  Get.snackbar(
+                                    'Success',
+                                    'Buyer lead updated successfully',
+                                    backgroundColor: Colors.green,
+                                    colorText: Colors.white,
+                                  );
+                                }
+                              }
+                              Navigator.pop(context);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            lead == null ? 'Add Buyer Lead' : 'Update Buyer Lead',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.body,
+                              fontWeight: AppFontWeights.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(getResponsivePadding(context)),
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _buildFormField(
-                            context: context,
-                            controller: nameController,
-                            label: 'Buyer Name',
-                            icon: Icons.person_outline,
-                            validator:
-                                (value) =>
-                                    value?.isEmpty ?? true
-                                        ? 'Name is required'
-                                        : null,
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          _buildFormField(
-                            context: context,
-                            controller: locationController,
-                            label: 'Preferred Location',
-                            icon: Icons.location_city_outlined,
-                            validator:
-                                (value) =>
-                                    value?.isEmpty ?? true
-                                        ? 'Location is required'
-                                        : null,
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          _buildFormField(
-                            context: context,
-                            controller: emailController,
-                            label: 'Email',
-                            icon: Icons.email_outlined,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value?.isEmpty ?? true)
-                                return 'Email is required';
-                              if (!GetUtils.isEmail(value!))
-                                return 'Enter a valid email';
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                    _buildFormField(context: context, controller: resellerTextController, label: 'Reseller ID', icon: Icons.perm_identity_outlined,isEnable: false),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          _buildFormField(
-                            context: context,
-                            controller: phoneController,
-                            label: 'Phone',
-                            icon: Icons.phone_outlined,
-                            keyboardType: TextInputType.phone,
-                          ),
-
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          ValueListenableBuilder<String?>(
-                            valueListenable: propertyController,
-                            builder: (context, selectedProperty, _) {
-                              // Build a list of property titles (ensure uniqueness)
-                              final propertyTitles = controller.dummyResellerLeads
-                                  .map((lead) => lead.customFields.title)
-                                  .toSet()
-                                  .toList();
-
-                              // Ensure currently selected value is actually in the list
-                              final currentValue = propertyTitles.contains(selectedProperty)
-                                  ? selectedProperty
-                                  : null;
-
-                              // Define one border style and reuse it everywhere
-                              final OutlineInputBorder commonBorder = OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: ColorRes.grey.withOpacity(0.3),
-                                  width: 1,
-                                ),
-                              );
-
-                              return SizedBox(
-                                height: 50,
-                                child: DropdownButtonFormField<String>(
-                                  value: currentValue,
-                                  decoration: InputDecoration(
-                                    labelText: 'Select Property',
-                                    labelStyle: const TextStyle(fontSize: 12),
-                                    prefixIcon: const Icon(Icons.home_outlined, size: 20),
-                                    border: commonBorder,
-                                    enabledBorder: commonBorder,
-                                    focusedBorder: commonBorder.copyWith(
-                                      borderSide: BorderSide(
-                                        color: ColorRes.grey.withOpacity(0.5), // optional darker on focus
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    disabledBorder: commonBorder,
-                                    errorBorder: commonBorder.copyWith(
-                                      borderSide: const BorderSide(color: Colors.red, width: 1),
-                                    ),
-                                    focusedErrorBorder: commonBorder.copyWith(
-                                      borderSide: const BorderSide(color: Colors.red, width: 1.5),
-                                    ),
-                                  ),
-                                  items: propertyTitles.map(
-                                        (title) {
-                                      return DropdownMenuItem<String>(
-                                        value: title,
-                                        child: SizedBox(
-                                          width: 200,
-                                          child: Text(
-                                            title,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ).toList(),
-                                  onChanged: (value) {
-                                    propertyController.value = value;
-                                    debugPrint('${propertyController.value}');
-                                  },
-                                  validator: (value) =>
-                                  (value == null || value.isEmpty) ? 'Please select a property' : null,
-                                ),
-                              );
-                            },
-                          ),
-
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          SizedBox(
-                            height: 50,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: ValueListenableBuilder<LeadStatus>(
-                                    valueListenable: statusController,
-
-                                    builder: (context, status, child) {
-                                      return DropdownButtonFormField<LeadStatus>(
-                                        value: status,
-
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color: Colors.black87,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: 'Status',
-                                          labelStyle: TextStyle(
-                                            fontSize: AppFontSizes.small,
-                                          ),
-
-                                          prefixIcon: const Icon(Icons.flag_outlined,size: 20,),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(0.3),
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.primary,
-                                            ),
-                                          ),
-                                          disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(0.3),
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(0.3),
-                                            ),
-                                          ),
-                                        ),
-                                        items:
-                                        LeadStatus.values.map((status) {
-                                          return DropdownMenuItem(
-                                            value: status,
-                                            child: Text(_getStatusText(status)),
-                                          );
-                                        }).toList(),
-                                        onChanged:
-                                            (value) => statusController.value = value!,
-                                      );
-                                    },
-                                  ),
-                                ),
-                                SizedBox(width: 8,
-                                ),
-                                Expanded(
-                                  child: ValueListenableBuilder<LeadStage>(
-                                    valueListenable: stageController,
-
-                                    builder: (context, stage, child) {
-                                      return DropdownButtonFormField<LeadStage>(
-
-                                        value: stage,
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color: Colors.black87,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: 'Stages',
-                                          labelStyle: TextStyle(
-                                            fontSize: AppFontSizes.small,
-                                          ),
-                                          prefixIcon: const Icon(Icons.show_chart),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(0.3),
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.primary,
-                                            ),
-                                          ),
-                                          disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(0.3),
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(0.3),
-                                            ),
-                                          ),
-                                        ),
-                                        items:
-                                        LeadStage.values.map((stage) {
-                                          return DropdownMenuItem(
-                                            value: stage,
-                                            child: Text(_getStageText(stage)),
-                                          );
-                                        }).toList(),
-                                        onChanged:
-                                            (value) => stageController.value = value!,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          _buildFormField(
-                            context: context,
-
-                            controller: notesController,
-                            label: 'Requirements & Notes',
-                            icon: Icons.note_outlined,
-                            maxLines: 4,
-                          ),
-
-                          const SizedBox(height: 24),
-                          SafeArea(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  final newLead = Lead(
-                                    id:
-                                        lead?.id ??
-                                        DateTime.now().millisecondsSinceEpoch
-                                            .toString(),
-                                    name: nameController.text,
-                                    company: locationController.text,
-                                    email: emailController.text,
-                                    phone: phoneController.text,
-                                    estimatedValue: double.parse(
-                                      budgetController.text,
-                                    ),
-                                    status: statusController.value,
-                                    notes: notesController.text,
-                                    createdAt: lead?.createdAt ?? DateTime.now(), stage: stageController.value,
-                                  );
-                            
-                                  if (lead == null) {
-                                    controller.recentLeads.add(newLead);
-                                    Get.snackbar(
-                                      'Success',
-                                      'Buyer lead added successfully',
-                                      backgroundColor: Colors.green,
-                                      colorText: Colors.white,
-                                    );
-                                  } else {
-                                    final index = controller.recentLeads
-                                        .indexWhere((l) => l.id == lead.id);
-                                    if (index != -1) {
-                                      controller.recentLeads[index] = newLead;
-                                      Get.snackbar(
-                                        'Success',
-                                        'Buyer lead updated successfully',
-                                        backgroundColor: Colors.green,
-                                        colorText: Colors.white,
-                                      );
-                                    }
-                                  }
-                                  Navigator.pop(context);
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Text(
-                                lead == null
-                                    ? 'Add Buyer Lead'
-                                    : 'Update Buyer Lead',
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.body,
-                                  fontWeight: AppFontWeights.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
+      ),
+    ),
   );
 }
 

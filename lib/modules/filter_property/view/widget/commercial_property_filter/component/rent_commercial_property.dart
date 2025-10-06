@@ -29,38 +29,46 @@ class _RentCommercialPropertyState extends State<RentCommercialProperty> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildFilterHeadingPadding("Property Type"),
+        buildPropertyFilterHeadingPadding("Property Type"),
         const SizedBox(height: 7),
         ListedBy(listedByList: widget.controllerForFilter.buyCommercialPropertyType,onTap: (items) {
           debugPrint('Rent Commercial property $items');
 
         },controllerForFilter: widget.controllerForFilter,selectedString: widget.controllerForFilter.buySelectedCommercialPropertyTyp,),
         const SizedBox(height: 7),
-        buildFilterHeadingPadding('Budget'),
-        BudgetFilter(
-          minValue: 0.0,
-          maxValue: 20,
-          values: const RangeValues(1, 20),
-          onChanged: (value) {},
-          minLabel: 'Min',
-          maxLabel: 'Max',
-          minQuantityLabel: 'L',
-          maxQuantityLabel: 'Cr+',
+        buildPropertyFilterHeadingPadding('Budget'),
+        Obx(
+          () =>  BudgetFilter(
+            minValue: widget.controllerForFilter.commercialRentMin.value,
+            maxValue: widget.controllerForFilter.commercialRentMax.value,
+            values:widget.controllerForFilter.commercialRentRangeValue.value,
+            onChanged: (value) {
+              widget.controllerForFilter.changeCommercialRent(value);
+            },
+            minLabel: 'Min',
+            maxLabel: 'Max',
+            minQuantityLabel: 'L',
+            maxQuantityLabel: 'Cr+',
+          ),
         ),
 
-        buildFilterHeadingPadding('Build-up Area'),
-        BudgetFilter(
-          minValue: 0.0,
-          maxValue: 4950,
-          values: const RangeValues(50, 2000),
-          onChanged: (value) {},
-          minLabel: 'Min',
-          maxLabel: 'Max',
-          minQuantityLabel: 'sqft',
-          maxQuantityLabel: 'sqft+',
+        buildPropertyFilterHeadingPadding('Build-up Area'),
+        Obx(
+          () =>  BudgetFilter(
+            minValue: widget.controllerForFilter.commercialRentAreaMin.value,
+            maxValue: widget.controllerForFilter.commercialRentAreaMax.value,
+            values: widget.controllerForFilter.commercialRentAreaRangeValue.value,
+            onChanged: (value) {
+              widget.controllerForFilter.changeCommercialAreaRent(value);
+            },
+            minLabel: 'Min',
+            maxLabel: 'Max',
+            minQuantityLabel: 'sqft',
+            maxQuantityLabel: 'sqft+',
+          ),
         ),
 
-        buildFilterHeadingPadding("Available"),
+        buildPropertyFilterHeadingPadding("Available"),
         const SizedBox(height: 7),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,

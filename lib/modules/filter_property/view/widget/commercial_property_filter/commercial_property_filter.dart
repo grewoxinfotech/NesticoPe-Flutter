@@ -6,6 +6,7 @@ import 'package:housing_flutter_app/modules/filter_property/view/widget/commerci
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
 
+import '../buy_componet/buy_component.dart';
 import 'component/rent_commercial_property.dart';
 
 class CommercialPropertyFilter extends StatelessWidget {
@@ -18,7 +19,7 @@ class CommercialPropertyFilter extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildFilterHeadingPadding('Sub category'),
+        buildPropertyFilterHeadingPadding('Sub category'),
         const SizedBox(height: 7),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,

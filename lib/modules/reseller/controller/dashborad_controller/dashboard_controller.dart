@@ -863,7 +863,7 @@ class DashboardController extends GetxController {
           phone: '+1-555-0201',
           estimatedValue: 850000,
           status: LeadStatus.qualified,
-          property: '',
+          property: 'Luxury Lakeside Villa with Private Pool',
           // ✅ new enum
           stage: LeadStage.interested,
           // add stage
@@ -880,7 +880,7 @@ class DashboardController extends GetxController {
           estimatedValue: 620000,
           status: LeadStatus.negotiation,
           // was proposal
-          property: '',
+          property: 'Spacious 4BHK Apartment with City View',
           stage: LeadStage.siteVisit,
           notes:
           'Interested in RedStone Station property. Submitted offer, awaiting seller response.',
@@ -892,7 +892,7 @@ class DashboardController extends GetxController {
           company: 'Queens, NY',
           email: 'r.martinez@gmail.com',
           phone: '+1-555-0203',
-          property: '',
+          property: 'Prime Office Space in Connaught Place',
           estimatedValue: 480000,
           status: LeadStatus.contacted,
           stage: LeadStage.contacted,
@@ -909,7 +909,7 @@ class DashboardController extends GetxController {
           estimatedValue: 1200000,
           status: LeadStatus.new_,
           // ✅ new enum
-          property: '',
+          property: 'Sea-facing 3BHK Apartment',
           stage: LeadStage.newLead,
           notes:
           'High-value prospect, wants 4+ bed penthouse. Urgent - relocating in 2 months.',
@@ -924,7 +924,7 @@ class DashboardController extends GetxController {
           estimatedValue: 720000,
           status: LeadStatus.qualified,
           stage: LeadStage.siteVisit,
-          property: '',
+          property: 'Modern 2BHK Flat near IT Park',
           notes:
           'Shown Blue Lagoon House, very interested. Ready for site visit this weekend.',
           createdAt: DateTime.now().subtract(const Duration(days: 2)),
@@ -939,7 +939,7 @@ class DashboardController extends GetxController {
           status: LeadStatus.convert,
           // was closed
           stage: LeadStage.sell,
-          property: '',
+          property: '4BHK Penthouse with Private Terrace',
           notes:
           'Deal closed! Purchased City Loft Apartment. Payment received, closing scheduled.',
           createdAt: DateTime.now().subtract(const Duration(days: 4)),
@@ -953,7 +953,7 @@ class DashboardController extends GetxController {
           estimatedValue: 1500000,
           status: LeadStatus.negotiation,
           // was proposal
-          property: '',
+          property: '3BHK Luxury Flat with Park View',
           stage: LeadStage.siteVisit,
           notes:
           'Negotiating on Hilltop Mansion. Counter-offer submitted. High probability close.',
@@ -967,7 +967,7 @@ class DashboardController extends GetxController {
           phone: '+1-555-0208',
           estimatedValue: 580000,
           status: LeadStatus.contacted,
-          property: '',
+          property: 'Affordable 1BHK Studio Apartment',
           stage: LeadStage.contacted,
           notes:
           'Young professional, interested in modern lofts. Scheduled viewing next Tuesday.',
