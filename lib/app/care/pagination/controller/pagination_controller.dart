@@ -180,19 +180,19 @@ abstract class PaginatedController<T> extends GetxController {
 
   /// Load next page
   Future<void> loadMore() async {
-    if (hasMore.value && !isPaging.value && !isLoading.value) {
-      print(
-        "Pagination: loadMore called. Current page: ${currentPage.value}, Total pages: ${totalPages.value}",
-      );
-      currentPage.value += 1;
-      await _loadPage(page: currentPage.value);
-    } else {
-      print(
-        "Pagination: loadMore skipped. Current page: ${currentPage.value}, "
-        "Total pages: ${totalPages.value}, isLoading: ${isLoading.value}, "
-        "isPaging: ${isPaging.value}, hasMore: ${hasMore.value}",
-      );
-    }
+    // if (hasMore.value && !isPaging.value && !isLoading.value) {
+    print(
+      "Pagination: loadMore called. Current page: ${currentPage.value}, Total pages: ${totalPages.value}",
+    );
+    currentPage.value += 1;
+    await _loadPage(page: currentPage.value);
+    // } else {
+    //   print(
+    //     "Pagination: loadMore skipped. Current page: ${currentPage.value}, "
+    //     "Total pages: ${totalPages.value}, isLoading: ${isLoading.value}, "
+    //     "isPaging: ${isPaging.value}, hasMore: ${hasMore.value}",
+    //   );
+    // }
   }
 
   /// Pull-to-refresh

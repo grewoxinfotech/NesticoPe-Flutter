@@ -32,7 +32,6 @@ class _PropertyCardState extends State<PropertyCard> {
   final controller = Get.find<PropertyController>();
   bool isFavorite = false;
 
-
   @override
   Widget build(BuildContext context) {
     final priceManager = PropertyPriceManager(
@@ -134,16 +133,16 @@ class _PropertyCardState extends State<PropertyCard> {
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 18,
-                        child: Obx(
-                          () {
-                            isFavorite = controller.favoriteIds.contains(widget.property.id);
-                            return Icon(
+                        child: Obx(() {
+                          isFavorite = controller.favoriteIds.contains(
+                            widget.property.id,
+                          );
+                          return Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
                             color: isFavorite ? Colors.red : Colors.grey,
                             size: 20,
                           );
-                          },
-                        ),
+                        }),
                       ),
                     ),
                   ),
@@ -369,7 +368,9 @@ class _PropertyCardState extends State<PropertyCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       if (widget.property.listingType?.toLowerCase() ==
-                          "rent") ...[
+                              "rent" ||
+                          widget.property.listingType?.toLowerCase() ==
+                              "pg") ...[
                         Flexible(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -531,6 +532,7 @@ class Facilities extends StatelessWidget {
     "Parking": Icons.local_parking,
     "Facing": Icons.explore,
     "Condition": Icons.handyman,
+    "Room Type": Icons.meeting_room,
     // Add more mappings if needed
   };
 

@@ -58,8 +58,8 @@ class AuthController extends GetxController {
   }
 
   void fillTestCredentials() {
-    emailController.text = "Superchc@gmail.com";
-    // emailController.text = "abc@gmail.com";
+    // emailController.text = "Superchc@gmail.com";
+    emailController.text = "abc@gmail.com";
     passwordController.text = "CRM_GrewoxAdmin@123";
   }
 
@@ -125,6 +125,8 @@ class AuthController extends GetxController {
       if (response['success'] == true && response['data']['token'] != null) {
         final token = response['data']['token'];
         await SecureStorage.saveToken(token);
+
+        print("API called successfully with phone: $phone, token: $token");
 
         Get.to(
           () => OtpVerificationScreen(

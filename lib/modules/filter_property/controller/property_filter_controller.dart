@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'dart:convert';
 
 import 'city_insigths_controller.dart';
 
@@ -8,7 +9,7 @@ class PropertyFilterControllerForFilter extends GetxController {
   ///=====================================Property Type Selection=====================
   RxInt selectedPropertyTypeIndex = 0.obs;
   RxList<String> propertyType =
-      ['Sell', 'Rent', 'Commercial'].obs;
+      ['Sell', 'Rent', 'Commercial', "PG/Co-living"].obs;
   RxList<String> verificationStatus = <String>['Verified', 'Non-verified'].obs;
   RxString verifiedStatusIndex = ''.obs;
   RxString statusApplicateIndex = ''.obs;
@@ -906,7 +907,8 @@ class PropertyFilterControllerForFilter extends GetxController {
         }
         return 'Sell';
       }
-      if (tab == 'PG/Co-living') return 'Rent';
+      if (tab == 'PG/Co-living')
+        return 'PG'; // Changed from 'Rent' to 'PG' for proper API mapping
       return null;
     }
 
@@ -1023,7 +1025,12 @@ class PropertyFilterControllerForFilter extends GetxController {
     final propertyCondition = mapPropertyCondition();
 
     Map<String, dynamic> filters = {
-      // Core
+      // Core filters
+      if (propertyType[selectedPropertyTypeIndex.value].isNotEmpty)
+        'type':
+            propertyType[selectedPropertyTypeIndex.value] == "Commercial"
+                ? 'commercial'
+                : slug(mappedListingType),
       if (mappedListingType != null) 'listingType': mappedListingType,
       if (mappedPropertyType != null) 'propertyType': mappedPropertyType,
       if (priceRange != null) 'priceRange': priceRange,
@@ -1058,9 +1065,16 @@ class PropertyFilterControllerForFilter extends GetxController {
       // Type (only when Commercial tab)
       if (propertyType[selectedPropertyTypeIndex.value] == 'Commercial')
         'type': 'commercial',
+
+      // PG-specific filters
+      if (propertyType[selectedPropertyTypeIndex.value] == 'PG/Co-living')
+        if (mapPgFor() != null) 'pg_for': mapPgFor(),
+      if (mapPgRoomType() != null) 'room_type': mapPgRoomType(),
+      if (foodSelected.value.isNotEmpty)
+        'pg_meal_offered': foodSelected.value.toLowerCase(),
     };
 
-    // Recursive cleaner
+    // Clean up null and empty values
     dynamic clean(dynamic value) {
       if (value == null) return null;
       if (value is String && value.isEmpty) return null;
@@ -1077,6 +1091,243 @@ class PropertyFilterControllerForFilter extends GetxController {
       ..removeWhere((k, v) => v == null);
 
     return filters;
+  }
+
+  // Map PG room type
+  String? mapPgRoomType() {
+    switch (roomSelectedType.value.toLowerCase()) {
+      case 'private room':
+        return 'single';
+      case 'double sharing':
+        return 'double';
+      case 'triple sharing':
+        return 'triple';
+      case '3+ sharing':
+        return 'multiple';
+      default:
+        return null;
+    }
+  }
+
+  // Map PG gender
+  String? mapPgFor() {
+    switch (genderSelected.value.toLowerCase()) {
+      case 'male':
+        return 'Boys';
+      case 'female':
+        return 'Girls';
+      case 'both':
+        return 'Co-ed';
+      default:
+        return null;
+    }
+  }
+
+  void initializeWithFilters(Map<String, String> initialFilters) {
+    try {
+      // Handle listing type first to set correct tab
+      if (initialFilters['listingType'] != null) {
+        String listingType = initialFilters['listingType']!;
+        int index;
+        switch (listingType) {
+          case 'Sell':
+            index = propertyType.indexOf('Sell');
+            break;
+          case 'Rent':
+            index = propertyType.indexOf('Rent');
+            break;
+          case 'PG':
+            index = propertyType.indexOf('PG/Co-living');
+            break;
+          default:
+            index = 0;
+        }
+        selectedPropertyTypeIndex.value = index;
+      }
+
+      // Handle verification status
+      if (initialFilters['isVerified'] != null) {
+        verifiedStatusIndex.value =
+            initialFilters['isVerified'] == 'true'
+                ? 'Verified'
+                : 'Non-verified';
+      }
+
+      // Handle approval status
+      if (initialFilters['approval_status'] != null) {
+        String status = initialFilters['approval_status']!;
+        status = status.substring(0, 1).toUpperCase() + status.substring(1);
+        statusApplicateIndex.value = status;
+      }
+
+      // Handle property type
+      if (initialFilters['propertyType'] != null) {
+        String pType = initialFilters['propertyType']!;
+        // Map API property types to UI property types
+        String uiType = '';
+        switch (pType) {
+          case 'apartment':
+            uiType = 'Apartments';
+            break;
+          case 'independent_house':
+            uiType = 'Independent House';
+            break;
+          case 'plot':
+            uiType = 'Plot';
+            break;
+          case 'studio':
+            uiType = 'Studio';
+            break;
+          case 'duplex':
+            uiType = 'Duplex';
+            break;
+          case 'penthouse':
+            uiType = 'PentHouse';
+            break;
+          case 'builder_floor':
+            uiType = 'Builder Floor';
+            break;
+          case 'villa':
+            uiType = 'Villa';
+            break;
+          // Commercial types
+          case 'office':
+            uiType = 'Ready to use Office Space';
+            break;
+          case 'retail_shop':
+            uiType = 'Shop';
+            break;
+          case 'showroom':
+            uiType = 'Showroom';
+            break;
+          case 'warehouse':
+            uiType = 'WareHouse';
+            break;
+        }
+
+        if (propertyType[selectedPropertyTypeIndex.value] == 'Commercial') {
+          buySelectedCommercialPropertyTyp.value = uiType;
+        } else {
+          subpropertyType.value = uiType;
+        }
+      }
+
+      // Handle price ranges
+      if (initialFilters['priceRange'] != null) {
+        try {
+          final Map<String, dynamic> range = json.decode(
+            initialFilters['priceRange']!,
+          );
+          double minValue = (range['min'] as num).toDouble();
+          double maxValue = (range['max'] as num).toDouble();
+
+          switch (propertyType[selectedPropertyTypeIndex.value]) {
+            case 'Sell':
+              _rangeValues.value = RangeValues(minValue, maxValue);
+              break;
+            case 'Rent':
+              rentRangeValues.value = RangeValues(minValue, maxValue);
+              break;
+            case 'Commercial':
+              if (commercialSelectedSubCategory.value.toLowerCase() == 'rent') {
+                commercialRentRangeValue.value = RangeValues(
+                  minValue,
+                  maxValue,
+                );
+              } else {
+                commercialRangeValues.value = RangeValues(minValue, maxValue);
+              }
+              break;
+            case 'PG/Co-living':
+              pgRangeValues.value = RangeValues(minValue, maxValue);
+              break;
+          }
+        } catch (e) {
+          debugPrint('Error parsing price range: $e');
+        }
+      }
+
+      // Handle PG specific filters
+      if (initialFilters['pg_info'] != null) {
+        try {
+          final Map<String, dynamic> pgInfo = json.decode(
+            initialFilters['pg_info']!,
+          );
+
+          // Handle pg_for (gender)
+          if (pgInfo['pg_for'] != null) {
+            String pgFor = pgInfo['pg_for'];
+            switch (pgFor) {
+              case 'Boys':
+                genderSelected.value = 'Male';
+                break;
+              case 'Girls':
+                genderSelected.value = 'Female';
+                break;
+              case 'Co-ed':
+                genderSelected.value = 'Both';
+                break;
+            }
+          }
+
+          // Handle room type
+          if (pgInfo['pg_room_info'] != null &&
+              (pgInfo['pg_room_info'] as List).isNotEmpty) {
+            String roomType = pgInfo['pg_room_info'][0]['room_type'];
+            switch (roomType) {
+              case 'single':
+                roomSelectedType.value = 'Private Room';
+                break;
+              case 'double':
+                roomSelectedType.value = 'Double Sharing';
+                break;
+              case 'triple':
+                roomSelectedType.value = 'Triple Sharing';
+                break;
+              case 'multiple':
+                roomSelectedType.value = '3+ Sharing';
+                break;
+            }
+          }
+
+          // Handle meal preference
+          if (pgInfo['pg_meal_offered'] != null) {
+            foodSelected.value =
+                pgInfo['pg_meal_offered'].toString().toLowerCase() == 'yes'
+                    ? 'Yes'
+                    : 'No';
+          }
+        } catch (e) {
+          debugPrint('Error parsing PG info: $e');
+        }
+      }
+
+      // Handle location
+      if (initialFilters['state'] != null) {
+        selectedState.value = initialFilters['state']!;
+      }
+      if (initialFilters['city'] != null) {
+        selectedCity.value = initialFilters['city']!;
+      }
+
+      // Handle furnishing type
+      if (initialFilters['furnish_type'] != null) {
+        String furnishType = initialFilters['furnish_type']!;
+        switch (furnishType) {
+          case 'semi-furnished':
+            rentFurnishing.value = 'Semi Furnished';
+            break;
+          case 'fully-furnished':
+            rentFurnishing.value = 'Fully Furnished';
+            break;
+          case 'unfurnished':
+            rentFurnishing.value = 'Unfurnished';
+            break;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error initializing filters: $e');
+    }
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+
 import '../../data/network/property/models/property_model.dart';
 
 class PropertyHighlightManager {
@@ -22,10 +24,9 @@ class PropertyHighlightManager {
       if (pd.propertyBuiltUpArea != null) {
         highlights.add({"Built-up Area": "${pd.propertyBuiltUpArea} sq.ft."});
       }
-      if (pd.floorInfo != null) {
+      if (pd.pgInfo?.pgRoomInfo != null && pd.pgInfo!.pgRoomInfo!.isNotEmpty) {
         highlights.add({
-          "Floor":
-              "${pd.floorInfo!.floorNumber} of ${pd.floorInfo!.totalFloors}",
+          "Room Type": "${pd.pgInfo?.pgRoomInfo?.first.roomType} Room",
         });
       }
 
@@ -33,7 +34,9 @@ class PropertyHighlightManager {
       switch (property.listingType?.toLowerCase()) {
         case 'rent':
           if (pd.financialInfo?.price != null) {
-            highlights.add({"Rent": "${pd.financialInfo!.price} INR / month"});
+            highlights.add({
+              "Rent": "${pd.financialInfo!.propertyRentPerMonth} INR / month",
+            });
           }
           break;
         case 'sell':
@@ -42,7 +45,11 @@ class PropertyHighlightManager {
           }
           break;
         case 'pg':
-          // PG-specific highlights (if available)
+          highlights.add({
+            "Price":
+                "${Formatter.formatPrice(pd.financialInfo!.propertyRentPerMonth)} INR / month",
+          });
+
           break;
       }
 

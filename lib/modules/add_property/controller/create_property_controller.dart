@@ -29,11 +29,8 @@ class CreatePropertyController extends GetxController {
   late MultiImagePickerController pickerController;
   RxBool isLoading = false.obs;
 
-
-
-
   ////////////document upload //////////////////
-  RxList<File>? files=<File>[].obs;
+  RxList<File>? files = <File>[].obs;
   // Reactive states
   var selectedSellerType = SellerType.owner.obs; // New: selected user type
   var isOwner = true.obs;
@@ -488,10 +485,9 @@ class CreatePropertyController extends GetxController {
       try {
         if (result != null) {
           files?.value = result.paths.map((path) => File(path!)).toList();
-          for (var file in files??[]) {
+          for (var file in files ?? []) {
             print('${file.uri} - ${file.path}');
           }
-
         } else {
           print("Error picking files: ");
           // User canceled the picker
@@ -2809,14 +2805,16 @@ class CreatePropertyController extends GetxController {
           pgSuitedFor: bestSuitedList.value.first,
           pgMealOffered: mealAvailableList.value.first,
           // TODO: Notice Period and lock in period
-          pgRoomInfo: PgRoomInfo(
-            // TODO: Correct this
-            roomType: rooms.isNotEmpty ? rooms.first.roomType : null,
-            totalBeds:
-                totalRoomsController.text.trim().isNotEmpty
-                    ? int.tryParse(totalRoomsController.text.trim())
-                    : null,
-          ),
+          pgRoomInfo: [
+            PgRoomInfo(
+              // TODO: Correct this
+              roomType: rooms.isNotEmpty ? rooms.first.roomType : null,
+              totalBeds:
+                  totalRoomsController.text.trim().isNotEmpty
+                      ? int.tryParse(totalRoomsController.text.trim())
+                      : null,
+            ),
+          ],
         ),
         financialInfo: FinancialInfo(
           propertyRentPerMonth: double.tryParse(rooms.first.monthlyRent),
@@ -4403,7 +4401,8 @@ class PgInfo {
   final double? mealChargesPerMonth;
   final double? electricityChargesPerMonth;
   final PgRules? pgRules;
-  final PgRoomInfo? pgRoomInfo;
+  // final PgRoomInfo? pgRoomInfo;
+  final List<PgRoomInfo>? pgRoomInfo;
 
   PgInfo({
     this.pgName,
@@ -4435,7 +4434,9 @@ class PgInfo {
           json['pg_rules'] != null ? PgRules.fromJson(json['pg_rules']) : null,
       pgRoomInfo:
           json['pg_room_info'] != null
-              ? PgRoomInfo.fromJson(json['pg_room_info'])
+              ? List<PgRoomInfo>.from(
+                json['pg_room_info'].map((x) => PgRoomInfo.fromJson(x)),
+              )
               : null,
     );
   }
@@ -4455,7 +4456,10 @@ class PgInfo {
     if (electricityChargesPerMonth != null)
       data['electricity_charges_per_month'] = electricityChargesPerMonth;
     if (pgRules != null) data['pg_rules'] = pgRules!.toJson();
-    if (pgRoomInfo != null) data['pg_room_info'] = pgRoomInfo!.toJson();
+    if (pgRoomInfo != null) {
+      // ✅ Correct: convert each PgRoomInfo to JSON and return as list
+      data['pg_room_info'] = pgRoomInfo!.map((x) => x.toJson()).toList();
+    }
     return data;
   }
 }

@@ -6,6 +6,7 @@ import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/widgets/cards/banner_card_with_text.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/app/widgets/texts/headline_text.dart';
 import 'package:housing_flutter_app/app/widgets/texts/title_with_disc.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
@@ -14,6 +15,8 @@ import 'package:housing_flutter_app/modules/home/widgets/city_card.dart';
 import 'package:housing_flutter_app/modules/home/widgets/home_header.dart';
 import 'package:housing_flutter_app/modules/home/widgets/top_locations.dart';
 import 'package:housing_flutter_app/modules/new_project/view/latest_project.dart';
+import 'package:housing_flutter_app/modules/news/controllers/news_controller.dart';
+import 'package:housing_flutter_app/modules/platform_service/controllers/platform_service_controller.dart';
 import 'package:housing_flutter_app/modules/propert_detail/view/property_details.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/property_list_screen.dart';
@@ -29,7 +32,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../app/utils/file_upload_section/file_upload_section.dart';
+import '../../../data/network/news/news_model.dart';
 import '../../dashboard/views/dashboard_screen.dart';
+import '../../news/view/news_detail_screen.dart';
+import '../../platform_service/views/widgets/platform_service_card.dart';
 import '../../property/views/widgets/city_filter.dart';
 import '../../property/views/widgets/property_card.dart';
 import '../../reseller/view/property_reseller.dart';
@@ -205,6 +211,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final PropertyController controller = Get.put(PropertyController());
+  final NewsController newsController = Get.put(NewsController());
+  final PlatformServicesController platformServicesController = Get.put(
+    PlatformServicesController(),
+  );
 
   final List<Map<String, dynamic>> cities = [
     {
@@ -344,7 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final user = await SecureStorage.getUserData();
       controller.getFavorite(user?.user?.id ?? '');
     });
@@ -649,36 +659,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   //     }
                   //   },
                   // ),
-
-            Obx(() {
-              if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (controller.items.isEmpty) {
-                return const Center(child: Text("No Property found."));
-              } else {
-                return SizedBox(
-                  height: 180,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.items.length.clamp(0, 10),
-                    separatorBuilder: (_, __) => const SizedBox(width: 10),
-                    itemBuilder: (context, index) {
-                      final property = controller.items[index];
-                      final percentage = double.tryParse(propertyPercentage[index]) ?? 0.0;
-                      final isPositive = percentage >= 10.0;
-                      return TopPropertyByLocation(
-                        property: property,
-                        rating: percentage,
-                        isPositive: isPositive,
+                  Obx(() {
+                    if (controller.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (controller.items.isEmpty) {
+                      return const Center(child: Text("No Property found."));
+                    } else {
+                      return SizedBox(
+                        height: 180,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: controller.items.length.clamp(0, 10),
+                          separatorBuilder:
+                              (_, __) => const SizedBox(width: 10),
+                          itemBuilder: (context, index) {
+                            final property = controller.items[index];
+                            final percentage =
+                                double.tryParse(propertyPercentage[index]) ??
+                                0.0;
+                            final isPositive = percentage >= 10.0;
+                            return TopPropertyByLocation(
+                              property: property,
+                              rating: percentage,
+                              isPositive: isPositive,
+                            );
+                          },
+                        ),
                       );
-                    },
-                  ),
-                );
-              }
-            }),
+                    }
+                  }),
 
-
-            const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   const TitleWithViewAll(
                     title: "Top Rated Localities",
@@ -967,7 +978,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     showViewAll: true,
 
                     onViewAll: () {
-                      Get.to(() =>  FileUploadSection());
+                      Get.to(() => FileUploadSection());
                     },
                   ),
                   const SizedBox(height: 12),
@@ -975,11 +986,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   SellerListWidget(propertyList: dummySellerList),
 
                   const SizedBox(height: 32),
-                   TitleWithViewAll(
+                  TitleWithViewAll(
                     title: "Recommended Insights",
                     showViewAll: true,
                     onViewAll: () {
-                      Get.to(()=>MainNavigationScreen());
+                      Get.to(() => MainNavigationScreen());
                     },
                   ),
                   SizedBox(height: AppSpacing.medium),
@@ -1005,12 +1016,44 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 32),
 
                   const TitleWithViewAll(
+                    title: "Platform Services",
+                    showViewAll: true,
+                  ),
+                  SizedBox(height: AppSpacing.medium),
+
+                  Obx(() {
+                    if (platformServicesController.isLoading.value &&
+                        platformServicesController.items.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!platformServicesController.isLoading.value &&
+                        platformServicesController.items.isEmpty) {
+                      return const Center(child: Text("No Record found."));
+                    }
+                    return PlatformServiceHorizontalList(
+                      services: platformServicesController.items,
+                    );
+                  }),
+                  const SizedBox(height: 32),
+                  const TitleWithViewAll(
                     title: "News & Articles",
                     showViewAll: true,
                   ),
                   SizedBox(height: AppSpacing.medium),
 
-                  NewsAndArticles(),
+                  Obx(() {
+                    if (newsController.isLoading.value &&
+                        newsController.items.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!newsController.isLoading.value &&
+                        newsController.items.isEmpty) {
+                      return const Center(child: Text("No News found."));
+                    }
+                    return NewsAndArticles(articles: newsController.items);
+                  }),
                   const SizedBox(height: 32),
 
                   const TitleWithViewAll(
@@ -1832,137 +1875,431 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //   }
 // }
 
+// class NewsAndArticles extends StatelessWidget {
+//   const NewsAndArticles({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final articles = [
+//       {
+//         "title": "Legal Updates",
+//         "subtitle": "Gimini and ChatGPT barf or agg ki barish",
+//         "image": IMGRes.news_1,
+//         "category": "Hot News",
+//         "readTime": "Sep 04, 2025",
+//         "author": "Senior Real Estate Consultant",
+//         "isNew": true,
+//       },
+//       {
+//         "title": "Rise in Premium Residential Property Demand",
+//         "subtitle": "Yash Hot News",
+//         "image": IMGRes.news_2,
+//         "category": "Market Trends",
+//         "readTime": "Sep 04, 2025",
+//         "author": "Senior Real Estate Consultant",
+//         "isNew": false,
+//       },
+//       {
+//         "title": "Smart Cities Development",
+//         "subtitle": "Govt announces 5 new smart city projects",
+//         "image": IMGRes.news_3,
+//         "category": "Government",
+//         "readTime": "Aug 28, 2025",
+//         "author": "Urban Affairs Analyst",
+//         "isNew": true,
+//       },
+//       {
+//         "title": "Affordable Housing Boost",
+//         "subtitle": "New subsidies introduced for first-time buyers",
+//         "image": IMGRes.news_1,
+//         "category": "Policy Updates",
+//         "readTime": "Aug 25, 2025",
+//         "author": "Real Estate Policy Expert",
+//         "isNew": false,
+//       },
+//       {
+//         "title": "Luxury Rentals on the Rise",
+//         "subtitle": "Millennials driving demand for premium rentals",
+//         "image": IMGRes.news_2,
+//         "category": "Lifestyle",
+//         "readTime": "Aug 20, 2025",
+//         "author": "Market Research Team",
+//         "isNew": true,
+//       },
+//       {
+//         "title": "Infrastructure Growth",
+//         "subtitle": "Metro expansion boosting property prices nearby",
+//         "image": IMGRes.news_3,
+//         "category": "Infrastructure",
+//         "readTime": "Aug 18, 2025",
+//         "author": "City Infrastructure Reporter",
+//         "isNew": false,
+//       },
+//       {
+//         "title": "Green Buildings Trend",
+//         "subtitle": "Sustainable housing gaining popularity in metros",
+//         "image": IMGRes.news_1,
+//         "category": "Sustainability",
+//         "readTime": "Aug 15, 2025",
+//         "author": "Environmental Consultant",
+//         "isNew": true,
+//       },
+//       {
+//         "title": "NRI Investments Surge",
+//         "subtitle": "Overseas investors eye Indian luxury homes",
+//         "image": IMGRes.news_2,
+//         "category": "Investment",
+//         "readTime": "Aug 12, 2025",
+//         "author": "Global Property Advisor",
+//         "isNew": false,
+//       },
+//       {
+//         "title": "Tech in Real Estate",
+//         "subtitle": "AI and AR shaping home buying experience",
+//         "image": IMGRes.news_3,
+//         "category": "Technology",
+//         "readTime": "Aug 10, 2025",
+//         "author": "PropTech Analyst",
+//         "isNew": true,
+//       },
+//       {
+//         "title": "Commercial Spaces Demand",
+//         "subtitle": "IT hubs drive growth in office real estate",
+//         "image": IMGRes.news_1,
+//         "category": "Commercial",
+//         "readTime": "Aug 08, 2025",
+//         "author": "Business Reporter",
+//         "isNew": false,
+//       },
+//     ];
+//
+//     return SizedBox(
+//       height: 260,
+//       child: ListView.separated(
+//         scrollDirection: Axis.horizontal,
+//         padding: const EdgeInsets.symmetric(horizontal: 12),
+//         clipBehavior: Clip.none,
+//         itemCount: articles.length,
+//         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.medium),
+//         itemBuilder: (context, index) {
+//           final article = articles[index];
+//           final isNew = article["isNew"] as bool;
+//
+//           return GestureDetector(
+//             onTap: () {
+//               // Handle article tap
+//             },
+//             child: Container(
+//               width: 280,
+//               decoration: BoxDecoration(
+//                 color: Colors.white,
+//                 borderRadius: BorderRadius.circular(16),
+//                 // boxShadow: [
+//                 //   BoxShadow(
+//                 //     color: Colors.black.withOpacity(0.08),
+//                 //     blurRadius: 12,
+//                 //     offset: const Offset(0, 4),
+//                 //   ),
+//                 //   BoxShadow(
+//                 //     color: Colors.black.withOpacity(0.04),
+//                 //     blurRadius: 4,
+//                 //     offset: const Offset(0, 2),
+//                 //   ),
+//                 // ],
+//                 border: Border.all(color: Colors.grey.shade300, width: 0.5),
+//               ),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   /// Top image section
+//                   Stack(
+//                     children: [
+//                       ClipRRect(
+//                         borderRadius: const BorderRadius.vertical(
+//                           top: Radius.circular(16),
+//                         ),
+//                         child: Image.asset(
+//                           article["image"]!.toString(),
+//                           height: 120,
+//                           width: double.infinity,
+//                           fit: BoxFit.cover,
+//                           errorBuilder: (context, error, stackTrace) {
+//                             return Container(
+//                               height: 120,
+//                               color: Colors.grey.shade200,
+//                               child: Icon(
+//                                 Icons.image_not_supported_outlined,
+//                                 color: Colors.grey.shade400,
+//                                 size: 32,
+//                               ),
+//                             );
+//                           },
+//                         ),
+//                       ),
+//
+//                       /// Category badge
+//                       Positioned(
+//                         top: 12,
+//                         left: 12,
+//                         child: Container(
+//                           padding: const EdgeInsets.symmetric(
+//                             horizontal: 8,
+//                             vertical: 4,
+//                           ),
+//                           decoration: BoxDecoration(
+//                             color: ColorRes.primary,
+//                             borderRadius: BorderRadius.circular(12),
+//                           ),
+//                           child: Text(
+//                             article["category"]!.toString(),
+//                             style: const TextStyle(
+//                               color: Colors.white,
+//                               fontSize: 10,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//
+//                       /// "NEW" badge
+//                       if (isNew)
+//                         Positioned(
+//                           top: 12,
+//                           right: 12,
+//                           child: Container(
+//                             padding: const EdgeInsets.symmetric(
+//                               horizontal: 6,
+//                               vertical: 3,
+//                             ),
+//                             decoration: BoxDecoration(
+//                               color: const Color(0xFFE74C3C),
+//                               borderRadius: BorderRadius.circular(8),
+//                             ),
+//                             child: const Text(
+//                               "NEW",
+//                               style: TextStyle(
+//                                 color: Colors.white,
+//                                 fontSize: 9,
+//                                 fontWeight: FontWeight.bold,
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                     ],
+//                   ),
+//
+//                   /// Content section
+//                   Expanded(
+//                     child: Padding(
+//                       padding: const EdgeInsets.all(16),
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               Text(
+//                                 article["title"]!.toString(),
+//                                 maxLines: 2,
+//                                 overflow: TextOverflow.ellipsis,
+//                                 style: const TextStyle(
+//                                   fontSize: 14,
+//                                   fontWeight: FontWeight.w700,
+//                                   color: Color(0xFF1A1A1A),
+//                                 ),
+//                               ),
+//                               const SizedBox(height: 6),
+//                               Text(
+//                                 article["subtitle"]!.toString(),
+//                                 maxLines: 2,
+//                                 overflow: TextOverflow.ellipsis,
+//                                 style: TextStyle(
+//                                   fontSize: 11,
+//                                   color: Colors.grey.shade600,
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//
+//                           /// Footer: author + date + arrow
+//                           Row(
+//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                             children: [
+//                               Expanded(
+//                                 child: Column(
+//                                   crossAxisAlignment: CrossAxisAlignment.start,
+//                                   children: [
+//                                     Text(
+//                                       article["author"]!.toString(),
+//                                       style: TextStyle(
+//                                         fontSize: 11,
+//                                         color: Colors.grey.shade700,
+//                                         fontWeight: FontWeight.w500,
+//                                       ),
+//                                       overflow: TextOverflow.ellipsis,
+//                                     ),
+//                                     const SizedBox(height: 2),
+//                                     Text(
+//                                       article["readTime"]!.toString(),
+//                                       style: TextStyle(
+//                                         fontSize: 10,
+//                                         color: Colors.grey.shade500,
+//                                       ),
+//                                     ),
+//                                   ],
+//                                 ),
+//                               ),
+//                               Container(
+//                                 padding: const EdgeInsets.all(6),
+//                                 decoration: BoxDecoration(
+//                                   color: const Color(
+//                                     0xFF2E7D63,
+//                                   ).withOpacity(0.1),
+//                                   borderRadius: BorderRadius.circular(8),
+//                                 ),
+//                                 child: const Icon(
+//                                   Icons.arrow_forward_ios,
+//                                   size: 12,
+//                                   color: Color(0xFF2E7D63),
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
 class NewsAndArticles extends StatelessWidget {
-  const NewsAndArticles({super.key});
+  final List<NewsItem> articles;
+  const NewsAndArticles({super.key, required this.articles});
 
   @override
   Widget build(BuildContext context) {
-    final articles = [
-      {
-        "title": "Legal Updates",
-        "subtitle": "Gimini and ChatGPT barf or agg ki barish",
-        "image": IMGRes.news_1,
-        "category": "Hot News",
-        "readTime": "Sep 04, 2025",
-        "author": "Senior Real Estate Consultant",
-        "isNew": true,
-      },
-      {
-        "title": "Rise in Premium Residential Property Demand",
-        "subtitle": "Yash Hot News",
-        "image": IMGRes.news_2,
-        "category": "Market Trends",
-        "readTime": "Sep 04, 2025",
-        "author": "Senior Real Estate Consultant",
-        "isNew": false,
-      },
-      {
-        "title": "Smart Cities Development",
-        "subtitle": "Govt announces 5 new smart city projects",
-        "image": IMGRes.news_3,
-        "category": "Government",
-        "readTime": "Aug 28, 2025",
-        "author": "Urban Affairs Analyst",
-        "isNew": true,
-      },
-      {
-        "title": "Affordable Housing Boost",
-        "subtitle": "New subsidies introduced for first-time buyers",
-        "image": IMGRes.news_1,
-        "category": "Policy Updates",
-        "readTime": "Aug 25, 2025",
-        "author": "Real Estate Policy Expert",
-        "isNew": false,
-      },
-      {
-        "title": "Luxury Rentals on the Rise",
-        "subtitle": "Millennials driving demand for premium rentals",
-        "image": IMGRes.news_2,
-        "category": "Lifestyle",
-        "readTime": "Aug 20, 2025",
-        "author": "Market Research Team",
-        "isNew": true,
-      },
-      {
-        "title": "Infrastructure Growth",
-        "subtitle": "Metro expansion boosting property prices nearby",
-        "image": IMGRes.news_3,
-        "category": "Infrastructure",
-        "readTime": "Aug 18, 2025",
-        "author": "City Infrastructure Reporter",
-        "isNew": false,
-      },
-      {
-        "title": "Green Buildings Trend",
-        "subtitle": "Sustainable housing gaining popularity in metros",
-        "image": IMGRes.news_1,
-        "category": "Sustainability",
-        "readTime": "Aug 15, 2025",
-        "author": "Environmental Consultant",
-        "isNew": true,
-      },
-      {
-        "title": "NRI Investments Surge",
-        "subtitle": "Overseas investors eye Indian luxury homes",
-        "image": IMGRes.news_2,
-        "category": "Investment",
-        "readTime": "Aug 12, 2025",
-        "author": "Global Property Advisor",
-        "isNew": false,
-      },
-      {
-        "title": "Tech in Real Estate",
-        "subtitle": "AI and AR shaping home buying experience",
-        "image": IMGRes.news_3,
-        "category": "Technology",
-        "readTime": "Aug 10, 2025",
-        "author": "PropTech Analyst",
-        "isNew": true,
-      },
-      {
-        "title": "Commercial Spaces Demand",
-        "subtitle": "IT hubs drive growth in office real estate",
-        "image": IMGRes.news_1,
-        "category": "Commercial",
-        "readTime": "Aug 08, 2025",
-        "author": "Business Reporter",
-        "isNew": false,
-      },
-    ];
+    // List<NewsItem> articles = [
+    //   NewsItem(
+    //     id: '1',
+    //     createdBy: 'admin',
+    //     updatedBy: 'editor',
+    //     title: 'Flutter 4.0 Released: What You Need to Know',
+    //     slug: 'flutter-4-0-released',
+    //     content:
+    //         'Flutter 4.0 brings major improvements in performance, desktop support, and tooling...',
+    //     summary:
+    //         'Flutter 4.0 is here with exciting updates for developers across platforms.',
+    //     coverImage: 'https://picsum.photos/800/400?random=1',
+    //     category: 'Technology',
+    //     tags: ['Flutter', 'Mobile', 'Cross-platform'],
+    //     author: 'Jane Doe',
+    //     authorDesignation: 'Senior Developer',
+    //     readTime: 5,
+    //     publishDate: '2025-10-08',
+    //     status: 'published',
+    //     featured: true,
+    //     metaTitle: 'Flutter 4.0 Release Notes',
+    //     metaDescription:
+    //         'All you need to know about Flutter 4.0 and its features.',
+    //     viewCount: 1024,
+    //     shareCount: 150,
+    //     createdAt: '2025-10-01T12:00:00Z',
+    //     updatedAt: '2025-10-05T15:30:00Z',
+    //   ),
+    //   NewsItem(
+    //     id: '2',
+    //     createdBy: 'editor',
+    //     updatedBy: 'editor',
+    //     title: 'Top 10 AI Tools to Boost Productivity in 2025',
+    //     slug: 'top-10-ai-tools-2025',
+    //     content:
+    //         'Artificial Intelligence tools are transforming the way we work. Here are the top 10 AI tools...',
+    //     summary:
+    //         'Explore the best AI tools for productivity, automation, and innovation in 2025.',
+    //     coverImage: 'https://picsum.photos/800/400?random=2',
+    //     category: 'Business',
+    //     tags: ['AI', 'Productivity', 'Tools'],
+    //     author: 'John Smith',
+    //     authorDesignation: 'Tech Analyst',
+    //     readTime: 7,
+    //     publishDate: '2025-09-28',
+    //     status: 'published',
+    //     featured: false,
+    //     metaTitle: 'Top 10 AI Tools in 2025',
+    //     metaDescription:
+    //         'Discover the most effective AI tools to improve efficiency and productivity.',
+    //     viewCount: 2048,
+    //     shareCount: 320,
+    //     createdAt: '2025-09-25T10:00:00Z',
+    //     updatedAt: '2025-09-27T14:45:00Z',
+    //   ),
+    //   NewsItem(
+    //     id: '3',
+    //     createdBy: 'admin',
+    //     updatedBy: 'admin',
+    //     title: 'Climate Change: Global Initiatives and Local Impact',
+    //     slug: 'climate-change-global-local',
+    //     content:
+    //         'Climate change continues to affect communities worldwide. Local initiatives are key to sustainable solutions...',
+    //     summary:
+    //         'A detailed look at how climate change is tackled globally and locally.',
+    //     coverImage: 'https://picsum.photos/800/400?random=3',
+    //     category: 'Environment',
+    //     tags: ['Climate', 'Environment', 'Sustainability'],
+    //     author: 'Alice Green',
+    //     authorDesignation: 'Environmental Journalist',
+    //     readTime: 6,
+    //     publishDate: '2025-10-01',
+    //     status: 'draft',
+    //     featured: false,
+    //     metaTitle: 'Climate Change: Initiatives & Impact',
+    //     metaDescription:
+    //         'Learn about global and local efforts to combat climate change.',
+    //     viewCount: 512,
+    //     shareCount: 80,
+    //     createdAt: '2025-09-20T09:30:00Z',
+    //     updatedAt: '2025-09-30T11:15:00Z',
+    //   ),
+    // ];
+
+    // Function to check if an article is "new" (published in last 7 days)
+    bool isNewArticle(String? publishDate) {
+      if (publishDate == null) return false;
+      final published = DateTime.tryParse(publishDate);
+      if (published == null) return false;
+      return DateTime.now().difference(published).inDays <= 7;
+    }
 
     return SizedBox(
-      height: 260,
+      height: 270,
       child: ListView.separated(
+        shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         clipBehavior: Clip.none,
         itemCount: articles.length,
-        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.medium),
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final article = articles[index];
-          final isNew = article["isNew"] as bool;
-
+          final isNew = isNewArticle(article.publishDate);
+          print("Image ------------------> ${article.coverImage}");
           return GestureDetector(
             onTap: () {
-              // Handle article tap
+              Get.to(() => NewsDetailScreen(newsItem: article));
             },
             child: Container(
               width: 280,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Colors.black.withOpacity(0.08),
-                //     blurRadius: 12,
-                //     offset: const Offset(0, 4),
-                //   ),
-                //   BoxShadow(
-                //     color: Colors.black.withOpacity(0.04),
-                //     blurRadius: 4,
-                //     offset: const Offset(0, 2),
-                //   ),
-                // ],
                 border: Border.all(color: Colors.grey.shade300, width: 0.5),
               ),
               child: Column(
@@ -1971,52 +2308,61 @@ class NewsAndArticles extends StatelessWidget {
                   /// Top image section
                   Stack(
                     children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                        child: Image.asset(
-                          article["image"]!.toString(),
-                          height: 120,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: 120,
-                              color: Colors.grey.shade200,
-                              child: Icon(
-                                Icons.image_not_supported_outlined,
-                                color: Colors.grey.shade400,
-                                size: 32,
-                              ),
-                            );
-                          },
-                        ),
+                      // ClipRRect(
+                      //   borderRadius: const BorderRadius.vertical(
+                      //     top: Radius.circular(16),
+                      //   ),
+                      //   child: Image.network(
+                      //     article.coverImage ?? '',
+                      //     height: 120,
+                      //     width: double.infinity,
+                      //     fit: BoxFit.cover,
+                      //     errorBuilder: (context, error, stackTrace) {
+                      //       return Container(
+                      //         height: 120,
+                      //         color: Colors.grey.shade200,
+                      //         child: Icon(
+                      //           Icons.image_not_supported_outlined,
+                      //           color: Colors.grey.shade400,
+                      //           size: 32,
+                      //         ),
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
+                      CustomImage(
+                        type: CustomImageType.network,
+                        src: article.coverImage,
+                        height: 120,
+                        width: double.infinity,
                       ),
 
                       /// Category badge
-                      Positioned(
-                        top: 12,
-                        left: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            article["category"]!.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
+                      if (article.category != null)
+                        Positioned(
+                          top: 12,
+                          left: 12,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              article.category!.capitalize
+                                  .toString()
+                                  .replaceAll("_", " "),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
-                      ),
 
                       /// "NEW" badge
                       if (isNew)
@@ -2057,7 +2403,7 @@ class NewsAndArticles extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                article["title"]!.toString(),
+                                article.title ?? '',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -2068,7 +2414,7 @@ class NewsAndArticles extends StatelessWidget {
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                article["subtitle"]!.toString(),
+                                article.summary ?? '',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -2079,7 +2425,7 @@ class NewsAndArticles extends StatelessWidget {
                             ],
                           ),
 
-                          /// Footer: author + date + arrow
+                          /// Footer: author + read time + arrow
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -2088,7 +2434,7 @@ class NewsAndArticles extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      article["author"]!.toString(),
+                                      article.author ?? '',
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: Colors.grey.shade700,
@@ -2098,7 +2444,7 @@ class NewsAndArticles extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      article["readTime"]!.toString(),
+                                      '${article.readTime ?? 0} min read',
                                       style: TextStyle(
                                         fontSize: 10,
                                         color: Colors.grey.shade500,
@@ -3766,7 +4112,7 @@ Widget _buildShimmerLoader() {
                       height: 14,
                       width: 120,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),

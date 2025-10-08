@@ -1363,7 +1363,8 @@ class PgInfo {
   final double? mealChargesPerMonth;
   final double? electricityChargesPerMonth;
   final PgRules? pgRules;
-  final PgRoomInfo? pgRoomInfo;
+  // final PgRoomInfo? pgRoomInfo;
+  final List<PgRoomInfo>? pgRoomInfo;
 
   PgInfo({
     this.pgName,
@@ -1395,7 +1396,9 @@ class PgInfo {
           json['pg_rules'] != null ? PgRules.fromJson(json['pg_rules']) : null,
       pgRoomInfo:
           json['pg_room_info'] != null
-              ? PgRoomInfo.fromJson(json['pg_room_info'])
+              ? List<PgRoomInfo>.from(
+                json['pg_room_info'].map((x) => PgRoomInfo.fromJson(x)),
+              )
               : null,
     );
   }
@@ -1415,7 +1418,10 @@ class PgInfo {
     if (electricityChargesPerMonth != null)
       data['electricity_charges_per_month'] = electricityChargesPerMonth;
     if (pgRules != null) data['pg_rules'] = pgRules!.toJson();
-    if (pgRoomInfo != null) data['pg_room_info'] = pgRoomInfo!.toJson();
+    if (pgRoomInfo != null) {
+      // ✅ Correct: convert each PgRoomInfo to JSON and return as list
+      data['pg_room_info'] = pgRoomInfo!.map((x) => x.toJson()).toList();
+    }
     return data;
   }
 }

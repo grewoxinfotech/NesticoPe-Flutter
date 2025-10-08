@@ -269,7 +269,8 @@ class PropertyService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         final favList = data['data']['favorite'] as List<dynamic>;
-        final List<String> favorites = favList.map<String>((e) => e['propertyId'].toString()).toList();
+        final List<String> favorites =
+            favList.map<String>((e) => e['propertyId'].toString()).toList();
 
         return favorites;
       }
@@ -279,5 +280,4 @@ class PropertyService {
       return null;
     }
   }
-
 }

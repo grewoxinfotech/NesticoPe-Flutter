@@ -15,6 +15,8 @@ class ApiConstants {
 
   // Lead
   static const String leads = "$baseURL/lead";
+  static const String news = "$baseURL/newsArticle";
+  static const String platformService = "$baseURL/platformService";
 
   //---------------------------------other-----------------------------//
 
