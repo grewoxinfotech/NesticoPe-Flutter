@@ -350,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   ];
 
-  int selectedIndex = 0;
+  int selectedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
