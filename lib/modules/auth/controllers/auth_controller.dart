@@ -58,7 +58,7 @@ class AuthController extends GetxController {
   }
 
   void fillTestCredentials() {
-    emailController.text = "Superchc@gmail.com";
+    emailController.text = "Super@gmail.com";
     // emailController.text = "abc@gmail.com";
     passwordController.text = "CRM_GrewoxAdmin@123";
   }
@@ -360,6 +360,58 @@ class AuthController extends GetxController {
         message: e.toString().replaceAll('Exception:', '').trim(),
         contentType: ContentType.failure,
       );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> covertBuyerToSeller(String sellerType) async {
+    try {
+      isLoading.value = true;
+      final user = await authService.convertBuyerToSeller(sellerType);
+      if (user) {
+        Get.offAll(() => LoginScreen());
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Conversion Failed",
+          message: "Failed to Convert Buyer to Seller",
+          contentType: ContentType.failure,
+        );
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Conversion Failed",
+        message: e.toString(),
+        contentType: ContentType.failure,
+      );
+      print("[Debug]-> Error: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> convertBuyerToReseller() async {
+    try {
+      isLoading.value = true;
+      final user = await authService.convertBuyerToReseller();
+      if (user) {
+        Get.offAll(() => LoginScreen());
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Conversion Failed",
+          message: "Failed to Convert Buyer to Reseller",
+          contentType: ContentType.failure,
+        );
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Conversion Failed",
+        message: e.toString(),
+        contentType: ContentType.failure,
+      );
+      print("[Debug]-> Error: $e");
     } finally {
       isLoading.value = false;
     }

@@ -9,6 +9,7 @@ import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
 import '../../../data/network/auth/model/user_model.dart';
+import '../../property/controllers/property_controller.dart';
 
 class HomeHeader extends StatefulWidget {
   final String cityName;
@@ -39,9 +40,12 @@ class HomeHeader extends StatefulWidget {
 
 class _HomeHeaderState extends State<HomeHeader> {
   int selectedIndex = 0;
+  final RxString selectedCity = "Surat".obs;
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => PropertyController());
+    final propertyController = Get.find<PropertyController>();
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,13 +91,16 @@ class _HomeHeaderState extends State<HomeHeader> {
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            Text(
-                              widget.cityName,
-                              style: const TextStyle(
-                                fontSize: AppFontSizes.body,
-                                color: ColorRes.textColor,
-                                fontWeight: AppFontWeights.semiBold,
-                                // fontFamily: 'Roboto',
+                            Obx(
+                              () => Text(
+                                // widget.cityName,
+                                selectedCity.value,
+                                style: const TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  color: ColorRes.textColor,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  // fontFamily: 'Roboto',
+                                ),
                               ),
                             ),
                           ],
@@ -141,8 +148,12 @@ class _HomeHeaderState extends State<HomeHeader> {
           child: Row(
             children: [
               Expanded(
-                child: buildPositionedTextField(context, () {
-                  Get.to(() => const CommonSearchField());
+                child: buildPositionedTextField(context, () async {
+                  final Map<String, String> filter = await Get.to(
+                    () => const CommonSearchField(),
+                  );
+                  selectedCity.value = filter['city'] ?? "Surat";
+                  propertyController.applyFilters(filter);
                 }),
               ),
               const SizedBox(width: 8),

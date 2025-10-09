@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
@@ -7,6 +8,7 @@ import '../../../widgets/dialogs/delete_dialog.dart';
 import '../../../widgets/drawer/drawer.dart';
 import 'package:get/get.dart';
 
+import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dart';
 import '../../home/views/home_screen.dart';
 import '../../insights/views/insights_screen.dart';
 import '../../saved_property/views/saved_property_screen.dart';
@@ -472,17 +474,41 @@ class DashboardScreen extends StatelessWidget {
           return const HomeScreen();
         } else if (navigationController.currentIndex.value == 1) {
           return Center(
-            child: ElevatedButton(
-              onPressed: () {
-                Get.offAll(
-                  () => SellerDashboardScreen(),
-                  binding: BindingsBuilder(() {
-                    Get.lazyPut<PropertyController>(() => PropertyController());
-                  }),
-                );
-              },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Get.offAll(
+                      () => SellerDashboardScreen(),
+                      binding: BindingsBuilder(() {
+                        Get.lazyPut<PropertyController>(
+                          () => PropertyController(),
+                        );
+                      }),
+                    );
+                  },
 
-              child: Text("Seller"),
+                  child: Text("Seller"),
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => ResellerConversionScreen());
+                  },
+
+                  child: Text("Convert Reseller"),
+                ),
+
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => SellerConversionScreen());
+                  },
+
+                  child: Text("Convert seller"),
+                ),
+              ],
             ),
           );
         } else if (navigationController.currentIndex.value == 2) {

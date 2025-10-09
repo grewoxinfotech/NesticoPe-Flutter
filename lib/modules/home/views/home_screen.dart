@@ -356,8 +356,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final user = await SecureStorage.getUserData();
+      debugPrint("User Data: ${user?.toJson()}");
       controller.getFavorite(user?.user?.id ?? '');
     });
+
     // Get.lazyPut(() => PropertyController());
     // final PropertyController controller = Get.find();
     return Scaffold(

@@ -1030,7 +1030,7 @@ class PropertyFilterControllerForFilter extends GetxController {
         'type':
             propertyType[selectedPropertyTypeIndex.value] == "Commercial"
                 ? 'commercial'
-                : slug(mappedListingType),
+                : 'residential',
       if (mappedListingType != null) 'listingType': mappedListingType,
       if (mappedPropertyType != null) 'propertyType': mappedPropertyType,
       if (priceRange != null) 'priceRange': priceRange,

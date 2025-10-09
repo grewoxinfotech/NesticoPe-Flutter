@@ -12,6 +12,8 @@ class ApiConstants {
   static const String verifyOtpEndpoint = "$auth/verify-otp";
   static const String resendOtpEndpoint = "$auth/resend-otp";
   static const String sellerRegister = "$auth/seller-register";
+  static const String covertToSeller = "$auth/convert-buyer-to-seller";
+  static const String convertToReseller = "$auth/convert-buyer-to-reseller";
 
   // Lead
   static const String leads = "$baseURL/lead";
@@ -21,6 +23,7 @@ class ApiConstants {
   //---------------------------------other-----------------------------//
 
   static const String cityInsights = "$baseURL/cityInsights/existing/city";
+  static const String trendingCityInsights = "$baseURL/cityInsights/trending";
 
   static const String logoutEndpoint = "/auth/logout";
   static const String resetPasswordEndpoint = "/auth/reset-password";

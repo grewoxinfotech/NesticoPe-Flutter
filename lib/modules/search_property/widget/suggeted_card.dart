@@ -5,11 +5,11 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 
-
 class SuggestionCardList extends StatelessWidget {
   final String address;
   final String propertyType;
-  final dynamic price;
+  final String state;
+  // final dynamic price;
   final VoidCallback? onTap;
   final double? cardHeight;
 
@@ -18,8 +18,9 @@ class SuggestionCardList extends StatelessWidget {
     this.onTap,
     required this.address,
     required this.propertyType,
-    required this.price,
+    // required this.price,
     this.cardHeight,
+    required this.state,
   });
 
   @override
@@ -59,7 +60,7 @@ class SuggestionCardList extends StatelessWidget {
             ),
             AppSpacing.verticalSmall,
             buildCommonText(
-              '₹ $price',
+              '$state',
               AppFontSizes.bodySmall,
               AppFontWeights.medium,
               Colors.grey.shade600,

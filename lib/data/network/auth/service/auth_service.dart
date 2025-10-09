@@ -193,6 +193,39 @@ class AuthService {
     throw Exception(data['message'] ?? 'OTP verification failed');
   }
 
+  Future<bool> convertBuyerToSeller(String sellerType) async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? '';
+    final response = await http.post(
+      Uri.parse('${ApiConstants.covertToSeller}/$userId'),
+      headers: await headers(),
+      body: jsonEncode({'sellerType': sellerType}),
+    );
+
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 200 && data['success'] == true) {
+      return true;
+    } else {
+      throw Exception(data["message"] ?? "Failed to convert buyer to seller");
+    }
+  }
+
+  Future<bool> convertBuyerToReseller() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? '';
+    final response = await http.post(
+      Uri.parse('${ApiConstants.convertToReseller}/$userId'),
+      headers: await headers(),
+    );
+
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 200 && data['success'] == true) {
+      return true;
+    } else {
+      throw Exception(data["message"] ?? "Failed to convert buyer to reseller");
+    }
+  }
+
   Future<String> verifyPasswordResetOtp(String otp, String token) async {
     final response = await http.post(
       Uri.parse('${ApiConstants.auth}/verify-otp'),

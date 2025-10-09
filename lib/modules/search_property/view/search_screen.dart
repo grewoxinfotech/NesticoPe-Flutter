@@ -4,7 +4,11 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/app/widgets/mic_search/search_mic.dart';
+import 'package:housing_flutter_app/data/network/city/tending_city/trending_city_model.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
+import 'package:housing_flutter_app/modules/other/trending_city/controllers/trending_city_controller.dart';
+import 'package:housing_flutter_app/modules/other/trending_city/views/trending_city_card.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/controller/search_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/change_location.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/search_result.dart';
@@ -14,6 +18,8 @@ import 'package:housing_flutter_app/utils/global.dart';
 import 'package:housing_flutter_app/widgets/input/custom_text_field.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../../filter_property/controller/city_insigths_controller.dart';
+import '../../filter_property/model/city_insigths_model.dart';
 import '../model/search_model.dart';
 
 class CommonSearchField extends StatefulWidget {
@@ -21,7 +27,14 @@ class CommonSearchField extends StatefulWidget {
   final bool isFromAddProperty;
   final String? initialSearchText;
   final String hintText;
-  const CommonSearchField({super.key, this.onCitySelected, this.isFromAddProperty = false, this.initialSearchText, this.hintText='Surat , Gujarat , 395010'});
+
+  const CommonSearchField({
+    super.key,
+    this.onCitySelected,
+    this.isFromAddProperty = false,
+    this.initialSearchText,
+    this.hintText = 'Surat , Gujarat , 395010',
+  });
 
   @override
   State<CommonSearchField> createState() => _CommonSearchFieldState();
@@ -35,10 +48,12 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
   late stt.SpeechToText _speech;
   final bool _isListening = false;
   final String _lastWords = " ";
+
   @override
   void initState() {
     super.initState();
-    if (widget.initialSearchText != null && widget.initialSearchText!.isNotEmpty) {
+    if (widget.initialSearchText != null &&
+        widget.initialSearchText!.isNotEmpty) {
       micController.searchText.value.text = widget.initialSearchText!;
       print('micro jsdewud ${micController.searchText.value.text}');
       // Fetch predictions for initial text
@@ -51,6 +66,10 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => CityController());
+    Get.lazyPut(() => TrendingCityController());
+    final cityController = Get.find<CityController>();
+    final trendingCityController = Get.find<TrendingCityController>();
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
@@ -62,13 +81,14 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
           ColorRes.black,
           1,
         ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: ColorRes.black),
-              onPressed: (){
-                Navigator.of(context).pop();
-                micController.searchText.value.clear();
-              }
-      ),),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: ColorRes.black),
+          onPressed: () {
+            Navigator.of(context).pop();
+            micController.searchText.value.clear();
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
@@ -94,7 +114,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                           ),
                         ),
                         controller: micController.searchText.value,
-                        hintText:widget.hintText,
+                        hintText: widget.hintText,
                       ),
                     ),
                   ),
@@ -182,16 +202,20 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                         endIndent: 16,
                       ),
                   itemBuilder: (context, index) {
-                    final item = controller.predictions[index];
+                    final Prediction item = controller.predictions[index];
                     return InkWell(
                       onTap: () {
-                        if (widget.onCitySelected != null) {
-                          widget.onCitySelected!(item);
+                        // if (widget.onCitySelected != null) {
+                        //   widget.onCitySelected!(item);
+                        //
+                        //   controller.predictions.clear(); // Clear predictions
+                        //   micController.searchText.value.clear();
+                        // }
+                        // // Remove navigation to RealEstateFilterScreen for city selection
 
-                          controller.predictions.clear(); // Clear predictions
-                          micController.searchText.value.clear();
-                        }
-                        // Remove navigation to RealEstateFilterScreen for city selection
+                        final filters = {"city": item.description ?? ""};
+                        print("Applied Filters: $filters");
+                        Get.back(result: filters);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -200,7 +224,10 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.apartment, color: ColorRes.primary),
+                            const Icon(
+                              Icons.apartment,
+                              color: ColorRes.primary,
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
@@ -246,89 +273,111 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                   },
                 );
               } else {
-                return (widget.isFromAddProperty)?SizedBox.shrink(): Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildSection("Popular Locations", propertyList),
-                    buildSection("Nearby Places", propertyList),
-                    AppSpacing.verticalSmall,
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppPadding.small,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const ChangeLocation(),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                left: AppPadding.small,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppPadding.small,
-                                vertical: AppPadding.small,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.small,
-                                ),
-                                border: Border.all(
-                                  color: Colors.grey.shade300,
-                                  width: 1,
-                                ),
-                                color: Colors.grey.shade100,
-                              ),
-                              child: buildCommonText(
-                                'Change Location',
-                                AppFontSizes.small,
-                                FontWeight.w600,
-                                ColorRes.textColor,
-                                1,
-                              ),
-                            ),
-                          ),
-                          AppSpacing.verticalSmall,
-                          buildFilterHeadingPadding('Some Popular Cities'),
-                          AppSpacing.verticalSmall,
-                          CityDropdownResult(
-                            initialCity: popularCities,
-                            onCitySelected: (index, city) {
-                              setState(() {
-                                popularCities = city;
-                                popularArea =
-                                    popularCitiesWithAreas[city]?[0] ?? '';
-                              });
-                              print("Selected City: $city at index $index");
-                            },
-                          ),
-                          AppSpacing.verticalSmall,
-                          buildFilterHeadingPadding(
-                            'Suggested Area ($popularCities)',
-                          ),
-                          AppSpacing.verticalSmall,
-                          SelectableWrap(
-                            items: popularCitiesWithAreas[popularCities] ?? [],
-                            selectedItem: popularArea,
-                            onSelected: (value) {
-                              setState(() {
-                                popularArea = value;
-                                print("Selected Area: $value");
-                              });
-                            },
-                          ),
-                          AppSpacing.verticalSmall,
-                        ],
-                      ),
-                    ),
-                  ],
-                );
+                return (widget.isFromAddProperty)
+                    ? SizedBox.shrink()
+                    : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Obx(() {
+                          if (cityController.allCities.isEmpty) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          return buildSection(
+                            "Popular Locations",
+                            cityController.allCities,
+                          );
+                        }),
+                        Obx(() {
+                          if (trendingCityController
+                              .allTrendingCities
+                              .isEmpty) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          return buildSectionTrending(
+                            "Nearby Places",
+                            trendingCityController.allTrendingCities,
+                          );
+                        }),
+                        AppSpacing.verticalSmall,
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(
+                        //     horizontal: AppPadding.small,
+                        //   ),
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       GestureDetector(
+                        //         onTap: () {
+                        //           Navigator.of(context).push(
+                        //             MaterialPageRoute(
+                        //               builder:
+                        //                   (context) => const ChangeLocation(),
+                        //             ),
+                        //           );
+                        //         },
+                        //         child: Container(
+                        //           margin: const EdgeInsets.only(
+                        //             left: AppPadding.small,
+                        //           ),
+                        //           padding: const EdgeInsets.symmetric(
+                        //             horizontal: AppPadding.small,
+                        //             vertical: AppPadding.small,
+                        //           ),
+                        //           decoration: BoxDecoration(
+                        //             borderRadius: BorderRadius.circular(
+                        //               AppRadius.small,
+                        //             ),
+                        //             border: Border.all(
+                        //               color: Colors.grey.shade300,
+                        //               width: 1,
+                        //             ),
+                        //             color: Colors.grey.shade100,
+                        //           ),
+                        //           child: buildCommonText(
+                        //             'Change Location',
+                        //             AppFontSizes.small,
+                        //             FontWeight.w600,
+                        //             ColorRes.textColor,
+                        //             1,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       AppSpacing.verticalSmall,
+                        //       buildFilterHeadingPadding('Some Popular Cities'),
+                        //       AppSpacing.verticalSmall,
+                        //       CityDropdownResult(
+                        //         initialCity: popularCities,
+                        //         onCitySelected: (index, city) {
+                        //           setState(() {
+                        //             popularCities = city;
+                        //             popularArea =
+                        //                 popularCitiesWithAreas[city]?[0] ?? '';
+                        //           });
+                        //           print("Selected City: $city at index $index");
+                        //         },
+                        //       ),
+                        //       AppSpacing.verticalSmall,
+                        //       buildFilterHeadingPadding(
+                        //         'Suggested Area ($popularCities)',
+                        //       ),
+                        //       AppSpacing.verticalSmall,
+                        //       SelectableWrap(
+                        //         items:
+                        //             popularCitiesWithAreas[popularCities] ?? [],
+                        //         selectedItem: popularArea,
+                        //         onSelected: (value) {
+                        //           setState(() {
+                        //             popularArea = value;
+                        //             print("Selected Area: $value");
+                        //           });
+                        //         },
+                        //       ),
+                        //       AppSpacing.verticalSmall,
+                        //     ],
+                        //   ),
+                        // ),
+                      ],
+                    );
               }
             }),
             const SizedBox(height: 30),
@@ -443,7 +492,47 @@ Widget highlightText(
 
 ///MARK: - Helpers
 /// 🔹 Reusable section widget
-Widget buildSection(String title, List<Map<String, dynamic>> data) {
+// Widget buildSection(String title, List<Map<String, dynamic>> data) {
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     mainAxisSize: MainAxisSize.min,
+//     children: [
+//       SizedBox(height: AppSpacing.verticalSmall.height),
+//       Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
+//         child: buildCommonText(
+//           title,
+//           12,
+//           FontWeight.w600,
+//           ColorRes.textColor,
+//           1,
+//         ),
+//       ),
+//
+//       SizedBox(
+//         height: 100,
+//         child: ListView.separated(
+//           scrollDirection: Axis.horizontal,
+//           padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
+//           itemCount: data.length,
+//           separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.small),
+//           itemBuilder: (context, index) {
+//             final property = data[index];
+//             return SuggestionCardList(
+//               address: property['address']['city'],
+//               price:
+//                   '${property['price_range']['min']} - ${property['price_range']['max']}',
+//               propertyType: property['type'],
+//               cardHeight: 65,
+//             );
+//           },
+//         ),
+//       ),
+//     ],
+//   );
+// }
+
+Widget buildSection(String title, List<CityData> data) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
@@ -468,13 +557,60 @@ Widget buildSection(String title, List<Map<String, dynamic>> data) {
           itemCount: data.length,
           separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.small),
           itemBuilder: (context, index) {
-            final property = data[index];
+            final city = data[index];
             return SuggestionCardList(
-              address: property['address']['city'],
-              price:
-                  '${property['price_range']['min']} - ${property['price_range']['max']}',
-              propertyType: property['type'],
+              address: city.city,
+              state: city.state,
+              propertyType: city.listingTypes.join(", "),
               cardHeight: 65,
+              onTap: () {
+                final filters = {"city": city.city};
+                print("Applied Filters: $filters");
+
+                Get.back(result: filters);
+              },
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+Widget buildSectionTrending(String title, List<TrendingCityData> data) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      SizedBox(height: AppSpacing.verticalSmall.height),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
+        child: buildCommonText(
+          title,
+          12,
+          FontWeight.w600,
+          ColorRes.textColor,
+          1,
+        ),
+      ),
+
+      SizedBox(
+        height: 90,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
+          itemCount: data.length,
+          separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.small),
+          itemBuilder: (context, index) {
+            final city = data[index];
+            return TrendingCityCard(
+              city: city,
+              onTap: () {
+                final filters = {"city": city.city};
+                print("Applied Filters: $filters");
+
+                Get.back(result: filters);
+              },
             );
           },
         ),
