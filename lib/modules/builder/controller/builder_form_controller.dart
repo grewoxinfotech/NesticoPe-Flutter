@@ -1,40 +1,825 @@
+//
+//
+// import 'package:file_picker/file_picker.dart';
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:image_picker/image_picker.dart';
+// import 'package:open_filex/open_filex.dart';
+//
+// // import '../../data/models/project_model.dart';
+// import '../model/config_model.dart';
+//
+// class ProjectWizardController extends GetxController {
+//   // step index: 0..4
+//   final currentStep = 0.obs;
+//   ImagePicker picker = ImagePicker();
+//   RxList<String> selectedListOfAmenities = <String>[].obs;
+//   final showAllAmenities = false.obs;
+//   RxString builderPropertyType = ''.obs;
+//   RxList<String> propertyStatusList =
+//       <String>['Ongoing', 'Launch', 'Completed'].obs;
+//   RxString selectedPropertyStatus = ''.obs;
+//
+//   RxString uploadBrocherName = ''.obs;
+//   RxString uploadBrocherPath = ''.obs;
+//
+//   // form data
+//   final project = ProjectModel(
+//     projectName: '',
+//     projectArea: 0,
+//     projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
+//     launchDate: DateTime.now(),
+//     possessionDate: DateTime.now(),
+//     configurations: [ProjectConfiguration(bhk: 1, variants: [
+//       ProjectVariant(
+//         name: '',
+//         builtUpArea: 0,
+//         carpetArea: 0,
+//         price: 0,
+//         pricePerSqFt: 0,
+//         totalUnits: 1,
+//         availableUnits: 1,
+//         specifications: [],
+//       )
+//     ])],
+//     reraId: '',
+//     propertyTypes: 'apartment',
+//     status: 'upcoming',
+//     address: '',
+//     city: '',
+//     state: '',
+//     zipCode: '',
+//     location: '',
+//     nearbyLocations: [],
+//     amenities: [],
+//     imageList: [],
+//     videoList: [],
+//     brochure: null,
+//     projectHighlights: [],
+//     projectContactInfo: ProjectContactInfo(
+//       name: '',
+//       phone: '',
+//       email: '',
+//     ),
+//   ).obs;
+//
+//
+//   // 🔹 Text controllers
+//   late TextEditingController projectNameController;
+//   late TextEditingController projectAreaController;
+//   late TextEditingController totalBuildingsController;
+//   late TextEditingController totalUnitsController;
+//   late TextEditingController reraIdController;
+//   late TextEditingController addressController;
+//   late TextEditingController cityController;
+//   late TextEditingController stateController;
+//   late TextEditingController zipCodeController;
+//   late TextEditingController locationController;
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//
+//
+//     projectNameController =
+//         TextEditingController(text: project.value.projectName);
+//     projectAreaController =
+//         TextEditingController(text: project.value.projectArea.toString());
+//     totalBuildingsController =
+//         TextEditingController(text: project.value.projectSize.totalBuildings.toString());
+//     totalUnitsController =
+//         TextEditingController(text: project.value.projectSize.totalUnits.toString());
+//     reraIdController = TextEditingController(text: project.value.reraId);
+//     addressController = TextEditingController(text: project.value.address);
+//     cityController = TextEditingController(text: project.value.city);
+//     stateController = TextEditingController(text: project.value.state);
+//     zipCodeController = TextEditingController(text: project.value.zipCode);
+//     locationController = TextEditingController(text: project.value.location);
+//   }
+//
+//
+//
+//
+//   void removeBuilderImage(int index) {
+//     project.update((p) {
+//       if (p == null) return;
+//       if (index >= 0 && index < p.imageList.length) {
+//         p.imageList.removeAt(index);
+//       }
+//     });
+//   }
+//
+//   void removeBuilderVideo(int index) {
+//     project.update((p) {
+//       if (p == null) return;
+//       if (index >= 0 && index < p.videoList.length) {
+//         p.videoList.removeAt(index);
+//       }
+//     });
+//   }
+//
+//
+//
+//   void setCommonMethodValue<T>(Rx<T> target, T value) {
+//     target.value = value;
+//     print('selected Property ${target.value}');
+//   }
+//
+//   Future<void> builderImagePicker() async {
+//     try {
+//       List<XFile> files = await picker.pickMultiImage(
+//         imageQuality: 80,
+//         maxWidth: 1024,
+//         maxHeight: 1024,
+//         limit: 5,
+//       );
+//
+//       if (files.isNotEmpty) {
+//
+//         if ( project.value.imageList.length + files.length > 5) {
+//           Get.snackbar(
+//             'Limit Exceeded',
+//             'You can only select up to 5 images in total',
+//             snackPosition: SnackPosition.BOTTOM,
+//           );
+//           return;
+//         }
+//
+//       project.update((p) {
+//         if (p == null) return;
+//         for (var file in files) {
+//           p.imageList.add(file.path);
+//           print('image added ${file.path}');
+//         }
+//       });
+//         project.refresh();
+//
+//         Get.snackbar(
+//           'Success',
+//           '${files.length} image(s) added',
+//           snackPosition: SnackPosition.BOTTOM,
+//         );
+//       }
+//     } catch (e) {
+//       Get.snackbar(
+//         'Error',
+//         'Failed to pick images: $e',
+//         snackPosition: SnackPosition.BOTTOM,
+//       );
+//     }
+//   }
+//
+//   Future<void> builderVideoPicker() async {
+//     try {
+//
+//       List<XFile> videos = await picker.pickMultiVideo(
+//         limit: 5,
+//         maxDuration: Duration(seconds: 60),
+//       );
+//
+//       if (videos.isNotEmpty) {
+//
+//         if ( project.value.videoList.length + videos.length > 5) {
+//           Get.snackbar(
+//             'Limit Exceeded',
+//             'You can only select up to 5 videos in total',
+//             snackPosition: SnackPosition.BOTTOM,
+//           );
+//           return;
+//         }
+//
+//
+//       project.update((p) {
+//         if (p == null) return;
+//         for (var video in videos) {
+//           p.videoList.add(video.path);
+//           print('Video added: ${video.path}');
+//         }
+//       });
+//         project.refresh(
+//
+//         );
+//
+//         Get.snackbar(
+//           'Success',
+//           '${videos.length} video(s) added',
+//           snackPosition: SnackPosition.BOTTOM,
+//         );
+//       }
+//     } catch (e) {
+//       Get.snackbar(
+//         'Error',
+//         'Failed to pick videos: $e',
+//         snackPosition: SnackPosition.BOTTOM,
+//       );
+//     }
+//   }
+//
+//   Future<void> pickFileInBuilder() async {
+//     FilePickerResult? result = await FilePicker.platform.pickFiles(
+//       type: FileType.custom,
+//       // Or specify types like FileType.image, FileType.custom
+//       allowMultiple: false,
+//       // Set to true for multiple file selection
+//       allowedExtensions: ['pdf', 'doc', 'txt'], // For FileType.custom
+//     );
+//
+//     if (result != null) {
+//       PlatformFile file = result.files.first;
+//
+//       print('Selected file: ${file.name}');
+//       uploadBrocherPath.value = file.path ?? 'No Data Found';
+//       uploadBrocherName.value = file.name;
+//       print(
+//         'Path: ${file.path}  ${uploadBrocherName.value} ${uploadBrocherPath.value}',
+//       );
+//       uploadBrocherPath.refresh();
+//       // sync brochure path into ProjectModel so print/export shows it
+//       if (file.path != null && file.path!.isNotEmpty) {
+//         project.update((p) {
+//           p!.brochure = file.path;
+//         });
+//       }
+//     } else {
+//       print('File selection canceled.');
+//     }
+//   }
+//
+//   Future<void> pdfPreviewByDefaultApp(String path) async {
+//     final result = await OpenFilex.open(path);
+//     print('Open result: ${result.message}');
+//   }
+//
+//   void removeBuilderBrocher() {
+//     uploadBrocherPath.value = '';
+//     uploadBrocherName.value = '';
+//     uploadBrocherPath.refresh();
+//     // also clear from ProjectModel
+//     project.update((p) {
+//       p!.brochure = null;
+//     });
+//   }
+//
+//   // UI helpers
+//   final formKeys = List.generate(6, (_) => GlobalKey<FormState>());
+//
+//   void next() {
+//     if (_validateCurrentStep()) {
+//       print('lenght of formkeey ${formKeys.length}');
+//       if (currentStep.value < 5) currentStep.value++;
+//
+//     }
+//   }
+//
+//   void selectedBuilderPropertyType(String index) {
+//     builderPropertyType.value = index;
+//     print('Selected Property Types ${builderPropertyType.value}');
+//   }
+//
+//   void toggleAmenitiesView() {
+//     showAllAmenities.value = !showAllAmenities.value;
+//   }
+//
+//   void back() {
+//     if (currentStep.value > 0) currentStep.value--;
+//   }
+//
+//   void addBuilderAmenities(String items) {
+//     if (selectedListOfAmenities.contains(items)) {
+//       selectedListOfAmenities.remove(items);
+//     } else {
+//       selectedListOfAmenities.add(items);
+//     }
+//     selectedListOfAmenities.refresh();
+//   }
+//
+//   bool _validateCurrentStep() {
+//     final key = formKeys[currentStep.value];
+//     final form = key.currentState;
+//     if (form == null) return true;
+//     if (form.validate()) {
+//       form.save();
+//       // cross-step custom validations
+//       if (currentStep.value == 0) {
+//         final err = _validateDates();
+//         if (err != null) {
+//           Get.snackbar('Validation Error', err);
+//           return false;
+//         }
+//       }
+//       return true;
+//     }
+//     return false;
+//   }
+//
+//   String? _validateDates() {
+//     final p = project.value;
+//     if (p.possessionDate.isBefore(p.launchDate)) {
+//       return 'Possession must be after Launch';
+//     }
+//     return null;
+//   }
+//
+//   // Configurations dynamic controls
+//   void addConfiguration() {
+//     project.update((p) {
+//       p!.configurations.add(ProjectConfiguration(bhk: 1, variants: []));
+//     });
+//   }
+//
+//   void removeConfiguration(int index) {
+//     project.update((p) {
+//       if (p!.configurations.length > 1) {
+//         p.configurations.removeAt(index);
+//       }
+//     });
+//   }
+//
+//   void addVariant(int configIndex) {
+//     project.update((p) {
+//       p!.configurations[configIndex].variants.add(
+//         ProjectVariant(
+//           name: '',
+//           builtUpArea: 0,
+//           carpetArea: 0,
+//           price: 0,
+//           totalUnits: 0,
+//           availableUnits: 0,
+//         ),
+//       );
+//     });
+//   }
+//
+//   void removeVariant(int configIndex, int variantIndex) {
+//     project.update((p) {
+//       p!.configurations[configIndex].variants.removeAt(variantIndex);
+//     });
+//   }
+//
+//   void submit() {
+//     // UI only; you can hook API here later.
+//     print('jhdyuf');
+//     Get.snackbar('Success', 'Project data is ready (UI-only)');
+//     printProjectDetails();
+//   }
+//   void printProjectDetails() {
+//     final p = project.value;
+//
+//     print('===== Project Details =====');
+//     print('Name: ${p.projectName}');
+//     print('Area: ${p.projectArea} sq.ft');
+//     print('Total Buildings: ${p.projectSize.totalBuildings}');
+//     print('Total Units: ${p.projectSize.totalUnits}');
+//     print('Launch Date: ${p.launchDate}');
+//     print('Possession Date: ${p.possessionDate}');
+//     print('RERA ID: ${p.reraId}');
+//     print('Property Type: ${p.propertyTypes}');
+//     print('Status: ${p.status}');
+//     print('Address: ${p.address}');
+//     print('City: ${p.city}');
+//     print('State: ${p.state}');
+//     print('Zip Code: ${p.zipCode}');
+//     print('Location: ${p.location}');
+//
+//     // Nearby locations
+//     if (p.nearbyLocations.isNotEmpty) {
+//       print('Nearby Locations:');
+//       for (var i = 0; i < p.nearbyLocations.length; i++) {
+//         print('  ${i + 1}: ${p.nearbyLocations[i]}');
+//       }
+//     }
+//
+//     // Amenities
+//     if (p.amenities.isNotEmpty) {
+//       print('Amenities: ${p.amenities.join(', ')}');
+//     }
+//
+//     // Media
+//     if (p.imageList.isNotEmpty) {
+//       print('Images:');
+//       for (var img in p.imageList) {
+//         print('  $img');
+//       }
+//     }
+//     if (p.videoList.isNotEmpty) {
+//       print('Videos:');
+//       for (var vid in p.videoList) {
+//         print('  $vid');
+//       }
+//     }
+//
+//     // Brochure
+//     if (p.brochure?.isNotEmpty??false) {
+//       print('Brochure: ${p.brochure}');
+//     }
+//
+//     // Highlights
+//     if (p.projectHighlights.isNotEmpty) {
+//       print('Project Highlights:');
+//       for (var highlight in p.projectHighlights) {
+//         print('  - $highlight');
+//       }
+//     }
+//
+//     // Contact Info
+//     if (p.projectContactInfo != null) {
+//       print('Contact Info:');
+//       print('  Name: ${p.projectContactInfo!.name}');
+//       print('  Phone: ${p.projectContactInfo!.phone}');
+//       print('  Email: ${p.projectContactInfo!.email}');
+//     }
+//
+//     // Configurations
+//     if (p.configurations.isNotEmpty) {
+//       print('Configurations:');
+//       for (var i = 0; i < p.configurations.length; i++) {
+//         final config = p.configurations[i];
+//         print('  Configuration ${i + 1}: BHK ${config.bhk}');
+//         if (config.variants.isNotEmpty) {
+//           for (var j = 0; j < config.variants.length; j++) {
+//             final variant = config.variants[j];
+//             print(
+//                 '    Variant ${j + 1}: ${variant.name}, BuiltUp: ${variant.builtUpArea}, Carpet: ${variant.carpetArea}, Price: ${variant.price}, Price/SqFt: ${variant.pricePerSqFt}, Total Units: ${variant.totalUnits}, Available Units: ${variant.availableUnits}');
+//             if (variant.specifications.isNotEmpty) {
+//               print('      Specifications: ${variant.specifications.join(', ')}');
+//             }
+//           }
+//         }
+//       }
+//     }
+//     print('============================');
+//   }
+//
+//
+//
+//   Map<String, dynamic> getAllBuilderValues() {
+//     return project.value.getAllBuilderValues();
+//   }
+//
+//
+//   void updateBuilderValues(Map<String, dynamic> values) {
+//     project.update((p) {
+//       p!.updateBuilderValues(values);
+//     });
+//   }
+//
+//
+//   List<String> validateBuilderValues() {
+//     return project.value.validateBuilderValues();
+//   }
+//
+//
+//   Map<String, dynamic> exportBuilderData() {
+//     return project.value.toBuilderJson();
+//   }
+//
+//
+//   void importBuilderData(Map<String, dynamic> jsonData) {
+//     final newProject = ProjectModel.fromBuilderJson(jsonData);
+//     project.value = newProject;
+//
+//     // Update text controllers with new values
+//     projectNameController.text = newProject.projectName;
+//     projectAreaController.text = newProject.projectArea.toString();
+//     totalBuildingsController.text = newProject.projectSize.totalBuildings.toString();
+//     totalUnitsController.text = newProject.projectSize.totalUnits.toString();
+//     reraIdController.text = newProject.reraId;
+//     addressController.text = newProject.address;
+//     cityController.text = newProject.city;
+//     stateController.text = newProject.state;
+//     zipCodeController.text = newProject.zipCode;
+//     locationController.text = newProject.location;
+//
+//
+//     selectedListOfAmenities.value = List<String>.from(newProject.amenities);
+//
+//
+//     if (newProject.propertyTypes != null) {
+//       builderPropertyType.value = newProject.propertyTypes!;
+//     }
+//     selectedPropertyStatus.value = newProject.status;
+//
+//
+//     project.value.imageList = List<String>.from(newProject.imageList);
+//     project.value.videoList = List<String>.from(newProject.videoList);
+//
+//
+//     if (newProject.brochure != null) {
+//       uploadBrocherPath.value = newProject.brochure!;
+//       uploadBrocherName.value = newProject.brochure!.split('/').last;
+//     }
+//   }
+//
+//   /// Builder folder ના values ને save કરવા માટે method (API call કરવા માટે)
+//   Future<bool> saveBuilderData() async {
+//     try {
+//       // Validate data first
+//       final errors = validateBuilderValues();
+//       if (errors.isNotEmpty) {
+//         Get.snackbar(
+//           'Validation Error',
+//           'Please fix the following errors:\n${errors.join('\n')}',
+//           snackPosition: SnackPosition.BOTTOM,
+//           duration: Duration(seconds: 5),
+//         );
+//         return false;
+//       }
+//
+//       // Get all builder values
+//       final builderData = getAllBuilderValues();
+//
+//       // Here you can add API call to save the data
+//       // For now, just print the data
+//       print('Saving Builder Data: $builderData');
+//
+//       Get.snackbar(
+//         'Success',
+//         'Builder data saved successfully!',
+//         snackPosition: SnackPosition.BOTTOM,
+//       );
+//
+//       return true;
+//     } catch (e) {
+//       Get.snackbar(
+//         'Error',
+//         'Failed to save builder data: $e',
+//         snackPosition: SnackPosition.BOTTOM,
+//       );
+//       return false;
+//     }
+//   }
+//
+// }
+
+
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// import '../../data/models/project_model.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:open_filex/open_filex.dart';
+
 import '../model/config_model.dart';
 
 class ProjectWizardController extends GetxController {
-  // step index: 0..4
   final currentStep = 0.obs;
+  ImagePicker picker = ImagePicker();
+  RxList<String> selectedListOfAmenities = <String>[].obs;
+  final showAllAmenities = false.obs;
+  RxString builderPropertyType = ''.obs;
+  RxList<String> propertyStatusList = <String>['Ongoing', 'Launch', 'Completed'].obs;
+  RxString selectedPropertyStatus = ''.obs;
 
-  // form data
+  RxString uploadBrocherName = ''.obs;
+  RxString uploadBrocherPath = ''.obs;
+
   final project = ProjectModel(
     projectName: '',
     projectArea: 0,
     projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
     launchDate: DateTime.now(),
     possessionDate: DateTime.now(),
-    configurations: [ProjectConfiguration(bhk: 1)],
+    configurations: [
+      ProjectConfiguration(
+        bhk: 1,
+        variants: [
+          ProjectVariant(
+            name: '',
+            builtUpArea: 0,
+            carpetArea: 0,
+            price: 0,
+            pricePerSqFt: 0,
+            totalUnits: 1,
+            availableUnits: 1,
+            specifications: [],
+          )
+        ],
+      )
+    ],
     reraId: '',
+    propertyTypes: 'apartment',
     status: 'upcoming',
     address: '',
     city: '',
     state: '',
     zipCode: '',
     location: '',
+    nearbyLocations: [],
+    amenities: [],
+    imageList: [],
+    videoList: [],
+    brochure: null,
+    projectHighlights: [],
+    projectContactInfo: ProjectContactInfo(
+      name: '',
+      phone: '',
+      email: '',
+    ),
   ).obs;
 
-  // UI helpers
-  final formKeys = List.generate(5, (_) => GlobalKey<FormState>());
+  late TextEditingController projectNameController;
+  late TextEditingController projectAreaController;
+  late TextEditingController totalBuildingsController;
+  late TextEditingController totalUnitsController;
+  late TextEditingController reraIdController;
+  late TextEditingController addressController;
+  late TextEditingController cityController;
+  late TextEditingController stateController;
+  late TextEditingController zipCodeController;
+  late TextEditingController locationController;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    projectNameController = TextEditingController(text: project.value.projectName);
+    projectAreaController = TextEditingController(text: project.value.projectArea.toString());
+    totalBuildingsController = TextEditingController(text: project.value.projectSize.totalBuildings.toString());
+    totalUnitsController = TextEditingController(text: project.value.projectSize.totalUnits.toString());
+    reraIdController = TextEditingController(text: project.value.reraId);
+    addressController = TextEditingController(text: project.value.address);
+    cityController = TextEditingController(text: project.value.city);
+    stateController = TextEditingController(text: project.value.state);
+    zipCodeController = TextEditingController(text: project.value.zipCode);
+    locationController = TextEditingController(text: project.value.location);
+  }
+
+  void removeBuilderImage(int index) {
+    project.update((p) {
+      if (p == null) return;
+      if (index >= 0 && index < p.imageList.length) {
+        p.imageList.removeAt(index);
+      }
+    });
+  }
+
+  void removeBuilderVideo(int index) {
+    project.update((p) {
+      if (p == null) return;
+      if (index >= 0 && index < p.videoList.length) {
+        p.videoList.removeAt(index);
+      }
+    });
+  }
+
+  void setCommonMethodValue<T>(Rx<T> target, T value) {
+    target.value = value;
+    print('selected Property ${target.value}');
+  }
+
+  Future<void> builderImagePicker() async {
+    try {
+      List<XFile> files = await picker.pickMultiImage(
+        imageQuality: 80,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        limit: 5,
+      );
+
+      if (files.isNotEmpty) {
+        if (project.value.imageList.length + files.length > 5) {
+          Get.snackbar(
+            'Limit Exceeded',
+            'You can only select up to 5 images in total',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return;
+        }
+
+        project.update((p) {
+          if (p == null) return;
+          for (var file in files) {
+            p.imageList.add(file.path);
+            print('image added ${file.path}');
+          }
+        });
+        project.refresh();
+
+        Get.snackbar(
+          'Success',
+          '${files.length} image(s) added',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick images: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> builderVideoPicker() async {
+    try {
+      List<XFile> videos = await picker.pickMultiVideo(
+        limit: 5,
+        maxDuration: Duration(seconds: 60),
+      );
+
+      if (videos.isNotEmpty) {
+        if (project.value.videoList.length + videos.length > 5) {
+          Get.snackbar(
+            'Limit Exceeded',
+            'You can only select up to 5 videos in total',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return;
+        }
+
+        project.update((p) {
+          if (p == null) return;
+          for (var video in videos) {
+            p.videoList.add(video.path);
+            print('Video added: ${video.path}');
+          }
+        });
+        project.refresh();
+
+        Get.snackbar(
+          'Success',
+          '${videos.length} video(s) added',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick videos: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> pickFileInBuilder() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowMultiple: false,
+      allowedExtensions: ['pdf', 'doc', 'txt'],
+    );
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+
+      print('Selected file: ${file.name}');
+      uploadBrocherPath.value = file.path ?? 'No Data Found';
+      uploadBrocherName.value = file.name;
+      print('Path: ${file.path}  ${uploadBrocherName.value} ${uploadBrocherPath.value}');
+      uploadBrocherPath.refresh();
+
+      if (file.path != null && file.path!.isNotEmpty) {
+        project.update((p) {
+          p!.brochure = file.name;
+          p!.pdfPath=file.path;
+        });
+      }
+    } else {
+      print('File selection canceled.');
+    }
+  }
+
+  Future<void> pdfPreviewByDefaultApp(String path) async {
+    final result = await OpenFilex.open(path);
+    print('Open result: ${result.message}');
+  }
+
+  void removeBuilderBrocher() {
+    uploadBrocherPath.value = '';
+    uploadBrocherName.value = '';
+    uploadBrocherPath.refresh();
+    project.update((p) {
+      p!.brochure = null;
+    });
+  }
+
+  final formKeys = List.generate(6, (_) => GlobalKey<FormState>());
 
   void next() {
     if (_validateCurrentStep()) {
-      if (currentStep.value < 4) currentStep.value++;
+      print('length of formkey ${formKeys.length}');
+      if (currentStep.value < 5) currentStep.value++;
     }
+  }
+
+  void selectedBuilderPropertyType(String index) {
+    builderPropertyType.value = index;
+    print('Selected Property Types ${builderPropertyType.value}');
+  }
+
+  void toggleAmenitiesView() {
+    showAllAmenities.value = !showAllAmenities.value;
   }
 
   void back() {
     if (currentStep.value > 0) currentStep.value--;
+  }
+
+  void addBuilderAmenities(String items) {
+    if (project.value.amenities.contains(items)) {project.value.amenities.remove(items);
+    } else {
+      project.value.amenities.add(items);
+    }
+    project.refresh();
   }
 
   bool _validateCurrentStep() {
@@ -43,11 +828,10 @@ class ProjectWizardController extends GetxController {
     if (form == null) return true;
     if (form.validate()) {
       form.save();
-      // cross-step custom validations
       if (currentStep.value == 0) {
         final err = _validateDates();
         if (err != null) {
-          Get.snackbar('વૈધતા ભૂલ', err);
+          Get.snackbar('Validation Error', err);
           return false;
         }
       }
@@ -59,12 +843,11 @@ class ProjectWizardController extends GetxController {
   String? _validateDates() {
     final p = project.value;
     if (p.possessionDate.isBefore(p.launchDate)) {
-      return 'Possession Launch પછી હોવું જોઈએ';
+      return 'Possession must be after Launch';
     }
     return null;
   }
 
-  // Configurations dynamic controls
   void addConfiguration() {
     project.update((p) {
       p!.configurations.add(ProjectConfiguration(bhk: 1, variants: []));
@@ -81,14 +864,16 @@ class ProjectWizardController extends GetxController {
 
   void addVariant(int configIndex) {
     project.update((p) {
-      p!.configurations[configIndex].variants.add(ProjectVariant(
-        name: '',
-        builtUpArea: 0,
-        carpetArea: 0,
-        price: 0,
-        totalUnits: 0,
-        availableUnits: 0,
-      ));
+      p!.configurations[configIndex].variants.add(
+        ProjectVariant(
+          name: '',
+          builtUpArea: 0,
+          carpetArea: 0,
+          price: 0,
+          totalUnits: 0,
+          availableUnits: 0,
+        ),
+      );
     });
   }
 
@@ -99,7 +884,119 @@ class ProjectWizardController extends GetxController {
   }
 
   void submit() {
-    // UI only; you can hook API here later.
-    Get.snackbar('સફળતા', 'પ્રોજેક્ટ ડેટા તૈયાર છે (UI-only)');
+
+
+
+    Get.snackbar('Success', 'Project data is ready');
+    printProjectDetails();
+  }
+
+  void printProjectDetails() {
+    final p = project.value;
+
+    print('===== Project Details =====');
+    print('Name: ${p.projectName}');
+    print('Area: ${p.projectArea} sq.ft');
+    print('Total Buildings: ${p.projectSize.totalBuildings}');
+    print('Total Units: ${p.projectSize.totalUnits}');
+    print('Launch Date: ${p.launchDate}');
+    print('Possession Date: ${p.possessionDate}');
+    print('RERA ID: ${p.reraId}');
+    print('Property Type: ${p.propertyTypes}');
+    print('Status: ${p.status}');
+    print('Address: ${p.address}');
+    print('City: ${p.city}');
+    print('State: ${p.state}');
+    print('Zip Code: ${p.zipCode}');
+    print('Location: ${p.location}');
+
+    if (p.nearbyLocations.isNotEmpty) {
+      print('Nearby Locations:');
+      for (var i = 0; i < p.nearbyLocations.length; i++) {
+        print('  ${i + 1}: ${p.nearbyLocations[i]}');
+      }
+    }
+
+    if (p.amenities.isNotEmpty) {
+      print('Amenities: ${p.amenities.join(', ')}');
+    }
+
+    if (p.imageList.isNotEmpty) {
+      print('Images:');
+      for (var img in p.imageList) {
+        print('  $img');
+      }
+    }
+    if (p.videoList.isNotEmpty) {
+      print('Videos:');
+      for (var vid in p.videoList) {
+        print('  $vid');
+      }
+    }
+
+    if (p.brochure?.isNotEmpty ?? false) {
+      print('Brochure: ${p.brochure}');
+    }
+
+    if (p.projectHighlights.isNotEmpty) {
+      print('Project Highlights:');
+      for (var highlight in p.projectHighlights) {
+        print('  - $highlight');
+      }
+    }
+
+    if (p.projectContactInfo != null) {
+      print('Contact Info:');
+      print('  Name: ${p.projectContactInfo!.name}');
+      print('  Phone: ${p.projectContactInfo!.phone}');
+      print('  Email: ${p.projectContactInfo!.email}');
+    }
+
+    if (p.configurations.isNotEmpty) {
+      print('Configurations:');
+      for (var i = 0; i < p.configurations.length; i++) {
+        final config = p.configurations[i];
+        print('  Configuration ${i + 1}: BHK ${config.bhk}');
+        if (config.variants.isNotEmpty) {
+          for (var j = 0; j < config.variants.length; j++) {
+            final variant = config.variants[j];
+            print('    Variant ${j + 1}: ${variant.name}, BuiltUp: ${variant.builtUpArea}, Carpet: ${variant.carpetArea}, Price: ${variant.price}, Price/SqFt: ${variant.pricePerSqFt}, Total Units: ${variant.totalUnits}, Available Units: ${variant.availableUnits}');
+            if (variant.specifications.isNotEmpty) {
+              print('      Specifications: ${variant.specifications.join(', ')}');
+            }
+          }
+        }
+      }
+    }
+    print('============================');
+  }
+
+  Map<String, dynamic> exportData() {
+    return project.value.toJson();
+  }
+
+
+  Future<bool> saveData() async {
+    try {
+      final projectData = project.value.toJson();
+
+      // TODO: Add API call here
+      print('Saving Project Data: $projectData');
+
+      Get.snackbar(
+        'Success',
+        'Project data saved successfully!',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      return true;
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to save project data: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return false;
+    }
   }
 }

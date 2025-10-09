@@ -616,11 +616,11 @@ class CreatePropertyController extends GetxController {
   }
 
   bool isSelected(String item) => selectedItems.contains(item);
-
   void select(String index) {
     selectedIndex.value = index;
     debugPrint("Selected index: $index");
   }
+
 
   // Toggle user type
   void toggleUserType(SellerType type) {
@@ -636,6 +636,7 @@ class CreatePropertyController extends GetxController {
 
   void setValue<T>(Rx<T> target, T value) {
     target.value = value;
+
   }
 
   void submitForm() {

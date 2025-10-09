@@ -742,20 +742,13 @@ class ResellerDashboardScreen extends StatelessWidget {
         return Container(
           padding: EdgeInsets.all(cardPadding),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:color.withOpacity(0.02),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(width: 1, color: Colors.grey.shade300),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            border: Border.all(width: 1, color: color.withOpacity(0.3)),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -778,8 +771,9 @@ class ResellerDashboardScreen extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(iconPadding),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(8),
+                      border: Border.all(width: 1, color: color.withOpacity(0.3)),
                     ),
                     child: Icon(icon, color: color, size: iconSize),
                   ),

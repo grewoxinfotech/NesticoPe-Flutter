@@ -2072,6 +2072,7 @@ class ProductListingScreen extends StatelessWidget {
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.08),
+              border: Border.all(width: 1,color: color.withOpacity(0.3)),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 15, color: color),

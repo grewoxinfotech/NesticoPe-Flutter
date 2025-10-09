@@ -286,7 +286,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withOpacity(0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withOpacity(0.3),width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,7 +437,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withOpacity(0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withOpacity(0.3),width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -555,6 +555,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: Colors.orange.withOpacity(0.3),
+                            width: 1
                           ),
                         ),
                         child: Text(
@@ -737,7 +738,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.blue.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                      border: Border.all(color: Colors.blue.withOpacity(0.3),width: 1),
                     ),
                     child: Text(
                       amenity,

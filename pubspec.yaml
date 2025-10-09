@@ -21,6 +21,8 @@ dependencies:
   image_picker:
   permission_handler:
   dropdown_search:
+  path_provider:
+  video_thumbnail:
   get:
   connectivity_plus:
   internet_connection_checker_plus:
@@ -35,6 +37,7 @@ dependencies:
   share_plus: ^12.0.0
   url_launcher:
   readmore:
+  clipboard:
   speech_to_text: 
   fl_chart:
   easy_stepper:

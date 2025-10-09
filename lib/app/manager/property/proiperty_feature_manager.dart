@@ -31,7 +31,7 @@ class PropertyFeatureManager {
       case 'rent':
         return [
           // "Rent Price: ₹${financial?.propertyRentPerMonth?.toStringAsFixed(0) ?? 'N/A'} / month",
-          "Deposit: ₹${financial?.propertySecurityDeposit?.toStringAsFixed(0) ?? 'N/A'}",
+          "Deposit: ₹${financial?.propertySecurityDeposit.toStringAsFixed(0) ?? 'N/A'}",
           "BHK: ${details.bhk ?? 'N/A'}",
           "Bathrooms: ${details.bathroom ?? 'N/A'}",
           "Furnish Type: ${furnish?.furnishType ?? 'N/A'}",
@@ -46,7 +46,7 @@ class PropertyFeatureManager {
           // "Rent per bed: ₹${financial?.propertyRentPerMonth?.toStringAsFixed(0) ?? 'N/A'}",
           "Sharing Type: ${property.propertyType ?? 'N/A'}",
           "Furnishing: ${furnish?.furnishType ?? 'N/A'}",
-          "Security Deposit: ₹${financial?.propertySecurityDeposit?.toStringAsFixed(0) ?? 'N/A'}",
+          "Security Deposit: ₹${financial?.propertySecurityDeposit.toStringAsFixed(0) ?? 'N/A'}",
           // if (details.amenities != null && details.amenities!.isNotEmpty)
           //   "Facilities: ${details.amenities!.join(', ')}",
         ];

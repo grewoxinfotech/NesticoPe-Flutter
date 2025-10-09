@@ -60,9 +60,12 @@ class ForgetPasswordScreen extends StatelessWidget {
                   NesticoPeButton(
                     title: "Send OTP",
                     onTap:
-                        () => authController.forgotPassword(
-                          id: authController.emailController.text.trim(),
-                        ),
+                        () {
+                          authController.forgotPassword(
+                            id: authController.emailController.text.trim(),
+                          );
+
+                        }
                   ),
                 ],
               ),

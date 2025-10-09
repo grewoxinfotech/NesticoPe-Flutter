@@ -1,47 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// import '../../../data/validators/project_validators.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
+
 import '../../controller/builder_form_controller.dart';
-// import '../../controllers/project_wizard_controller.dart';
+
+import '../widget/common_builder_textfield.dart';
 import '../widget/validation/validation.dart';
 
 class StepBasicInfo extends GetView<ProjectWizardController> {
   final GlobalKey<FormState> formKey;
+
   const StepBasicInfo({super.key, required this.formKey});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final labelStyle = theme.textTheme.bodySmall;
+    final labelStyle = theme.textTheme.labelMedium;
     return Form(
       key: formKey,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Obx(() {
-          final p = controller.project.value;
-          return Column(
+      child: Obx(() {
+        final p = controller.project.value;
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Basic Info', style: theme.textTheme.titleLarge),
               const SizedBox(height: 12),
-
-              Text('Project Name', style: labelStyle),
-              TextFormField(
+              CommonTextField(
+                label: 'Project Name',
+                hint: 'e.g. Sunrise Residency',
+                controller: controller.projectNameController,
+                prefixIcon: const Icon(
+                  Icons.apartment_outlined,
+                  size: 20,
+                  color: ColorRes.primary,
+                ),
                 initialValue: p.projectName,
-                decoration: const InputDecoration(hintText: 'e.g. Sunrise Residency'),
-                validator: (v) => ProjectValidators.requiredText(v, field: 'Project Name'),
-                onSaved: (v) => controller.project.update((x) => x!.projectName = v!.trim()),
+                validator:
+                    (v) => ProjectValidators.requiredText(
+                      v,
+                      field: 'Project Name',
+                    ),
+                onSaved:
+                    (v) => controller.project.update(
+                      (x) => x!.projectName = v!.trim(),
+                    ),
+                borderType: 'outline', // or 'underline', 'none', 'filled'
               ),
+
               const SizedBox(height: 12),
 
-              Text('Project Area (sq.ft)', style: labelStyle),
-              TextFormField(
-                initialValue: p.projectArea == 0 ? '' : p.projectArea.toString(),
+              CommonTextField(
+                label: 'Project Area (sq.ft)',
+                controller: controller.projectAreaController,
+                hint: 'e.g. 125000',
+                suffixText: 'sq.ft',
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(hintText: 'e.g. 125000'),
-                validator: (v) => ProjectValidators.positiveNumber(num.tryParse(v ?? ''), field: 'Project Area'),
-                onSaved: (v) => controller.project.update((x) => x!.projectArea = double.tryParse(v ?? '') ?? 0),
+                textInputAction: TextInputAction.next,
+                prefixIcon: Icon(
+                  Icons.square_foot_outlined,
+                  size: 20,
+                  color: ColorRes.primary,
+                ),
+                initialValue:
+                    p.projectArea == 0 ? '' : p.projectArea.toString(),
+                validator:
+                    (v) => ProjectValidators.positiveNumber(
+                      num.tryParse(v ?? ''),
+                      field: 'Project Area',
+                    ),
+                onSaved:
+                    (v) => controller.project.update(
+                      (x) => x!.projectArea = double.tryParse(v ?? '') ?? 0,
+                    ),
+                borderType: 'outline', // or 'underline', 'none', 'filled'
               ),
+
               const SizedBox(height: 12),
 
               Row(
@@ -50,12 +84,29 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Total Buildings', style: labelStyle),
-                        TextFormField(
+                        CommonTextField(
+                          label: 'Total Building',
+                          controller: controller.totalBuildingsController,
                           initialValue: p.projectSize.totalBuildings.toString(),
                           keyboardType: TextInputType.number,
-                          validator: (v) => ProjectValidators.minNumber(num.tryParse(v ?? ''), 1, field: 'Total Buildings'),
-                          onSaved: (v) => controller.project.update((x) => x!.projectSize.totalBuildings = int.tryParse(v ?? '') ?? 1),
+                          prefixIcon: Icon(
+                            Icons.domain_outlined,
+                            size: 20,
+                            color: ColorRes.primary,
+                          ),
+                          textInputAction: TextInputAction.next,
+                          validator:
+                              (v) => ProjectValidators.minNumber(
+                                num.tryParse(v ?? ''),
+                                1,
+                                field: 'Total Buildings',
+                              ),
+                          onSaved:
+                              (v) => controller.project.update(
+                                (x) =>
+                                    x!.projectSize.totalBuildings =
+                                        int.tryParse(v ?? '') ?? 1,
+                              ),
                         ),
                       ],
                     ),
@@ -65,12 +116,29 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Total Units', style: labelStyle),
-                        TextFormField(
+                        CommonTextField(
+                          label: 'Total Units',
+                          controller: controller.totalUnitsController,
                           initialValue: p.projectSize.totalUnits.toString(),
                           keyboardType: TextInputType.number,
-                          validator: (v) => ProjectValidators.minNumber(num.tryParse(v ?? ''), 1, field: 'Total Units'),
-                          onSaved: (v) => controller.project.update((x) => x!.projectSize.totalUnits = int.tryParse(v ?? '') ?? 1),
+                          prefixIcon: Icon(
+                            Icons.apartment_rounded,
+                            size: 20,
+                            color: ColorRes.primary,
+                          ),
+
+                          validator:
+                              (v) => ProjectValidators.minNumber(
+                                num.tryParse(v ?? ''),
+                                1,
+                                field: 'Total Units',
+                              ),
+                          onSaved:
+                              (v) => controller.project.update(
+                                (x) =>
+                                    x!.projectSize.totalUnits =
+                                        int.tryParse(v ?? '') ?? 1,
+                              ),
                         ),
                       ],
                     ),
@@ -82,46 +150,71 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
               Row(
                 children: [
                   Expanded(
-                    child: _DateField(
+                    child: _CommonDatePickerField(
                       label: 'Launch Date',
-                      date: p.launchDate,
-                      onSaved: (d) => controller.project.update((x) => x!.launchDate = d),
+                      date: controller.project.value.launchDate,
+                      onSaved: (pickedDate) {
+                        controller.project.update(
+                          (p) => p!.launchDate = pickedDate,
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _DateField(
+                    child: _CommonDatePickerField(
                       label: 'Possession Date',
-                      date: p.possessionDate,
-                      onSaved: (d) => controller.project.update((x) => x!.possessionDate = d),
-                      extraValidator: (d) => ProjectValidators.possessionAfterLaunch(d, p.launchDate),
+                      date: controller.project.value.possessionDate,
+                      onSaved: (pickedDate) {
+                        controller.project.update(
+                          (p) => p!.possessionDate = pickedDate,
+                        );
+                      },
+                      extraValidator:
+                          (pickedDate) =>
+                              ProjectValidators.possessionAfterLaunch(
+                                pickedDate,
+                                controller.project.value.launchDate,
+                              ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
 
-              Text('RERA ID', style: labelStyle),
-              TextFormField(
+              const SizedBox(height: 12),
+              CommonTextField(
+                label: 'RERA ID',
                 initialValue: p.reraId,
-                validator: (v) => ProjectValidators.requiredText(v, field: 'RERA ID'),
-                onSaved: (v) => controller.project.update((x) => x!.reraId = v!.trim()),
+                textCapitalization: TextCapitalization.characters,
+                controller: controller.reraIdController,
+                hint: 'e.g. PR/GJ/123456/0000',
+                prefixIcon: Icon(
+                  Icons.verified_outlined,
+                  size: 20,
+                  color: ColorRes.primary,
+                ),
+
+                validator:
+                    (v) => ProjectValidators.requiredText(v, field: 'RERA ID'),
+                onSaved:
+                    (v) =>
+                        controller.project.update((x) => x!.reraId = v!.trim()),
               ),
             ],
-          );
-        }),
-      ),
+          ),
+        );
+      }),
     );
   }
 }
 
-class _DateField extends StatefulWidget {
+class _CommonDatePickerField extends StatefulWidget {
   final String label;
   final DateTime date;
   final void Function(DateTime) onSaved;
   final String? Function(DateTime?)? extraValidator;
 
-  const _DateField({
+  const _CommonDatePickerField({
     required this.label,
     required this.date,
     required this.onSaved,
@@ -129,64 +222,66 @@ class _DateField extends StatefulWidget {
   });
 
   @override
-  State<_DateField> createState() => _DateFieldState();
+  State<_CommonDatePickerField> createState() => _CommonDatePickerFieldState();
 }
 
-class _DateFieldState extends State<_DateField> {
-  DateTime? _value;
+class _CommonDatePickerFieldState extends State<_CommonDatePickerField> {
+  late TextEditingController _controller;
+  DateTime? _selectedDate;
 
   @override
   void initState() {
     super.initState();
-    _value = widget.date;
+    _selectedDate = widget.date;
+    _controller = TextEditingController(
+      text:
+          _selectedDate != null
+              ? _selectedDate.toString().split(' ').first
+              : '',
+    );
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      firstDate: DateTime(now.year - 30),
+      lastDate: DateTime(now.year + 30),
+      initialDate: _selectedDate ?? now,
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+        _controller.text = picked.toString().split(' ').first;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FormField<DateTime>(
-      validator: (v) {
-        final base = v == null ? 'તારીખ જરૂરી છે' : null;
-        if (base != null) return base;
-        if (widget.extraValidator != null) return widget.extraValidator!(v);
-        return null;
-      },
-      initialValue: _value,
-      onSaved: (v) {
-        if (v != null) widget.onSaved(v);
-      },
-      builder: (state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.label),
-            const SizedBox(height: 6),
-            InkWell(
-              onTap: () async {
-                final now = DateTime.now();
-                final picked = await showDatePicker(
-                  context: context,
-                  firstDate: DateTime(now.year - 30),
-                  lastDate: DateTime(now.year + 30),
-                  initialDate: state.value ?? now,
-                );
-                if (picked != null) {
-                  state.didChange(picked);
-                  setState(() => _value = picked);
-                }
-              },
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  errorText: state.errorText,
-                  hintText: 'Select date',
-                ),
-                child: Text(
-                  (state.value ?? widget.date).toLocal().toString().split(' ').first,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+    return GestureDetector(
+      onTap: _pickDate,
+      child: AbsorbPointer(
+        child: CommonTextField(
+          label: widget.label,
+          prefixIcon: Icon(
+            Icons.calendar_month_outlined,
+            size: 20,
+            color: ColorRes.primary,
+          ),
+          enabled: false,
+          controller: _controller,
+          validator: (_) {
+            if (_selectedDate == null) return 'Required date';
+            if (widget.extraValidator != null)
+              return widget.extraValidator!(_selectedDate);
+            return null;
+          },
+          onSaved: (_) {
+            if (_selectedDate != null) widget.onSaved(_selectedDate!);
+          },
+        ),
+      ),
     );
   }
 }

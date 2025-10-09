@@ -3646,7 +3646,7 @@ class LeadDetailScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withOpacity(0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withOpacity(0.3),width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -3921,7 +3921,8 @@ class LeadDetailScreen extends StatelessWidget {
                       color: ColorRes.primary.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: ColorRes.primary.withOpacity(0.3),
+                        color: ColorRes.primary.withOpacity(0.3,),
+                        width: 1
                       ),
                     ),
                     child: Row(

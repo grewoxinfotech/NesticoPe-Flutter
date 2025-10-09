@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dart';
 import '../../home/views/home_screen.dart';
 import '../../insights/views/insights_screen.dart';
+import '../../referral/view/referral_dashboard.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import '../../seller/seller_listing/view/seller_listing_view.dart';
 
@@ -512,7 +513,7 @@ class DashboardScreen extends StatelessWidget {
             ),
           );
         } else if (navigationController.currentIndex.value == 2) {
-          return Container(child: Center(child: Text("Coming soon")));
+          return ReferralProgramScreen();
         } else if (navigationController.currentIndex.value == 3) {
           return InsightsScreen();
         } else if (navigationController.currentIndex.value == 4) {

@@ -1,7 +1,9 @@
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactHelper {
   /// Open phone dialer
+
   static Future<void> openDialer(String phoneNumber) async {
     final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(uri)) {
@@ -32,5 +34,13 @@ class ContactHelper {
 
       await launchUrl(uri, mode: LaunchMode.externalApplication);
 
+  }
+  static void shareFeature(String url,String title) async {
+   ShareResult shareResult = await SharePlus.instance.share(
+      ShareParams(
+        uri: Uri.parse(url),
+        title: title,
+      ),
+    );
   }
 }

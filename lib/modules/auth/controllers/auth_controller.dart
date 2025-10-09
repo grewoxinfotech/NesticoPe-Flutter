@@ -311,6 +311,7 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       final token = await authService.forgotPassword(id);
+      print('ferefydgetydgwewgdhgtgywvdwyg   hdgetyd hudb      $token');
       isLoading.value = false;
 
       Get.to(

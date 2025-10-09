@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/app/widgets/texts/headline_text.dart';
 import 'package:housing_flutter_app/app/widgets/texts/title_with_disc.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
 import 'package:housing_flutter_app/modules/home/widgets/city_card.dart';
 import 'package:housing_flutter_app/modules/home/widgets/home_header.dart';
 import 'package:housing_flutter_app/modules/home/widgets/top_locations.dart';
@@ -33,6 +34,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../app/utils/file_upload_section/file_upload_section.dart';
 import '../../../data/network/news/news_model.dart';
+import '../../builder/view/builder_form_screen.dart';
+import '../../builder/view/builder_main_screen.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../news/view/news_detail_screen.dart';
 import '../../platform_service/views/widgets/platform_service_card.dart';
@@ -556,7 +559,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: "Recommended Properties",
                     showViewAll: true,
                     description: "Best properties for you",
-                    // onViewAll: () => Get.to(PropertyDetail()),
+                    // onViewAll: () => Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
+                    //   Get.put(ProjectWizardController());
+                    // },)),
+                    onViewAll: () => Get.to(BuilderMainScreen()),
                   ),
                   SizedBox(height: 4),
                   SingleChildScrollView(

@@ -14,8 +14,9 @@ class ApiConstants {
   static const String sellerRegister = "$auth/seller-register";
   static const String covertToSeller = "$auth/convert-buyer-to-seller";
   static const String convertToReseller = "$auth/convert-buyer-to-reseller";
+  static const String referralGet = "$baseURL/referral/my-stats";
 
-  // Lead
+  // Leadhttp://localhost:19725/api/v1/referral/my-stats
   static const String leads = "$baseURL/lead";
   static const String news = "$baseURL/newsArticle";
   static const String platformService = "$baseURL/platformService";
