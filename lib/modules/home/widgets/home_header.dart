@@ -149,11 +149,17 @@ class _HomeHeaderState extends State<HomeHeader> {
             children: [
               Expanded(
                 child: buildPositionedTextField(context, () async {
-                  final Map<String, String> filter = await Get.to(
-                    () => const CommonSearchField(),
+                  Get.to(
+                    () => CommonSearchField(
+                      onTap: (city) {
+                        final filters = {"city": city};
+                        print("Applied Filters: $filters");
+                        selectedCity.value = filters['city'] ?? "Surat";
+                        propertyController.applyFilters(filters);
+                        Get.back(result: filters);
+                      },
+                    ),
                   );
-                  selectedCity.value = filter['city'] ?? "Surat";
-                  propertyController.applyFilters(filter);
                 }),
               ),
               const SizedBox(width: 8),

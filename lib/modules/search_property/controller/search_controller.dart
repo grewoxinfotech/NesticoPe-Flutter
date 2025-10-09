@@ -6,19 +6,19 @@ class GoogleMapController extends GetxController {
   /// Reactive variables
   var isLoading = false.obs;
   var predictions = <Prediction>[].obs;
-  
 
   /// Fetch predictions from Google API
   Future<void> fetchPredictions(String city) async {
     try {
       isLoading.value = true;
 
-      final response = await GoogleMapApi.instance.getPlacePredictions(city);
-      
+      final response = await GoogleMapApi.instance.searchCities(city);
+
       print("resposne ===== $response");
 
       if (response != null) {
         final model = SearchFilterModel.fromJson(response);
+        print("model ===== ${model.toJson()}");
         predictions.value = model.predictions ?? [];
       } else {
         predictions.clear();

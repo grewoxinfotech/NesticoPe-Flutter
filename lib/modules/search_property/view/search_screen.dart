@@ -27,6 +27,7 @@ class CommonSearchField extends StatefulWidget {
   final bool isFromAddProperty;
   final String? initialSearchText;
   final String hintText;
+  final Function(String city)? onTap;
 
   const CommonSearchField({
     super.key,
@@ -34,6 +35,7 @@ class CommonSearchField extends StatefulWidget {
     this.isFromAddProperty = false,
     this.initialSearchText,
     this.hintText = 'Surat , Gujarat , 395010',
+    this.onTap,
   });
 
   @override
@@ -204,19 +206,36 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                   itemBuilder: (context, index) {
                     final Prediction item = controller.predictions[index];
                     return InkWell(
+                      // onTap:
+                      //     widget.onTap!(item.description!) ??
+                      //     () {
+                      //       if (widget.onCitySelected != null) {
+                      //         widget.onCitySelected!(item);
+                      //
+                      //         controller.predictions
+                      //             .clear(); // Clear predictions
+                      //         micController.searchText.value.clear();
+                      //       }
+                      //       // Remove navigation to RealEstateFilterScreen for city selection
+                      //
+                      //       final filters = {"city": item.description ?? ""};
+                      //       print("Applied Filters: $filters");
+                      //       Get.back(result: filters);
+                      //     },
                       onTap: () {
-                        // if (widget.onCitySelected != null) {
-                        //   widget.onCitySelected!(item);
-                        //
-                        //   controller.predictions.clear(); // Clear predictions
-                        //   micController.searchText.value.clear();
-                        // }
-                        // // Remove navigation to RealEstateFilterScreen for city selection
+                        if (widget.onTap != null) {
+                          widget.onTap!(item.description!);
+                        } else {
+                          // Fallback if onTap is not provided
+                          if (widget.onCitySelected != null) {
+                            widget.onCitySelected!(item);
 
-                        final filters = {"city": item.description ?? ""};
-                        print("Applied Filters: $filters");
-                        Get.back(result: filters);
+                            controller.predictions.clear(); // Clear predictions
+                            micController.searchText.value.clear();
+                          }
+                        }
                       },
+
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppPadding.medium,
