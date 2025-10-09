@@ -43,12 +43,13 @@ class StepLocation extends GetView<ProjectWizardController> {
                   Expanded(
                     child: CommonTextField(
                       label: 'City',
-controller: controller.cityController,
+                      controller: controller.cityController,
                       hint: 'e.g. Surat ',
                       prefixIcon: const Icon(Icons.location_city_outlined,size: 20,color: ColorRes.primary),
                       initialValue: p.city,
                       validator: (v) => ProjectValidators.requiredText(v, field: 'City'),
                       onSaved: (v) => controller.project.update((x) => x!.city = v!.trim()),
+
                     ),
                   ),
                   const SizedBox(width: 12),

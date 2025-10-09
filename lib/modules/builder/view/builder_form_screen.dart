@@ -168,21 +168,24 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                 // Back Button
                 if (step > 0)
                   Expanded(
-                    child: OutlinedButton(
-                      onPressed: controller.back,
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    child: SizedBox(
+                      height: 45,
+                      child: OutlinedButton(
+                        onPressed: controller.back,
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          side: const BorderSide(color: ColorRes.textColor),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        side: const BorderSide(color: ColorRes.textColor),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: const Text(
-                        'Back',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: ColorRes.textColor,
-                          fontWeight: FontWeight.w500,
+                        child: const Text(
+                          'Back',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: ColorRes.textColor,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
@@ -194,22 +197,29 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
 
                 // Next / Submit Button
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: step == 5 ? controller.submit : controller.next,
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    height: 45,
+                    child: ElevatedButton(
+                      onPressed: step == 5 ? controller.isLoading.value ? null :controller.submit : controller.next,
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor:controller.isLoading.value ?ColorRes.primary.withOpacity(0.3): ColorRes.primary, // your theme color
                       ),
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      backgroundColor: ColorRes.primary, // your theme color
-                    ),
-                    child: Text(
-                      step == 5 ? 'Submit' : 'Next',
-                      style: const TextStyle(
+                      child: controller.isLoading.value ? Text("Submitting...",style: const TextStyle(
                         fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
+                      ),): Text(
+                        step == 5 ? 'Submit' : 'Next',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),

@@ -126,8 +126,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../data/network/builder/model/builder_model.dart';
 import '../../controller/builder_form_controller.dart';
-import '../../model/config_model.dart';
 import '../media/upload_media_screen.dart';
 
 class StepReview extends GetView<ProjectWizardController> {

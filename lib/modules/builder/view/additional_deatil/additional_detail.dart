@@ -727,8 +727,8 @@ import 'package:housing_flutter_app/modules/add_property/view/create_property.da
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/manager/icon_manager.dart';
 import '../../../../app/utils/svg_widget.dart';
+import '../../../../data/network/builder/model/builder_model.dart';
 import '../../controller/builder_form_controller.dart';
-import '../../model/config_model.dart';
 import '../widget/common_builder_textfield.dart';
 import '../widget/validation/validation.dart';
 

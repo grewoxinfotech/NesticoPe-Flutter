@@ -551,71 +551,76 @@
 //
 // }
 
+import 'dart:io';
 
-
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
+import 'package:housing_flutter_app/modules/builder/view/builder_dashboard.dart';
+import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
 
-import '../model/config_model.dart';
+import '../../../data/network/builder/model/builder_model.dart';
 
 class ProjectWizardController extends GetxController {
+  final BuilderService _builderService = BuilderService();
   final currentStep = 0.obs;
   ImagePicker picker = ImagePicker();
   RxList<String> selectedListOfAmenities = <String>[].obs;
   final showAllAmenities = false.obs;
   RxString builderPropertyType = ''.obs;
-  RxList<String> propertyStatusList = <String>['Ongoing', 'Launch', 'Completed'].obs;
+  RxList<String> propertyStatusList =
+      <String>['Ongoing', 'Launch', 'Completed'].obs;
   RxString selectedPropertyStatus = ''.obs;
 
   RxString uploadBrocherName = ''.obs;
   RxString uploadBrocherPath = ''.obs;
 
-  final project = ProjectModel(
-    projectName: '',
-    projectArea: 0,
-    projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
-    launchDate: DateTime.now(),
-    possessionDate: DateTime.now(),
-    configurations: [
-      ProjectConfiguration(
-        bhk: 1,
-        variants: [
-          ProjectVariant(
-            name: '',
-            builtUpArea: 0,
-            carpetArea: 0,
-            price: 0,
-            pricePerSqFt: 0,
-            totalUnits: 1,
-            availableUnits: 1,
-            specifications: [],
-          )
+  RxBool isLoading = false.obs;
+
+  final project =
+      ProjectModel(
+        projectName: '',
+        projectArea: 0,
+        projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
+        launchDate: DateTime.now(),
+        possessionDate: DateTime.now(),
+        configurations: [
+          ProjectConfiguration(
+            bhk: 1,
+            variants: [
+              ProjectVariant(
+                name: '',
+                builtUpArea: 0,
+                carpetArea: 0,
+                price: 0,
+                pricePerSqFt: 0,
+                totalUnits: 1,
+                availableUnits: 1,
+                specifications: [],
+              ),
+            ],
+          ),
         ],
-      )
-    ],
-    reraId: '',
-    propertyTypes: 'apartment',
-    status: 'upcoming',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    location: '',
-    nearbyLocations: [],
-    amenities: [],
-    imageList: [],
-    videoList: [],
-    brochure: null,
-    projectHighlights: [],
-    projectContactInfo: ProjectContactInfo(
-      name: '',
-      phone: '',
-      email: '',
-    ),
-  ).obs;
+        reraId: '',
+        propertyTypes: 'apartment',
+        status: 'upcoming',
+        address: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        location: '',
+        nearbyLocations: [],
+        amenities: [],
+        imageList: [],
+        videoList: [],
+        brochure: null,
+        projectHighlights: [],
+        projectContactInfo: ProjectContactInfo(name: 'name', phone: '123456', email: 'abc@gmail.com'),
+      ).obs;
 
   late TextEditingController projectNameController;
   late TextEditingController projectAreaController;
@@ -632,10 +637,18 @@ class ProjectWizardController extends GetxController {
   void onInit() {
     super.onInit();
 
-    projectNameController = TextEditingController(text: project.value.projectName);
-    projectAreaController = TextEditingController(text: project.value.projectArea.toString());
-    totalBuildingsController = TextEditingController(text: project.value.projectSize.totalBuildings.toString());
-    totalUnitsController = TextEditingController(text: project.value.projectSize.totalUnits.toString());
+    projectNameController = TextEditingController(
+      text: project.value.projectName,
+    );
+    projectAreaController = TextEditingController(
+      text: project.value.projectArea.toString(),
+    );
+    totalBuildingsController = TextEditingController(
+      text: project.value.projectSize.totalBuildings.toString(),
+    );
+    totalUnitsController = TextEditingController(
+      text: project.value.projectSize.totalUnits.toString(),
+    );
     reraIdController = TextEditingController(text: project.value.reraId);
     addressController = TextEditingController(text: project.value.address);
     cityController = TextEditingController(text: project.value.city);
@@ -764,13 +777,15 @@ class ProjectWizardController extends GetxController {
       print('Selected file: ${file.name}');
       uploadBrocherPath.value = file.path ?? 'No Data Found';
       uploadBrocherName.value = file.name;
-      print('Path: ${file.path}  ${uploadBrocherName.value} ${uploadBrocherPath.value}');
+      print(
+        'Path: ${file.path}  ${uploadBrocherName.value} ${uploadBrocherPath.value}',
+      );
       uploadBrocherPath.refresh();
 
       if (file.path != null && file.path!.isNotEmpty) {
         project.update((p) {
           p!.brochure = file.name;
-          p!.pdfPath=file.path;
+          p!.pdfPath = file.path;
         });
       }
     } else {
@@ -815,7 +830,8 @@ class ProjectWizardController extends GetxController {
   }
 
   void addBuilderAmenities(String items) {
-    if (project.value.amenities.contains(items)) {project.value.amenities.remove(items);
+    if (project.value.amenities.contains(items)) {
+      project.value.amenities.remove(items);
     } else {
       project.value.amenities.add(items);
     }
@@ -883,16 +899,81 @@ class ProjectWizardController extends GetxController {
     });
   }
 
-  void submit() {
+  Future<void> submit() async{
+    try{
+      isLoading.value = true;
+      await createBuilderProject();
 
+    }catch (e){
+      print('Create builder project error: $e');
+    }finally{
+      isLoading.value =false;
+    }
+  }
 
+  Future<void> createBuilderProject() async {
+    try {
+      final success = await _builderService.createProject(
+        projectData: _buildProjectPayload(),
+        images: project.value.imageList.map((path) => File(path)).toList(),
+        videos: project.value.videoList.map((path) => File(path)).toList(),
+        documents: project.value.brochure != null ? File(project.value.brochure!) : null,
+      );
+      if (success) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Project Created Successfully",
+          message: "",
+          contentType: ContentType.success,
+        );
+        Get.offUntil(
+          MaterialPageRoute(builder: (_) => BuilderDashboard()),
+          (route) => route.isFirst,
+        );
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Failed to Create Project",
+          message: "",
+          contentType: ContentType.failure,
+        );
+      }
+    } catch (e) {
+      print('Create builder project error: $e');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Failed to Create Project",
+        message: "",
+        contentType: ContentType.failure,
+      );
+    }
+  }
 
-    Get.snackbar('Success', 'Project data is ready');
-    printProjectDetails();
+  ProjectModel _buildProjectPayload() {
+    final ProjectModel p = project.value;
+    print('Building payload ---- > ${p.projectContactInfo?.toJson()}');
+    return ProjectModel(
+      projectName: p.projectName,
+      projectArea: p.projectArea,
+      projectSize: ProjectSize(totalBuildings: p.projectSize.totalBuildings, totalUnits: p.projectSize.totalUnits),
+      launchDate: p.launchDate,
+      possessionDate: p.possessionDate,
+      configurations: p.configurations,
+      reraId: p.reraId,
+      address: p.address,
+      status: p.status,
+      city: p.city,
+      state: p.state,
+      zipCode: p.zipCode,
+      location: p.location,
+      amenities: p.amenities,
+      brochure: p.brochure,
+      nearbyLocations: p.nearbyLocations,
+      projectContactInfo: p.projectContactInfo,
+      propertyTypes: p.propertyTypes,
+      projectHighlights: p.projectHighlights,
+    );
   }
 
   void printProjectDetails() {
-    final p = project.value;
+    final ProjectModel p = project.value;
 
     print('===== Project Details =====');
     print('Name: ${p.projectName}');
@@ -960,9 +1041,13 @@ class ProjectWizardController extends GetxController {
         if (config.variants.isNotEmpty) {
           for (var j = 0; j < config.variants.length; j++) {
             final variant = config.variants[j];
-            print('    Variant ${j + 1}: ${variant.name}, BuiltUp: ${variant.builtUpArea}, Carpet: ${variant.carpetArea}, Price: ${variant.price}, Price/SqFt: ${variant.pricePerSqFt}, Total Units: ${variant.totalUnits}, Available Units: ${variant.availableUnits}');
+            print(
+              '    Variant ${j + 1}: ${variant.name}, BuiltUp: ${variant.builtUpArea}, Carpet: ${variant.carpetArea}, Price: ${variant.price}, Price/SqFt: ${variant.pricePerSqFt}, Total Units: ${variant.totalUnits}, Available Units: ${variant.availableUnits}',
+            );
             if (variant.specifications.isNotEmpty) {
-              print('      Specifications: ${variant.specifications.join(', ')}');
+              print(
+                '      Specifications: ${variant.specifications.join(', ')}',
+              );
             }
           }
         }
@@ -974,7 +1059,6 @@ class ProjectWizardController extends GetxController {
   Map<String, dynamic> exportData() {
     return project.value.toJson();
   }
-
 
   Future<bool> saveData() async {
     try {
