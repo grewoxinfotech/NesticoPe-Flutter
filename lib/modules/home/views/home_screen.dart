@@ -366,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Get.lazyPut(() => PropertyController());
     // final PropertyController controller = Get.find();
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -432,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color:
                                             isSelected
                                                 ? ColorRes.primary
-                                                : Colors.grey.shade300,
+                                                : ColorRes.leadGreyColor.shade300,
                                         width: 2,
                                       ),
                                     ),
@@ -447,7 +447,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               (context, error, stackTrace) =>
                                                   Icon(
                                                     Icons.home_work_rounded,
-                                                    color: Colors.grey.shade400,
+                                                    color: ColorRes.leadGreyColor.shade400,
                                                     size: 32,
                                                   ),
                                         ),
@@ -719,7 +719,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Center(
                           child: Text(
                             'Error: ${asyncSnapshot.error}',
-                            style: const TextStyle(color: Colors.red),
+                            style: const TextStyle(color: ColorRes.error),
                           ),
                         );
                       } else if (asyncSnapshot.connectionState ==
@@ -1127,7 +1127,7 @@ class _CityDropdownState extends State<CityDropdown> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
+          color: ColorRes.white,
         ),
         child: DropdownButtonFormField<String>(
           decoration: const InputDecoration(
@@ -1140,7 +1140,7 @@ class _CityDropdownState extends State<CityDropdown> {
           value: selectedCity,
           icon: const Icon(
             Icons.keyboard_arrow_down_rounded,
-            color: Colors.grey,
+            color: ColorRes.leadGreyColor
           ),
           // Custom arrow icon
           items:
@@ -1376,7 +1376,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                 child: Container(
                   width: 300,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: ColorRes.white,
                     borderRadius: BorderRadius.circular(20),
                     // boxShadow: [
                     //   BoxShadow(
@@ -1392,7 +1392,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                     //     spreadRadius: 0,
                     //   ),
                     // ],
-                    border: Border.all(color: Colors.grey.shade200, width: 1),
+                    border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -1416,8 +1416,8 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                 ),
                                 gradient: LinearGradient(
                                   colors: [
-                                    const Color(0xFF2E7D63).withOpacity(0.1),
-                                    const Color(0xFF27AE60).withOpacity(0.1),
+                                    ColorRes.homeGreenFade.withOpacity(0.1),
+                                    ColorRes.homeGreenDarkFade.withOpacity(0.1),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -1431,7 +1431,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                   errorBuilder: (context, error, stackTrace) {
                                     return Icon(
                                       Icons.person,
-                                      color: const Color(0xFF2E7D63),
+                                      color:     ColorRes.homeGreenFade.withOpacity(0.1),
                                       size: 24,
                                     );
                                   },
@@ -1454,7 +1454,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFF1A1A1A),
+                                            color: ColorRes.homeBlackFade
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1464,14 +1464,14 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                         Container(
                                           padding: const EdgeInsets.all(2),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF27AE60),
+                                            color: ColorRes.homeGreenDarkFade,
                                             borderRadius: BorderRadius.circular(
                                               10,
                                             ),
                                           ),
                                           child: const Icon(
                                             Icons.check,
-                                            color: Colors.white,
+                                            color: ColorRes.white,
                                             size: 12,
                                           ),
                                         ),
@@ -1483,7 +1483,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                     testimonial["location"]!.toString(),
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.grey.shade600,
+                                      color: ColorRes.leadGreyColor.shade600,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -1502,19 +1502,19 @@ class ReviewsAndTestimonials extends StatelessWidget {
                               if (starIndex < rating.floor()) {
                                 return const Icon(
                                   Icons.star,
-                                  color: Color(0xFFFFB800),
+                                  color: ColorRes.homeYellow,
                                   size: 16,
                                 );
                               } else if (starIndex < rating) {
                                 return const Icon(
                                   Icons.star_half,
-                                  color: Color(0xFFFFB800),
+                                  color: ColorRes.homeYellow,
                                   size: 16,
                                 );
                               } else {
                                 return Icon(
                                   Icons.star_outline,
-                                  color: Colors.grey.shade300,
+                                  color: ColorRes.leadGreyColor.shade300,
                                   size: 16,
                                 );
                               }
@@ -1525,7 +1525,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF1A1A1A),
+                                color: ColorRes.homeBlackFade,
                               ),
                             ),
                           ],
@@ -1539,7 +1539,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                             '"${testimonial["review"]!}"',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey.shade700,
+                              color: ColorRes.leadGreyColor.shade700,
                               height: 1.5,
                               fontStyle: FontStyle.italic,
                             ),
@@ -1560,7 +1560,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF2E7D63).withOpacity(0.1),
+                                color: ColorRes.homeGreenFade.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -1568,7 +1568,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF2E7D63),
+                                  color: ColorRes.homeGreenFade,
                                 ),
                               ),
                             ),
@@ -1597,14 +1597,14 @@ class ReviewsAndTestimonials extends StatelessWidget {
   Widget _buildStatItem(String value, String label, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: const Color(0xFF2E7D63), size: 20),
+        Icon(icon, color: ColorRes.homeGreenFade, size: 20),
         const SizedBox(height: 8),
         Text(
           value,
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF1A1A1A),
+            color: ColorRes.homeBlackFade,
           ),
         ),
         const SizedBox(height: 4),
@@ -1612,7 +1612,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 10,
-            color: Colors.grey.shade600,
+            color: ColorRes.leadGreyColor.shade600,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -1682,7 +1682,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //             child: Container(
 //               width: 280,
 //               decoration: BoxDecoration(
-//                 color: Colors.white,
+//                 color: ColorRes.white,
 //                 borderRadius: BorderRadius.circular(16),
 //                 boxShadow: [
 //                   BoxShadow(
@@ -1758,7 +1758,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                           child: Text(
 //                             article["category"]!.toString(),
 //                             style: const TextStyle(
-//                               color: Colors.white,
+//                               color: ColorRes.white,
 //                               fontSize: 10,
 //                               fontWeight: FontWeight.w600,
 //                             ),
@@ -1783,7 +1783,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                             child: const Text(
 //                               "NEW",
 //                               style: TextStyle(
-//                                 color: Colors.white,
+//                                 color: ColorRes.white,
 //                                 fontSize: 9,
 //                                 fontWeight: FontWeight.bold,
 //                                 letterSpacing: 0.5,
@@ -2000,7 +2000,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //             child: Container(
 //               width: 280,
 //               decoration: BoxDecoration(
-//                 color: Colors.white,
+//                 color: ColorRes.white,
 //                 borderRadius: BorderRadius.circular(16),
 //                 // boxShadow: [
 //                 //   BoxShadow(
@@ -2061,7 +2061,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                           child: Text(
 //                             article["category"]!.toString(),
 //                             style: const TextStyle(
-//                               color: Colors.white,
+//                               color: ColorRes.white,
 //                               fontSize: 10,
 //                               fontWeight: FontWeight.w600,
 //                             ),
@@ -2086,7 +2086,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                             child: const Text(
 //                               "NEW",
 //                               style: TextStyle(
-//                                 color: Colors.white,
+//                                 color: ColorRes.white,
 //                                 fontSize: 9,
 //                                 fontWeight: FontWeight.bold,
 //                               ),
@@ -2306,9 +2306,9 @@ class NewsAndArticles extends StatelessWidget {
             child: Container(
               width: 280,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorRes.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.5),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2356,7 +2356,7 @@ class NewsAndArticles extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green,
+                              color: ColorRes.green,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -2364,7 +2364,7 @@ class NewsAndArticles extends StatelessWidget {
                                   .toString()
                                   .replaceAll("_", " "),
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: ColorRes.white,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -2383,13 +2383,13 @@ class NewsAndArticles extends StatelessWidget {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE74C3C),
+                              color: ColorRes.homeRed,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Text(
                               "NEW",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: ColorRes.white,
                                 fontSize: 9,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -2417,7 +2417,7 @@ class NewsAndArticles extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF1A1A1A),
+                                  color: ColorRes.homeBlackFade,
                                 ),
                               ),
                               const SizedBox(height: 6),
@@ -2445,7 +2445,7 @@ class NewsAndArticles extends StatelessWidget {
                                       article.author ?? '',
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: Colors.grey.shade700,
+                                        color: ColorRes.leadGreyColor.shade700,
                                         fontWeight: FontWeight.w500,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -2455,7 +2455,7 @@ class NewsAndArticles extends StatelessWidget {
                                       '${article.readTime ?? 0} min read',
                                       style: TextStyle(
                                         fontSize: 10,
-                                        color: Colors.grey.shade500,
+                                        color:ColorRes.leadGreyColor.shade500,
                                       ),
                                     ),
                                   ],
@@ -2464,15 +2464,13 @@ class NewsAndArticles extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: const Color(
-                                    0xFF2E7D63,
-                                  ).withOpacity(0.1),
+                                  color: ColorRes.homeGreenFade.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
                                   Icons.arrow_forward_ios,
                                   size: 12,
-                                  color: Color(0xFF2E7D63),
+                                  color:ColorRes.homeGreenFade,
                                 ),
                               ),
                             ],
@@ -2537,9 +2535,9 @@ class ExploreLocalities extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(AppSpacing.small),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorRes.white,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: ColorRes.leadGreyColor.shade300),
                 // boxShadow: [
                 //   BoxShadow(
                 //     color: Colors.grey.shade200,
@@ -2718,7 +2716,7 @@ class CompactInsightCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey.shade300, width: 1),
         ),
@@ -2869,7 +2867,7 @@ class InsightsCard extends StatelessWidget {
       width: 280,
       // padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
         // boxShadow: [
@@ -2897,7 +2895,7 @@ class InsightsCard extends StatelessWidget {
                   width: 100,
                   height: double.infinity,
                   color: Colors.grey.shade300,
-                  child: const Icon(Icons.broken_image, color: Colors.white),
+                  child: const Icon(Icons.broken_image, color: ColorRes.white),
                 );
               },
               frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
@@ -3408,7 +3406,7 @@ class CustomerSupport extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: ColorRes.white,
                 ),
               ),
               const SizedBox(height: 10),
@@ -3419,7 +3417,7 @@ class CustomerSupport extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.normal,
-                    color: Colors.white,
+                    color: ColorRes.white,
                   ),
                 ),
               ),
@@ -3427,7 +3425,7 @@ class CustomerSupport extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: _callSupport,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: ColorRes.white,
                   foregroundColor: Colors.yellow.shade900,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -3596,7 +3594,7 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
                 ),
                 child: const Text(
                   "Submit",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  style: TextStyle(fontSize: 16, color: ColorRes.white),
                 ),
               ),
             ),
@@ -3629,7 +3627,7 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
 //       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
 //       padding: const EdgeInsets.all(12),
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(16),
 //         boxShadow: [
 //           BoxShadow(
@@ -3778,11 +3776,11 @@ class PropertyHorizontalCard extends StatelessWidget {
     required this.title,
     this.ratingFont = 11,
     this.ratingFontWeight = FontWeight.w600,
-    this.locationColor = Colors.black54,
+    this.locationColor = ColorRes.textSecondary,
     required this.imagePath,
     required this.location,
     this.price = '2020',
-    this.priceColor = Colors.black87,
+    this.priceColor = ColorRes.textPrimary,
     this.priceFontWeight = FontWeight.w700,
     this.locationWeight = FontWeight.w400,
     this.titleFontWeight = FontWeight.w600,
@@ -3791,11 +3789,11 @@ class PropertyHorizontalCard extends StatelessWidget {
     this.maxLineSubtitle = 1,
 
     // styling
-    this.borderColor = Colors.grey,
-    this.textColor = Colors.black,
-    this.accentColor = Colors.blue,
-    this.titleColor = Colors.black,
-    this.dividerColor = Colors.grey,
+    this.borderColor = ColorRes.leadGreyColor,
+    this.textColor = ColorRes.black,
+    this.accentColor = ColorRes.blueColor,
+    this.titleColor = ColorRes.black,
+    this.dividerColor = ColorRes.leadGreyColor,
 
     // layout (smaller container)
     this.width = 250,
@@ -3836,7 +3834,7 @@ class PropertyHorizontalCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: borderColor.withOpacity(0.3), width: 0.8),
-          color: Colors.white,
+          color: ColorRes.white,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -4053,10 +4051,10 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
                   ),
                   child: Text(
                     "+$remainingCount more",
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontSize: AppFontSizes.caption,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black54,
+                      color: ColorRes.textColor,
                     ),
                   ),
                 ),
@@ -4087,7 +4085,7 @@ Widget _buildShimmerLoader() {
         return Container(
           width: 190,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ColorRes.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.grey.shade200),
           ),
@@ -4120,7 +4118,7 @@ Widget _buildShimmerLoader() {
                       height: 14,
                       width: 120,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),

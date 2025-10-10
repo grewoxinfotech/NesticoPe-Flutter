@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../app/constants/color_res.dart';
 import '../../app/constants/font_res.dart';
 import '../../app/constants/size_manager.dart';
 import '../display/card.dart';
@@ -58,9 +59,9 @@ class NesticoPeButton extends StatelessWidget {
           heroTag != null
               ? Hero(
                 tag: heroTag!,
-                child: Material(color: Colors.transparent, child: button),
+                child: Material(color: ColorRes.transparentColor, child: button),
               )
-              : Material(color: Colors.transparent, child: button),
+              : Material(color: ColorRes.transparentColor, child: button),
     );
   }
 }

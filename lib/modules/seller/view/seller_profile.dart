@@ -68,7 +68,7 @@ class AgentProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -80,10 +80,10 @@ class AgentProfilePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            icon: const Icon(Icons.home, color: Colors.white, size: 18),
+            icon: const Icon(Icons.home, color: ColorRes.white, size: 18),
             label: const Text(
               'View Properties',
-              style: TextStyle(fontSize: 14, color: Colors.white),
+              style: TextStyle(fontSize: 14, color: ColorRes.white),
             ),
             onPressed: () {
               // TODO: Navigate to Agent’s property list
@@ -245,7 +245,7 @@ class AgentCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: ColorRes.grey.withOpacity(0.25), width: 0.8),
         // boxShadow: [
@@ -294,7 +294,7 @@ class AgentCard extends StatelessWidget {
                         badgeText,
                         style: const TextStyle(
                           fontSize: 9,
-                          color: Colors.white,
+                          color: ColorRes.white,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -421,10 +421,10 @@ class InfoTile extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: AppFontWeights.semiBold,
-            color: Colors.black87,
+            color: ColorRes.textPrimary,
           ),
         ),
       ],
@@ -513,7 +513,7 @@ class CategoryChip extends StatelessWidget {
             style: TextStyle(
               fontSize: AppFontSizes.medium,
               fontWeight: AppFontWeights.regular,
-              color: isSelected ? ColorRes.primary : Colors.black87,
+              color: isSelected ? ColorRes.primary : ColorRes.textPrimary,
             ),
           ),
           const SizedBox(height: 4),

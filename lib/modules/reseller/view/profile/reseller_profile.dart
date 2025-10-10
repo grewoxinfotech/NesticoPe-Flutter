@@ -14,7 +14,7 @@
 //       backgroundColor: Colors.grey[50],
 //       appBar: AppBar(
 //         title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-//         backgroundColor: Colors.white,
+//         backgroundColor: ColorRes.white,
 //         elevation: 0,
 //         actions: [
 //           Obx(() => IconButton(
@@ -64,7 +64,7 @@
 //     return Container(
 //       padding: const EdgeInsets.all(24),
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(12),
 //         boxShadow: [
 //           BoxShadow(
@@ -86,7 +86,7 @@
 //                     ? NetworkImage(controller.profile.value.avatarUrl)
 //                     : null,
 //                 child: controller.profile.value.avatarUrl.isEmpty
-//                     ? const Icon(Icons.person, size: 50, color: Colors.white)
+//                     ? const Icon(Icons.person, size: 50, color: ColorRes.white)
 //                     : null,
 //               ),
 //               if (controller.isEditing.value)
@@ -101,7 +101,7 @@
 //                     ),
 //                     child: const Icon(
 //                       Icons.camera_alt,
-//                       color: Colors.white,
+//                       color: ColorRes.white,
 //                       size: 16,
 //                     ),
 //                   ),
@@ -163,7 +163,7 @@
 //     return Container(
 //       padding: const EdgeInsets.all(16),
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(12),
 //         boxShadow: [
 //           BoxShadow(
@@ -202,7 +202,7 @@
 //     return Container(
 //       padding: const EdgeInsets.all(16),
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(12),
 //         boxShadow: [
 //           BoxShadow(
@@ -282,7 +282,7 @@
 //                       onPressed: controller.saveProfile,
 //                       style: ElevatedButton.styleFrom(
 //                         backgroundColor: Colors.green,
-//                         foregroundColor: Colors.white,
+//                         foregroundColor: ColorRes.white,
 //                         padding: const EdgeInsets.symmetric(vertical: 16),
 //                         shape: RoundedRectangleBorder(
 //                           borderRadius: BorderRadius.circular(12),
@@ -293,7 +293,7 @@
 //                         height: 20,
 //                         width: 20,
 //                         child: CircularProgressIndicator(
-//                           color: Colors.white,
+//                           color: ColorRes.white,
 //                           strokeWidth: 2,
 //                         ),
 //                       )
@@ -306,7 +306,7 @@
 //                       onPressed: controller.cancelEdit,
 //                       style: ElevatedButton.styleFrom(
 //                         backgroundColor: Colors.grey,
-//                         foregroundColor: Colors.white,
+//                         foregroundColor: ColorRes.white,
 //                         padding: const EdgeInsets.symmetric(vertical: 16),
 //                         shape: RoundedRectangleBorder(
 //                           borderRadius: BorderRadius.circular(12),
@@ -355,7 +355,7 @@
 //     return Container(
 //       margin: const EdgeInsets.only(bottom: 8),
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(12),
 //         boxShadow: [
 //           BoxShadow(
@@ -387,12 +387,12 @@
 //       content: const Text('Are you sure you want to logout?'),
 //       textConfirm: 'Yes',
 //       textCancel: 'No',
-//       confirmTextColor: Colors.white,
+//       confirmTextColor: ColorRes.white,
 //       buttonColor: Colors.red,
 //       onConfirm: () {
 //         Get.back();
 //         Get.snackbar('Success', 'Logged out successfully',
-//             backgroundColor: Colors.green, colorText: Colors.white);
+//             backgroundColor: Colors.green, colorText: ColorRes.white);
 //       },
 //     );
 //   }
@@ -425,7 +425,7 @@ class ResellerProfileScreen extends StatelessWidget {
     final profileController = Get.put(ProfileController());
 
     return Scaffold(
-      backgroundColor:Colors.white,
+      backgroundColor:ColorRes.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
@@ -435,7 +435,7 @@ class ResellerProfileScreen extends StatelessWidget {
             fontSize: 20,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         centerTitle: false,
         actions: [
@@ -498,7 +498,7 @@ class ResellerProfileScreen extends StatelessWidget {
   //   return Container(
   //     padding: const EdgeInsets.all(24),
   //     decoration: BoxDecoration(
-  //       color: Colors.white,
+  //       color: ColorRes.white,
   //       borderRadius: BorderRadius.circular(16),
   //       border: Border.all(
   //         color: Colors.grey.withOpacity(0.3),
@@ -555,11 +555,11 @@ class ResellerProfileScreen extends StatelessWidget {
   //                     decoration: BoxDecoration(
   //                       color: ColorRes.primary,
   //                       shape: BoxShape.circle,
-  //                       border: Border.all(color: Colors.white, width: 3),
+  //                       border: Border.all(color: ColorRes.white, width: 3),
   //                     ),
   //                     child: const Icon(
   //                       Icons.camera_alt,
-  //                       color: Colors.white,
+  //                       color: ColorRes.white,
   //                       size: 14,
   //                     ),
   //                   ),
@@ -624,7 +624,7 @@ class ResellerProfileScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Colors.grey.withOpacity(0.3),
@@ -684,11 +684,11 @@ class ResellerProfileScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: ColorRes.primary,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(color: ColorRes.white, width: 2),
                       ),
                       child: const Icon(
                         Icons.camera_alt,
-                        color: Colors.white,
+                        color: ColorRes.white,
                         size: 12,
                       ),
                     ),
@@ -803,7 +803,7 @@ class ResellerProfileScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Colors.grey.withOpacity(0.3),
@@ -864,7 +864,7 @@ class ResellerProfileScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Colors.grey.withOpacity(0.3),
@@ -957,7 +957,7 @@ class ResellerProfileScreen extends StatelessWidget {
                       onPressed: controller.saveProfile,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
+                        foregroundColor: ColorRes.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -969,7 +969,7 @@ class ResellerProfileScreen extends StatelessWidget {
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: ColorRes.white,
                           strokeWidth: 2,
                         ),
                       )
@@ -1072,7 +1072,7 @@ minLines: 1,
   Widget _buildProfileOptionsSection() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Colors.grey.withOpacity(0.3),
@@ -1139,7 +1139,7 @@ minLines: 1,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: ColorRes.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -1179,7 +1179,7 @@ minLines: 1,
                   'Success',
                   'Logged out successfully',
                   backgroundColor: Colors.green,
-                  colorText: Colors.white,
+                  colorText: ColorRes.white,
                   snackPosition: SnackPosition.BOTTOM,
                   margin: const EdgeInsets.all(16),
                   borderRadius: 12,

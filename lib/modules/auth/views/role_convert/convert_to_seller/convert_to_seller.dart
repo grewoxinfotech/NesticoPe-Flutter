@@ -23,7 +23,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       body: SingleChildScrollView(
         child: Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
@@ -48,10 +48,10 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                     Text(
                       "Welcome",
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: ColorRes.whiteShade,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -59,7 +59,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                     Text(
                       "Find Your Perfect\nLuxury Home",
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -67,7 +67,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                     const Text(
                       "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: ColorRes.whiteShade,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -82,7 +82,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                   horizontal: 16,
                 ),
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: ColorRes.white,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(16),
                     bottomRight: Radius.circular(16),
@@ -98,13 +98,13 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.deepPurple,
+                        color: ColorRes.deepPurpleColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Text(
                         "Seller Conversion",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: ColorRes.white,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
@@ -123,16 +123,16 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                     const SizedBox(height: 8),
                     const Text(
                       "You're just one step away from posting your properties!",
-                      style: TextStyle(color: Colors.black54, fontSize: 12),
+                      style: TextStyle(color: ColorRes.blackShade54, fontSize: 12),
                     ),
                     const SizedBox(height: 24),
 
                     // INFO BOX
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
+                        color: ColorRes.leadGreyColor.shade100,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
+                        border: Border.all(color: ColorRes.leadGreyColor.shade300),
                       ),
                       padding: const EdgeInsets.symmetric(
                         vertical: 20,
@@ -145,7 +145,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                             "What happens next?",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: ColorRes.blackShade87,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -211,8 +211,8 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                                         "Select Seller Type",
                                         "Please choose whether you are an Owner or a Builder",
                                         snackPosition: SnackPosition.BOTTOM,
-                                        backgroundColor: Colors.redAccent,
-                                        colorText: Colors.white,
+                                        backgroundColor: ColorRes.redAccentColor,
+                                        colorText: ColorRes.white,
                                       );
                                     } else {
                                       controller.covertBuyerToSeller(
@@ -243,7 +243,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                         text: TextSpan(
                           text: "Already have an account? ",
                           style: const TextStyle(
-                            color: Colors.black87,
+                            color: ColorRes.blackShade87,
                             fontSize: 14,
                           ),
                           children: [
@@ -284,7 +284,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 12, color: Colors.black87),
+            style: const TextStyle(fontSize: 12, color: ColorRes.blackShade87),
           ),
         ),
       ],

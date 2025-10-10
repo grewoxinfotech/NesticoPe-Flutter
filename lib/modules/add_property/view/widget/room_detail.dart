@@ -76,7 +76,7 @@ class RoomDetail extends StatelessWidget {
                               IconButton(
                                 icon: const Icon(
                                   Icons.delete_outline_outlined,
-                                  color: Colors.red,
+                                  color: ColorRes.error,
                                 ),
                                 onPressed: () {
                                   controller.deleteRoom(index);
@@ -283,7 +283,7 @@ class RoomDetail extends StatelessWidget {
                                 child: const Text(
                                   "Cancel",
                                   style: TextStyle(
-                                    color: Colors.grey,
+                                    color: ColorRes.leadGreyColor,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),

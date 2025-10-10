@@ -44,7 +44,7 @@ class _FilterTagListState extends State<FilterTagList> {
               curve: Curves.easeInOut,
               width: 90,
               decoration: BoxDecoration(
-                color: Colors.white, // Always white background
+                color: ColorRes.white, // Always white background
                 borderRadius: BorderRadius.circular(AppRadius.medium),
                 border: isSelected
                     ? Border.all(

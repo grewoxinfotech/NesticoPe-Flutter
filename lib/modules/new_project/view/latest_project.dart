@@ -21,14 +21,14 @@ class MumbaiProjectsScreen extends StatelessWidget {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarDividerColor: ColorRes.transparentColor,
         systemNavigationBarColor: Theme.of(context).secondaryHeaderColor,
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
+        statusBarColor: ColorRes.transparentColor,
       ),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -72,7 +72,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                         child: Text(
                           "You are looking for",
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: ColorRes.white.withOpacity(0.9),
                             fontSize: 14,
                           ),
                         ),
@@ -82,7 +82,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                         child: Text(
                           "New Projects in Mumbai",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: ColorRes.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -93,7 +93,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: ColorRes.white,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: buildPositionedTextField(context, () {}),

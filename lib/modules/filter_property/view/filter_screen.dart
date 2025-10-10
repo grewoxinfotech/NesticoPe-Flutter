@@ -44,10 +44,10 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         leading: IconButton(
           icon: const Icon(Icons.close, color: ColorRes.textColor),
           onPressed: () => Get.back(),
@@ -209,12 +209,12 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                             ),
                             decoration: BoxDecoration(
                               color:
-                                  isSelected ? ColorRes.primary : Colors.white,
+                                  isSelected ? ColorRes.primary : ColorRes.white,
                               border: Border.all(
                                 color:
                                     isSelected
-                                        ? Colors.transparent
-                                        : Colors.grey.shade300,
+                                        ? ColorRes.transparentColor
+                                        : ColorRes.leadGreyColor.shade300,
                                 width: 1.5,
                               ),
                               borderRadius: BorderRadius.circular(12),
@@ -223,7 +223,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                               controllerForFilter.propertyType[index],
                               12,
                               FontWeight.w600,
-                              isSelected ? Colors.white : ColorRes.textColor,
+                              isSelected ? ColorRes.white : ColorRes.textColor,
                               1,
                             ),
                           ),
@@ -328,10 +328,10 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
       // Fixed Bottom Button
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: ColorRes.black.withOpacity(0.08),
               blurRadius: 12,
               offset: const Offset(0, -2),
             ),
@@ -373,7 +373,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorRes.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: ColorRes.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -401,7 +401,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                           'Apply Filters',
                           16,
                           FontWeight.w600,
-                          Colors.white,
+                          ColorRes.white,
                           1,
                         ),
                         const SizedBox(width: 8),

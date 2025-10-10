@@ -24,7 +24,7 @@
 //       appBar: AppBar(
 //         title: const Text(
 //             'Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
-//         backgroundColor: Colors.white,
+//         backgroundColor: ColorRes.white,
 //         elevation: 0,
 //         // actions: [
 //         //   Obx(() => controller.isLoading.value
@@ -131,7 +131,7 @@
 //         return Container(
 //           padding: EdgeInsets.all(cardPadding),
 //           decoration: BoxDecoration(
-//             color: Colors.white,
+//             color: ColorRes.white,
 //             borderRadius: BorderRadius.circular(12),
 //             border: Border.all(width: 1, color: Colors.grey.shade300),
 //           ),
@@ -377,7 +377,7 @@
 //       child: Container(
 //         margin: const EdgeInsets.symmetric(vertical: 8),
 //         decoration: BoxDecoration(
-//           color: Colors.white,
+//           color: ColorRes.white,
 //           borderRadius: BorderRadius.circular(16),
 //           border: Border.all(color: Colors.grey.shade200, width: 1),
 //           boxShadow: [
@@ -411,7 +411,7 @@
 //                     padding: const EdgeInsets.symmetric(
 //                         horizontal: 8, vertical: 4),
 //                     decoration: BoxDecoration(
-//                       color: Colors.white,
+//                       color: ColorRes.white,
 //                       borderRadius: BorderRadius.circular(6),
 //                     ),
 //                     child: const Text(
@@ -429,7 +429,7 @@
 //                   right: 8,
 //                   child: Icon(
 //                     Icons.favorite_border,
-//                     color: Colors.white,
+//                     color: ColorRes.white,
 //                   ),
 //                 ),
 //               ],
@@ -584,7 +584,7 @@
 //           unselectedItemColor: Colors.grey,
 //           selectedLabelStyle: TextStyle(fontSize: AppFontSizes.caption,fontWeight: FontWeight.w500),
 //           unselectedLabelStyle: TextStyle(fontSize: AppFontSizes.caption,fontWeight: FontWeight.w500),
-//           backgroundColor: Colors.white,
+//           backgroundColor: ColorRes.white,
 //           elevation: 8,
 //           items: const [
 //             BottomNavigationBarItem(
@@ -643,7 +643,7 @@ class ResellerDashboardScreen extends StatelessWidget {
           'Dashboard',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: false,
@@ -662,7 +662,7 @@ class ResellerDashboardScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Overview Cards
-                _buildOverviewCards(controller),
+                buildOverviewCards(controller),
                 const SizedBox(height: 20),
 
                 // Recent Leads
@@ -679,8 +679,9 @@ class ResellerDashboardScreen extends StatelessWidget {
       }),
     );
   }
+}
 
-  Widget _buildOverviewCards(DashboardController controller) {
+  Widget buildOverviewCards(DashboardController controller) {
     return Obx(() {
       final metrics = controller.metrics.value;
       return GridView.count(
@@ -691,36 +692,36 @@ class ResellerDashboardScreen extends StatelessWidget {
         mainAxisSpacing: 12,
         childAspectRatio: 1.5,
         children: [
-          _buildMetricCard(
+          buildMetricCard(
             'Property Sales',
             '\$${(metrics.totalSales / 1000000).toStringAsFixed(2)}M',
             Icons.home_work,
-            Colors.green,
+            ColorRes.success,
           ),
-          _buildMetricCard(
+          buildMetricCard(
             'Buyer Leads',
             '${metrics.totalLeads}',
             Icons.people,
-            Colors.blue,
+            ColorRes.blueColor,
           ),
-          _buildMetricCard(
+          buildMetricCard(
             'Listed Properties',
             '${metrics.totalProducts}',
             Icons.apartment,
-            Colors.orange,
+            ColorRes.orangeColor,
           ),
-          _buildMetricCard(
+          buildMetricCard(
             'Sales Growth',
             '${metrics.growthPercentage.toStringAsFixed(1)}%',
             Icons.trending_up,
-            Colors.purple,
+            ColorRes.purpleColor,
           ),
         ],
       );
     });
   }
 
-  Widget _buildMetricCard(
+  Widget buildMetricCard(
     String title,
     String value,
     IconData icon,
@@ -785,7 +786,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: valueFontSize,
                   fontWeight: AppFontWeights.bold,
-                  color: Colors.black87,
+                  color: ColorRes.textPrimary,
                   height: 1.0,
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -861,9 +862,9 @@ class ResellerDashboardScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(cardPadding),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -913,7 +914,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                         '${lead.company}',
                         style: TextStyle(
                           fontSize: isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
-                          color: Colors.grey[700],
+                          color: ColorRes.leadGreyColor.shade700,
                           fontWeight: AppFontWeights.regular,
                         ),
                         maxLines: 1,
@@ -933,7 +934,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                               lead.email,
                               style: TextStyle(
                                 fontSize: AppFontSizes.extraSmall,
-                                color: Colors.grey[600],
+                                color: ColorRes.leadGreyColor.shade600,
                                 fontWeight: AppFontWeights.regular,
                               ),
                               maxLines: 1,
@@ -956,7 +957,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                     'Budget',
                     style: TextStyle(
                       fontSize: AppFontSizes.extraSmall,
-                      color: Colors.grey[800],
+                      color: ColorRes.leadGreyColor.shade800,
                       fontWeight: AppFontWeights.regular,
                     ),
                   ),
@@ -966,7 +967,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: isCompact ? AppFontSizes.medium : AppFontSizes.body,
                       fontWeight: AppFontWeights.semiBold,
-                      color: Colors.green,
+                      color: ColorRes.green,
                     ),
                   ),
                   SizedBox(height: 4),
@@ -974,7 +975,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                     _formatTime(lead.createdAt),
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
-                      color: Colors.grey[600],
+                      color: ColorRes.leadGreyColor.shade600,
                       fontWeight: AppFontWeights.regular,
                     ),
                   ),
@@ -985,7 +986,7 @@ class ResellerDashboardScreen extends StatelessWidget {
 
           SizedBox(height: isCompact ? 8 : 12),
           Divider(
-            color: Colors.grey,
+            color: ColorRes.leadGreyColor,
             thickness: 0.5,
           ),
           SizedBox(height: isCompact ? 8 : 12),
@@ -1047,7 +1048,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                 children: [
                   buildActionButton(
                     icon: Icons.visibility,
-                    color: Colors.blue,
+                    color: ColorRes.blueColor,
                     onPressed: () {
                       Get.to(() => LeadDetailScreen(lead: dummyResellerLead));
                     },
@@ -1057,7 +1058,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                   SizedBox(width: 8),
                   buildActionButton(
                     icon: Icons.edit,
-                    color: Colors.orange,
+                    color: ColorRes.orangeColor,
                     onPressed: () => showLeadForm(context, controller, lead: lead),
                     tooltip: 'Edit Lead',
                     isCompact: isCompact,
@@ -1065,7 +1066,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                   SizedBox(width: 8),
                   buildActionButton(
                     icon: Icons.delete,
-                    color: Colors.red,
+                    color: ColorRes.error,
                     onPressed: () => showDeleteConfirmation(context, lead, controller),
                     tooltip: 'Delete Lead',
                     isCompact: isCompact,
@@ -1143,9 +1144,9 @@ class ResellerDashboardScreen extends StatelessWidget {
       width: 200,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey.shade300, width: 1),
+          border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1172,16 +1173,16 @@ class ResellerDashboardScreen extends StatelessWidget {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: ColorRes.white,
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.grey.shade300, width: 1),
+                      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
                     ),
                     child: const Text(
                       'Added Today',
                       style: TextStyle(
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: ColorRes.textPrimary,
                       ),
                     ),
                   ),
@@ -1192,12 +1193,12 @@ class ResellerDashboardScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
+                      color: ColorRes.white.withOpacity(0.9),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.favorite_border,
-                      color: Colors.black87,
+                      color: ColorRes.textPrimary,
                       size: 15,
                     ),
                   ),
@@ -1230,7 +1231,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                       product.category,
                       style: TextStyle(
                         fontSize: 10,
-                        color: Colors.grey.shade700,
+                        color: ColorRes.leadGreyColor.shade700,
                         // height: 1.3,
                       ),
                       maxLines: 2,
@@ -1280,7 +1281,7 @@ class ResellerDashboardScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: ColorRes.white,
                           ),
                         ),
                       ),
@@ -1314,7 +1315,7 @@ class ResellerDashboardScreen extends StatelessWidget {
           text,
           style: TextStyle(
             fontSize: 9,
-            color: Colors.grey.shade800,
+            color: ColorRes.leadGreyColor.shade800,
             height: 1.0,
           ),
         ),
@@ -1325,20 +1326,20 @@ class ResellerDashboardScreen extends StatelessWidget {
   Color _getStatusColor(LeadStatus status) {
     switch (status) {
       case LeadStatus.new_: // 'New'
-        return Colors.blue;
+        return ColorRes.blueColor;
       case LeadStatus.contacted:
-        return Colors.orange;
+        return ColorRes.orangeColor;
       case LeadStatus.qualified:
-        return Colors.purple;
+        return ColorRes.purpleColor;
       case LeadStatus.negotiation:
-        return Colors.indigo;
+        return ColorRes.leadIndigoColor;
       case LeadStatus.lost:
-        return Colors.red;
+        return ColorRes.error;
       case LeadStatus.convert:
-        return Colors.teal;
+        return ColorRes.leadTealColor;
       case LeadStatus.all:
       default:
-        return Colors.grey;
+        return ColorRes.leadGreyColor;
     }
   }
 
@@ -1365,18 +1366,25 @@ class ResellerDashboardScreen extends StatelessWidget {
   Color _getStageColor(LeadStage stage) {
     switch (stage) {
       case LeadStage.newLead: // 'New Lead'
-        return Colors.blue;
+        return ColorRes.blueColor;
+        // return Colors.blue;
       case LeadStage.contacted:
-        return Colors.orange;
+        return ColorRes.orangeColor;
+        // return ;
+        // return Colors.orange;
       case LeadStage.interested:
-        return Colors.purple;
+        return ColorRes.purpleColor;
+        // return Colors.purple;
       case LeadStage.siteVisit:
-        return Colors.indigo;
+        return ColorRes.leadIndigoColor;
+        // return Colors.indigo;
       case LeadStage.sell:
-        return Colors.green;
+        return ColorRes.success;
+        // return Colors.green;
       case LeadStage.all:
       default:
-        return Colors.grey;
+        return ColorRes.leadGreyColor;
+        // return Colors.grey;
     }
   }
 
@@ -1412,7 +1420,7 @@ class ResellerDashboardScreen extends StatelessWidget {
       return '${difference.inMinutes}m ago';
     }
   }
-}
+
 
 // Navigation Controller
 class ResellerNavigationController extends GetxController {
@@ -1450,8 +1458,8 @@ class MainNavigationScreen extends StatelessWidget {
             currentIndex: navigationController.currentIndex.value,
             onTap: navigationController.changeTabIndex,
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Colors.grey,
+            selectedItemColor: ColorRes.blueColor,
+            unselectedItemColor: ColorRes.leadGreyColor,
             selectedLabelStyle: TextStyle(
               fontSize: AppFontSizes.caption,
               fontWeight: FontWeight.w600,
@@ -1460,7 +1468,7 @@ class MainNavigationScreen extends StatelessWidget {
               fontSize: AppFontSizes.caption,
               fontWeight: FontWeight.w500,
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: ColorRes.white,
             elevation: 0,
             items: const [
               BottomNavigationBarItem(

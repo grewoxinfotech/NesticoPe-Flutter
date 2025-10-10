@@ -223,7 +223,7 @@ class DeveloperSection extends StatelessWidget {
                 ),
                 fit: BoxFit.cover,
               ),
-              color: Colors.white,
+              color: ColorRes.white,
               borderRadius: BorderRadius.circular(15),
             ),
           ),

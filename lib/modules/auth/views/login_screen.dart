@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/modules/auth/views/select_account_type_scree
 import 'package:housing_flutter_app/modules/auth/views/otp_login_screen.dart';
 import 'package:get/get.dart';
 
+import '../../../app/constants/color_res.dart';
 import '../../../app/constants/font_res.dart';
 import '../../../app/constants/ic_res.dart';
 import '../../../app/utils/validation.dart';
@@ -90,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Icon(
                           Icons.home_work,
                           size: 24,
-                          color: Colors.white,
+                          color: ColorRes.white,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -113,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontFamily: FontRes.nuNunitoSans,
                       fontWeight: FontWeight.w800,
-                      color: Colors.black87,
+                      color: ColorRes.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -204,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "Don't have an account?",
                             style: TextStyle(
-                              color: Colors.grey[700],
+                              color: ColorRes.leadGreyColor.shade700,
                               fontFamily: FontRes.nuNunitoSans,
                             ),
                           ),

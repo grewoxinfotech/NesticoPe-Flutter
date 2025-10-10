@@ -87,7 +87,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    icon: const Icon(Icons.arrow_back, color: ColorRes.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
@@ -99,7 +99,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.share, color: Colors.white),
+                      icon: const Icon(Icons.share, color: ColorRes.white),
                       onPressed: _shareArticle,
                     ),
                   ),
@@ -112,7 +112,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                     child: IconButton(
                       icon: const Icon(
                         Icons.bookmark_border,
-                        color: Colors.white,
+                        color: ColorRes.white,
                       ),
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -149,7 +149,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                           child: const Icon(
                             Icons.article,
                             size: 80,
-                            color: Colors.white,
+                            color: ColorRes.white,
                           ),
                         ),
                       Container(
@@ -196,7 +196,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                               " ",
                             ),
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: ColorRes.white,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -244,7 +244,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                         .toUpperCase() ??
                                     'A',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: ColorRes.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -493,7 +493,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                 mini: true,
                 backgroundColor: Theme.of(context).primaryColor,
                 onPressed: _scrollToTop,
-                child: const Icon(Icons.arrow_upward, color: Colors.white),
+                child: const Icon(Icons.arrow_upward, color: ColorRes.white),
               ),
             ),
         ],

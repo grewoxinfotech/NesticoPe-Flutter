@@ -64,13 +64,13 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                     colors:
                         isCenterText
                             ? [
-                              Colors.black.withOpacity(0.45),
-                              Colors.black.withOpacity(0.65),
-                              Colors.black.withOpacity(0.75),
+                              ColorRes.black.withOpacity(0.45),
+                          ColorRes.black.withOpacity(0.65),
+                          ColorRes.black.withOpacity(0.75),
                             ]
                             : [
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.85),
+                          ColorRes.transparentColor,
+                          ColorRes.black.withOpacity(0.85),
                             ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -93,7 +93,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                           .substring(0, 1)
                           .toUpperCase(), // First letter
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
                       ),
@@ -103,7 +103,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                   Text(
                     developersName,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: Colors.white,
+                      color: ColorRes.white,
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
                     ),
@@ -132,7 +132,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                     //       .textTheme
                     //       .titleSmall
                     //       ?.copyWith(
-                    //     color: Colors.white,
+                    //     color: ColorRes.white,
                     //     fontWeight: FontWeight.bold,
                     //   ),
                     //   maxLines: titleMaxLines,
@@ -144,7 +144,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                     //   Text(
                     //     description!,
                     //     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    //       color: Colors.white70,
+                    //       color: ColorRes.white70,
                     //       fontWeight: FontWeight.w400,
                     //     ),
                     //     maxLines: descriptionMaxLines,
@@ -156,7 +156,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                     Text(
                       price,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -165,7 +165,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                     Text(
                       location,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white70,
+                        color: ColorRes.whiteShade,
                         fontWeight: FontWeight.w400,
                       ),
                       maxLines: 1,
@@ -244,7 +244,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
 //             child: Text(
 //               title,
 //               style: const TextStyle(
-//                 color: Colors.white,
+//                 color: ColorRes.white,
 //                 fontSize: 14,
 //                 fontWeight: FontWeight.w500,
 //               ),
@@ -650,7 +650,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
 //
 //   // Helper to determine text color based on background brightness
 //   Color getTextColor(Color background) {
-//     return background.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+//     return background.computeLuminance() > 0.5 ? Colors.black : ColorRes.white;
 //   }
 // }
 
@@ -683,18 +683,18 @@ class NesticoPeCardWithText extends StatelessWidget {
     final gradientColors =
         isDark
             ? [
-              Colors.black.withOpacity(0.7),
-              Colors.black.withOpacity(0.5),
-              Colors.black.withOpacity(0.3),
-              Colors.black.withOpacity(0.1),
-              Colors.transparent,
+              ColorRes.black.withOpacity(0.7),
+          ColorRes.black.withOpacity(0.5),
+          ColorRes.black.withOpacity(0.3),
+          ColorRes.black.withOpacity(0.1),
+          ColorRes.transparentColor,
             ]
             : [
               opacity,
               opacity.withOpacity(0.9),
               opacity.withOpacity(0.7),
               opacity.withOpacity(0.5),
-              Colors.transparent,
+          ColorRes.transparentColor,
             ];
 
     final gradientStops =
@@ -730,7 +730,7 @@ class NesticoPeCardWithText extends StatelessWidget {
                   child: Container(
                     height: height,
                     width: width,
-                    color: Colors.black.withOpacity(
+                    color: ColorRes.black.withOpacity(
                       0.2,
                     ), // semi-transparent overlay
                   ),
@@ -794,6 +794,6 @@ class NesticoPeCardWithText extends StatelessWidget {
 
   // Helper to determine text color based on background brightness
   Color getTextColor(Color background) {
-    return background.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+    return background.computeLuminance() > 0.5 ? ColorRes.black : ColorRes.white;
   }
 }

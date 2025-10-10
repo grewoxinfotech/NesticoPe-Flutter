@@ -34,7 +34,7 @@
 //         title,
 //         AppFontSizes.small,
 //         AppFontWeights.medium,
-//         isSelected ? Colors.white : ColorRes.textColor,
+//         isSelected ? ColorRes.white : ColorRes.textColor,
 //         1,
 //       ),
 //     );
@@ -56,7 +56,7 @@
 //         title,
 //         AppFontSizes.small,
 //         AppFontWeights.medium,
-//         isSelected ? Colors.white : ColorRes.textColor,
+//         isSelected ? ColorRes.white : ColorRes.textColor,
 //         1,
 //       ),
 //     );
@@ -90,7 +90,7 @@ Widget buildFilterPropertyTypes({
     ),
     decoration: BoxDecoration(
 
-      color: isSelected ? ColorRes.primary.withOpacity(0.1) : Colors.white,
+      color: isSelected ? ColorRes.primary.withOpacity(0.1) : ColorRes.white,
       border: Border.all(
         color: isSelected ? ColorRes.primary : Colors.grey.shade300,
         width: isSelected?1.8:1.5,

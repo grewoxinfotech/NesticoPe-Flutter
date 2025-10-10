@@ -89,7 +89,7 @@ class _StepProgressState extends State<StepProgress> {
                       duration: const Duration(milliseconds: 200),
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white,
+                        color: ColorRes.white,
                         fontWeight: isCurrent || isCompleted
                             ? FontWeight.bold
                             : FontWeight.normal,

@@ -53,7 +53,7 @@ class ContactOwnerBottom extends StatefulWidget {
     this.contactButtonText = "Contact Owner",
     this.termsText = "By clicking above you agree to ",
     this.termsClickableText = "Terms & Conditions",
-    this.chatButtonColor = Colors.green,
+    this.chatButtonColor = ColorRes.success,
     this.contactButtonColor = ColorRes.primary,
     this.allowSellerContact = true,
     this.homeLoanInterest = false,
@@ -64,7 +64,7 @@ class ContactOwnerBottom extends StatefulWidget {
     this.nameIcon = Icons.person_outline,
     this.phoneIcon = Icons.call,
     this.emailIcon = Icons.email_outlined,
-    this.chatButtonIcon = const Icon(Icons.call, color: Colors.white),
+    this.chatButtonIcon = const Icon(Icons.call, color: ColorRes.white),
   });
 
   @override
@@ -146,7 +146,8 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
             style: TextStyle(
               fontSize: 15,
               fontWeight: AppFontWeights.semiBold,
-              color: Colors.blueGrey[900],
+              color: ColorRes.blueGrey,
+
             ),
           ),
           const SizedBox(height: 12),
@@ -156,7 +157,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: Colors.blue.shade100,
+                backgroundColor: ColorRes.blueColor.shade100,
                 backgroundImage: AssetImage(IMGRes.home2),
               ),
               const SizedBox(width: 12),
@@ -169,7 +170,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                   ),
                   Text(
                     "+91 ${widget.property.ownerPhone}",
-                    style: TextStyle(color: Colors.grey, fontSize: 11),
+                    style: TextStyle(color: ColorRes.leadGreyColor, fontSize: 11),
                   ),
                 ],
               ),
@@ -189,7 +190,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
             icon: widget.chatButtonIcon,
             label: Text(
               widget.chatButtonText,
-              style: const TextStyle(fontSize: 14, color: Colors.white),
+              style: const TextStyle(fontSize: 14, color: ColorRes.white),
             ),
             onPressed: widget.onChatPressed,
           ),
@@ -381,7 +382,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               textAlign: TextAlign.center,
               text: TextSpan(
                 text: widget.termsText,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                style: const TextStyle(fontSize: 12, color: ColorRes.leadGreyColor),
                 children: [
                   TextSpan(
                     text: widget.termsClickableText,

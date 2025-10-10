@@ -32,7 +32,7 @@
 //       child: Container(
 //         width: 180,
 //         decoration: BoxDecoration(
-//           color: Colors.white,
+//           color: ColorRes.white,
 //           borderRadius: BorderRadius.circular(AppRadius.medium),
 //           border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
 //         ),
@@ -63,7 +63,7 @@
 //                         vertical: 2,
 //                       ),
 //                       decoration: BoxDecoration(
-//                         color: Colors.white.withOpacity(0.90),
+//                         color: ColorRes.white.withOpacity(0.90),
 //                         borderRadius: BorderRadius.circular(8),
 //                       ),
 //                       child: Row(
@@ -249,8 +249,8 @@ class TopPropertyByLocation extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.85),
+                        ColorRes.transparentColor,
+                        ColorRes.black.withOpacity(0.85),
                       ],
 
                       begin: Alignment.topCenter,
@@ -269,7 +269,7 @@ class TopPropertyByLocation extends StatelessWidget {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.90),
+                    color: ColorRes.white.withOpacity(0.90),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -318,7 +318,7 @@ class TopPropertyByLocation extends StatelessWidget {
                         "${property.city}, ${property.state}",
                         fontSize: 11,
                         fontWeight: FontWeight.w400,
-                        color: Colors.white70.withOpacity(0.8),
+                        color: Colors.white70,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

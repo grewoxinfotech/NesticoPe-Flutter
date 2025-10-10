@@ -1,6 +1,8 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';import 'package:get/get.dart';
 
+import '../../constants/color_res.dart';
+
 class NesticoPeSnackBar {
   static void showAwesomeSnackbar({
     required String title,
@@ -11,7 +13,7 @@ class NesticoPeSnackBar {
     final snackBar = SnackBar(
       elevation: 0,
       behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.transparent,
+      backgroundColor: ColorRes.transparentColor,
       content: AwesomeSnackbarContent(
         title: title,
         message: message,

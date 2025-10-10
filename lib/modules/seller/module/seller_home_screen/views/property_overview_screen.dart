@@ -24,8 +24,8 @@ class PropertyOverviewScreen extends StatelessWidget {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: ColorRes.white,
+        foregroundColor: ColorRes.textPrimary,
         title: const Text(
           "Property Overview",
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
@@ -65,7 +65,7 @@ class PropertyOverviewScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: ColorRes.black.withOpacity(0.08),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -74,7 +74,7 @@ class PropertyOverviewScreen extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: Material(
-            color: Colors.white,
+            color: ColorRes.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -106,7 +106,7 @@ class PropertyOverviewScreen extends StatelessWidget {
                         child: Text(
                           property.propertyStatus?.capitalize ?? 'Available',
                           style: TextStyle(
-                            color: isSold ? Colors.white : ColorRes.primary,
+                            color: isSold ? ColorRes.white : ColorRes.primary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -130,7 +130,7 @@ class PropertyOverviewScreen extends StatelessWidget {
                           child: Text(
                             property.listingType!.capitalize.toString(),
                             style: TextStyle(
-                              color: Colors.white,
+                              color: ColorRes.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -161,7 +161,7 @@ class PropertyOverviewScreen extends StatelessWidget {
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
+                                    color: ColorRes.textPrimary,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -334,7 +334,7 @@ class PropertyOverviewScreen extends StatelessWidget {
           style: const TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: ColorRes.textPrimary,
           ),
         ),
         // const SizedBox(height: 2),

@@ -390,7 +390,7 @@
 //                                   decoration: BoxDecoration(
 //                                     color: isSelected
 //                                         ? Theme.of(context).primaryColor.withOpacity(0.1)
-//                                         : Colors.white,
+//                                         : ColorRes.white,
 //                                     borderRadius: BorderRadius.circular(12),
 //                                     border: Border.all(
 //                                       color: isSelected
@@ -817,7 +817,7 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                           .of(context)
                                           .primaryColor
                                           .withOpacity(0.1)
-                                          : Colors.white,
+                                          : ColorRes.white,
                                       borderRadius: BorderRadius.circular(
                                         12,
                                       ),
@@ -829,7 +829,7 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                           context,
                                         )
                                             .primaryColor
-                                            : Colors.grey.shade300,
+                                            : ColorRes.leadGreyColor.shade300,
                                         width: 1,
                                       ),
                                     ),
@@ -852,7 +852,7 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                             context,
                                           )
                                               .primaryColor
-                                              : Colors.grey.shade600,
+                                              : ColorRes.leadGreyColor.shade600,
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
@@ -866,7 +866,7 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                               context,
                                             )
                                                 .primaryColor
-                                                : Colors.black,
+                                                : ColorRes.black,
                                             fontWeight: FontWeight.w400,
                                             fontSize: 10,
                                           ),
@@ -1161,10 +1161,10 @@ Widget builderPropertyType(ProjectWizardController controller) {
                 color:
                     isSelected
                         ? ColorRes.primary.withOpacity(0.1)
-                        : Colors.white,
+                        : ColorRes.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isSelected ? Colors.transparent : Colors.grey.shade300,
+                  color: isSelected ? ColorRes.transparentColor : ColorRes.leadGreyColor.shade300,
                   width: 1,
                 ),
               ),
@@ -1174,7 +1174,7 @@ Widget builderPropertyType(ProjectWizardController controller) {
                   AppSvgIcon(
                     assetName: item.key,
                     size: 24,
-                    color: isSelected ? ColorRes.primary : Colors.grey.shade600,
+                    color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade600,
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -1182,7 +1182,7 @@ Widget builderPropertyType(ProjectWizardController controller) {
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       fontWeight: FontWeight.w500,
-                      color: isSelected ? ColorRes.primary : Colors.black,
+                      color: isSelected ? ColorRes.primary : ColorRes.black,
                     ),
                     textAlign: TextAlign.center,
                   ),

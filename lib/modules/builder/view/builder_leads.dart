@@ -11,7 +11,7 @@ class BuilderLeads extends StatelessWidget {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text('Leads', style: TextStyle(fontWeight: FontWeight.w600)),
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
@@ -21,7 +21,7 @@ class BuilderLeads extends StatelessWidget {
       // body: Column(
       //   children: [
       //     Container(
-      //       color: Colors.white,
+      //       color: ColorRes.white,
       //       padding: const EdgeInsets.all(16),
       //       child: Row(
       //         children: [
@@ -54,8 +54,8 @@ class BuilderLeads extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text('$count', style: TextStyle(fontSize: AppFontSizes.body, fontWeight: FontWeight.bold, color: isSelected ? Colors.white : ColorRes.textPrimary)),
-          Text(label, style: TextStyle(fontSize: AppFontSizes.small, color: isSelected ? Colors.white.withOpacity(0.9) : ColorRes.textSecondary)),
+          Text('$count', style: TextStyle(fontSize: AppFontSizes.body, fontWeight: FontWeight.bold, color: isSelected ? ColorRes.white : ColorRes.textPrimary)),
+          Text(label, style: TextStyle(fontSize: AppFontSizes.small, color: isSelected ? ColorRes.white.withOpacity(0.9) : ColorRes.textSecondary)),
         ],
       ),
     );
@@ -80,7 +80,7 @@ class BuilderLeads extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.grey.shade200),
       ),

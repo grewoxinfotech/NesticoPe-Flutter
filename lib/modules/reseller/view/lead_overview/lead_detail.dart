@@ -31,7 +31,7 @@
 //             fontSize: AppFontSizes.large,
 //           ),
 //         ),
-//         backgroundColor: Colors.white,
+//         backgroundColor: ColorRes.white,
 //         elevation: 0,
 //         actions: [
 //           IconButton(
@@ -96,7 +96,7 @@
 //
 //     return Container(
 //       height: 280,
-//       color: Colors.white,
+//       color: ColorRes.white,
 //       child: Stack(
 //         children: [
 //           PageView.builder(
@@ -142,7 +142,7 @@
 //               child: Text(
 //                 '1/${dummyImages.length}',
 //                 style: TextStyle(
-//                   color: Colors.white,
+//                   color: ColorRes.white,
 //                   fontSize: AppFontSizes.small,
 //                   fontWeight: AppFontWeights.semiBold,
 //                 ),
@@ -162,7 +162,7 @@
 //               child: Text(
 //                 _getStatusText(lead.status),
 //                 style: TextStyle(
-//                   color: Colors.white,
+//                   color: ColorRes.white,
 //                   fontSize: AppFontSizes.small,
 //                   fontWeight: AppFontWeights.bold,
 //                 ),
@@ -179,7 +179,7 @@
 //       margin: EdgeInsets.all(16),
 //       padding: EdgeInsets.all(isCompact ? 16 : 20),
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(16),
 //         boxShadow: [
 //           BoxShadow(
@@ -753,7 +753,7 @@
 //               ),
 //               style: ElevatedButton.styleFrom(
 //                 backgroundColor: Colors.green,
-//                 foregroundColor: Colors.white,
+//                 foregroundColor: ColorRes.white,
 //                 padding: EdgeInsets.symmetric(vertical: 16),
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(12),
@@ -775,7 +775,7 @@
 //               ),
 //               style: ElevatedButton.styleFrom(
 //                 backgroundColor: ColorRes.primary,
-//                 foregroundColor: Colors.white,
+//                 foregroundColor: ColorRes.white,
 //                 padding: EdgeInsets.symmetric(vertical: 16),
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(12),
@@ -799,7 +799,7 @@
 //       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 //       padding: EdgeInsets.all(isCompact ? 16 : 20),
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(16),
 //         boxShadow: [
 //           BoxShadow(
@@ -843,7 +843,7 @@
 //   void _showMoreOptions(BuildContext context) {
 //     showModalBottomSheet(
 //       context: context,
-//       backgroundColor: Colors.white,
+//       backgroundColor: ColorRes.white,
 //       shape: RoundedRectangleBorder(
 //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
 //       ),
@@ -954,7 +954,7 @@
 //     final isCompact = MediaQuery.of(context).size.width < 600;
 //
 //     return Scaffold(
-//       backgroundColor: Colors.white,
+//       backgroundColor: ColorRes.white,
 //       appBar: AppBar(
 //         leading: IconButton(onPressed: () {
 //           Get.back();
@@ -966,7 +966,7 @@
 //             fontSize: AppFontSizes.large,
 //           ),
 //         ),
-//         backgroundColor: Colors.white,
+//         backgroundColor: ColorRes.white,
 //         elevation: 0,
 //         actions: [
 //           IconButton(
@@ -1042,7 +1042,7 @@
 //
 //     return Container(
 //       height: 280,
-//       color: Colors.white,
+//       color: ColorRes.white,
 //       child: Stack(
 //         children: [
 //           PageView.builder(
@@ -1090,7 +1090,7 @@
 //               child: Text(
 //                 '1/${dummyImages.length}',
 //                 style: TextStyle(
-//                   color: Colors.white,
+//                   color: ColorRes.white,
 //                   fontSize: AppFontSizes.small,
 //                   fontWeight: AppFontWeights.semiBold,
 //                 ),
@@ -1110,7 +1110,7 @@
 //               child: Text(
 //                 _getStatusText(lead.status),
 //                 style: TextStyle(
-//                   color: Colors.white,
+//                   color: ColorRes.white,
 //                   fontSize: AppFontSizes.extraSmall,
 //                   fontWeight: AppFontWeights.semiBold,
 //                 ),
@@ -1908,7 +1908,7 @@
 //               ),
 //               style: ElevatedButton.styleFrom(
 //                 backgroundColor: Colors.green,
-//                 foregroundColor: Colors.white,
+//                 foregroundColor: ColorRes.white,
 //                 padding: EdgeInsets.symmetric(vertical: 16),
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(12),
@@ -1930,7 +1930,7 @@
 //               ),
 //               style: ElevatedButton.styleFrom(
 //                 backgroundColor: ColorRes.primary,
-//                 foregroundColor: Colors.white,
+//                 foregroundColor: ColorRes.white,
 //                 padding: EdgeInsets.symmetric(vertical: 16),
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(12),
@@ -1946,7 +1946,7 @@
 //   void _showMoreOptions(BuildContext context) {
 //     showModalBottomSheet(
 //       context: context,
-//       backgroundColor: Colors.white,
+//       backgroundColor: ColorRes.white,
 //       shape: RoundedRectangleBorder(
 //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
 //       ),
@@ -2060,7 +2060,7 @@
 //     final isCompact = MediaQuery.of(context).size.width < 600;
 //
 //     return Scaffold(
-//       backgroundColor: Colors.white,
+//       backgroundColor: ColorRes.white,
 //       appBar: AppBar(
 //         leading:  IconButton(
 //           icon: const Icon(Icons.arrow_back),
@@ -2080,7 +2080,7 @@
 //             fontSize: AppFontSizes.large,
 //           ),
 //         ),
-//         backgroundColor: Colors.white,
+//         backgroundColor: ColorRes.white,
 //         elevation: 0,
 //         actions: [
 //           IconButton(
@@ -2314,7 +2314,7 @@
 //
 //     return Container(
 //       height: 280,
-//       color: Colors.white,
+//       color: ColorRes.white,
 //       child: Stack(
 //         children: [
 //           PageView.builder(
@@ -2363,7 +2363,7 @@
 //               child: Text(
 //                 '1/${dummyImages.length}',
 //                 style: TextStyle(
-//                   color: Colors.white,
+//                   color: ColorRes.white,
 //                   fontSize: AppFontSizes.small,
 //                   fontWeight: AppFontWeights.semiBold,
 //                 ),
@@ -2384,7 +2384,7 @@
 //               child: Text(
 //                 _getStatusText(lead.status),
 //                 style: TextStyle(
-//                   color: Colors.white,
+//                   color: ColorRes.white,
 //                   fontSize: AppFontSizes.extraSmall,
 //                   fontWeight: AppFontWeights.semiBold,
 //                 ),
@@ -2971,7 +2971,7 @@
 //               ),
 //               style: ElevatedButton.styleFrom(
 //                 backgroundColor: Colors.green,
-//                 foregroundColor: Colors.white,
+//                 foregroundColor: ColorRes.white,
 //                 padding: EdgeInsets.symmetric(vertical: 16),
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(12),
@@ -2993,7 +2993,7 @@
 //               ),
 //               style: ElevatedButton.styleFrom(
 //                 backgroundColor: ColorRes.primary,
-//                 foregroundColor: Colors.white,
+//                 foregroundColor: ColorRes.white,
 //                 padding: EdgeInsets.symmetric(vertical: 16),
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.circular(12),
@@ -3009,7 +3009,7 @@
 //   void _showMoreOptions(BuildContext context) {
 //     showModalBottomSheet(
 //       context: context,
-//       backgroundColor: Colors.white,
+//       backgroundColor: ColorRes.white,
 //       shape: RoundedRectangleBorder(
 //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
 //       ),
@@ -3130,7 +3130,7 @@ class LeadDetailScreen extends StatelessWidget {
     final isCompact = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -3146,7 +3146,7 @@ class LeadDetailScreen extends StatelessWidget {
             fontSize: AppFontSizes.large,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -3448,7 +3448,7 @@ class LeadDetailScreen extends StatelessWidget {
 
     return Container(
       height: 280,
-      color: Colors.white,
+      color: ColorRes.white,
       child: Stack(
         children: [
           PageView.builder(
@@ -3494,7 +3494,7 @@ class LeadDetailScreen extends StatelessWidget {
               child: Text(
                 '1/${dummyImages.length}',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: ColorRes.white,
                   fontSize: AppFontSizes.small,
                   fontWeight: AppFontWeights.semiBold,
                 ),
@@ -3517,7 +3517,7 @@ class LeadDetailScreen extends StatelessWidget {
               child: Text(
                 _getStatusText(lead.status),
                 style: TextStyle(
-                  color: Colors.white,
+                  color: ColorRes.white,
                   fontSize: AppFontSizes.extraSmall,
                   fontWeight: AppFontWeights.semiBold,
                 ),
@@ -4151,7 +4151,7 @@ class LeadDetailScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: ColorRes.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
@@ -4347,7 +4347,7 @@ class LeadDetailScreen extends StatelessWidget {
                                   !hasOffer
                                       ? Colors.green.shade600
                                       : Colors.grey.shade400,
-                              foregroundColor: Colors.white,
+                              foregroundColor: ColorRes.white,
                               padding: EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -4435,7 +4435,7 @@ class LeadDetailScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorRes.white,
                 shape: BoxShape.circle,
                 border: Border.all(color: color, width: 2.5),
               ),
@@ -4463,7 +4463,7 @@ class LeadDetailScreen extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade300, width: 1),
               ),
@@ -4527,7 +4527,7 @@ class LeadDetailScreen extends StatelessWidget {
   //           ),
   //           child: Container(
   //             decoration: BoxDecoration(
-  //               color: Colors.white,
+  //               color: ColorRes.white,
   //               borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
   //             ),
   //             child: Column(
@@ -4569,7 +4569,7 @@ class LeadDetailScreen extends StatelessWidget {
   //                                 Container(
   //                                   padding: EdgeInsets.all(14),
   //                                   decoration: BoxDecoration(
-  //                                     color: Colors.white,
+  //                                     color: ColorRes.white,
   //                                     shape: BoxShape.circle,
   //                                     border: Border.all(
   //                                       color: ColorRes.green,
@@ -4729,7 +4729,7 @@ class LeadDetailScreen extends StatelessWidget {
   //                                     ),
   //                                   ),
   //                                   filled: true,
-  //                                   fillColor: Colors.white,
+  //                                   fillColor: ColorRes.white,
   //                                   contentPadding: EdgeInsets.symmetric(
   //                                     horizontal: 16,
   //                                     vertical: 16,
@@ -4789,7 +4789,7 @@ class LeadDetailScreen extends StatelessWidget {
   //                                     ),
   //                                   ),
   //                                   filled: true,
-  //                                   fillColor: Colors.white,
+  //                                   fillColor: ColorRes.white,
   //                                   contentPadding: EdgeInsets.symmetric(
   //                                     horizontal: 16,
   //                                     vertical: 16,
@@ -4859,7 +4859,7 @@ class LeadDetailScreen extends StatelessWidget {
   //                                               children: [
   //                                                 Icon(
   //                                                   Icons.check_circle,
-  //                                                   color: Colors.white,
+  //                                                   color: ColorRes.white,
   //                                                 ),
   //                                                 SizedBox(width: 12),
   //                                                 Expanded(
@@ -4896,7 +4896,7 @@ class LeadDetailScreen extends StatelessWidget {
   //                                     ),
   //                                     style: ElevatedButton.styleFrom(
   //                                       backgroundColor: ColorRes.primary,
-  //                                       foregroundColor: Colors.white,
+  //                                       foregroundColor: ColorRes.white,
   //                                       padding: EdgeInsets.symmetric(
   //                                         vertical: 14,
   //                                       ),
@@ -4946,7 +4946,7 @@ class LeadDetailScreen extends StatelessWidget {
             ),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorRes.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
               ),
               child: Column(
@@ -4988,7 +4988,7 @@ class LeadDetailScreen extends StatelessWidget {
                                   Container(
                                     padding: EdgeInsets.all(14),
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: ColorRes.white,
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: ColorRes.green,
@@ -5147,7 +5147,7 @@ class LeadDetailScreen extends StatelessWidget {
                                       ),
                                     ),
                                     filled: true,
-                                    fillColor: Colors.white,
+                                    fillColor: ColorRes.white,
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 16,
@@ -5207,7 +5207,7 @@ class LeadDetailScreen extends StatelessWidget {
                                       ),
                                     ),
                                     filled: true,
-                                    fillColor: Colors.white,
+                                    fillColor: ColorRes.white,
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 16,
@@ -5285,7 +5285,7 @@ class LeadDetailScreen extends StatelessWidget {
                                                 children: [
                                                   Icon(
                                                     Icons.check_circle,
-                                                    color: Colors.white,
+                                                    color: ColorRes.white,
                                                   ),
                                                   SizedBox(width: 12),
                                                   Expanded(
@@ -5321,7 +5321,7 @@ class LeadDetailScreen extends StatelessWidget {
                                       ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: ColorRes.primary,
-                                        foregroundColor: Colors.white,
+                                        foregroundColor: ColorRes.white,
                                         padding: EdgeInsets.symmetric(
                                           vertical: 14,
                                         ),
@@ -5392,7 +5392,7 @@ class LeadDetailScreen extends StatelessWidget {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
+                  foregroundColor: ColorRes.white,
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -5414,7 +5414,7 @@ class LeadDetailScreen extends StatelessWidget {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorRes.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: ColorRes.white,
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -5431,7 +5431,7 @@ class LeadDetailScreen extends StatelessWidget {
   void _showMoreOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),

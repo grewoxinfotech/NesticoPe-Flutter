@@ -172,7 +172,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                     },
                     child: CircleAvatar(
                       radius: 14,
-                      backgroundColor: Colors.white,
+                      backgroundColor: ColorRes.white,
                       child: Obx(
                         () {
                           final isFavorite = controller.favoriteIds.contains(widget.property.id);
@@ -555,7 +555,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
 //                       ? "Verified"
 //                       : "RERA",
 //                   backgroundColor: Colors.black.withOpacity(0.7),
-//                   textColor: Colors.white,
+//                   textColor: ColorRes.white,
 //                   fontSize: AppFontSizes.extraSmall,
 //                   borderRadius: AppRadius.small,
 //                   fontWeight: AppFontWeights.bold,
@@ -572,7 +572,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
 //                   onTap: () => setState(() => isFavorite = !isFavorite),
 //                   child: CircleAvatar(
 //                     radius: 16,
-//                     backgroundColor: Colors.white,
+//                     backgroundColor: ColorRes.white,
 //                     child: Icon(
 //                       isFavorite ? Icons.favorite : Icons.favorite_border,
 //                       color: ColorRes.primary,
@@ -700,7 +700,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
 //               children: [
 //                 CircleAvatar(
 //                   radius: 18,
-//                   backgroundColor: Colors.white,
+//                   backgroundColor: ColorRes.white,
 //                   child: CircleAvatar(
 //                     radius: 16,
 //                     backgroundImage: NetworkImage(widget.ownerAvatar),
@@ -738,7 +738,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
 //                     borderRadius: BorderRadius.circular(AppRadius.small),
 //                   ),
 //                   child: const Icon(Icons.call,
-//                       color: Colors.white, size: AppFontSizes.medium),
+//                       color: ColorRes.white, size: AppFontSizes.medium),
 //                 ),
 //                 const SizedBox(width: 8),
 //                 // View Details Button

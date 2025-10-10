@@ -5,6 +5,8 @@ import 'package:housing_flutter_app/modules/add_property/view/create_property.da
 import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../../../app/constants/color_res.dart';
+
 class BasicDetail extends StatelessWidget {
   final CreatePropertyController controller;
   final GlobalKey<FormState>? formKey;
@@ -57,7 +59,7 @@ class BasicDetail extends StatelessWidget {
                         child: Text(
                           'Please select property type',
                           style: TextStyle(
-                            color: Colors.red.shade700,
+                            color: ColorRes.error.shade700,
                             fontSize: 12,
                           ),
                         ),
@@ -135,7 +137,7 @@ class BasicDetail extends StatelessWidget {
                             child: Text(
                               'Please select what you are looking to do',
                               style: TextStyle(
-                                color: Colors.red.shade700,
+                                color: ColorRes.error.shade700,
                                 fontSize: 12,
                               ),
                             ),
@@ -193,7 +195,7 @@ class BasicDetail extends StatelessWidget {
                           child: Text(
                             'Please select any one category',
                             style: TextStyle(
-                              color: Colors.red.shade700,
+                              color: ColorRes.error.shade700,
                               fontSize: 12,
                             ),
                           ),
@@ -225,7 +227,7 @@ class BasicDetail extends StatelessWidget {
             //       "Next, add address & price",
             //       style: TextStyle(
             //         fontSize: 14,
-            //         color: Colors.white,
+            //         color: ColorRes.white,
             //         fontWeight: FontWeight.w500,
             //       ),
             //     ),

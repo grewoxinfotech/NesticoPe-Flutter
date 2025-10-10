@@ -100,7 +100,7 @@ class _DynamicMediaBannerState extends State<PropertyMediaGallery> {
               left: 16,
               child: CircularIcon(
                 icon: Icons.arrow_back_rounded,
-                backgroundColor: Colors.white,
+                backgroundColor: ColorRes.white,
                 onPressed: widget.onBack ?? () => Get.back(),
               ),
             ),
@@ -120,7 +120,7 @@ class _DynamicMediaBannerState extends State<PropertyMediaGallery> {
                           isFav
                               ? Icons.favorite
                               : Icons.favorite_border_rounded,
-                      backgroundColor: Colors.white,
+                      backgroundColor: ColorRes.white,
                       iconColor: isFav ? Colors.redAccent : ColorRes.black,
                       onPressed:
                           () => widget.onFavoriteToggle?.call(widget.itemId!),
@@ -131,7 +131,7 @@ class _DynamicMediaBannerState extends State<PropertyMediaGallery> {
                   CircularIcon(
                     icon: Icons.share_outlined,
                     onPressed: widget.onShare,
-                    backgroundColor: Colors.white,
+                    backgroundColor: ColorRes.white,
                   ),
               ],
             ),
@@ -150,7 +150,7 @@ class _DynamicMediaBannerState extends State<PropertyMediaGallery> {
               child: Text(
                 '${_currentPage + 1}/${mediaList.length}',
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: ColorRes.white,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),

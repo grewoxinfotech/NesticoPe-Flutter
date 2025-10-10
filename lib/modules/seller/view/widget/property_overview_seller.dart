@@ -25,7 +25,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
     final isCompact = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -35,7 +35,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           'Property Overview',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -179,7 +179,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
               child: Text(
                 '1/${images.length}',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: ColorRes.white,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -200,7 +200,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
               child: Text(
                 _formatStatus(property.propertyStatus ?? 'active'),
                 style: TextStyle(
-                  color: Colors.white,
+                  color: ColorRes.white,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -828,7 +828,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
       ),
@@ -937,7 +937,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade700,
-                  foregroundColor: Colors.white,
+                  foregroundColor: ColorRes.white,
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -958,7 +958,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green.shade700,
-                  foregroundColor: Colors.white,
+                  foregroundColor: ColorRes.white,
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -975,7 +975,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
   void _showMoreOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),

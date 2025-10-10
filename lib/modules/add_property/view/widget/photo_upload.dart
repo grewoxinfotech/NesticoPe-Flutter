@@ -36,8 +36,8 @@ class PhotoUpload extends StatelessWidget {
                   Icons.add_a_photo,
                   color:
                       controller.selectedImages.length >= controller.maxImages
-                          ? Colors.grey
-                          : Colors.white,
+                          ? ColorRes.leadGreyColor
+                          : ColorRes.white,
                 ),
                 label: Text(
                   controller.selectedImages.length >= controller.maxImages
@@ -46,8 +46,8 @@ class PhotoUpload extends StatelessWidget {
                   style: TextStyle(
                     color:
                         controller.selectedImages.length >= controller.maxImages
-                            ? Colors.grey
-                            : Colors.white,
+                            ? ColorRes.leadGreyColor
+                            : ColorRes.white,
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
                   ),
@@ -63,13 +63,13 @@ class PhotoUpload extends StatelessWidget {
                   elevation: 3,
                   backgroundColor:
                       controller.selectedImages.length >= controller.maxImages
-                          ? Colors.grey
+                          ? ColorRes.leadGreyColor
                           : Theme.of(context).primaryColor,
                 ),
               ),
               Text(
                 "${controller.selectedImages.length} / ${controller.maxImages} photos selected",
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                style: TextStyle(color: ColorRes.leadGreyColor.shade600, fontSize: 12),
               ),
             ],
           ),
@@ -77,7 +77,7 @@ class PhotoUpload extends StatelessWidget {
           controller.selectedImages.isEmpty
               ? const Text(
                 "No images selected yet.",
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: ColorRes.leadGreyColor),
               )
               : Wrap(
                 spacing: 12,
@@ -97,7 +97,7 @@ class PhotoUpload extends StatelessWidget {
                             color:
                                 img.isCover
                                     ? Theme.of(context).primaryColor
-                                    : Colors.grey.shade300,
+                                    : ColorRes.leadGreyColor.shade300,
                             width: img.isCover ? 2 : 1,
                           ),
                         ),
@@ -129,7 +129,7 @@ class PhotoUpload extends StatelessWidget {
                                       horizontal: 8,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.black54,
+                                      color: ColorRes.textColor,
                                       borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(12),
                                         bottomRight: Radius.circular(12),
@@ -147,7 +147,7 @@ class PhotoUpload extends StatelessWidget {
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                             style: const TextStyle(
-                                              color: Colors.white,
+                                              color: ColorRes.white,
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -176,13 +176,13 @@ class PhotoUpload extends StatelessWidget {
                           onTap: () => controller.removeImageByPath(img.path),
                           child: Container(
                             decoration: const BoxDecoration(
-                              color: Colors.black54,
+                              color: ColorRes.blackShade54,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
                               Icons.close,
                               size: 20,
-                              color: Colors.white,
+                              color: ColorRes.white,
                             ),
                           ),
                         ),
@@ -215,7 +215,7 @@ void showLabelBottomSheet(
     Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SingleChildScrollView(
@@ -240,8 +240,8 @@ void showLabelBottomSheet(
                         side: BorderSide(
                           color:
                               isSelected
-                                  ? Colors.transparent
-                                  : Colors.grey.shade300,
+                                  ? ColorRes.transparentColor
+                                  : ColorRes.leadGreyColor.shade300,
                           width: 1,
                         ),
                         selected: isSelected,
@@ -253,7 +253,7 @@ void showLabelBottomSheet(
                         selectedColor:
                             isSelected
                                 ? ColorRes.primary.withOpacity(0.1)
-                                : Colors.white,
+                                : ColorRes.white,
                         labelStyle: TextStyle(
                           color:
                               isSelected

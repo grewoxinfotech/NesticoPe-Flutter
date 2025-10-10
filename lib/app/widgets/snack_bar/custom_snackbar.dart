@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/color_res.dart';
+
 /// Custom SnackBar widget with different types and animations
 class CustomSnackBar {
   static void show(
@@ -131,7 +133,7 @@ class _CustomSnackBarWidgetState extends State<_CustomSnackBarWidget>
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Material(
-            color: Colors.transparent,
+            color: ColorRes.transparentColor,
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -147,13 +149,13 @@ class _CustomSnackBarWidgetState extends State<_CustomSnackBarWidget>
               ),
               child: Row(
                 children: [
-                  Icon(_getIcon(), color: Colors.white, size: 24),
+                  Icon(_getIcon(), color: ColorRes.white, size: 24),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       widget.message,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -168,7 +170,7 @@ class _CustomSnackBarWidgetState extends State<_CustomSnackBarWidget>
                         _dismiss();
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
+                        foregroundColor: ColorRes.white,
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                       ),
                       child: Text(
@@ -178,7 +180,7 @@ class _CustomSnackBarWidgetState extends State<_CustomSnackBarWidget>
                     ),
                   ],
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
+                    icon: const Icon(Icons.close, color: ColorRes.white),
                     onPressed: _dismiss,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),

@@ -44,7 +44,7 @@ class TitleWithDescription extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Colors.blue,
+                      color: ColorRes.blueColor,
                     ),
                   ),
                 ),
@@ -57,7 +57,7 @@ class TitleWithDescription extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
-                color: Colors.grey,
+                color: ColorRes.leadGreyColor,
               ),
             ),
           ],

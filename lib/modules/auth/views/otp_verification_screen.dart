@@ -355,6 +355,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
+import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../widgets/button/button.dart';
 import '../../../widgets/messages/snack_bar.dart';
@@ -592,7 +593,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 40),
-                const Icon(Icons.verified_user, size: 80, color: Colors.blue),
+                 Icon(Icons.verified_user, size: 80, color: ColorRes.blueColor),
                 const SizedBox(height: 20),
                 Text(
                   'Enter OTP',
@@ -619,7 +620,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     ),
                     hintText: '••••••',
                     filled: true,
-                    fillColor: Colors.grey[100],
+                    fillColor: ColorRes.leadGreyColor.shade100,
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: 16,
                       horizontal: 12,
@@ -665,7 +666,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             style: TextStyle(
                               color:
                                   (_resendTimeout > 0 || _isResending)
-                                      ? Colors.grey
+                                      ? ColorRes.leadGreyColor
                                       : Theme.of(context).primaryColor,
                             ),
                           ),

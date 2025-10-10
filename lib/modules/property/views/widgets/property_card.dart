@@ -47,7 +47,7 @@ class _PropertyCardState extends State<PropertyCard> {
         width: 260,
         // margin: const EdgeInsets.only(right: 12, bottom: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
           border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
           // boxShadow: [
@@ -131,7 +131,7 @@ class _PropertyCardState extends State<PropertyCard> {
                         controller.toggleFavorite(widget.property.id ?? '');
                       },
                       child: CircleAvatar(
-                        backgroundColor: Colors.white,
+                        backgroundColor: ColorRes.white,
                         radius: 18,
                         child: Obx(() {
                           isFavorite = controller.favoriteIds.contains(
@@ -413,7 +413,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: ColorRes.white,
                           ),
                         ),
                       ),
@@ -432,7 +432,7 @@ class _PropertyCardState extends State<PropertyCard> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
@@ -463,7 +463,7 @@ class _PropertyCardState extends State<PropertyCard> {
       child: Text(
         text,
         style: const TextStyle(
-          color: Colors.white,
+          color: ColorRes.white,
           fontSize: 10,
           fontWeight: FontWeight.w500,
         ),

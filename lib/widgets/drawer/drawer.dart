@@ -109,10 +109,10 @@
 //                   style: TextStyle(
 //                     fontSize: 16,
 //                     fontWeight: FontWeight.w700,
-//                     color: Colors.white,
+//                     color: ColorRes.white,
 //                   ),
 //                 ),
-//                 icon: NesticoPeIc(iconPath: ICRes.notifications, color: Colors.white),
+//                 icon: NesticoPeIc(iconPath: ICRes.notifications, color: ColorRes.white),
 //                 onPressed: () {},
 //               ),
 //             ),
@@ -163,6 +163,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/constants/color_res.dart';
 import '../../app/constants/ic_res.dart';
 import '../../app/constants/size_manager.dart';
 import '../../modules/auth/controllers/auth_controller.dart';
@@ -270,12 +271,12 @@ class NesticoPeDrawer extends StatelessWidget {
                     fontSize: 16,
 
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: ColorRes.white,
                   ),
                 ),
                 icon: const NesticoPeIc(
                   iconPath: ICRes.notifications,
-                  color: Colors.white,
+                  color: ColorRes.white,
                 ),
                 onPressed: () {
                   // TODO: Support action

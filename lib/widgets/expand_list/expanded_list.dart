@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../app/constants/color_res.dart';
+
 class NesticoPeExpandableTile extends StatefulWidget {
   // Core content
   final String title;
@@ -284,7 +286,7 @@ class _ExpandableTileState extends State<NesticoPeExpandableTile>
             boxShadow: widget.shadow != null ? [widget.shadow!] : null,
           ),
           child: Material(
-            color: Colors.transparent,
+            color: ColorRes.transparentColor,
             child: InkWell(
               borderRadius: widget.borderRadius,
               onTap: widget.enabled ? _toggleExpand : null,

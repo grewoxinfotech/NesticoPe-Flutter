@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/platform_service/platform_service_model.dart';
 
 class PlatformServiceHorizontalList extends StatelessWidget {
@@ -38,7 +39,7 @@ class PlatformServiceHorizontalList extends StatelessWidget {
               width: cardWidth,
               margin: const EdgeInsets.only(right: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorRes.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.grey.shade200),
               ),

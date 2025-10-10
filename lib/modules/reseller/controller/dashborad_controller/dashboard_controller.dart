@@ -258,7 +258,7 @@
 //
 //     } catch (e) {
 //       Get.snackbar('Error', 'Failed to load dashboard data',
-//           backgroundColor: Colors.red, colorText: Colors.white);
+//           backgroundColor: Colors.red, colorText: ColorRes.white);
 //     } finally {
 //       isLoading.value = false;
 //     }
@@ -562,7 +562,7 @@
 //   //
 //   //   } catch (e) {
 //   //     Get.snackbar('Error', 'Failed to load dashboard data',
-//   //         backgroundColor: Colors.red, colorText: Colors.white);
+//   //         backgroundColor: Colors.red, colorText: ColorRes.white);
 //   //   } finally {
 //   //     isLoading.value = false;
 //   //   }
@@ -583,10 +583,10 @@
 //       );
 //
 //       Get.snackbar('Success', 'Dashboard refreshed',
-//           backgroundColor: Colors.green, colorText: Colors.white);
+//           backgroundColor: Colors.green, colorText: ColorRes.white);
 //     } catch (e) {
 //       Get.snackbar('Error', 'Failed to refresh dashboard',
-//           backgroundColor: Colors.red, colorText: Colors.white);
+//           backgroundColor: Colors.red, colorText: ColorRes.white);
 //     } finally {
 //       isRefreshing.value = false;
 //     }
@@ -606,6 +606,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../app/constants/color_res.dart';
 import '../../../../utils/global.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
@@ -1020,8 +1021,8 @@ class DashboardController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to load dashboard data',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        backgroundColor: ColorRes.error,
+        colorText: ColorRes.white,
       );
     } finally {
       isLoading.value = false;
@@ -1898,14 +1899,14 @@ class DashboardController extends GetxController {
         'Success',
         'Dashboard refreshed',
         backgroundColor: Colors.green,
-        colorText: Colors.white,
+        colorText: ColorRes.white,
       );
     } catch (e) {
       Get.snackbar(
         'Error',
         'Failed to refresh dashboard',
         backgroundColor: Colors.red,
-        colorText: Colors.white,
+        colorText: ColorRes.white,
       );
     } finally {
       isRefreshing.value = false;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/color_res.dart';
 import '../../constants/size_manager.dart';
 
 class CustomSearchAppBar extends StatelessWidget {
@@ -20,9 +21,9 @@ class CustomSearchAppBar extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: ColorRes.leadGreyColor.shade100,
                       borderRadius: BorderRadius.circular(AppRadius.medium),
-                      border: Border.all(color: Colors.grey.shade300),
+                      border: Border.all(color: ColorRes.leadGreyColor.shade300),
                     ),
                     child: const TextField(
                       decoration: InputDecoration(
@@ -35,7 +36,7 @@ class CustomSearchAppBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 CircleAvatar(
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: ColorRes.leadGreyColor.shade200,
                   child: IconButton(
                     icon: const Icon(Icons.arrow_downward_outlined),
                     onPressed: () {},
@@ -50,7 +51,7 @@ class CustomSearchAppBar extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: ColorRes.leadGreyColor.shade200,
                   child: IconButton(
                     icon: const Icon(Icons.filter_list),
                     onPressed: () {},

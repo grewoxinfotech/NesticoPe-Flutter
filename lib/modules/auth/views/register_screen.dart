@@ -202,7 +202,7 @@
 //
 //                 Container(
 //                   decoration: BoxDecoration(
-//                     color: Colors.white,
+//                     color: ColorRes.white,
 //                     borderRadius: BorderRadius.circular(30),
 //                   ),
 //                   child: Row(
@@ -228,7 +228,7 @@
 //                                     style: TextStyle(
 //                                       color:
 //                                           _selectedRole == role
-//                                               ? Colors.white
+//                                               ? ColorRes.white
 //                                               : Colors.black87,
 //                                       fontWeight: FontWeight.bold,
 //                                     ),
@@ -309,6 +309,7 @@ import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 
+import '../../../app/constants/color_res.dart';
 import '../../../app/widgets/snackbar/snackbar.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
@@ -508,7 +509,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //const SizedBox(height: 16),
                 // Container(
                 //   decoration: BoxDecoration(
-                //     color: Colors.white,
+                //     color: ColorRes.white,
                 //     borderRadius: BorderRadius.circular(30),
                 //   ),
                 //   child: Row(
@@ -534,7 +535,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //                     style: TextStyle(
                 //                       color:
                 //                           _selectedRole == role
-                //                               ? Colors.white
+                //                               ? ColorRes.white
                 //                               : Colors.black87,
                 //                       fontWeight: FontWeight.bold,
                 //                     ),
@@ -721,7 +722,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _isPasswordVisible
                           ? Icons.visibility
                           : Icons.visibility_off,
-                      color: Colors.grey,
+                      color: ColorRes.leadGreyColor,
                       size: 20,
                     ),
                     onPressed: _togglePasswordVisibility,
@@ -751,7 +752,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _isConfirmPasswordVisible
                           ? Icons.visibility
                           : Icons.visibility_off,
-                      color: Colors.grey,
+                      color: ColorRes.leadGreyColor,
                       size: 20,
                     ),
                     onPressed: _toggleConfirmPasswordVisibility,
@@ -782,13 +783,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         text: TextSpan(
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[700],
+                            color: ColorRes.leadGreyColor.shade700,
                           ),
                           children: [
                             const TextSpan(text: 'I agree to the '),
                             TextSpan(
                               text: 'Terms and Conditions',
-                              style: const TextStyle(color: Colors.blue),
+                              style: const TextStyle(color: ColorRes.blueColor),
                               recognizer:
                                   TapGestureRecognizer()
                                     ..onTap =
@@ -797,7 +798,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             const TextSpan(text: ' and '),
                             TextSpan(
                                text: 'Privacy Policy',
-                              style: const TextStyle(color: Colors.blue),
+                              style: const TextStyle(color: ColorRes.blueColor),
                               recognizer:
                                   TapGestureRecognizer()
                                     ..onTap =
@@ -821,7 +822,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Text(
                       'Already have an account?',
-                      style: TextStyle(color: Colors.grey[700]),
+                      style: TextStyle(color: ColorRes.leadGreyColor.shade700),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),

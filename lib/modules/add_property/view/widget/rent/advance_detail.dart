@@ -256,7 +256,7 @@ class RentAdvanceDetail extends StatelessWidget {
                   // chipWidth: 180,
                   fontSize: 12,
                   selectedColor: ColorRes.primary,
-                  unselectedColor: Colors.white,
+                  unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
                   unselectedTextColor: ColorRes.textPrimary,
                 ),
@@ -275,7 +275,7 @@ class RentAdvanceDetail extends StatelessWidget {
 
                   fontSize: 12,
                   selectedColor: ColorRes.primary,
-                  unselectedColor: Colors.white,
+                  unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
                   unselectedTextColor: ColorRes.textPrimary,
                 ),
@@ -294,7 +294,7 @@ class RentAdvanceDetail extends StatelessWidget {
 
                   fontSize: 12,
                   selectedColor: ColorRes.primary,
-                  unselectedColor: Colors.white,
+                  unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
                   unselectedTextColor: ColorRes.textPrimary,
                 ),
@@ -313,7 +313,7 @@ class RentAdvanceDetail extends StatelessWidget {
 
                   fontSize: 12,
                   selectedColor: ColorRes.primary,
-                  unselectedColor: Colors.white,
+                  unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
                   unselectedTextColor: ColorRes.textPrimary,
                 ),
@@ -332,7 +332,7 @@ class RentAdvanceDetail extends StatelessWidget {
                   // chipWidth: 180,
                   fontSize: 12,
                   selectedColor: ColorRes.primary,
-                  unselectedColor: Colors.white,
+                  unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
                   unselectedTextColor: ColorRes.textPrimary,
                 ),
@@ -351,7 +351,7 @@ class RentAdvanceDetail extends StatelessWidget {
                   // chipWidth: 180,
                   fontSize: 12,
                   selectedColor: ColorRes.primary,
-                  unselectedColor: Colors.white,
+                  unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
                   unselectedTextColor: ColorRes.textPrimary,
                 ),
@@ -370,7 +370,7 @@ class RentAdvanceDetail extends StatelessWidget {
                   // chipWidth: 180,
                   fontSize: 12,
                   selectedColor: ColorRes.primary,
-                  unselectedColor: Colors.white,
+                  unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
                   unselectedTextColor: ColorRes.textPrimary,
                 ),
@@ -460,9 +460,9 @@ class RentAdvanceDetail extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade400),
+                        border: Border.all(color: ColorRes.leadGreyColor.shade400),
                       ),
                       child: DropdownButton<String>(
                         value: controller.carpetAreaUnit.value,
@@ -483,9 +483,9 @@ class RentAdvanceDetail extends StatelessWidget {
                         underline: Container(),
                         style: const TextStyle(
                           fontSize: 12,
-                          color: Colors.black,
+                          color: ColorRes.black,
                         ),
-                        dropdownColor: Colors.white,
+                        dropdownColor: ColorRes.white,
                       ),
                     ),
                   ],
@@ -615,9 +615,9 @@ class RentAdvanceDetail extends StatelessWidget {
                               colorScheme: ColorScheme.light(
                                 primary: ColorRes.primary,
                                 // header background color
-                                onPrimary: Colors.white,
+                                onPrimary: ColorRes.white,
                                 // header text color
-                                onSurface: Colors.black, // body text color
+                                onSurface: ColorRes.black, // body text color
                               ),
                               textButtonTheme: TextButtonThemeData(
                                 style: TextButton.styleFrom(
@@ -836,9 +836,9 @@ class SelectableChipRow extends StatelessWidget {
 
     this.fontSize = 12,
     this.selectedColor = const Color(0xFF1976D2), // Example primary color
-    this.unselectedColor = Colors.white,
+    this.unselectedColor = ColorRes.white,
     this.selectedTextColor = const Color(0xFF1976D2),
-    this.unselectedTextColor = Colors.black,
+    this.unselectedTextColor = ColorRes.black,
   });
 
   @override
@@ -866,8 +866,8 @@ class SelectableChipRow extends StatelessWidget {
                       border: Border.all(
                         color:
                             selected
-                                ? Colors.transparent
-                                : Colors.grey.shade300,
+                                ? ColorRes.transparentColor
+                                : ColorRes.leadGreyColor.shade300,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),

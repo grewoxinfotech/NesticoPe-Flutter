@@ -34,10 +34,10 @@ class StepChipsRow extends StatelessWidget {
                   decoration: BoxDecoration(
                     color:
                         isCompleted
-                            ? Colors.green
+                            ? ColorRes.success
                             : isSelected
                             ? ColorRes.primary
-                            : Colors.grey.shade300,
+                            : ColorRes.leadGreyColor.shade300,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   alignment: Alignment.center,
@@ -46,7 +46,7 @@ class StepChipsRow extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.white,
+                      color: ColorRes.white,
                       fontWeight:
                           isSelected || isCompleted
                               ? FontWeight.bold

@@ -25,7 +25,7 @@
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(20),
 //         border: Border.all(color: ColorRes.grey.withOpacity(0.15), width: 0.8),
-//         color: Colors.white,
+//         color: ColorRes.white,
 //       ),
 //       child: Column(
 //         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +63,7 @@
 //                     style: const TextStyle(
 //                       fontWeight: FontWeight.w700,
 //                       fontSize: 16,
-//                       color: Colors.white,
+//                       color: ColorRes.white,
 //                       letterSpacing: 0.5,
 //                       shadows: [
 //                         Shadow(
@@ -142,7 +142,7 @@ class CityCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
-        color: Colors.white,
+        color: ColorRes.white,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,10 +168,10 @@ class CityCard extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.transparent,
-                          Colors.black45,
-                          Colors.black54,
-                          Colors.black87,
+                          ColorRes.transparentColor,
+                          ColorRes.textPrimary,
+                          ColorRes.textSecondary,
+                          ColorRes.textPrimary,
                         ],
                       ),
                     ),
@@ -188,7 +188,7 @@ class CityCard extends StatelessWidget {
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 18,
-                          color: Colors.white,
+                          color: ColorRes.white,
                           letterSpacing: 0.6,
                           // shadows: [
                           //   Shadow(
@@ -205,7 +205,7 @@ class CityCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white.withOpacity(0.9),
+                          color: ColorRes.white.withOpacity(0.9),
                         ),
                       ),
                     ],

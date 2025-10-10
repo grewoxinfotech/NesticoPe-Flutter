@@ -76,9 +76,9 @@ class RentPriceDetail extends StatelessWidget {
                           colorScheme: ColorScheme.light(
                             primary: ColorRes.primary,
                             // header background color
-                            onPrimary: Colors.white,
+                            onPrimary: ColorRes.white,
                             // header text color
-                            onSurface: Colors.black, // body text color
+                            onSurface: ColorRes.black, // body text color
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
@@ -132,7 +132,7 @@ class RentPriceDetail extends StatelessWidget {
                           child: Text(
                             'Please select Deposit type',
                             style: TextStyle(
-                              color: Colors.red.shade700,
+                              color: ColorRes.error.shade700,
                               fontSize: 12,
                             ),
                           ),
@@ -225,7 +225,7 @@ class RentPriceDetail extends StatelessWidget {
                           child: Text(
                             'Please select Status',
                             style: TextStyle(
-                              color: Colors.red.shade700,
+                              color: ColorRes.error.shade700,
                               fontSize: 12,
                             ),
                           ),
@@ -261,9 +261,9 @@ class RentPriceDetail extends StatelessWidget {
                             colorScheme: ColorScheme.light(
                               primary: ColorRes.primary,
                               // header background color
-                              onPrimary: Colors.white,
+                              onPrimary: ColorRes.white,
                               // header text color
-                              onSurface: Colors.black, // body text color
+                              onSurface: ColorRes.black, // body text color
                             ),
                             textButtonTheme: TextButtonThemeData(
                               style: TextButton.styleFrom(
@@ -391,7 +391,7 @@ class RentPriceDetail extends StatelessWidget {
                           child: Text(
                             'Please select Pre-leased/Pre-rented',
                             style: TextStyle(
-                              color: Colors.red.shade700,
+                              color: ColorRes.error.shade700,
                               fontSize: 12,
                             ),
                           ),

@@ -407,7 +407,7 @@ class PropertyDetailScreen extends StatelessWidget {
   //               left: 16,
   //               child: CircularIcon(
   //                 icon: Icons.arrow_back_rounded,
-  //                 backgroundColor: Colors.white, // set background color
+  //                 backgroundColor: ColorRes.white, // set background color
   //                 onPressed: () => Get.back(),
   //               ),
   //             ),
@@ -419,14 +419,14 @@ class PropertyDetailScreen extends StatelessWidget {
   //                 children: [
   //                   CircularIcon(
   //                     icon: Icons.favorite_border_rounded,
-  //                     backgroundColor: Colors.white,
+  //                     backgroundColor: ColorRes.white,
   //                     onPressed: () {},
   //                   ),
   //                   const SizedBox(width: 12),
   //                   CircularIcon(
   //                     icon: Icons.share_outlined,
   //                     onPressed: () {},
-  //                     backgroundColor: Colors.white,
+  //                     backgroundColor: ColorRes.white,
   //                   ),
   //                 ],
   //               ),
@@ -447,7 +447,7 @@ class PropertyDetailScreen extends StatelessWidget {
   //                 child: Text(
   //                   '${currentPage + 1}/${images.length}',
   //                   style: const TextStyle(
-  //                     color: Colors.white,
+  //                     color: ColorRes.white,
   //                     fontSize: 12,
   //                     fontWeight: FontWeight.w600,
   //                   ),
@@ -511,7 +511,7 @@ class PropertyDetailScreen extends StatelessWidget {
                 left: 16,
                 child: CircularIcon(
                   icon: Icons.arrow_back_rounded,
-                  backgroundColor: Colors.white,
+                  backgroundColor: ColorRes.white,
                   onPressed: () => Get.back(),
                 ),
               ),
@@ -527,7 +527,7 @@ class PropertyDetailScreen extends StatelessWidget {
                         final isFavorite = controller.favoriteIds.contains(id);
                         return CircularIcon(
                         icon: isFavorite ? Icons.favorite :Icons.favorite_border_rounded,
-                        backgroundColor: Colors.white,
+                        backgroundColor: ColorRes.white,
                         iconColor: isFavorite ? Colors.redAccent: ColorRes.black,
                         onPressed: () {
                           controller.toggleFavorite(id);
@@ -539,7 +539,7 @@ class PropertyDetailScreen extends StatelessWidget {
                     CircularIcon(
                       icon: Icons.share_outlined,
                       onPressed: () {},
-                      backgroundColor: Colors.white,
+                      backgroundColor: ColorRes.white,
                     ),
                   ],
                 ),
@@ -561,7 +561,7 @@ class PropertyDetailScreen extends StatelessWidget {
                   child: Text(
                     '${currentPage + 1}/${mediaList.length}',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: ColorRes.white,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -585,14 +585,14 @@ class PropertyDetailScreen extends StatelessWidget {
               //     child: Row(
               //       mainAxisSize: MainAxisSize.min,
               //       children: [
-              //         const Icon(Icons.verified, size: 14, color: Colors.white),
+              //         const Icon(Icons.verified, size: 14, color: ColorRes.white),
               //         const SizedBox(width: 4),
               //         const Text(
               //           "RERA",
               //           style: TextStyle(
               //             fontSize: 12,
               //             fontWeight: FontWeight.w600,
-              //             color: Colors.white,
+              //             color: ColorRes.white,
               //           ),
               //         ),
               //       ],
@@ -1101,7 +1101,7 @@ class PropertyBottomBar extends StatelessWidget {
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
@@ -1254,7 +1254,7 @@ class PricingBottomSheet extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -1468,7 +1468,7 @@ class FacilitiesCard extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: ColorRes.primary, width: 1),
         borderRadius: BorderRadius.circular(20), // pill-like
-        color: Colors.white,
+        color: ColorRes.white,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1860,7 +1860,7 @@ class NearbyPropertyDetails extends StatelessWidget {
                 vertical: AppPadding.small,
               ),
               decoration: BoxDecoration(
-                color: Colors.white, // ✅ soft background
+                color: ColorRes.white, // ✅ soft background
                 borderRadius: BorderRadius.circular(AppRadius.medium),
                 border: Border.all(color: Colors.grey.shade300, width: 0.8),
               ),
@@ -1929,7 +1929,7 @@ class RecommendedInsights extends StatelessWidget {
                 vertical: AppPadding.small,
               ),
               decoration: BoxDecoration(
-                color: Colors.white, // ✅ soft background
+                color: ColorRes.white, // ✅ soft background
                 borderRadius: BorderRadius.circular(AppRadius.medium),
                 border: Border.all(color: Colors.grey.shade300, width: 0.8),
               ),
@@ -2067,7 +2067,7 @@ class OwnerInformation extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 40),
                 backgroundColor:
-                    controller.isDeveloper.value ? Colors.white : Colors.white,
+                    controller.isDeveloper.value ? ColorRes.white : ColorRes.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
@@ -2491,7 +2491,7 @@ class ProjectBrochure extends StatelessWidget {
                         child: Text(
                           "1/$totalPages",
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: ColorRes.white,
                             fontSize: 10,
                           ),
                         ),
@@ -2560,12 +2560,12 @@ class ProjectBrochure extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.download, size: 15, color: Colors.white),
+                          Icon(Icons.download, size: 15, color: ColorRes.white),
                           SizedBox(width: 8),
                           Text(
                             "Download",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: ColorRes.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -2722,7 +2722,7 @@ class ProjectDetails extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: ColorRes.white,
                     foregroundColor: ColorRes.primary,
                     side: const BorderSide(color: ColorRes.primary, width: 1.5),
                     shape: RoundedRectangleBorder(
@@ -2987,7 +2987,7 @@ class _PropertyFeedbackComponentState extends State<PropertyFeedbackComponent> {
                 ),
                 child: const Text(
                   "Submit",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  style: TextStyle(fontSize: 16, color: ColorRes.white),
                 ),
               ),
             ),

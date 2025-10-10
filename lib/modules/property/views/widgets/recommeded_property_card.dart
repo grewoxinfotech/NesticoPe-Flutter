@@ -43,7 +43,7 @@
 //         curve: Curves.easeInOut,
 //         width: 240,
 //         decoration: BoxDecoration(
-//           color: Colors.white,
+//           color: ColorRes.white,
 //           borderRadius: BorderRadius.circular(AppRadius.medium),
 //         ),
 //         child: Column(
@@ -138,7 +138,7 @@
 //                         height: 32,
 //                         width: 32,
 //                         decoration: BoxDecoration(
-//                           color: Colors.white,
+//                           color: ColorRes.white,
 //                           shape: BoxShape.circle,
 //                           boxShadow: [
 //                             BoxShadow(
@@ -175,7 +175,7 @@
 //                         child: const Text(
 //                           "Recently Viewed",
 //                           style: TextStyle(
-//                             color: Colors.white,
+//                             color: ColorRes.white,
 //                             fontSize: 10,
 //                             fontWeight: FontWeight.w500,
 //                           ),

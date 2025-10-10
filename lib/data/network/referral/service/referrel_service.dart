@@ -14,22 +14,24 @@ class Referral_Service{
     return await ApiConstants.getHeaders();
   }
 
-  void fetchReferrals() async {
+  Future fetchReferrals() async {
     try {
       final response = await http.get(Uri.parse(_baseUrl), headers: await headers());
 
       if (response.statusCode == 200) {
         final referrals = json.decode(response.body);
-
         print(referrals);
+        return  referrals;
+
+
       } else {
         final referrals = json.decode(response.body);
 
         print(referrals);
-        throw Exception('Failed to fetch referrals');
+        return referrals;
       }
     } on Exception catch (e) {
-      print('Error fetching referrals: $e');
+    return {'error': e.toString()};
     }
   }
 

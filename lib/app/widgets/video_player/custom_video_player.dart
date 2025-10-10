@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../constants/color_res.dart';
+
 class CustomVideoPlayer extends StatefulWidget {
   final String url;
 
@@ -42,17 +44,17 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
           alignment: Alignment.center,
           children: [
             Container(
-              color: Colors.black,
+              color: ColorRes.black,
               width: double.infinity,
               height: double.infinity,
-              child: const Center(
-                child: Icon(Icons.videocam, color: Colors.white54, size: 48),
+              child:  Center(
+                child: Icon(Icons.videocam, color: ColorRes.white.withOpacity(0.9), size: 48),
               ),
             ),
             const CircleAvatar(
-              backgroundColor: Colors.black54,
+              backgroundColor: ColorRes.textPrimary,
               radius: 28,
-              child: Icon(Icons.play_arrow, color: Colors.white, size: 36),
+              child: Icon(Icons.play_arrow, color: ColorRes.white, size: 36),
             ),
           ],
         ),

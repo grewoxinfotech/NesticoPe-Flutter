@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/widgets/input/custom_text_field.dart';
 
 class OtpLoginScreen extends StatefulWidget {
@@ -149,7 +150,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           Text(
             'We will send you a verification code',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
+              color: ColorRes.leadGreyColor.shade600,
             ),
             textAlign: TextAlign.center,
           ),
@@ -214,7 +215,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           Text(
             'Enter the verification code sent to ${_phoneController.text}',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
+              color: ColorRes.leadGreyColor.shade600,
             ),
             textAlign: TextAlign.center,
           ),

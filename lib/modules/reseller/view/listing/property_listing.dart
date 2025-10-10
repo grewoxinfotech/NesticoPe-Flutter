@@ -17,9 +17,9 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       backgroundColor: Colors.white,
+//       backgroundColor: ColorRes.white,
 //       appBar: AppBar(
-//         backgroundColor: Colors.white,
+//         backgroundColor: ColorRes.white,
 //         elevation: 0,
 //         title: Text(
 //           'Property Listing',
@@ -47,7 +47,7 @@
 //               showModalBottomSheet(
 //                 context: context,
 //                 isScrollControlled: true,
-//                 backgroundColor: Colors.white,
+//                 backgroundColor: ColorRes.white,
 //                 shape: RoundedRectangleBorder(
 //                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
 //                 ),
@@ -135,7 +135,7 @@
 //             margin: EdgeInsets.all(getResponsivePadding(context)),
 //             padding: EdgeInsets.symmetric(horizontal:getResponsivePadding(context)),
 //             decoration: BoxDecoration(
-//                 color: Colors.white,
+//                 color: ColorRes.white,
 //                 borderRadius: BorderRadius.circular(14),
 //                 border: Border.all(color: Colors.grey.shade300, width: 1)
 //             ),
@@ -244,7 +244,7 @@
 //                   selected: isSelected,
 //
 //                   onSelected: (_) => controller.updateCategory(category),
-//                   backgroundColor: Colors.white,
+//                   backgroundColor: ColorRes.white,
 //                   checkmarkColor:isSelected ? ColorRes.white : Colors
 //                       .grey[700] ,
 //                   selectedColor: ColorRes.primary,
@@ -362,7 +362,7 @@
 //       },
 //       child: Container(
 //         decoration: BoxDecoration(
-//           color: Colors.white,
+//           color: ColorRes.white,
 //           borderRadius: BorderRadius.circular(14),
 //           border: Border.all(color: ColorRes.grey.withOpacity(0.2), width: 1),
 //         ),
@@ -456,7 +456,7 @@
 //                           child: Text('Visit',style: TextStyle(
 //                             fontWeight: FontWeight.w600,
 //                             fontSize: 10,
-//                             color: Colors.white
+//                             color: ColorRes.white
 //                           ),),
 //                         )
 //
@@ -558,7 +558,7 @@
 // //     return Scaffold(
 // //       backgroundColor: ColorRes.white,
 // //       appBar: AppBar(
-// //         backgroundColor: Colors.white,
+// //         backgroundColor: ColorRes.white,
 // //         elevation: 0,
 // //         title: Column(
 // //           crossAxisAlignment: CrossAxisAlignment.start,
@@ -617,7 +617,7 @@
 // //                     child: Text(
 // //                       '$activeFilters',
 // //                       style: TextStyle(
-// //                         color: Colors.white,
+// //                         color: ColorRes.white,
 // //                         fontSize: 10,
 // //                         fontWeight: FontWeight.bold,
 // //                       ),
@@ -657,7 +657,7 @@
 // //         children: [
 // //           // Enhanced Search Bar with shadow
 // //           Container(
-// //             color: Colors.white,
+// //             color: ColorRes.white,
 // //             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
 // //             child: Container(
 // //               decoration: BoxDecoration(
@@ -691,7 +691,7 @@
 // //                       borderSide: BorderSide(width: 1,color: ColorRes.grey.withOpacity(0.3))
 // //                   ),
 // //                   filled: true,
-// //                   fillColor: Colors.white,
+// //                   fillColor: ColorRes.white,
 // //                   contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
 // //                 ),
 // //               ),
@@ -809,7 +809,7 @@
 // //   Widget build(BuildContext context) {
 // //     return Container(
 // //       decoration: BoxDecoration(
-// //         color: Colors.white,
+// //         color: ColorRes.white,
 // //         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
 // //       ),
 // //       child: Column(
@@ -907,7 +907,7 @@
 // //                               ),
 // //                               selected: isSelected,
 // //                               onSelected: (_) => controller.updateCategory(category),
-// //                               backgroundColor: Colors.white,
+// //                               backgroundColor: ColorRes.white,
 // //                               checkmarkColor: isSelected ? ColorRes.white : Colors.grey[700],
 // //                               selectedColor: ColorRes.primary,
 // //                               shape: RoundedRectangleBorder(
@@ -990,7 +990,7 @@
 // //                           Container(
 // //                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 // //                             decoration: BoxDecoration(
-// //                               color: Colors.white,
+// //                               color: ColorRes.white,
 // //                               borderRadius: BorderRadius.circular(8),
 // //                               border: Border.all(color: Colors.grey[300]!),
 // //                             ),
@@ -1007,7 +1007,7 @@
 // //                           Container(
 // //                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 // //                             decoration: BoxDecoration(
-// //                               color: Colors.white,
+// //                               color: ColorRes.white,
 // //                               borderRadius: BorderRadius.circular(8),
 // //                               border: Border.all(color: Colors.grey[300]!),
 // //                             ),
@@ -1110,16 +1110,16 @@
 // //             product.name,
 // //             snackPosition: SnackPosition.BOTTOM,
 // //             backgroundColor: ColorRes.primary,
-// //             colorText: Colors.white,
+// //             colorText: ColorRes.white,
 // //             margin: EdgeInsets.all(16),
 // //             borderRadius: 12,
-// //             icon: Icon(Icons.home_rounded, color: Colors.white),
+// //             icon: Icon(Icons.home_rounded, color: ColorRes.white),
 // //             duration: Duration(seconds: 2),
 // //           );
 // //         },
 // //         child: Container(
 // //           decoration: BoxDecoration(
-// //             color: Colors.white,
+// //             color: ColorRes.white,
 // //             borderRadius: BorderRadius.circular(20),
 // //             border: Border.all(
 // //               color: ColorRes.grey.withOpacity(0.15),
@@ -1207,7 +1207,7 @@
 // //                       child: Text(
 // //                         'AVAILABLE',
 // //                         style: TextStyle(
-// //                           color: Colors.white,
+// //                           color: ColorRes.white,
 // //                           fontSize: 10,
 // //                           fontWeight: FontWeight.bold,
 // //                           letterSpacing: 0.5,
@@ -1222,7 +1222,7 @@
 // //                     right: 16,
 // //                     child: Container(
 // //                       decoration: BoxDecoration(
-// //                         color: Colors.white,
+// //                         color: ColorRes.white,
 // //                         shape: BoxShape.circle,
 // //                       ),
 // //                       child: Material(
@@ -1376,7 +1376,7 @@
 // //                                   style: TextStyle(
 // //                                     fontSize: 13,
 // //                                     fontWeight: FontWeight.bold,
-// //                                     color: Colors.white,
+// //                                     color: ColorRes.white,
 // //                                     letterSpacing: 0.3,
 // //                                   ),
 // //                                 ),
@@ -1467,7 +1467,7 @@
 // //           margin: EdgeInsets.only(bottom: 16),
 // //           height: 360,
 // //           decoration: BoxDecoration(
-// //             color: Colors.white,
+// //             color: ColorRes.white,
 // //             borderRadius: BorderRadius.circular(16),
 // //             boxShadow: [
 // //               BoxShadow(
@@ -1677,7 +1677,7 @@ class ProductListingScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         title: Text(
           'Property Listing',
@@ -1792,7 +1792,7 @@ class ProductListingScreen extends StatelessWidget {
         children: [
           // Enhanced Search Bar
           Container(
-            color: Colors.white,
+            color: ColorRes.white,
             padding: EdgeInsets.fromLTRB(
               getResponsivePadding(context),
               12,
@@ -1852,7 +1852,7 @@ class ProductListingScreen extends StatelessWidget {
 
             return hasActiveFilters
                 ? Container(
-              color: Colors.white,
+              color: ColorRes.white,
               padding: EdgeInsets.symmetric(
                 horizontal: getResponsivePadding(context),
                 vertical: 8,
@@ -2123,7 +2123,7 @@ class _FilterPanelState extends State<FilterPanel> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -2406,7 +2406,7 @@ class _FilterPanelState extends State<FilterPanel> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: ColorRes.white,
                         ),
                       )),
                     ),
@@ -2506,7 +2506,7 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
       elevation: 1,
       shadowColor: Colors.black.withOpacity(0.06),
@@ -2638,7 +2638,7 @@ class ProductCard extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
-                                color: Colors.white,
+                                color: ColorRes.white,
                               ),
                             ),
                           ),
@@ -2683,7 +2683,7 @@ class ProductCard extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
 //     return Material(
-//       color: Colors.white,
+//       color: ColorRes.white,
 //       borderRadius: BorderRadius.circular(16),
 //       elevation: 2,
 //       shadowColor: Colors.black.withOpacity(0.08),
@@ -2696,7 +2696,7 @@ class ProductCard extends StatelessWidget {
 //             snackPosition: SnackPosition.BOTTOM,
 //             duration: Duration(seconds: 2),
 //             backgroundColor: ColorRes.primary,
-//             colorText: Colors.white,
+//             colorText: ColorRes.white,
 //             margin: EdgeInsets.all(16),
 //             borderRadius: 12,
 //           );
@@ -2727,7 +2727,7 @@ class ProductCard extends StatelessWidget {
 //                     child: Container(
 //                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
 //                       decoration: BoxDecoration(
-//                         color: Colors.white,
+//                         color: ColorRes.white,
 //                         borderRadius: BorderRadius.circular(8),
 //                       ),
 //                       child: Row(
@@ -2857,7 +2857,7 @@ class ProductCard extends StatelessWidget {
 //                               style: TextStyle(
 //                                 fontWeight: FontWeight.w600,
 //                                 fontSize: 10,
-//                                 color: Colors.white,
+//                                 color: ColorRes.white,
 //                               ),
 //                             ),
 //                           ),

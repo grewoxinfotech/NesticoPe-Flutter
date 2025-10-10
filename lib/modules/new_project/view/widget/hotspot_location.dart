@@ -58,7 +58,7 @@ class _HotspotSectionState extends State<HotspotSection> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -136,7 +136,7 @@ class _HotspotSectionState extends State<HotspotSection> {
       width: 200,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isSelected ? ColorRes.primary.withOpacity(0.08) : Colors.white,
+        color: isSelected ? ColorRes.primary.withOpacity(0.08) : ColorRes.white,
         border: Border.all(
           color: isSelected ? ColorRes.primary : ColorRes.grey.withOpacity(0.3),
           width: isSelected ? 1.5 : 0.8,

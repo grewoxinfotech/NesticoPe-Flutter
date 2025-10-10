@@ -32,7 +32,7 @@ class Data {
   String? createdBy;
   String? updatedBy;
   String? referrerId;
-  String? referredUsers;
+  List<dynamic>? referredUsers;
   String? referralCode;
   String? referralLink;
   String? status;

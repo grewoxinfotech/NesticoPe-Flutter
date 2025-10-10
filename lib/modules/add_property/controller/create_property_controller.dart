@@ -569,7 +569,7 @@ class CreatePropertyController extends GetxController {
         "Failed to prepare review data. Please try again.",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
+        colorText: ColorRes.white,
       );
     }
   }
@@ -738,7 +738,7 @@ class CreatePropertyController extends GetxController {
         "Failed to pick image: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent.withOpacity(0.8),
-        colorText: Colors.white,
+        colorText: ColorRes.white,
       );
     } finally {
       isProcessing.value = false;
@@ -790,7 +790,7 @@ class CreatePropertyController extends GetxController {
         "Failed to pick images: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent.withOpacity(0.8),
-        colorText: Colors.white,
+        colorText: ColorRes.white,
       );
     } finally {
       isProcessing.value = false;
@@ -803,7 +803,7 @@ class CreatePropertyController extends GetxController {
       message,
       snackPosition: SnackPosition.TOP,
       borderColor: Colors.redAccent,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       colorText: Colors.black,
       duration: const Duration(seconds: 3),
     );

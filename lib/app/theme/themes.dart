@@ -14,9 +14,9 @@ ThemeData lightTheme = ThemeData(
   disabledColor: ColorRes.disabled,
   shadowColor: ColorRes.shadow,
 
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.transparent,
-    surfaceTintColor: Colors.transparent,
+  appBarTheme:  AppBarTheme(
+    backgroundColor: ColorRes.transparentColor,
+    surfaceTintColor: ColorRes.transparentColor,
     elevation: 0.0,
     scrolledUnderElevation: 0.0,
     titleTextStyle: TextStyle(
@@ -59,7 +59,7 @@ ThemeData lightTheme = ThemeData(
       ),
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
       elevation: 0,
-      shadowColor: Colors.transparent,
+      shadowColor: ColorRes.transparentColor,
     ),
   ),
 );

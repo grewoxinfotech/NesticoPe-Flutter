@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/add_property/model/review_property_model.dart';
 
+import '../../../../app/constants/color_res.dart';
 import '../../model/commercial_model.dart';
 
 class ListingReviewCard extends StatelessWidget {
@@ -21,7 +22,7 @@ class ListingReviewCard extends StatelessWidget {
                padding: EdgeInsets.all(20.0),
                child: Text(
                  'No review yet.',
-                 style: TextStyle(fontSize: 16, color: Colors.grey),
+                 style: TextStyle(fontSize: 16, color: ColorRes.leadGreyColor),
                ),
              ),
            );
@@ -38,20 +39,20 @@ class ListingReviewCard extends StatelessWidget {
                  margin: const EdgeInsets.symmetric(horizontal: 12),
                  padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
                  decoration: BoxDecoration(
-                   color: Colors.green.shade50,
+                   color: ColorRes.green.shade50,
                    borderRadius: BorderRadius.circular(14),
-                   border: Border.all(color: Colors.green.shade200, width: 1),
+                   border: Border.all(color: ColorRes.green.shade200, width: 1),
                  ),
                  child: Row(
                    mainAxisAlignment: MainAxisAlignment.center,
                    children: [
-                     const Icon(Icons.check_circle, color: Colors.green, size: 28),
+                     const Icon(Icons.check_circle, color: ColorRes.green, size: 28),
                      const SizedBox(width: 12),
                      Expanded(
                        child: Text(
                          "Congratulations! Your property listing has been created.",
                          style: TextStyle(
-                           color: Colors.green.shade800,
+                           color: ColorRes.green.shade800,
                            fontWeight: FontWeight.w600,
                            fontSize: 12,
                          ),
@@ -73,7 +74,7 @@ class ListingReviewCard extends StatelessWidget {
                padding: EdgeInsets.all(20.0),
                child: Text(
                  'No review yet.',
-                 style: TextStyle(fontSize: 16, color: Colors.grey),
+                 style: TextStyle(fontSize: 16, color: ColorRes.leadGreyColor),
                ),
              ),
            );
@@ -91,20 +92,20 @@ class ListingReviewCard extends StatelessWidget {
                  margin: const EdgeInsets.symmetric(horizontal: 12),
                  padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
                  decoration: BoxDecoration(
-                   color: Colors.green.shade50,
+                   color: ColorRes.green.shade50,
                    borderRadius: BorderRadius.circular(14),
-                   border: Border.all(color: Colors.green.shade200, width: 1),
+                   border: Border.all(color: ColorRes.green.shade200, width: 1),
                  ),
                  child: Row(
                    mainAxisAlignment: MainAxisAlignment.center,
                    children: [
-                     const Icon(Icons.check_circle, color: Colors.green, size: 28),
+                     const Icon(Icons.check_circle, color: ColorRes.green, size: 28),
                      const SizedBox(width: 12),
                      Expanded(
                        child: Text(
                          "Congratulations! Your property listing has been created.",
                          style: TextStyle(
-                           color: Colors.green.shade800,
+                           color: ColorRes.green.shade800,
                            fontWeight: FontWeight.w600,
                            fontSize: 12,
                          ),
@@ -150,7 +151,7 @@ class _ReviewCardItem extends StatelessWidget {
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
-          side: BorderSide(color: Colors.grey.shade300, width: 1),
+          side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
         ),
         elevation: 2,
 
@@ -213,8 +214,8 @@ class _ReviewCardItem extends StatelessWidget {
 
   Widget _buildPlaceholderImage() {
     return Container(
-      color: Colors.grey.shade200,
-      child: Icon(Icons.image, size: 50, color: Colors.grey.shade400),
+      color: ColorRes.leadGreyColor.shade200,
+      child: Icon(Icons.image, size: 50, color: ColorRes.leadGreyColor.shade400),
     );
   }
 
@@ -259,7 +260,7 @@ class _ReviewCardItem extends StatelessWidget {
   Widget _buildInfoText(String text) {
     return Text(
       text,
-      style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+      style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
     );
@@ -269,14 +270,14 @@ class _ReviewCardItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        color: ColorRes.green.shade50,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         'Under Review',
         style: TextStyle(
           fontSize: 11,
-          color: Colors.green.shade800,
+          color: ColorRes.green.shade800,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -293,7 +294,7 @@ class _ReviewCardItem extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: ColorRes.textPrimary,
             ),
             overflow: TextOverflow.ellipsis,
           ),
@@ -301,7 +302,7 @@ class _ReviewCardItem extends StatelessWidget {
         Flexible(
           child: Text(
             "Notice: $noticePeriod days",
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            style: TextStyle(fontSize: 12, color: ColorRes.leadGreyColor.shade600),
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.end,
           ),
@@ -329,7 +330,7 @@ class _CommercialReviewCardItem extends StatelessWidget {
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
-          side: BorderSide(color: Colors.grey.shade300, width: 1),
+          side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
         ),
         elevation: 2,
         child: Padding(
@@ -388,8 +389,8 @@ class _CommercialReviewCardItem extends StatelessWidget {
 
   Widget _buildPlaceholderImage() {
     return Container(
-      color: Colors.grey.shade200,
-      child: Icon(Icons.image, size: 50, color: Colors.grey.shade400),
+      color: ColorRes.leadGreyColor.shade200,
+      child: Icon(Icons.image, size: 50, color: ColorRes.leadGreyColor.shade400),
     );
   }
 
@@ -434,7 +435,7 @@ class _CommercialReviewCardItem extends StatelessWidget {
   Widget _buildInfoText(String text) {
     return Text(
       text,
-      style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+      style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
     );
@@ -444,14 +445,14 @@ class _CommercialReviewCardItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        color: ColorRes.green.shade50,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         'Under Review',
         style: TextStyle(
           fontSize: 11,
-          color: Colors.green.shade800,
+          color: ColorRes.green.shade800,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -468,7 +469,7 @@ class _CommercialReviewCardItem extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: ColorRes.textPrimary,
             ),
             overflow: TextOverflow.ellipsis,
           ),

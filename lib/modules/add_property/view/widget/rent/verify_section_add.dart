@@ -398,9 +398,9 @@ class VerifySection extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,7 +425,7 @@ class VerifySection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                  color: ColorRes.blackShade87,
                 ),
               ),
             ],
@@ -468,9 +468,9 @@ class VerifySection extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -480,12 +480,12 @@ class VerifySection extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: ColorRes.blueColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
                   Icons.schedule_outlined,
-                  color: Colors.blue,
+                  color: ColorRes.blueColor,
                   size: 16,
                 ),
               ),
@@ -495,7 +495,7 @@ class VerifySection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                  color: ColorRes.blackShade87,
                 ),
               ),
             ],
@@ -505,7 +505,7 @@ class VerifySection extends StatelessWidget {
             "Schedule a convenient time for property verification",
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey.shade600,
+              color: ColorRes.leadGreyColor.shade600,
               height: 1.4,
             ),
           ),
@@ -558,14 +558,14 @@ class VerifySection extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(
-          color: isSelected ? ColorRes.primary : Colors.grey.shade300,
+          color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade300,
           width: isSelected ? 2 : 1,
         ),
         borderRadius: BorderRadius.circular(12),
         color:
             isSelected
                 ? ColorRes.primary.withOpacity(0.05)
-                : Colors.grey.shade50,
+                : ColorRes.leadGreyColor.shade50,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -573,7 +573,7 @@ class VerifySection extends StatelessWidget {
           Icon(
             icon,
             size: 20,
-            color: isSelected ? ColorRes.primary : Colors.grey.shade600,
+            color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade600,
           ),
           const SizedBox(height: 4),
           Text(
@@ -581,14 +581,14 @@ class VerifySection extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: isSelected ? ColorRes.primary : Colors.grey.shade700,
+              color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade700,
             ),
           ),
           Text(
             date,
             style: TextStyle(
               fontSize: 10,
-              color: isSelected ? ColorRes.primary : Colors.grey.shade500,
+              color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade500,
             ),
           ),
         ],
@@ -610,14 +610,14 @@ class VerifySection extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border.all(
-            color: hasSelection ? ColorRes.primary : Colors.grey.shade300,
+            color: hasSelection ? ColorRes.primary : ColorRes.leadGreyColor.shade300,
             width: hasSelection ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
           color:
               hasSelection
                   ? ColorRes.primary.withOpacity(0.05)
-                  : Colors.grey.shade50,
+                  : ColorRes.leadGreyColor.shade50,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -625,7 +625,7 @@ class VerifySection extends StatelessWidget {
             Icon(
               Icons.event_outlined,
               size: 20,
-              color: hasSelection ? ColorRes.primary : Colors.grey.shade600,
+              color: hasSelection ? ColorRes.primary : ColorRes.leadGreyColor.shade600,
             ),
             const SizedBox(height: 4),
             Text(
@@ -633,7 +633,7 @@ class VerifySection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: hasSelection ? ColorRes.primary : Colors.grey.shade700,
+                color: hasSelection ? ColorRes.primary : ColorRes.leadGreyColor.shade700,
               ),
             ),
             if (hasSelection) ...[
@@ -651,7 +651,7 @@ class VerifySection extends StatelessWidget {
             ] else
               Text(
                 "Tap to choose",
-                style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                style: TextStyle(fontSize: 10, color: ColorRes.leadGreyColor.shade500),
               ),
           ],
         ),
@@ -671,8 +671,8 @@ class VerifySection extends StatelessWidget {
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             elevation: isEnabled ? 4 : 0,
-            backgroundColor: isEnabled ? ColorRes.white : Colors.grey.shade300,
-            foregroundColor: isEnabled ? Colors.white : Colors.grey.shade500,
+            backgroundColor: isEnabled ? ColorRes.white : ColorRes.leadGreyColor.shade300,
+            foregroundColor: isEnabled ? ColorRes.white : ColorRes.leadGreyColor.shade500,
             shape: RoundedRectangleBorder(
               side: BorderSide(color: ColorRes.primary),
               borderRadius: BorderRadius.circular(16),
@@ -686,10 +686,10 @@ class VerifySection extends StatelessWidget {
                       "Visit planned for ${controller.formattedDate} at ${controller.formattedTime}",
                       snackPosition: SnackPosition.TOP,
                       backgroundColor: ColorRes.primary,
-                      colorText: Colors.white,
+                      colorText: ColorRes.white,
                       borderRadius: 12,
                       margin: const EdgeInsets.all(16),
-                      icon: const Icon(Icons.check_circle, color: Colors.white),
+                      icon: const Icon(Icons.check_circle, color: ColorRes.white),
                       duration: const Duration(seconds: 3),
                     );
                   }
@@ -727,19 +727,19 @@ class VerifySection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: Divider(color: Colors.grey.shade300)),
+              Expanded(child: Divider(color: ColorRes.leadGreyColor.shade300)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   "Or",
                   style: TextStyle(
-                    color: Colors.grey.shade600,
+                    color: ColorRes.leadGreyColor.shade600,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              Expanded(child: Divider(color: Colors.grey.shade300)),
+              Expanded(child: Divider(color: ColorRes.leadGreyColor.shade300)),
             ],
           ),
           const SizedBox(height: 16),
@@ -769,7 +769,7 @@ class VerifySection extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(25),
             ),
-            child: Icon(icon, color: Colors.white, size: 22),
+            child: Icon(icon, color: ColorRes.white, size: 22),
           ),
           const SizedBox(height: 8),
           Text(
@@ -778,14 +778,14 @@ class VerifySection extends StatelessWidget {
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: ColorRes.blackShade87,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+            style: TextStyle(fontSize: 10, color: ColorRes.leadGreyColor.shade600),
           ),
         ],
       ),
@@ -818,11 +818,11 @@ class VerifySection extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: ColorRes.transparentColor,
       builder: (ctx) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: ColorRes.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Padding(
@@ -842,7 +842,7 @@ class VerifySection extends StatelessWidget {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: ColorRes.leadGreyColor.shade300,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -869,7 +869,7 @@ class VerifySection extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Colors.black87,
+                            color: ColorRes.blackShade87,
                           ),
                         ),
                       ],
@@ -879,7 +879,7 @@ class VerifySection extends StatelessWidget {
                     // Enhanced Calendar
                     Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade200),
+                        border: Border.all(color: ColorRes.leadGreyColor.shade200),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Theme(
@@ -927,9 +927,9 @@ class VerifySection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
+                        color: ColorRes.leadGreyColor.shade50,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade200),
+                        border: Border.all(color: ColorRes.leadGreyColor.shade200),
                       ),
                       child: InkWell(
                         onTap: () async {
@@ -957,12 +957,12 @@ class VerifySection extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.1),
+                                color: ColorRes.blueColor.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
                                 Icons.access_time,
-                                color: Colors.blue,
+                                color: ColorRes.blueColor,
                                 size: 20,
                               ),
                             ),
@@ -974,7 +974,7 @@ class VerifySection extends StatelessWidget {
                                   "Selected Time",
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.grey,
+                                    color:ColorRes.leadGreyColor,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -983,7 +983,7 @@ class VerifySection extends StatelessWidget {
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
+                                    color: ColorRes.blackShade87,
                                   ),
                                 ),
                               ],
@@ -991,7 +991,7 @@ class VerifySection extends StatelessWidget {
                             const Spacer(),
                             Icon(
                               Icons.chevron_right,
-                              color: Colors.grey.shade400,
+                              color: ColorRes.leadGreyColor.shade400,
                             ),
                           ],
                         ),
@@ -1008,7 +1008,7 @@ class VerifySection extends StatelessWidget {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: ColorRes.primary,
-                            foregroundColor: Colors.white,
+                            foregroundColor: ColorRes.white,
                             elevation: 2,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -1067,7 +1067,7 @@ class ShareReminderButton extends StatelessWidget {
         child: Text(
           "Share link with others",
           style: TextStyle(
-            color: Colors.blue.shade700,
+            color: ColorRes.blueColor.shade700,
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),

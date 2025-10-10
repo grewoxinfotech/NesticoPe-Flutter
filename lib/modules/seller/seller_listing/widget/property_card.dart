@@ -34,7 +34,7 @@ class PropertyListCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadius.medium),
-        color: Colors.transparent,
+        color: ColorRes.transparentColor,
         border: Border.all(color: ColorRes.grey.withOpacity(0.2), width: 1),
       ),
       child: Padding(

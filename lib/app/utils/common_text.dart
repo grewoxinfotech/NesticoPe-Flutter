@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/color_res.dart';
+
 class CustomText extends StatelessWidget {
   // Text properties
   final String text;
@@ -43,7 +45,7 @@ class CustomText extends StatelessWidget {
     this.semanticsLabel,
     this.textWidthBasis = TextWidthBasis.parent,
     // TextStyle defaults
-    this.color = Colors.black,
+    this.color = ColorRes.textPrimary,
     this.fontSize = 14.0,
     this.fontWeight = FontWeight.normal,
     this.fontStyle = FontStyle.normal,

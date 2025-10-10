@@ -11,7 +11,7 @@ class BuilderPropertyListing extends StatelessWidget {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text('My Properties', style: TextStyle(fontWeight: FontWeight.w600)),
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
@@ -48,7 +48,7 @@ class BuilderPropertyListing extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade200),
       ),
@@ -69,7 +69,7 @@ class BuilderPropertyListing extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(color: statusColor, borderRadius: BorderRadius.circular(20)),
-                    child: Text(property['status']!, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white)),
+                    child: Text(property['status']!, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: ColorRes.white)),
                   ),
                 ),
               ],
@@ -116,7 +116,7 @@ class BuilderPropertyListing extends StatelessWidget {
                         label: const Text('Edit'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,
-                          foregroundColor: Colors.white,
+                          foregroundColor: ColorRes.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                       ),

@@ -46,7 +46,7 @@
 //             shape: const CircularNotchedRectangle(),
 //             notchMargin: 8,
 //             elevation: 0,
-//             color: Colors.white,
+//             color: ColorRes.white,
 //             child: Container(
 //               height: 65,
 //               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -100,6 +100,7 @@ import 'package:housing_flutter_app/modules/builder/controller/builder_form_cont
 import 'package:housing_flutter_app/modules/builder/view/builder_form_screen.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
+import '../../../app/constants/color_res.dart';
 import '../controller/builder_navigation_controller.dart';
 import 'package:get/get.dart';
 
@@ -135,7 +136,7 @@ class BuilderMainScreen extends StatelessWidget {
         //     Get.put(ProjectWizardController());
         //   },));
 
-      },label: Text('+ Add Project',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),),),
+      },label: Text('+ Add Project',style: TextStyle(color: ColorRes.white,fontWeight: FontWeight.w600),),),
 
       bottomNavigationBar: Obx(
             () => SafeArea(
@@ -153,7 +154,7 @@ class BuilderMainScreen extends StatelessWidget {
               fontSize: AppFontSizes.caption,
               fontWeight: FontWeight.w500,
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: ColorRes.white,
             elevation: 0,
             items: const [
               BottomNavigationBarItem(

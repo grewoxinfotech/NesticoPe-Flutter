@@ -84,14 +84,14 @@ class _CityAlphabetListState extends State<CityAlphabetList> {
               return Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isSelected ? ColorRes.primary : Colors.transparent,
+                  color: isSelected ? ColorRes.primary : ColorRes.transparentColor,
                 ),
                 alignment: Alignment.center,
                 child: buildCommonText(
                   symbol,
                   isSelected ? AppFontSizes.medium : 12,
                   isSelected ? AppFontWeights.semiBold : FontWeight.w400,
-                  isSelected ? Colors.white : ColorRes.grey,
+                  isSelected ? ColorRes.white : ColorRes.grey,
                   1,
                 ),
               );

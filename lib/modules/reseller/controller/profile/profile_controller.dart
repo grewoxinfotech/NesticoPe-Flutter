@@ -91,7 +91,7 @@
 //     isSaving.value = false;
 //
 //     Get.snackbar('Success', 'Profile updated successfully',
-//         backgroundColor: Colors.green, colorText: Colors.white);
+//         backgroundColor: Colors.green, colorText: ColorRes.white);
 //   }
 //
 //   @override
@@ -113,6 +113,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import '../../../../app/constants/color_res.dart';
 import '../../model/user/user_model.dart';
 
 class ProfileController extends GetxController {
@@ -204,7 +205,7 @@ class ProfileController extends GetxController {
           'Success',
           'Image selected successfully',
           backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: Colors.white,
+          colorText: ColorRes.white,
           snackPosition: SnackPosition.BOTTOM,
           margin: const EdgeInsets.all(16),
           borderRadius: 12,
@@ -216,7 +217,7 @@ class ProfileController extends GetxController {
         'Error',
         'Failed to pick image: ${e.toString()}',
         backgroundColor: Colors.red,
-        colorText: Colors.white,
+        colorText: ColorRes.white,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
@@ -239,7 +240,7 @@ class ProfileController extends GetxController {
           'Success',
           'Image captured successfully',
           backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: Colors.white,
+          colorText: ColorRes.white,
           snackPosition: SnackPosition.BOTTOM,
           margin: const EdgeInsets.all(16),
           borderRadius: 12,
@@ -251,7 +252,7 @@ class ProfileController extends GetxController {
         'Error',
         'Failed to capture image: ${e.toString()}',
         backgroundColor: Colors.red,
-        colorText: Colors.white,
+        colorText: ColorRes.white,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
@@ -262,11 +263,11 @@ class ProfileController extends GetxController {
   void showImagePickerOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: ColorRes.transparentColor,
       builder: (BuildContext context) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: ColorRes.white,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -365,7 +366,7 @@ class ProfileController extends GetxController {
       'Success',
       'Profile photo removed',
       backgroundColor: Colors.orange.withOpacity(0.8),
-      colorText: Colors.white,
+      colorText: ColorRes.white,
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
@@ -398,7 +399,7 @@ class ProfileController extends GetxController {
         'Error',
         'Failed to upload image: ${e.toString()}',
         backgroundColor: Colors.red,
-        colorText: Colors.white,
+        colorText: ColorRes.white,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
@@ -459,7 +460,7 @@ class ProfileController extends GetxController {
       'Success',
       'Profile updated successfully',
       backgroundColor: Colors.green,
-      colorText: Colors.white,
+      colorText: ColorRes.white,
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,

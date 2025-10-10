@@ -36,16 +36,16 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: ColorRes.leadGreyColor.shade200!),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.image_outlined, size: 20, color: Colors.blue[700]),
+              Icon(Icons.image_outlined, size: 20, color: ColorRes.blueColor.shade700),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -54,7 +54,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     buildBuilderDefaultHeaderText('Project Images'),
                     Text(
                       'Required • Max 5MB each',
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
                     ),
                   ],
                 ),
@@ -68,8 +68,8 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                   decoration: BoxDecoration(
                     color:
                         controller.project.value.imageList.isEmpty
-                            ? Colors.orange[50]
-                            : Colors.green[50],
+                            ? ColorRes.orangeColor.shade50
+                            : ColorRes.success.shade50,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -79,8 +79,8 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                       fontWeight: FontWeight.w600,
                       color:
                       controller.project.value.imageList.isEmpty
-                              ? Colors.orange[700]
-                              : Colors.green[700],
+                              ? ColorRes.orangeColor.shade700
+                              : ColorRes.success.shade700,
                     ),
                   ),
                 ),
@@ -96,7 +96,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                       icon: Icons.cloud_upload_outlined,
                       title: 'Upload your files here',
                       subtitle: 'Browse',
-                      color: Colors.blue,
+                      color: ColorRes.blueColor,
                     )
                     : Column(
                       children: [
@@ -135,9 +135,9 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: ColorRes.leadGreyColor.shade200!),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +147,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
               Icon(
                 Icons.videocam_outlined,
                 size: 20,
-                color: Colors.purple[700],
+                color: ColorRes.purpleColor[700],
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -163,7 +163,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     ),
                     Text(
                       'Optional • Max 50MB each',
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor[600]),
                     ),
                   ],
                 ),
@@ -175,7 +175,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: ColorRes.leadGreyColor[100],
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -183,7 +183,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey[700],
+                      color: ColorRes.leadGreyColor[700],
                     ),
                   ),
                 ),
@@ -199,7 +199,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                       icon: Icons.cloud_upload_outlined,
                       title: 'Upload your files here',
                       subtitle: 'Browse',
-                      color: Colors.purple,
+                      color: ColorRes.purpleColor,
                     )
                     : Column(
                       children: [
@@ -238,9 +238,9 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: ColorRes.leadGreyColor[200]!),
       ),
       child: Obx(
         () => Column(
@@ -254,7 +254,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                   color:
                       (controller.uploadBrocherPath.value.isNotEmpty)
                           ? ColorRes.primary
-                          : Colors.red[700],
+                          : ColorRes.error[700],
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -274,7 +274,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                             'Optional • PDF only • Max 10MB',
                             style: TextStyle(
                               fontSize: 11,
-                              color: Colors.grey[600],
+                              color: ColorRes.leadGreyColor[600],
                             ),
                           ),
                         ],
@@ -287,7 +287,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                             },
                             icon: Icon(
                               Icons.delete_outline_outlined,
-                              color: Colors.red,
+                              color: ColorRes.error,
                               size: 20,
                             ),
                           )
@@ -377,7 +377,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                   icon: Icons.cloud_upload_outlined,
                   title: 'Upload your files here',
                   subtitle: 'Browse',
-                  color: Colors.red,
+                  color: ColorRes.error,
                 ),
           ],
         ),
@@ -416,7 +416,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
             const SizedBox(height: 12),
             Text(
               title,
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              style: TextStyle(fontSize: 14, color: ColorRes.leadGreyColor[700]),
             ),
             const SizedBox(height: 4),
             Text(
@@ -445,10 +445,10 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
           width: 90,
           height: 90,
           decoration: BoxDecoration(
-            color: isVideo ? Colors.purple[50] : Colors.grey[100],
+            color: isVideo ? ColorRes.purpleColor[50] : ColorRes.leadGreyColor[100],
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isVideo ? Colors.purple[200]! : Colors.grey[300]!,
+              color: isVideo ? ColorRes.purpleColor[200]! : ColorRes.leadGreyColor[300]!,
             ),
           ),
           child: ClipRRect(
@@ -471,7 +471,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                             child: Icon(
                               Icons.videocam,
                               size: 32,
-                              color: Colors.grey,
+                              color: ColorRes.leadGreyColor,
                             ),
                           );
                         }
@@ -482,7 +482,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                             const Center(
                               child: Icon(
                                 Icons.play_circle_fill,
-                                color: Colors.white,
+                                color: ColorRes.white,
                                 size: 32,
                               ),
                             ),
@@ -508,10 +508,10 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.red[600],
+                color: ColorRes.error[600],
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.close, size: 12, color: Colors.white),
+              child: const Icon(Icons.close, size: 12, color: ColorRes.white),
             ),
           ),
         ),
@@ -570,7 +570,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
   //                   const Center(
   //                     child: Icon(
   //                       Icons.play_circle_fill,
-  //                       color: Colors.white,
+  //                       color: ColorRes.white,
   //                       size: 32,
   //                     ),
   //                   ),
@@ -598,7 +598,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
   //               color: Colors.red[600],
   //               shape: BoxShape.circle,
   //             ),
-  //             child: const Icon(Icons.close, size: 12, color: Colors.white),
+  //             child: const Icon(Icons.close, size: 12, color: ColorRes.white),
   //           ),
   //         ),
   //       ),
@@ -616,21 +616,21 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
         width: 90,
         height: 90,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey[300]!, width: 1.5),
+          border: Border.all(color: ColorRes.leadGreyColor[300]!, width: 1.5),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_circle_outline, size: 28, color: Colors.blue[600]),
+            Icon(Icons.add_circle_outline, size: 28, color: ColorRes.blueColor[600]),
             const SizedBox(height: 4),
             Text(
               'Add More',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
+                color: ColorRes.leadGreyColor[700],
               ),
             ),
           ],

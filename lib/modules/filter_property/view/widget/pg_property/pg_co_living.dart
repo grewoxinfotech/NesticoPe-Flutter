@@ -140,7 +140,7 @@
 //                           11,
 //                           FontWeight.w500,
 //                           itemList.contains(builderList[index]['title'])
-//                               ? Colors.white
+//                               ? ColorRes.white
 //                               : ColorRes.textColor,
 //                           1,
 //                         ),
@@ -288,7 +288,7 @@ class _PgCoLivingState extends State<PgCoLiving> {
         //                       11,
         //                       FontWeight.w500,
         //                       widget.controllerForFilter.selectedMap['title'] ==
-        //                           builder['title'] ? Colors.white : ColorRes.textColor,
+        //                           builder['title'] ? ColorRes.white : ColorRes.textColor,
         //                       1,
         //                     ),
         //                   ],
@@ -334,7 +334,7 @@ class _PgCoLivingState extends State<PgCoLiving> {
         //               ),
         //               decoration: BoxDecoration(
         //
-        //                 color: isSelected ? ColorRes.primary.withOpacity(0.1) : Colors.white,
+        //                 color: isSelected ? ColorRes.primary.withOpacity(0.1) : ColorRes.white,
         //                 border: Border.all(
         //                   color:
         //                       isSelected

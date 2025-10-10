@@ -27,7 +27,7 @@ class CommonNesticoPeAppBar extends StatelessWidget implements PreferredSizeWidg
 
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Colors.white, // Background color of status bar
+        statusBarColor: ColorRes.white, // Background color of status bar
         statusBarIconBrightness: Brightness.dark, // Android
         statusBarBrightness: Brightness.light, // iOS
       ),
@@ -36,7 +36,7 @@ class CommonNesticoPeAppBar extends StatelessWidget implements PreferredSizeWidg
     return SafeArea(
       child: Container(
         height: preferredSize.height,
-        color: Colors.white, // Themed background color
+        color: ColorRes.white, // Themed background color
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,

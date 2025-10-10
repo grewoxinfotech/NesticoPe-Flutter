@@ -140,7 +140,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                       Icons.delete_outline_rounded,
                                       size: 20,
                                     ),
-                                    color: Colors.red.shade600,
+                                    color: ColorRes.error.shade600,
                                     tooltip: 'Remove Configuration',
                                     style: IconButton.styleFrom(
                                       padding: const EdgeInsets.all(8),
@@ -183,11 +183,11 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         colors: [
-                                          Colors.transparent,
+                                          ColorRes.transparentColor,
                                           ColorRes.grey.withOpacity(0.3),
                                           ColorRes.grey.withOpacity(0.3),
                                           ColorRes.grey.withOpacity(0.3),
-                                          Colors.transparent,
+                                          ColorRes.transparentColor,
                                         ],
                                       ),
                                     ),
@@ -300,7 +300,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                     const Spacer(),
                                     TextButton(
                                       onPressed: () => controller.removeVariant(ci, vi),
-                                    child: Text('Remove',style: TextStyle(color: Colors.redAccent,fontSize: 12),),
+                                    child: Text('Remove',style: TextStyle(color: ColorRes.redAccentColor,fontSize: 12),),
 
                                       // color: Colors.red.shade600,
                                       // tooltip: 'Remove Configuration',

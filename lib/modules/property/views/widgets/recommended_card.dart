@@ -78,8 +78,8 @@ class _RecommendedCardState extends State<RecommendedCard> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.black.withOpacity(0.4),
-                          Colors.transparent,
+                          ColorRes.black.withOpacity(0.4),
+                          ColorRes.transparentColor,
                         ],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
@@ -125,7 +125,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         height: 32,
                         width: 32,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: ColorRes.white,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
@@ -162,7 +162,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         child: const Text(
                           "Recently Viewed",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: ColorRes.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                           ),

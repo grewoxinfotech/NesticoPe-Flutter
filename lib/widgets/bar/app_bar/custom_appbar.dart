@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/constants/color_res.dart';
+
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget> leftActions;
@@ -11,7 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.leftActions = const [],
     this.rightActions = const [],
-    this.backgroundColor = Colors.white,
+    this.backgroundColor = ColorRes.white,
   });
 
   @override

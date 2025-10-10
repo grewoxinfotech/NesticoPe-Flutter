@@ -246,7 +246,7 @@ import '../../seller/seller_listing/view/seller_listing_view.dart';
 //           child: Text(
 //             category,
 //             style: TextStyle(
-//               color: isSelected ? Colors.white : Colors.black,
+//               color: isSelected ? ColorRes.white : Colors.black,
 //               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
 //             ),
 //           ),
@@ -283,7 +283,7 @@ import '../../seller/seller_listing/view/seller_listing_view.dart';
 //                       placeholder: (context, url) => Shimmer.fromColors(
 //                         baseColor: Colors.grey[300]!,
 //                         highlightColor: Colors.grey[100]!,
-//                         child: Container(color: Colors.white),
+//                         child: Container(color: ColorRes.white),
 //                       ),
 //                       errorWidget: (context, url, error) => Container(
 //                         color: Colors.grey[300],
@@ -302,7 +302,7 @@ import '../../seller/seller_listing/view/seller_listing_view.dart';
 //                       ),
 //                       child: Text(
 //                         '\$${property.price.toStringAsFixed(0)}',
-//                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+//                         style: TextStyle(color: ColorRes.white, fontWeight: FontWeight.bold),
 //                       ),
 //                     ),
 //                   ),
@@ -378,7 +378,7 @@ import '../../seller/seller_listing/view/seller_listing_view.dart';
 //                   placeholder: (context, url) => Shimmer.fromColors(
 //                     baseColor: Colors.grey[300]!,
 //                     highlightColor: Colors.grey[100]!,
-//                     child: Container(color: Colors.white),
+//                     child: Container(color: ColorRes.white),
 //                   ),
 //                   errorWidget: (context, url, error) => Container(
 //                     color: Colors.grey[300],

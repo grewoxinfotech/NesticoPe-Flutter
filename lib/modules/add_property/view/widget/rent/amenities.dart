@@ -5,6 +5,8 @@ import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
 
+import '../../../../../app/constants/color_res.dart';
+
 class RentAmenities extends StatelessWidget {
   final CreatePropertyController controller;
   const RentAmenities({super.key, required this.controller});
@@ -67,13 +69,13 @@ class RentAmenities extends StatelessWidget {
                                       ? Theme.of(
                                         context,
                                       ).primaryColor.withOpacity(0.1)
-                                      : Colors.white,
+                                      : ColorRes.white,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color:
                                     isSelected
                                         ? Theme.of(context).primaryColor
-                                        : Colors.grey.shade300,
+                                        : ColorRes.leadGreyColor.shade300,
                                 width: 1,
                               ),
                             ),
@@ -93,7 +95,7 @@ class RentAmenities extends StatelessWidget {
                                   color:
                                       isSelected
                                           ? Theme.of(context).primaryColor
-                                          : Colors.grey.shade600,
+                                          : ColorRes.leadGreyColor.shade600,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
@@ -103,7 +105,7 @@ class RentAmenities extends StatelessWidget {
                                     color:
                                         isSelected
                                             ? Theme.of(context).primaryColor
-                                            : Colors.black,
+                                            : ColorRes.black,
                                     fontWeight: FontWeight.w400,
                                     fontSize: 10,
                                   ),
@@ -172,13 +174,13 @@ controller.addOrUpdateAmenities(e.key);
                             ? Theme.of(
                           context,
                         ).primaryColor.withOpacity(0.1)
-                            : Colors.white,
+                            : ColorRes.white,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color:
                           isSelected
                               ? Theme.of(context).primaryColor
-                              : Colors.grey.shade300,
+                              : ColorRes.leadGreyColor.shade300,
                           width: 1,
                         ),
                       ),
@@ -198,7 +200,7 @@ controller.addOrUpdateAmenities(e.key);
                             color:
                             isSelected
                                 ? Theme.of(context).primaryColor
-                                : Colors.grey.shade600,
+                                : ColorRes.leadGreyColor.shade600,
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -208,7 +210,7 @@ controller.addOrUpdateAmenities(e.key);
                               color:
                               isSelected
                                   ? Theme.of(context).primaryColor
-                                  : Colors.black,
+                                  : ColorRes.black,
                               fontWeight: FontWeight.w400,
                               fontSize: 10,
                             ),
@@ -256,12 +258,12 @@ controller.addOrUpdateAmenities(e.key);
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? Theme.of(context).primaryColor.withOpacity(0.1)
-                                : Colors.white,
+                                : ColorRes.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isSelected
                                   ? Theme.of(context).primaryColor
-                                  : Colors.grey.shade300,
+                                  : ColorRes.leadGreyColor.shade300,
                               width: 1,
                             ),
                           ),
@@ -279,7 +281,7 @@ controller.addOrUpdateAmenities(e.key);
                                 folder: 'amenities',
                                 color: isSelected
                                     ? Theme.of(context).primaryColor
-                                    : Colors.grey.shade600,
+                                    : ColorRes.leadGreyColor.shade600,
                               ),
                               const SizedBox(height: 4),
                               Text(
@@ -288,7 +290,7 @@ controller.addOrUpdateAmenities(e.key);
                                 style: TextStyle(
                                   color: isSelected
                                       ? Theme.of(context).primaryColor
-                                      : Colors.black,
+                                      : ColorRes.black,
                                   fontWeight: FontWeight.w400,
                                   fontSize: 10,
                                 ),

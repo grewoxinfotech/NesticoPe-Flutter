@@ -245,7 +245,7 @@
 //                           ],
 //                         )
 //                             : null,
-//                         color: isSelected ? null : Colors.white,
+//                         color: isSelected ? null : ColorRes.white,
 //                         boxShadow: [
 //                           BoxShadow(
 //                             color: isSelected
@@ -275,8 +275,8 @@
 //                                     begin: Alignment.topLeft,
 //                                     end: Alignment.bottomRight,
 //                                     colors: [
-//                                       Colors.white.withOpacity(0.2),
-//                                       Colors.white.withOpacity(0.1),
+//                                       ColorRes.white.withOpacity(0.2),
+//                                       ColorRes.white.withOpacity(0.1),
 //                                     ],
 //                                   ),
 //                                 ),
@@ -298,7 +298,7 @@
 //                                         borderRadius: BorderRadius.circular(16),
 //                                         border: isSelected
 //                                             ? Border.all(
-//                                           color: Colors.white.withOpacity(0.3),
+//                                           color: ColorRes.white.withOpacity(0.3),
 //                                           width: 2,
 //                                         )
 //                                             : null,
@@ -340,7 +340,7 @@
 //                                           width: 24,
 //                                           height: 24,
 //                                           decoration: BoxDecoration(
-//                                             color: Colors.white,
+//                                             color: ColorRes.white,
 //                                             shape: BoxShape.circle,
 //                                             boxShadow: [
 //                                               BoxShadow(
@@ -366,7 +366,7 @@
 //                                     fontSize: 13,
 //                                     fontWeight: FontWeight.w700,
 //                                     color: isSelected
-//                                         ? Colors.white
+//                                         ? ColorRes.white
 //                                         : Colors.grey[800],
 //                                     letterSpacing: 0.2,
 //                                   ),
@@ -389,7 +389,7 @@
 //                                           width: 4,
 //                                           height: 4,
 //                                           decoration: BoxDecoration(
-//                                             color: Colors.white.withOpacity(0.8),
+//                                             color: ColorRes.white.withOpacity(0.8),
 //                                             shape: BoxShape.circle,
 //                                           ),
 //                                         );
@@ -581,8 +581,8 @@ class _CityFilterListState extends State<CityFilterList> {
                       borderRadius: BorderRadius.circular(20),
                       gradient: LinearGradient(
                         colors: [
-                          Colors.black.withOpacity(0.4),
-                          Colors.transparent,
+                          ColorRes.black.withOpacity(0.4),
+                          ColorRes.transparentColor,
                         ],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
@@ -594,7 +594,7 @@ class _CityFilterListState extends State<CityFilterList> {
                     child: Text(
                       cities[index],
                       style: TextStyle(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),

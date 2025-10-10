@@ -51,7 +51,7 @@ class TrendingAreaCard extends StatelessWidget {
                 width: 260,
                 margin: const EdgeInsets.only(right: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: ColorRes.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(

@@ -175,7 +175,7 @@ class StepReview extends GetView<ProjectWizardController> {
                           ),
                           child: const Icon(
                             Icons.fact_check_rounded,
-                            color: Colors.white,
+                            color: ColorRes.white,
                             size: 26,
                           ),
                         ),
@@ -213,7 +213,7 @@ class StepReview extends GetView<ProjectWizardController> {
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: ColorRes.primary.withOpacity(0.15),
@@ -440,7 +440,7 @@ class StepReview extends GetView<ProjectWizardController> {
                 icon: Icons.square_foot_rounded,
                 value: '${p.projectArea}',
                 label: 'Sq.Ft',
-                color: const Color(0xFF6366F1),
+                color: ColorRes.builderGridPurple,
               ),
             ),
             const SizedBox(width: 12),
@@ -449,7 +449,7 @@ class StepReview extends GetView<ProjectWizardController> {
                 icon: Icons.apartment_rounded,
                 value: '${p.projectSize.totalBuildings}',
                 label: 'Buildings',
-                color: const Color(0xFFEC4899),
+                color: ColorRes.builderGridPink,
               ),
             ),
           ],
@@ -462,7 +462,8 @@ class StepReview extends GetView<ProjectWizardController> {
                 icon: Icons.meeting_room_rounded,
                 value: '${p.projectSize.totalUnits}',
                 label: 'Units',
-                color: const Color(0xFF8B5CF6),
+                color: ColorRes.builderGridLightPurple,
+
               ),
             ),
             const SizedBox(width: 12),
@@ -474,7 +475,7 @@ class StepReview extends GetView<ProjectWizardController> {
                         ? '${p.reraId.substring(0, 8)}..'
                         : p.reraId,
                 label: 'RERA',
-                color: const Color(0xFF10B981),
+                color: ColorRes.builderGridLightGreen,
                 valueSize: 14,
               ),
             ),
@@ -553,10 +554,10 @@ class StepReview extends GetView<ProjectWizardController> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Color(0xFFF59E0B).withOpacity(0.02),
+        color: ColorRes.builderGridLightYellow.withOpacity(0.02),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: const Color(0xFFF59E0B).withOpacity(0.3),
+          color: ColorRes.builderGridLightYellow.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -568,16 +569,16 @@ class StepReview extends GetView<ProjectWizardController> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF59E0B).withOpacity(0.08),
+                  color:  ColorRes.builderGridLightYellow.withOpacity(0.08),
                   border: Border.all(
-                    color: const Color(0xFFF59E0B).withOpacity(0.3),
+                    color:  ColorRes.builderGridLightYellow.withOpacity(0.3),
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.schedule_rounded,
-                  color: Color(0xFFF59E0B),
+                  color: ColorRes.builderGridLightYellow,
                   size: 20,
                 ),
               ),
@@ -600,7 +601,7 @@ class StepReview extends GetView<ProjectWizardController> {
                   Icons.rocket_launch_rounded,
                   'Launch',
                   p.launchDate,
-                  const Color(0xFF3B82F6),
+                  ColorRes.builderGridLightBlue,
                 ),
               ),
               const SizedBox(width: 12),
@@ -609,7 +610,7 @@ class StepReview extends GetView<ProjectWizardController> {
                   Icons.key_rounded,
                   'Possession',
                   p.possessionDate,
-                  const Color(0xFF10B981),
+                  ColorRes.builderGridLightGreen,
                 ),
               ),
             ],
@@ -628,7 +629,7 @@ class StepReview extends GetView<ProjectWizardController> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
@@ -671,9 +672,9 @@ class StepReview extends GetView<ProjectWizardController> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: ColorRes.leadGreyColor.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -723,9 +724,9 @@ class StepReview extends GetView<ProjectWizardController> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Row(
         children: [
@@ -763,9 +764,9 @@ class StepReview extends GetView<ProjectWizardController> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -803,9 +804,9 @@ class StepReview extends GetView<ProjectWizardController> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Row(
         children: [
@@ -900,12 +901,12 @@ class StepReview extends GetView<ProjectWizardController> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF8B5CF6).withOpacity(0.08),
-            const Color(0xFF8B5CF6).withOpacity(0.03),
+            ColorRes.builderGridLightPurple.withOpacity(0.08),
+            ColorRes.builderGridLightPurple.withOpacity(0.03),
           ],
         ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF8B5CF6).withOpacity(0.2)),
+        border: Border.all(color: ColorRes.builderGridLightPurple.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -915,13 +916,13 @@ class StepReview extends GetView<ProjectWizardController> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withOpacity(0.15),
+                  color: ColorRes.builderGridLightPurple.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.contact_phone_rounded,
                   size: 18,
-                  color: Color(0xFF8B5CF6),
+                  color: ColorRes.builderGridLightPurple,
                 ),
               ),
               const SizedBox(width: 12),
@@ -952,7 +953,7 @@ class StepReview extends GetView<ProjectWizardController> {
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF8B5CF6)),
+          Icon(icon, size: 16, color:ColorRes.builderGridLightPurple),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -1059,12 +1060,12 @@ class StepReview extends GetView<ProjectWizardController> {
                                       width: 140,
                                       height: 100,
                                       decoration: BoxDecoration(
-                                        color: Colors.grey.shade200,
+                                        color: ColorRes.leadGreyColor.shade200,
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Icon(
                                         Icons.image,
-                                        color: Colors.grey,
+                                        color: ColorRes.leadGreyColor,
                                       ),
                                     ),
                               ),
@@ -1073,14 +1074,14 @@ class StepReview extends GetView<ProjectWizardController> {
                               Positioned.fill(
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.black54,
+                                    color: ColorRes.blackShade54,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Center(
                                     child: Text(
                                       '+${p.imageList.length - 5}',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: ColorRes.white,
                                         fontSize: AppFontSizes.medium,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -1104,7 +1105,7 @@ class StepReview extends GetView<ProjectWizardController> {
                     Icon(
                       Icons.video_library_rounded,
                       size: 16,
-                      color: const Color(0xFFEC4899),
+                      color:ColorRes.builderGridPink,
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -1122,7 +1123,7 @@ class StepReview extends GetView<ProjectWizardController> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEC4899).withOpacity(0.1),
+                        color: ColorRes.builderGridPink.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -1130,7 +1131,7 @@ class StepReview extends GetView<ProjectWizardController> {
                         style: TextStyle(
                           fontSize: AppFontSizes.extraSmall,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFFEC4899),
+                          color: ColorRes.builderGridPink,
                         ),
                       ),
                     ),
@@ -1183,7 +1184,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                       child: Icon(
                                         Icons.videocam,
                                         size: 32,
-                                        color: Colors.grey,
+                                        color: ColorRes.leadGreyColor,
                                       ),
                                     );
                                   }
@@ -1197,7 +1198,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                       const Center(
                                         child: Icon(
                                           Icons.play_circle_fill,
-                                          color: Colors.white,
+                                          color: ColorRes.white,
                                           size: 32,
                                         ),
                                       ),
@@ -1209,14 +1210,14 @@ class StepReview extends GetView<ProjectWizardController> {
                                 Positioned.fill(
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.black54,
+                                      color: ColorRes.blackShade54,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Center(
                                       child: Text(
                                         '+${p.videoList.length - 5}',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: ColorRes.white,
                                           fontSize: AppFontSizes.medium,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -1243,13 +1244,13 @@ class StepReview extends GetView<ProjectWizardController> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF8B5CF6).withOpacity(0.08),
-                        const Color(0xFF8B5CF6).withOpacity(0.03),
+                        ColorRes.builderGridLightPurple.withOpacity(0.08),
+                        ColorRes.builderGridLightPurple.withOpacity(0.03),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFF8B5CF6).withOpacity(0.3),
+                      color: ColorRes.builderGridLightPurple.withOpacity(0.3),
                     ),
                   ),
                   child: Row(
@@ -1257,12 +1258,12 @@ class StepReview extends GetView<ProjectWizardController> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF8B5CF6).withOpacity(0.15),
+                          color: ColorRes.builderGridLightPurple.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           Icons.picture_as_pdf_rounded,
-                          color: const Color(0xFF8B5CF6),
+                          color: ColorRes.builderGridLightPurple,
                           size: 24,
                         ),
                       ),
@@ -1350,7 +1351,7 @@ class StepReview extends GetView<ProjectWizardController> {
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                                color: ColorRes.white,
                               ),
                             ),
                           ),
@@ -1399,14 +1400,14 @@ class StepReview extends GetView<ProjectWizardController> {
                           margin: const EdgeInsets.only(bottom: 16),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: ColorRes.white,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: ColorRes.primary.withOpacity(0.3),
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.shade200,
+                                color: ColorRes.leadGreyColor.shade200,
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -1444,7 +1445,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF10B981).withOpacity(0.1),
+                                        color: ColorRes.builderGridLightGreen.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Row(
@@ -1453,7 +1454,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                           const Icon(
                                             Icons.check_circle,
                                             size: 12,
-                                            color: Color(0xFF10B981),
+                                            color: ColorRes.builderGridLightGreen,
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
@@ -1461,7 +1462,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                             style: TextStyle(
                                               fontSize: AppFontSizes.extraSmall,
                                               fontWeight: FontWeight.w600,
-                                              color: const Color(0xFF10B981),
+                                              color: ColorRes.builderGridLightGreen,
                                             ),
                                           ),
                                         ],
@@ -1474,7 +1475,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.red.shade50,
+                                        color: ColorRes.error.shade50,
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(
@@ -1482,7 +1483,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                         style: TextStyle(
                                           fontSize: AppFontSizes.extraSmall,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.red.shade700,
+                                          color: ColorRes.error.shade700,
                                         ),
                                       ),
                                     ),
@@ -1498,8 +1499,8 @@ class StepReview extends GetView<ProjectWizardController> {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      const Color(0xFF10B981).withOpacity(0.08),
-                                      const Color(0xFF10B981).withOpacity(0.03),
+                                      ColorRes.builderGridLightGreen.withOpacity(0.08),
+                                      ColorRes.builderGridLightGreen.withOpacity(0.03),
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(12),
@@ -1523,7 +1524,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                           style: TextStyle(
                                             fontSize: AppFontSizes.body,
                                             fontWeight: FontWeight.bold,
-                                            color: const Color(0xFF10B981),
+                                            color: ColorRes.builderGridLightGreen
                                           ),
                                         ),
                                       ],
@@ -1563,7 +1564,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                       Icons.square_foot_rounded,
                                       'Built-up Area',
                                       '${variant.builtUpArea}',
-                                      const Color(0xFF6366F1),
+                                        ColorRes.builderGridPurple
                                     ),
                                   ),
                                   const SizedBox(width: 10),
@@ -1572,7 +1573,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                       Icons.space_dashboard_rounded,
                                       'Carpet Area',
                                       '${variant.carpetArea}',
-                                      const Color(0xFF8B5CF6),
+                                        ColorRes.builderGridLightPurple
                                     ),
                                   ),
                                 ],
@@ -1587,7 +1588,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                       Icons.apartment_rounded,
                                       'Total Units',
                                       '${variant.totalUnits}',
-                                      const Color(0xFFEC4899),
+                                        ColorRes.builderGridPink
                                     ),
                                   ),
                                   const SizedBox(width: 10),
@@ -1596,7 +1597,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                       Icons.meeting_room_rounded,
                                       'Available',
                                       '${variant.availableUnits}',
-                                      const Color(0xFF10B981),
+                                        ColorRes.builderGridLightGreen
                                     ),
                                   ),
                                 ],
@@ -1764,7 +1765,7 @@ class StepReview extends GetView<ProjectWizardController> {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: ColorRes.white,
                   ),
                 ),
               ),
@@ -1806,7 +1807,7 @@ class StepReview extends GetView<ProjectWizardController> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorRes.white,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../app/constants/color_res.dart';
+
 // Controller
 class ReportPropertyController extends GetxController {
   var selectedReason = ''.obs;
@@ -31,7 +33,7 @@ class ReportPropertyController extends GetxController {
         'Please select a reason for reporting',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
-        colorText: Colors.white,
+        colorText: ColorRes.white,
       );
     }
     else
@@ -43,7 +45,7 @@ class ReportPropertyController extends GetxController {
           'Report submitted successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
-          colorText: Colors.white,
+          colorText: ColorRes.white,
         );
 
       }

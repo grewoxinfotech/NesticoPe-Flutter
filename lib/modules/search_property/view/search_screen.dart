@@ -74,7 +74,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
     final trendingCityController = Get.find<TrendingCityController>();
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
         title: buildCommonText(
           'Search in Surat',
@@ -104,7 +104,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                     child: Obx(
                       () => CustomTextField(
                         enabled: true,
-                        fillColor: Colors.white,
+                        fillColor: ColorRes.white,
                         suffixIcon: const Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppPadding.medium,

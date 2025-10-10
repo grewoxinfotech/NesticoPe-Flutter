@@ -70,11 +70,11 @@ class _PriceDetailsState extends State<PriceDetails> {
     return Obx(
       () => AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light.copyWith(
-          systemNavigationBarDividerColor: Colors.transparent,
+          systemNavigationBarDividerColor: ColorRes.transparentColor,
           systemNavigationBarColor: Theme.of(context).secondaryHeaderColor,
           systemNavigationBarIconBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.dark,
-          statusBarColor: Colors.transparent,
+          statusBarColor:ColorRes.transparentColor,
         ),
         child: Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -105,7 +105,7 @@ class _PriceDetailsState extends State<PriceDetails> {
                   // const SizedBox(height: 16),
                   Container(
                     width: double.infinity,
-                    decoration: const BoxDecoration(color: Colors.white),
+                    decoration: const BoxDecoration(color: ColorRes.white),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -133,7 +133,7 @@ class _PriceDetailsState extends State<PriceDetails> {
                                 ),
                                 child: const Icon(
                                   Icons.filter_list_rounded,
-                                  color: Colors.white,
+                                  color: ColorRes.white,
                                   size: 22.0,
                                 ),
                               ),
@@ -157,7 +157,7 @@ class _PriceDetailsState extends State<PriceDetails> {
                                         borderRadius: BorderRadius.circular(
                                           20.0,
                                         ),
-                                        color: Colors.white,
+                                        color: ColorRes.white,
                                         border: Border.all(
                                           color:
                                               Theme.of(
@@ -473,7 +473,7 @@ class BlurredHeader extends StatelessWidget {
       width: double.infinity,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         border: Border(top: BorderSide(color: Colors.grey.shade300, width: 1)),
       ),
       child: Stack(

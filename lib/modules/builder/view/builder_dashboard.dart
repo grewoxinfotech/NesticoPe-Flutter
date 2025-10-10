@@ -9,10 +9,10 @@ class BuilderDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
         title: const Text('Dashboard', style: TextStyle(fontWeight: FontWeight.w600)),
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         automaticallyImplyLeading: false,
       ),
@@ -39,7 +39,7 @@ class BuilderDashboard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: ColorRes.white,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -47,7 +47,7 @@ class BuilderDashboard extends StatelessWidget {
                           'Manage your properties efficiently',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.white.withOpacity(0.9),
+                            color: ColorRes.white.withOpacity(0.9),
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -59,39 +59,40 @@ class BuilderDashboard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: ColorRes.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.home_work_rounded, size: 40, color: Colors.white),
+                    child: const Icon(Icons.home_work_rounded, size: 40, color: ColorRes.white),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
 
+            ///Font not change from it ============================================
             // Metrics Grid
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.2,
-              children: [
-                _buildMetricCard('Total Properties', '24', Icons.apartment_rounded, const Color(0xFF6366F1)),
-                _buildMetricCard('Active Leads', '156', Icons.people_rounded, const Color(0xFFEC4899)),
-                _buildMetricCard('Sold Units', '18', Icons.check_circle_rounded, const Color(0xFF10B981)),
-                _buildMetricCard('Revenue', '₹2.4Cr', Icons.currency_rupee_rounded, const Color(0xFFF59E0B)),
-              ],
-            ),
+            // GridView.count(
+            //   shrinkWrap: true,
+            //   physics: const NeverScrollableScrollPhysics(),
+            //   crossAxisCount: 2,
+            //   crossAxisSpacing: 16,
+            //   mainAxisSpacing: 16,
+            //   childAspectRatio: 1.2,
+            //   children: [
+            //     _buildMetricCard('Total Properties', '24', Icons.apartment_rounded, const Color(0xFF6366F1)),
+            //     _buildMetricCard('Active Leads', '156', Icons.people_rounded, const Color(0xFFEC4899)),
+            //     _buildMetricCard('Sold Units', '18', Icons.check_circle_rounded, const Color(0xFF10B981)),
+            //     _buildMetricCard('Revenue', '₹2.4Cr', Icons.currency_rupee_rounded, const Color(0xFFF59E0B)),
+            //   ],
+            // ),
             const SizedBox(height: 24),
 
             // Recent Activities
             Text('Recent Activities', style: TextStyle(fontSize: AppFontSizes.body, fontWeight: FontWeight.w600, color: ColorRes.textPrimary)),
             const SizedBox(height: 12),
-            _buildActivityItem('New lead for Skyline Tower', '2 hours ago', Icons.person_add_rounded, Colors.blue),
-            _buildActivityItem('Property listed successfully', '5 hours ago', Icons.check_circle_rounded, Colors.green),
-            _buildActivityItem('Site visit scheduled', '1 day ago', Icons.calendar_today_rounded, Colors.orange),
+            _buildActivityItem('New lead for Skyline Tower', '2 hours ago', Icons.person_add_rounded, ColorRes.blueColor),
+            _buildActivityItem('Property listed successfully', '5 hours ago', Icons.check_circle_rounded, ColorRes.green),
+            _buildActivityItem('Site visit scheduled', '1 day ago', Icons.calendar_today_rounded, ColorRes.orangeColor),
           ],
         ),
       ),
@@ -128,9 +129,9 @@ class BuilderDashboard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: ColorRes.leadGreyColor.shade200),
       ),
       child: Row(
         children: [

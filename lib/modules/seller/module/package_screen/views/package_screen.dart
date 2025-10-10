@@ -102,12 +102,12 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       child: Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
         appBar: AppBar(
-          // backgroundColor: Colors.white,
+          // backgroundColor: ColorRes.white,
           elevation: 0,
           title: const Text(
             'Choose a Package',
             style: TextStyle(
-              color: Colors.black,
+              color: ColorRes.black,
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -167,7 +167,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           const Text(
             'Unlock Premium Features',
             style: TextStyle(
-              color: Colors.white,
+              color: ColorRes.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -175,19 +175,19 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           const SizedBox(height: 12),
           const Text(
             'Boost your property business with our advanced tools and features',
-            style: TextStyle(color: Colors.white70, fontSize: 13),
+            style: TextStyle(color: ColorRes.white, fontSize: 13),
           ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: ColorRes.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
               '30-day money-back guarantee',
               style: TextStyle(
-                color: Colors.white,
+                color: ColorRes.white,
                 fontSize: 9,
                 fontWeight: FontWeight.w500,
               ),
@@ -224,7 +224,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? plan.color : Colors.grey.withOpacity(0.2),
@@ -273,7 +273,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                           child: const Text(
                             'POPULAR',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: ColorRes.white,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -292,7 +292,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: ColorRes.black,
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -345,8 +345,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                                     fontSize: 11,
                                     color:
                                         feature.isIncluded
-                                            ? Colors.black87
-                                            : Colors.grey,
+                                            ? ColorRes.textPrimary
+                                            : ColorRes.leadGreyColor,
                                   ),
                                 ),
                               ),
@@ -396,8 +396,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isSelected ? plan.color : Colors.grey[100],
-                    foregroundColor: isSelected ? Colors.white : Colors.black,
+                    backgroundColor: isSelected ? plan.color : ColorRes.leadGreyColor.shade100,
+                    foregroundColor: isSelected ? ColorRes.white : ColorRes.black,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -431,7 +431,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? plan.color : Colors.grey.withOpacity(0.2),
@@ -442,7 +442,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
               color:
                   isSelected
                       ? plan.color.withOpacity(0.2)
-                      : Colors.black.withOpacity(0.05),
+                      : ColorRes.black.withOpacity(0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -481,7 +481,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                           child: const Text(
                             'POPULAR',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: ColorRes.white,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -500,7 +500,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: ColorRes.black,
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -553,8 +553,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                                     fontSize: 13,
                                     color:
                                         feature.isIncluded
-                                            ? Colors.black87
-                                            : Colors.grey,
+                                            ? ColorRes.textPrimary
+                                            : ColorRes.leadGreyColor,
                                   ),
                                 ),
                               ),
@@ -577,8 +577,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isSelected ? plan.color : Colors.grey[100],
-                    foregroundColor: isSelected ? Colors.white : Colors.black,
+                    backgroundColor: isSelected ? plan.color : ColorRes.leadGreyColor.shade100,
+                    foregroundColor: isSelected ? ColorRes.white : ColorRes.black,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -605,7 +605,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: ColorRes.transparentColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey[300]!),
         // boxShadow: [
@@ -686,7 +686,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[200]!),
         // boxShadow: [
@@ -754,7 +754,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey[200]!),
         // boxShadow: [
@@ -817,7 +817,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           Text(
             'Subscribe to ${selectedPlan.name}',
             style: const TextStyle(
-              color: Colors.white,
+              color: ColorRes.white,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -825,7 +825,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           const SizedBox(height: 8),
           Text(
             selectedPlan.price + ' ' + selectedPlan.duration,
-            style: const TextStyle(color: Colors.white70, fontSize: 14),
+            style: const TextStyle(color: ColorRes.white, fontSize: 14),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -835,7 +835,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                 _handleSubscribe(selectedPlan);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
+                backgroundColor: ColorRes.white,
                 foregroundColor: ColorRes.primary,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -857,11 +857,11 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
     // Handle subscription logic here
     Get.dialog(
       Container(
-        color: Colors.transparent,
+        color: ColorRes.transparentColor,
         child: AlertDialog(
           title: const Text('Subscription'),
           content: Text('You selected ${plan.name} plan for ${plan.price}'),
-          backgroundColor: Colors.white,
+          backgroundColor: ColorRes.white,
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

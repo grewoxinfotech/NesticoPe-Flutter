@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart';
 
+import '../../../../app/constants/color_res.dart';
+
 class SellerListWidget extends StatelessWidget {
   final List<dynamic> propertyList;
 
@@ -221,9 +223,9 @@ class SellerCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.7),
-                      Colors.black.withOpacity(0.9),
+                      ColorRes.transparentColor,
+                      ColorRes.black.withOpacity(0.7),
+                      ColorRes.black.withOpacity(0.9),
                     ],
                     stops: const [0.5, 0.7, 1.0],
                   ),
@@ -243,7 +245,7 @@ class SellerCard extends StatelessWidget {
                 child: const Text(
                   'Top Rated',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: ColorRes.white,
                     fontSize: AppFontSizes.mini,
                     fontWeight: FontWeight.w600,
                   ),
@@ -263,7 +265,7 @@ class SellerCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: ColorRes.white,
                       fontWeight: FontWeight.w600,
                       fontSize: AppFontSizes.caption,
                     ),
@@ -273,7 +275,7 @@ class SellerCard extends StatelessWidget {
 
                   Row(
                     children: [
-                      const Icon(
+                       Icon(
                         Icons.work_outline,
                         size: 12,
                         color: Colors.white70,
@@ -282,7 +284,7 @@ class SellerCard extends StatelessWidget {
                       Text(
                         "$experience yrs Exp.",
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: ColorRes.white.withOpacity(0.9),
                           fontSize: AppFontSizes.mini,
                         ),
                       ),
@@ -297,7 +299,7 @@ class SellerCard extends StatelessWidget {
                       Icon(
                         Icons.location_on_outlined,
                         size: 12,
-                        color: Colors.white.withOpacity(0.9),
+                        color: ColorRes.white.withOpacity(0.9),
                       ),
                       const SizedBox(width: 3),
                       Expanded(
@@ -307,7 +309,7 @@ class SellerCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: AppFontSizes.mini,
-                            color: Colors.white.withOpacity(0.9),
+                            color: ColorRes.white.withOpacity(0.9),
                           ),
                         ),
                       ),
@@ -321,7 +323,7 @@ class SellerCard extends StatelessWidget {
                       Text(
                         "${formatNumber(properties)} Properties",
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: ColorRes.white,
                           fontSize: AppFontSizes.caption,
                           fontWeight: FontWeight.w600,
                         ),
@@ -329,7 +331,7 @@ class SellerCard extends StatelessWidget {
                       const SizedBox(width: 3),
                       const Icon(
                         Icons.arrow_forward_ios,
-                        color: Colors.white,
+                        color: ColorRes.white,
                         size: 10,
                       ),
                     ],

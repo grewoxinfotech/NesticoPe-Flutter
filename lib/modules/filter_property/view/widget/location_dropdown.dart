@@ -50,9 +50,9 @@ class SearchableDropdownWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorRes.white,
                 border: Border.all(
-                  color: enabled ? Colors.grey.shade300 : Colors.grey.shade200,
+                  color: enabled ? ColorRes.leadGreyColor.shade300 : ColorRes.leadGreyColor.shade200,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -64,7 +64,7 @@ class SearchableDropdownWidget extends StatelessWidget {
                     color:
                         selectedValue.value.isNotEmpty
                             ? ColorRes.primary
-                            : Colors.grey.shade400,
+                            : ColorRes.leadGreyColor.shade400,
                     size: 20,
                   ),
                   const SizedBox(width: 12),
@@ -74,14 +74,14 @@ class SearchableDropdownWidget extends StatelessWidget {
                       15,
                       FontWeight.w500,
                       selectedValue.value.isEmpty
-                          ? Colors.grey.shade400
+                          ? ColorRes.leadGreyColor.shade400
                           : ColorRes.textColor,
                       1,
                     ),
                   ),
                   Icon(
                     Icons.keyboard_arrow_down,
-                    color: Colors.grey.shade600,
+                    color: ColorRes.leadGreyColor.shade600,
                     size: 20,
                   ),
                 ],
@@ -128,7 +128,7 @@ class SearchableDropdownWidget extends StatelessWidget {
       Container(
         height: Get.height * 0.7,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
@@ -142,7 +142,7 @@ class SearchableDropdownWidget extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: ColorRes.leadGreyColor.shade300,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -194,12 +194,12 @@ class SearchableDropdownWidget extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Search ${label.toLowerCase()}...',
                   hintStyle: TextStyle(
-                    color: Colors.grey.shade400,
+                    color: ColorRes.leadGreyColor.shade400,
                     fontSize: 14,
                   ),
                   prefixIcon: Icon(
                     Icons.search,
-                    color: Colors.grey.shade400,
+                    color: ColorRes.leadGreyColor.shade400,
                     size: 20,
                   ),
                   suffixIcon:
@@ -207,7 +207,7 @@ class SearchableDropdownWidget extends StatelessWidget {
                           ? IconButton(
                             icon: Icon(
                               Icons.clear,
-                              color: Colors.grey.shade400,
+                              color: ColorRes.leadGreyColor.shade400,
                               size: 20,
                             ),
                             onPressed: () {
@@ -217,14 +217,14 @@ class SearchableDropdownWidget extends StatelessWidget {
                           )
                           : null,
                   filled: true,
-                  fillColor: Colors.grey.shade50,
+                  fillColor: ColorRes.leadGreyColor.shade50,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade200),
+                    borderSide: BorderSide(color: ColorRes.leadGreyColor.shade200),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade200),
+                    borderSide: BorderSide(color: ColorRes.leadGreyColor.shade200),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -253,7 +253,7 @@ class SearchableDropdownWidget extends StatelessWidget {
                             '${filteredItems.length} ${filteredItems.length == 1 ? 'result' : 'results'} found',
                             12,
                             FontWeight.w500,
-                            Colors.grey.shade600,
+                            ColorRes.leadGreyColor.shade600,
                             1,
                           ),
                         ),
@@ -261,7 +261,7 @@ class SearchableDropdownWidget extends StatelessWidget {
                       : const SizedBox.shrink(),
             ),
 
-            Divider(height: 0.5, color: Colors.grey.shade200),
+            Divider(height: 0.5, color: ColorRes.leadGreyColor.shade200),
 
             // List of items
             Expanded(
@@ -292,7 +292,7 @@ class SearchableDropdownWidget extends StatelessWidget {
                                   color:
                                       isSelected
                                           ? ColorRes.primary.withOpacity(0.05)
-                                          : Colors.transparent,
+                                          : ColorRes.transparentColor,
                                 ),
                                 child: Row(
                                   children: [
@@ -340,13 +340,13 @@ class SearchableDropdownWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.search_off, size: 64, color: Colors.grey.shade300),
+          Icon(Icons.search_off, size: 64, color: ColorRes.leadGreyColor.shade300),
           const SizedBox(height: 16),
           buildCommonText(
             'No results found',
             16,
             FontWeight.w600,
-            Colors.grey.shade400,
+            ColorRes.leadGreyColor.shade400,
             1,
           ),
           const SizedBox(height: 8),
@@ -354,7 +354,7 @@ class SearchableDropdownWidget extends StatelessWidget {
             'Try a different search term',
             14,
             FontWeight.w400,
-            Colors.grey.shade400,
+            ColorRes.leadGreyColor.shade400,
             1,
           ),
         ],

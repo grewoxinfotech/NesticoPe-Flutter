@@ -254,17 +254,17 @@ class ProfileScreen extends StatelessWidget {
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       title: const Text(
         "My Activity",
-        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        style: TextStyle(color: ColorRes.black, fontWeight: FontWeight.bold),
       ),
       actions: [
         TextButton(
           onPressed: () {
             // TODO: Implement login functionality
           },
-          child: const Text("Login", style: TextStyle(color: Colors.green)),
+          child: const Text("Login", style: TextStyle(color: ColorRes.green)),
         ),
       ],
     );
@@ -278,7 +278,7 @@ class ProfileScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(_defaultPadding),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.circular(_cardRadius),
           boxShadow: const [
             BoxShadow(
@@ -311,7 +311,7 @@ class ProfileScreen extends StatelessWidget {
         : CircleAvatar(
           radius: _profileRadius,
           backgroundColor: ColorRes.primary,
-          child: const Icon(Icons.person, color: Colors.white, size: 32),
+          child: const Icon(Icons.person, color: ColorRes.white, size: 32),
         );
   }
 
@@ -596,7 +596,7 @@ class SubItems extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Material(
-      color: Colors.transparent,
+      color: ColorRes.transparentColor,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
@@ -608,7 +608,7 @@ class SubItems extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Colors.white, Colors.grey.shade50],
+              colors: [ColorRes.white, Colors.grey.shade50],
             ),
             borderRadius: BorderRadius.circular(16),
             // boxShadow: [
@@ -673,7 +673,7 @@ class SubItems extends StatelessWidget {
           child: Text(
             "!",
             style: TextStyle(
-              color: Colors.white,
+              color: ColorRes.white,
               fontSize: 10,
               fontWeight: FontWeight.bold,
             ),

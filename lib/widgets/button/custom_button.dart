@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/widgets/display/card.dart';
 
+import '../../app/constants/color_res.dart';
+
 
 class CustomButton extends StatelessWidget {
   final GestureTapCallback? onTap;
@@ -55,9 +57,9 @@ class CustomButton extends StatelessWidget {
       child: heroTag != null
           ? Hero(
         tag: heroTag!,
-        child: Material(color: Colors.transparent, child: button),
+        child: Material(color: ColorRes.transparentColor, child: button),
       )
-          : Material(color: Colors.transparent, child: button),
+          : Material(color: ColorRes.transparentColor, child: button),
     );
   }
 } 

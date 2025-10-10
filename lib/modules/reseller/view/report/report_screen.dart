@@ -14,7 +14,7 @@
 //     final controller = Get.put(ReportPropertyController());
 //
 //     return Scaffold(
-//       backgroundColor: Colors.white,
+//       backgroundColor: ColorRes.white,
 //       appBar: AppBar(
 //         backgroundColor: const Color(0xFF4A73E8),
 //         elevation: 0,
@@ -34,7 +34,7 @@
 //         automaticallyImplyLeading: false,
 //         actions: [
 //           IconButton(
-//             icon: const Icon(Icons.close, color: Colors.white),
+//             icon: const Icon(Icons.close, color: ColorRes.white),
 //             onPressed: () => controller.cancel(),
 //           ),
 //         ],
@@ -250,7 +250,7 @@
 //                     child: const Text(
 //                       'Submit Report',
 //                       style: TextStyle(
-//                         color: Colors.white,
+//                         color: ColorRes.white,
 //                         fontSize: 16,
 //                       ),
 //                     ),
@@ -289,7 +289,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 //         padding: const EdgeInsets.all(16),
 //         decoration: BoxDecoration(
-//           color: Colors.white,
+//           color: ColorRes.white,
 //           borderRadius: BorderRadius.circular(12),
 //           border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
 //
@@ -492,7 +492,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                   child: const Text(
 //                     'Submit Report',
 //                     style: TextStyle(
-//                       color: Colors.white,
+//                       color: ColorRes.white,
 //                       fontSize: 16,
 //                     ),
 //                   ),
@@ -516,7 +516,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //     return Container(
 //       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(16),
 //         boxShadow: [
 //           BoxShadow(
@@ -544,7 +544,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                 Container(
 //                   padding: const EdgeInsets.all(12),
 //                   decoration: BoxDecoration(
-//                     color: Colors.white,
+//                     color: ColorRes.white,
 //                     borderRadius: BorderRadius.circular(12),
 //                     boxShadow: [
 //                       BoxShadow(
@@ -664,7 +664,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                       Icons.keyboard_arrow_down_rounded,
 //                       color: Color(0xFF757575),
 //                     ),
-//                     dropdownColor: Colors.white,
+//                     dropdownColor: ColorRes.white,
 //                     borderRadius: BorderRadius.circular(12),
 //                     items: controller.reportReasons.map((String reason) {
 //                       return DropdownMenuItem<String>(
@@ -760,7 +760,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                       Container(
 //                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
 //                         decoration: BoxDecoration(
-//                           color: Colors.white,
+//                           color: ColorRes.white,
 //                           borderRadius: const BorderRadius.only(
 //                             bottomLeft: Radius.circular(12),
 //                             bottomRight: Radius.circular(12),
@@ -854,13 +854,13 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                             Icon(
 //                               Icons.send_rounded,
 //                               size: 18,
-//                               color: Colors.white,
+//                               color: ColorRes.white,
 //                             ),
 //                             SizedBox(width: 8),
 //                             Text(
 //                               'Submit Report',
 //                               style: TextStyle(
-//                                 color: Colors.white,
+//                                 color: ColorRes.white,
 //                                 fontSize: 15,
 //                                 fontWeight: FontWeight.w600,
 //                               ),
@@ -890,7 +890,7 @@ class ReportPropertyCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
       ),
@@ -1000,7 +1000,7 @@ class ReportPropertyCard extends StatelessWidget {
                         size: 20,
                         color: Color(0xFF757575),
                       ),
-                      dropdownColor: Colors.white,
+                      dropdownColor: ColorRes.white,
                       style: const TextStyle(
                         color: Color(0xFF212121),
                         fontSize: 14,
@@ -1143,7 +1143,7 @@ class ReportPropertyCard extends StatelessWidget {
                           child: const Text(
                             'Submit Report',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: ColorRes.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1272,7 +1272,7 @@ class ReportPropertyCard extends StatelessWidget {
 //               return Container(
 //                 padding: const EdgeInsets.all(12),
 //                 decoration: BoxDecoration(
-//                   color: Colors.white,
+//                   color: ColorRes.white,
 //                   borderRadius: BorderRadius.circular(12),
 //                   border: Border.all(
 //                     color:Colors.grey.withOpacity(0.3),
@@ -1457,7 +1457,7 @@ class PropertyOverviewCard extends StatelessWidget {
               return Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: ColorRes.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: (item["color"] as Color).withOpacity(0.3),

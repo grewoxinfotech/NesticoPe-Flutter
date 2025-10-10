@@ -30,14 +30,14 @@ class _RatingDetailState extends State<RatingDetail> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarDividerColor:ColorRes.transparentColor,
         systemNavigationBarColor: Theme.of(context).secondaryHeaderColor,
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent,
+        statusBarColor:ColorRes.transparentColor,
       ),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         body: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 20),
           child: Column(
@@ -58,7 +58,7 @@ class _RatingDetailState extends State<RatingDetail> {
 
               Container(
                 width: double.infinity,
-                color: Colors.white,
+                color: ColorRes.white,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -110,7 +110,7 @@
 //             style: TextStyle(fontWeight: FontWeight.w600),
 //           ),
 //           elevation: 0,
-//           backgroundColor: Colors.white,
+//           backgroundColor: ColorRes.white,
 //           foregroundColor: Colors.black,
 //           bottom: PreferredSize(
 //             preferredSize: const Size.fromHeight(48.0),
@@ -178,7 +178,7 @@
 //             gradient: LinearGradient(
 //               begin: Alignment.topCenter,
 //               end: Alignment.bottomCenter,
-//               colors: [Colors.grey[50]!, Colors.white],
+//               colors: [Colors.grey[50]!, ColorRes.white],
 //             ),
 //           ),
 //           child: ListView.builder(
@@ -235,7 +235,7 @@
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(16),
 //         border: Border.all(color: Colors.grey[300]!),
-//         color: Colors.white,
+//         color: ColorRes.white,
 //       ),
 //       margin: const EdgeInsets.only(bottom: 16),
 //       padding: EdgeInsets.all(12),
@@ -253,7 +253,7 @@
 //               builder: (context, scrollController) {
 //                 return Container(
 //                   decoration: const BoxDecoration(
-//                     color: Colors.white,
+//                     color: ColorRes.white,
 //                     borderRadius: BorderRadius.only(
 //                       topLeft: Radius.circular(16),
 //                       topRight: Radius.circular(16),
@@ -477,7 +477,7 @@
 //     return Container(
 //       // height: MediaQuery.of(context).size.height*0.75,
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.only(
 //           topLeft: Radius.circular(16),
 //           topRight: Radius.circular(16),
@@ -725,7 +725,7 @@
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(12),
 //         border: Border.all(color: Colors.grey[300]!),
-//         color: Colors.white,
+//         color: ColorRes.white,
 //       ),
 //       child: Row(
 //         children: [
@@ -832,7 +832,7 @@
 // //       decoration: BoxDecoration(
 // //         borderRadius: BorderRadius.circular(16),
 // //         border: Border.all(color: Colors.grey[300]!),
-// //         color: Colors.white,
+// //         color: ColorRes.white,
 // //       ),
 // //       margin: const EdgeInsets.only(bottom: 16),
 // //       child: InkWell(
@@ -869,7 +869,7 @@
 // //                       child: Text(
 // //                         property['propertyId'],
 // //                         style: const TextStyle(
-// //                           color: Colors.white,
+// //                           color: ColorRes.white,
 // //                           fontSize: 12,
 // //                           fontWeight: FontWeight.w600,
 // //                         ),
@@ -1277,7 +1277,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //             );
 //           }),
 //           elevation: 0,
-//           backgroundColor: Colors.white,
+//           backgroundColor: ColorRes.white,
 //           foregroundColor: Colors.black,
 //           bottom: PreferredSize(
 //             preferredSize: const Size.fromHeight(48.0),
@@ -1358,7 +1358,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //             gradient: LinearGradient(
 //               begin: Alignment.topCenter,
 //               end: Alignment.bottomCenter,
-//               colors: [Colors.grey[50]!, Colors.white],
+//               colors: [Colors.grey[50]!, ColorRes.white],
 //             ),
 //           ),
 //           child: Obx(() {
@@ -1483,7 +1483,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //             );
 //           }),
 //           elevation: 0,
-//           backgroundColor: Colors.white,
+//           backgroundColor: ColorRes.white,
 //           foregroundColor: Colors.black,
 //           bottom: PreferredSize(
 //             preferredSize: const Size.fromHeight(48.0),
@@ -1630,7 +1630,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(16),
 //         border: Border.all(color: Colors.grey[300]!),
-//         color: Colors.white,
+//         color: ColorRes.white,
 //       ),
 //       margin: const EdgeInsets.only(bottom: 10),
 //       padding: const EdgeInsets.all(12),
@@ -1645,7 +1645,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //               builder: (context, scrollController) {
 //                 return Container(
 //                   decoration: const BoxDecoration(
-//                     color: Colors.white,
+//                     color: ColorRes.white,
 //                     borderRadius: BorderRadius.only(
 //                       topLeft: Radius.circular(16),
 //                       topRight: Radius.circular(16),
@@ -1817,7 +1817,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //           'Follow-up set for ${DateFormat('dd MMM yyyy, hh:mm a').format(fullDateTime)}',
 //           snackPosition: SnackPosition.BOTTOM,
 //           backgroundColor: Colors.green,
-//           colorText: Colors.white,
+//           colorText: ColorRes.white,
 //         );
 //       }
 //     }
@@ -1829,7 +1829,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //
 //     Get.dialog(
 //       AlertDialog(
-//         backgroundColor: Colors.white,
+//         backgroundColor: ColorRes.white,
 //         title: const Text('Edit Notes'),
 //         content: TextField(
 //           controller: notesController,
@@ -1850,7 +1850,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                 'Lead notes have been updated',
 //                 snackPosition: SnackPosition.BOTTOM,
 //                 backgroundColor: Colors.green,
-//                 colorText: Colors.white,
+//                 colorText: ColorRes.white,
 //               );
 //             },
 //             child: const Text('Save'),
@@ -1864,7 +1864,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //   Widget build(BuildContext context) {
 //     return Container(
 //       decoration: const BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.only(
 //           topLeft: Radius.circular(16),
 //           topRight: Radius.circular(16),
@@ -1948,7 +1948,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                         //   'Lead status changed to $value',
 //                         //   snackPosition: SnackPosition.BOTTOM,
 //                         //   backgroundColor: Colors.blue,
-//                         //   colorText: Colors.white,
+//                         //   colorText: ColorRes.white,
 //                         // );
 //                       }
 //                     },
@@ -2209,7 +2209,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(12),
 //         border: Border.all(color: Colors.grey[300]!),
-//         color: Colors.white,
+//         color: ColorRes.white,
 //       ),
 //       child: Row(
 //         children: [
@@ -2358,7 +2358,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //         appBar: AppBar(
 //           title: Text("Leads"),
 //           elevation: 0,
-//           backgroundColor: Colors.white,
+//           backgroundColor: ColorRes.white,
 //           foregroundColor: Colors.black,
 //         ),
 //
@@ -2498,7 +2498,7 @@ class LeadScreen extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         appBar: AppBar(
           title: const Text(
             "Leads",
@@ -2557,7 +2557,7 @@ class LeadScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? ColorRes.primary
-                                    : Colors.transparent,
+                                    : ColorRes.transparentColor,
                                 borderRadius: BorderRadius.circular(10),
 
                               ),
@@ -2567,7 +2567,7 @@ class LeadScreen extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                                    color: isSelected ? Colors.white : Colors.grey[700],
+                                    color: isSelected ? ColorRes.white : Colors.grey[700],
                                     letterSpacing: 0.2, // Improved readability
                                   ),
                                   textAlign: TextAlign.center,
@@ -2611,13 +2611,13 @@ class LeadScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: ColorRes.white,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(width: 1,color: ColorRes.grey.withOpacity(0.3))
                         ),
                         child: NesticoPeExpandableTile(
                           title: status.capitalize.toString(),
-                          expandedBackgroundColor: Colors.white,
+                          expandedBackgroundColor: ColorRes.white,
                           borderRadius: BorderRadius.circular(16),
                           trailingIcon: Icons.keyboard_arrow_down_rounded,
                           onTap: () {
@@ -2634,7 +2634,7 @@ class LeadScreen extends StatelessWidget {
                             }
                           },
                           initiallyExpanded: false,
-                          backgroundColor: Colors.white,
+                          backgroundColor: ColorRes.white,
                           children: [
                             Obx(() {
                               final filteredLeads = getFilteredLeads(controller, status);
@@ -2748,13 +2748,13 @@ class LeadCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
       margin: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: Colors.transparent,
+        color: ColorRes.transparentColor,
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
           onTap: () {
@@ -2767,7 +2767,7 @@ class LeadCard extends StatelessWidget {
                 builder: (context, scrollController) {
                   return Container(
                     decoration: const BoxDecoration(
-                      color: Colors.white,
+                      color: ColorRes.white,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(24),
                         topRight: Radius.circular(24),
@@ -2784,7 +2784,7 @@ class LeadCard extends StatelessWidget {
                 },
               ),
               isScrollControlled: true,
-              backgroundColor: Colors.transparent,
+              backgroundColor: ColorRes.transparentColor,
             );
           },
           child: Padding(
@@ -2922,7 +2922,7 @@ class LeadCard extends StatelessWidget {
 
   Widget _buildActionButton(IconData icon, VoidCallback onTap, Color color) {
     return Material(
-      color: Colors.transparent,
+      color: ColorRes.transparentColor,
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         onTap: onTap,
@@ -3017,10 +3017,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
           'Follow-up set for ${DateFormat('dd MMM yyyy, hh:mm a').format(fullDateTime)}',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
-          colorText: Colors.white,
+          colorText: ColorRes.white,
           borderRadius: 12,
           margin: const EdgeInsets.all(16),
-          icon: const Icon(Icons.check_circle, color: Colors.white),
+          icon: const Icon(Icons.check_circle, color: ColorRes.white),
         );
       }
     }
@@ -3032,7 +3032,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
 
     Get.dialog(
       AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Edit Notes', style: TextStyle(fontWeight: FontWeight.w700)),
         content: TextField(
@@ -3068,10 +3068,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
                 'Lead notes have been updated',
                 snackPosition: SnackPosition.BOTTOM,
                 backgroundColor: Colors.green,
-                colorText: Colors.white,
+                colorText: ColorRes.white,
                 borderRadius: 12,
                 margin: const EdgeInsets.all(16),
-                icon: const Icon(Icons.check_circle, color: Colors.white),
+                icon: const Icon(Icons.check_circle, color: ColorRes.white),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -3089,7 +3089,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
@@ -3333,7 +3333,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   onPressed: () => ContactHelper.openDialer(leadData.phone),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorRes.primary,
-                    foregroundColor: Colors.white,
+                    foregroundColor: ColorRes.white,
                     elevation: 2,
                     shadowColor: ColorRes.primary.withOpacity(0.3),
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -3358,7 +3358,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
 
   Widget _buildActionRow(IconData icon, String text, String buttonText, VoidCallback onPressed) {
     return Material(
-      color: Colors.transparent,
+      color: ColorRes.transparentColor,
       child: InkWell(
         onTap: onPressed,
         borderRadius: BorderRadius.circular(10),
@@ -3399,7 +3399,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   buttonText,
                   style: const TextStyle(
                     fontSize: 11,
-                    color: Colors.white,
+                    color: ColorRes.white,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -3446,7 +3446,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[300]!, width: 1),
-        color: Colors.white,
+        color: ColorRes.white,
       ),
       child: Row(
         children: [

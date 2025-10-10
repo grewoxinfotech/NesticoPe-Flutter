@@ -121,6 +121,7 @@ import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import '../../../app/constants/color_res.dart';
 import '../../../app/constants/size_manager.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../widgets/bar/navigation_bar/navigation_Bar.dart';
@@ -170,7 +171,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
     double iconSize = 20;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       extendBody: true,
       drawer: NesticoPeDrawer(),
 
@@ -232,7 +233,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
       //                   child: Icon(
       //                     FontAwesomeIcons.add,
       //                     size: iconSize,
-      //                     color: Colors.white,
+      //                     color: ColorRes.white,
       //                   ),
       //                 ),
       //               ),
@@ -304,10 +305,10 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
         child: Obx(
           () => Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: ColorRes.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black12,
+                  color: ColorRes.blackShade12,
                   blurRadius: 8,
                   offset: Offset(0, -2),
                 ),
@@ -324,7 +325,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
               currentIndex: navigationController.currentIndex.value,
               onTap: (i) => navigationController.changeIndex(i),
               selectedItemColor: Get.theme.colorScheme.primary,
-              unselectedItemColor: Colors.grey,
+              unselectedItemColor: ColorRes.leadGreyColor,
               showSelectedLabels: true,
               showUnselectedLabels: true,
               selectedLabelStyle: TextStyle(

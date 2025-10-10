@@ -509,7 +509,7 @@ class PostProperty extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 6, left: 4),
                           child: Text(
                             'Please select a property type',
-                            style: TextStyle(color: Colors.red, fontSize: 13),
+                            style: TextStyle(color: ColorRes.error, fontSize: 13),
                           ),
                         )
                         : SizedBox.shrink(),
@@ -628,7 +628,7 @@ class PostProperty extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 6, left: 4),
                           child: Text(
                             'Please select a BHK type',
-                            style: TextStyle(color: Colors.red, fontSize: 13),
+                            style: TextStyle(color: ColorRes.error, fontSize: 13),
                           ),
                         )
                         : SizedBox.shrink(),
@@ -680,9 +680,9 @@ class PostProperty extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: ColorRes.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade400),
+                      border: Border.all(color: ColorRes.leadGreyColor.shade400),
                     ),
                     child: DropdownButton<String>(
                       value: controller.areaUnit.value,
@@ -705,8 +705,8 @@ class PostProperty extends StatelessWidget {
                         }
                       },
                       underline: Container(),
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
-                      dropdownColor: Colors.white,
+                      style: const TextStyle(fontSize: 12, color: ColorRes.black),
+                      dropdownColor: ColorRes.white,
                     ),
                   ),
                 ],
@@ -883,7 +883,7 @@ class PostProperty extends StatelessWidget {
                 Text(
                   'POSSESSTION INFO',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: ColorRes.black,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -920,7 +920,7 @@ class PostProperty extends StatelessWidget {
                             child: Text(
                               'Please select possession type',
                               style: TextStyle(
-                                color: Colors.red.shade700,
+                                color: ColorRes.error.shade700,
                                 fontSize: 12,
                               ),
                             ),
@@ -955,9 +955,9 @@ class PostProperty extends StatelessWidget {
                           colorScheme: ColorScheme.light(
                             primary: ColorRes.primary,
                             // header background color
-                            onPrimary: Colors.white,
+                            onPrimary: ColorRes.white,
                             // header text color
-                            onSurface: Colors.black, // body text color
+                            onSurface: ColorRes.black, // body text color
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
@@ -1001,7 +1001,7 @@ class PostProperty extends StatelessWidget {
               Text(
                 'ABOUT THE PROPERTY',
                 style: TextStyle(
-                  color: Colors.black,
+                  color: ColorRes.black,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -1043,7 +1043,7 @@ class PostProperty extends StatelessWidget {
                             child: Text(
                               'Please select Zone type',
                               style: TextStyle(
-                                color: Colors.red.shade700,
+                                color: ColorRes.error.shade700,
                                 fontSize: 12,
                               ),
                             ),
@@ -1266,7 +1266,7 @@ class PostProperty extends StatelessWidget {
                           child: Text(
                             'Please select OwnerShip type',
                             style: TextStyle(
-                              color: Colors.red.shade700,
+                              color: ColorRes.error.shade700,
                               fontSize: 12,
                             ),
                           ),
@@ -1312,7 +1312,7 @@ class PostProperty extends StatelessWidget {
                             child: Text(
                               'Please select OwnerShip type',
                               style: TextStyle(
-                                color: Colors.red.shade700,
+                                color: ColorRes.error.shade700,
                                 fontSize: 12,
                               ),
                             ),
@@ -1579,7 +1579,7 @@ class PostProperty extends StatelessWidget {
                 Text(
                   'POSSESSTION INFO',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: ColorRes.black,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1617,7 +1617,7 @@ class PostProperty extends StatelessWidget {
                             child: Text(
                               'Please select possession type',
                               style: TextStyle(
-                                color: Colors.red.shade700,
+                                color: ColorRes.error.shade700,
                                 fontSize: 12,
                               ),
                             ),
@@ -1655,9 +1655,9 @@ class PostProperty extends StatelessWidget {
                             colorScheme: ColorScheme.light(
                               primary: ColorRes.primary,
                               // header background color
-                              onPrimary: Colors.white,
+                              onPrimary: ColorRes.white,
                               // header text color
-                              onSurface: Colors.black, // body text color
+                              onSurface: ColorRes.black, // body text color
                             ),
                             textButtonTheme: TextButtonThemeData(
                               style: TextButton.styleFrom(
@@ -1703,7 +1703,7 @@ class PostProperty extends StatelessWidget {
               Text(
                 'ABOUT THE PROPERTY',
                 style: TextStyle(
-                  color: Colors.black,
+                  color: ColorRes.black,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -1745,7 +1745,7 @@ class PostProperty extends StatelessWidget {
                             child: Text(
                               'Please select Zone type',
                               style: TextStyle(
-                                color: Colors.red.shade700,
+                                color: ColorRes.error.shade700,
                                 fontSize: 12,
                               ),
                             ),
@@ -1963,7 +1963,7 @@ class PostProperty extends StatelessWidget {
                           child: Text(
                             'Please select OwnerShip type',
                             style: TextStyle(
-                              color: Colors.red.shade700,
+                              color: ColorRes.error.shade700,
                               fontSize: 12,
                             ),
                           ),
@@ -2009,7 +2009,7 @@ class PostProperty extends StatelessWidget {
                             child: Text(
                               'Please select Construction Status',
                               style: TextStyle(
-                                color: Colors.red.shade700,
+                                color: ColorRes.error.shade700,
                                 fontSize: 12,
                               ),
                             ),
@@ -2169,9 +2169,9 @@ class TextFieldWithDropdown extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 8),
             padding: const EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: ColorRes.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade400),
+              border: Border.all(color: ColorRes.leadGreyColor.shade400),
             ),
             child: DropdownButton<String>(
               value: selectedValue.value,
@@ -2188,8 +2188,8 @@ class TextFieldWithDropdown extends StatelessWidget {
                 }
               },
               underline: Container(),
-              style: const TextStyle(fontSize: 12, color: Colors.black),
-              dropdownColor: Colors.white,
+              style: const TextStyle(fontSize: 12, color: ColorRes.black),
+              dropdownColor: ColorRes.white,
             ),
           ),
         ),
@@ -2231,7 +2231,7 @@ class TextFieldWithDropdown extends StatelessWidget {
 //               maxHeight: MediaQuery.of(context).size.height * 0.5,
 //             ),
 //             decoration: BoxDecoration(
-//               color: Colors.white,
+//               color: ColorRes.white,
 //               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
 //             ),
 //             child: Column(
@@ -2361,7 +2361,7 @@ class TextFieldWithDropdown extends StatelessWidget {
 //                             },
 //                             style: ElevatedButton.styleFrom(
 //                               backgroundColor: Theme.of(context).primaryColor,
-//                               foregroundColor: Colors.white,
+//                               foregroundColor: ColorRes.white,
 //                               padding: EdgeInsets.symmetric(vertical: 12),
 //                               shape: RoundedRectangleBorder(
 //                                 borderRadius: BorderRadius.circular(8),
@@ -2416,7 +2416,7 @@ void _showFloorSelectionBottomSheet(
     isScrollControlled: true,
     isDismissible: true,
     enableDrag: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: ColorRes.transparentColor,
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setModalState) {
@@ -2425,7 +2425,7 @@ void _showFloorSelectionBottomSheet(
               maxHeight: MediaQuery.of(context).size.height * 0.5,
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: ColorRes.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
             child: Column(
@@ -2437,7 +2437,7 @@ void _showFloorSelectionBottomSheet(
                   width: 32,
                   height: 3,
                   decoration: BoxDecoration(
-                    color: Colors.grey[400],
+                    color: ColorRes.leadGreyColor.shade400,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -2452,7 +2452,7 @@ void _showFloorSelectionBottomSheet(
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: ColorRes.textPrimary,
                         ),
                       ),
                       IconButton(
@@ -2464,7 +2464,7 @@ void _showFloorSelectionBottomSheet(
                     ],
                   ),
                 ),
-                Divider(height: 1, color: Colors.grey[300]),
+                Divider(height: 1, color: ColorRes.leadGreyColor.shade300),
                 // Floor list (single selection)
                 Flexible(
                   child: ListView.builder(
@@ -2483,7 +2483,7 @@ void _showFloorSelectionBottomSheet(
                             floor,
                             style: TextStyle(
                               fontSize: 15,
-                              color: Colors.black87,
+                              color: ColorRes.textPrimary,
                             ),
                           ),
                           value: floor,
@@ -2515,7 +2515,7 @@ void _showFloorSelectionBottomSheet(
                             margin: EdgeInsets.only(bottom: 8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
-                              color: Colors.grey.shade200,
+                              color: ColorRes.leadGreyColor.shade200,
                             ),
                             child: TextButton(
                               onPressed: () {
@@ -2529,7 +2529,7 @@ void _showFloorSelectionBottomSheet(
                               child: Text(
                                 'Clear Selection',
                                 style: TextStyle(
-                                  color: Colors.red,
+                                  color: ColorRes.error,
                                   fontSize: 14,
                                 ),
                               ),
@@ -2548,7 +2548,7 @@ void _showFloorSelectionBottomSheet(
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context).primaryColor,
-                              foregroundColor: Colors.white,
+                              foregroundColor: ColorRes.white,
                               padding: EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),

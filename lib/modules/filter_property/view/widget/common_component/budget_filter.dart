@@ -90,7 +90,7 @@ class BudgetFilter extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -184,8 +184,8 @@ class BudgetFilter extends StatelessWidget {
             data: SliderThemeData(
               trackHeight: 3,
               activeTrackColor: ColorRes.primary,
-              inactiveTrackColor: Colors.grey.shade200,
-              thumbColor: Colors.white,
+              inactiveTrackColor: ColorRes.leadGreyColor.shade200,
+              thumbColor: ColorRes.white,
               overlayColor: ColorRes.primary.withOpacity(0.2),
               thumbShape: const RoundSliderThumbShape(
                 enabledThumbRadius: 10,

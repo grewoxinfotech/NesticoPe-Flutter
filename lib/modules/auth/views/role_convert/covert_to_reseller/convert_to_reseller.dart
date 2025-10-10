@@ -16,7 +16,7 @@ class ResellerConversionScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       body: SingleChildScrollView(
         child: Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
@@ -44,7 +44,7 @@ class ResellerConversionScreen extends StatelessWidget {
                     Text(
                       "Welcome",
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: ColorRes.whiteShade,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -52,7 +52,7 @@ class ResellerConversionScreen extends StatelessWidget {
                     Text(
                       "Find Your Perfect\nLuxury Home",
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -60,7 +60,7 @@ class ResellerConversionScreen extends StatelessWidget {
                     Text(
                       "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: ColorRes.whiteShade,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -74,7 +74,7 @@ class ResellerConversionScreen extends StatelessWidget {
                   horizontal: 16,
                 ),
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: ColorRes.white,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(16),
                     bottomRight: Radius.circular(16),
@@ -89,13 +89,13 @@ class ResellerConversionScreen extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.green,
+                        color: ColorRes.green,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Text(
                         "Reseller Conversion",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: ColorRes.white,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
@@ -112,14 +112,14 @@ class ResellerConversionScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     const Text(
                       "You're just one step away from becoming a property reseller!",
-                      style: TextStyle(color: Colors.black54, fontSize: 12),
+                      style: TextStyle(color: ColorRes.blackShade54, fontSize: 12),
                     ),
                     const SizedBox(height: 24),
                     Container(
                       decoration: BoxDecoration(
                         // color: ColorRes.primary.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
+                        border: Border.all(color: ColorRes.leadGreyColor.shade300),
                       ),
                       padding: const EdgeInsets.symmetric(
                         vertical: 20,
@@ -132,7 +132,7 @@ class ResellerConversionScreen extends StatelessWidget {
                             "What happens next?",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: ColorRes.blackShade87,
                             ),
                           ),
                           SizedBox(height: 12),
@@ -196,7 +196,7 @@ class ResellerConversionScreen extends StatelessWidget {
                         text: TextSpan(
                           text: "Already have an account? ",
                           style: const TextStyle(
-                            color: Colors.black87,
+                            color: ColorRes.blackShade87,
                             fontSize: 14,
                           ),
                           children: [
@@ -237,7 +237,7 @@ class ResellerConversionScreen extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 12, color: Colors.black87),
+            style: const TextStyle(fontSize: 12, color: ColorRes.blackShade87),
           ),
         ),
       ],

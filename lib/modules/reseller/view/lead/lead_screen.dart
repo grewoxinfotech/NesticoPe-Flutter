@@ -22,7 +22,7 @@ class ResellerLeadScreen extends StatelessWidget {
     final controller = Get.find<DashboardController>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading: (isViewAll)?IconButton(onPressed: () {
 Navigator.of(context).pop();
@@ -39,7 +39,7 @@ Navigator.of(context).pop();
           ),
         ),
         automaticallyImplyLeading: (isViewAll),
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -96,7 +96,7 @@ Navigator.of(context).pop();
       margin: EdgeInsets.all(getResponsivePadding(context)),
       padding: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
@@ -214,7 +214,7 @@ Navigator.of(context).pop();
                               filterType,
                               style: TextStyle(
                                 fontSize: AppFontSizes.extraSmall,
-                                color: Colors.white,
+                                color: ColorRes.white,
                                 fontWeight: AppFontWeights.bold,
                               ),
                             ),
@@ -301,7 +301,7 @@ Navigator.of(context).pop();
     return Container(
       padding: EdgeInsets.all(cardPadding),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
@@ -513,13 +513,13 @@ void showFilterBottomSheet(BuildContext context, DashboardController controller)
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: ColorRes.transparentColor,
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
         return Container(
           height: MediaQuery.of(context).size.height * 0.75,
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: ColorRes.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
@@ -640,7 +640,7 @@ void showFilterBottomSheet(BuildContext context, DashboardController controller)
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorRes.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: ColorRes.white,
                       padding: const EdgeInsets.all(16.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -790,7 +790,7 @@ Widget _buildFilterSection({
 //           child: Container(
 //             height: MediaQuery.of(context).size.height * 0.9,
 //             decoration: const BoxDecoration(
-//               color: Colors.white,
+//               color: ColorRes.white,
 //               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
 //             ),
 //             child: Column(
@@ -1134,7 +1134,7 @@ Widget _buildFilterSection({
 //                                       'Success',
 //                                       'Buyer lead added successfully',
 //                                       backgroundColor: Colors.green,
-//                                       colorText: Colors.white,
+//                                       colorText: ColorRes.white,
 //                                     );
 //                                   } else {
 //                                     final index = controller.recentLeads
@@ -1145,7 +1145,7 @@ Widget _buildFilterSection({
 //                                         'Success',
 //                                         'Buyer lead updated successfully',
 //                                         backgroundColor: Colors.green,
-//                                         colorText: Colors.white,
+//                                         colorText: ColorRes.white,
 //                                       );
 //                                     }
 //                                   }
@@ -1154,7 +1154,7 @@ Widget _buildFilterSection({
 //                               },
 //                               style: ElevatedButton.styleFrom(
 //                                 backgroundColor: Colors.blue,
-//                                 foregroundColor: Colors.white,
+//                                 foregroundColor: ColorRes.white,
 //                                 padding: const EdgeInsets.symmetric(vertical: 16),
 //                                 shape: RoundedRectangleBorder(
 //                                   borderRadius: BorderRadius.circular(12),
@@ -1223,7 +1223,7 @@ void showLeadForm(
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: ColorRes.transparentColor,
     builder: (context) => Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -1231,7 +1231,7 @@ void showLeadForm(
       child: Container(
         height: MediaQuery.of(context).size.height * 0.9,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
@@ -1548,7 +1548,7 @@ void showLeadForm(
                                   'Success',
                                   'Buyer lead added successfully',
                                   backgroundColor: Colors.green,
-                                  colorText: Colors.white,
+                                  colorText: ColorRes.white,
                                 );
                               } else {
                                 final index = controller.recentLeads
@@ -1559,7 +1559,7 @@ void showLeadForm(
                                     'Success',
                                     'Buyer lead updated successfully',
                                     backgroundColor: Colors.green,
-                                    colorText: Colors.white,
+                                    colorText: ColorRes.white,
                                   );
                                 }
                               }
@@ -1568,7 +1568,7 @@ void showLeadForm(
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
+                            foregroundColor: ColorRes.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -1643,7 +1643,7 @@ void showLeadDetails(BuildContext context, Lead lead) {
 
     builder:
         (context) => AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: ColorRes.white,
           title: Text(
             lead.name,
             style: TextStyle(
@@ -1905,7 +1905,7 @@ Widget buildActionButton({
           border: Border.all(color: color.withOpacity(0.3), width: 1),
         ),
         child: Material(
-          color: Colors.transparent,
+          color: ColorRes.transparentColor,
           child: Icon(icon, size: isCompact ? 15 : 14, color: color),
         ),
       ),

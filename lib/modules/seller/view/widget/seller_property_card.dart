@@ -36,7 +36,7 @@
 //         width: 260,
 //         margin: const EdgeInsets.only(right: 12, bottom: 12),
 //         decoration: BoxDecoration(
-//           color: Colors.white,
+//           color: ColorRes.white,
 //           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
 //           border: Border.all(
 //             color: ColorRes.grey.withOpacity(0.15),
@@ -90,7 +90,7 @@
 //                     child: GestureDetector(
 //                       onTap: () => setState(() => isFavorite = !isFavorite),
 //                       child: CircleAvatar(
-//                         backgroundColor: Colors.white,
+//                         backgroundColor: ColorRes.white,
 //                         radius: 18,
 //                         child: Icon(
 //                           isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -240,7 +240,7 @@
 //                           style: TextStyle(
 //                             fontSize: 11,
 //                             fontWeight: FontWeight.w600,
-//                             color: Colors.white,
+//                             color: ColorRes.white,
 //                           ),
 //                         ),
 //                       ),
@@ -259,7 +259,7 @@
 //     return Container(
 //       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
 //       decoration: BoxDecoration(
-//         color: Colors.white,
+//         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(8),
 //         boxShadow: [
 //           BoxShadow(
@@ -290,7 +290,7 @@
 //       child: Text(
 //         text,
 //         style: const TextStyle(
-//           color: Colors.white,
+//           color: ColorRes.white,
 //           fontSize: 10,
 //           fontWeight: FontWeight.w500,
 //         ),
@@ -356,7 +356,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
       child: Container(
         // margin: const EdgeInsets.only(bottom: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ColorRes.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: ColorRes.grey.withOpacity(0.12),
@@ -364,7 +364,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: ColorRes.black.withOpacity(0.04),
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
@@ -407,7 +407,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                                       ),
                                       fit: BoxFit.cover,
                                       colorFilter: ColorFilter.mode(
-                                        Colors.black.withOpacity(0.25),
+                                        ColorRes.black.withOpacity(0.25),
                                         BlendMode.darken,
                                       ),
                                     )
@@ -441,7 +441,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
-                                  color: Colors.black87,
+                                  color: ColorRes.textPrimary,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -571,7 +571,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                                color: ColorRes.white,
                               ),
                             ),
                           ],
@@ -610,11 +610,11 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
   Widget _buildTag(String text) => Container(
     padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: ColorRes.white,
       borderRadius: BorderRadius.circular(6),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.08),
+          color: ColorRes.black.withOpacity(0.08),
           blurRadius: 4,
           offset: const Offset(0, 2),
         ),
@@ -633,13 +633,13 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
   Widget _buildBadge(String text) => Container(
     padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
     decoration: BoxDecoration(
-      color: Colors.black.withOpacity(0.75),
+      color: ColorRes.black.withOpacity(0.75),
       borderRadius: BorderRadius.circular(4),
     ),
     child: Text(
       text,
       style: const TextStyle(
-        color: Colors.white,
+        color: ColorRes.white,
         fontSize: 9,
         fontWeight: FontWeight.w500,
       ),

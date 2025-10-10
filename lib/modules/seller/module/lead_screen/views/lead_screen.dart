@@ -70,7 +70,7 @@
 //             style: TextStyle(fontWeight: FontWeight.w600),
 //           ),
 //           elevation: 0,
-//           backgroundColor: Colors.white,
+//           backgroundColor: ColorRes.white,
 //           foregroundColor: Colors.black,
 //         ),
 //         body: Container(
@@ -78,7 +78,7 @@
 //             gradient: LinearGradient(
 //               begin: Alignment.topCenter,
 //               end: Alignment.bottomCenter,
-//               colors: [Colors.grey[50]!, Colors.white],
+//               colors: [Colors.grey[50]!, ColorRes.white],
 //             ),
 //           ),
 //           child: ListView.builder(

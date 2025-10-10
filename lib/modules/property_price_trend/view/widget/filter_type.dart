@@ -157,7 +157,7 @@ SizedBox buildFilter(BuildContext context) {
                   'Filter Apply',
                   13,
                   FontWeight.w600,
-                  Colors.white,
+                  ColorRes.white,
                   1,
                 ),
               ),
@@ -204,7 +204,7 @@ Widget buildFilterPropertyTypes({
           title,
           11,
           FontWeight.w500,
-          isSelected ? Colors.white : ColorRes.textColor,
+          isSelected ? ColorRes.white : ColorRes.textColor,
           1,
         ),
       )
@@ -225,7 +225,7 @@ Widget buildFilterPropertyTypes({
           title,
           11,
           FontWeight.w500,
-          isSelected ? Colors.white : ColorRes.textColor,
+          isSelected ? ColorRes.white : ColorRes.textColor,
           1,
         ),
       );

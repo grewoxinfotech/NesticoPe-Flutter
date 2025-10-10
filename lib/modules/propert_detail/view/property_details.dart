@@ -89,7 +89,7 @@ class PropertyDetail extends StatelessWidget {
   PropertyDetail({
     super.key,
     this.isAppBarShow = true,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor = ColorRes.white,
     this.filters,
   });
 
@@ -159,7 +159,7 @@ class PropertyDetail extends StatelessWidget {
                                 child: Text(
                                   '${selectedFilters.length}',
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: ColorRes.white,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -355,7 +355,7 @@ class PropertyDetail extends StatelessWidget {
       //         ),
       //         Positioned.fill(
       //           child: Container(
-      //             color: Colors.white.withOpacity(0.7),
+      //             color: ColorRes.white.withOpacity(0.7),
       //             child: const Center(child: CircularProgressIndicator()),
       //           ),
       //         ),
@@ -401,7 +401,7 @@ class PropertyDetail extends StatelessWidget {
       //               },
       //               style: ElevatedButton.styleFrom(
       //                 backgroundColor: ColorRes.primary,
-      //                 foregroundColor: Colors.white,
+      //                 foregroundColor: ColorRes.white,
       //                 padding: const EdgeInsets.symmetric(
       //                   horizontal: 24,
       //                   vertical: 12,
@@ -613,7 +613,7 @@ class PropertyDetail extends StatelessWidget {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: ColorRes.primary,
-                            foregroundColor: Colors.white,
+                            foregroundColor: ColorRes.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 24,
                               vertical: 12,

@@ -111,7 +111,7 @@
 //                         color:
 //                             isSelected
 //                                 ? ColorRes.primary.withOpacity(0.1)
-//                                 : Colors.white,
+//                                 : ColorRes.white,
 //                         borderRadius: BorderRadius.circular(8),
 //                       ),
 //                       alignment: Alignment.center,
@@ -238,7 +238,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.grey[100],
-      backgroundColor: Colors.white,
+      backgroundColor: ColorRes.white,
       body: Column(
         children: [
           /// Custom Header
@@ -252,7 +252,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                 bottom: 16,
               ),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorRes.white,
                 // boxShadow: [
                 //   BoxShadow(
                 //     color: Colors.black12,
@@ -279,7 +279,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                           color:
                               isSelected
                                   ? ColorRes.primary.withOpacity(0.15)
-                                  : Colors.white,
+                                  : ColorRes.white,
                           border: Border.all(
                             color:
                                 isSelected ? ColorRes.primary : Colors.grey[300]!,
@@ -856,7 +856,7 @@ List<Items> dummyItems = [
 //                   style: TextStyle(
 //                     fontSize: 20,
 //                     fontWeight: FontWeight.bold,
-//                     color: Colors.white,
+//                     color: ColorRes.white,
 //                   ),
 //                 ),
 //                 const SizedBox(height: 16),
@@ -865,7 +865,7 @@ List<Items> dummyItems = [
 //                 Container(
 //                   height: 52,
 //                   decoration: BoxDecoration(
-//                     color: Colors.white,
+//                     color: ColorRes.white,
 //                     borderRadius: BorderRadius.circular(30),
 //                   ),
 //                   child: Row(

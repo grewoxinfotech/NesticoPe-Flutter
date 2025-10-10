@@ -25,7 +25,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff091F48),
+      backgroundColor:ColorRes.addPropertyBackgroundColor,
       body: SafeArea(
         child: LayoutBuilder(
           builder:(context, constraints) =>  SingleChildScrollView(
@@ -46,7 +46,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                       ),
                       alignment: Alignment.topLeft,
                       decoration: const BoxDecoration(
-                        color: Color(0xff091F48),
+                        color: ColorRes.addPropertyBackgroundColor
                       ),
                       child: Row(
                         children: [
@@ -55,7 +55,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                             width: 40,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.grey.shade300,
+                              color: ColorRes.leadGreyColor.shade300,
                             ),
                             alignment: Alignment.center,
                             child: IconButton(
@@ -64,7 +64,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                               },
                               icon: const Icon(
                                 Icons.arrow_back,
-                                color: Colors.black,
+                                color: ColorRes.black,
                                 size: 20,
                               ),
                             ),
@@ -73,7 +73,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                           const Text(
                             "Create Listing",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: ColorRes.white,
                               fontSize: AppFontSizes.large,
                               fontWeight: FontWeight.w700,
                             ),
@@ -85,7 +85,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: const BoxDecoration(
-                        color: Color(0xff091F48),
+                        color: ColorRes.addPropertyBackgroundColor
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +94,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                           const Text(
                             "Sell or rent your property faster",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: ColorRes.white,
                               fontSize: AppFontSizes.body,
                               fontWeight: FontWeight.w600,
                             ),
@@ -160,7 +160,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
       bottomNavigationBar: Obx(() {
         final step = controller.currentStep.value;
         return Container(
-          color: Colors.white,
+          color: ColorRes.white,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: SafeArea(
             child: Row(
@@ -211,7 +211,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                       ),
                       child: controller.isLoading.value ? Text("Submitting...",style: const TextStyle(
                         fontSize: 14,
-                        color: Colors.white,
+                        color: ColorRes.white,
                         fontWeight: FontWeight.w500,
                       ),): Text(
                         step == 5 ? 'Submit' : 'Next',

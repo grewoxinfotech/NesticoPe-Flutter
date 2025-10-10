@@ -13,9 +13,9 @@ class ReferralProgramScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF8F9FA),
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorRes.white,
         elevation: 0,
         title: Text(
           'Referral Program',
@@ -31,10 +31,12 @@ class ReferralProgramScreen extends StatelessWidget {
         child: Column(
           children: [
             _buildHeader(),
-            SizedBox(height: 6),
+            SizedBox(height: 16),
             _buildStatsGrid(),
             SizedBox(height: 16),
             _buildBonusCard(),
+            SizedBox(height: 16),
+            _buildHowWork(),
             SizedBox(height: 150),
           ],
         ),
@@ -42,9 +44,83 @@ class ReferralProgramScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildHowWork() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // How it Works Section
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: ColorRes.white,
+            borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: ColorRes.grey.withOpacity(0.3),width: 1)
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.purple[50],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.lightbulb_outline,
+                      color: Colors.purple[700],
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'How it Works',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.purple[700],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              _buildStepCard(
+                number: '1',
+                title: 'Share Your Code',
+                description:
+                    'Share your unique referral code or link with other resellers you know',
+                color: Colors.purple,
+              ),
+              const SizedBox(height: 16),
+              _buildStepCard(
+                number: '2',
+                title: 'They Register',
+                description:
+                    'When they register using your code, they become your referral',
+                color: Colors.purple,
+              ),
+              const SizedBox(height: 16),
+              _buildStepCard(
+                number: '3',
+                title: 'Earn Rewards',
+                description:
+                    'You earn rewards when your referrals successfully complete their activities',
+                color: Colors.purple,
+              ),
+            ],
+          ),
+        ),
+
+        // My Referred Users Section
+      ],
+    );
+  }
+
   Widget _buildHeader() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: ColorRes.primary,
@@ -58,7 +134,7 @@ class ReferralProgramScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: ColorRes.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text('🎁', style: TextStyle(fontSize: 28)),
@@ -71,7 +147,7 @@ class ReferralProgramScreen extends StatelessWidget {
                     Text(
                       'Referral Program Overview',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: ColorRes.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -80,7 +156,7 @@ class ReferralProgramScreen extends StatelessWidget {
                     Text(
                       'Track your referrals and earn rewards',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: ColorRes.white.withOpacity(0.9),
                         fontSize: 13,
                       ),
                     ),
@@ -93,10 +169,10 @@ class ReferralProgramScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
+              color: ColorRes.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
+                color: ColorRes.white.withOpacity(0.3),
                 width: 1,
               ),
             ),
@@ -105,8 +181,8 @@ class ReferralProgramScreen extends StatelessWidget {
                 return InkWell(
                   onTap: () {
                     controller.referralCodeGenerator(true);
-                    print('Referral Code: ${controller.isGenerate.value}');
-                    controller.fetchReferralService();
+                    // print('Referral Code: ${controller.isGenerate.value}');
+                    // controller.fetchReferralService();
                   },
                   child: Container(
                     width: double.infinity,
@@ -116,7 +192,7 @@ class ReferralProgramScreen extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text(
                       'Generate Referral Code',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: ColorRes.white),
                     ),
                   ),
                 );
@@ -130,7 +206,7 @@ class ReferralProgramScreen extends StatelessWidget {
                         Text(
                           'ACTIVE REFERRAL CODE',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
+                            color: ColorRes.white.withOpacity(0.8),
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.5,
@@ -138,9 +214,9 @@ class ReferralProgramScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 6),
                         Text(
-                          controller.dummyReferral.data?[0].referralCode ?? '',
+                          controller.dummyReferral?.data?[0].referralCode ?? '',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: ColorRes.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.5,
@@ -152,7 +228,7 @@ class ReferralProgramScreen extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         ContactHelper.shareFeature(
-                          controller.dummyReferral.data?[0].referralLink ?? '',
+                          controller.dummyReferral?.data?[0].referralLink ?? '',
                           'Share Referral Link',
                           // 'Share your referral link with your friends and family to earn rewards.',
                         );
@@ -160,26 +236,26 @@ class ReferralProgramScreen extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: ColorRes.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Icon(Icons.share, color: Colors.white, size: 20),
+                        child: Icon(Icons.share, color: ColorRes.white, size: 20),
                       ),
                     ),
                     SizedBox(width: 10),
                     InkWell(
                       onTap: () {
                         FlutterClipboard.copy(
-                          controller.dummyReferral.data?[0].referralCode ?? '',
+                          controller.dummyReferral?.data?[0].referralCode ?? '',
                         );
                       },
                       child: Container(
                         padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: ColorRes.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Icon(Icons.copy, color: Colors.white, size: 20),
+                        child: Icon(Icons.copy, color: ColorRes.white, size: 20),
                       ),
                     ),
                   ],
@@ -194,7 +270,7 @@ class ReferralProgramScreen extends StatelessWidget {
 
   Widget _buildStatsGrid() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16,vertical: 8),
       child: Column(
         children: [
           Row(
@@ -205,7 +281,7 @@ class ReferralProgramScreen extends StatelessWidget {
                   iconColor: Color(0xFF9B59B6),
                   iconBg: Color(0xFFEDE7F6),
                   title: 'Referral Codes',
-                  value: controller.dummyReferral.data?[0].referralCode ?? '0',
+                  value: controller.dummyReferral?.data?[0].referralCode ?? '0',
                   subtitle: 'Generated by you',
                 ),
               ),
@@ -217,7 +293,7 @@ class ReferralProgramScreen extends StatelessWidget {
                   iconBg: Color(0xFFE0F7FA),
                   title: 'Earn Per Referral',
                   value:
-                      '${controller.dummyReferral.data?[0].referrerReward.toString() ?? '0'}',
+                      '${controller.dummyReferral?.data?[0].referrerReward.toString() ?? '0'}',
                   subtitle:
                       '${controller.rewardsEarned.value} x rewards earned',
                 ),
@@ -234,7 +310,7 @@ class ReferralProgramScreen extends StatelessWidget {
                   iconBg: Color(0xFFEDE7F6),
                   title: 'Resellers Referred',
                   value:
-                      controller.dummyReferral.data?[0].referredUsers?.length
+                      controller.dummyReferral?.data?[0].referredUsers?.length
                           .toString() ??
                       '0',
                   subtitle:
@@ -249,7 +325,7 @@ class ReferralProgramScreen extends StatelessWidget {
                   iconBg: Color(0xFFFFF3E0),
                   title: 'Points Earned',
                   value:
-                      controller.dummyReferral.data?[0].totalRewards
+                      controller.dummyReferral?.data?[0].totalRewards
                           .toString() ??
                       '0',
                   subtitle: 'From referrals',
@@ -344,7 +420,7 @@ class ReferralProgramScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: ColorRes.white,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text('🚀', style: TextStyle(fontSize: 28)),
@@ -394,7 +470,7 @@ Widget _buildReferralCode() {
     child: Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(width: 1, color: Colors.purple.withOpacity(0.3)),
       ),
@@ -449,3 +525,96 @@ Widget _buildReferralCode() {
     ),
   );
 }
+
+Widget _buildStepCard({
+  required String number,
+  required String title,
+  required String description,
+  required Color color,
+  bool isLast = false, // hide line for last item
+}) {
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Left side: circle + vertical line
+      Column(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            margin: EdgeInsets.only(top: 0),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [color, color.withOpacity(0.7)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              number,
+              style: const TextStyle(
+                color: ColorRes.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+
+          // Connecting line (touching circle)
+          if (!isLast)
+            Container(
+              margin: EdgeInsets.only(top: 0), // directly touches circle
+              height: 60, // adjust based on spacing between cards
+              width: 2,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [Color(0xFF9B59B6),Color(0xFF9B59B6).withOpacity(0.5), Color(0xFF9B59B6).withOpacity(0.3),],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+
+              ),
+            ),
+        ],
+      ),
+
+      const SizedBox(width: 10),
+
+      // Right side: text card
+      Expanded(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.purple[300]!, width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
+}
+

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 
@@ -90,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen>
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: Colors.white,
+        color: ColorRes.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -119,7 +120,7 @@ class _SplashScreenState extends State<SplashScreen>
                         child: Icon(
                           Icons.home_work,
                           size: 60,
-                          color: Colors.white,
+                          color: ColorRes.white,
                         ),
                       ),
                     ),
@@ -145,7 +146,7 @@ class _SplashScreenState extends State<SplashScreen>
               child: Text(
                 'House Cleaning Service',
                 style: TextStyle(
-                  color: Colors.grey[700],
+                  color: ColorRes.leadGreyColor.shade700,
                   fontSize: 16,
                   letterSpacing: 0.5,
                 ),

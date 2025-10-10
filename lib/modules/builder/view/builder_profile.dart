@@ -25,21 +25,21 @@ class BuilderProfile extends StatelessWidget {
       //           children: [
       //             CircleAvatar(
       //               radius: 50,
-      //               backgroundColor: Colors.white,
+      //               backgroundColor: ColorRes.white,
       //               child: Icon(Icons.person_rounded, size: 60, color: ColorRes.primary),
       //             ),
       //             const SizedBox(height: 16),
-      //             const Text('Builder Company Ltd.', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+      //             const Text('Builder Company Ltd.', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: ColorRes.white)),
       //             const SizedBox(height: 4),
-      //             Text('builder@company.com', style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.9))),
+      //             Text('builder@company.com', style: TextStyle(fontSize: 14, color: ColorRes.white.withOpacity(0.9))),
       //             const SizedBox(height: 20),
       //             Row(
       //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       //               children: [
       //                 _buildStatItem('24', 'Properties'),
-      //                 Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
+      //                 Container(width: 1, height: 40, color: ColorRes.white.withOpacity(0.3)),
       //                 _buildStatItem('156', 'Leads'),
-      //                 Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
+      //                 Container(width: 1, height: 40, color: ColorRes.white.withOpacity(0.3)),
       //                 _buildStatItem('18', 'Sold'),
       //               ],
       //             ),
@@ -70,9 +70,9 @@ class BuilderProfile extends StatelessWidget {
   Widget _buildStatItem(String value, String label) {
     return Column(
       children: [
-        Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+        Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: ColorRes.white)),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.9))),
+        Text(label, style: TextStyle(fontSize: 13, color: ColorRes.white.withOpacity(0.9))),
       ],
     );
   }
@@ -81,7 +81,7 @@ class BuilderProfile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: onTap,

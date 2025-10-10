@@ -531,7 +531,7 @@ class PropertyCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(right: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[300]!),
       ),
@@ -641,14 +641,14 @@ class PropertyCard extends StatelessWidget {
                             children: [
                               const Icon(
                                 Icons.trending_up_outlined,
-                                color: Colors.white,
+                                color: ColorRes.white,
                                 size: 12,
                               ),
                               const SizedBox(width: 2),
                               Text(
                                 '${property.priceChangePercent}%',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: ColorRes.white,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                 ),

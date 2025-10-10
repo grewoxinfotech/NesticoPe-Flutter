@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../app/constants/color_res.dart';
+
 class ReraComponent extends StatelessWidget {
   final String text;
   final Color backgroundColor;
@@ -15,14 +17,14 @@ class ReraComponent extends StatelessWidget {
   const ReraComponent({
     super.key,
     this.text = "Rera",
-    this.backgroundColor = Colors.green,
-    this.textColor = Colors.white,
+    this.backgroundColor = ColorRes.success,
+    this.textColor = ColorRes.white,
     this.fontSize = 12,
     this.fontWeight = FontWeight.w600,
     this.borderRadius = 8,
     this.showIcon = true,
     this.icon = Icons.verified, // Default icon
-    this.iconColor = Colors.white,
+    this.iconColor = ColorRes.white,
     this.iconSize = 14,
   });
 

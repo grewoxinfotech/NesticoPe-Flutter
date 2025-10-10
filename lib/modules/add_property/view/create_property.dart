@@ -104,7 +104,7 @@
 //                                   const Text(
 //                                     "Create Listing",
 //                                     style: TextStyle(
-//                                       color: Colors.white,
+//                                       color: ColorRes.white,
 //                                       fontSize: AppFontSizes.large,
 //                                       fontWeight: FontWeight.w700,
 //                                     ),
@@ -129,7 +129,7 @@
 //                                   const Text(
 //                                     "Sell or rent your property faster",
 //                                     style: TextStyle(
-//                                       color: Colors.white,
+//                                       color: ColorRes.white,
 //                                       fontSize: AppFontSizes.body,
 //                                       fontWeight: FontWeight.w600,
 //                                     ),
@@ -154,7 +154,7 @@
 //                                 ),
 //                                 width: double.infinity,
 //                                 decoration: const BoxDecoration(
-//                                   color: Colors.white,
+//                                   color: ColorRes.white,
 //                                   borderRadius: BorderRadius.only(
 //                                     topLeft: Radius.circular(28),
 //                                     topRight: Radius.circular(28),
@@ -312,7 +312,7 @@
 //           ),
 //
 //           bottomNavigationBar: Container(
-//             color: Colors.white,
+//             color: ColorRes.white,
 //             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 //             child: SafeArea(
 //               child: SizedBox(
@@ -476,7 +476,7 @@
 //                     "Next, add address & price",
 //                     style: TextStyle(
 //                       fontSize: 14,
-//                       color: Colors.white,
+//                       color: ColorRes.white,
 //                       fontWeight: FontWeight.w500,
 //                     ),
 //                   ),
@@ -535,7 +535,7 @@
 //                                   const Text(
 //                                     "Housing.com",
 //                                     style: TextStyle(
-//                                       color: Colors.white,
+//                                       color: ColorRes.white,
 //                                       fontSize: AppFontSizes.large,
 //                                       fontWeight: FontWeight.w700,
 //                                     ),
@@ -560,7 +560,7 @@
 //                                   const Text(
 //                                     "Sell or rent your property faster",
 //                                     style: TextStyle(
-//                                       color: Colors.white,
+//                                       color: ColorRes.white,
 //                                       fontSize: AppFontSizes.body,
 //                                       fontWeight: FontWeight.w600,
 //                                     ),
@@ -584,7 +584,7 @@
 //                                 ),
 //                                 width: double.infinity,
 //                                 decoration: const BoxDecoration(
-//                                   color: Colors.white,
+//                                   color: ColorRes.white,
 //                                   borderRadius: BorderRadius.only(
 //                                     topLeft: Radius.circular(28),
 //                                     topRight: Radius.circular(28),
@@ -872,7 +872,7 @@
 //                                           //       "Next, add address & price",
 //                                           //       style: TextStyle(
 //                                           //         fontSize: 14,
-//                                           //         color: Colors.white,
+//                                           //         color: ColorRes.white,
 //                                           //         fontWeight: FontWeight.w500,
 //                                           //       ),
 //                                           //     ),
@@ -936,7 +936,7 @@
 //                                               style: TextStyle(
 //                                                 fontSize: 15,
 //                                                 fontWeight: FontWeight.w600,
-//                                                 color: Colors.white,
+//                                                 color: ColorRes.white,
 //                                               ),
 //                                             ),
 //                                           ),
@@ -1019,7 +1019,7 @@
 //                                           //       "On Tap Login with Truecaller",
 //                                           //       style: TextStyle(
 //                                           //         fontSize: 14,
-//                                           //         color: Colors.white,
+//                                           //         color: ColorRes.white,
 //                                           //         fontWeight: FontWeight.w500,
 //                                           //       ),
 //                                           //     ),
@@ -1088,7 +1088,7 @@
 //             ),
 //           ),
 //           bottomNavigationBar: Container(
-//             color: Colors.white, // 👈 white background behind button
+//             color: ColorRes.white, // 👈 white background behind button
 //             padding: const EdgeInsets.all(16),
 //             child: SafeArea(
 //               child: SizedBox(
@@ -1121,7 +1121,7 @@
 //                     "Next, add address & price",
 //                     style: TextStyle(
 //                       fontSize: 14,
-//                       color: Colors.white,
+//                       color: ColorRes.white,
 //                       fontWeight: FontWeight.w500,
 //                     ),
 //                   ),
@@ -1144,7 +1144,7 @@
 //       children: [
 //         const Icon(Icons.check_circle, color: Colors.yellow, size: 15),
 //         const SizedBox(width: 8),
-//         Text(text, style: const TextStyle(color: Colors.white, fontSize: 13)),
+//         Text(text, style: const TextStyle(color: ColorRes.white, fontSize: 13)),
 //       ],
 //     ),
 //   );
@@ -1183,7 +1183,7 @@
 //       width: width,
 //       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
 //       decoration: BoxDecoration(
-//         color: selected ? ColorRes.primary.withOpacity(0.1) : Colors.white,
+//         color: selected ? ColorRes.primary.withOpacity(0.1) : ColorRes.white,
 //         border: Border.all(
 //           color: selected ? Colors.transparent : Colors.grey.shade300,
 //           width: 1,
@@ -1394,7 +1394,7 @@
 //                 color:
 //                     isSelected
 //                         ? ColorRes.primary.withOpacity(0.1)
-//                         : Colors.white,
+//                         : ColorRes.white,
 //                 borderRadius: BorderRadius.circular(14),
 //                 border: Border.all(
 //                   color: isSelected ? Colors.transparent : Colors.grey.shade300,
@@ -1435,7 +1435,7 @@
 //     selected: selected,
 //     onSelected: (_) => onSelected(),
 //     selectedColor: Colors.deepPurpleAccent,
-//     labelStyle: TextStyle(color: selected ? Colors.white : Colors.black),
+//     labelStyle: TextStyle(color: selected ? ColorRes.white : Colors.black),
 //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
 //   );
 // }
@@ -1528,7 +1528,7 @@ class CreatePropertyScreen extends StatelessWidget {
 
       if (controller.isLogin.value) {
         return Scaffold(
-          backgroundColor: const Color(0xff091F48),
+          backgroundColor:  ColorRes.addPropertyBackgroundColor,
           body: SafeArea(
             child: LayoutBuilder(
               builder:
@@ -1549,7 +1549,7 @@ class CreatePropertyScreen extends StatelessWidget {
                               ),
                               alignment: Alignment.topLeft,
                               decoration: const BoxDecoration(
-                                color: Color(0xff091F48),
+                                color: ColorRes.addPropertyBackgroundColor,
                               ),
                               child: Row(
                                 children: [
@@ -1558,7 +1558,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                     width: 40,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.grey.shade300,
+                                      color: ColorRes.leadGreyColor.shade300,
                                     ),
                                     alignment: Alignment.center,
                                     child: IconButton(
@@ -1576,7 +1576,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                       },
                                       icon: const Icon(
                                         Icons.arrow_back,
-                                        color: Colors.black,
+                                        color: ColorRes.black,
                                         size: 20,
                                       ),
                                     ),
@@ -1585,7 +1585,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                   const Text(
                                     "Create Listing",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: ColorRes.white,
                                       fontSize: AppFontSizes.large,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -1599,7 +1599,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                 horizontal: 16,
                               ),
                               decoration: const BoxDecoration(
-                                color: Color(0xff091F48),
+                                color: ColorRes.addPropertyBackgroundColor,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1608,7 +1608,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                   const Text(
                                     "Sell or rent your property faster",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: ColorRes.white,
                                       fontSize: AppFontSizes.body,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -1625,7 +1625,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                 ),
                                 width: double.infinity,
                                 decoration: const BoxDecoration(
-                                  color: Colors.white,
+                                  color: ColorRes.white,
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(28),
                                     topRight: Radius.circular(28),
@@ -1786,7 +1786,7 @@ class CreatePropertyScreen extends StatelessWidget {
 
           // --- Full screen loader overlay ---
           bottomNavigationBar: Container(
-            color: Colors.white,
+            color: ColorRes.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: SafeArea(
               child: SizedBox(
@@ -1987,7 +1987,7 @@ class CreatePropertyScreen extends StatelessWidget {
                         : "Next",
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white,
+                      color: ColorRes.white,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -2000,7 +2000,7 @@ class CreatePropertyScreen extends StatelessWidget {
         // Login section
         final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
         return Scaffold(
-          backgroundColor: const Color(0xff091F48),
+          backgroundColor:ColorRes.addPropertyBackgroundColor,
           body: SafeArea(
             child: LayoutBuilder(
               builder:
@@ -2021,7 +2021,7 @@ class CreatePropertyScreen extends StatelessWidget {
                               ),
                               alignment: Alignment.topLeft,
                               decoration: const BoxDecoration(
-                                color: Color(0xff091F48),
+                                color: ColorRes.addPropertyBackgroundColor
                               ),
                               child: Row(
                                 children: [
@@ -2030,7 +2030,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                     width: 40,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.grey.shade300,
+                                      color: ColorRes.leadGreyColor.shade300,
                                     ),
                                     alignment: Alignment.center,
                                     child: IconButton(
@@ -2042,7 +2042,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                       },
                                       icon: const Icon(
                                         Icons.arrow_back,
-                                        color: Colors.black,
+                                        color: ColorRes.black,
                                         size: 20,
                                       ),
                                     ),
@@ -2051,7 +2051,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                   const Text(
                                     "Housing.com",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: ColorRes.white,
                                       fontSize: AppFontSizes.large,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -2065,7 +2065,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                 horizontal: 16,
                               ),
                               decoration: const BoxDecoration(
-                                color: Color(0xff091F48),
+                                color: ColorRes.addPropertyBackgroundColor
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2074,7 +2074,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                   const Text(
                                     "Sell or rent your property faster",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: ColorRes.white,
                                       fontSize: AppFontSizes.body,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -2097,7 +2097,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                 ),
                                 width: double.infinity,
                                 decoration: const BoxDecoration(
-                                  color: Colors.white,
+                                  color: ColorRes.white,
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(28),
                                     topRight: Radius.circular(28),
@@ -2115,7 +2115,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                         Container(
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
-                                            color: Colors.grey.shade200,
+                                            color: ColorRes.leadGreyColor.shade200,
                                             borderRadius: BorderRadius.circular(
                                               14,
                                             ),
@@ -2396,7 +2396,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w600,
-                                                color: Colors.white,
+                                                color: ColorRes.white,
                                               ),
                                             ),
                                           ),
@@ -2409,7 +2409,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 'By clicking above you agree to ',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
-                                                  color: Colors.grey,
+                                                  color: ColorRes.leadGreyColor,
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.w600,
                                                 ),
@@ -2430,7 +2430,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                             children: [
                                               Expanded(
                                                 child: Divider(
-                                                  color: Colors.grey
+                                                  color: ColorRes.leadGreyColor
                                                       .withOpacity(0.5),
                                                   thickness: 0.8,
                                                 ),
@@ -2443,7 +2443,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 child: Text(
                                                   'OR',
                                                   style: TextStyle(
-                                                    color: Colors.grey,
+                                                    color: ColorRes.leadGreyColor,
                                                     fontSize: 12,
                                                   ),
                                                 ),
@@ -2451,7 +2451,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                               const SizedBox(width: 16),
                                               Expanded(
                                                 child: Divider(
-                                                  color: Colors.grey
+                                                  color: ColorRes.leadGreyColor
                                                       .withOpacity(0.5),
                                                   thickness: 0.8,
                                                 ),
@@ -2517,7 +2517,7 @@ class CreatePropertyScreen extends StatelessWidget {
             ),
           ),
           bottomNavigationBar: Container(
-            color: Colors.white,
+            color: ColorRes.white,
             padding: const EdgeInsets.all(16),
             child: SafeArea(
               child: SizedBox(
@@ -2547,7 +2547,7 @@ class CreatePropertyScreen extends StatelessWidget {
                     "Next, add address & price",
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white,
+                      color: ColorRes.white,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -2570,7 +2570,7 @@ Widget buildInfoPoint(String text) {
       children: [
         const Icon(Icons.check_circle, color: Colors.yellow, size: 15),
         const SizedBox(width: 8),
-        Text(text, style: const TextStyle(color: Colors.white, fontSize: 13)),
+        Text(text, style: const TextStyle(color: ColorRes.white, fontSize: 13)),
       ],
     ),
   );
@@ -2581,7 +2581,7 @@ Widget buildTab(String title, bool isSelected) {
     padding: const EdgeInsets.symmetric(vertical: 10),
     decoration: BoxDecoration(
       color:
-          isSelected ? ColorRes.primary.withOpacity(0.15) : Colors.transparent,
+          isSelected ? ColorRes.primary.withOpacity(0.15) : ColorRes.transparentColor,
       borderRadius: BorderRadius.circular(10),
     ),
     alignment: Alignment.center,
@@ -2608,9 +2608,9 @@ Widget buildChoice({
       width: width,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
       decoration: BoxDecoration(
-        color: selected ? ColorRes.primary.withOpacity(0.1) : Colors.white,
+        color: selected ? ColorRes.primary.withOpacity(0.1) : ColorRes.white,
         border: Border.all(
-          color: selected ? Colors.transparent : Colors.grey.shade300,
+          color: selected ? ColorRes.transparentColor : Colors.grey.shade300,
           width: 1,
         ),
         borderRadius: BorderRadius.circular(12),
@@ -2811,10 +2811,10 @@ Widget subPropertyType(CreatePropertyController controller) {
                 color:
                     isSelected
                         ? ColorRes.primary.withOpacity(0.1)
-                        : Colors.white,
+                        : ColorRes.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isSelected ? Colors.transparent : Colors.grey.shade300,
+                  color: isSelected ? ColorRes.transparentColor: Colors.grey.shade300,
                   width: 1,
                 ),
               ),
@@ -2852,7 +2852,7 @@ Widget _buildChoiceChip(String label, bool selected, VoidCallback onSelected) {
     selected: selected,
     onSelected: (_) => onSelected(),
     selectedColor: Colors.deepPurpleAccent,
-    labelStyle: TextStyle(color: selected ? Colors.white : Colors.black),
+    labelStyle: TextStyle(color: selected ? ColorRes.white : Colors.black),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
   );
 }
