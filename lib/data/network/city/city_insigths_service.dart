@@ -26,6 +26,7 @@ class CityService extends GetxService {
       } else {
         Get.snackbar('Error', 'Failed to fetch cities: ${response.statusCode}');
       }
+      print("cities ===== ${response.body}");
     } catch (e) {
       Get.snackbar('Error', 'Something went wrong: $e');
     } finally {
