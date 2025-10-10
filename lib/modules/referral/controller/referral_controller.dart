@@ -15,28 +15,41 @@ class ReferralController extends GetxController {
   final rewardsEarned = 0.obs;
   final requiredResellers = 10.obs;
 
-  final isGenerate =false.obs;
-  Referrel_Model? dummyReferral;
+  final isGenerate = false.obs;
+  final isGenerated = false.obs;
+  final isLoading = false.obs;
+  Rxn<Referrel_Model> dummyReferral = Rxn<Referrel_Model>();
 
-@override
+  @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
     fetchReferralService();
   }
-  void referralCodeGenerator(bool generate)
-  {
-    isGenerate.value=generate;
-    isGenerate.refresh();
 
+  Future<void> referralCodeGenerator() async {
+    try {
+      isGenerate.value = true;
+      final success = await Referral_Service.instance.generateReferCode();
+      if (success) {
+        await fetchReferralService();
+      }
+    } catch (e) {
+    } finally {
+      isGenerate.value = false;
+    }
   }
 
-  Future<void> fetchReferralService()
-  async {
-final data  = await Referral_Service.instance.fetchReferrals();
-dummyReferral=Referrel_Model.fromJson(data);
-print(dummyReferral?.data?.first.totalRewards);
-
+  Future<void> fetchReferralService() async {
+    try {
+      isLoading.value = true;
+      final data = await Referral_Service.instance.fetchReferrals();
+      dummyReferral.value = Referrel_Model.fromJson(data);
+      if (dummyReferral.value != null) isGenerated.value = true;
+    } catch (e) {
+      print(e);
+    } finally {
+      isLoading.value = false;
+    }
   }
-
 }

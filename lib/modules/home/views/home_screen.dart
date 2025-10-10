@@ -4,6 +4,8 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 
 import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
+import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
+import 'package:housing_flutter_app/app/manager/property_highlight_manager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/widgets/cards/banner_card_with_text.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
@@ -20,6 +22,8 @@ import 'package:housing_flutter_app/modules/news/controllers/news_controller.dar
 import 'package:housing_flutter_app/modules/platform_service/controllers/platform_service_controller.dart';
 import 'package:housing_flutter_app/modules/propert_detail/view/property_details.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/property/controllers/recommended_property_controller.dart';
+import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/property/views/property_list_screen.dart';
 
 // import 'package:housing_flutter_app/modules/property/views/recommended.dart';
@@ -215,6 +219,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final PropertyController controller = Get.put(PropertyController());
   final NewsController newsController = Get.put(NewsController());
+  final RecommendedPropertyController _recommendedPropertyController = Get.put(
+    RecommendedPropertyController(),
+  );
   final PlatformServicesController platformServicesController = Get.put(
     PlatformServicesController(),
   );
@@ -432,7 +439,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color:
                                             isSelected
                                                 ? ColorRes.primary
-                                                : ColorRes.leadGreyColor.shade300,
+                                                : ColorRes
+                                                    .leadGreyColor
+                                                    .shade300,
                                         width: 2,
                                       ),
                                     ),
@@ -447,7 +456,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                               (context, error, stackTrace) =>
                                                   Icon(
                                                     Icons.home_work_rounded,
-                                                    color: ColorRes.leadGreyColor.shade400,
+                                                    color:
+                                                        ColorRes
+                                                            .leadGreyColor
+                                                            .shade400,
                                                     size: 32,
                                                   ),
                                         ),
@@ -565,34 +577,67 @@ class _HomeScreenState extends State<HomeScreen> {
                     onViewAll: () => Get.to(BuilderMainScreen()),
                   ),
                   SizedBox(height: 4),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 12),
-                      child: Row(
-                        children: List.generate(HomeScreen.banners.length, (
-                          index,
-                        ) {
-                          return GestureDetector(
-                            onTap: () {},
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: NesticoPeBannerCardWithText(
-                                height: 260,
-                                // ✅ reduced for balanced look
-                                width: 240,
-                                imageUrl: HomeScreen.banners[index],
-                                price: "₹1.25Cr",
-                                location: "Mota varacha, Surat",
-                                propertySize:
-                                    "3 / 4 BHK, 1250 sqft, Semi-Furnished",
-                              ),
-                            ),
-                          );
-                        }),
+                  Obx(() {
+                    if (_recommendedPropertyController.isLoading.value &&
+                        _recommendedPropertyController.items.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!_recommendedPropertyController.isLoading.value &&
+                        _recommendedPropertyController.items.isEmpty) {
+                      return const Center(child: Text("No Property found."));
+                    }
+
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Row(
+                          children: List.generate(
+                            _recommendedPropertyController.items.length,
+                            (index) {
+                              final data =
+                                  _recommendedPropertyController.items[index];
+                              final propertyPrice = PropertyPriceManager(
+                                listingType: data.listingType ?? "",
+                                financialInfo:
+                                    data.propertyDetails?.financialInfo,
+                              );
+                              final propertyHighlight =
+                                  PropertyHighlightManager(data);
+                              return GestureDetector(
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 12),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.to(
+                                        PropertyDetailScreen(property: data),
+                                      );
+                                    },
+                                    child: NesticoPeBannerCardWithText(
+                                      height: 260,
+                                      width: 240,
+                                      imageUrl:
+                                          data.propertyMedia?.images?.first ??
+                                          IMGRes.home3,
+                                      price: propertyPrice.displayPrice,
+                                      developersName: data.ownerName ?? '',
+                                      location:
+                                          data.address ??
+                                          "Location not specified",
+                                      propertySize:
+                                          propertyHighlight.highlightsString,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
 
                   const SizedBox(height: 20),
 
@@ -1140,7 +1185,7 @@ class _CityDropdownState extends State<CityDropdown> {
           value: selectedCity,
           icon: const Icon(
             Icons.keyboard_arrow_down_rounded,
-            color: ColorRes.leadGreyColor
+            color: ColorRes.leadGreyColor,
           ),
           // Custom arrow icon
           items:
@@ -1392,7 +1437,10 @@ class ReviewsAndTestimonials extends StatelessWidget {
                     //     spreadRadius: 0,
                     //   ),
                     // ],
-                    border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
+                    border: Border.all(
+                      color: ColorRes.leadGreyColor.shade200,
+                      width: 1,
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -1431,7 +1479,9 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                   errorBuilder: (context, error, stackTrace) {
                                     return Icon(
                                       Icons.person,
-                                      color:     ColorRes.homeGreenFade.withOpacity(0.1),
+                                      color: ColorRes.homeGreenFade.withOpacity(
+                                        0.1,
+                                      ),
                                       size: 24,
                                     );
                                   },
@@ -1454,7 +1504,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: ColorRes.homeBlackFade
+                                            color: ColorRes.homeBlackFade,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -2308,7 +2358,10 @@ class NewsAndArticles extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.5),
+                border: Border.all(
+                  color: ColorRes.leadGreyColor.shade300,
+                  width: 0.5,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2455,7 +2508,7 @@ class NewsAndArticles extends StatelessWidget {
                                       '${article.readTime ?? 0} min read',
                                       style: TextStyle(
                                         fontSize: 10,
-                                        color:ColorRes.leadGreyColor.shade500,
+                                        color: ColorRes.leadGreyColor.shade500,
                                       ),
                                     ),
                                   ],
@@ -2464,13 +2517,15 @@ class NewsAndArticles extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: ColorRes.homeGreenFade.withOpacity(0.1),
+                                  color: ColorRes.homeGreenFade.withOpacity(
+                                    0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
                                   Icons.arrow_forward_ios,
                                   size: 12,
-                                  color:ColorRes.homeGreenFade,
+                                  color: ColorRes.homeGreenFade,
                                 ),
                               ),
                             ],
@@ -4051,7 +4106,7 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
                   ),
                   child: Text(
                     "+$remainingCount more",
-                    style:  TextStyle(
+                    style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       fontWeight: FontWeight.w600,
                       color: ColorRes.textColor,

@@ -22,6 +22,7 @@ class NesticoPeTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onTap;
+  final TextCapitalization textCapitalization;
 
   const NesticoPeTextField({
     super.key,
@@ -42,6 +43,7 @@ class NesticoPeTextField extends StatelessWidget {
     this.textInputAction,
     this.onChanged,
     this.onTap,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -82,6 +84,7 @@ class NesticoPeTextField extends StatelessWidget {
           focusNode: focusNode,
           textInputAction: textInputAction,
           onChanged: onChanged,
+          textCapitalization: textCapitalization,
           autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
           onTap: onTap,
           style: TextStyle(

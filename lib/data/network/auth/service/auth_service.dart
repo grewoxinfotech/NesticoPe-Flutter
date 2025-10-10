@@ -57,6 +57,7 @@ class AuthService {
     required String city,
     required String state,
     required String zipCode,
+    String? referCode,
   }) async {
     final response = await http.post(
       Uri.parse(ApiConstants.registerEndpoint),
@@ -73,10 +74,12 @@ class AuthService {
         'city': city,
         'state': state,
         'zipCode': zipCode,
+        if (referCode != null) 'referralCode': referCode,
       }),
     );
 
     final data = jsonDecode(response.body);
+    print("[DEBUG]=> ${response.body}");
     if (response.statusCode == 200) {
       return data;
     } else {
@@ -89,6 +92,7 @@ class AuthService {
     required String phone,
     required String userType,
     required String sellerType,
+    String? referCode,
   }) async {
     final response = await http.post(
       Uri.parse(ApiConstants.sellerRegister),
@@ -97,12 +101,14 @@ class AuthService {
         'phone': phone,
         'userType': userType,
         'sellerType': sellerType,
+        if (referCode != null) 'referralCode': referCode,
       }),
     );
 
     print("API URL${ApiConstants.sellerRegister}");
 
     final data = jsonDecode(response.body);
+    print("Seller [DEBUG]=> ${response.body}");
     if (response.statusCode == 200) {
       return data;
     } else {
@@ -122,6 +128,8 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
+        print("Seller Complete [DEBUG]=> ${response.body}");
+
         if (body['success'] == true) {
           // Return token from response
           return body['data']['token'];
@@ -185,7 +193,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    // print("[DEBUG]=> ${response.body}");
+    print("OTP [DEBUG]=> ${response.body}");
     // debugPrint("[DEBUG]=> ${response.body}");
     if (response.statusCode == 200 && data['success'] == true) {
       return data['data']['token'];

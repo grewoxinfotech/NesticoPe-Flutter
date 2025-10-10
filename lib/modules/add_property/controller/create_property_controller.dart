@@ -621,7 +621,6 @@ class CreatePropertyController extends GetxController {
     debugPrint("Selected index: $index");
   }
 
-
   // Toggle user type
   void toggleUserType(SellerType type) {
     selectedSellerType.value = type;
@@ -636,7 +635,6 @@ class CreatePropertyController extends GetxController {
 
   void setValue<T>(Rx<T> target, T value) {
     target.value = value;
-
   }
 
   void submitForm() {
@@ -648,13 +646,13 @@ class CreatePropertyController extends GetxController {
       final authController = Get.find<AuthController>();
       print("2===================== ${isLogin.value}======================");
 
-      if (isOwner.value) {
-        authController.sellerRegister(
-          phone: phoneController.text.trim(),
-          userType: "seller",
-          sellerType: "owner",
-        );
-      }
+      // if (isOwner.value) {
+      //   authController.sellerRegister(
+      //     phone: phoneController.text.trim(),
+      //     userType: "seller",
+      //     sellerType: "owner",
+      //   );
+      // }
     }
     // isLogin.value = true;
     // Get.snackbar(

@@ -324,8 +324,8 @@ class RegisterScreen extends StatefulWidget {
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-
 class _RegisterScreenState extends State<RegisterScreen> {
+  String? _selectedSellerType;
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _firstNameController = TextEditingController();
@@ -336,6 +336,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _cityController = TextEditingController();
   final _stateController = TextEditingController();
   final _zipCodeController = TextEditingController();
+  final _referralCodeController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -398,6 +399,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           state: _stateController.text.trim(),
           zipCode: _zipCodeController.text.trim(),
           userType: _roleToString(_selectedRole),
+          referralCode: _referralCodeController.text.trim(),
         );
 
         if (!success) {
@@ -410,6 +412,60 @@ class _RegisterScreenState extends State<RegisterScreen> {
             contentType: ContentType.success,
           );
         }
+      } catch (e) {
+        _showErrorDialog('Registration failed: ${e.toString()}');
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _sellerRegister() async {
+    if (_formKey.currentState!.validate()) {
+      if (!_acceptTerms) {
+        _showErrorDialog('Please accept the terms and conditions');
+        return;
+      }
+
+      if (_selectedSellerType == null) {
+        _showErrorDialog('Please select seller type');
+        return;
+      }
+
+      setState(() => _isLoading = true);
+
+      try {
+        final data = {
+          "password": _passwordController.text.trim(),
+          "email": _emailController.text.trim(),
+          "firstName": _firstNameController.text.trim(),
+          "lastName": _lastNameController.text.trim(),
+          "address": _addressController.text.trim(),
+          "city": _cityController.text.trim(),
+          "state": _stateController.text.trim(),
+          "zip_code": _zipCodeController.text.trim(),
+          "username": _usernameController.text.trim(),
+        };
+        final authController = Get.find<AuthController>();
+        final success = await authController.sellerRegister(
+          context: context,
+          username: _usernameController.text.trim(),
+          phone: _phoneController.text.trim(),
+          referralCode: _referralCodeController.text.trim(),
+          sellerType: _selectedSellerType?.toLowerCase() ?? 'owner',
+          data: data,
+        );
+
+        // if (!success) {
+        //   _showErrorDialog(authController.errorMessage.value);
+        // } else {
+        //   // _showSuccessDialog();
+        //   NesticoPeSnackBar.showAwesomeSnackbar(
+        //     title: "Success",
+        //     message: "OTP sent Successfully",
+        //     contentType: ContentType.success,
+        //   );
+        // }
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
       } finally {
@@ -450,6 +506,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
+            backgroundColor: ColorRes.white,
             title: const Text('Registration Error'),
             content: Text(message),
             actions: [
@@ -548,7 +605,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //   ),
                 // ),
 
-//                const SizedBox(height: 15),
+                //                const SizedBox(height: 15),
+                if (_selectedRole == UserRole.seller) ...[
+                  Text(
+                    "Select Seller Type",
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: ColorRes.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      _buildRadioOption("Owner"),
+                      const SizedBox(width: 24),
+                      _buildRadioOption("Builder"),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
                 NesticoPeTextField(
                   title: "Username",
                   controller: _usernameController,
@@ -600,7 +675,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 10),
+                // const SizedBox(height: 10),
                 NesticoPeTextField(
                   title: "Email Address",
                   controller: _emailController,
@@ -637,23 +712,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   },
                 ),
 
-                const SizedBox(height: 10),
-                NesticoPeTextField(
-                  hintText: 'Enter Address',
-                  title: "Address",
-                  controller: _addressController,
-                  prefixIcon: Icons.home_outlined,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-
-                  validator: (value) {
-
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter address';
-                    }
-                    return null;
-                  },
-                ),
-
+                // const SizedBox(height: 10),
+                // NesticoPeTextField(
+                //   hintText: 'Enter Address',
+                //   title: "Address",
+                //   controller: _addressController,
+                //   prefixIcon: Icons.home_outlined,
+                //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                //
+                //   validator: (value) {
+                //
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter address';
+                //     }
+                //     return null;
+                //   },
+                // ),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -692,22 +766,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                NesticoPeTextField(
-                  hintText: 'Enter Zip Code',
-                  title: "Zip Code",
-                  controller: _zipCodeController,
-                  prefixIcon: Icons.numbers_outlined,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
 
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter zip code';
-                    }
-                    return null;
-                  },
-                ),
-
+                // const SizedBox(height: 10),
+                // NesticoPeTextField(
+                //   hintText: 'Enter Zip Code',
+                //   title: "Zip Code",
+                //   controller: _zipCodeController,
+                //   prefixIcon: Icons.numbers_outlined,
+                //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                //
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter zip code';
+                //     }
+                //     return null;
+                //   },
+                // ),
                 const SizedBox(height: 10),
                 NesticoPeTextField(
                   hintText: 'Enter Password',
@@ -767,8 +841,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 10),
+                NesticoPeTextField(
+                  hintText: 'Enter Referral Code (Optional)',
+                  title: "Referral Code",
+                  controller: _referralCodeController,
+                  textCapitalization: TextCapitalization.characters,
+                  prefixIcon: Icons.numbers_outlined,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
 
                 const SizedBox(height: 16),
+
                 Row(
                   children: [
                     Checkbox(
@@ -797,7 +881,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const TextSpan(text: ' and '),
                             TextSpan(
-                               text: 'Privacy Policy',
+                              text: 'Privacy Policy',
                               style: const TextStyle(color: ColorRes.blueColor),
                               recognizer:
                                   TapGestureRecognizer()
@@ -814,7 +898,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 NesticoPeButton(
                   title: 'Create Account',
-                  onTap: _isLoading ? null : _register,
+                  onTap: _isLoading ? null : switchRole(_selectedRole),
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -841,6 +925,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  dynamic switchRole(UserRole role) {
+    switch (role) {
+      case UserRole.buyer:
+        return _register;
+      case UserRole.seller:
+        return _sellerRegister;
+      case UserRole.reseller:
+        return 'reseller';
+      case UserRole.contractor:
+        return 'contractor';
+    }
+  }
+
+  Widget _buildRadioOption(String label) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Radio<String>(
+          value: label,
+          activeColor: ColorRes.primary,
+          groupValue: _selectedSellerType,
+          onChanged: (value) {
+            setState(() {
+              _selectedSellerType = value;
+            });
+          },
+        ),
+        Text(label, style: const TextStyle(fontSize: 13)),
+      ],
     );
   }
 }

@@ -371,6 +371,7 @@ class OtpVerificationScreen extends StatefulWidget {
   final String? token;
   final VerifyOTPFor verifyOTPFor;
   final Widget? redirectAfterOtp;
+  final Map<String, dynamic>? data;
 
   const OtpVerificationScreen({
     Key? key,
@@ -378,6 +379,7 @@ class OtpVerificationScreen extends StatefulWidget {
     this.token,
     required this.verifyOTPFor,
     this.redirectAfterOtp,
+    this.data,
   }) : super(key: key);
 
   @override
@@ -480,18 +482,57 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   /// ✅ Seller Registration Flow
+  // Future<void> _handleSellerAccountVerificationFlow(String token) async {
+  //   final authController = Get.find<AuthController>();
+  //
+  //   await authController.verifyOtpSellerRegister(_otpController.text, token);
+  //
+  //   final success = await authController.completeSellerRegistration(
+  //     widget.data ?? {},
+  //   );
+  //
+  //   NesticoPeSnackBar.showAwesomeSnackbar(
+  //     title: 'Success',
+  //     message: 'Seller account verified successfully!',
+  //     contentType: ContentType.success,
+  //   );
+  //
+  //   // await SecureStorage.saveToken(token);
+  //
+  //   Get.offUntil(
+  //     MaterialPageRoute(
+  //       builder: (_) => widget.redirectAfterOtp ?? const DashboardScreen(),
+  //     ),
+  //     (route) => route.isFirst,
+  //   );
+  // }
+
   Future<void> _handleSellerAccountVerificationFlow(String token) async {
     final authController = Get.find<AuthController>();
 
+    // Step 1: Verify OTP
     await authController.verifyOtpSellerRegister(_otpController.text, token);
 
-    NesticoPeSnackBar.showAwesomeSnackbar(
-      title: 'Success',
-      message: 'Seller account verified successfully!',
-      contentType: ContentType.success,
+    // Step 2: Complete seller registration
+    final success = await authController.completeSellerRegistration(
+      widget.data ?? {},
     );
 
-    // await SecureStorage.saveToken(token);
+    if (!success) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to complete registration.',
+        contentType: ContentType.failure,
+      );
+      return; // Stop navigation if registration fails
+    }
+
+    // Step 3: Success message and redirect
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Success',
+      message: 'Seller account verified and registration completed!',
+      contentType: ContentType.success,
+    );
 
     Get.offUntil(
       MaterialPageRoute(
@@ -593,7 +634,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 40),
-                 Icon(Icons.verified_user, size: 80, color: ColorRes.blueColor),
+                Icon(Icons.verified_user, size: 80, color: ColorRes.blueColor),
                 const SizedBox(height: 20),
                 Text(
                   'Enter OTP',

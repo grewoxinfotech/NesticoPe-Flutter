@@ -34,22 +34,19 @@ class PaginationMeta {
   }
 }
 
-
 class PaginationResponse<T> {
   final List<T> items;
   final PaginationMeta meta;
 
-  PaginationResponse({
-    required this.items,
-    required this.meta,
-  });
+  PaginationResponse({required this.items, required this.meta});
 
   factory PaginationResponse.fromJson(
-      Map<String, dynamic> json,
-      T Function(Map<String, dynamic>) fromJsonModel,
-      ) {
+    Map<String, dynamic> json,
+    T Function(Map<String, dynamic>) fromJsonModel,
+  ) {
     final data = json['data'] ?? {};
-    final itemsJson = (data['items'] as List?) ?? [];
+    final itemsJson =
+        (data['items'] as List?) ?? (data['properties'] as List?) ?? [];
 
     final itemsList = itemsJson.map((i) => fromJsonModel(i)).toList();
 
@@ -60,8 +57,8 @@ class PaginationResponse<T> {
   }
 
   Map<String, dynamic> toJson(
-      Map<String, dynamic> Function(T model) toJsonModel,
-      ) {
+    Map<String, dynamic> Function(T model) toJsonModel,
+  ) {
     return {
       'items': items.map((e) => toJsonModel(e)).toList(),
       'meta': meta.toJson(),

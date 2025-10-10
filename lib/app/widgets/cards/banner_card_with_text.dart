@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 
 class NesticoPeBannerCardWithText extends StatelessWidget {
   final String imageUrl;
@@ -54,7 +55,14 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
         child: Stack(
           children: [
             /// Background Image
-            Positioned.fill(child: Image.asset(imageUrl, fit: BoxFit.cover)),
+            Positioned.fill(
+              child: CustomImage(
+                type: CustomImageType.network,
+                src: imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Positioned.fill(child: Image.asset(imageUrl, fit: BoxFit.cover)),
 
             /// Gradient Overlay
             Positioned.fill(
@@ -65,12 +73,12 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                         isCenterText
                             ? [
                               ColorRes.black.withOpacity(0.45),
-                          ColorRes.black.withOpacity(0.65),
-                          ColorRes.black.withOpacity(0.75),
+                              ColorRes.black.withOpacity(0.65),
+                              ColorRes.black.withOpacity(0.75),
                             ]
                             : [
-                          ColorRes.transparentColor,
-                          ColorRes.black.withOpacity(0.85),
+                              ColorRes.transparentColor,
+                              ColorRes.black.withOpacity(0.85),
                             ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -684,17 +692,17 @@ class NesticoPeCardWithText extends StatelessWidget {
         isDark
             ? [
               ColorRes.black.withOpacity(0.7),
-          ColorRes.black.withOpacity(0.5),
-          ColorRes.black.withOpacity(0.3),
-          ColorRes.black.withOpacity(0.1),
-          ColorRes.transparentColor,
+              ColorRes.black.withOpacity(0.5),
+              ColorRes.black.withOpacity(0.3),
+              ColorRes.black.withOpacity(0.1),
+              ColorRes.transparentColor,
             ]
             : [
               opacity,
               opacity.withOpacity(0.9),
               opacity.withOpacity(0.7),
               opacity.withOpacity(0.5),
-          ColorRes.transparentColor,
+              ColorRes.transparentColor,
             ];
 
     final gradientStops =
@@ -703,7 +711,7 @@ class NesticoPeCardWithText extends StatelessWidget {
     return Container(
       height: height,
       width: width,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16),),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Stack(
@@ -794,6 +802,8 @@ class NesticoPeCardWithText extends StatelessWidget {
 
   // Helper to determine text color based on background brightness
   Color getTextColor(Color background) {
-    return background.computeLuminance() > 0.5 ? ColorRes.black : ColorRes.white;
+    return background.computeLuminance() > 0.5
+        ? ColorRes.black
+        : ColorRes.white;
   }
 }

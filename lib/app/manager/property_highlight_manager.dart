@@ -116,6 +116,12 @@ class PropertyHighlightManager {
 
     return highlights;
   }
+
+  String get highlightsString {
+    final list = getHighlights();
+    // Join all values into a single string
+    return list.map((e) => e.values.first).join(', ');
+  }
 }
 
 // extension StringCasingExtension on String {

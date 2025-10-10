@@ -15,11 +15,14 @@ class ApiConstants {
   static const String covertToSeller = "$auth/convert-buyer-to-seller";
   static const String convertToReseller = "$auth/convert-buyer-to-reseller";
   static const String referralGet = "$baseURL/referral/my-stats";
+  static const String generateReferCode = "$baseURL/referral/generate-code";
 
   // Leadhttp://localhost:19725/api/v1/referral/my-stats
   static const String leads = "$baseURL/lead";
   static const String news = "$baseURL/newsArticle";
   static const String platformService = "$baseURL/platformService";
+  static const String propertyRecommend =
+      "$baseURL/property/personalized-recommendations";
   static const String builderProject = "$baseURL/builderproject";
 
   //---------------------------------other-----------------------------//

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/constants/color_res.dart';
+
 class TrendingAreaCard extends StatelessWidget {
   final List<Map<String, dynamic>> localities = [
     {
@@ -8,7 +10,7 @@ class TrendingAreaCard extends StatelessWidget {
       'Percentage': '0.85%',
       'price': '₹ 2.6K / sq.ft.',
       'image':
-      'https://housing-images.n7net.in/4f2250e8/87e7f7c26184125b0f522223f718b5d5/v0/medium/magna_solitaire-peeramcheru-hyderabad-magna_infra_avenues_llp.jpeg'
+          'https://housing-images.n7net.in/4f2250e8/87e7f7c26184125b0f522223f718b5d5/v0/medium/magna_solitaire-peeramcheru-hyderabad-magna_infra_avenues_llp.jpeg',
     },
     {
       'name': 'Dindoli',
@@ -16,8 +18,7 @@ class TrendingAreaCard extends StatelessWidget {
       'Percentage': '1.25%',
       'price': '₹ 3.3K / sq.ft.',
       'image':
-      'https://housing-images.n7net.in/4f2250e8/87e7f7c26184125b0f522223f718b5d5/v0/medium/magna_solitaire-peeramcheru-hyderabad-magna_infra_avenues_llp.jpeg'
-
+          'https://housing-images.n7net.in/4f2250e8/87e7f7c26184125b0f522223f718b5d5/v0/medium/magna_solitaire-peeramcheru-hyderabad-magna_infra_avenues_llp.jpeg',
     },
     {
       'name': 'Vesu',
@@ -25,11 +26,11 @@ class TrendingAreaCard extends StatelessWidget {
       'Percentage': '-4.27%',
       'price': '₹ 5.5K / sq.ft.',
       'image':
-      'https://housing-images.n7net.in/4f2250e8/87e7f7c26184125b0f522223f718b5d5/v0/medium/magna_solitaire-peeramcheru-hyderabad-magna_infra_avenues_llp.jpeg'
+          'https://housing-images.n7net.in/4f2250e8/87e7f7c26184125b0f522223f718b5d5/v0/medium/magna_solitaire-peeramcheru-hyderabad-magna_infra_avenues_llp.jpeg',
     },
   ];
 
-   TrendingAreaCard({super.key});
+  TrendingAreaCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +93,11 @@ class TrendingAreaCard extends StatelessWidget {
                             width: 80,
                             height: 130,
                             color: Colors.grey.shade300,
-                            child: const Icon(Icons.image_not_supported,
-                                color: Colors.grey, size: 30),
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              color: Colors.grey,
+                              size: 30,
+                            ),
                           );
                         },
                       ),
@@ -133,7 +137,7 @@ class TrendingAreaCard extends StatelessWidget {
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color:
-                                    isPositive ? Colors.green : Colors.red,
+                                        isPositive ? Colors.green : Colors.red,
                                   ),
                                 ),
                               ],
@@ -167,7 +171,8 @@ class TrendingAreaCard extends StatelessWidget {
                             GestureDetector(
                               onTap: () {
                                 print(
-                                    "View price clicked for ${locality['name']}");
+                                  "View price clicked for ${locality['name']}",
+                                );
                               },
                               child: const Text(
                                 "View price trend >",

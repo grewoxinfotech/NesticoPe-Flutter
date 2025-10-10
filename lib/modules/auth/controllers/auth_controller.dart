@@ -60,7 +60,8 @@ class AuthController extends GetxController {
   void fillTestCredentials() {
     // emailController.text = "Supercuc@gmail.com";
     // emailController.text = "Super@gmail.com";
-    emailController.text = "abc@gmail.com";
+    emailController.text = "reseller11@example.com";
+    // emailController.text = "abc@gmail.com";
     passwordController.text = "CRM_GrewoxAdmin@123";
   }
 
@@ -103,6 +104,7 @@ class AuthController extends GetxController {
     required String phone,
     required String address,
     required String city,
+    String? referralCode,
     required String state,
     required String zipCode,
     required String userType,
@@ -121,6 +123,7 @@ class AuthController extends GetxController {
         city: city,
         state: state,
         zipCode: zipCode,
+        referCode: referralCode,
       );
 
       if (response['success'] == true && response['data']['token'] != null) {
@@ -158,16 +161,20 @@ class AuthController extends GetxController {
   }
 
   Future<void> sellerRegister({
+    required BuildContext context,
+    required Map<String, dynamic>? data,
+    required String username,
     required String phone,
-    required String userType,
     required String sellerType,
+    String? referralCode,
   }) async {
     try {
       isLoading.value = true;
 
       final response = await authService.sellerRegister(
+        userType: "seller",
         phone: phone,
-        userType: userType,
+        referCode: referralCode,
         sellerType: sellerType,
       );
 
@@ -175,17 +182,14 @@ class AuthController extends GetxController {
         final token = response['data']['token'];
         await SecureStorage.saveToken(token);
 
-        print(
-          'API called successfully with phone: $phone, userType: $userType, sellerType: $sellerType, token: $token',
-        );
-
         // Navigate to OTP screen using the passed phone
         Get.to(
           () => OtpVerificationScreen(
             phone: phone,
             token: token,
             verifyOTPFor: VerifyOTPFor.sellerRegister,
-            redirectAfterOtp: SellerRegistrationComplete(),
+            data: data,
+            redirectAfterOtp: LoginScreen(),
             // redirectAfterOtp: CreatePropertyScreen(
             //   sellerType:
             //       sellerType == "owner" ? SellerType.owner : SellerType.builder,
@@ -220,6 +224,7 @@ class AuthController extends GetxController {
   Future<bool> completeSellerRegistration(Map<String, dynamic> data) async {
     try {
       isLoading.value = true;
+      print("Received data: $data");
       final receivedToken = await authService.sellerRegistrationComplete(data);
       if (receivedToken != null) {
         await SecureStorage.saveToken(receivedToken);
