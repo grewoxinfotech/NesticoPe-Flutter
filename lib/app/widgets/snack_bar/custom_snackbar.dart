@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/app_font_sizes.dart';
 import '../../constants/color_res.dart';
 
 /// Custom SnackBar widget with different types and animations
@@ -154,10 +155,10 @@ class _CustomSnackBarWidgetState extends State<_CustomSnackBarWidget>
                   Expanded(
                     child: Text(
                       widget.message,
-                      style: const TextStyle(
+                      style:  TextStyle(
                         color: ColorRes.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.medium,
                       ),
                     ),
                   ),

@@ -23,7 +23,7 @@
 //           'Report Property',
 //           style: TextStyle(
 //             color: ColorRes.white,
-//             fontWeight: FontWeight.w700,
+//             fontWeight: AppFontWeights.bold,
 //             fontSize: getResponsiveFontSize(
 //               context,
 //               AppFontSizes.large,
@@ -50,7 +50,7 @@
 //                 'apartment in Gandhinagar',
 //                 style: TextStyle(
 //                   fontSize: 18,
-//                   fontWeight: FontWeight.w500,
+//                   fontWeight: AppFontWeights.medium,
 //                 ),
 //               ),
 //               const SizedBox(height: 24),
@@ -80,7 +80,7 @@
 //                             'Important Note',
 //                             style: TextStyle(
 //                               fontSize: 16,
-//                               fontWeight: FontWeight.w600,
+//                               fontWeight: AppFontWeights.semiBold,
 //                             ),
 //                           ),
 //                           SizedBox(height: 4),
@@ -116,7 +116,7 @@
 //                       style: TextStyle(
 //                         color: Colors.black,
 //                         fontSize: 16,
-//                         fontWeight: FontWeight.w500,
+//                         fontWeight: AppFontWeights.medium,
 //                       ),
 //                     ),
 //                   ],
@@ -177,7 +177,7 @@
 //                 'Additional Details (Optional)',
 //                 style: TextStyle(
 //                   fontSize: 16,
-//                   fontWeight: FontWeight.w500,
+//                   fontWeight: AppFontWeights.medium,
 //                 ),
 //               ),
 //
@@ -323,7 +323,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                         'Report Property',
 //                         style: TextStyle(
 //                           fontSize: 15,
-//                           fontWeight: FontWeight.w600,
+//                           fontWeight: AppFontWeights.semiBold,
 //                           color: Color(0xFF212121),
 //                         ),
 //                       ),
@@ -359,7 +359,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                     style: TextStyle(
 //                       color: Colors.black,
 //                       fontSize: 16,
-//                       fontWeight: FontWeight.w500,
+//                       fontWeight: AppFontWeights.medium,
 //                     ),
 //                   ),
 //                 ],
@@ -420,7 +420,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //               'Additional Details (Optional)',
 //               style: TextStyle(
 //                 fontSize: 16,
-//                 fontWeight: FontWeight.w500,
+//                 fontWeight: AppFontWeights.medium,
 //               ),
 //             ),
 //
@@ -570,7 +570,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                         'Report Property',
 //                         style: TextStyle(
 //                           fontSize: 18,
-//                           fontWeight: FontWeight.w700,
+//                           fontWeight: AppFontWeights.bold,
 //                           color: Color(0xFF212121),
 //                           letterSpacing: -0.3,
 //                         ),
@@ -606,7 +606,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                         style: TextStyle(
 //                           color: Color(0xFF212121),
 //                           fontSize: 15,
-//                           fontWeight: FontWeight.w600,
+//                           fontWeight: AppFontWeights.semiBold,
 //                         ),
 //                       ),
 //                       TextSpan(
@@ -697,7 +697,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                                 style: const TextStyle(
 //                                   color: Color(0xFF212121),
 //                                   fontSize: 15,
-//                                   fontWeight: FontWeight.w500,
+//                                   fontWeight: AppFontWeights.medium,
 //                                 ),
 //                               ),
 //                             ),
@@ -715,7 +715,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                   'Additional Details',
 //                   style: TextStyle(
 //                     fontSize: 15,
-//                     fontWeight: FontWeight.w600,
+//                     fontWeight: AppFontWeights.semiBold,
 //                     color: Color(0xFF212121),
 //                   ),
 //                 ),
@@ -801,7 +801,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                         ? const Color(0xFFD32F2F)
 //                         : Colors.grey[600],
 //                     fontSize: 12,
-//                     fontWeight: FontWeight.w500,
+//                     fontWeight: AppFontWeights.medium,
 //                   ),
 //                 )),
 //
@@ -828,7 +828,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                           style: TextStyle(
 //                             color: Color(0xFF616161),
 //                             fontSize: 15,
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semiBold,
 //                           ),
 //                         ),
 //                       ),
@@ -863,7 +863,7 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //                               style: TextStyle(
 //                                 color: ColorRes.white,
 //                                 fontSize: 15,
-//                                 fontWeight: FontWeight.w600,
+//                                 fontWeight: AppFontWeights.semiBold,
 //                               ),
 //                             ),
 //                           ],
@@ -895,7 +895,7 @@ class ReportPropertyCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
+        border: Border.all(color:  ColorRes.reportCardBG, width: 1),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -907,16 +907,16 @@ class ReportPropertyCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.redAccent.withOpacity(0.08),
+                  color: ColorRes.redAccentColor.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: Colors.redAccent.withOpacity(0.3),
+                    color: ColorRes.redAccentColor.withOpacity(0.3),
                     width: 1,
                   ),
                 ),
-                child: const Icon(
+                child:  Icon(
                   Icons.report_problem_outlined,
-                  color: Color(0xFFD32F2F),
+                  color: ColorRes.error,
                   size: 20,
                 ),
               ),
@@ -925,9 +925,9 @@ class ReportPropertyCard extends StatelessWidget {
                 child: Text(
                   'Report Property',
                   style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF212121),
+                    fontSize: AppFontSizes.bodyMedium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.reportCardText,
                   ),
                 ),
               ),
@@ -948,16 +948,16 @@ class ReportPropertyCard extends StatelessWidget {
                       TextSpan(
                         text: 'Reason ',
                         style: TextStyle(
-                          color: Color(0xFF424242),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          color: ColorRes.reportCardText,
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.medium,
                         ),
                       ),
                       TextSpan(
                         text: '*',
                         style: TextStyle(
-                          color: Color(0xFFD32F2F),
-                          fontSize: 14,
+                          color: ColorRes.reportCardred,
+                          fontSize: AppFontSizes.medium,
                         ),
                       ),
                     ],
@@ -968,12 +968,12 @@ class ReportPropertyCard extends StatelessWidget {
                   () => Container(
                     height: 44,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFAFAFA),
+                      color: ColorRes.white,
                       border: Border.all(
                         color:
                             controller.selectedReason.value.isEmpty
-                                ? const Color(0xFFE0E0E0)
-                                : const Color(0xFF4A73E8),
+                                ?  ColorRes.reportCardboarder
+                                :  ColorRes.reportCardblue,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -989,8 +989,8 @@ class ReportPropertyCard extends StatelessWidget {
                       hint: const Text(
                         'Select reason',
                         style: TextStyle(
-                          color: Color(0xFF9E9E9E),
-                          fontSize: 14,
+                          color: ColorRes.reportCardhint,
+                          fontSize: AppFontSizes.medium,
                         ),
                       ),
                       value:
@@ -1004,9 +1004,9 @@ class ReportPropertyCard extends StatelessWidget {
                         color: Color(0xFF757575),
                       ),
                       dropdownColor: ColorRes.white,
-                      style: const TextStyle(
-                        color: Color(0xFF212121),
-                        fontSize: 14,
+                      style:  TextStyle(
+                        color: ColorRes.textColor,
+                        fontSize: AppFontSizes.medium,
                       ),
                       items:
                           controller.reportReasons.map((String reason) {
@@ -1027,19 +1027,19 @@ class ReportPropertyCard extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Additional Details - Compact
-                const Text(
+                 Text(
                   'Additional Details (Optional)',
                   style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF424242),
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.medium,
+                    color: ColorRes.reportCardText,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFAFAFA),
-                    border: Border.all(color: const Color(0xFFE0E0E0)),
+                    color:  ColorRes.white,
+                    border: Border.all(color: ColorRes.reportCardboarder),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -1051,8 +1051,8 @@ class ReportPropertyCard extends StatelessWidget {
                         decoration: const InputDecoration(
                           hintText: 'Describe the issue...',
                           hintStyle: TextStyle(
-                            color: Color(0xFFBDBDBD),
-                            fontSize: 13,
+                            color: ColorRes.reportCardhint,
+                            fontSize: AppFontSizes.bodySmall,
                           ),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.all(12),
@@ -1104,9 +1104,9 @@ class ReportPropertyCard extends StatelessWidget {
                                                   .value
                                                   .length >
                                               450
-                                          ? const Color(0xFFD32F2F)
-                                          : const Color(0xFF757575),
-                                  fontSize: 11,
+                                          ?  ColorRes.reportCardred
+                                          :  ColorRes.reportCardTextFiled,
+                                  fontSize: AppFontSizes.caption,
                                 ),
                               ),
                             ),
@@ -1127,7 +1127,7 @@ class ReportPropertyCard extends StatelessWidget {
                         onPressed: () => controller.cancel(),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 11),
-                          side: const BorderSide(color: Color(0xFFE0E0E0)),
+                          side: const BorderSide(color: ColorRes.reportCardBG),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -1135,9 +1135,9 @@ class ReportPropertyCard extends StatelessWidget {
                         child: const Text(
                           'Cancel',
                           style: TextStyle(
-                            color: Color(0xFF616161),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                            color: ColorRes.textDisabled,
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.medium,
                           ),
                         ),
                       ),
@@ -1388,7 +1388,7 @@ class ReportPropertyCard extends StatelessWidget {
 //                       style: TextStyle(
 //                         fontSize: 11,
 //                         color: Colors.grey.shade600,
-//                         fontWeight: FontWeight.w500,
+//                         fontWeight: AppFontWeights.medium,
 //                       ),
 //                     ),
 //                     const SizedBox(height: 2),
@@ -1574,9 +1574,9 @@ class PropertyOverviewCard extends StatelessWidget {
                         Text(
                           item["value"]!,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: AppFontSizes.medium,
                             height: 1,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: AppFontWeights.extraBold,
                             color: item["color"] as Color,
                           ),
                         ),
@@ -1584,10 +1584,10 @@ class PropertyOverviewCard extends StatelessWidget {
                         Text(
                           item["title"]!,
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: AppFontSizes.extraSmall,
                             height: 1,
-                            color: Colors.grey.shade600,
-                            fontWeight: FontWeight.w500,
+                            color: ColorRes.leadGreyColor.shade600,
+                            fontWeight: AppFontWeights.medium,
                           ),
                         ),
                       ],

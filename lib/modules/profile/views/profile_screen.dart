@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../profile/views/edit_profile_screen.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +65,7 @@ class ProfileDetailScreen extends StatelessWidget {
                   fullName.isNotEmpty ? fullName : "Guest User",
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     fontFamily: FontRes.nuNunitoSans,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: AppFontWeights.extraBold,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -157,14 +158,14 @@ class ProfileDetailScreen extends StatelessWidget {
         title,
         style: const TextStyle(
           fontFamily: FontRes.nuNunitoSans,
-          fontWeight: FontWeight.w800,
+          fontWeight: AppFontWeights.extraBold,
         ),
       ),
       subtitle: Text(
         value,
         style: const TextStyle(
           fontFamily: FontRes.nuNunitoSans,
-          fontWeight: FontWeight.w600,
+          fontWeight: AppFontWeights.semiBold,
         ),
       ),
     );
@@ -257,7 +258,7 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: ColorRes.white,
       title: const Text(
         "My Activity",
-        style: TextStyle(color: ColorRes.black, fontWeight: FontWeight.bold),
+        style: TextStyle(color: ColorRes.black, fontWeight: AppFontWeights.extraBold),
       ),
       actions: [
         TextButton(
@@ -282,7 +283,7 @@ class ProfileScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(_cardRadius),
           boxShadow: const [
             BoxShadow(
-              color: Colors.black12,
+              color: ColorRes.blackShade12,
               blurRadius: 8,
               offset: Offset(0, 4),
             ),
@@ -411,14 +412,14 @@ class _ProfileWelcomeSection extends StatelessWidget {
       children: const [
         Text(
           "Hello 👋",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.extraBold),
         ),
         SizedBox(height: 4),
         Text(
           "✓ Easy Contact with sellers",
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: ColorRes.leadGreyColor),
         ),
-        Text("✓ Personalized experience", style: TextStyle(color: Colors.grey)),
+        Text("✓ Personalized experience", style: TextStyle(color: ColorRes.leadGreyColor)),
       ],
     );
   }
@@ -463,11 +464,11 @@ class SettingsMenuTile extends StatelessWidget {
       leading: Icon(icon, size: 28, color: ColorRes.primary),
       title: Text(
         title,
-        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        style: TextStyle(fontSize: AppFontSizes.medium, fontWeight: AppFontWeights.semiBold),
       ),
       subtitle: Text(
         subTitle,
-        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+        style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor[600]),
       ),
       trailing: trailing ?? const Icon(Icons.chevron_right),
       onTap: onTap,
@@ -540,19 +541,19 @@ class _ExpandableTileState extends State<ExpandableTile>
           leading: Icon(widget.leadingIcon, color: ColorRes.primary),
           title: Text(
             widget.title,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: AppFontSizes.medium, fontWeight: AppFontWeights.semiBold),
           ),
           subtitle:
               widget.subtitle != null
                   ? Text(
                     widget.subtitle!,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor[600]),
                   )
                   : null,
           trailing: AnimatedRotation(
             turns: _isExpanded ? 0.5 : 0,
             duration: const Duration(milliseconds: 300),
-            child: Icon(widget.trailingIcon, color: Colors.grey[700]),
+            child: Icon(widget.trailingIcon, color: ColorRes.leadGreyColor[700]),
           ),
           onTap: _toggleExpand,
         ),
@@ -608,7 +609,7 @@ class SubItems extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [ColorRes.white, Colors.grey.shade50],
+              colors: [ColorRes.white, ColorRes.leadGreyColor.shade50],
             ),
             borderRadius: BorderRadius.circular(16),
             // boxShadow: [
@@ -619,7 +620,7 @@ class SubItems extends StatelessWidget {
             //     spreadRadius: 0,
             //   ),
             // ],
-            border: Border.all(color: Colors.grey.shade200, width: 0.5),
+            border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 0.5),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -659,11 +660,11 @@ class SubItems extends StatelessWidget {
         width: _badgeSize,
         height: _badgeSize,
         decoration: BoxDecoration(
-          color: Colors.red.shade600,
+          color: ColorRes.error.shade600,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.3),
+              color: ColorRes.error.withOpacity(0.3),
               blurRadius: 4,
               offset: const Offset(0, 1),
             ),
@@ -674,8 +675,8 @@ class SubItems extends StatelessWidget {
             "!",
             style: TextStyle(
               color: ColorRes.white,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
+              fontSize: AppFontSizes.extraSmall,
+              fontWeight: AppFontWeights.extraBold,
             ),
           ),
         ),
@@ -691,9 +692,9 @@ class SubItems extends StatelessWidget {
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: Colors.grey.shade700,
+          fontSize: AppFontSizes.small,
+          fontWeight: AppFontWeights.semiBold,
+          color: ColorRes.leadGreyColor.shade700,
           // height: 1.1,
         ),
       ),

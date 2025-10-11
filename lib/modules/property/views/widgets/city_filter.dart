@@ -116,7 +116,7 @@
 //                   cities[index],
 //                   style: TextStyle(
 //                     fontSize: 12,
-//                     fontWeight: FontWeight.w500,
+//                     fontWeight: AppFontWeights.medium,
 //                     color: Colors.black87,
 //                   ),
 //                   maxLines: 1,
@@ -364,7 +364,7 @@
 //                                   cities[index],
 //                                   style: TextStyle(
 //                                     fontSize: 13,
-//                                     fontWeight: FontWeight.w700,
+//                                     fontWeight: AppFontWeights.bold,
 //                                     color: isSelected
 //                                         ? ColorRes.white
 //                                         : Colors.grey[800],
@@ -445,7 +445,7 @@
 // cities[index],
 // style: TextStyle(
 // fontSize: 14,
-// fontWeight: FontWeight.w500,
+// fontWeight: AppFontWeights.medium,
 // color: isSelected ? Colors.blueAccent : Colors.black87,
 // ),
 // ),

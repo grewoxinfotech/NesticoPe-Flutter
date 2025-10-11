@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
@@ -106,8 +107,10 @@ class RentAmenities extends StatelessWidget {
                                         isSelected
                                             ? Theme.of(context).primaryColor
                                             : ColorRes.black,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10,
+                                    // fontWeight: FontWeight.w400,
+                                    // fontSize: 10,
+                                    fontWeight: AppFontWeights.regular,
+                                    fontSize: AppFontSizes.small,
                                   ),
                                 ),
                                 if (e.isMultiChoice) ...[
@@ -127,7 +130,7 @@ class RentAmenities extends StatelessWidget {
                                         ),
                                         Text(
                                           '$quantity',
-                                          style: TextStyle(fontSize: 18),
+                                          style: TextStyle(fontSize: AppFontSizes.large),
                                         ),
                                         IconButton(
                                           icon: Icon(Icons.add, size: 22),
@@ -211,8 +214,10 @@ controller.addOrUpdateAmenities(e.key);
                               isSelected
                                   ? Theme.of(context).primaryColor
                                   : ColorRes.black,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 10,
+                              fontSize: AppFontSizes.extraSmall,
+                              fontWeight: AppFontWeights.regular,
+                              // fontWeight: FontWeight.w400,
+                              // fontSize: 10,
                             ),
                           ),
 
@@ -291,9 +296,12 @@ controller.addOrUpdateAmenities(e.key);
                                   color: isSelected
                                       ? Theme.of(context).primaryColor
                                       : ColorRes.black,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 10,
+                                  // fontWeight: FontWeight.w400,
+                                  // fontSize: 10,
+                                  fontWeight: AppFontWeights.regular,
+                                  fontSize: AppFontSizes.extraSmall,
                                 ),
+
                               ),
                             ],
                           ),

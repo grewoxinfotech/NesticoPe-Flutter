@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
+
 class StepProgress extends StatefulWidget {
   final int totalSteps;
   final int currentStep;
@@ -88,11 +90,11 @@ class _StepProgressState extends State<StepProgress> {
                     child: AnimatedDefaultTextStyle(
                       duration: const Duration(milliseconds: 200),
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: AppFontSizes.small,
                         color: ColorRes.white,
                         fontWeight: isCurrent || isCompleted
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                            ? AppFontWeights.extraBold
+                            : AppFontWeights.regular,
                       ),
                       child: Text(
                         widget.labels![i],

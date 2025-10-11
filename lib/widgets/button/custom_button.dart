@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/widgets/display/card.dart';
 
+import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 
 
@@ -44,8 +45,8 @@ class CustomButton extends StatelessWidget {
           style:
           titleTextStyle ??
               TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
+                fontSize: AppFontSizes.body,
+                fontWeight: AppFontWeights.bold,
                 color: Get.theme.colorScheme.surface,
               ),
         ),

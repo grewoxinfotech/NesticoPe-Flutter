@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
+import '../../constants/app_font_sizes.dart';
+
 class TitleWithDescription extends StatelessWidget {
   final String title;
   final String? description; // optional
@@ -28,9 +30,9 @@ class TitleWithDescription extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textPrimary,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -39,11 +41,11 @@ class TitleWithDescription extends StatelessWidget {
               if (showViewAll)
                 GestureDetector(
                   onTap: onViewAll,
-                  child: const Text(
+                  child: Text(
                     "See All",
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.medium,
                       color: ColorRes.blueColor,
                     ),
                   ),
@@ -54,8 +56,8 @@ class TitleWithDescription extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               description!,
-              style: const TextStyle(
-                fontSize: 12,
+              style:  TextStyle(
+                fontSize: AppFontSizes.small,
                 fontWeight: FontWeight.w400,
                 color: ColorRes.leadGreyColor,
               ),

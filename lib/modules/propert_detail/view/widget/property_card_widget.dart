@@ -66,7 +66,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.medium),
           // ignore: deprecated_member_use
-          side: BorderSide(color: Colors.grey[300]!, width: 1),
+          side: BorderSide(color: ColorRes.leadGreyColor[300]!, width: 1),
         ),
         // elevation: 2,
         margin: const EdgeInsets.symmetric(vertical: AppPadding.small),
@@ -98,7 +98,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                             MediaQuery.of(context).size.width / 2 -
                             2, // show 2 images
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
+                          color: ColorRes.leadGreyColor.shade200,
                           borderRadius: BorderRadius.circular(12),
                           // image: DecorationImage(
                           //   image: NetworkImage(property),
@@ -134,7 +134,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                                   child: Icon(
                                     Icons.broken_image,
                                     size: 40,
-                                    color: Colors.grey,
+                                    color: ColorRes.leadGreyColor,
                                   ),
                                 ),
                       );
@@ -354,7 +354,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                         horizontal: AppPadding.small,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
+                        color: ColorRes.leadGreyColor.shade100,
                         borderRadius: BorderRadius.circular(AppRadius.small),
                       ),
                       child: Row(
@@ -379,7 +379,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
             ),
             Divider(
               height: 15,
-              color: Colors.grey.shade300,
+              color: ColorRes.leadGreyColor.shade300,
               indent: 12,
               endIndent: 12,
             ),
@@ -412,7 +412,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                           widget.property.ownerName ?? 'N/A',
                           style: const TextStyle(
                             fontSize: AppFontSizes.small,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.textColor,
                           ),
                         ),
@@ -420,7 +420,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                           widget.role,
                           style: const TextStyle(
                             fontSize: 10,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: AppFontWeights.medium,
                             color: ColorRes.grey,
                           ),
                         ),
@@ -715,7 +715,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
 //                         widget.ownerName,
 //                         style: const TextStyle(
 //                           fontSize: AppFontSizes.small,
-//                           fontWeight: FontWeight.w600,
+//                           fontWeight: AppFontWeights.semiBold,
 //                           color: ColorRes.textColor,
 //                         ),
 //                       ),
@@ -753,7 +753,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
 //                     "View Details",
 //                     style: TextStyle(
 //                       fontSize: AppFontSizes.extraSmall,
-//                       fontWeight: FontWeight.w600,
+//                       fontWeight: AppFontWeights.semiBold,
 //                       color: ColorRes.primary,
 //                     ),
 //                   ),

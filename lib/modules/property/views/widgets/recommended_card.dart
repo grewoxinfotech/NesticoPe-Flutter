@@ -104,8 +104,8 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         widget.property.listingType ?? '-',
                         style: const TextStyle(
                           color: ColorRes.primary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.semiBold,
                         ),
                       ),
                     ),
@@ -138,7 +138,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                           isFavorite
                               ? Icons.favorite_rounded
                               : Icons.favorite_border_rounded,
-                          color: isFavorite ? Colors.red : Colors.grey,
+                          color: isFavorite ? ColorRes.error : ColorRes.leadGreyColor,
                           size: 18,
                         ),
                       ),
@@ -156,15 +156,15 @@ class _RecommendedCardState extends State<RecommendedCard> {
                           horizontal: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.7),
+                          color: ColorRes.black.withOpacity(0.7),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
                           "Recently Viewed",
                           style: TextStyle(
                             color: ColorRes.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
+                            fontSize: AppFontSizes.extraSmall,
+                            fontWeight: AppFontWeights.medium,
                           ),
                         ),
                       ),
@@ -185,9 +185,9 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       '${widget.property.propertyDetails?.propertyCondition} ' ??
                           '-',
                       style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey.shade800,
-                        fontWeight: FontWeight.w500,
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.leadGreyColor.shade800,
+                        fontWeight: AppFontWeights.medium,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -200,9 +200,9 @@ class _RecommendedCardState extends State<RecommendedCard> {
                           child: Text(
                             widget.property.title ?? '-',
                             style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: Colors.black87,
+                              fontWeight: AppFontWeights.semiBold,
+                              fontSize: AppFontSizes.medium,
+                              color: ColorRes.blackShade87,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -220,7 +220,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                           ),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: AppFontSizes.body,
                             color: ColorRes.primary,
                           ),
                         ),
@@ -265,9 +265,9 @@ class _RecommendedCardState extends State<RecommendedCard> {
                           //   "${widget.property.propertyDetails!.bathrooms} Bath",
                         ].join(" · "),
                         style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey.shade800,
-                          fontWeight: FontWeight.w500,
+                          fontSize: AppFontSizes.caption,
+                          color: ColorRes.leadGreyColor.shade800,
+                          fontWeight: AppFontWeights.medium,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -291,8 +291,8 @@ class _RecommendedCardState extends State<RecommendedCard> {
                             widget.property.address ?? '-',
 
                             style: TextStyle(
-                              fontSize: 9,
-                              color: Colors.grey.shade600,
+                              fontSize: AppFontSizes.mini,
+                              color: ColorRes.leadGreyColor.shade600,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -307,7 +307,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                     //   style: TextStyle(
                     //     fontSize: 10,
                     //     color: Colors.grey.shade800,
-                    //     fontWeight: FontWeight.w500,
+                    //     fontWeight: AppFontWeights.medium,
                     //   ),
                     //   maxLines: 1,
                     //   overflow: TextOverflow.ellipsis,
@@ -317,9 +317,9 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       '${widget.property.propertyDetails?.propertyBuiltUpArea} sq.ft' ??
                           '-',
                       style: TextStyle(
-                        fontSize: 9,
-                        color: Colors.grey.shade800,
-                        fontWeight: FontWeight.w500,
+                        fontSize: AppFontSizes.mini,
+                        color: ColorRes.leadGreyColor.shade800,
+                        fontWeight: AppFontWeights.medium,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -374,7 +374,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                                 "View Phone",
                                 style: TextStyle(
                                   fontSize: AppFontSizes.caption,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: AppFontWeights.medium,
                                   color: ColorRes.primary,
                                 ),
                               ),
@@ -397,9 +397,9 @@ class _RecommendedCardState extends State<RecommendedCard> {
     return Text(
       text,
       style: TextStyle(
-        fontSize: 12,
-        color: Colors.grey.shade800,
-        fontWeight: FontWeight.w500,
+        fontSize: AppFontSizes.small,
+        color: ColorRes.leadGreyColor.shade800,
+        fontWeight: AppFontWeights.medium,
       ),
     );
   }

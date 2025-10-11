@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 
@@ -45,7 +46,7 @@ class ResellerConversionScreen extends StatelessWidget {
                       "Welcome",
                       style: TextStyle(
                         color: ColorRes.whiteShade,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: AppFontWeights.bold,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -53,7 +54,8 @@ class ResellerConversionScreen extends StatelessWidget {
                       "Find Your Perfect\nLuxury Home",
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: ColorRes.white,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: AppFontWeights.extraBold
+                        // fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -61,7 +63,8 @@ class ResellerConversionScreen extends StatelessWidget {
                       "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
                       style: TextStyle(
                         color: ColorRes.whiteShade,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: AppFontWeights.bold,
+                        // fontWeight: FontWeAght.w700,
                       ),
                     ),
                   ],
@@ -92,12 +95,14 @@ class ResellerConversionScreen extends StatelessWidget {
                         color: ColorRes.green,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
+                      child:  Text(
                         "Reseller Conversion",
                         style: TextStyle(
                           color: ColorRes.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                          fontWeight: AppFontWeights.semiBold,
+                          // fontWeight: AppFontWeights.semiBold,
+                          fontSize: AppFontSizes.small,
+                          // fontSize: 12,
                         ),
                       ),
                     ),
@@ -106,13 +111,13 @@ class ResellerConversionScreen extends StatelessWidget {
                       "Become a Reseller",
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: ColorRes.primary,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: AppFontWeights.extraBold,
                       ),
                     ),
                     const SizedBox(height: 8),
                     const Text(
                       "You're just one step away from becoming a property reseller!",
-                      style: TextStyle(color: ColorRes.blackShade54, fontSize: 12),
+                      style: TextStyle(color: ColorRes.blackShade54, fontSize: AppFontSizes.small,),
                     ),
                     const SizedBox(height: 24),
                     Container(
@@ -131,7 +136,8 @@ class ResellerConversionScreen extends StatelessWidget {
                           Text(
                             "What happens next?",
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                              fontWeight: AppFontWeights.extraBold,
+                              // fontWeight: FontWeight.bold,
                               color: ColorRes.blackShade87,
                             ),
                           ),
@@ -179,11 +185,11 @@ class ResellerConversionScreen extends StatelessWidget {
                               controller.isLoading.value
                                   ? Text(
                                     "Converting...",
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: AppFontSizes.body),
                                   )
                                   : Text(
                                     "Confirm - Convert to Reseller →",
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: AppFontSizes.body),
                                   ),
                         ),
                       ),
@@ -197,16 +203,16 @@ class ResellerConversionScreen extends StatelessWidget {
                           text: "Already have an account? ",
                           style: const TextStyle(
                             color: ColorRes.blackShade87,
-                            fontSize: 14,
+                            fontSize: AppFontSizes.medium,
                           ),
                           children: [
                             TextSpan(
                               text: "Login here",
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: ColorRes.primary,
                                 decoration: TextDecoration.underline,
                                 decorationColor: ColorRes.primary,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: AppFontWeights.semiBold,
                               ),
                               recognizer:
                                   TapGestureRecognizer()
@@ -237,7 +243,7 @@ class ResellerConversionScreen extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 12, color: ColorRes.blackShade87),
+            style:  TextStyle(fontSize: AppFontSizes.small, color: ColorRes.blackShade87),
           ),
         ),
       ],

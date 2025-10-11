@@ -11,7 +11,7 @@
 //     final profileController = Get.put(ProfileController());
 //
 //     return Scaffold(
-//       backgroundColor: Colors.grey[50],
+//       backgroundColor: ColorRes.leadGreyColor[50],
 //       appBar: AppBar(
 //         title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold)),
 //         backgroundColor: ColorRes.white,
@@ -68,7 +68,7 @@
 //         borderRadius: BorderRadius.circular(12),
 //         boxShadow: [
 //           BoxShadow(
-//             color: Colors.grey.withOpacity(0.1),
+//             color: ColorRes.leadGreyColor.withOpacity(0.1),
 //             spreadRadius: 1,
 //             blurRadius: 8,
 //             offset: const Offset(0, 2),
@@ -81,7 +81,7 @@
 //             children: [
 //               CircleAvatar(
 //                 radius: 50,
-//                 backgroundColor: Colors.blue,
+//                 backgroundColor: ColorRes.blueColor,
 //                 backgroundImage: controller.profile.value.avatarUrl.isNotEmpty
 //                     ? NetworkImage(controller.profile.value.avatarUrl)
 //                     : null,
@@ -96,7 +96,7 @@
 //                   child: Container(
 //                     padding: const EdgeInsets.all(4),
 //                     decoration: const BoxDecoration(
-//                       color: Colors.blue,
+//                       color: ColorRes.blueColor,
 //                       shape: BoxShape.circle,
 //                     ),
 //                     child: const Icon(
@@ -115,11 +115,11 @@
 //           ),
 //           Text(
 //             controller.profile.value.position,
-//             style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+//             style: TextStyle(fontSize: 16, color: ColorRes.leadGreyColor[600]),
 //           ),
 //           Text(
 //             controller.profile.value.company,
-//             style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+//             style: TextStyle(fontSize: 14, color: ColorRes.leadGreyColor[500]),
 //           ),
 //         ],
 //       ),
@@ -134,7 +134,7 @@
 //             'Total Sales',
 //             '\$${controller.profile.value.totalSales.toStringAsFixed(0)}',
 //             Icons.attach_money,
-//             Colors.green,
+//             ColorRes.success,
 //           ),
 //         ),
 //         const SizedBox(width: 16),
@@ -143,7 +143,7 @@
 //             'Leads Closed',
 //             '${controller.profile.value.leadsCount}',
 //             Icons.people,
-//             Colors.blue,
+//             ColorRes.blueColor,
 //           ),
 //         ),
 //         const SizedBox(width: 16),
@@ -167,7 +167,7 @@
 //         borderRadius: BorderRadius.circular(12),
 //         boxShadow: [
 //           BoxShadow(
-//             color: Colors.grey.withOpacity(0.1),
+//             color: ColorRes.leadGreyColor.withOpacity(0.1),
 //             spreadRadius: 1,
 //             blurRadius: 8,
 //             offset: const Offset(0, 2),
@@ -189,7 +189,7 @@
 //             title,
 //             style: TextStyle(
 //               fontSize: 12,
-//               color: Colors.grey[600],
+//               color: ColorRes.leadGreyColor[600],
 //             ),
 //             textAlign: TextAlign.center,
 //           ),
@@ -206,7 +206,7 @@
 //         borderRadius: BorderRadius.circular(12),
 //         boxShadow: [
 //           BoxShadow(
-//             color: Colors.grey.withOpacity(0.1),
+//             color: ColorRes.leadGreyColor.withOpacity(0.1),
 //             spreadRadius: 1,
 //             blurRadius: 8,
 //             offset: const Offset(0, 2),
@@ -281,7 +281,7 @@
 //                     child: ElevatedButton(
 //                       onPressed: controller.saveProfile,
 //                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: Colors.green,
+//                         backgroundColor: ColorRes.success,
 //                         foregroundColor: ColorRes.white,
 //                         padding: const EdgeInsets.symmetric(vertical: 16),
 //                         shape: RoundedRectangleBorder(
@@ -305,7 +305,7 @@
 //                     child: ElevatedButton(
 //                       onPressed: controller.cancelEdit,
 //                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: Colors.grey,
+//                         backgroundColor: ColorRes.leadGreyColor,
 //                         foregroundColor: ColorRes.white,
 //                         padding: const EdgeInsets.symmetric(vertical: 16),
 //                         shape: RoundedRectangleBorder(
@@ -343,7 +343,7 @@
 //           borderRadius: BorderRadius.circular(12),
 //         ),
 //         filled: !enabled,
-//         fillColor: enabled ? null : Colors.grey[100],
+//         fillColor: enabled ? null : ColorRes.leadGreyColor[100],
 //       ),
 //       keyboardType: keyboardType,
 //       validator: validator,
@@ -359,7 +359,7 @@
 //         borderRadius: BorderRadius.circular(12),
 //         boxShadow: [
 //           BoxShadow(
-//             color: Colors.grey.withOpacity(0.1),
+//             color: ColorRes.leadGreyColor.withOpacity(0.1),
 //             spreadRadius: 1,
 //             blurRadius: 8,
 //             offset: const Offset(0, 2),
@@ -367,12 +367,12 @@
 //         ],
 //       ),
 //       child: ListTile(
-//         leading: Icon(icon, color: isLogout ? Colors.red : Colors.grey[700]),
+//         leading: Icon(icon, color: isLogout ? ColorRes.error : ColorRes.leadGreyColor[700]),
 //         title: Text(
 //           title,
 //           style: TextStyle(
-//             fontWeight: FontWeight.w500,
-//             color: isLogout ? Colors.red : Colors.black87,
+//             fontWeight: AppFontWeights.medium,
+//             color: isLogout ? ColorRes.error : ColorRes.blackShade87,
 //           ),
 //         ),
 //         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -388,11 +388,11 @@
 //       textConfirm: 'Yes',
 //       textCancel: 'No',
 //       confirmTextColor: ColorRes.white,
-//       buttonColor: Colors.red,
+//       buttonColor: ColorRes.error,
 //       onConfirm: () {
 //         Get.back();
 //         Get.snackbar('Success', 'Logged out successfully',
-//             backgroundColor: Colors.green, colorText: ColorRes.white);
+//             backgroundColor: ColorRes.success, colorText: ColorRes.white);
 //       },
 //     );
 //   }
@@ -414,6 +414,7 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../controller/profile/profile_controller.dart';
 import 'package:get/get.dart';
 
@@ -431,8 +432,8 @@ class ResellerProfileScreen extends StatelessWidget {
         title: const Text(
           'Profile',
           style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
+            fontWeight: AppFontWeights.semiBold,
+            fontSize: AppFontSizes.subtitle,
           ),
         ),
         backgroundColor: ColorRes.white,
@@ -451,11 +452,11 @@ class ResellerProfileScreen extends StatelessWidget {
                   : () => profileController.toggleEdit(),
               style: IconButton.styleFrom(
                 backgroundColor: profileController.isEditing.value
-                    ? Colors.blue.withOpacity(0.1)
-                    : Colors.grey.withOpacity(0.1),
+                    ? ColorRes.blueColor.withOpacity(0.1)
+                    : ColorRes.leadGreyColor.withOpacity(0.1),
                 foregroundColor: profileController.isEditing.value
-                    ? Colors.blue
-                    : Colors.grey[700],
+                    ? ColorRes.blueColor
+                    : ColorRes.leadGreyColor[700],
               ),
             ),
           )),
@@ -501,7 +502,7 @@ class ResellerProfileScreen extends StatelessWidget {
   //       color: ColorRes.white,
   //       borderRadius: BorderRadius.circular(16),
   //       border: Border.all(
-  //         color: Colors.grey.withOpacity(0.3),
+  //         color: ColorRes.leadGreyColor.withOpacity(0.3),
   //         width: 1,
   //       ),
   //     ),
@@ -593,7 +594,7 @@ class ResellerProfileScreen extends StatelessWidget {
   //             style: TextStyle(
   //               fontSize: 14,
   //               color:ColorRes.primary.withOpacity(0.8),
-  //               fontWeight: FontWeight.w500,
+  //               fontWeight: AppFontWeights.medium,
   //             ),
   //             textAlign: TextAlign.center,
   //           ),
@@ -602,13 +603,13 @@ class ResellerProfileScreen extends StatelessWidget {
   //         Row(
   //           mainAxisAlignment: MainAxisAlignment.center,
   //           children: [
-  //             Icon(Icons.business_outlined, size: 14, color: Colors.grey[600]),
+  //             Icon(Icons.business_outlined, size: 14, color: ColorRes.leadGreyColor[600]),
   //             const SizedBox(width: 4),
   //             Text(
   //               controller.profile.value.company,
   //               style: TextStyle(
   //                 fontSize: 14,
-  //                 color: Colors.grey[600],
+  //                 color: ColorRes.leadGreyColor[600],
   //               ),
   //               textAlign: TextAlign.center,
   //             ),
@@ -627,7 +628,7 @@ class ResellerProfileScreen extends StatelessWidget {
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.grey.withOpacity(0.3),
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -707,8 +708,8 @@ class ResellerProfileScreen extends StatelessWidget {
                   child: Text(
                     controller.profile.value.name,
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                      fontSize: AppFontSizes.body,
+                      fontWeight: AppFontWeights.bold,
                       color: ColorRes.textPrimary,
                     ),
                   ),
@@ -728,9 +729,9 @@ class ResellerProfileScreen extends StatelessWidget {
                   child: Text(
                     controller.profile.value.position,
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: AppFontSizes.extraSmall,
                       color: ColorRes.primary,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: AppFontWeights.medium,
                     ),
                   ),
                 ),
@@ -738,16 +739,16 @@ class ResellerProfileScreen extends StatelessWidget {
                 Row(
                   children: [
                     Icon(Icons.business_outlined,
-                        size: 12, color: Colors.grey[600]),
+                        size: 12, color: ColorRes.leadGreyColor[600]),
                     const SizedBox(width: 4),
                     SizedBox(
                       width: 150,
                       child: Text(
                         '${controller.profile.value.company}',
                         style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.leadGreyColor[600],
+                          fontWeight: AppFontWeights.medium
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -774,7 +775,7 @@ class ResellerProfileScreen extends StatelessWidget {
             'Total Sales',
             '${Formatter.formatPrice(controller.profile.value.totalSales)}',
             Icons.trending_up,
-            Colors.green,
+            ColorRes.success,
           ),
         ),
         const SizedBox(width: 8),
@@ -783,7 +784,7 @@ class ResellerProfileScreen extends StatelessWidget {
             'Leads',
             '${controller.profile.value.leadsCount}',
             Icons.people_alt_outlined,
-            Colors.blue,
+            ColorRes.blueColor,
           ),
         ),
         const SizedBox(width: 8),
@@ -792,7 +793,7 @@ class ResellerProfileScreen extends StatelessWidget {
             'Rating',
             '${controller.profile.value.rating}',
             Icons.star_rounded,
-            Colors.amber,
+            ColorRes.homeAmber,
           ),
         ),
       ],
@@ -806,7 +807,7 @@ class ResellerProfileScreen extends StatelessWidget {
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.grey.withOpacity(0.3),
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -833,10 +834,10 @@ class ResellerProfileScreen extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1A1A1A),
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.extraBold,
+                color: ColorRes.homeBlackFade,
                 height: 1.2,
               ),
             ),
@@ -846,9 +847,9 @@ class ResellerProfileScreen extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+              fontSize: AppFontSizes.extraSmall,
+              color: ColorRes.leadGreyColor[600],
+              fontWeight: AppFontWeights.medium,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -867,7 +868,7 @@ class ResellerProfileScreen extends StatelessWidget {
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.grey.withOpacity(0.3),
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -881,18 +882,18 @@ class ResellerProfileScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: ColorRes.blueColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.person_outline, color: Colors.blue[700], size: 20),
+                  child: Icon(Icons.person_outline, color: ColorRes.blueColor[700], size: 20),
                 ),
                 const SizedBox(width: 12),
-                const Text(
+                 Text(
                   'Profile Information',
                   style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF1A1A1A),
+                    fontSize: AppFontSizes.bodyMedium,
+                    color: ColorRes.homeBlackFade,
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
               ],
@@ -956,7 +957,7 @@ class ResellerProfileScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: controller.saveProfile,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: ColorRes.blueColor,
                         foregroundColor: ColorRes.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         elevation: 0,
@@ -973,11 +974,11 @@ class ResellerProfileScreen extends StatelessWidget {
                           strokeWidth: 2,
                         ),
                       )
-                          : const Text(
+                          :  Text(
                         'Save Changes',
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: AppFontWeights.semiBold,
+                          fontSize: AppFontSizes.bodyMedium,
                         ),
                       ),
                     ),
@@ -987,9 +988,9 @@ class ResellerProfileScreen extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: controller.cancelEdit,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.grey[700],
+                        foregroundColor: ColorRes.leadGreyColor[700],
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                        side: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.3)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -997,8 +998,8 @@ class ResellerProfileScreen extends StatelessWidget {
                       child: const Text(
                         'Cancel',
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                          fontSize: AppFontSizes.bodyMedium,
+                          fontWeight: AppFontWeights.semiBold,
                         ),
                       ),
                     ),
@@ -1029,43 +1030,43 @@ minLines: 1,
         labelText: label,
 
         labelStyle: TextStyle(
-          fontSize: 12,
-          color: enabled ? Colors.grey[700] : Colors.grey[500],
+          fontSize: AppFontSizes.small,
+          color: enabled ? ColorRes.leadGreyColor[700] : ColorRes.leadGreyColor[500],
 
         ),
-        prefixIcon: Icon(icon, size: 20, color: Colors.grey[600]),
+        prefixIcon: Icon(icon, size: 20, color: ColorRes.leadGreyColor[600]),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+          borderSide: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.3)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+          borderSide: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.3)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blue, width: 1.5),
+          borderSide: const BorderSide(color: ColorRes.blueColor, width: 1.5),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
+          borderSide: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.2)),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red, width: 1),
+          borderSide: const BorderSide(color: ColorRes.error, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          borderSide: const BorderSide(color: ColorRes.error, width: 1.5),
         ),
         filled: true,
-        fillColor: enabled ? Colors.grey[50] : Colors.grey[100],
+        fillColor: enabled ? ColorRes.leadGreyColor[50] : ColorRes.leadGreyColor[100],
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       keyboardType: keyboardType,
       validator: validator,
       maxLines: maxLines,
-      style: const TextStyle(fontSize: 12, color: Color(0xFF1A1A1A)),
+      style: TextStyle(fontSize:AppFontSizes.small, color: ColorRes.homeBlackFade),
     );
   }
 
@@ -1075,7 +1076,7 @@ minLines: 1,
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.grey.withOpacity(0.3),
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -1098,27 +1099,27 @@ minLines: 1,
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isLogout ? Colors.red.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+              color: isLogout ? ColorRes.error.withOpacity(0.1) : ColorRes.leadGreyColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
               icon,
-              color: isLogout ? Colors.red : Colors.grey[700],
+              color: isLogout ? ColorRes.error : ColorRes.leadGreyColor[700],
               size: 20,
             ),
           ),
           title: Text(
             title,
             style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: isLogout ? Colors.red : const Color(0xFF1A1A1A),
+              fontSize: AppFontSizes.bodyMedium,
+              fontWeight: AppFontWeights.medium,
+              color: isLogout ? ColorRes.error :  ColorRes.homeBlackFade,
             ),
           ),
           trailing: Icon(
             Icons.chevron_right,
             size: 20,
-            color: Colors.grey[400],
+            color: ColorRes.leadGreyColor[400],
           ),
           onTap: onTap,
         ),
@@ -1126,7 +1127,7 @@ minLines: 1,
           Divider(
             height: 1,
             thickness: 1,
-            color: Colors.grey.withOpacity(0.2),
+            color: ColorRes.leadGreyColor.withOpacity(0.2),
             indent: 16,
             endIndent: 16,
           ),
@@ -1146,15 +1147,15 @@ minLines: 1,
           title: const Text(
             'Logout',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: AppFontSizes.subtitle,
               fontWeight: FontWeight.bold,
             ),
           ),
           content: const Text(
             'Are you sure you want to logout?',
             style: TextStyle(
-              fontSize: 15,
-              color: Colors.black87,
+              fontSize: AppFontSizes.bodyMedium,
+              color: ColorRes.blackShade87,
             ),
           ),
           actions: [
@@ -1164,9 +1165,9 @@ minLines: 1,
               child: Text(
                 'Cancel',
                 style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[600],
+                  fontSize: AppFontSizes.bodyMedium,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.leadGreyColor[600],
                 ),
               ),
             ),
@@ -1178,19 +1179,19 @@ minLines: 1,
                 Get.snackbar(
                   'Success',
                   'Logged out successfully',
-                  backgroundColor: Colors.green,
+                  backgroundColor: ColorRes.success,
                   colorText: ColorRes.white,
                   snackPosition: SnackPosition.BOTTOM,
                   margin: const EdgeInsets.all(16),
                   borderRadius: 12,
                 );
               },
-              child: const Text(
+              child:  Text(
                 'Logout',
                 style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
+                  fontSize: AppFontSizes.bodyMedium,
+                  fontWeight: AppFontWeights.extraBold,
+                  color: ColorRes.error,
                 ),
               ),
             ),

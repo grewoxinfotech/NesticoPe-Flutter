@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 
 class NesticoPeExpandableTile extends StatefulWidget {
@@ -189,7 +190,7 @@ class _ExpandableTileState extends State<NesticoPeExpandableTile>
         duration: widget.animationDuration ?? const Duration(milliseconds: 300),
         child: Icon(
           widget.trailingIcon,
-          color: widget.trailingIconColor ?? Colors.grey[700],
+          color: widget.trailingIconColor ?? ColorRes.leadGreyColor[700],
         ),
       );
     }
@@ -205,8 +206,8 @@ class _ExpandableTileState extends State<NesticoPeExpandableTile>
       style:
           widget.titleStyle ??
           TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontSize: AppFontSizes.medium,
+            fontWeight: AppFontWeights.semiBold,
             color: widget.titleColor,
           ),
     );
@@ -221,8 +222,8 @@ class _ExpandableTileState extends State<NesticoPeExpandableTile>
         style:
             widget.subtitleStyle ??
             TextStyle(
-              fontSize: 12,
-              color: widget.subtitleColor ?? Colors.grey[600],
+              fontSize: AppFontSizes.small,
+              color: widget.subtitleColor ?? ColorRes.leadGreyColor[600],
             ),
       );
     }

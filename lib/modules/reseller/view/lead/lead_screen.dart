@@ -104,7 +104,7 @@ class ResellerLeadScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: TextField(
         onChanged: controller.updateSearch,
@@ -146,7 +146,7 @@ class ResellerLeadScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: AppFontSizes.small,
                     fontWeight: AppFontWeights.semiBold,
-                    color: Colors.grey[700],
+                    color: ColorRes.leadGreyColor[700],
                   ),
                 ),
                 const Spacer(),
@@ -187,7 +187,7 @@ class ResellerLeadScreen extends StatelessWidget {
                       final chipColor =
                           filterType == 'Stage'
                               ? ColorRes.primary
-                              : Colors.green;
+                              : ColorRes.green;
 
                       return Container(
                         decoration: BoxDecoration(
@@ -269,13 +269,13 @@ class ResellerLeadScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.real_estate_agent, size: 64, color: Colors.grey[400]),
+          Icon(Icons.real_estate_agent, size: 64, color: ColorRes.leadGreyColor[400]),
           const SizedBox(height: 16),
           Text(
             'No buyer leads found',
             style: TextStyle(
               fontSize: AppFontSizes.large,
-              color: Colors.grey[600],
+              color: ColorRes.leadGreyColor[600],
               fontWeight: AppFontWeights.medium,
             ),
           ),
@@ -286,7 +286,7 @@ class ResellerLeadScreen extends StatelessWidget {
               'Add your first property buyer to get started',
               style: TextStyle(
                 fontSize: AppFontSizes.medium,
-                color: Colors.grey[500],
+                color: ColorRes.leadGreyColor[500],
               ),
               textAlign: TextAlign.center,
             ),
@@ -309,7 +309,7 @@ class ResellerLeadScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,7 +361,7 @@ class ResellerLeadScreen extends StatelessWidget {
                               isCompact
                                   ? AppFontSizes.extraSmall
                                   : AppFontSizes.small,
-                          color: Colors.grey[700],
+                          color: ColorRes.leadGreyColor[700],
                           fontWeight: AppFontWeights.regular,
                         ),
                         maxLines: 1,
@@ -377,7 +377,7 @@ class ResellerLeadScreen extends StatelessWidget {
                               lead.email,
                               style: TextStyle(
                                 fontSize: AppFontSizes.extraSmall,
-                                color: Colors.grey[600],
+                                color: ColorRes.leadGreyColor[600],
                                 fontWeight: AppFontWeights.regular,
                               ),
                               maxLines: 1,
@@ -397,7 +397,7 @@ class ResellerLeadScreen extends StatelessWidget {
                     'Budget',
                     style: TextStyle(
                       fontSize: AppFontSizes.extraSmall,
-                      color: Colors.grey[800],
+                      color: ColorRes.leadGreyColor[800],
                       fontWeight: AppFontWeights.regular,
                     ),
                   ),
@@ -408,7 +408,7 @@ class ResellerLeadScreen extends StatelessWidget {
                       fontSize:
                           isCompact ? AppFontSizes.medium : AppFontSizes.body,
                       fontWeight: AppFontWeights.semiBold,
-                      color: Colors.green,
+                      color: ColorRes.success,
                     ),
                   ),
                   SizedBox(height: 4),
@@ -416,7 +416,7 @@ class ResellerLeadScreen extends StatelessWidget {
                     _formatTime(lead.createdAt),
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
-                      color: Colors.grey[600],
+                      color: ColorRes.leadGreyColor[600],
                       fontWeight: AppFontWeights.regular,
                     ),
                   ),
@@ -425,7 +425,7 @@ class ResellerLeadScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: isCompact ? 8 : 12),
-          Divider(color: Colors.grey, thickness: 0.5),
+          Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
           SizedBox(height: isCompact ? 8 : 12),
 
           Row(
@@ -490,7 +490,7 @@ class ResellerLeadScreen extends StatelessWidget {
                 children: [
                   buildActionButton(
                     icon: Icons.visibility,
-                    color: Colors.blue,
+                    color: ColorRes.blueColor,
                     onPressed: () {
                       Get.to(
                         () => LeadDetailScreen(
@@ -505,7 +505,7 @@ class ResellerLeadScreen extends StatelessWidget {
                   SizedBox(width: 8),
                   buildActionButton(
                     icon: Icons.edit,
-                    color: Colors.orange,
+                    color: ColorRes.orangeColor,
                     onPressed:
                         () => showLeadForm(context, controller, lead: lead),
                     tooltip: 'Edit Lead',
@@ -514,7 +514,7 @@ class ResellerLeadScreen extends StatelessWidget {
                   SizedBox(width: 8),
                   buildActionButton(
                     icon: Icons.delete,
-                    color: Colors.red,
+                    color: ColorRes.error,
                     onPressed:
                         () => showDeleteConfirmation(context, lead, controller),
                     tooltip: 'Delete Lead',
@@ -559,7 +559,7 @@ void showFilterBottomSheet(
                     height: 4,
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                             color: ColorRes.leadGreyColor[300],
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -573,8 +573,8 @@ void showFilterBottomSheet(
                         Text(
                           'Filter Leads',
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: AppFontWeights.semiBold,
+                        fontSize: AppFontSizes.body,
+                        fontWeight: AppFontWeights.semiBold,
                           ),
                         ),
                         Row(
@@ -587,13 +587,12 @@ void showFilterBottomSheet(
                                 setState(() {});
                               },
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.red[400],
+                         foregroundColor: ColorRes.error[400],
                               ),
                               child: Text(
                                 'Clear All',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
+                                fontWeight: AppFontWeights.medium,fontSize: AppFontSizes.small
                                 ),
                               ),
                             ),
@@ -603,7 +602,7 @@ void showFilterBottomSheet(
                     ),
                   ),
 
-                  Divider(height: 1, color: Colors.grey[300]),
+                  Divider(height: 1, color: ColorRes.leadGreyColor[300]),
 
                   // Filter content
                   Expanded(
@@ -722,8 +721,8 @@ Widget _buildFilterSection({
           Text(
             title,
             style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+              fontSize: AppFontSizes.bodySmall,
+              fontWeight: AppFontWeights.semiBold,
               color: ColorRes.textColor,
             ),
           ),
@@ -756,16 +755,16 @@ Widget _buildFilterSection({
                   },
                   selectedColor: ColorRes.primary.withOpacity(0.15),
                   checkmarkColor: ColorRes.primary,
-                  backgroundColor: Colors.grey[100],
+                  backgroundColor: ColorRes.leadGreyColor[100],
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: isSelected ? ColorRes.primary : Colors.grey[300]!,
-                      width: isSelected ? 1.5 : 1,
-                    ),
-                  ),
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor[300]!,
+                  width: isSelected ? 1.5 : 1,
+                ),
+              ),
                   labelStyle: TextStyle(
-                    color: isSelected ? ColorRes.primary : Colors.black87,
+                   color: isSelected ? ColorRes.primary : ColorRes.blackShade87,
                     fontWeight:
                         isSelected
                             ? AppFontWeights.semiBold
@@ -831,7 +830,7 @@ Widget _buildFilterSection({
 //                   height: 4,
 //                   margin: const EdgeInsets.symmetric(vertical: 8),
 //                   decoration: BoxDecoration(
-//                     color: Colors.grey[300],
+//                     color: ColorRes.leadGreyColor[300],
 //                     borderRadius: BorderRadius.circular(2),
 //                   ),
 //                 ),
@@ -960,10 +959,10 @@ Widget _buildFilterSection({
 //                                     ),
 //                                     disabledBorder: commonBorder,
 //                                     errorBorder: commonBorder.copyWith(
-//                                       borderSide: const BorderSide(color: Colors.red, width: 1),
+//                                       borderSide: const BorderSide(color: ColorRes.error, width: 1),
 //                                     ),
 //                                     focusedErrorBorder: commonBorder.copyWith(
-//                                       borderSide: const BorderSide(color: Colors.red, width: 1.5),
+//                                       borderSide: const BorderSide(color: ColorRes.error, width: 1.5),
 //                                     ),
 //                                   ),
 //                                   items: propertyTitles.map(
@@ -978,7 +977,7 @@ Widget _buildFilterSection({
 //                                             overflow: TextOverflow.ellipsis,
 //                                             style: const TextStyle(
 //                                               fontSize: 12,
-//                                               fontWeight: FontWeight.w500,
+//                                               fontWeight: AppFontWeights.medium,
 //                                             ),
 //                                           ),
 //                                         ),
@@ -1011,7 +1010,7 @@ Widget _buildFilterSection({
 //
 //                                         style: TextStyle(
 //                                           fontSize: AppFontSizes.small,
-//                                           color: Colors.black87,
+//                                           color: ColorRes.blackShade87,
 //                                         ),
 //                                         decoration: InputDecoration(
 //                                           labelText: 'Status',
@@ -1074,7 +1073,7 @@ Widget _buildFilterSection({
 //                                         value: stage,
 //                                         style: TextStyle(
 //                                           fontSize: AppFontSizes.small,
-//                                           color: Colors.black87,
+//                                           color: ColorRes.blackShade87,
 //                                         ),
 //                                         decoration: InputDecoration(
 //                                           labelText: 'Stages',
@@ -1164,7 +1163,7 @@ Widget _buildFilterSection({
 //                                     Get.snackbar(
 //                                       'Success',
 //                                       'Buyer lead added successfully',
-//                                       backgroundColor: Colors.green,
+//                                       backgroundColor: ColorRes.success,
 //                                       colorText: ColorRes.white,
 //                                     );
 //                                   } else {
@@ -1175,7 +1174,7 @@ Widget _buildFilterSection({
 //                                       Get.snackbar(
 //                                         'Success',
 //                                         'Buyer lead updated successfully',
-//                                         backgroundColor: Colors.green,
+//                                         backgroundColor: ColorRes.success,
 //                                         colorText: ColorRes.white,
 //                                       );
 //                                     }
@@ -1184,7 +1183,7 @@ Widget _buildFilterSection({
 //                                 }
 //                               },
 //                               style: ElevatedButton.styleFrom(
-//                                 backgroundColor: Colors.blue,
+//                                 backgroundColor: ColorRes.blueColor,
 //                                 foregroundColor: ColorRes.white,
 //                                 padding: const EdgeInsets.symmetric(vertical: 16),
 //                                 shape: RoundedRectangleBorder(
@@ -1840,7 +1839,7 @@ void showDeleteConfirmation(
           'Are you sure you want to delete ${lead.name}?',
           style: TextStyle(
             fontSize: AppFontSizes.medium,
-            color: Colors.grey[700],
+            color: ColorRes.leadGreyColor[700],
           ),
         ),
         actions: [
@@ -1852,7 +1851,7 @@ void showDeleteConfirmation(
               style: TextStyle(
                 fontSize: AppFontSizes.medium,
                 fontWeight: AppFontWeights.medium,
-                color: Colors.grey[600],
+                color: ColorRes.leadGreyColor[600],
               ),
             ),
           ),
@@ -1866,7 +1865,7 @@ void showDeleteConfirmation(
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Buyer lead deleted successfully'),
-                  backgroundColor: Colors.red,
+                  backgroundColor: ColorRes.error,
                 ),
               );
             },
@@ -1875,7 +1874,7 @@ void showDeleteConfirmation(
               style: TextStyle(
                 fontSize: AppFontSizes.medium,
                 fontWeight: AppFontWeights.bold,
-                color: Colors.red,
+                color: ColorRes.error,
               ),
             ),
           ),
@@ -1909,20 +1908,20 @@ double getResponsiveFontSize(
 Color _getStatusColor(LeadStatus status) {
   switch (status) {
     case LeadStatus.new_: // 'New'
-      return Colors.blue;
+      return ColorRes.blueColor;
     case LeadStatus.contacted:
-      return Colors.orange;
+      return ColorRes.orangeColor;
     case LeadStatus.qualified:
-      return Colors.purple;
+      return ColorRes.purpleColor;
     case LeadStatus.negotiation:
-      return Colors.indigo;
+      return ColorRes.leadIndigoColor;
     case LeadStatus.lost:
-      return Colors.red;
+      return ColorRes.error;
     case LeadStatus.convert:
-      return Colors.teal;
+      return ColorRes.leadTealColor;
     case LeadStatus.all:
     default:
-      return Colors.grey;
+      return ColorRes.leadGreyColor;
   }
 }
 
@@ -1949,18 +1948,18 @@ String _getStatusText(LeadStatus status) {
 Color _getStageColor(LeadStage stage) {
   switch (stage) {
     case LeadStage.newLead: // 'New Lead'
-      return Colors.blue;
+      return ColorRes.blueColor;
     case LeadStage.contacted:
-      return Colors.orange;
+      return ColorRes.orangeColor;
     case LeadStage.interested:
-      return Colors.purple;
+      return ColorRes.purpleColor;
     case LeadStage.siteVisit:
-      return Colors.indigo;
+      return ColorRes.leadIndigoColor;
     case LeadStage.sell:
-      return Colors.green;
+      return ColorRes.success;
     case LeadStage.all:
     default:
-      return Colors.grey;
+      return ColorRes.leadGreyColor;
   }
 }
 

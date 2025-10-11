@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
+
 /// Reusable Searchable Dropdown Widget
 class SearchableDropdownWidget extends StatelessWidget {
   final String label;
@@ -32,8 +34,8 @@ class SearchableDropdownWidget extends StatelessWidget {
         // Label
         buildCommonText(
           label,
-          14,
-          FontWeight.w600,
+          AppFontSizes.medium,
+          AppFontWeights.semiBold,
           ColorRes.textColor.withOpacity(0.7),
           1,
         ),
@@ -71,8 +73,8 @@ class SearchableDropdownWidget extends StatelessWidget {
                   Expanded(
                     child: buildCommonText(
                       selectedValue.value.isEmpty ? hint : selectedValue.value,
-                      15,
-                      FontWeight.w500,
+                      AppFontSizes.bodyMedium,
+                      AppFontWeights.medium,
                       selectedValue.value.isEmpty
                           ? ColorRes.leadGreyColor.shade400
                           : ColorRes.textColor,
@@ -106,7 +108,7 @@ class SearchableDropdownWidget extends StatelessWidget {
         //         buildCommonText(
         //           'Selected: ${selectedValue.value}',
         //           12,
-        //           FontWeight.w500,
+        //           AppFontWeights.medium,
         //           ColorRes.primary,
         //           1,
         //         ),
@@ -155,8 +157,8 @@ class SearchableDropdownWidget extends StatelessWidget {
                   Expanded(
                     child: buildCommonText(
                       'Select $label',
-                      18,
-                      FontWeight.w600,
+                      AppFontSizes.large,
+                      AppFontWeights.semiBold,
                       ColorRes.textColor,
                       1,
                     ),
@@ -195,7 +197,7 @@ class SearchableDropdownWidget extends StatelessWidget {
                   hintText: 'Search ${label.toLowerCase()}...',
                   hintStyle: TextStyle(
                     color: ColorRes.leadGreyColor.shade400,
-                    fontSize: 14,
+                    fontSize:AppFontSizes.medium,
                   ),
                   prefixIcon: Icon(
                     Icons.search,
@@ -251,8 +253,8 @@ class SearchableDropdownWidget extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           child: buildCommonText(
                             '${filteredItems.length} ${filteredItems.length == 1 ? 'result' : 'results'} found',
-                            12,
-                            FontWeight.w500,
+                            AppFontSizes.small,
+                            AppFontWeights.medium,
                             ColorRes.leadGreyColor.shade600,
                             1,
                           ),
@@ -310,10 +312,10 @@ class SearchableDropdownWidget extends StatelessWidget {
                                     Expanded(
                                       child: buildCommonText(
                                         item,
-                                        15,
+                                        AppFontSizes.bodyMedium,
                                         isSelected
-                                            ? FontWeight.w600
-                                            : FontWeight.w400,
+                                            ? AppFontWeights.semiBold
+                                            : AppFontWeights.regular,
                                         isSelected
                                             ? ColorRes.primary
                                             : ColorRes.textColor,
@@ -344,16 +346,16 @@ class SearchableDropdownWidget extends StatelessWidget {
           const SizedBox(height: 16),
           buildCommonText(
             'No results found',
-            16,
-            FontWeight.w600,
+            AppFontSizes.body,
+            AppFontWeights.semiBold,
             ColorRes.leadGreyColor.shade400,
             1,
           ),
           const SizedBox(height: 8),
           buildCommonText(
             'Try a different search term',
-            14,
-            FontWeight.w400,
+            AppFontSizes.medium,
+            AppFontWeights.regular,
             ColorRes.leadGreyColor.shade400,
             1,
           ),

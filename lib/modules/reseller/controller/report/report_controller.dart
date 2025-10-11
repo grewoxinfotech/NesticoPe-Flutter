@@ -27,6 +27,7 @@ class ReportPropertyController extends GetxController {
   }
 
   void setAdditionalDetails(String details) {
+
     additionalDetails.value = details;
   }
 

@@ -57,7 +57,7 @@
 //                       "Today",
 //                       style: TextStyle(
 //                         fontSize: 13,
-//                         fontWeight: FontWeight.w500,
+//                         fontWeight: AppFontWeights.medium,
 //                         color: Colors.black87,
 //                       ),
 //                     ),
@@ -78,7 +78,7 @@
 //                       DateFormat("d MMM").format(DateTime.now()), // example: 23 Sep
 //                       style: const TextStyle(
 //                         fontSize: 13,
-//                         fontWeight: FontWeight.w500,
+//                         fontWeight: AppFontWeights.medium,
 //                         color: Colors.black87,
 //                       ),
 //                     ),
@@ -116,7 +116,7 @@
 //                         label,
 //                         style: TextStyle(
 //                           fontSize: 13,
-//                           fontWeight: FontWeight.w500,
+//                           fontWeight: AppFontWeights.medium,
 //                           color: selected != null ? ColorRes.primary : Colors.black87,
 //                         ),
 //                       ),
@@ -145,7 +145,7 @@
 //                         '${selectedTime?.format(Get.context!)}',
 //                         style: TextStyle(
 //                           fontSize: 13,
-//                           fontWeight: FontWeight.w500,
+//                           fontWeight: AppFontWeights.medium,
 //                           color: selectedTime != null ? ColorRes.primary : Colors.black87,
 //                         ),
 //                       ),
@@ -175,7 +175,7 @@
 //                   "Select",
 //                   style: TextStyle(
 //                     fontSize: 13,
-//                     fontWeight: FontWeight.w500,
+//                     fontWeight: AppFontWeights.medium,
 //                     color: ColorRes.primary,
 //                   ),
 //                 ),
@@ -211,7 +211,7 @@
 //                   "Set Reminder",
 //                   style: TextStyle(
 //                       fontSize: 16,
-//                       fontWeight: FontWeight.w600,
+//                       fontWeight: AppFontWeights.semiBold,
 //                       color: ColorRes.white),
 //                 ),
 //               ),
@@ -255,7 +255,7 @@
 //                     const Text(
 //                       "Pick Date & Time",
 //                       style:
-//                       TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+//                       TextStyle(fontSize: 18, fontWeight: AppFontWeights.semiBold),
 //                     ),
 //                     const SizedBox(height: 12),
 //
@@ -353,6 +353,7 @@ import 'package:housing_flutter_app/modules/add_property/controller/create_prope
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../../app/constants/app_font_sizes.dart';
 import '../../create_property.dart';
 
 class VerifySection extends StatelessWidget {
@@ -420,11 +421,13 @@ class VerifySection extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 'Verification Steps',
                 style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                  fontSize: AppFontSizes.bodyMedium,
+                  // fontSize: 15,
+                  fontWeight: AppFontWeights.bold,
+                  // fontWeight: AppFontWeights.bold,
                   color: ColorRes.blackShade87,
                 ),
               ),
@@ -490,11 +493,13 @@ class VerifySection extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 'Plan Your Visit',
                 style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                  fontSize: AppFontSizes.bodyMedium,
+                  // fontSize: 15,
+                  fontWeight: AppFontWeights.bold,
+                  // fontWeight: AppFontWeights.bold,
                   color: ColorRes.blackShade87,
                 ),
               ),
@@ -504,7 +509,8 @@ class VerifySection extends StatelessWidget {
           Text(
             "Schedule a convenient time for property verification",
             style: TextStyle(
-              fontSize: 12,
+              fontSize: AppFontSizes.small,
+              // fontSize: 12,
               color: ColorRes.leadGreyColor.shade600,
               height: 1.4,
             ),
@@ -579,15 +585,17 @@ class VerifySection extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontSize: AppFontSizes.small,
+              // fontSize: 12,
+              fontWeight: AppFontWeights.semiBold,
               color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade700,
             ),
           ),
           Text(
             date,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: AppFontSizes.extraSmall,
+              // fontSize: 10,
               color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade500,
             ),
           ),
@@ -631,8 +639,8 @@ class VerifySection extends StatelessWidget {
             Text(
               hasSelection ? "Custom" : "Select Date",
               style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
                 color: hasSelection ? ColorRes.primary : ColorRes.leadGreyColor.shade700,
               ),
             ),
@@ -641,17 +649,17 @@ class VerifySection extends StatelessWidget {
                 selectedDate != null
                     ? DateFormat("d MMM").format(selectedDate)
                     : "Date",
-                style: TextStyle(fontSize: 10, color: ColorRes.primary),
+                style: TextStyle(fontSize: AppFontSizes.extraSmall, color: ColorRes.primary),
               ),
               if (selectedTime != null)
                 Text(
                   selectedTime.format(context),
-                  style: TextStyle(fontSize: 10, color: ColorRes.primary),
+                  style: TextStyle(fontSize: AppFontSizes.extraSmall, color: ColorRes.primary),
                 ),
             ] else
               Text(
                 "Tap to choose",
-                style: TextStyle(fontSize: 10, color: ColorRes.leadGreyColor.shade500),
+                style: TextStyle(fontSize: AppFontSizes.extraSmall, color: ColorRes.leadGreyColor.shade500),
               ),
           ],
         ),
@@ -707,9 +715,9 @@ class VerifySection extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 isEnabled ? "Set Reminder" : "Select Date First",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                style: TextStyle(
+                  fontSize: AppFontSizes.body,
+                  fontWeight: AppFontWeights.semiBold,
                   color: ColorRes.primary,
                 ),
               ),
@@ -734,8 +742,8 @@ class VerifySection extends StatelessWidget {
                   "Or",
                   style: TextStyle(
                     color: ColorRes.leadGreyColor.shade600,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
               ),
@@ -775,9 +783,9 @@ class VerifySection extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+            style: TextStyle(
+              fontSize:AppFontSizes.small,
+              fontWeight: AppFontWeights.semiBold,
               color: ColorRes.blackShade87,
             ),
           ),
@@ -785,7 +793,7 @@ class VerifySection extends StatelessWidget {
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 10, color: ColorRes.leadGreyColor.shade600),
+            style: TextStyle(fontSize:AppFontSizes.extraSmall, color: ColorRes.leadGreyColor.shade600),
           ),
         ],
       ),
@@ -864,11 +872,13 @@ class VerifySection extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
+                        Text(
                           "Pick Date & Time",
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                            fontSize: AppFontSizes.body,
+                            // fontSize: 16,
+                            fontWeight: AppFontWeights.bold,
+                            // fontWeight: AppFontWeights.bold,
                             color: ColorRes.blackShade87,
                           ),
                         ),
@@ -885,9 +895,9 @@ class VerifySection extends StatelessWidget {
                       child: Theme(
                         data: Theme.of(ctx).copyWith(
                           datePickerTheme: DatePickerThemeData(
-                            dayStyle: const TextStyle(
+                            dayStyle: TextStyle(
                               fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: AppFontWeights.semiBold,
                             ),
                             todayForegroundColor: WidgetStateProperty.all(
                               ColorRes.primary,
@@ -970,19 +980,23 @@ class VerifySection extends StatelessWidget {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   "Selected Time",
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    // fontSize: 12,
+                                    fontSize: AppFontSizes.small,
                                     color:ColorRes.leadGreyColor,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: AppFontWeights.medium,
+                                    // fontWeight: AppFontWeights.medium,
                                   ),
                                 ),
                                 Text(
                                   tempTime.format(ctx),
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.body,
+                                    // fontSize: 16,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    // fontWeight: AppFontWeights.semiBold,
                                     color: ColorRes.blackShade87,
                                   ),
                                 ),
@@ -1022,8 +1036,11 @@ class VerifySection extends StatelessWidget {
                           child: Text(
                             "Confirm Selection",
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              // fontSize: 16,
+                              // fontWeight: AppFontWeights.semiBold,
+                              fontSize: AppFontSizes.body,
+                              fontWeight: AppFontWeights.semiBold,
+                              // color: ColorRes.white,
                             ),
                           ),
                         ),
@@ -1068,8 +1085,10 @@ class ShareReminderButton extends StatelessWidget {
           "Share link with others",
           style: TextStyle(
             color: ColorRes.blueColor.shade700,
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
+            // fontSize: 11,
+            // fontWeight: AppFontWeights.medium,
+            fontSize: AppFontSizes.caption,
+            fontWeight: AppFontWeights.medium,
           ),
         ),
       ),

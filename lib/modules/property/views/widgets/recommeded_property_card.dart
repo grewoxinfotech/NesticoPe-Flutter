@@ -102,7 +102,7 @@
 //                   //       style: TextStyle(
 //                   //         color: ColorRes.primary,
 //                   //         fontSize: 12,
-//                   //         fontWeight: FontWeight.w600,
+//                   //         fontWeight: AppFontWeights.semiBold,
 //                   //       ),
 //                   //     ),
 //                   //   ),
@@ -177,7 +177,7 @@
 //                           style: TextStyle(
 //                             color: ColorRes.white,
 //                             fontSize: 10,
-//                             fontWeight: FontWeight.w500,
+//                             fontWeight: AppFontWeights.medium,
 //                           ),
 //                         ),
 //                       ),
@@ -201,7 +201,7 @@
 //                           child: Text(
 //                             widget.property.title ?? '-',
 //                             style: const TextStyle(
-//                               fontWeight: FontWeight.w600,
+//                               fontWeight: AppFontWeights.semiBold,
 //                               fontSize: 14,
 //                               color: Colors.black87,
 //                             ),
@@ -261,7 +261,7 @@
 //                         style: TextStyle(
 //                           fontSize: 12,
 //                           color: Colors.grey.shade800,
-//                           fontWeight: FontWeight.w500,
+//                           fontWeight: AppFontWeights.medium,
 //                         ),
 //                         overflow: TextOverflow.ellipsis,
 //                       ),
@@ -309,7 +309,7 @@
 //       style: TextStyle(
 //         fontSize: 12,
 //         color: Colors.grey.shade800,
-//         fontWeight: FontWeight.w500,
+//         fontWeight: AppFontWeights.medium,
 //       ),
 //     );
 //   }

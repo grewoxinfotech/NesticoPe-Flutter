@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -23,7 +24,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: backgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: ColorRes.black.withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -46,10 +47,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Center(
                   child: Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.large,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.black,
                     ),
                   ),
                 ),

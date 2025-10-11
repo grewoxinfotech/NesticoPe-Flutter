@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/size_manager.dart';
 
 class NesticoPeTextField extends StatelessWidget {
@@ -55,10 +56,10 @@ class NesticoPeTextField extends StatelessWidget {
           children: [
             Text(
               title!,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
                 color: ColorRes.black,
-                fontWeight: FontWeight.w600,
+                fontWeight: AppFontWeights.semiBold,
               ),
             ),
             if (isRequired)
@@ -66,8 +67,8 @@ class NesticoPeTextField extends StatelessWidget {
                 ' *',
                 style: TextStyle(
                   color: Get.theme.colorScheme.error,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontSize: AppFontSizes.medium,
+                  fontWeight: AppFontWeights.bold,
                 ),
               ),
           ],
@@ -88,9 +89,9 @@ class NesticoPeTextField extends StatelessWidget {
           autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
           onTap: onTap,
           style: TextStyle(
-            fontSize: 15,
+            fontSize: AppFontSizes.bodyMedium,
             color: Get.theme.colorScheme.onSurface,
-            fontWeight: FontWeight.w500,
+            fontWeight: AppFontWeights.medium,
           ),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(AppPadding.small),
@@ -102,8 +103,8 @@ class NesticoPeTextField extends StatelessWidget {
             hintText: hintText,
             hintStyle: TextStyle(
               color: Get.theme.colorScheme.onSurface.withAlpha(128),
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
+              fontSize: AppFontSizes.bodyMedium,
+              fontWeight:AppFontWeights.regular,
             ),
             prefixIcon:
                 prefixIcon != null
@@ -125,8 +126,8 @@ class NesticoPeTextField extends StatelessWidget {
             disabledBorder: tile(Get.theme.dividerColor),
             errorStyle: TextStyle(
               color: Get.theme.colorScheme.error,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontSize: AppFontSizes.small,
+              fontWeight: AppFontWeights.semiBold,
             ),
           ),
         ),

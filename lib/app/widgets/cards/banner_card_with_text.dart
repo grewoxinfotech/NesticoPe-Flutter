@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 
+import '../../constants/app_font_sizes.dart';
+
 class NesticoPeBannerCardWithText extends StatelessWidget {
   final String imageUrl;
   final String price;
@@ -100,10 +102,10 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                       developersName
                           .substring(0, 1)
                           .toUpperCase(), // First letter
-                      style: const TextStyle(
+                      style:  TextStyle(
                         color: ColorRes.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
+                        fontWeight: AppFontWeights.medium,
+                        fontSize: AppFontSizes.small,
                       ),
                     ),
                   ),
@@ -112,8 +114,8 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                     developersName,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: ColorRes.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
+                      fontWeight: AppFontWeights.medium,
+                      fontSize: AppFontSizes.small,
                     ),
                   ),
                 ],
@@ -165,7 +167,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                       price,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: ColorRes.white,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: AppFontWeights.semiBold,
                       ),
                     ),
 
@@ -186,8 +188,8 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                       propertySize,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: ColorRes.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
+                        fontWeight: AppFontWeights.medium,
+                        fontSize: AppFontSizes.small,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -254,7 +256,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
 //               style: const TextStyle(
 //                 color: ColorRes.white,
 //                 fontSize: 14,
-//                 fontWeight: FontWeight.w500,
+//                 fontWeight: AppFontWeights.medium,
 //               ),
 //               maxLines: 1,
 //               overflow: TextOverflow.ellipsis,
@@ -768,8 +770,8 @@ class NesticoPeCardWithText extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: AppFontSizes.body,
+                    fontWeight: AppFontWeights.extraBold,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -785,8 +787,8 @@ class NesticoPeCardWithText extends StatelessWidget {
                     title,
                     style: TextStyle(
                       color: textColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontSize: AppFontSizes.body,
+                      fontWeight: AppFontWeights.extraBold,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

@@ -14,7 +14,7 @@
 //             isScrollable: true,
 //             indicatorColor: Colors.blue,
 //             labelColor: Colors.blue,
-//             unselectedLabelColor: Colors.grey,
+//             unselectedLabelColor: ColorRes.leadGreyColor,
 //             tabs: [
 //               Tab(text: "Saved Properties"),
 //               Tab(text: "Seen Properties"),
@@ -104,7 +104,7 @@
 //                       decoration: BoxDecoration(
 //                         border: Border.all(
 //                           color:
-//                               isSelected ? ColorRes.primary : Colors.grey[400]!,
+//                               isSelected ? ColorRes.primary : ColorRes.leadGreyColor[400]!,
 //                           width: 1,
 //                         ),
 //                         // color: ColorRes.white,
@@ -205,6 +205,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/manager/favorite.dart';
 import 'package:housing_flutter_app/modules/property/views/widgets/property_list_screen_card.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/img_res.dart';
 import '../../../app/constants/size_manager.dart';
 import '../../../data/network/property/models/property_model.dart';
@@ -237,7 +238,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.grey[100],
+      // backgroundColor: ColorRes.leadGreyColor[100],
       backgroundColor: ColorRes.white,
       body: Column(
         children: [
@@ -282,7 +283,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                                   : ColorRes.white,
                           border: Border.all(
                             color:
-                                isSelected ? ColorRes.primary : Colors.grey[300]!,
+                                isSelected ? ColorRes.primary : ColorRes.leadGreyColor[300]!,
                             width: 1.5,
                           ),
                         ),
@@ -293,22 +294,22 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                               tabsIcon[index],
                               size: 20,
                               color:
-                                  isSelected ? ColorRes.primary : Colors.black54,
+                                  isSelected ? ColorRes.primary : ColorRes.blackShade54,
                             ),
                             // SizedBox(height: AppSpacing.small),
                             Text(
                               "${tabs[index]}",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: AppFontSizes.small,
                                 // fontWeight:
                                 //     isSelected
-                                //         ? FontWeight.w600
+                                //         ? AppFontWeights.semiBold
                                 //         : FontWeight.normal,
                                 color:
                                     isSelected
                                         ? ColorRes.primary
-                                        : Colors.black87,
+                                        : ColorRes.blackShade87,
                               ),
                             ),
                             SizedBox(height: 4),
@@ -316,11 +317,11 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                               "(${tabsCount[index]})",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: AppFontSizes.small,
                                 color:
                                     isSelected
                                         ? ColorRes.primary
-                                        : Colors.black87,
+                                        : ColorRes.blackShade87,
                               ),
                             ),
                           ],
@@ -358,7 +359,7 @@ class SeenPropertiesTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      child: PropertyDetail(isAppBarShow: false,backgroundColor: Colors.grey[100]!,),
+      child: PropertyDetail(isAppBarShow: false,backgroundColor: ColorRes.leadGreyColor[100]!,),
       // child: Container(),
 
       // child: RefreshIndicator(
@@ -821,7 +822,7 @@ List<Items> dummyItems = [
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       backgroundColor: Colors.grey[100],
+//       backgroundColor: ColorRes.leadGreyColor[100],
 //       body: Column(
 //         children: [
 //           /// Header
@@ -904,7 +905,7 @@ List<Items> dummyItems = [
 //                                     fontSize: 11,
 //                                     fontWeight:
 //                                         isSelected
-//                                             ? FontWeight.w600
+//                                             ? AppFontWeights.semiBold
 //                                             : FontWeight.normal,
 //                                     color:
 //                                         isSelected
@@ -1012,14 +1013,14 @@ List<Items> dummyItems = [
 //       child: Column(
 //         mainAxisSize: MainAxisSize.min,
 //         children: [
-//           Icon(icon, size: 60, color: Colors.grey[400]),
+//           Icon(icon, size: 60, color: ColorRes.leadGreyColor[400]),
 //           const SizedBox(height: 12),
 //           Text(
 //             message,
 //             style: const TextStyle(
 //               fontSize: 14,
 //               color: Colors.black54,
-//               fontWeight: FontWeight.w500,
+//               fontWeight: AppFontWeights.medium,
 //             ),
 //           ),
 //         ],

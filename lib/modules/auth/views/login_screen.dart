@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/forgot_password_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/select_account_type_screen.dart';
@@ -98,9 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         'NesticoPe',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: AppFontSizes.subtitle,
                           fontFamily: FontRes.nuNunitoSans,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: AppFontWeights.extraBold,
                           color: theme.colorScheme.primary,
                         ),
                       ),
@@ -113,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     'Login',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontFamily: FontRes.nuNunitoSans,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: AppFontWeights.extraBold,
                       color: ColorRes.textPrimary,
                     ),
                   ),
@@ -170,7 +171,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           'Forgot Password?',
                           style: TextStyle(
                             color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
+                            // fontWeight: FontWeight.bold,
+                            fontWeight: AppFontWeights.extraBold,
                             fontFamily: FontRes.nuNunitoSans,
                           ),
                         ),
@@ -216,7 +218,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               'Sign Up here',
                               style: TextStyle(
                                 color: Get.theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
+                                // fontWeight: FontWeight.bold,
+                                fontWeight: AppFontWeights.extraBold,
                                 fontFamily: FontRes.nuNunitoSans,
                               ),
                             ),

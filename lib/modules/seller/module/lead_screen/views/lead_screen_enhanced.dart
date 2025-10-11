@@ -107,11 +107,11 @@
 //         appBar: AppBar(
 //           title: const Text(
 //             "Leads",
-//             style: TextStyle(fontWeight: FontWeight.w600),
+//             style: TextStyle(fontWeight: AppFontWeights.semiBold),
 //           ),
 //           elevation: 0,
 //           backgroundColor: ColorRes.white,
-//           foregroundColor: Colors.black,
+//           foregroundColor: ColorRes.black,
 //           bottom: PreferredSize(
 //             preferredSize: const Size.fromHeight(48.0),
 //             child: Row(
@@ -129,8 +129,8 @@
 //                           e,
 //                           style: TextStyle(
 //                             fontSize: 12,
-//                             color: Colors.grey[800],
-//                             fontWeight: FontWeight.w600,
+//                             color: ColorRes.leadGreyColor[800],
+//                             fontWeight: AppFontWeights.semiBold,
 //                           ),
 //                         ),
 //                       ))
@@ -155,8 +155,8 @@
 //                         e,
 //                         style: TextStyle(
 //                           fontSize: 12,
-//                           color: Colors.grey[800],
-//                           fontWeight: FontWeight.w600,
+//                           color: ColorRes.leadGreyColor[800],
+//                           fontWeight: AppFontWeights.semiBold,
 //                         ),
 //                       ),
 //                     ))
@@ -178,7 +178,7 @@
 //             gradient: LinearGradient(
 //               begin: Alignment.topCenter,
 //               end: Alignment.bottomCenter,
-//               colors: [Colors.grey[50]!, ColorRes.white],
+//               colors: [ColorRes.leadGreyColor[50]!, ColorRes.white],
 //             ),
 //           ),
 //           child: ListView.builder(
@@ -234,7 +234,7 @@
 //     return Container(
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(16),
-//         border: Border.all(color: Colors.grey[300]!),
+//         border: Border.all(color: ColorRes.leadGreyColor[300]!),
 //         color: ColorRes.white,
 //       ),
 //       margin: const EdgeInsets.only(bottom: 16),
@@ -283,8 +283,8 @@
 //                       "$name >",
 //                       style: TextStyle(
 //                         fontSize: 13,
-//                         color: Colors.black54,
-//                         fontWeight: FontWeight.w600,
+//                         color: ColorRes.black54,
+//                         fontWeight: AppFontWeights.semiBold,
 //                       ),
 //                     ),
 //                     SizedBox(height: 10),
@@ -296,7 +296,7 @@
 //                           height: 16, // controls the divider height
 //                           child: const VerticalDivider(
 //                             thickness: 1,
-//                             color: Colors.black54,
+//                             color: ColorRes.black54,
 //                           ),
 //                         ),
 //                         const SizedBox(width: 4),
@@ -304,8 +304,8 @@
 //                           date,
 //                           style: TextStyle(
 //                             fontSize: 12,
-//                             color: Colors.grey[600],
-//                             fontWeight: FontWeight.w500,
+//                             color: ColorRes.leadGreyColor[600],
+//                             fontWeight: AppFontWeights.medium,
 //                           ),
 //                         ),
 //                       ],
@@ -349,8 +349,8 @@
 //               property['name'],
 //               style: TextStyle(
 //                 fontSize: 12,
-//                 fontWeight: FontWeight.w600,
-//                 color: Colors.grey[600],
+//                 fontWeight: AppFontWeights.semiBold,
+//                 color: ColorRes.leadGreyColor[600],
 //               ),
 //             ),
 //           ],
@@ -369,8 +369,8 @@
 //           text,
 //           style: TextStyle(
 //             fontSize: 13,
-//             color: Colors.grey[700],
-//             fontWeight: FontWeight.w500,
+//             color: ColorRes.leadGreyColor[700],
+//             fontWeight: AppFontWeights.medium,
 //           ),
 //         ),
 //       ],
@@ -381,16 +381,16 @@
 //     return Container(
 //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
 //       decoration: BoxDecoration(
-//         color: Colors.grey.shade50,
+//         color: ColorRes.leadGreyColor.shade50,
 //         borderRadius: BorderRadius.circular(8),
-//         border: Border.all(color: Colors.grey.shade300),
+//         border: Border.all(color: ColorRes.leadGreyColor.shade300),
 //       ),
 //       child: Text(
 //         text,
 //         style: TextStyle(
-//           color: Colors.black54,
+//           color: ColorRes.black54,
 //           fontSize: 12,
-//           fontWeight: FontWeight.w600,
+//           fontWeight: AppFontWeights.semiBold,
 //         ),
 //       ),
 //     );
@@ -406,7 +406,7 @@
 //             Container(
 //               padding: const EdgeInsets.all(6),
 //               decoration: BoxDecoration(
-//                 color: Colors.grey[100],
+//                 color: ColorRes.leadGreyColor[100],
 //                 borderRadius: BorderRadius.circular(8),
 //               ),
 //               child: Icon(
@@ -416,15 +416,15 @@
 //               ),
 //             ),
 //             const SizedBox(width: 12),
-//             Text(text, style: TextStyle(fontSize: 13, color: Colors.grey[800])),
+//             Text(text, style: TextStyle(fontSize: 13, color: ColorRes.leadGreyColor[800])),
 //           ],
 //         ),
 //         Text(
 //           date,
 //           style: TextStyle(
 //             fontSize: 12,
-//             color: Colors.grey[600],
-//             fontWeight: FontWeight.w500,
+//             color: ColorRes.leadGreyColor[600],
+//             fontWeight: AppFontWeights.medium,
 //           ),
 //         ),
 //       ],
@@ -498,15 +498,15 @@
 //                       "Gunjan",
 //                       style: TextStyle(
 //                         fontSize: 14,
-//                         color: Colors.black54,
-//                         fontWeight: FontWeight.w600,
+//                         color: ColorRes.black54,
+//                         fontWeight: AppFontWeights.semiBold,
 //                       ),
 //                     ),
 //                     SizedBox(height: 8),
 //                     Obx(
 //                       ()=> Text(
 //                         "${DateFormat('dd MMM yyyy, hh:mm a').format(controller.selectedDate.value!) ?? "N/A"}",
-//                         style: TextStyle(fontSize: 12, color: Colors.black54),
+//                         style: TextStyle(fontSize: 12, color: ColorRes.black54),
 //                       ),
 //                     ),
 //                   ],
@@ -523,8 +523,8 @@
 //                             e,
 //                             style: TextStyle(
 //                               fontSize: 12,
-//                               color: Colors.grey[800],
-//                               fontWeight: FontWeight.w600,
+//                               color: ColorRes.leadGreyColor[800],
+//                               fontWeight: AppFontWeights.semiBold,
 //                             ),
 //                           ),
 //                         );
@@ -552,7 +552,7 @@
 //             SizedBox(height: 12),
 //             _buildTextWithIconAndButton(Icons.note_add, "Notes", "Edit", () {}),
 //             SizedBox(height: 12),
-//             Divider(color: Colors.black12),
+//             Divider(color: ColorRes.black12),
 //             SizedBox(height: 12),
 //             _buildInfoRow("Property", "2BHK Apartment in Viman Nagar"),
 //             SizedBox(height: 8),
@@ -562,14 +562,14 @@
 //             SizedBox(height: 8),
 //             _buildInfoRow("Area", "1200 sq ft"),
 //             SizedBox(height: 12),
-//             Divider(color: Colors.black12),
+//             Divider(color: ColorRes.black12),
 //             SizedBox(height: 12),
 //             Text(
 //               "Intrested In: ",
 //               style: TextStyle(
 //                 fontSize: 14,
-//                 color: Colors.black54,
-//                 fontWeight: FontWeight.w600,
+//                 color: ColorRes.black54,
+//                 fontWeight: AppFontWeights.semiBold,
 //               ),
 //             ),
 //             SizedBox(height: 12),
@@ -615,7 +615,7 @@
 //                           "Message",
 //                           style: TextStyle(
 //                             fontSize: 12,
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semiBold,
 //                           ),
 //                         ),
 //                       ],
@@ -644,7 +644,7 @@
 //                           "Call",
 //                           style: TextStyle(
 //                             fontSize: 12,
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semiBold,
 //                           ),
 //                         ),
 //                       ],
@@ -677,7 +677,7 @@
 //       children: [
 //         Icon(icon, color: ColorRes.primary, size: 15),
 //         SizedBox(width: 6),
-//         Text(text, style: TextStyle(fontSize: 12, color: Colors.black54)),
+//         Text(text, style: TextStyle(fontSize: 12, color: ColorRes.black54)),
 //         SizedBox(width: 6),
 //         GestureDetector(
 //           onTap: onPressed,
@@ -702,8 +702,8 @@
 //           "$title: ",
 //           style: TextStyle(
 //             fontSize: 12,
-//             color: Colors.grey[600],
-//             fontWeight: FontWeight.w500,
+//             color: ColorRes.leadGreyColor[600],
+//             fontWeight: AppFontWeights.medium,
 //           ),
 //         ),
 //         SizedBox(width: 6),
@@ -711,8 +711,8 @@
 //           value,
 //           style: TextStyle(
 //             fontSize: 12,
-//             color: Colors.grey[800],
-//             fontWeight: FontWeight.w600,
+//             color: ColorRes.leadGreyColor[800],
+//             fontWeight: AppFontWeights.semiBold,
 //           ),
 //         ),
 //       ],
@@ -724,7 +724,7 @@
 //       height: 100,
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(12),
-//         border: Border.all(color: Colors.grey[300]!),
+//         border: Border.all(color: ColorRes.leadGreyColor[300]!),
 //         color: ColorRes.white,
 //       ),
 //       child: Row(
@@ -753,8 +753,8 @@
 //                   property['name'],
 //                   style: TextStyle(
 //                     fontSize: 11,
-//                     fontWeight: FontWeight.w600,
-//                     color: Colors.grey[800],
+//                     fontWeight: AppFontWeights.semiBold,
+//                     color: ColorRes.leadGreyColor[800],
 //                   ),
 //                   maxLines: 1,
 //                   overflow: TextOverflow.ellipsis,
@@ -762,7 +762,7 @@
 //                 SizedBox(height: 4),
 //                 Text(
 //                   "${property['address']}",
-//                   style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+//                   style: TextStyle(fontSize: 10, color: ColorRes.leadGreyColor[600]),
 //                   maxLines: 1,
 //                   overflow: TextOverflow.ellipsis,
 //                 ),
@@ -788,16 +788,16 @@
 //     return Container(
 //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
 //       decoration: BoxDecoration(
-//         color: Colors.grey.shade50,
+//         color: ColorRes.leadGreyColor.shade50,
 //         borderRadius: BorderRadius.circular(6),
-//         border: Border.all(color: Colors.grey.shade300),
+//         border: Border.all(color: ColorRes.leadGreyColor.shade300),
 //       ),
 //       child: Text(
 //         text,
 //         style: TextStyle(
-//           color: Colors.black54,
+//           color: ColorRes.black54,
 //           fontSize: 9,
-//           fontWeight: FontWeight.w600,
+//           fontWeight: AppFontWeights.semiBold,
 //         ),
 //       ),
 //     );
@@ -831,7 +831,7 @@
 // //     return Container(
 // //       decoration: BoxDecoration(
 // //         borderRadius: BorderRadius.circular(16),
-// //         border: Border.all(color: Colors.grey[300]!),
+// //         border: Border.all(color: ColorRes.leadGreyColor[300]!),
 // //         color: ColorRes.white,
 // //       ),
 // //       margin: const EdgeInsets.only(bottom: 16),
@@ -863,7 +863,7 @@
 // //                         vertical: 6,
 // //                       ),
 // //                       decoration: BoxDecoration(
-// //                         color: Colors.black.withOpacity(0.7),
+// //                         color: ColorRes.black.withOpacity(0.7),
 // //                         borderRadius: BorderRadius.circular(20),
 // //                       ),
 // //                       child: Text(
@@ -871,7 +871,7 @@
 // //                         style: const TextStyle(
 // //                           color: ColorRes.white,
 // //                           fontSize: 12,
-// //                           fontWeight: FontWeight.w600,
+// //                           fontWeight: AppFontWeights.semiBold,
 // //                         ),
 // //                       ),
 // //                     ),
@@ -888,7 +888,7 @@
 // //                 children: [
 // //                   Row(
 // //                     children: [
-// //                       _buildChip(source, Colors.blue[50]!, Colors.blue[700]!),
+// //                       _buildChip(source, ColorRes.blueColor[50]!, ColorRes.blueColor[700]!),
 // //                       const SizedBox(width: 8),
 // //                       _buildChip(stage, Colors.green[50]!, Colors.green[700]!),
 // //
@@ -900,9 +900,9 @@
 // //                   Container(
 // //                     padding: const EdgeInsets.all(12),
 // //                     decoration: BoxDecoration(
-// //                       color: Colors.grey[50],
+// //                       color: ColorRes.leadGreyColor[50],
 // //                       borderRadius: BorderRadius.circular(12),
-// //                       border: Border.all(color: Colors.grey[200]!),
+// //                       border: Border.all(color: ColorRes.leadGreyColor[200]!),
 // //                     ),
 // //                     child: Column(
 // //                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -911,8 +911,8 @@
 // //                           property['name'],
 // //                           style: TextStyle(
 // //                             fontSize: 15,
-// //                             fontWeight: FontWeight.w600,
-// //                             color: Colors.grey[900],
+// //                             fontWeight: AppFontWeights.semiBold,
+// //                             color: ColorRes.leadGreyColor[900],
 // //                           ),
 // //                         ),
 // //                         const SizedBox(height: 8),
@@ -942,7 +942,7 @@
 // //                   Container(
 // //                     decoration: BoxDecoration(
 // //                       borderRadius: BorderRadius.circular(12),
-// //                       border: Border.all(color: Colors.grey[200]!),
+// //                       border: Border.all(color: ColorRes.leadGreyColor[200]!),
 // //                     ),
 // //                     padding: EdgeInsets.all(12),
 // //                     child: Row(
@@ -962,7 +962,7 @@
 // //                                 style: Theme.of(
 // //                                   context,
 // //                                 ).textTheme.titleMedium?.copyWith(
-// //                                   fontWeight: FontWeight.w600,
+// //                                   fontWeight: AppFontWeights.semiBold,
 // //                                   fontSize: 16,
 // //                                 ),
 // //                                 overflow: TextOverflow.ellipsis,
@@ -980,7 +980,7 @@
 // //                                       email,
 // //                                       style: TextStyle(
 // //                                         fontSize: 13,
-// //                                         color: Colors.grey[800],
+// //                                         color: ColorRes.leadGreyColor[800],
 // //                                       ),
 // //                                       overflow: TextOverflow.ellipsis,
 // //                                     ),
@@ -999,7 +999,7 @@
 // //                                     phone,
 // //                                     style: TextStyle(
 // //                                       fontSize: 13,
-// //                                       color: Colors.grey[800],
+// //                                       color: ColorRes.leadGreyColor[800],
 // //                                     ),
 // //                                   ),
 // //                                 ],
@@ -1034,8 +1034,8 @@
 // //           text,
 // //           style: TextStyle(
 // //             fontSize: 13,
-// //             color: Colors.grey[700],
-// //             fontWeight: FontWeight.w500,
+// //             color: ColorRes.leadGreyColor[700],
+// //             fontWeight: AppFontWeights.medium,
 // //           ),
 // //         ),
 // //       ],
@@ -1055,7 +1055,7 @@
 // //         style: TextStyle(
 // //           color: textColor,
 // //           fontSize: 12,
-// //           fontWeight: FontWeight.w600,
+// //           fontWeight: AppFontWeights.semiBold,
 // //         ),
 // //       ),
 // //     );
@@ -1071,7 +1071,7 @@
 // //             Container(
 // //               padding: const EdgeInsets.all(6),
 // //               decoration: BoxDecoration(
-// //                 color: Colors.grey[100],
+// //                 color: ColorRes.leadGreyColor[100],
 // //                 borderRadius: BorderRadius.circular(8),
 // //               ),
 // //               child: Icon(
@@ -1081,15 +1081,15 @@
 // //               ),
 // //             ),
 // //             const SizedBox(width: 12),
-// //             Text(text, style: TextStyle(fontSize: 13, color: Colors.grey[800])),
+// //             Text(text, style: TextStyle(fontSize: 13, color: ColorRes.leadGreyColor[800])),
 // //           ],
 // //         ),
 // //         Text(
 // //           date,
 // //           style: TextStyle(
 // //             fontSize: 12,
-// //             color: Colors.grey[600],
-// //             fontWeight: FontWeight.w500,
+// //             color: ColorRes.leadGreyColor[600],
+// //             fontWeight: AppFontWeights.medium,
 // //           ),
 // //         ),
 // //       ],
@@ -1264,7 +1264,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //               children: [
 //                 const Text(
 //                   "Leads",
-//                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+//                   style: TextStyle(fontWeight: AppFontWeights.semiBold, fontSize: 18),
 //                 ),
 //                 Text(
 //                   "$filteredCount of ${dummyLeads.length} leads",
@@ -1278,7 +1278,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //           }),
 //           elevation: 0,
 //           backgroundColor: ColorRes.white,
-//           foregroundColor: Colors.black,
+//           foregroundColor: ColorRes.black,
 //           bottom: PreferredSize(
 //             preferredSize: const Size.fromHeight(48.0),
 //             child: Padding(
@@ -1301,8 +1301,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                                       e,
 //                                       style: TextStyle(
 //                                         fontSize: 12,
-//                                         color: Colors.grey[800],
-//                                         fontWeight: FontWeight.w600,
+//                                         color: ColorRes.leadGreyColor[800],
+//                                         fontWeight: AppFontWeights.semiBold,
 //                                       ),
 //                                     ),
 //                                   ),
@@ -1333,8 +1333,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                                       e,
 //                                       style: TextStyle(
 //                                         fontSize: 12,
-//                                         color: Colors.grey[800],
-//                                         fontWeight: FontWeight.w600,
+//                                         color: ColorRes.leadGreyColor[800],
+//                                         fontWeight: AppFontWeights.semiBold,
 //                                       ),
 //                                     ),
 //                                   ),
@@ -1358,7 +1358,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //             gradient: LinearGradient(
 //               begin: Alignment.topCenter,
 //               end: Alignment.bottomCenter,
-//               colors: [Colors.grey[50]!, ColorRes.white],
+//               colors: [ColorRes.leadGreyColor[50]!, ColorRes.white],
 //             ),
 //           ),
 //           child: Obx(() {
@@ -1369,19 +1369,19 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                 child: Column(
 //                   mainAxisAlignment: MainAxisAlignment.center,
 //                   children: [
-//                     Icon(Icons.search_off, size: 64, color: Colors.grey),
+//                     Icon(Icons.search_off, size: 64, color: ColorRes.leadGreyColor),
 //                     SizedBox(height: 16),
 //                     Text(
 //                       'No leads found',
 //                       style: TextStyle(
 //                         fontSize: 16,
-//                         color: Colors.grey,
-//                         fontWeight: FontWeight.w500,
+//                         color: ColorRes.leadGreyColor,
+//                         fontWeight: AppFontWeights.medium,
 //                       ),
 //                     ),
 //                     Text(
 //                       'Try adjusting your filters',
-//                       style: TextStyle(fontSize: 14, color: Colors.grey),
+//                       style: TextStyle(fontSize: 14, color: ColorRes.leadGreyColor),
 //                     ),
 //                   ],
 //                 ),
@@ -1470,7 +1470,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //               children: [
 //                 const Text(
 //                   "Leads",
-//                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+//                   style: TextStyle(fontWeight: AppFontWeights.semiBold, fontSize: 18),
 //                 ),
 //                 Text(
 //                   "$filteredCount of $totalCount leads",
@@ -1484,7 +1484,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //           }),
 //           elevation: 0,
 //           backgroundColor: ColorRes.white,
-//           foregroundColor: Colors.black,
+//           foregroundColor: ColorRes.black,
 //           bottom: PreferredSize(
 //             preferredSize: const Size.fromHeight(48.0),
 //             child: Padding(
@@ -1507,8 +1507,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                                       e,
 //                                       style: TextStyle(
 //                                         fontSize: 12,
-//                                         color: Colors.grey[800],
-//                                         fontWeight: FontWeight.w600,
+//                                         color: ColorRes.leadGreyColor[800],
+//                                         fontWeight: AppFontWeights.semiBold,
 //                                       ),
 //                                     ),
 //                                   ),
@@ -1539,8 +1539,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                                       e,
 //                                       style: TextStyle(
 //                                         fontSize: 12,
-//                                         color: Colors.grey[800],
-//                                         fontWeight: FontWeight.w600,
+//                                         color: ColorRes.leadGreyColor[800],
+//                                         fontWeight: AppFontWeights.semiBold,
 //                                       ),
 //                                     ),
 //                                   ),
@@ -1571,19 +1571,19 @@ final List<Map<String, dynamic>> dummyLeads = [
 //               child: Column(
 //                 mainAxisAlignment: MainAxisAlignment.center,
 //                 children: [
-//                   Icon(Icons.search_off, size: 64, color: Colors.grey),
+//                   Icon(Icons.search_off, size: 64, color: ColorRes.leadGreyColor),
 //                   SizedBox(height: 16),
 //                   Text(
 //                     'No leads found',
 //                     style: TextStyle(
 //                       fontSize: 16,
-//                       color: Colors.grey,
-//                       fontWeight: FontWeight.w500,
+//                       color: ColorRes.leadGreyColor,
+//                       fontWeight: AppFontWeights.medium,
 //                     ),
 //                   ),
 //                   Text(
 //                     'Try adjusting your filters',
-//                     style: TextStyle(fontSize: 14, color: Colors.grey),
+//                     style: TextStyle(fontSize: 14, color: ColorRes.leadGreyColor),
 //                   ),
 //                 ],
 //               ),
@@ -1629,7 +1629,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //     return Container(
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(16),
-//         border: Border.all(color: Colors.grey[300]!),
+//         border: Border.all(color: ColorRes.leadGreyColor[300]!),
 //         color: ColorRes.white,
 //       ),
 //       margin: const EdgeInsets.only(bottom: 10),
@@ -1678,8 +1678,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                         "${lead.name} >",
 //                         style: const TextStyle(
 //                           fontSize: 13,
-//                           color: Colors.black54,
-//                           fontWeight: FontWeight.w600,
+//                           color: ColorRes.black54,
+//                           fontWeight: AppFontWeights.semiBold,
 //                         ),
 //                       ),
 //                       const SizedBox(height: 10),
@@ -1692,7 +1692,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                             height: 16,
 //                             child: const VerticalDivider(
 //                               thickness: 1,
-//                               color: Colors.black54,
+//                               color: ColorRes.black54,
 //                             ),
 //                           ),
 //                           const SizedBox(width: 4),
@@ -1700,8 +1700,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                             DateFormat('yyyy-MM-dd').format(lead.createdAt),
 //                             style: TextStyle(
 //                               fontSize: 12,
-//                               color: Colors.grey[600],
-//                               fontWeight: FontWeight.w500,
+//                               color: ColorRes.leadGreyColor[600],
+//                               fontWeight: AppFontWeights.medium,
 //                             ),
 //                           ),
 //                         ],
@@ -1729,8 +1729,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //               lead.customFields?.title ?? "N/A",
 //               style: TextStyle(
 //                 fontSize: 12,
-//                 fontWeight: FontWeight.w600,
-//                 color: Colors.grey[600],
+//                 fontWeight: AppFontWeights.semiBold,
+//                 color: ColorRes.leadGreyColor[600],
 //               ),
 //             ),
 //           ],
@@ -1758,16 +1758,16 @@ final List<Map<String, dynamic>> dummyLeads = [
 //     return Container(
 //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
 //       decoration: BoxDecoration(
-//         color: Colors.grey.shade50,
+//         color: ColorRes.leadGreyColor.shade50,
 //         borderRadius: BorderRadius.circular(8),
-//         border: Border.all(color: Colors.grey.shade300),
+//         border: Border.all(color: ColorRes.leadGreyColor.shade300),
 //       ),
 //       child: Text(
 //         text,
 //         style: const TextStyle(
-//           color: Colors.black54,
+//           color: ColorRes.black54,
 //           fontSize: 12,
-//           fontWeight: FontWeight.w600,
+//           fontWeight: AppFontWeights.semiBold,
 //         ),
 //       ),
 //     );
@@ -1882,7 +1882,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //               height: 4,
 //               margin: const EdgeInsets.only(bottom: 20),
 //               decoration: BoxDecoration(
-//                 color: Colors.grey[300],
+//                 color: ColorRes.leadGreyColor[300],
 //                 borderRadius: BorderRadius.circular(2),
 //               ),
 //             ),
@@ -1898,8 +1898,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                     leadData.name,
 //                     style: const TextStyle(
 //                       fontSize: 14,
-//                       color: Colors.black54,
-//                       fontWeight: FontWeight.w600,
+//                       color: ColorRes.black54,
+//                       fontWeight: AppFontWeights.semiBold,
 //                     ),
 //                   ),
 //                   const SizedBox(height: 8),
@@ -1914,8 +1914,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                         fontSize: 12,
 //                         color:
 //                             controller.selectedDate.value != null
-//                                 ? Colors.black54
-//                                 : Colors.grey[400],
+//                                 ? ColorRes.black54
+//                                 : ColorRes.leadGreyColor[400],
 //                       ),
 //                     ),
 //                   ),
@@ -1934,8 +1934,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                               e,
 //                               style: TextStyle(
 //                                 fontSize: 12,
-//                                 color: Colors.grey[800],
-//                                 fontWeight: FontWeight.w600,
+//                                 color: ColorRes.leadGreyColor[800],
+//                                 fontWeight: AppFontWeights.semiBold,
 //                               ),
 //                             ),
 //                           );
@@ -1947,7 +1947,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                         //   'Status Updated',
 //                         //   'Lead status changed to $value',
 //                         //   snackPosition: SnackPosition.BOTTOM,
-//                         //   backgroundColor: Colors.blue,
+//                         //   backgroundColor: ColorRes.blueColor,
 //                         //   colorText: ColorRes.white,
 //                         // );
 //                       }
@@ -1987,7 +1987,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                   controller.notes.value,
 //                   style: TextStyle(
 //                     fontSize: 11,
-//                     color: Colors.grey[600],
+//                     color: ColorRes.leadGreyColor[600],
 //                     fontStyle: FontStyle.italic,
 //                   ),
 //                   maxLines: 3,
@@ -1999,7 +1999,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //           }),
 //
 //           const SizedBox(height: 12),
-//           const Divider(color: Colors.black12),
+//           const Divider(color: ColorRes.black12),
 //           const SizedBox(height: 12),
 //
 //           if (leadData.customFields?.title != null &&
@@ -2044,15 +2044,15 @@ final List<Map<String, dynamic>> dummyLeads = [
 //             ),
 //             const SizedBox(height: 12),
 //           ],
-//           const Divider(color: Colors.black12),
+//           const Divider(color: ColorRes.black12),
 //           const SizedBox(height: 12),
 //
 //           const Text(
 //             "Interested In: ",
 //             style: TextStyle(
 //               fontSize: 14,
-//               color: Colors.black54,
-//               fontWeight: FontWeight.w600,
+//               color: ColorRes.black54,
+//               fontWeight: AppFontWeights.semiBold,
 //             ),
 //           ),
 //
@@ -2103,7 +2103,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                         "Email",
 //                         style: TextStyle(
 //                           fontSize: 12,
-//                           fontWeight: FontWeight.w600,
+//                           fontWeight: AppFontWeights.semiBold,
 //                         ),
 //                       ),
 //                     ],
@@ -2132,7 +2132,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                         "Call",
 //                         style: TextStyle(
 //                           fontSize: 12,
-//                           fontWeight: FontWeight.w600,
+//                           fontWeight: AppFontWeights.semiBold,
 //                         ),
 //                       ),
 //                     ],
@@ -2159,7 +2159,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //       children: [
 //         Icon(icon, color: ColorRes.primary, size: 15),
 //         const SizedBox(width: 6),
-//         Text(text, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+//         Text(text, style: const TextStyle(fontSize: 12, color: ColorRes.black54)),
 //         const SizedBox(width: 6),
 //         GestureDetector(
 //           onTap: onPressed,
@@ -2184,8 +2184,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //           "$title: ",
 //           style: TextStyle(
 //             fontSize: 12,
-//             color: Colors.grey[600],
-//             fontWeight: FontWeight.w500,
+//             color: ColorRes.leadGreyColor[600],
+//             fontWeight: AppFontWeights.medium,
 //           ),
 //         ),
 //         const SizedBox(width: 6),
@@ -2194,8 +2194,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //             value,
 //             style: TextStyle(
 //               fontSize: 12,
-//               color: Colors.grey[800],
-//               fontWeight: FontWeight.w600,
+//               color: ColorRes.leadGreyColor[800],
+//               fontWeight: AppFontWeights.semiBold,
 //             ),
 //           ),
 //         ),
@@ -2208,7 +2208,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //       height: 100,
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(12),
-//         border: Border.all(color: Colors.grey[300]!),
+//         border: Border.all(color: ColorRes.leadGreyColor[300]!),
 //         color: ColorRes.white,
 //       ),
 //       child: Row(
@@ -2242,8 +2242,8 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                       property.title!,
 //                       style: TextStyle(
 //                         fontSize: 11,
-//                         fontWeight: FontWeight.w600,
-//                         color: Colors.grey[800],
+//                         fontWeight: AppFontWeights.semiBold,
+//                         color: ColorRes.leadGreyColor[800],
 //                       ),
 //                       maxLines: 2,
 //                       overflow: TextOverflow.ellipsis,
@@ -2252,7 +2252,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                   ],
 //                   Text(
 //                     property.address ?? '',
-//                     style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+//                     style: TextStyle(fontSize: 10, color: ColorRes.leadGreyColor[600]),
 //                     maxLines: 2,
 //                     overflow: TextOverflow.ellipsis,
 //                   ),
@@ -2290,16 +2290,16 @@ final List<Map<String, dynamic>> dummyLeads = [
 //     return Container(
 //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
 //       decoration: BoxDecoration(
-//         color: Colors.grey.shade50,
+//         color: ColorRes.leadGreyColor.shade50,
 //         borderRadius: BorderRadius.circular(6),
-//         border: Border.all(color: Colors.grey.shade300),
+//         border: Border.all(color: ColorRes.leadGreyColor.shade300),
 //       ),
 //       child: Text(
 //         text,
 //         style: const TextStyle(
-//           color: Colors.black54,
+//           color: ColorRes.black54,
 //           fontSize: 9,
-//           fontWeight: FontWeight.w600,
+//           fontWeight: AppFontWeights.semiBold,
 //         ),
 //       ),
 //     );
@@ -2359,7 +2359,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //           title: Text("Leads"),
 //           elevation: 0,
 //           backgroundColor: ColorRes.white,
-//           foregroundColor: Colors.black,
+//           foregroundColor: ColorRes.black,
 //         ),
 //
 //         body: SingleChildScrollView(
@@ -2395,15 +2395,15 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                                   Icon(
 //                                     Icons.search_off,
 //                                     size: 64,
-//                                     color: Colors.grey,
+//                                     color: ColorRes.leadGreyColor,
 //                                   ),
 //                                   SizedBox(height: 16),
 //                                   Text(
 //                                     'No leads found',
 //                                     style: TextStyle(
 //                                       fontSize: 16,
-//                                       color: Colors.grey,
-//                                       fontWeight: FontWeight.w500,
+//                                       color: ColorRes.leadGreyColor,
+//                                       fontWeight: AppFontWeights.medium,
 //                                     ),
 //                                   ),
 //                                   SizedBox(height: 4),
@@ -2411,7 +2411,7 @@ final List<Map<String, dynamic>> dummyLeads = [
 //                                     'Try adjusting your filters',
 //                                     style: TextStyle(
 //                                       fontSize: 14,
-//                                       color: Colors.grey,
+//                                       color: ColorRes.leadGreyColor,
 //                                     ),
 //                                   ),
 //                                 ],
@@ -2502,10 +2502,10 @@ class LeadScreen extends StatelessWidget {
         appBar: AppBar(
           title: const Text(
             "Leads",
-            style: TextStyle(fontWeight: FontWeight.w700),
+            style: TextStyle(fontWeight: AppFontWeights.bold),
           ),
           elevation: 0,
-          foregroundColor: Colors.black87,
+          foregroundColor: ColorRes.blackShade87,
           centerTitle: false,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(70.0), // Increased height for better spacing
@@ -2524,15 +2524,15 @@ class LeadScreen extends StatelessWidget {
                       () => Container(
                     padding: const EdgeInsets.all(4), // Reduced padding for sleeker look
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: ColorRes.leadGreyColor.shade100,
                       borderRadius: BorderRadius.circular(12), // Modern rounded corners
                       border: Border.all(
-                        color: Colors.grey.shade200,
+                        color: ColorRes.leadGreyColor.shade200,
                         width: 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.03), // Subtle depth
+                          color: ColorRes.black.withOpacity(0.03), // Subtle depth
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -2565,9 +2565,9 @@ class LeadScreen extends StatelessWidget {
                                 child: Text(
                                   filter,
                                   style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                                    color: isSelected ? ColorRes.white : Colors.grey[700],
+                                    fontSize: AppFontSizes.medium,
+                                    fontWeight: isSelected ? AppFontWeights.bold : AppFontWeights.semiBold,
+                                    color: isSelected ? ColorRes.white : ColorRes.leadGreyColor[700],
                                     letterSpacing: 0.2, // Improved readability
                                   ),
                                   textAlign: TextAlign.center,
@@ -2649,22 +2649,22 @@ class LeadScreen extends StatelessWidget {
                                         Container(
                                           padding: const EdgeInsets.all(16),
                                           decoration: BoxDecoration(
-                                            color: Colors.grey[100],
+                                            color: ColorRes.leadGreyColor[100],
                                             shape: BoxShape.circle,
                                           ),
                                           child: Icon(
                                             Icons.search_off_rounded,
                                             size: 48,
-                                            color: Colors.grey[400],
+                                            color: ColorRes.leadGreyColor[400],
                                           ),
                                         ),
                                         const SizedBox(height: 16),
                                         Text(
                                           'No leads found',
                                           style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[700],
-                                            fontWeight: FontWeight.w600,
+                                            fontSize: AppFontSizes.body,
+                                            color: ColorRes.leadGreyColor[700],
+                                            fontWeight: AppFontWeights.semiBold,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
@@ -2672,7 +2672,7 @@ class LeadScreen extends StatelessWidget {
                                           'Try adjusting your filters',
                                           style: TextStyle(
                                             fontSize: 13,
-                                            color: Colors.grey[500],
+                                            color: ColorRes.leadGreyColor[500],
                                           ),
                                         ),
                                       ],
@@ -2750,7 +2750,7 @@ class LeadCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       margin: const EdgeInsets.only(bottom: 12),
       child: Material(
@@ -2805,8 +2805,8 @@ class LeadCard extends StatelessWidget {
                           getInitials(lead.name),
                           style: TextStyle(
                             color: ColorRes.primary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15,
+                            fontWeight: AppFontWeights.bold,
+                            fontSize: AppFontSizes.bodyMedium,
                           ),
                         ),
                       ),
@@ -2819,9 +2819,9 @@ class LeadCard extends StatelessWidget {
                           Text(
                             lead.name,
                             style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.grey[900],
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.bold,
+                              color: ColorRes.leadGreyColor[900],
                               height: 1.2,
                             ),
                             maxLines: 1,
@@ -2832,7 +2832,7 @@ class LeadCard extends StatelessWidget {
                             lead.customFields?.ownerName ?? 'N/A',
                             style: TextStyle(
                               fontSize: AppFontSizes.extraSmall,
-                              color: Colors.grey[600],
+                              color: ColorRes.leadGreyColor[600],
                               fontWeight: AppFontWeights.regular,
                             ),
                             maxLines: 1,
@@ -2843,7 +2843,7 @@ class LeadCard extends StatelessWidget {
                             lead.customFields?.ownerEmail ?? 'N/A',
                             style: TextStyle(
                               fontSize: AppFontSizes.extraSmall,
-                              color: Colors.grey[600],
+                              color: ColorRes.leadGreyColor[600],
                               fontWeight: AppFontWeights.regular,
                             ),
                             maxLines: 1,
@@ -2859,7 +2859,7 @@ class LeadCard extends StatelessWidget {
                           'Budget',
                           style: TextStyle(
                             fontSize: AppFontSizes.extraSmall,
-                            color: Colors.grey[800],
+                            color: ColorRes.leadGreyColor[800],
                             fontWeight: AppFontWeights.regular,
                           ),
                         ),
@@ -2879,9 +2879,9 @@ class LeadCard extends StatelessWidget {
                         Text(
                           _formatTime(lead.createdAt),
                           style: TextStyle(
-                            fontSize: 9,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w400,
+                            fontSize: AppFontSizes.mini,
+                            color: ColorRes.leadGreyColor[600],
+                            fontWeight: AppFontWeights.regular,
                           ),
                         ),
                       ],
@@ -2889,7 +2889,7 @@ class LeadCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 14),
-                Divider(color: Colors.grey[200], thickness: 1, height: 1),
+                Divider(color: ColorRes.leadGreyColor[200], thickness: 1, height: 1),
                 const SizedBox(height: 14),
                 Row(
                   children: [
@@ -2900,7 +2900,7 @@ class LeadCard extends StatelessWidget {
                         _buildActionButton(
                           Icons.phone_rounded,
                               () => ContactHelper.openDialer(lead.phone),
-                          Colors.blue,
+                          ColorRes.blueColor,
                         ),
                         const SizedBox(width: 8),
                         _buildActionButton(
@@ -2951,8 +2951,8 @@ class LeadCard extends StatelessWidget {
         text,
         style: TextStyle(
           color: _getStageColor(text),
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
+          fontSize: AppFontSizes.extraSmall,
+          fontWeight: AppFontWeights.bold,
           letterSpacing: 0.3,
         ),
       ),
@@ -3034,7 +3034,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
       AlertDialog(
         backgroundColor: ColorRes.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Edit Notes', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text('Edit Notes', style: TextStyle(fontWeight: AppFontWeights.bold)),
         content: TextField(
           controller: notesController,
           maxLines: 5,
@@ -3042,11 +3042,11 @@ class LeadDetailBottomSheet extends StatelessWidget {
             hintText: 'Enter your notes here...',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: ColorRes.leadGreyColor[300]!),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: ColorRes.leadGreyColor[300]!),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -3057,7 +3057,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+            child: Text('Cancel', style: TextStyle(color: ColorRes.leadGreyColor[600])),
           ),
           ElevatedButton(
             onPressed: () {
@@ -3106,7 +3106,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
               height: 5,
               margin: const EdgeInsets.only(bottom: 24),
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: ColorRes.leadGreyColor[300],
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -3121,10 +3121,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   children: [
                     Text(
                       leadData.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w700,
+                      style:  TextStyle(
+                        fontSize: AppFontSizes.large,
+                        color: ColorRes.blackShade87,
+                        fontWeight: AppFontWeights.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -3134,7 +3134,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: controller.selectedDate.value != null
                               ? ColorRes.primary.withOpacity(0.08)
-                              : Colors.grey[100],
+                              : ColorRes.leadGreyColor[100],
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
@@ -3145,7 +3145,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                               size: 14,
                               color: controller.selectedDate.value != null
                                   ? ColorRes.primary
-                                  : Colors.grey[500],
+                                  : ColorRes.leadGreyColor[500],
                             ),
                             const SizedBox(width: 6),
                             Text(
@@ -3154,11 +3154,11 @@ class LeadDetailBottomSheet extends StatelessWidget {
                                   .format(controller.selectedDate.value!)
                                   : "No follow-up set",
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: AppFontSizes.caption,
                                 color: controller.selectedDate.value != null
                                     ? ColorRes.primary
-                                    : Colors.grey[500],
-                                fontWeight: FontWeight.w600,
+                                    : ColorRes.leadGreyColor[500],
+                                fontWeight: AppFontWeights.semiBold,
                               ),
                             ),
                           ],
@@ -3174,9 +3174,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   width: 130,
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
+                    color: ColorRes.leadGreyColor[50],
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey[300]!),
+                    border: Border.all(color: ColorRes.leadGreyColor[300]!),
                   ),
                   child: NesticoPeDropdownField(
                     value: controller.selectedStatus.value,
@@ -3186,9 +3186,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
                         child: Text(
                           e,
                           style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[800],
-                            fontWeight: FontWeight.w600,
+                            fontSize: AppFontSizes.small,
+                            color: ColorRes.leadGreyColor[800],
+                            fontWeight: AppFontWeights.semiBold,
                           ),
                         ),
                       );
@@ -3223,15 +3223,15 @@ class LeadDetailBottomSheet extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 12, left: 32),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[50],
+                  color: ColorRes.leadGreyColor[50],
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey[200]!),
+                  border: Border.all(color: ColorRes.leadGreyColor[200]!),
                 ),
                 child: Text(
                   controller.notes.value,
                   style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[700],
+                    fontSize: AppFontSizes.small,
+                    color: ColorRes.leadGreyColor[700],
                     fontStyle: FontStyle.italic,
                     height: 1.5,
                   ),
@@ -3243,7 +3243,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
             return const SizedBox.shrink();
           }),
           const SizedBox(height: 20),
-          Divider(color: Colors.grey[200], thickness: 1),
+          Divider(color: ColorRes.leadGreyColor[200], thickness: 1),
           const SizedBox(height: 16),
           if (leadData.customFields?.title != null && leadData.customFields!.title!.isNotEmpty) ...[
             _buildInfoRow("Property", leadData.customFields?.title ?? "N/A"),
@@ -3271,14 +3271,14 @@ class LeadDetailBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 16),
           ],
-          Divider(color: Colors.grey[200], thickness: 1),
+          Divider(color: ColorRes.leadGreyColor[200], thickness: 1),
           const SizedBox(height: 16),
           const Text(
             "Interested In:",
             style: TextStyle(
-              fontSize: 15,
-              color: Colors.black87,
-              fontWeight: FontWeight.w700,
+              fontSize: AppFontSizes.bodyMedium,
+              color: ColorRes.blackShade87,
+              fontWeight: AppFontWeights.bold,
             ),
           ),
           const SizedBox(height: 14),
@@ -3322,7 +3322,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   icon: const Icon(Icons.email_rounded, size: 20),
                   label: const Text(
                     "Email",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: AppFontSizes.bodySmall, fontWeight: AppFontWeights.semiBold),
                   ),
                 ),
               ),
@@ -3344,7 +3344,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   icon: const Icon(Icons.phone_rounded, size: 20),
                   label: const Text(
                     "Call",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: AppFontSizes.bodySmall, fontWeight: AppFontWeights.semiBold),
                   ),
                 ),
               ),
@@ -3365,9 +3365,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: ColorRes.leadGreyColor[50],
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: ColorRes.leadGreyColor[200]!),
           ),
           child: Row(
             children: [
@@ -3382,10 +3382,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 text,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w600,
+                style:  TextStyle(
+                  fontSize: AppFontSizes.bodySmall,
+                  color: ColorRes.blackShade87,
+                  fontWeight: AppFontWeights.semiBold,
                 ),
               ),
               const Spacer(),
@@ -3397,10 +3397,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
                 ),
                 child: Text(
                   buttonText,
-                  style: const TextStyle(
-                    fontSize: 11,
+                  style:  TextStyle(
+                    fontSize: AppFontSizes.caption,
                     color: ColorRes.white,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppFontWeights.semiBold,
                   ),
                 ),
               ),
@@ -3420,9 +3420,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
           child: Text(
             "$title:",
             style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+              fontSize: AppFontSizes.bodySmall,
+              color: ColorRes.leadGreyColor[600],
+              fontWeight: AppFontWeights.medium,
             ),
           ),
         ),
@@ -3431,9 +3431,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
           child: Text(
             value,
             style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[900],
-              fontWeight: FontWeight.w600,
+              fontSize: AppFontSizes.bodySmall,
+              color: ColorRes.leadGreyColor[900],
+              fontWeight: AppFontWeights.semiBold,
             ),
           ),
         ),
@@ -3445,7 +3445,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!, width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor[300]!, width: 1),
         color: ColorRes.white,
       ),
       child: Row(
@@ -3477,9 +3477,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
                     Text(
                       property.title!,
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.grey[900],
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.bold,
+                        color: ColorRes.leadGreyColor[900],
                         height: 1.3,
                       ),
                       maxLines: 2,
@@ -3492,7 +3492,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
                       Expanded(
                         child: Text(
                           property.address ?? 'N/A',
-                          style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                          style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor[600]),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -3544,8 +3544,8 @@ class LeadDetailBottomSheet extends StatelessWidget {
             text,
             style: TextStyle(
               color: ColorRes.primary,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
+              fontSize: AppFontSizes.extraSmall,
+              fontWeight: AppFontWeights.bold,
             ),
           ),
         ],
@@ -3582,18 +3582,18 @@ String _formatTime(DateTime dateTime) {
 Color _getStageColor(String stage) {
   switch (stage.toLowerCase()) {
     case 'new':
-      return Colors.blue;
+      return ColorRes.blueColor;
     case 'contacted':
-      return Colors.orange;
+      return ColorRes.orangeColor;
     case 'qualified':
-      return Colors.purple;
+      return ColorRes.purpleColor;
     case 'negotiation':
-      return Colors.indigo;
+      return ColorRes.leadIndigoColor;
     case 'lost':
-      return Colors.red;
+      return ColorRes.error;
     case 'converted':
-      return Colors.green;
+      return ColorRes.success;
     default:
-      return Colors.grey;
+      return ColorRes.leadGreyColor;
   }
 }

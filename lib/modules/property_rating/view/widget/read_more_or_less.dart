@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:readmore/readmore.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
+
 
 class ReadMoreClass extends StatelessWidget {
   const ReadMoreClass({
@@ -35,13 +37,13 @@ class ReadMoreClass extends StatelessWidget {
       trimExpandedText: ' Read Less',
       lessStyle: TextStyle(
         fontSize: size,
-        fontWeight: FontWeight.w600,
+        fontWeight: AppFontWeights.semiBold,
         color: colorClickableText,
       ),
 
       moreStyle: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
+        fontSize: AppFontSizes.caption,
+        fontWeight: AppFontWeights.semiBold,
         color: ColorRes.primary,
       ),
     );

@@ -1246,8 +1246,8 @@ class ReferralProgramScreen extends StatelessWidget {
           'Referral Program',
           style: TextStyle(
             color: Colors.black87,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+            fontSize: AppFontSizes.large,
+            fontWeight: AppFontWeights.semiBold,
           ),
         ),
         centerTitle: false,
@@ -1299,25 +1299,28 @@ class ReferralProgramScreen extends StatelessWidget {
                   color: ColorRes.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text('🎁', style: TextStyle(fontSize: 28)),
+                child: Text('🎁', style: TextStyle(fontSize: AppFontSizes.displaySmall)),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children:  [
                     Text(
                       'Referral Program Overview',
                       style: TextStyle(
                         color: ColorRes.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontSize: AppFontSizes.large,
+                        fontWeight: AppFontWeights.extraBold,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       'Track your referrals and earn rewards',
-                      style: TextStyle(color: ColorRes.white, fontSize: 13),
+                      style: TextStyle(
+                        color: ColorRes.white.withOpacity(0.9),
+                        fontSize: AppFontSizes.bodySmall,
+                      ),
                     ),
                   ],
                 ),
@@ -1370,7 +1373,7 @@ class ReferralProgramScreen extends StatelessWidget {
                           style: TextStyle(
                             color: ColorRes.white.withOpacity(0.8),
                             fontSize: 10,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: AppFontWeights.semiBold,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -1379,8 +1382,8 @@ class ReferralProgramScreen extends StatelessWidget {
                           referral?.referralCode ?? '',
                           style: const TextStyle(
                             color: ColorRes.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: AppFontSizes.large,
+                            fontWeight: AppFontWeights.extraBold,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -1521,7 +1524,7 @@ class ReferralProgramScreen extends StatelessWidget {
                   maxLines: 2,
                   style: TextStyle(
                     fontSize: AppFontSizes.small,
-                    color: Colors.grey[600],
+                    color: ColorRes.leadGreyColor[600],
                     fontWeight: AppFontWeights.medium,
                     height: 1.2,
                   ),
@@ -1545,9 +1548,9 @@ class ReferralProgramScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
+            style: TextStyle(
+              fontSize: AppFontSizes.subtitle,
+              fontWeight: AppFontWeights.bold,
               color: ColorRes.textColor,
             ),
           ),
@@ -1578,7 +1581,7 @@ class ReferralProgramScreen extends StatelessWidget {
               color: ColorRes.white,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text('🚀', style: TextStyle(fontSize: 28)),
+            child: Text('🚀', style: TextStyle(fontSize: AppFontSizes.displaySmall)),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -1587,16 +1590,16 @@ class ReferralProgramScreen extends StatelessWidget {
                 text: TextSpan(
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Colors.black87,
+                    color: ColorRes.blackShade87,
                     height: 1.4,
                   ),
                   children: [
                     const TextSpan(text: 'Refer '),
                     TextSpan(
                       text:
-                          '${controller.requiredResellers.value} more resellers ',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                          '${controller.requiredResellers.value} more active resellers',
+                      style: TextStyle(
+                        fontWeight: AppFontWeights.extraBold,
                         color: Color(0xFF9B59B6),
                       ),
                     ),
@@ -1604,7 +1607,7 @@ class ReferralProgramScreen extends StatelessWidget {
                     const TextSpan(
                       text: 'BONUS REWARD!',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: AppFontWeights.extraBold,
                         color: Color(0xFF9B59B6),
                       ),
                     ),

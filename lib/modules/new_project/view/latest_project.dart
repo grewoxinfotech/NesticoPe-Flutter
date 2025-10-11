@@ -43,7 +43,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                     //   ),
                     //   fit: BoxFit.cover,
                     // ),
-                    color: Color(0xff091F48),
+                    color: ColorRes.addPropertyBackgroundColor,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,14 +54,14 @@ class MumbaiProjectsScreen extends StatelessWidget {
                         width: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.grey.shade300,
+                          color: ColorRes.leadGreyColor.shade300,
                         ),
                         alignment: Alignment.center,
                         child: IconButton(
                           onPressed: () => Navigator.pop(context),
                           icon: const Icon(
                             Icons.arrow_back,
-                            color: Colors.black,
+                            color: ColorRes.black,
                             size: 20,
                           ),
                         ),
@@ -73,7 +73,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                           "You are looking for",
                           style: TextStyle(
                             color: ColorRes.white.withOpacity(0.9),
-                            fontSize: 14,
+                            fontSize: AppFontSizes.medium,
                           ),
                         ),
                       ),
@@ -83,8 +83,8 @@ class MumbaiProjectsScreen extends StatelessWidget {
                           "New Projects in Mumbai",
                           style: TextStyle(
                             color: ColorRes.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontSize: AppFontSizes.subtitle,
+                            fontWeight: AppFontWeights.extraBold,
                           ),
                         ),
                       ),
@@ -135,7 +135,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                     'Top 5 Mumbai developers for new projects',
                     style: TextStyle(
                       fontSize: AppFontSizes.medium,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textPrimary,
                     ),
                   ),

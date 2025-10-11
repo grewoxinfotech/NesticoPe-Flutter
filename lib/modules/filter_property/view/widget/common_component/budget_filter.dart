@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
+
+import '../../../../../app/constants/app_font_sizes.dart';
 //
 // class BudgetFilter extends StatelessWidget {
 //   final double minValue; // slider min
@@ -36,7 +38,7 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 //               buildCommonText(
 //                 '$minLabel : ${Formatter.formatPrice(values.start)}',
 //                 11,
-//                 FontWeight.w500,
+//                 AppFontWeights.medium,
 //                 ColorRes.primary,
 //                 1,
 //               ),
@@ -44,7 +46,7 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 //               buildCommonText(
 //                 '$maxLabel : ${(Formatter.formatPrice(values.end))}',
 //                 11,
-//                 FontWeight.w500,
+//                 AppFontWeights.medium,
 //                 ColorRes.primary,
 //                 1,
 //               ),
@@ -116,16 +118,16 @@ class BudgetFilter extends StatelessWidget {
                     children: [
                       buildCommonText(
                         minLabel,
-                        10,
-                        FontWeight.w500,
+                        AppFontSizes.extraSmall,
+                        AppFontWeights.medium,
                         ColorRes.textColor.withOpacity(0.6),
                         1,
                       ),
                       const SizedBox(height: 4),
                       buildCommonText(
                         Formatter.formatPrice(values.start),
-                        14,
-                        FontWeight.w600,
+                        AppFontSizes.medium,
+                        AppFontWeights.semiBold,
                         ColorRes.primary,
                         1,
                       ),
@@ -160,16 +162,16 @@ class BudgetFilter extends StatelessWidget {
                     children: [
                       buildCommonText(
                         maxLabel,
-                        10,
-                        FontWeight.w500,
+                        AppFontSizes.extraSmall,
+                        AppFontWeights.medium,
                         ColorRes.textColor.withOpacity(0.6),
                         1,
                       ),
                       const SizedBox(height: 4),
                       buildCommonText(
                         Formatter.formatPrice(values.end),
-                        14,
-                        FontWeight.w600,
+                        AppFontSizes.medium,
+                        AppFontWeights.semiBold,
                         ColorRes.primary,
                         1,
                       ),

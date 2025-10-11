@@ -37,7 +37,7 @@ class SuggestionCardList extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.medium),
-          border: Border.all(color: Colors.grey.shade500, width: 0.5),
+          border: Border.all(color: ColorRes.leadGreyColor.shade500, width: 0.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +55,7 @@ class SuggestionCardList extends StatelessWidget {
               propertyType,
               AppFontSizes.extraSmall,
               AppFontWeights.regular,
-              Colors.grey.shade600,
+              ColorRes.leadGreyColor.shade600,
               1,
             ),
             AppSpacing.verticalSmall,
@@ -63,7 +63,7 @@ class SuggestionCardList extends StatelessWidget {
               '$state',
               AppFontSizes.bodySmall,
               AppFontWeights.medium,
-              Colors.grey.shade600,
+              ColorRes.leadGreyColor.shade600,
               1,
             ),
           ],

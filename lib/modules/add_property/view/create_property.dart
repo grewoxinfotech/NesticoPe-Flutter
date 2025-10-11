@@ -106,7 +106,7 @@
 //                                     style: TextStyle(
 //                                       color: ColorRes.white,
 //                                       fontSize: AppFontSizes.large,
-//                                       fontWeight: FontWeight.w700,
+//                                       fontWeight: AppFontWeights.bold,
 //                                     ),
 //                                   ),
 //                                 ],
@@ -131,7 +131,7 @@
 //                                     style: TextStyle(
 //                                       color: ColorRes.white,
 //                                       fontSize: AppFontSizes.body,
-//                                       fontWeight: FontWeight.w600,
+//                                       fontWeight: AppFontWeights.semiBold,
 //                                     ),
 //                                   ),
 //                                   // const SizedBox(height: 15),
@@ -477,7 +477,7 @@
 //                     style: TextStyle(
 //                       fontSize: 14,
 //                       color: ColorRes.white,
-//                       fontWeight: FontWeight.w500,
+//                       fontWeight: AppFontWeights.medium,
 //                     ),
 //                   ),
 //                 ),
@@ -537,7 +537,7 @@
 //                                     style: TextStyle(
 //                                       color: ColorRes.white,
 //                                       fontSize: AppFontSizes.large,
-//                                       fontWeight: FontWeight.w700,
+//                                       fontWeight: AppFontWeights.bold,
 //                                     ),
 //                                   ),
 //                                 ],
@@ -562,7 +562,7 @@
 //                                     style: TextStyle(
 //                                       color: ColorRes.white,
 //                                       fontSize: AppFontSizes.body,
-//                                       fontWeight: FontWeight.w600,
+//                                       fontWeight: AppFontWeights.semiBold,
 //                                     ),
 //                                   ),
 //                                   const SizedBox(height: 15),
@@ -873,7 +873,7 @@
 //                                           //       style: TextStyle(
 //                                           //         fontSize: 14,
 //                                           //         color: ColorRes.white,
-//                                           //         fontWeight: FontWeight.w500,
+//                                           //         fontWeight: AppFontWeights.medium,
 //                                           //       ),
 //                                           //     ),
 //                                           //   ),
@@ -935,7 +935,7 @@
 //                                               'Continue',
 //                                               style: TextStyle(
 //                                                 fontSize: 15,
-//                                                 fontWeight: FontWeight.w600,
+//                                                 fontWeight: AppFontWeights.semiBold,
 //                                                 color: ColorRes.white,
 //                                               ),
 //                                             ),
@@ -951,7 +951,7 @@
 //                                                 style: TextStyle(
 //                                                   color: Colors.grey,
 //                                                   fontSize: 10,
-//                                                   fontWeight: FontWeight.w600,
+//                                                   fontWeight: AppFontWeights.semiBold,
 //                                                 ),
 //                                               ),
 //                                               Text(
@@ -960,7 +960,7 @@
 //                                                 style: TextStyle(
 //                                                   color: ColorRes.primary,
 //                                                   fontSize: 11,
-//                                                   fontWeight: FontWeight.w600,
+//                                                   fontWeight: AppFontWeights.semiBold,
 //                                                 ),
 //                                               ),
 //                                             ],
@@ -1020,7 +1020,7 @@
 //                                           //       style: TextStyle(
 //                                           //         fontSize: 14,
 //                                           //         color: ColorRes.white,
-//                                           //         fontWeight: FontWeight.w500,
+//                                           //         fontWeight: AppFontWeights.medium,
 //                                           //       ),
 //                                           //     ),
 //                                           //   ),
@@ -1050,7 +1050,7 @@
 //                                                             ColorRes
 //                                                                 .textSecondary,
 //                                                         fontWeight:
-//                                                             FontWeight.w500,
+//                                                             AppFontWeights.medium,
 //                                                       ),
 //                                                     ),
 //                                                     SizedBox(width: 6),
@@ -1060,7 +1060,7 @@
 //                                                         fontSize: 13,
 //                                                         color: ColorRes.primary,
 //                                                         fontWeight:
-//                                                             FontWeight.w600,
+//                                                             AppFontWeights.semiBold,
 //                                                         decoration:
 //                                                             TextDecoration
 //                                                                 .underline, // 👈 adds a hint it's clickable
@@ -1122,7 +1122,7 @@
 //                     style: TextStyle(
 //                       fontSize: 14,
 //                       color: ColorRes.white,
-//                       fontWeight: FontWeight.w500,
+//                       fontWeight: AppFontWeights.medium,
 //                     ),
 //                   ),
 //                 ),
@@ -1163,7 +1163,7 @@
 //     child: Text(
 //       title,
 //       style: TextStyle(
-//         fontWeight: FontWeight.w600,
+//         fontWeight: AppFontWeights.semiBold,
 //         fontSize: AppFontSizes.bodySmall,
 //         color: isSelected ? ColorRes.primary : ColorRes.textPrimary,
 //       ),
@@ -1195,7 +1195,7 @@
 //         title,
 //         style: TextStyle(
 //           color: selected ? ColorRes.primary : ColorRes.textPrimary,
-//           fontWeight: FontWeight.w500,
+//           fontWeight: AppFontWeights.medium,
 //           fontSize: AppFontSizes.small,
 //         ),
 //       ),
@@ -1210,7 +1210,7 @@
 //     style: const TextStyle(
 //       fontSize: AppFontSizes.small,
 //
-//       fontWeight: FontWeight.w600,
+//       fontWeight: AppFontWeights.semiBold,
 //       color: ColorRes.textSecondary,
 //     ),
 //   );
@@ -1223,7 +1223,7 @@
 //     style: const TextStyle(
 //       fontSize: AppFontSizes.caption,
 //
-//       fontWeight: FontWeight.w600,
+//       fontWeight: AppFontWeights.semiBold,
 //       color: ColorRes.textSecondary,
 //     ),
 //   );
@@ -1414,7 +1414,7 @@
 //                     item.title,
 //                     style: TextStyle(
 //                       fontSize: AppFontSizes.caption,
-//                       fontWeight: FontWeight.w500,
+//                       fontWeight: AppFontWeights.medium,
 //                       color: isSelected ? ColorRes.primary : Colors.black,
 //                     ),
 //                     textAlign: TextAlign.center,
@@ -1582,12 +1582,12 @@ class CreatePropertyScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  const Text(
+                                  Text(
                                     "Create Listing",
                                     style: TextStyle(
                                       color: ColorRes.white,
                                       fontSize: AppFontSizes.large,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: AppFontWeights.bold,
                                     ),
                                   ),
                                 ],
@@ -1605,12 +1605,12 @@ class CreatePropertyScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const SizedBox(height: 5),
-                                  const Text(
+                                  Text(
                                     "Sell or rent your property faster",
                                     style: TextStyle(
                                       color: ColorRes.white,
                                       fontSize: AppFontSizes.body,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: AppFontWeights.semiBold,
                                     ),
                                   ),
                                 ],
@@ -1986,9 +1986,9 @@ class CreatePropertyScreen extends StatelessWidget {
                         ? "Adding Property... Wait"
                         : "Next",
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: AppFontSizes.medium,
                       color: ColorRes.white,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: AppFontWeights.medium,
                     ),
                   ),
                 ),
@@ -2048,12 +2048,12 @@ class CreatePropertyScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  const Text(
+                                  Text(
                                     "Housing.com",
                                     style: TextStyle(
                                       color: ColorRes.white,
                                       fontSize: AppFontSizes.large,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: AppFontWeights.bold,
                                     ),
                                   ),
                                 ],
@@ -2071,12 +2071,12 @@ class CreatePropertyScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const SizedBox(height: 5),
-                                  const Text(
+                                  Text(
                                     "Sell or rent your property faster",
                                     style: TextStyle(
                                       color: ColorRes.white,
                                       fontSize: AppFontSizes.body,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: AppFontWeights.semiBold,
                                     ),
                                   ),
                                   const SizedBox(height: 15),
@@ -2391,17 +2391,17 @@ class CreatePropertyScreen extends StatelessWidget {
                                                   BorderRadius.circular(12),
                                             ),
                                             alignment: Alignment.center,
-                                            child: const Text(
+                                            child: Text(
                                               'Continue',
                                               style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600,
+                                                fontSize: AppFontSizes.bodyMedium,
+                                                fontWeight: AppFontWeights.semiBold,
                                                 color: ColorRes.white,
                                               ),
                                             ),
                                           ),
                                           const SizedBox(height: 15),
-                                          const Row(
+                                          Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
@@ -2410,8 +2410,8 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: ColorRes.leadGreyColor,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: AppFontSizes.extraSmall,
+                                                  fontWeight: AppFontWeights.semiBold,
                                                 ),
                                               ),
                                               Text(
@@ -2419,8 +2419,8 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: ColorRes.primary,
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: AppFontSizes.caption,
+                                                  fontWeight: AppFontWeights.semiBold,
                                                 ),
                                               ),
                                             ],
@@ -2464,8 +2464,8 @@ class CreatePropertyScreen extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               onTap: controller.submitForm,
-                                              child: const Padding(
-                                                padding: EdgeInsets.symmetric(
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(
                                                   vertical: 6,
                                                   horizontal: 12,
                                                 ),
@@ -2476,22 +2476,22 @@ class CreatePropertyScreen extends StatelessWidget {
                                                     Text(
                                                       "Existing User?",
                                                       style: TextStyle(
-                                                        fontSize: 12,
+                                                        fontSize: AppFontSizes.small,
                                                         color:
                                                             ColorRes
                                                                 .textSecondary,
                                                         fontWeight:
-                                                            FontWeight.w500,
+                                                        AppFontWeights.medium,
                                                       ),
                                                     ),
-                                                    SizedBox(width: 6),
+                                                    const SizedBox(width: 6),
                                                     Text(
                                                       "Login Here",
                                                       style: TextStyle(
-                                                        fontSize: 13,
+                                                        fontSize: AppFontSizes.bodySmall,
                                                         color: ColorRes.primary,
                                                         fontWeight:
-                                                            FontWeight.w600,
+                                                            AppFontWeights.semiBold,
                                                         decoration:
                                                             TextDecoration
                                                                 .underline,
@@ -2543,12 +2543,12 @@ class CreatePropertyScreen extends StatelessWidget {
                     ),
                     elevation: 2,
                   ),
-                  child: const Text(
+                  child: Text(
                     "Next, add address & price",
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: AppFontSizes.medium,
                       color: ColorRes.white,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: AppFontWeights.medium,
                     ),
                   ),
                 ),
@@ -2570,7 +2570,7 @@ Widget buildInfoPoint(String text) {
       children: [
         const Icon(Icons.check_circle, color: Colors.yellow, size: 15),
         const SizedBox(width: 8),
-        Text(text, style: const TextStyle(color: ColorRes.white, fontSize: 13)),
+        Text(text, style: const TextStyle(color: ColorRes.white, fontSize: AppFontSizes.bodySmall),),
       ],
     ),
   );
@@ -2588,7 +2588,7 @@ Widget buildTab(String title, bool isSelected) {
     child: Text(
       title,
       style: TextStyle(
-        fontWeight: FontWeight.w600,
+        fontWeight: AppFontWeights.semiBold,
         fontSize: AppFontSizes.bodySmall,
         color: isSelected ? ColorRes.primary : ColorRes.textPrimary,
       ),
@@ -2620,7 +2620,7 @@ Widget buildChoice({
         title,
         style: TextStyle(
           color: selected ? ColorRes.primary : ColorRes.textPrimary,
-          fontWeight: FontWeight.w500,
+          fontWeight: AppFontWeights.medium,
           fontSize: AppFontSizes.small,
         ),
       ),
@@ -2632,9 +2632,9 @@ Widget buildSectionTitle(String title) {
   return Text(
     title,
     textAlign: TextAlign.left,
-    style: const TextStyle(
+    style: TextStyle(
       fontSize: AppFontSizes.small,
-      fontWeight: FontWeight.w600,
+      fontWeight: AppFontWeights.semiBold,
       color: ColorRes.textSecondary,
     ),
   );
@@ -2644,9 +2644,9 @@ Widget buildSizedSectionTitle(String title, {double width = 70}) {
   return Text(
     title,
     textAlign: TextAlign.left,
-    style: const TextStyle(
+    style: TextStyle(
       fontSize: AppFontSizes.caption,
-      fontWeight: FontWeight.w600,
+      fontWeight: AppFontWeights.semiBold,
       color: ColorRes.textSecondary,
     ),
   );
@@ -2672,7 +2672,7 @@ Widget buildTextField(
       maxLines: maxLines,
       minLines: minLines,
       keyboardType: isPhoneKey ? TextInputType.phone : TextInputType.text,
-      style: const TextStyle(fontSize: 14, color: ColorRes.textPrimary),
+      style:  TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.textPrimary),
       validator: validator,
       decoration: InputDecoration(
         prefixIcon:
@@ -2687,7 +2687,7 @@ Widget buildTextField(
           maxHeight: 20,
         ),
         hintText: label,
-        hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+        hintStyle: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor.shade500),
         contentPadding: const EdgeInsets.symmetric(
           vertical: 14,
           horizontal: 12,
@@ -2712,15 +2712,15 @@ Widget buildTextField(
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(width: 1.2, color: Colors.red),
+          borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(width: 1.2, color: Colors.red),
+          borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
         ),
         filled: true,
         fillColor: Colors.grey.shade50,
-        errorStyle: TextStyle(color: Colors.red.shade700, fontSize: 12),
+        errorStyle: TextStyle(color: ColorRes.error.shade700, fontSize: AppFontSizes.small),
       ),
     ),
   );
@@ -2761,7 +2761,7 @@ Widget buildPhonePrefix() {
                       children: [
                         Text(
                           entry['flag']!,
-                          style: const TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: AppFontSizes.body),
                         ),
                         const SizedBox(width: 3),
                         Text(entry['code']!),
@@ -2773,7 +2773,7 @@ Widget buildPhonePrefix() {
               return countryCodes.map((entry) {
                 return Row(
                   children: [
-                    Text(entry['flag']!, style: const TextStyle(fontSize: 16)),
+                    Text(entry['flag']!, style: const TextStyle(fontSize: AppFontSizes.body)),
                     const SizedBox(width: 3),
                     Text(entry['code']!),
                   ],
@@ -2814,7 +2814,7 @@ Widget subPropertyType(CreatePropertyController controller) {
                         : ColorRes.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isSelected ? ColorRes.transparentColor: Colors.grey.shade300,
+                  color: isSelected ? ColorRes.transparentColor: ColorRes.leadGreyColor.shade300,
                   width: 1,
                 ),
               ),
@@ -2824,15 +2824,15 @@ Widget subPropertyType(CreatePropertyController controller) {
                   AppSvgIcon(
                     assetName: item.key,
                     size: 24,
-                    color: isSelected ? ColorRes.primary : Colors.grey.shade600,
+                    color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade600,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     item.title,
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
-                      fontWeight: FontWeight.w500,
-                      color: isSelected ? ColorRes.primary : Colors.black,
+                      fontWeight: AppFontWeights.medium,
+                      color: isSelected ? ColorRes.primary : ColorRes.black,
                     ),
                     textAlign: TextAlign.center,
                   ),

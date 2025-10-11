@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
 class StepChipsRow extends StatelessWidget {
@@ -49,8 +50,8 @@ class StepChipsRow extends StatelessWidget {
                       color: ColorRes.white,
                       fontWeight:
                           isSelected || isCompleted
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                              ? AppFontWeights.extraBold
+                              : AppFontWeights.regular,
                     ),
                   ),
                 ),

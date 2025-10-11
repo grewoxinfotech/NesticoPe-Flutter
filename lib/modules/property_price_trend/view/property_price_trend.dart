@@ -168,12 +168,12 @@ class _PriceDetailsState extends State<PriceDetails> {
                                       ),
                                       child: buildCommonText(
                                         controller.filterList[index],
-                                        12,
-                                        FontWeight.w500,
+                                        AppFontSizes.small,
+                                        AppFontWeights.medium,
                                         Theme.of(
                                               context,
                                             ).textTheme.bodyMedium?.color ??
-                                            Colors.black,
+                                            ColorRes.black,
                                         1,
                                       ),
                                     ),
@@ -218,7 +218,7 @@ class _PriceDetailsState extends State<PriceDetails> {
                               SizedBox(
                                 height: 65,
                                 child: VerticalDivider(
-                                  color: Colors.grey.shade300.withOpacity(0.8),
+                                  color: ColorRes.leadGreyColor.shade300.withOpacity(0.8),
                                   indent: 6,
                                   endIndent: 6,
                                   thickness: 1,
@@ -232,7 +232,7 @@ class _PriceDetailsState extends State<PriceDetails> {
                                     buildCommonText(
                                       '${propertyController.items[0].title}',
                                       AppFontSizes.bodySmall,
-                                      FontWeight.w600,
+                                      AppFontWeights.semiBold,
                                       ColorRes.textPrimary,
                                       1,
                                     ),
@@ -240,7 +240,7 @@ class _PriceDetailsState extends State<PriceDetails> {
                                     buildCommonText(
                                       'Location : ${propertyController.items[0].address ?? "City"}',
                                       AppFontSizes.extraSmall,
-                                      FontWeight.w500,
+                                      AppFontWeights.medium,
                                       ColorRes.grey,
                                       1,
                                     ),
@@ -255,8 +255,8 @@ class _PriceDetailsState extends State<PriceDetails> {
                                         const SizedBox(width: 2),
                                         buildCommonText(
                                           ' ${propertyList[0]['rating']} ',
-                                          10,
-                                          FontWeight.bold,
+                                          AppFontSizes.extraSmall,
+                                          AppFontWeights.extraBold,
                                           Theme.of(
                                             context,
                                           ).colorScheme.secondary,
@@ -266,8 +266,8 @@ class _PriceDetailsState extends State<PriceDetails> {
                                         buildCommonText(
                                           'Rating',
                                           AppFontSizes.extraSmall,
-                                          FontWeight.w500,
-                                          Colors.grey,
+                                          AppFontWeights.medium,
+                                          ColorRes.leadGreyColor,
                                           1,
                                         ),
                                       ],
@@ -346,8 +346,8 @@ class _PriceDetailsState extends State<PriceDetails> {
                               ),
                               buildCommonText(
                                 'See all',
-                                12,
-                                FontWeight.w500,
+                                AppFontSizes.small,
+                                AppFontWeights.medium,
                                 Theme.of(context).colorScheme.secondary,
                                 1,
                               ),
@@ -422,7 +422,7 @@ Text buildHeading(BuildContext context, String title) {
   return buildCommonText(
     title,
     AppFontSizes.small,
-    FontWeight.w600,
+    AppFontWeights.semiBold,
     ColorRes.textColor,
     1,
   );
@@ -437,8 +437,8 @@ Widget buildButton({required BuildContext context, required String title}) {
       alignment: Alignment.center,
       child: buildCommonText(
         title,
-        12,
-        FontWeight.w600,
+        AppFontSizes.small,
+        AppFontWeights.semiBold,
         Theme.of(context).colorScheme.secondary,
         1,
       ),
@@ -474,7 +474,7 @@ class BlurredHeader extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: ColorRes.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade300, width: 1)),
+        border: Border(top: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1)),
       ),
       child: Stack(
         fit: StackFit.expand,
@@ -485,7 +485,7 @@ class BlurredHeader extends StatelessWidget {
               imagePath,
               fit: BoxFit.cover,
               errorBuilder:
-                  (_, __, ___) => Container(color: Colors.grey.shade200),
+                  (_, __, ___) => Container(color: ColorRes.leadGreyColor.shade200),
             )
           else
             Image.asset(imagePath, fit: BoxFit.cover),
@@ -506,14 +506,14 @@ class BlurredHeader extends StatelessWidget {
                 width: 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.grey.shade300,
+                  color: ColorRes.leadGreyColor.shade300,
                 ),
                 alignment: Alignment.center,
                 child: IconButton(
                   onPressed: onBack ?? () => Navigator.pop(context),
                   icon: const Icon(
                     Icons.arrow_back,
-                    color: Colors.black,
+                    color: ColorRes.black,
                     size: 20,
                   ),
                 ),

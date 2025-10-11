@@ -138,7 +138,7 @@
 //                         buildCommonText(
 //                           builderList[index]['title'],
 //                           11,
-//                           FontWeight.w500,
+//                           AppFontWeights.medium,
 //                           itemList.contains(builderList[index]['title'])
 //                               ? ColorRes.white
 //                               : ColorRes.textColor,
@@ -286,7 +286,7 @@ class _PgCoLivingState extends State<PgCoLiving> {
         //                     buildCommonText(
         //                       builder['title'],
         //                       11,
-        //                       FontWeight.w500,
+        //                       AppFontWeights.medium,
         //                       widget.controllerForFilter.selectedMap['title'] ==
         //                           builder['title'] ? ColorRes.white : ColorRes.textColor,
         //                       1,
@@ -368,7 +368,7 @@ class _PgCoLivingState extends State<PgCoLiving> {
         //                   buildCommonText(
         //                     builder['title'],
         //                     12,
-        //                     FontWeight.w500,
+        //                     AppFontWeights.medium,
         //                     isSelected ? ColorRes.primary : ColorRes.textColor,
         //                     1,
         //                   ),

@@ -37,7 +37,7 @@ class ForgetPasswordScreen extends StatelessWidget {
                   //
                   //   style: theme.textTheme.headlineMedium?.copyWith(
                   //     fontFamily: FontRes.nuNunitoSans,
-                  //     fontWeight: FontWeight.w800,
+                  //     fontWeight: AppFontWeights.extraBold,
                   //     color: Colors.black87,
                   //   ),
                   // ),

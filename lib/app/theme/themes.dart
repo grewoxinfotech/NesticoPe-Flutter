@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_font_sizes.dart';
 import '../constants/color_res.dart';
 import '../constants/font_res.dart';
 
@@ -21,7 +22,7 @@ ThemeData lightTheme = ThemeData(
     scrolledUnderElevation: 0.0,
     titleTextStyle: TextStyle(
       fontSize: 18,
-      fontWeight: FontWeight.w800,
+      fontWeight: AppFontWeights.extraBold,
       color: ColorRes.textPrimary,
     ),
   ),
@@ -50,9 +51,9 @@ ThemeData lightTheme = ThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: ColorRes.primary,
       foregroundColor: ColorRes.white,
-      textStyle: const TextStyle(
+      textStyle: TextStyle(
         fontSize: 16,
-        fontWeight: FontWeight.w600,
+        fontWeight: AppFontWeights.semiBold,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),

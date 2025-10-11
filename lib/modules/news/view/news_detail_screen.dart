@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/news/news_model.dart';
 
 class NewsDetailScreen extends StatefulWidget {
@@ -83,7 +84,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                 leading: Container(
                   margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: ColorRes.black.withOpacity(0.5),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
@@ -95,7 +96,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                   Container(
                     margin: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
+                      color: ColorRes.black.withOpacity(0.5),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
@@ -106,7 +107,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                   Container(
                     margin: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
+                      color: ColorRes.black.withOpacity(0.5),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
@@ -132,14 +133,14 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                           fit: BoxFit.cover,
                           placeholder:
                               (context, url) => Container(
-                                color: Colors.grey[300],
+                                color: ColorRes.leadGreyColor[300],
                                 child: const Center(
                                   child: CircularProgressIndicator(),
                                 ),
                               ),
                           errorWidget:
                               (context, url, error) => Container(
-                                color: Colors.grey[300],
+                                color: ColorRes.leadGreyColor[300],
                                 child: const Icon(Icons.error, size: 50),
                               ),
                         )
@@ -158,8 +159,8 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.7),
+                              ColorRes.transparentColor,
+                              ColorRes.black.withOpacity(0.7),
                             ],
                           ),
                         ),
@@ -197,8 +198,8 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                             ),
                             style: const TextStyle(
                               color: ColorRes.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.extraBold,
                             ),
                           ),
                         ),
@@ -208,8 +209,8 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       Text(
                         newsItem.title ?? 'Untitled',
                         style: TextStyle(
-                          fontSize: isTablet ? 32 : 18,
-                          fontWeight: FontWeight.w600,
+                          fontSize: isTablet ? AppFontSizes.displayMedium : AppFontSizes.large,
+                          fontWeight: AppFontWeights.semiBold,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -219,9 +220,9 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                         Text(
                           newsItem.summary!,
                           style: TextStyle(
-                            fontSize: isTablet ? 18 : 15,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.normal,
+                            fontSize: isTablet ? AppFontSizes.large : AppFontSizes.bodyMedium,
+                            color: ColorRes.leadGreyColor[600],
+                            fontWeight: AppFontWeights.regular,
                           ),
                         ),
                       const SizedBox(height: 20),
@@ -230,7 +231,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
+                          color: ColorRes.leadGreyColor[100],
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -245,8 +246,8 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                     'A',
                                 style: const TextStyle(
                                   color: ColorRes.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: AppFontSizes.subtitle,
+                                  fontWeight: AppFontWeights.extraBold,
                                 ),
                               ),
                             ),
@@ -258,16 +259,16 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                   Text(
                                     newsItem.author ?? 'Unknown Author',
                                     style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontWeight: AppFontWeights.extraBold,
+                                      fontSize: AppFontSizes.body,
                                     ),
                                   ),
                                   if (newsItem.authorDesignation != null)
                                     Text(
                                       newsItem.authorDesignation!,
                                       style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 14,
+                                        color: ColorRes.leadGreyColor[600],
+                                        fontSize: AppFontSizes.medium,
                                       ),
                                     ),
                                 ],
@@ -370,7 +371,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                 return Text(
                                   '#$tag',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: AppFontSizes.small,
                                     color: ColorRes.primary,
                                   ),
                                 );
@@ -390,17 +391,17 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       //       ),
                       //       "h1": Style(
                       //         fontSize: FontSize(isTablet ? 28 : 24),
-                      //         fontWeight: FontWeight.bold,
+                      //         fontWeight: AppFontWeights.extraBold,
                       //         margin: Margins.symmetric(vertical: 16),
                       //       ),
                       //       "h2": Style(
                       //         fontSize: FontSize(isTablet ? 24 : 20),
-                      //         fontWeight: FontWeight.bold,
+                      //         fontWeight: AppFontWeights.extraBold,
                       //         margin: Margins.symmetric(vertical: 14),
                       //       ),
                       //       "h3": Style(
                       //         fontSize: FontSize(isTablet ? 20 : 18),
-                      //         fontWeight: FontWeight.bold,
+                      //         fontWeight: AppFontWeights.extraBold,
                       //         margin: Margins.symmetric(vertical: 12),
                       //       ),
                       //       "p": Style(
@@ -426,7 +427,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       // else
                       Text(
                         '${newsItem.content}',
-                        style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                        style: TextStyle(fontSize: AppFontSizes.bodySmall, color: ColorRes.leadGreyColor[600]),
                       ),
                       const SizedBox(height: 40),
 
@@ -434,7 +435,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]!),
+                          border: Border.all(color: ColorRes.leadGreyColor[300]!),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Column(
@@ -442,8 +443,8 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                             const Text(
                               'Share this article',
                               style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontSize: AppFontSizes.large,
+                                fontWeight: AppFontWeights.extraBold,
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -507,7 +508,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
       children: [
         Icon(icon, size: 16, color: ColorRes.primary),
         const SizedBox(width: 4),
-        Text(text, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+        Text(text, style: TextStyle(color: ColorRes.leadGreyColor[600], fontSize: AppFontSizes.medium)),
       ],
     );
   }

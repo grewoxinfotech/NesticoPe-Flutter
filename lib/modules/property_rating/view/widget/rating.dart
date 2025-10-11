@@ -26,7 +26,7 @@ class RatingWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey.shade300, width: 1),
+          border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +48,7 @@ class RatingWidget extends StatelessWidget {
                           buildCommonText(
                             '$star',
                             AppFontSizes.caption,
-                            FontWeight.w500,
+                            AppFontWeights.medium,
                             ColorRes.textPrimary,
                             1,
                           ),
@@ -58,7 +58,7 @@ class RatingWidget extends StatelessWidget {
                             child: LinearProgressIndicator(
                               borderRadius: BorderRadius.circular(15),
                               value: percent,
-                              backgroundColor: Colors.grey[300],
+                              backgroundColor: ColorRes.leadGreyColor[300],
                               color: ColorRes.primary,
                               minHeight: 4,
                             ),
@@ -67,7 +67,7 @@ class RatingWidget extends StatelessWidget {
                           buildCommonText(
                             '${ratingCounts[star]}',
                             AppFontSizes.caption,
-                            FontWeight.w500,
+                            AppFontWeights.medium,
                             ColorRes.textPrimary,
                             1,
                           ),
@@ -83,7 +83,7 @@ class RatingWidget extends StatelessWidget {
                   child: VerticalDivider(
                     width: 1,
                     thickness: 0.5,
-                    color: Colors.grey.shade300,
+                    color: ColorRes.leadGreyColor.shade300,
                   ),
                 ),
 
@@ -95,7 +95,7 @@ class RatingWidget extends StatelessWidget {
                       buildCommonText(
                         averageRating.toStringAsFixed(1),
                         AppFontSizes.heading,
-                        FontWeight.w600,
+                        AppFontWeights.semiBold,
                         ColorRes.textPrimary,
                         1,
                       ),
@@ -105,8 +105,8 @@ class RatingWidget extends StatelessWidget {
                       buildCommonText(
                         '($total) Ratings',
                         AppFontSizes.extraSmall,
-                        FontWeight.normal,
-                        Colors.grey.shade600,
+                        AppFontWeights.regular,
+                        ColorRes.leadGreyColor.shade600,
                         1,
                       ),
                     ],

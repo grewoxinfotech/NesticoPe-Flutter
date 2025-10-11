@@ -81,9 +81,9 @@ class AgentProfilePage extends StatelessWidget {
               ),
             ),
             icon: const Icon(Icons.home, color: ColorRes.white, size: 18),
-            label: const Text(
+            label:  Text(
               'View Properties',
-              style: TextStyle(fontSize: 14, color: ColorRes.white),
+              style: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.white),
             ),
             onPressed: () {
               // TODO: Navigate to Agent’s property list
@@ -100,7 +100,7 @@ class AgentProfilePage extends StatelessWidget {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                  icon: const Icon(Icons.arrow_back, color: ColorRes.blackShade87),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
@@ -119,8 +119,8 @@ class AgentProfilePage extends StatelessWidget {
             Center(
               child: Text(
                 agent.name,
-                style: const TextStyle(
-                  fontSize: 16,
+                style:  TextStyle(
+                  fontSize: AppFontSizes.body,
                   fontWeight: AppFontWeights.bold,
                   color: ColorRes.textColor,
                 ),
@@ -274,9 +274,9 @@ class AgentCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                      style:  TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.bold,
                         color: ColorRes.textColor,
                       ),
                     ),
@@ -292,10 +292,10 @@ class AgentCard extends StatelessWidget {
                       ),
                       child: Text(
                         badgeText,
-                        style: const TextStyle(
-                          fontSize: 9,
+                        style:  TextStyle(
+                          fontSize: AppFontSizes.mini,
                           color: ColorRes.white,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: AppFontWeights.semiBold,
                         ),
                       ),
                     ),
@@ -310,29 +310,29 @@ class AgentCard extends StatelessWidget {
             if (!isOwner) ...[
               Row(
                 children: [
-                  const Icon(Icons.groups, color: Colors.blue, size: 18),
+                  const Icon(Icons.groups, color: ColorRes.blueColor, size: 18),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       buyersServed,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
+                      style:  TextStyle(
+                        fontSize: AppFontSizes.extraSmall,
+                        fontWeight: AppFontWeights.medium,
                       ),
                     ),
                   ),
                   const Icon(
                     Icons.verified_user,
-                    color: Colors.green,
+                    color: ColorRes.green,
                     size: 18,
                   ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       listings,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
+                      style:  TextStyle(
+                        fontSize:AppFontSizes.extraSmall,
+                        fontWeight: AppFontWeights.medium,
                       ),
                     ),
                   ),
@@ -348,22 +348,22 @@ class AgentCard extends StatelessWidget {
                   //     buyersServed,
                   //     style: const TextStyle(
                   //       fontSize: 10,
-                  //       fontWeight: FontWeight.w500,
+                  //       fontWeight: AppFontWeights.medium,
                   //     ),
                   //   ),
                   // ),
                   const Icon(
                     Icons.verified_user,
-                    color: Colors.green,
+                    color: ColorRes.green,
                     size: 18,
                   ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       listings,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
+                      style:  TextStyle(
+                        fontSize:AppFontSizes.extraSmall,
+                        fontWeight: AppFontWeights.medium,
                       ),
                     ),
                   ),
@@ -375,7 +375,7 @@ class AgentCard extends StatelessWidget {
             /// Description
             Text(
               description,
-              style: const TextStyle(fontSize: 11, color: ColorRes.grey),
+              style:  TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.grey),
             ),
 
             const SizedBox(height: 12),
@@ -393,7 +393,7 @@ class AgentCard extends StatelessWidget {
                       const VerticalDivider(
                         thickness: 0.5,
                         width: 20,
-                        color: Colors.grey,
+                        color: ColorRes.leadGreyColor,
                       ),
                   ],
                 ],
@@ -417,12 +417,12 @@ class InfoTile extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(title, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        Text(title, style:  TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor)),
         const SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: AppFontSizes.small,
             fontWeight: AppFontWeights.semiBold,
             color: ColorRes.textPrimary,
           ),
@@ -452,10 +452,10 @@ class AgentTag extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           text,
-          style: const TextStyle(
-            fontSize: 11,
-            color: Colors.grey,
-            fontWeight: FontWeight.w500,
+          style:  TextStyle(
+            fontSize:AppFontSizes.mini,
+            color: ColorRes.leadGreyColor,
+            fontWeight: AppFontWeights.medium,
           ),
         ),
       ],
@@ -471,10 +471,10 @@ class AreaChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Chip(
       label: Text(label, style: const TextStyle(fontSize: 11)),
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: ColorRes.leadGreyColor.shade100,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.grey.shade200, width: 1),
+        side: BorderSide(color: ColorRes.leadGreyColor.shade200, width: 1),
       ),
     );
   }
@@ -522,7 +522,7 @@ class CategoryChip extends StatelessWidget {
             style: TextStyle(
               fontSize: AppFontSizes.caption,
               fontWeight: AppFontWeights.regular,
-              color: isSelected ? ColorRes.primary : Colors.grey.shade500,
+              color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade500,
             ),
           ),
         ],
@@ -541,9 +541,9 @@ class SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
+        style:  TextStyle(
+          fontSize: AppFontSizes.medium,
+          fontWeight: AppFontWeights.semiBold,
           color: ColorRes.textColor,
         ),
       ),

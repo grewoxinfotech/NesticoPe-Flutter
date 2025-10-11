@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/img_res.dart';
 import '../../../../app/constants/size_manager.dart';
@@ -88,10 +89,10 @@ class PropertyListScreenCard extends StatelessWidget {
                       Flexible(
                         child: Text(
                           items!.title!,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 14,
+                          style:  TextStyle(
+                            fontWeight: AppFontWeights.extraBold,
+                            color: ColorRes.black,
+                            fontSize: AppFontSizes.medium,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -110,9 +111,9 @@ class PropertyListScreenCard extends StatelessWidget {
                             items?.listingType != null
                                 ? Text(
                                   "${items!.listingType}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
+                                  style:  TextStyle(
+                                    fontWeight: AppFontWeights.semiBold,
+                                    fontSize: AppFontSizes.small,
                                     color: ColorRes.white,
                                   ),
                                 )
@@ -124,7 +125,8 @@ class PropertyListScreenCard extends StatelessWidget {
                   Divider(
                     indent: 12,
                     endIndent: 12,
-                    color: Colors.grey.shade200,
+                    color: ColorRes.leadGreyColor.shade200,
+                    // color: .shade200,
                   ),
                   IntrinsicHeight(
                     child: Row(
@@ -137,10 +139,10 @@ class PropertyListScreenCard extends StatelessWidget {
                               child: Text(
                                 items!.propertyDetails!.financialInfo!.price
                                     .toString(),
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
+                                style:  TextStyle(
+                                  fontSize: AppFontSizes.medium,
+                                  color: ColorRes.black,
+                                  fontWeight: AppFontWeights.extraBold,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -163,7 +165,7 @@ class PropertyListScreenCard extends StatelessWidget {
                         VerticalDivider(
                           thickness: 1,
                           width: 20, // space between items
-                          color: Colors.grey.shade200,
+                          color: ColorRes.leadGreyColor.shade200,
                         ),
                         const SizedBox(width: 6),
                         SizedBox(
@@ -175,9 +177,9 @@ class PropertyListScreenCard extends StatelessWidget {
                                 Text(
                                   "${items!.propertyDetails!.propertyBuiltUpArea} sq.ft",
                                   style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: AppFontSizes.medium,
+                                    color: ColorRes.black,
+                                    fontWeight: AppFontWeights.extraBold,
                                   ),
                                 ),
                               SizedBox(
@@ -185,8 +187,8 @@ class PropertyListScreenCard extends StatelessWidget {
                                 child: Text(
                                   "Built Up area",
                                   style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[700],
+                                    fontSize: AppFontSizes.small,
+                                    color: ColorRes.leadGreyColor[700],
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -198,7 +200,7 @@ class PropertyListScreenCard extends StatelessWidget {
                         VerticalDivider(
                           thickness: 1,
                           width: 20, // space between items
-                          color: Colors.grey.shade200,
+                          color: ColorRes.leadGreyColor.shade200,
                         ),
                         const SizedBox(width: 6),
 
@@ -209,10 +211,10 @@ class PropertyListScreenCard extends StatelessWidget {
                             children: [
                               Text(
                                 '${items!.propertyDetails!.bhk ?? '0'} BHK',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
+                                style:  TextStyle(
+                                  fontSize: AppFontSizes.medium,
+                                  color: ColorRes.black,
+                                  fontWeight: AppFontWeights.extraBold,
                                 ),
                               ),
                               if (items
@@ -226,8 +228,8 @@ class PropertyListScreenCard extends StatelessWidget {
                                       .furnishInfo!
                                       .furnishType!,
                                   style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[700],
+                                    fontSize: AppFontSizes.small,
+                                    color: ColorRes.leadGreyColor[700],
                                   ),
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
@@ -249,16 +251,16 @@ class PropertyListScreenCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade600,
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.leadGreyColor.shade600,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Divider(
                     indent: 12,
                     endIndent: 12,
-                    color: Colors.grey.shade200,
+                    color: ColorRes.leadGreyColor.shade200,
                   ),
                   Row(
                     children: [
@@ -283,18 +285,18 @@ class PropertyListScreenCard extends StatelessWidget {
                             const Text(
                               'Posted by',
                               style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
+                                color: ColorRes.leadGreyColor,
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.medium,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               items!.ownerName!,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                                color: Colors.black,
+                              style:  TextStyle(
+                                fontWeight: AppFontWeights.extraBold,
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.black,
                               ),
                             ),
                           ],

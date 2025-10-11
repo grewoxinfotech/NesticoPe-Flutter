@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/ic_res.dart';
 import '../../../app/constants/size_manager.dart';
 import '../../display/ic.dart';
@@ -50,9 +51,9 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
             Text(
               title!,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: AppFontSizes.medium,
                 color: Get.theme.colorScheme.onSecondary,
-                fontWeight: FontWeight.w700,
+                fontWeight: AppFontWeights.bold,
               ),
             ),
             if (isRequired)
@@ -60,8 +61,8 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
                 ' *',
                 style: TextStyle(
                   color: Get.theme.colorScheme.error,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontSize: AppFontSizes.medium,
+                  fontWeight: AppFontWeights.bold,
                 ),
               ),
           ],
@@ -91,9 +92,9 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
       validator: validator,
       focusNode: focusNode,
       style: TextStyle(
-        fontSize: 15,
+        fontSize: AppFontSizes.bodyMedium,
         color: Get.theme.colorScheme.onSurface,
-        fontWeight: FontWeight.w500,
+        fontWeight: AppFontWeights.medium,
       ),
       decoration: _getInputDecoration(),
       isExpanded: true,
@@ -188,7 +189,7 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
       hintText: hintText,
       hintStyle: TextStyle(
         color: Get.theme.colorScheme.onSurface.withAlpha(128),
-        fontSize: 15,
+        fontSize: AppFontSizes.bodyMedium,
         fontWeight: FontWeight.w400,
       ),
       prefixIcon:
@@ -210,8 +211,8 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
       errorText: state?.hasError == true ? state?.errorText : null,
       errorStyle: TextStyle(
         color: Get.theme.colorScheme.error,
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
+        fontSize: AppFontSizes.small,
+        fontWeight: AppFontWeights.medium,
       ),
     );
   }

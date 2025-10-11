@@ -88,7 +88,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                                 fontSize: AppFontSizes.extraSmall,
                                 color: ColorRes.primary,
 
-                                fontWeight: FontWeight.w500,
+                                fontWeight: AppFontWeights.medium,
                               ),
                             ),
                             Obx(
@@ -212,7 +212,7 @@ Widget buildPositionedTextField(BuildContext context, VoidCallback? onTap) {
       controller: TextEditingController(),
       decoration: InputDecoration(
         hintText: 'Change your Location ...',
-        hintStyle: const TextStyle(fontSize: 14),
+        hintStyle: const TextStyle(fontSize: AppFontSizes.medium),
         filled: true,
         fillColor: ColorRes.white,
         prefixIcon: const Icon(Icons.search, color: ColorRes.primary, size: 22),

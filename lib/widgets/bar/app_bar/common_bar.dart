@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
+
 class CommonNesticoPeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool showBackArrow;
@@ -61,8 +63,8 @@ class CommonNesticoPeAppBar extends StatelessWidget implements PreferredSizeWidg
               child: Text(
                 title,
                 style: theme.appBarTheme.titleTextStyle?.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontSize: AppFontSizes.large,
+                  fontWeight: AppFontWeights.semiBold,
                 ),
 
                 maxLines: 1,

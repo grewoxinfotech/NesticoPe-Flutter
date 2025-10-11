@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart'
     hide Obx;
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../controller/create_property_controller.dart';
 
 class PhotoUpload extends StatelessWidget {
@@ -48,8 +49,9 @@ class PhotoUpload extends StatelessWidget {
                         controller.selectedImages.length >= controller.maxImages
                             ? ColorRes.leadGreyColor
                             : ColorRes.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
+                    fontWeight: AppFontWeights.medium,
+                    fontSize: AppFontSizes.small,
+                    // fontSize: 12,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -69,7 +71,7 @@ class PhotoUpload extends StatelessWidget {
               ),
               Text(
                 "${controller.selectedImages.length} / ${controller.maxImages} photos selected",
-                style: TextStyle(color: ColorRes.leadGreyColor.shade600, fontSize: 12),
+                style: TextStyle(color: ColorRes.leadGreyColor.shade600, fontSize: AppFontSizes.small),
               ),
             ],
           ),
@@ -146,10 +148,11 @@ class PhotoUpload extends StatelessWidget {
                                                 : img.label,
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                               color: ColorRes.white,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
+                                              fontSize: AppFontSizes.medium,
+                                              // fontSize: 14,
+                                              fontWeight: AppFontWeights.medium,
                                             ),
                                           ),
                                         ),
@@ -259,8 +262,9 @@ void showLabelBottomSheet(
                               isSelected
                                   ? ColorRes.primary
                                   : ColorRes.textPrimary,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
+                          fontWeight: AppFontWeights.medium,
+                          fontSize: AppFontSizes.small,
+                          // fontSize: 12,
                         ),
                       );
                     }).toList(),
@@ -274,9 +278,7 @@ void showLabelBottomSheet(
   );
 }
 
-extension on bool {
-  operator [](String other) {}
-}
+
 
 void showImageSourceSheet(
   BuildContext context,

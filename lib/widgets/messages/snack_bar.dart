@@ -2,6 +2,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 
 class NesticoPeSnackBar {
@@ -21,8 +22,8 @@ class NesticoPeSnackBar {
         contentType: contentType,
         color: color,
         inMaterialBanner: true,
-        titleTextStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-        messageTextStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        titleTextStyle:  TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.bold),
+        messageTextStyle:  TextStyle(fontSize: AppFontSizes.medium, fontWeight: AppFontWeights.semiBold),
       ),
     );
 

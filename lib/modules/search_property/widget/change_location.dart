@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import 'alphabet_search.dart';
 
 class ChangeLocation extends StatefulWidget {
@@ -24,8 +25,8 @@ class _ChangeLocationState extends State<ChangeLocation> {
           title: buildCommonText(
             'Change Location',
 
-            20,
-            FontWeight.w600,
+            AppFontSizes.subtitle,
+            AppFontWeights.semiBold,
             ColorRes.textColor,
             1,
           ),

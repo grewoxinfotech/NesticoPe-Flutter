@@ -11,7 +11,7 @@ class BuilderDashboard extends StatelessWidget {
 
       backgroundColor: ColorRes.white,
       appBar: AppBar(
-        title: const Text('Dashboard', style: TextStyle(fontWeight: FontWeight.w600)),
+        title: Text('Dashboard', style: TextStyle(fontWeight: AppFontWeights.semiBold)),
         backgroundColor: ColorRes.white,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -37,8 +37,8 @@ class BuilderDashboard extends StatelessWidget {
                         Text(
                           'Welcome Back!',
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontSize: AppFontSizes.subtitle,
+                            fontWeight: AppFontWeights.extraBold,
                             color: ColorRes.white,
                           ),
                         ),
@@ -46,10 +46,11 @@ class BuilderDashboard extends StatelessWidget {
                         Text(
                           'Manage your properties efficiently',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: AppFontSizes.bodySmall,
                             color: ColorRes.white.withOpacity(0.9),
                           ),
                           maxLines: 2,
+
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
@@ -70,25 +71,25 @@ class BuilderDashboard extends StatelessWidget {
             const SizedBox(height: 24),
 
             ///Font not change from it ============================================
-            // Metrics Grid
-            // GridView.count(
-            //   shrinkWrap: true,
-            //   physics: const NeverScrollableScrollPhysics(),
-            //   crossAxisCount: 2,
-            //   crossAxisSpacing: 16,
-            //   mainAxisSpacing: 16,
-            //   childAspectRatio: 1.2,
-            //   children: [
-            //     _buildMetricCard('Total Properties', '24', Icons.apartment_rounded, const Color(0xFF6366F1)),
-            //     _buildMetricCard('Active Leads', '156', Icons.people_rounded, const Color(0xFFEC4899)),
-            //     _buildMetricCard('Sold Units', '18', Icons.check_circle_rounded, const Color(0xFF10B981)),
-            //     _buildMetricCard('Revenue', '₹2.4Cr', Icons.currency_rupee_rounded, const Color(0xFFF59E0B)),
-            //   ],
-            // ),
+
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 1.5,
+              children: [
+                _buildMetricCard('Total Properties', '24', Icons.apartment_rounded, const Color(0xFF6366F1)),
+                _buildMetricCard('Active Leads', '156', Icons.people_rounded, const Color(0xFFEC4899)),
+                _buildMetricCard('Sold Units', '18', Icons.check_circle_rounded, const Color(0xFF10B981)),
+                _buildMetricCard('Revenue', '₹2.4Cr', Icons.currency_rupee_rounded, const Color(0xFFF59E0B)),
+              ],
+            ),
             const SizedBox(height: 24),
 
             // Recent Activities
-            Text('Recent Activities', style: TextStyle(fontSize: AppFontSizes.body, fontWeight: FontWeight.w600, color: ColorRes.textPrimary)),
+            Text('Recent Activities', style: TextStyle(fontSize: AppFontSizes.body, fontWeight: AppFontWeights.semiBold, color: ColorRes.textPrimary)),
             const SizedBox(height: 12),
             _buildActivityItem('New lead for Skyline Tower', '2 hours ago', Icons.person_add_rounded, ColorRes.blueColor),
             _buildActivityItem('Property listed successfully', '5 hours ago', Icons.check_circle_rounded, ColorRes.green),
@@ -117,7 +118,7 @@ class BuilderDashboard extends StatelessWidget {
             decoration: BoxDecoration(color: color.withOpacity(0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: color.withOpacity(0.3),width: 1),),
             child: Icon(icon, size: 20, color: color),
           ),
-          Text(value, style: TextStyle(fontSize: AppFontSizes.large, fontWeight: FontWeight.w600, color: ColorRes.textPrimary)),
+          Text(value, style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.semiBold, color: ColorRes.textPrimary)),
           Text(label, style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.textSecondary)),
         ],
       ),
@@ -145,7 +146,7 @@ class BuilderDashboard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: TextStyle(fontSize: AppFontSizes.bodySmall, fontWeight: FontWeight.w600, color: ColorRes.textPrimary)),
+                Text(title, style: TextStyle(fontSize: AppFontSizes.bodySmall, fontWeight: AppFontWeights.semiBold, color: ColorRes.textPrimary)),
                 Text(time, style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.textSecondary)),
               ],
             ),

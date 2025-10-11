@@ -84,8 +84,8 @@
 //                               fontSize: 16,
 //                               fontWeight:
 //                               (drawerController.selextedIndex == i)
-//                                   ? FontWeight.w700
-//                                   : FontWeight.w600,
+//                                   ? AppFontWeights.bold
+//                                   : AppFontWeights.semiBold,
 //                               color:
 //                               (drawerController.selextedIndex == i)
 //                                   ? Get.theme.colorScheme.primary
@@ -108,7 +108,7 @@
 //                   "Support",
 //                   style: TextStyle(
 //                     fontSize: 16,
-//                     fontWeight: FontWeight.w700,
+//                     fontWeight: AppFontWeights.bold,
 //                     color: ColorRes.white,
 //                   ),
 //                 ),
@@ -132,7 +132,7 @@
 //                       "Logout",
 //                       style: TextStyle(
 //                         fontSize: 18,
-//                         fontWeight: FontWeight.w700,
+//                         fontWeight: AppFontWeights.bold,
 //                         color: Get.theme.colorScheme.onSecondary,
 //                       ),
 //                     ),
@@ -163,6 +163,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 import '../../app/constants/ic_res.dart';
 import '../../app/constants/size_manager.dart';
@@ -185,6 +186,7 @@ class NesticoPeDrawer extends StatelessWidget {
     DrawerModel(title: "Messenger", iconPath: ICRes.notifications),
     DrawerModel(title: "Info Portal", iconPath: ICRes.file),
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -241,12 +243,12 @@ class NesticoPeDrawer extends StatelessWidget {
                           Text(
                             items[i].title,
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: AppFontSizes.body,
 
                               fontWeight:
                                   isSelected
-                                      ? FontWeight.w700
-                                      : FontWeight.w600,
+                                      ? AppFontWeights.bold
+                                      : AppFontWeights.semiBold,
                               color:
                                   isSelected
                                       ? Get.theme.colorScheme.primary
@@ -265,12 +267,12 @@ class NesticoPeDrawer extends StatelessWidget {
             Align(
               alignment: Alignment.center,
               child: FloatingActionButton.extended(
-                label: const Text(
+                label:  Text(
                   "Support",
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: AppFontSizes.body,
 
-                    fontWeight: FontWeight.w700,
+                    fontWeight: AppFontWeights.bold,
                     color: ColorRes.white,
                   ),
                 ),
@@ -298,9 +300,9 @@ class NesticoPeDrawer extends StatelessWidget {
                     Text(
                       "Logout",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: AppFontSizes.large,
 
-                        fontWeight: FontWeight.w700,
+                        fontWeight: AppFontWeights.bold,
                         color: Get.theme.colorScheme.onSecondary,
                       ),
                     ),

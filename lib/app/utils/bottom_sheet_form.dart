@@ -166,7 +166,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                 children: [
                   Text(
                     "${widget.property.ownerName}",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                    style: TextStyle(fontWeight: AppFontWeights.semiBold, fontSize: 12),
                   ),
                   Text(
                     "+91 ${widget.property.ownerPhone}",
@@ -223,7 +223,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
           const SizedBox(height: 12),
           Text(
             widget.formTitle,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 13, fontWeight: AppFontWeights.semiBold),
           ),
           const SizedBox(height: 14),
 
@@ -234,7 +234,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               labelText: widget.nameLabel,
               labelStyle: TextStyle(
                 fontSize: AppFontSizes.small,
-                fontWeight: FontWeight.w500,
+                fontWeight: AppFontWeights.medium,
               ),
               prefixIcon: Icon(widget.nameIcon, size: 18),
               border: OutlineInputBorder(
@@ -258,7 +258,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               labelText: widget.phoneLabel,
               labelStyle: TextStyle(
                 fontSize: AppFontSizes.small,
-                fontWeight: FontWeight.w500,
+                fontWeight: AppFontWeights.medium,
               ),
               prefixIcon: Icon(widget.phoneIcon, size: 18),
               border: OutlineInputBorder(
@@ -283,7 +283,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               labelText: widget.emailLabel,
               labelStyle: TextStyle(
                 fontSize: AppFontSizes.small,
-                fontWeight: FontWeight.w500,
+                fontWeight: AppFontWeights.medium,
               ),
               prefixIcon: Icon(widget.emailIcon, size: 18),
               border: OutlineInputBorder(
@@ -369,7 +369,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               widget.contactButtonText,
               style: const TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontWeight: AppFontWeights.semiBold,
                 color: ColorRes.white,
               ),
             ),
@@ -388,7 +388,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                     text: widget.termsClickableText,
                     style: TextStyle(
                       color: ColorRes.primary,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: AppFontWeights.medium,
                     ),
                   ),
                 ],

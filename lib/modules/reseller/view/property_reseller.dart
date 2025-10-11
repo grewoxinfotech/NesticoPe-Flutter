@@ -193,7 +193,7 @@
 //               'Recent Buyer Leads',
 //               style: TextStyle(
 //                 fontSize: 14,
-//                 fontWeight: FontWeight.w600,
+//                 fontWeight: AppFontWeights.semiBold,
 //                 color: ColorRes.textPrimary,
 //               ),
 //             ),
@@ -203,7 +203,7 @@
 //                 Get.to(() => ResellerLeadScreen());
 //               },
 //               child: const Text('View All',style: TextStyle(
-//                 fontWeight: FontWeight.w500,
+//                 fontWeight: AppFontWeights.medium,
 //                 color: ColorRes.primary,
 //                 fontSize: 12
 //               ),),
@@ -242,14 +242,14 @@
 //             lead.name.split(' ').map((e) => e[0]).join().toUpperCase(),
 //             style: TextStyle(
 //               color: _getStatusColor(lead.status),
-//               fontWeight: FontWeight.w700,
+//               fontWeight: AppFontWeights.bold,
 //             ),
 //           ),
 //         ),
 //         title: Text(
 //           lead.name,
 //           style: TextStyle(
-//               fontWeight: FontWeight.w600, fontSize: AppFontSizes.bodySmall),
+//               fontWeight: AppFontWeights.semiBold, fontSize: AppFontSizes.bodySmall),
 //         ),
 //         subtitle: Column(
 //           crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,7 +282,7 @@
 //                     style: TextStyle(
 //                       fontSize: AppFontSizes.mini,
 //                       color: _getStatusColor(lead.status),
-//                       fontWeight: FontWeight.w500,
+//                       fontWeight: AppFontWeights.medium,
 //                     ),
 //                   ),
 //                 ),
@@ -334,7 +334,7 @@
 //               'Top Property',
 //               style: TextStyle(
 //                 fontSize: 14,
-//                 fontWeight: FontWeight.w600,
+//                 fontWeight: AppFontWeights.semiBold,
 //                 color: ColorRes.textPrimary,
 //               ),
 //             ),
@@ -344,7 +344,7 @@
 //                 Get.to(() => ResellerLeadScreen());
 //               },
 //               child: const Text('View All',style: TextStyle(
-//                   fontWeight: FontWeight.w500,
+//                   fontWeight: AppFontWeights.medium,
 //                   color: ColorRes.primary,
 //                   fontSize: 12
 //               ),),
@@ -418,7 +418,7 @@
 //                       'Added Today',
 //                       style: TextStyle(
 //                         fontSize: 10,
-//                         fontWeight: FontWeight.w600,
+//                         fontWeight: AppFontWeights.semiBold,
 //                         color: Colors.black87,
 //                       ),
 //                     ),
@@ -582,8 +582,8 @@
 //           type: BottomNavigationBarType.fixed,
 //           selectedItemColor: Colors.blue,
 //           unselectedItemColor: Colors.grey,
-//           selectedLabelStyle: TextStyle(fontSize: AppFontSizes.caption,fontWeight: FontWeight.w500),
-//           unselectedLabelStyle: TextStyle(fontSize: AppFontSizes.caption,fontWeight: FontWeight.w500),
+//           selectedLabelStyle: TextStyle(fontSize: AppFontSizes.caption,fontWeight: AppFontWeights.medium),
+//           unselectedLabelStyle: TextStyle(fontSize: AppFontSizes.caption,fontWeight: AppFontWeights.medium),
 //           backgroundColor: ColorRes.white,
 //           elevation: 8,
 //           items: const [
@@ -639,9 +639,9 @@ class ResellerDashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
-        title: const Text(
+        title:  Text(
           'Dashboard',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: AppFontWeights.extraBold),
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
@@ -1469,11 +1469,11 @@ class MainNavigationScreen extends StatelessWidget {
             unselectedItemColor: ColorRes.leadGreyColor,
             selectedLabelStyle: TextStyle(
               fontSize: AppFontSizes.caption,
-              fontWeight: FontWeight.w600,
+              fontWeight: AppFontWeights.semiBold,
             ),
             unselectedLabelStyle: TextStyle(
               fontSize: AppFontSizes.caption,
-              fontWeight: FontWeight.w500,
+              fontWeight: AppFontWeights.medium,
             ),
             backgroundColor: ColorRes.white,
             elevation: 0,

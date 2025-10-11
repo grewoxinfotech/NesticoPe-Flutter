@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/widgets/input/custom_text_field.dart';
 
@@ -140,7 +141,8 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           Text(
             'Enter your phone number',
             style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+              // fontWeight: FontWeight.bold,
+              fontWeight: AppFontWeights.extraBold
             ),
             textAlign: TextAlign.center,
           ),
@@ -205,7 +207,8 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           Text(
             'Verify OTP',
             style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: AppFontWeights.extraBold,
+              // fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
           ),
@@ -246,7 +249,8 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
                   'Resend OTP',
                   style: TextStyle(
                     color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: AppFontWeights.medium,
+                    // fontWeight: AppFontWeights.medium,
                   ),
                 ),
               ),

@@ -121,7 +121,7 @@ class _DynamicMediaBannerState extends State<PropertyMediaGallery> {
                               ? Icons.favorite
                               : Icons.favorite_border_rounded,
                       backgroundColor: ColorRes.white,
-                      iconColor: isFav ? Colors.redAccent : ColorRes.black,
+                      iconColor: isFav ? ColorRes.redAccentColor : ColorRes.black,
                       onPressed:
                           () => widget.onFavoriteToggle?.call(widget.itemId!),
                     );
@@ -144,15 +144,15 @@ class _DynamicMediaBannerState extends State<PropertyMediaGallery> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.black54,
+                color: ColorRes.blackShade54,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 '${_currentPage + 1}/${mediaList.length}',
                 style: const TextStyle(
                   color: ColorRes.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.semiBold,
                 ),
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 
 class TrendingAreaCard extends StatelessWidget {
@@ -56,13 +57,13 @@ class TrendingAreaCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.15),
+                      color: ColorRes.leadGreyColor.withOpacity(0.15),
                       blurRadius: 6,
                       spreadRadius: 1,
                       offset: const Offset(0, 3),
                     ),
                   ],
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: ColorRes.leadGreyColor.shade200),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -82,7 +83,7 @@ class TrendingAreaCard extends StatelessWidget {
                           return Container(
                             width: 80,
                             height: 130,
-                            color: Colors.grey.shade200,
+                            color: ColorRes.leadGreyColor.shade200,
                             child: const Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
@@ -92,12 +93,9 @@ class TrendingAreaCard extends StatelessWidget {
                           return Container(
                             width: 80,
                             height: 130,
-                            color: Colors.grey.shade300,
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              color: Colors.grey,
-                              size: 30,
-                            ),
+                            color: ColorRes.leadGreyColor.shade300,
+                            child: const Icon(Icons.image_not_supported,
+                                color: Colors.grey, size: 30),
                           );
                         },
                       ),
@@ -113,9 +111,9 @@ class TrendingAreaCard extends StatelessWidget {
                             Text(
                               locality['name'],
                               style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
+                                fontSize: AppFontSizes.bodyMedium,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.blackShade87,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -128,16 +126,16 @@ class TrendingAreaCard extends StatelessWidget {
                                       ? Icons.arrow_upward
                                       : Icons.arrow_downward,
                                   size: 16,
-                                  color: isPositive ? Colors.green : Colors.red,
+                                  color: isPositive ? ColorRes.green : ColorRes.error,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
                                   "${locality['Percentage']} YoY",
                                   style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
+                                    fontSize: AppFontSizes.small,
+                                    fontWeight: AppFontWeights.semiBold,
                                     color:
-                                        isPositive ? Colors.green : Colors.red,
+                                    isPositive ? ColorRes.green : ColorRes.error,
                                   ),
                                 ),
                               ],
@@ -147,9 +145,9 @@ class TrendingAreaCard extends StatelessWidget {
                             Text(
                               locality['price'],
                               style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w500,
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.blackShade87,
+                                fontWeight: AppFontWeights.medium,
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -159,7 +157,7 @@ class TrendingAreaCard extends StatelessWidget {
                               decoration: const BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
-                                    color: Colors.grey,
+                                    color: ColorRes.leadGreyColor,
                                     width: 1,
                                     style: BorderStyle.solid,
                                   ),
@@ -177,9 +175,9 @@ class TrendingAreaCard extends StatelessWidget {
                               child: const Text(
                                 "View price trend >",
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.purple,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: AppFontSizes.small,
+                                  color: ColorRes.purpleColor,
+                                  fontWeight: AppFontWeights.medium,
                                 ),
                               ),
                             ),

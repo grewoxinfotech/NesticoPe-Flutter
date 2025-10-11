@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
@@ -133,7 +134,8 @@ class RentPriceDetail extends StatelessWidget {
                             'Please select Deposit type',
                             style: TextStyle(
                               color: ColorRes.error.shade700,
-                              fontSize: 12,
+                              fontSize: AppFontSizes.body,
+                              // fontSize: 12,
                             ),
                           ),
                         )
@@ -226,7 +228,8 @@ class RentPriceDetail extends StatelessWidget {
                             'Please select Status',
                             style: TextStyle(
                               color: ColorRes.error.shade700,
-                              fontSize: 12,
+                              fontSize: AppFontSizes.small,
+                              // fontSize: 12,
                             ),
                           ),
                         )
@@ -392,7 +395,8 @@ class RentPriceDetail extends StatelessWidget {
                             'Please select Pre-leased/Pre-rented',
                             style: TextStyle(
                               color: ColorRes.error.shade700,
-                              fontSize: 12,
+                              fontSize: AppFontSizes.small,
+                              // fontSize: 12,
                             ),
                           ),
                         )

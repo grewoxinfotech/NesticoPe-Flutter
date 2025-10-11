@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../property/controllers/property_controller.dart';
@@ -66,43 +67,43 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
               showShare: false,
             ),
 
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // Property Status & Performance
             _buildStatusSection(context, isCompact),
 
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // Property Overview
             _buildPropertyOverviewSection(context, isCompact),
 
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // Financial Information
             _buildFinancialSection(context, isCompact),
 
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // Property Details
             _buildPropertyDetailsSection(context, isCompact),
 
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // Amenities
             if (property.propertyDetails?.amenities?.isNotEmpty ?? false) ...[
               _buildAmenitiesSection(context, isCompact),
-              Divider(thickness: 8, color: Colors.grey[100]),
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
             ],
 
             // Performance Metrics
             _buildPerformanceSection(context, isCompact),
 
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // Assignment Info (if assigned)
             if (property.assignedTo != null) ...[
               _buildAssignmentSection(context, isCompact),
-              Divider(thickness: 8, color: Colors.grey[100]),
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
             ],
 
             // Action Buttons
@@ -122,18 +123,18 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
     if (images.isEmpty) {
       return Container(
         height: 280,
-        color: Colors.grey[300],
+        color: ColorRes.leadGreyColor[300],
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.home, size: 80, color: Colors.grey[400]),
+            Icon(Icons.home, size: 80, color: ColorRes.leadGreyColor[400]),
             SizedBox(height: 8),
             Text(
               property.title ?? 'No images available',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+                fontSize: AppFontSizes.body,
+                fontWeight: AppFontWeights.extraBold,
+                color: ColorRes.leadGreyColor[600],
               ),
               textAlign: TextAlign.center,
             ),
@@ -154,11 +155,11 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: Colors.grey[300],
+                    color: ColorRes.leadGreyColor[300],
                     child: Icon(
                       Icons.image_not_supported,
                       size: 80,
-                      color: Colors.grey[400],
+                      color: ColorRes.leadGreyColor[400],
                     ),
                   );
                 },
@@ -173,15 +174,15 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
+                color: ColorRes.black.withOpacity(0.6),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 '1/${images.length}',
                 style: TextStyle(
                   color: ColorRes.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.semiBold,
                 ),
               ),
             ),
@@ -201,8 +202,8 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 _formatStatus(property.propertyStatus ?? 'active'),
                 style: TextStyle(
                   color: ColorRes.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.extraBold,
                 ),
               ),
             ),
@@ -224,9 +225,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
               Text(
                 'Property Status',
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[800],
+                  fontSize: AppFontSizes.body,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.leadGreyColor[800],
                 ),
               ),
               Container(
@@ -239,9 +240,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                   child: Text(
                     ' ${property.propertyStatus?.toUpperCase() ?? 'N/A'} ',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: AppFontSizes.small,
                       color: ColorRes.primary,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: AppFontWeights.extraBold,
                     ),
                   ),
                 ),
@@ -264,7 +265,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 child: _buildStatusCard(
                   'Verified',
                   property.isVerified ?? false ? 'Yes' : 'No',
-                  property.isVerified ?? false ? Colors.green : Colors.orange,
+                  property.isVerified ?? false ? ColorRes.success : ColorRes.orangeColor,
                   Icons.check_circle_outline,
                 ),
               ),
@@ -298,9 +299,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+                  fontSize: AppFontSizes.small,
+                  color: ColorRes.leadGreyColor[600],
+                  fontWeight: AppFontWeights.medium,
                 ),
               ),
             ],
@@ -309,8 +310,8 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.extraBold,
               color: color,
             ),
           ),
@@ -331,8 +332,8 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
         //     'Property Overview',
         //     style: TextStyle(
         //       fontSize: 16,
-        //       fontWeight: FontWeight.w600,
-        //       color: Colors.grey[800],
+        //       fontWeight: AppFontWeights.semiBold,
+        //       color: ColorRes.leadGreyColor[800],
         //     ),
         //   ),
         // ),
@@ -348,10 +349,10 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
               if (type == "residential") {
                 return Text(
                   "$bhk BHK $propertyType",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.black87,
+                  style:  TextStyle(
+                    fontWeight: AppFontWeights.semiBold,
+                    fontSize: AppFontSizes.body,
+                    color: ColorRes.blackShade87,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -359,10 +360,10 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
               } else if (type == "commercial") {
                 return Text(
                   propertyType,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.black87,
+                  style:  TextStyle(
+                    fontWeight: AppFontWeights.semiBold,
+                    fontSize: AppFontSizes.body,
+                    color: ColorRes.blackShade87,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -383,13 +384,13 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
               Icon(
                 Icons.location_on_outlined,
                 size: 16,
-                color: Colors.grey[600],
+                color: ColorRes.leadGreyColor[600],
               ),
               SizedBox(width: 4),
               Expanded(
                 child: Text(
                   '${property.address ?? ''}, ${property.city ?? ''}, ${property.state ?? ''} - ${property.zipCode ?? ''}',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: AppFontSizes.bodySmall, color: ColorRes.leadGreyColor[600]),
                 ),
               ),
             ],
@@ -410,7 +411,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
         //         Icons.straighten,
         //       ),
         //     if (propertyDetails?.bathroom != null) ...[
-        //       Container(width: 1, height: 50, color: Colors.grey[300]),
+        //       Container(width: 1, height: 50, color: ColorRes.leadGreyColor[300]),
         //       _buildStatItem(
         //         '${propertyDetails!.bathroom}',
         //         'Bathrooms',
@@ -418,7 +419,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
         //       ),
         //     ],
         //     if (propertyDetails?.balcony != null) ...[
-        //       Container(width: 1, height: 50, color: Colors.grey[300]),
+        //       Container(width: 1, height: 50, color: ColorRes.leadGreyColor[300]),
         //       _buildStatItem(
         //         '${propertyDetails!.balcony}',
         //         'Balconies',
@@ -447,9 +448,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             text,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: AppFontSizes.small,
               color: color,
-              fontWeight: FontWeight.w600,
+              fontWeight: AppFontWeights.semiBold,
             ),
           ),
         ],
@@ -460,20 +461,20 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
   Widget _buildStatItem(String value, String label, IconData icon) {
     return Column(
       children: [
-        Icon(icon, size: 22, color: Colors.blue.shade700),
+        Icon(icon, size: 22, color: ColorRes.blueColor.shade700),
         SizedBox(height: 8),
         Text(
           value,
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[900],
+            fontSize: AppFontSizes.body,
+            fontWeight: AppFontWeights.extraBold,
+            color: ColorRes.leadGreyColor[900],
           ),
         ),
         SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+          style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor[600]),
           textAlign: TextAlign.center,
         ),
       ],
@@ -498,9 +499,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             'Financial Information',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.leadGreyColor[800],
             ),
           ),
           const SizedBox(height: 16),
@@ -509,7 +510,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.green.shade200, width: 1),
+              border: Border.all(color: ColorRes.success.shade200, width: 1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -526,18 +527,18 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                               ? 'Monthly Rent'
                               : 'Property Price',
                           style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey[700],
+                            fontSize: AppFontSizes.bodySmall,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.leadGreyColor[700],
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           priceManager.displayPrice,
                           style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green.shade800,
+                            fontSize: AppFontSizes.title,
+                            fontWeight: AppFontWeights.extraBold,
+                            color: ColorRes.success.shade800,
                           ),
                         ),
                       ],
@@ -551,19 +552,19 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.08),
+                          color: ColorRes.orangeColor.withOpacity(0.08),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: Colors.orange.withOpacity(0.3),
+                            color: ColorRes.orangeColor.withOpacity(0.3),
                             width: 1
                           ),
                         ),
                         child: Text(
                           'Negotiable',
                           style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.orange.shade700,
-                            fontWeight: FontWeight.bold,
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.orangeColor.shade700,
+                            fontWeight: AppFontWeights.extraBold,
                           ),
                         ),
                       ),
@@ -571,7 +572,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 16),
-                // Divider(thickness: 1, color: Colors.grey[300]),
+                // Divider(thickness: 1, color: ColorRes.leadGreyColor[300]),
                 // const SizedBox(height: 8),
 
                 /// --- Optional Details ---
@@ -610,17 +611,17 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w500,
+              fontSize: AppFontSizes.bodySmall,
+              color: ColorRes.leadGreyColor[700],
+              fontWeight: AppFontWeights.medium,
             ),
           ),
           Text(
             value,
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue.shade700,
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.extraBold,
+              color: ColorRes.blueColor.shade700,
             ),
           ),
         ],
@@ -639,9 +640,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             'Property Details',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.leadGreyColor[800],
             ),
           ),
           SizedBox(height: 16),
@@ -690,9 +691,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+                fontSize: AppFontSizes.bodySmall,
+                color: ColorRes.leadGreyColor[600],
+                fontWeight: AppFontWeights.medium,
               ),
             ),
           ),
@@ -700,9 +701,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
             child: Text(
               value,
               style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[900],
+                fontSize: AppFontSizes.bodySmall,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.leadGreyColor[900],
               ),
             ),
           ),
@@ -722,9 +723,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             'Amenities',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.leadGreyColor[800],
             ),
           ),
           SizedBox(height: 16),
@@ -736,16 +737,16 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                   return Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.08),
+                      color: ColorRes.blueColor.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.blue.withOpacity(0.3),width: 1),
+                      border: Border.all(color: ColorRes.blueColor.withOpacity(0.3),width: 1),
                     ),
                     child: Text(
                       amenity,
                       style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.blue.shade700,
-                        fontWeight: FontWeight.w600,
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.blueColor.shade700,
+                        fontWeight: AppFontWeights.semiBold,
                       ),
                     ),
                   );
@@ -765,9 +766,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             'Performance Metrics',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.leadGreyColor[800],
             ),
           ),
           SizedBox(height: 16),
@@ -778,7 +779,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                   'Views',
                   '${property.totalViews ?? 0}',
                   Icons.visibility_outlined,
-                  Colors.blue,
+                  ColorRes.blueColor,
                 ),
               ),
               SizedBox(width: 12),
@@ -787,7 +788,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                   'Inquiries',
                   '${property.totalInquiries ?? 0}',
                   Icons.question_answer_outlined,
-                  Colors.orange,
+                  ColorRes.orangeColor,
                 ),
               ),
             ],
@@ -800,7 +801,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                   'Favorites',
                   '${property.totalFavorites ?? 0}',
                   Icons.favorite_border,
-                  Colors.red,
+                  ColorRes.error,
                 ),
               ),
               SizedBox(width: 12),
@@ -809,7 +810,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                   'Shares',
                   '${property.totalShares ?? 0}',
                   Icons.share_outlined,
-                  Colors.green,
+                  ColorRes.success,
                 ),
               ),
             ],
@@ -830,7 +831,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300),
       ),
       child: Row(
         children: [
@@ -850,18 +851,18 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
+                    fontSize: AppFontSizes.small,
+                    color: ColorRes.leadGreyColor[600],
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
                 SizedBox(height: 2),
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[900],
+                    fontSize: AppFontSizes.large,
+                    fontWeight: AppFontWeights.extraBold,
+                    color: ColorRes.leadGreyColor[900],
                   ),
                 ),
               ],
@@ -881,18 +882,18 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             'Assignment Information',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.leadGreyColor[800],
             ),
           ),
           SizedBox(height: 16),
           Container(
             padding: EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.purple.shade50,
+              color: ColorRes.purpleColor.shade50,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.purple.shade200),
+              border: Border.all(color: ColorRes.purpleColor.shade200),
             ),
             child: Column(
               children: [
@@ -933,10 +934,10 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 icon: Icon(Icons.edit),
                 label: Text(
                   'Edit Property',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: AppFontSizes.medium, fontWeight: AppFontWeights.extraBold),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade700,
+                  backgroundColor: ColorRes.blueColor.shade700,
                   foregroundColor: ColorRes.white,
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -954,10 +955,10 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 icon: Icon(Icons.share),
                 label: Text(
                   'Share',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: AppFontSizes.medium, fontWeight: AppFontWeights.extraBold),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade700,
+                  backgroundColor: ColorRes.success.shade700,
                   foregroundColor: ColorRes.white,
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -989,33 +990,33 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                 height: 4,
                 margin: EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: ColorRes.leadGreyColor[300],
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.visibility, color: Colors.blue),
+                leading: Icon(Icons.visibility, color: ColorRes.blueColor),
                 title: Text('Preview Property'),
                 onTap: () {
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.analytics, color: Colors.orange),
+                leading: Icon(Icons.analytics, color: ColorRes.orangeColor),
                 title: Text('View Analytics'),
                 onTap: () {
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.refresh, color: Colors.green),
+                leading: Icon(Icons.refresh, color: ColorRes.success),
                 title: Text('Renew Listing'),
                 onTap: () {
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
+                leading: Icon(Icons.delete, color: ColorRes.error),
                 title: Text('Delete Property'),
                 onTap: () {
                   Navigator.pop(context);
@@ -1033,14 +1034,14 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'approved':
       case 'active':
-        return Colors.green;
+        return ColorRes.success;
       case 'pending':
-        return Colors.orange;
+        return ColorRes.orangeColor;
       case 'rejected':
       case 'inactive':
-        return Colors.red;
+        return ColorRes.error;
       default:
-        return Colors.grey;
+        return ColorRes.leadGreyColor;
     }
   }
 

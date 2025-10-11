@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/size_manager.dart';
 
@@ -67,7 +68,7 @@ class _FilterTagListState extends State<FilterTagList> {
                     icons[index],
                     color: isSelected
                         ? ColorRes.primary
-                        : Colors.grey,
+                        : ColorRes.leadGreyColor,
                     size: 28,
                   ),
                   const SizedBox(height: 6),
@@ -76,9 +77,9 @@ class _FilterTagListState extends State<FilterTagList> {
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
                       color: isSelected
                           ? ColorRes.primary
-                          : Colors.grey,
+                          : ColorRes.leadGreyColor,
                       fontWeight:
-                      isSelected ? FontWeight.w700 : FontWeight.w500,
+                      isSelected ? AppFontWeights.bold : AppFontWeights.medium,
                     ),
                   ),
                 ],

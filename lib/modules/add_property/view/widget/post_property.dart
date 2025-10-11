@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart'
@@ -509,7 +510,7 @@ class PostProperty extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 6, left: 4),
                           child: Text(
                             'Please select a property type',
-                            style: TextStyle(color: ColorRes.error, fontSize: 13),
+                            style: TextStyle(color: ColorRes.error, fontSize: AppFontSizes.bodySmall),
                           ),
                         )
                         : SizedBox.shrink(),
@@ -628,7 +629,7 @@ class PostProperty extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 6, left: 4),
                           child: Text(
                             'Please select a BHK type',
-                            style: TextStyle(color: ColorRes.error, fontSize: 13),
+                            style: TextStyle(color: ColorRes.error, fontSize:AppFontSizes.bodySmall),
                           ),
                         )
                         : SizedBox.shrink(),
@@ -705,7 +706,7 @@ class PostProperty extends StatelessWidget {
                         }
                       },
                       underline: Container(),
-                      style: const TextStyle(fontSize: 12, color: ColorRes.black),
+                      style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.black),
                       dropdownColor: ColorRes.white,
                     ),
                   ),
@@ -751,7 +752,7 @@ class PostProperty extends StatelessWidget {
                     ),
                     Text(
                       'Share listing information with agents',
-                      style: TextStyle(fontSize: 13),
+                      style: TextStyle(fontSize: AppFontSizes.bodySmall),
                     ),
                   ],
                 ),
@@ -884,7 +885,7 @@ class PostProperty extends StatelessWidget {
                   'POSSESSTION INFO',
                   style: TextStyle(
                     color: ColorRes.black,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
                 SizedBox(height: 16),
@@ -921,7 +922,8 @@ class PostProperty extends StatelessWidget {
                               'Please select possession type',
                               style: TextStyle(
                                 color: ColorRes.error.shade700,
-                                fontSize: 12,
+                                // fontSize: 12,
+                                fontSize: AppFontSizes.bodySmall, 
                               ),
                             ),
                           )
@@ -1002,7 +1004,8 @@ class PostProperty extends StatelessWidget {
                 'ABOUT THE PROPERTY',
                 style: TextStyle(
                   color: ColorRes.black,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: AppFontWeights.medium,
+                  // fontWeight: AppFontWeights.medium,
                 ),
               ),
               SizedBox(height: 16),
@@ -1044,7 +1047,8 @@ class PostProperty extends StatelessWidget {
                               'Please select Zone type',
                               style: TextStyle(
                                 color: ColorRes.error.shade700,
-                                fontSize: 12,
+                                fontSize: AppFontSizes.bodySmall, 
+                                // fontSize: 12,
                               ),
                             ),
                           )
@@ -1267,7 +1271,8 @@ class PostProperty extends StatelessWidget {
                             'Please select OwnerShip type',
                             style: TextStyle(
                               color: ColorRes.error.shade700,
-                              fontSize: 12,
+                              fontSize: AppFontSizes.small,
+                              // fontSize: 12,
                             ),
                           ),
                         )
@@ -1313,7 +1318,7 @@ class PostProperty extends StatelessWidget {
                               'Please select OwnerShip type',
                               style: TextStyle(
                                 color: ColorRes.error.shade700,
-                                fontSize: 12,
+                                fontSize: AppFontSizes.small,
                               ),
                             ),
                           )
@@ -1552,7 +1557,7 @@ class PostProperty extends StatelessWidget {
               //   'POSSESSTION INFO',
               //   style: TextStyle(
               //     color: Colors.black,
-              //     fontWeight: FontWeight.w500,
+              //     fontWeight: AppFontWeights.medium,
               //   ),
               // ),
               if (controller.selectedIndex.value == 'Other') ...[
@@ -1580,7 +1585,8 @@ class PostProperty extends StatelessWidget {
                   'POSSESSTION INFO',
                   style: TextStyle(
                     color: ColorRes.black,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: AppFontWeights.medium,
+                    // fontWeight: AppFontWeights.medium,
                   ),
                 ),
                 SizedBox(height: 16),
@@ -1704,7 +1710,7 @@ class PostProperty extends StatelessWidget {
                 'ABOUT THE PROPERTY',
                 style: TextStyle(
                   color: ColorRes.black,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: AppFontWeights.medium,
                 ),
               ),
               SizedBox(height: 16),
@@ -1746,7 +1752,8 @@ class PostProperty extends StatelessWidget {
                               'Please select Zone type',
                               style: TextStyle(
                                 color: ColorRes.error.shade700,
-                                fontSize: 12,
+                                fontSize: AppFontSizes.small,
+                                // fontSize: 12,
                               ),
                             ),
                           )
@@ -1964,7 +1971,8 @@ class PostProperty extends StatelessWidget {
                             'Please select OwnerShip type',
                             style: TextStyle(
                               color: ColorRes.error.shade700,
-                              fontSize: 12,
+                              fontSize: AppFontSizes.small,
+                              // fontSize: 12,
                             ),
                           ),
                         )
@@ -2010,7 +2018,8 @@ class PostProperty extends StatelessWidget {
                               'Please select Construction Status',
                               style: TextStyle(
                                 color: ColorRes.error.shade700,
-                                fontSize: 12,
+                                fontSize: AppFontSizes.small,
+                                // fontSize: 12,
                               ),
                             ),
                           )
@@ -2188,7 +2197,8 @@ class TextFieldWithDropdown extends StatelessWidget {
                 }
               },
               underline: Container(),
-              style: const TextStyle(fontSize: 12, color: ColorRes.black),
+              style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.black),
+              // style: const TextStyle(fontSize: 12, color: ColorRes.black),
               dropdownColor: ColorRes.white,
             ),
           ),
@@ -2257,7 +2267,7 @@ class TextFieldWithDropdown extends StatelessWidget {
 //                         'Select Your Floor',
 //                         style: TextStyle(
 //                           fontSize: 18,
-//                           fontWeight: FontWeight.w600,
+//                           fontWeight: AppFontWeights.semiBold,
 //                           color: Colors.black87,
 //                         ),
 //                       ),
@@ -2371,7 +2381,7 @@ class TextFieldWithDropdown extends StatelessWidget {
 //                               'Done',
 //                               style: TextStyle(
 //                                 fontSize: 15,
-//                                 fontWeight: FontWeight.w500,
+//                                 fontWeight: AppFontWeights.medium,
 //                               ),
 //                             ),
 //                           ),
@@ -2450,8 +2460,8 @@ void _showFloorSelectionBottomSheet(
                       Text(
                         'Select Your Floor',
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                          fontSize: AppFontSizes.large,
+                          fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.textPrimary,
                         ),
                       ),
@@ -2482,7 +2492,7 @@ void _showFloorSelectionBottomSheet(
                           title: Text(
                             floor,
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: AppFontSizes.bodyMedium,
                               color: ColorRes.textPrimary,
                             ),
                           ),
@@ -2530,7 +2540,7 @@ void _showFloorSelectionBottomSheet(
                                 'Clear Selection',
                                 style: TextStyle(
                                   color: ColorRes.error,
-                                  fontSize: 14,
+                                  fontSize: AppFontSizes.medium,
                                 ),
                               ),
                             ),
@@ -2557,8 +2567,8 @@ void _showFloorSelectionBottomSheet(
                             child: Text(
                               'Done',
                               style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
+                                fontSize: AppFontSizes.bodyMedium,
+                                fontWeight: AppFontWeights.medium,
                               ),
                             ),
                           ),

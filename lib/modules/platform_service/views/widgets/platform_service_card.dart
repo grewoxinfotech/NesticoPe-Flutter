@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/platform_service/platform_service_model.dart';
 
@@ -41,7 +42,7 @@ class PlatformServiceHorizontalList extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: ColorRes.leadGreyColor.shade200),
               ),
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -52,13 +53,13 @@ class PlatformServiceHorizontalList extends StatelessWidget {
                     height: 40,
                     width: 40,
                     decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
+                      color: ColorRes.blueColor.shade50,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child:
                         service.icon != null
                             ? Image.network(service.icon!, fit: BoxFit.contain)
-                            : Icon(Icons.home_work, color: Colors.blue),
+                            : Icon(Icons.home_work, color: ColorRes.blueColor),
                   ),
                   const SizedBox(height: 12),
                   // Title
@@ -67,8 +68,8 @@ class PlatformServiceHorizontalList extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontWeight: AppFontWeights.extraBold,
+                      fontSize: AppFontSizes.medium,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -77,7 +78,7 @@ class PlatformServiceHorizontalList extends StatelessWidget {
                     service.description ?? '',
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: const TextStyle(fontSize: AppFontSizes.small, color: ColorRes.blackShade54),
                   ),
                   const Spacer(),
                   // Features (optional, show first 2)
@@ -94,14 +95,14 @@ class PlatformServiceHorizontalList extends StatelessWidget {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.blue.shade50,
+                                    color: ColorRes.blueColor.shade50,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     f,
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.blue,
+                                    style:  TextStyle(
+                                      fontSize: AppFontSizes.extraSmall,
+                                      color: ColorRes.blueColor,
                                     ),
                                   ),
                                 ),

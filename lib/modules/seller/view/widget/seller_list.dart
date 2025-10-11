@@ -54,12 +54,12 @@ class SellerListWidget extends StatelessWidget {
                         AgentTagData(
                           icon: Icons.verified,
                           text: "Trusted agent",
-                          color: Colors.green,
+                          color: ColorRes.success,
                         ),
                         AgentTagData(
                           icon: Icons.star,
                           text: "Professional Expert",
-                          color: Colors.amber,
+                          color: ColorRes.homeAmber,
                         ),
                       ],
                       showTags: true,
@@ -199,17 +199,17 @@ class SellerCard extends StatelessWidget {
                   return const Center(
                     child: CircularProgressIndicator(
                       strokeWidth: 1.5,
-                      color: Colors.deepOrange,
+                      color: ColorRes.homeRed,
                     ),
                   );
                 },
                 errorBuilder:
                     (context, error, stackTrace) => Container(
-                      color: Colors.grey.shade200,
+                      color: ColorRes.leadGreyColor.shade200,
                       child: const Icon(
                         Icons.image_not_supported,
                         size: 28,
-                        color: Colors.grey,
+                        color: ColorRes.leadGreyColor,
                       ),
                     ),
               ),
@@ -239,15 +239,15 @@ class SellerCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
-                  color: Colors.deepOrange.shade600,
+                  color: ColorRes.homedeepOrange.shade600,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text(
+                child:  Text(
                   'Top Rated',
                   style: TextStyle(
                     color: ColorRes.white,
                     fontSize: AppFontSizes.mini,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppFontWeights.semiBold,
                   ),
                 ),
               ),
@@ -264,9 +264,9 @@ class SellerCard extends StatelessWidget {
                     name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style:  TextStyle(
                       color: ColorRes.white,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: AppFontWeights.semiBold,
                       fontSize: AppFontSizes.caption,
                     ),
                   ),
@@ -278,7 +278,7 @@ class SellerCard extends StatelessWidget {
                        Icon(
                         Icons.work_outline,
                         size: 12,
-                        color: Colors.white70,
+                        color: ColorRes.whiteShade,
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -322,10 +322,10 @@ class SellerCard extends StatelessWidget {
                     children: [
                       Text(
                         "${formatNumber(properties)} Properties",
-                        style: const TextStyle(
+                        style:  TextStyle(
                           color: ColorRes.white,
                           fontSize: AppFontSizes.caption,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: AppFontWeights.semiBold,
                         ),
                       ),
                       const SizedBox(width: 3),

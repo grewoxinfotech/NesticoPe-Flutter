@@ -45,7 +45,7 @@ class _CityDropdownResultState extends State<CityDropdownResult> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
-            borderSide: BorderSide(color: Colors.grey.shade400, width: 1.2),
+            borderSide: BorderSide(color: ColorRes.leadGreyColor.shade400, width: 1.2),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),

@@ -305,6 +305,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
@@ -558,7 +559,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 // Text(
                 //   'Select Account Type',
                 //   style: theme.textTheme.titleLarge?.copyWith(
-                //     fontWeight: FontWeight.w600,
+                //     fontWeight: AppFontWeights.semiBold,
                 //     color: Colors.black,
                 //     fontSize: 16
                 //   ),
@@ -866,7 +867,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: RichText(
                         text: TextSpan(
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize:  AppFontSizes.medium,
+                            // fontSize: 14,
                             color: ColorRes.leadGreyColor.shade700,
                           ),
                           children: [
@@ -914,7 +916,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         'Login here',
                         style: TextStyle(
                           color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: AppFontWeights.extraBold,
+                          // fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),

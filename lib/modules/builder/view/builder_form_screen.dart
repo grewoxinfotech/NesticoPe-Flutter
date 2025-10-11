@@ -70,12 +70,12 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                             ),
                           ):SizedBox.shrink(),
                           const SizedBox(width: 10),
-                          const Text(
+                          Text(
                             "Create Listing",
                             style: TextStyle(
                               color: ColorRes.white,
                               fontSize: AppFontSizes.large,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: AppFontWeights.bold,
                             ),
                           ),
                         ],
@@ -91,12 +91,12 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 5),
-                          const Text(
+                          Text(
                             "Sell or rent your property faster",
                             style: TextStyle(
                               color: ColorRes.white,
                               fontSize: AppFontSizes.body,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: AppFontWeights.semiBold,
                             ),
                           ),
                         ],
@@ -179,12 +179,12 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                           side: const BorderSide(color: ColorRes.textColor),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Back',
                           style: TextStyle(
-                            fontSize: 14,
+                           fontSize:  AppFontSizes.medium,
                             color: ColorRes.textColor,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: AppFontWeights.medium,
                           ),
                         ),
                       ),
@@ -209,16 +209,16 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         backgroundColor:controller.isLoading.value ?ColorRes.primary.withOpacity(0.3): ColorRes.primary, // your theme color
                       ),
-                      child: controller.isLoading.value ? Text("Submitting...",style: const TextStyle(
-                        fontSize: 14,
+                      child: controller.isLoading.value ? Text("Submitting...",style: TextStyle(
+                        fontSize:  AppFontSizes.medium,
                         color: ColorRes.white,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: AppFontWeights.medium,
                       ),): Text(
                         step == 5 ? 'Submit' : 'Next',
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TextStyle(
+                         fontSize:  AppFontSizes.medium,
                           color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: AppFontWeights.medium,
                         ),
                       ),
                     ),

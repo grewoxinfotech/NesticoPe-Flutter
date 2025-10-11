@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 
@@ -52,7 +53,8 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                       "Welcome",
                       style: TextStyle(
                         color: ColorRes.whiteShade,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: AppFontWeights.bold,
+                        // fontWeight: AppFontWeights.bold,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -60,15 +62,16 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                       "Find Your Perfect\nLuxury Home",
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: ColorRes.white,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: AppFontWeights.extraBold,
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
                       style: TextStyle(
                         color: ColorRes.whiteShade,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: AppFontWeights.bold,
+                        // fontWeight: AppFontWeights.bold,
                       ),
                     ),
                   ],
@@ -101,12 +104,14 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                         color: ColorRes.deepPurpleColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
+                      child: Text(
                         "Seller Conversion",
                         style: TextStyle(
                           color: ColorRes.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                          // fontWeight: AppFontWeights.semiBold,
+                          // fontSize: 12,
+                          fontWeight: AppFontWeights.semiBold,
+                          fontSize: AppFontSizes.small,
                         ),
                       ),
                     ),
@@ -117,7 +122,10 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                       "Become a Seller",
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: ColorRes.primary,
-                        fontWeight: FontWeight.bold,
+                        // fontWeight: FontWeight.bold,
+
+                        fontWeight: AppFontWeights.bold,
+
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -141,10 +149,11 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             "What happens next?",
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                              fontWeight: AppFontWeights.semiBold,
+                              // fontWeight: FontWeight.bold,
                               color: ColorRes.blackShade87,
                             ),
                           ),
@@ -169,11 +178,13 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                     const SizedBox(height: 24),
 
                     // SELLER TYPE SELECTION
-                    const Text(
+                    Text(
                       "Seller Type*",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        // fontWeight: FontWeight.bold,
+                        // fontSize: 14,
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.extraBold,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -224,11 +235,11 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                               controller.isLoading.value
                                   ? Text(
                                     "Converting...",
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: AppFontSizes.body),
                                   )
                                   : Text(
                                     "Convert to Seller →",
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: AppFontSizes.body),
                                   ),
                         ),
                       ),
@@ -244,16 +255,16 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                           text: "Already have an account? ",
                           style: const TextStyle(
                             color: ColorRes.blackShade87,
-                            fontSize: 14,
+                            fontSize: AppFontSizes.medium,
                           ),
                           children: [
                             TextSpan(
                               text: "Login here",
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: ColorRes.primary,
                                 decoration: TextDecoration.underline,
                                 decorationColor: ColorRes.primary,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: AppFontWeights.semiBold,
                               ),
                               recognizer:
                                   TapGestureRecognizer()
@@ -284,7 +295,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 12, color: ColorRes.blackShade87),
+            style: const TextStyle(fontSize: AppFontSizes.small, color: ColorRes.blackShade87),
           ),
         ),
       ],
@@ -305,7 +316,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
             });
           },
         ),
-        Text(label, style: const TextStyle(fontSize: 13)),
+        Text(label, style: const TextStyle(fontSize: AppFontSizes.bodySmall)),
       ],
     );
   }

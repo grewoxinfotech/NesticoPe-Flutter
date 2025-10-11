@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 
+import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../search_property/view/search_screen.dart';
 
@@ -126,8 +127,8 @@ class _ListedByState extends State<ListedBy> {
                     children: [
                       buildCommonText(
                         widget.listedByList[index],
-                        12,
-                        FontWeight.w500,
+                        AppFontSizes.small,
+                        AppFontWeights.medium,
                         isSelected ? ColorRes.primary : ColorRes.textColor,
                         1,
                       ),

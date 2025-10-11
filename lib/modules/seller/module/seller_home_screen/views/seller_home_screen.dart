@@ -262,7 +262,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                                     style: TextStyle(
 //                                       color: ColorRes.white,
 //                                       fontSize: 16,
-//                                       fontWeight: FontWeight.w700,
+//                                       fontWeight: AppFontWeights.bold,
 //                                     ),
 //                                   ),
 //
@@ -271,7 +271,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                                     style: TextStyle(
 //                                       color: ColorRes.white,
 //                                       fontSize: 14,
-//                                       fontWeight: FontWeight.w600,
+//                                       fontWeight: AppFontWeights.semiBold,
 //                                     ),
 //                                   ),
 //                                   SizedBox(height: 8),
@@ -287,7 +287,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                                       decoration: BoxDecoration(
 //                                         borderRadius: BorderRadius.circular(8),
 //                                         border: Border.all(
-//                                           color: Colors.grey[300]!,
+//                                           color: ColorRes.leadGreyColor[300]!,
 //                                         ),
 //                                       ),
 //                                       child: Text(
@@ -517,7 +517,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //       width: double.infinity,
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(20),
-//         border: Border.all(color: Colors.grey[300]!),
+//         border: Border.all(color: ColorRes.leadGreyColor[300]!),
 //         color: ColorRes.white,
 //       ),
 //       child: Column(
@@ -554,7 +554,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                     "Explore >",
 //                     style: TextStyle(
 //                       color: ColorRes.primary,
-//                       fontWeight: FontWeight.w600,
+//                       fontWeight: AppFontWeights.semiBold,
 //                     ),
 //                   ),
 //                 ),
@@ -585,7 +585,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                   decoration: BoxDecoration(
 //                     color: Colors.transparent,
 //                     borderRadius: BorderRadius.circular(14),
-//                     border: Border.all(color: Colors.grey[300]!),
+//                     border: Border.all(color: ColorRes.leadGreyColor[300]!),
 //                   ),
 //                   child: Row(
 //                     mainAxisAlignment: MainAxisAlignment.start,
@@ -608,7 +608,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                               overflow: TextOverflow.ellipsis,
 //                               style: TextStyle(
 //                                 fontSize: 11,
-//                                 color: Colors.grey.shade600,
+//                                 color: ColorRes.leadGreyColor.shade600,
 //                               ),
 //                             ),
 //                           ),
@@ -702,7 +702,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //           color: backgroundColor,
 //           borderRadius: BorderRadius.circular(16),
 //           border: Border.all(
-//             color: isPopular ? ColorRes.primary : Colors.grey[300]!,
+//             color: isPopular ? ColorRes.primary : ColorRes.leadGreyColor[300]!,
 //             width: isPopular ? 2 : 1,
 //           ),
 //         ),
@@ -734,7 +734,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //             const SizedBox(height: 4),
 //             Text(
 //               description,
-//               style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+//               style: TextStyle(fontSize: 13, color: ColorRes.leadGreyColor[700]),
 //               maxLines: 2,
 //               overflow: TextOverflow.ellipsis,
 //             ),
@@ -846,7 +846,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //           decoration: BoxDecoration(
 //             color: ColorRes.white,
 //             borderRadius: BorderRadius.circular(12),
-//             border: Border.all(color: Colors.grey[300]!),
+//             border: Border.all(color: ColorRes.leadGreyColor[300]!),
 //           ),
 //           child: Column(
 //             mainAxisSize: MainAxisSize.min,
@@ -869,7 +869,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //           decoration: BoxDecoration(
 //             color: ColorRes.white,
 //             borderRadius: BorderRadius.circular(12),
-//             // border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+//             // border: Border(bottom: BorderSide(color: ColorRes.leadGreyColor[200]!)),
 //           ),
 //           child: Row(
 //             children: [
@@ -892,7 +892,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                     plan.name,
 //                     style: TextStyle(
 //                       fontSize: 14,
-//                       fontWeight: FontWeight.w600,
+//                       fontWeight: AppFontWeights.semiBold,
 //                       color:
 //                           plan.isPopular
 //                               ? widget.primaryColor
@@ -905,7 +905,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //             ],
 //           ),
 //         ),
-//         Divider(height: 1, color: Colors.grey[200]!),
+//         Divider(height: 1, color: ColorRes.leadGreyColor[200]!),
 //       ],
 //     );
 //   }
@@ -935,7 +935,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //       padding: const EdgeInsets.symmetric(vertical: 16),
 //       decoration: BoxDecoration(
 //         color: ColorRes.white,
-//         border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+//         border: Border(bottom: BorderSide(color: ColorRes.leadGreyColor[200]!)),
 //       ),
 //       child: Row(
 //         children: [
@@ -945,7 +945,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //               featureName,
 //               style: const TextStyle(
 //                 fontSize: 12,
-//                 fontWeight: FontWeight.w500,
+//                 fontWeight: AppFontWeights.medium,
 //                 color: Color(0xFF4A4A4A),
 //               ),
 //             ),
@@ -965,8 +965,8 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //         "-",
 //         style: TextStyle(
 //           fontSize: 14,
-//           color: Colors.grey,
-//           fontWeight: FontWeight.w500,
+//           color: ColorRes.leadGreyColor,
+//           fontWeight: AppFontWeights.medium,
 //         ),
 //         textAlign: TextAlign.center,
 //       );
@@ -993,7 +993,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                   return CircularProgressIndicator(
 //                     value: value,
 //                     strokeWidth: 4,
-//                     backgroundColor: Colors.grey[300],
+//                     backgroundColor: ColorRes.leadGreyColor[300],
 //                     valueColor: AlwaysStoppedAnimation<Color>(
 //                       feature.value >= 90
 //                           ? widget.secondaryColor
@@ -1014,7 +1014,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //           feature.value.toString(),
 //           style: TextStyle(
 //             fontSize: 13,
-//             fontWeight: FontWeight.w500,
+//             fontWeight: AppFontWeights.medium,
 //             color:
 //                 feature.isHighlight
 //                     ? widget.primaryColor
@@ -1027,7 +1027,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //           feature.value.toString(),
 //           style: TextStyle(
 //             fontSize: 13,
-//             fontWeight: FontWeight.w500,
+//             fontWeight: AppFontWeights.medium,
 //             color:
 //                 feature.isHighlight
 //                     ? widget.primaryColor
@@ -1068,11 +1068,11 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                             backgroundColor:
 //                                 plan.isPopular
 //                                     ? widget.primaryColor
-//                                     : Colors.grey[200],
+//                                     : ColorRes.leadGreyColor[200],
 //                             foregroundColor:
 //                                 plan.isPopular
 //                                     ? ColorRes.white
-//                                     : Colors.grey[700],
+//                                     : ColorRes.leadGreyColor[700],
 //                             elevation: isSelected ? 8 : 2,
 //                             // shadowColor: (plan.isPopular
 //                             //         ? widget.primaryColor
@@ -1085,7 +1085,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                           child: Text(
 //                             plan.buttonText,
 //                             style: const TextStyle(
-//                               fontWeight: FontWeight.w600,
+//                               fontWeight: AppFontWeights.semiBold,
 //                               fontSize: 13,
 //                             ),
 //                           ),
@@ -1139,7 +1139,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                       width: 40,
 //                       height: 4,
 //                       decoration: BoxDecoration(
-//                         color: Colors.grey[300],
+//                         color: ColorRes.leadGreyColor[300],
 //                         borderRadius: BorderRadius.circular(2),
 //                       ),
 //                     ),
@@ -1149,7 +1149,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                     plan.name,
 //                     style: TextStyle(
 //                       fontSize: 20,
-//                       fontWeight: FontWeight.w600,
+//                       fontWeight: AppFontWeights.semiBold,
 //                       color: widget.primaryColor,
 //                     ),
 //                   ),
@@ -1162,7 +1162,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                               margin: const EdgeInsets.only(bottom: 12),
 //                               padding: const EdgeInsets.all(16),
 //                               decoration: BoxDecoration(
-//                                 color: Colors.grey[50],
+//                                 color: ColorRes.leadGreyColor[50],
 //                                 borderRadius: BorderRadius.circular(12),
 //                               ),
 //                               child: Row(
@@ -1172,7 +1172,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                                       entry.key,
 //                                       style: const TextStyle(
 //                                         fontSize: 14,
-//                                         fontWeight: FontWeight.w500,
+//                                         fontWeight: AppFontWeights.medium,
 //                                       ),
 //                                     ),
 //                                   ),
@@ -1315,7 +1315,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //       decoration: BoxDecoration(
 //         color: ColorRes.white,
 //         borderRadius: BorderRadius.circular(16),
-//         border: Border.all(color: Colors.grey[300]!),
+//         border: Border.all(color: ColorRes.leadGreyColor[300]!),
 //       ),
 //       // margin: const EdgeInsets.all(16),
 //       child: Padding(
@@ -1329,7 +1329,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //                 const SizedBox(width: 8),
 //                 const Text(
 //                   "Customer Support",
-//                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+//                   style: TextStyle(fontSize: 18, fontWeight: AppFontWeights.semiBold),
 //                 ),
 //               ],
 //             ),
@@ -1337,7 +1337,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //             Container(
 //               decoration: BoxDecoration(
 //                 borderRadius: BorderRadius.circular(8),
-//                 border: Border.all(color: Colors.grey[200]!),
+//                 border: Border.all(color: ColorRes.leadGreyColor[200]!),
 //               ),
 //               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
 //
@@ -1355,7 +1355,7 @@ final List<Map<String, dynamic>> propertiesOverview = [
 //             Container(
 //               decoration: BoxDecoration(
 //                 borderRadius: BorderRadius.circular(8),
-//                 border: Border.all(color: Colors.grey[200]!),
+//                 border: Border.all(color: ColorRes.leadGreyColor[200]!),
 //               ),
 //               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
 //               child: Row(
@@ -1442,21 +1442,21 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
 
-                                  const Text(
+                                   Text(
                                     "Welcome, Seller",
                                     style: TextStyle(
                                       color: ColorRes.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
+                                      fontSize: AppFontSizes.body,
+                                      fontWeight: AppFontWeights.bold,
                                     ),
                                   ),
 
-                                  const Text(
+                                   Text(
                                     "Sell or rent your property faster",
                                     style: TextStyle(
                                       color: ColorRes.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
+                                      fontSize: AppFontSizes.medium,
+                                      fontWeight: AppFontWeights.semiBold,
                                     ),
                                   ),
                                   SizedBox(height: 8),
@@ -1472,7 +1472,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                          color: Colors.grey[300]!,
+                                          color: ColorRes.leadGreyColor[300]!,
                                         ),
                                       ),
                                       child: Text(
@@ -1673,25 +1673,25 @@ class OverViewCard extends StatelessWidget {
         "title": "Views",
         "value": _formatValue(totalViews),
         "icon": Icons.remove_red_eye_outlined,
-        "color":Color(0xFF6366F1)
+        "color":ColorRes.builderGridPurple
       },
       {
         "title": "Visits",
         "value": _formatValue(totalVisits),
         "icon": Icons.travel_explore,
-        "color":Color(0xFFEC4899)
+        "color":ColorRes.builderGridPink
       },
       {
         "title": "Converted Visits",
         "value": _formatValue(convertedVisits),
         "icon": Icons.check_circle_outline,
-        "color":Color(0xFF10B981)
+        "color":ColorRes.builderGridPurple
       },
       {
         "title": "Leads",
         "value": _formatValue(totalLeads),
         "icon": Icons.people_alt_outlined,
-        "color":Color(0xFFF59E0B)
+        "color":ColorRes.builderGridLightYellow
       },
     ];
 
@@ -1743,7 +1743,7 @@ class OverViewCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Text(item["value"].toString(), style: TextStyle(fontSize: AppFontSizes.large, fontWeight: FontWeight.w600, color: ColorRes.textPrimary,     height: 1.0,)),
+                    Text(item["value"].toString(), style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.semiBold, color: ColorRes.textPrimary,     height: 1.0,)),
                   ],
                 ),
               ),
@@ -1824,7 +1824,7 @@ class AddonCard extends StatelessWidget {
           color: backgroundColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isPopular ? ColorRes.primary : Colors.grey[300]!,
+            color: isPopular ? ColorRes.primary : ColorRes.leadGreyColor[300]!,
             width: isPopular ? 2 : 1,
           ),
         ),
@@ -1851,12 +1851,12 @@ class AddonCard extends StatelessWidget {
             // const SizedBox(height: 8),
             Text(
               title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style:  TextStyle(fontSize: AppFontSizes.body, fontWeight: AppFontWeights.extraBold),
             ),
             const SizedBox(height: 4),
             Text(
               description,
-              style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+              style: TextStyle(fontSize: AppFontSizes.bodySmall, color: ColorRes.leadGreyColor[700]),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -1866,10 +1866,10 @@ class AddonCard extends StatelessWidget {
               children: [
                 Text(
                   '\$${price.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                  style:  TextStyle(
+                    fontSize: AppFontSizes.bodyMedium,
+                    fontWeight: AppFontWeights.extraBold,
+                    color: ColorRes.success,
                   ),
                 ),
                 ElevatedButton(
@@ -1884,9 +1884,9 @@ class AddonCard extends StatelessWidget {
                       horizontal: 12,
                     ),
                   ),
-                  child: const Text(
+                  child:  Text(
                     'Add',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: AppFontSizes.bodySmall, fontWeight: AppFontWeights.extraBold),
                   ),
                 ),
               ],
@@ -1911,8 +1911,8 @@ class PricingComparisonWidget extends StatefulWidget {
     required this.plans,
     this.onPlanSelected,
     this.animationDuration = const Duration(milliseconds: 800),
-    this.primaryColor = const Color(0xFF6366F1),
-    this.secondaryColor = const Color(0xFF10B981),
+    this.primaryColor = ColorRes.builderGridPurple,
+    this.secondaryColor = ColorRes.builderGridLightGreen,
     this.backgroundColor = ColorRes.white,
   }) : super(key: key);
 
@@ -1968,7 +1968,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
           decoration: BoxDecoration(
             color: ColorRes.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: ColorRes.leadGreyColor[300]!),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1991,7 +1991,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
           decoration: BoxDecoration(
             color: ColorRes.white,
             borderRadius: BorderRadius.circular(12),
-            // border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+            // border: Border(bottom: BorderSide(color: ColorRes.leadGreyColor[200]!)),
           ),
           child: Row(
             children: [
@@ -2000,8 +2000,8 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
                   child: Text(
                     "Plans",
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      fontSize: AppFontSizes.subtitle,
+                      fontWeight: AppFontWeights.extraBold,
                       color: widget.primaryColor,
                     ),
                   ),
@@ -2013,8 +2013,8 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
                   child: Text(
                     plan.name,
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
                       color:
                       plan.isPopular
                           ? widget.primaryColor
@@ -2027,7 +2027,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
             ],
           ),
         ),
-        Divider(height: 1, color: Colors.grey[200]!),
+        Divider(height: 1, color: ColorRes.leadGreyColor[200]!),
       ],
     );
   }
@@ -2057,7 +2057,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: ColorRes.white,
-        border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+        border: Border(bottom: BorderSide(color: ColorRes.leadGreyColor[200]!)),
       ),
       child: Row(
         children: [
@@ -2065,9 +2065,9 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
             flex: 2,
             child: Text(
               featureName,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+              style:  TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.medium,
                 color: Color(0xFF4A4A4A),
               ),
             ),
@@ -2083,12 +2083,12 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
 
   Widget _buildFeatureValue(PlanFeature? feature) {
     if (feature == null) {
-      return const Text(
+      return  Text(
         "-",
         style: TextStyle(
-          fontSize: 14,
-          color: Colors.grey,
-          fontWeight: FontWeight.w500,
+          fontSize: AppFontSizes.medium,
+          color: ColorRes.leadGreyColor,
+          fontWeight: AppFontWeights.medium,
         ),
         textAlign: TextAlign.center,
       );
@@ -2098,7 +2098,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
       case FeatureType.boolean:
         return Icon(
           feature.value == true ? Icons.check_circle : Icons.cancel,
-          color: feature.value == true ? widget.secondaryColor : Colors.red,
+          color: feature.value == true ? widget.secondaryColor : ColorRes.error,
           size: 20,
         );
       case FeatureType.percentage:
@@ -2115,7 +2115,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
                   return CircularProgressIndicator(
                     value: value,
                     strokeWidth: 4,
-                    backgroundColor: Colors.grey[300],
+                    backgroundColor: ColorRes.leadGreyColor[300],
                     valueColor: AlwaysStoppedAnimation<Color>(
                       feature.value >= 90
                           ? widget.secondaryColor
@@ -2127,7 +2127,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
             ),
             Text(
               '${feature.value.toInt()}%',
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+              style:  TextStyle(fontSize: AppFontSizes.extraSmall, fontWeight: AppFontWeights.extraBold),
             ),
           ],
         );
@@ -2135,8 +2135,8 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
         return Text(
           feature.value.toString(),
           style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
+            fontSize: AppFontSizes.bodySmall,
+            fontWeight: AppFontWeights.medium,
             color:
             feature.isHighlight
                 ? widget.primaryColor
@@ -2148,8 +2148,8 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
         return Text(
           feature.value.toString(),
           style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
+            fontSize: AppFontSizes.bodySmall,
+            fontWeight: AppFontWeights.medium,
             color:
             feature.isHighlight
                 ? widget.primaryColor
@@ -2190,11 +2190,11 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
                         backgroundColor:
                         plan.isPopular
                             ? widget.primaryColor
-                            : Colors.grey[200],
+                            : ColorRes.leadGreyColor[200],
                         foregroundColor:
                         plan.isPopular
                             ? ColorRes.white
-                            : Colors.grey[700],
+                            : ColorRes.leadGreyColor[700],
                         elevation: isSelected ? 8 : 2,
                         // shadowColor: (plan.isPopular
                         //         ? widget.primaryColor
@@ -2206,9 +2206,9 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
                       ),
                       child: Text(
                         plan.buttonText,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                        style:  TextStyle(
+                          fontWeight: AppFontWeights.semiBold,
+                          fontSize: AppFontSizes.bodySmall,
                         ),
                       ),
                     ),
@@ -2261,7 +2261,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: ColorRes.leadGreyColor[300],
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -2270,8 +2270,8 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
               Text(
                 plan.name,
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
+                  fontSize: AppFontSizes.subtitle,
+                  fontWeight: AppFontWeights.semiBold,
                   color: widget.primaryColor,
                 ),
               ),
@@ -2284,7 +2284,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.grey[50],
+                        color: ColorRes.leadGreyColor[50],
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -2292,9 +2292,9 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
                           Expanded(
                             child: Text(
                               entry.key,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                              style:  TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.medium,
                               ),
                             ),
                           ),
@@ -2437,7 +2437,7 @@ class CustomerSupportCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: ColorRes.leadGreyColor[300]!),
       ),
       // margin: const EdgeInsets.all(16),
       child: Padding(
@@ -2449,9 +2449,9 @@ class CustomerSupportCard extends StatelessWidget {
               children: [
                 Icon(Icons.support_agent, color: ColorRes.primary),
                 const SizedBox(width: 8),
-                const Text(
+                 Text(
                   "Customer Support",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.semiBold),
                 ),
               ],
             ),
@@ -2459,7 +2459,7 @@ class CustomerSupportCard extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(color: ColorRes.leadGreyColor[200]!),
               ),
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
 
@@ -2468,7 +2468,7 @@ class CustomerSupportCard extends StatelessWidget {
                   Icon(Icons.email_outlined, color: ColorRes.primary),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(email, style: const TextStyle(fontSize: 16)),
+                    child: Text(email, style:  TextStyle(fontSize: AppFontSizes.body)),
                   ),
                 ],
               ),
@@ -2477,7 +2477,7 @@ class CustomerSupportCard extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(color: ColorRes.leadGreyColor[200]!),
               ),
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               child: Row(
@@ -2485,7 +2485,7 @@ class CustomerSupportCard extends StatelessWidget {
                   Icon(Icons.phone_outlined, color: ColorRes.primary),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(phone, style: const TextStyle(fontSize: 16)),
+                    child: Text(phone, style:  TextStyle(fontSize: AppFontSizes.body)),
                   ),
                 ],
               ),

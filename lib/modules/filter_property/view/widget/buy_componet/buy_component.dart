@@ -4,6 +4,8 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../../../../app/constants/app_font_sizes.dart';
+
 // class FilterPropertyTypesList extends StatefulWidget {
 //   const FilterPropertyTypesList({
 //     super.key,
@@ -65,7 +67,7 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 // Padding buildFilterHeadingPadding(String title) {
 //   return Padding(
 //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-//     child: buildCommonText(title, 15, FontWeight.w600, ColorRes.textColor, 1),
+//     child: buildCommonText(title, 15, AppFontWeights.semiBold, ColorRes.textColor, 1),
 //   );
 // }
 
@@ -136,8 +138,8 @@ class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
                     children: [
                       buildCommonText(
                         widget.items[index],
-                        12,
-                        FontWeight.w500,
+                        AppFontSizes.small,
+                        AppFontWeights.medium,
                         isSelected ? ColorRes.primary : ColorRes.textColor,
                         1,
                       ),
@@ -156,6 +158,6 @@ class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
 Padding buildPropertyFilterHeadingPadding(String title) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-    child: buildCommonText(title, 14, FontWeight.w600, ColorRes.textColor, 1),
+    child: buildCommonText(title,AppFontSizes.medium, AppFontWeights.semiBold, ColorRes.textColor, 1),
   );
 }

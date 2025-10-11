@@ -78,7 +78,7 @@ class _HotspotSectionState extends State<HotspotSection> {
                   style: const TextStyle(
                     fontSize: AppFontSizes.medium,
                     color: ColorRes.textPrimary,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppFontWeights.semiBold,
                   ),
                 ),
                 GestureDetector(
@@ -87,7 +87,7 @@ class _HotspotSectionState extends State<HotspotSection> {
                     "Map View",
                     style: TextStyle(
                       color: ColorRes.primary,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: AppFontWeights.semiBold,
                       fontSize: AppFontSizes.caption,
                     ),
                   ),
@@ -150,7 +150,7 @@ class _HotspotSectionState extends State<HotspotSection> {
             hotspot.name,
             style: const TextStyle(
               fontSize: AppFontSizes.bodySmall,
-              fontWeight: FontWeight.w600,
+              fontWeight: AppFontWeights.semiBold,
               color: ColorRes.textPrimary,
             ),
           ),
@@ -179,8 +179,8 @@ class _HotspotSectionState extends State<HotspotSection> {
                 "${hotspot.appreciationValue.toStringAsFixed(2)}%",
                 style: TextStyle(
                   fontSize: AppFontSizes.bodySmall,
-                  fontWeight: FontWeight.w600,
-                  color: hotspot.isPositive ? Colors.green : Colors.red,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: hotspot.isPositive ? ColorRes.green : ColorRes.error,
                 ),
               ),
               const SizedBox(width: 6),

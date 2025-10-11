@@ -474,8 +474,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontSize: AppFontSizes.caption,
                                       fontWeight:
                                           isSelected
-                                              ? FontWeight.w600
-                                              : FontWeight.w500,
+                                              ? AppFontWeights.semiBold
+                                              : AppFontWeights.medium,
                                       color:
                                           isSelected
                                               ? ColorRes.primary
@@ -789,7 +789,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   padding: const EdgeInsets.only(right: 10), //
                                   child: PropertyHorizontalCard(
                                     imageHeight: double.infinity,
-                                    titleFontWeight: FontWeight.w600,
+                                    titleFontWeight: AppFontWeights.semiBold,
 
                                     buttonText: 'View More',
                                     locationFontSize: AppFontSizes.caption,
@@ -822,7 +822,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     price:
                                         '${property.propertyDetails?.financialInfo?.price ?? 'N/A'}',
                                     priceFontSize: AppFontSizes.caption,
-                                    priceFontWeight: FontWeight.w600,
+                                    priceFontWeight: AppFontWeights.semiBold,
                                     ratingColor: ColorRes.primary,
                                     accentColor: ColorRes.primary,
                                     onTap: () {
@@ -1309,7 +1309,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
         //                     "4.8",
         //                     style: TextStyle(
         //                       fontSize: 12,
-        //                       fontWeight: FontWeight.bold,
+        //                       fontWeight: AppFontWeights.extraBold,
         //                       color: Color(0xFF2E7D63),
         //                     ),
         //                   ),
@@ -1321,7 +1321,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
         //               "Reviews & Testimonials",
         //               style: TextStyle(
         //                 fontSize: 22,
-        //                 fontWeight: FontWeight.bold,
+        //                 fontWeight: AppFontWeights.extraBold,
         //                 color: Color(0xFF1A1A1A),
         //               ),
         //             ),
@@ -1333,7 +1333,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
         //           style: TextStyle(
         //             fontSize: 14,
         //             color: Colors.grey.shade600,
-        //             fontWeight: FontWeight.w400,
+        //             fontWeight: AppFontWeights.regular,
         //           ),
         //         ),
         //       ],
@@ -1351,7 +1351,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
         //         "View All",
         //         style: TextStyle(
         //           color: Color(0xFF2E7D63),
-        //           fontWeight: FontWeight.w600,
+        //           fontWeight: AppFontWeights.semiBold,
         //           fontSize: 14,
         //         ),
         //       ),
@@ -1501,10 +1501,10 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                       Expanded(
                                         child: Text(
                                           testimonial["name"]!.toString(),
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: ColorRes.homeBlackFade,
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.body,
+                                            fontWeight: AppFontWeights.extraBold,
+                                            color: ColorRes.homeBlackFade
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1532,9 +1532,9 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                   Text(
                                     testimonial["location"]!.toString(),
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: AppFontSizes.small,
                                       color: ColorRes.leadGreyColor.shade600,
-                                      fontWeight: FontWeight.w400,
+                                      fontWeight: AppFontWeights.regular,
                                     ),
                                   ),
                                 ],
@@ -1572,9 +1572,9 @@ class ReviewsAndTestimonials extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               rating.toString(),
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
                                 color: ColorRes.homeBlackFade,
                               ),
                             ),
@@ -1588,7 +1588,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                           child: Text(
                             '"${testimonial["review"]!}"',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: AppFontSizes.medium,
                               color: ColorRes.leadGreyColor.shade700,
                               height: 1.5,
                               fontStyle: FontStyle.italic,
@@ -1615,9 +1615,9 @@ class ReviewsAndTestimonials extends StatelessWidget {
                               ),
                               child: Text(
                                 testimonial["propertyType"]!.toString(),
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.semiBold,
                                   color: ColorRes.homeGreenFade,
                                 ),
                               ),
@@ -1625,9 +1625,9 @@ class ReviewsAndTestimonials extends StatelessWidget {
                             Text(
                               testimonial["date"]!.toString(),
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: AppFontSizes.caption,
                                 color: Colors.grey.shade500,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: AppFontWeights.regular,
                               ),
                             ),
                           ],
@@ -1651,9 +1651,9 @@ class ReviewsAndTestimonials extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+          style: TextStyle(
+            fontSize: AppFontSizes.body,
+            fontWeight: AppFontWeights.extraBold,
             color: ColorRes.homeBlackFade,
           ),
         ),
@@ -1661,9 +1661,9 @@ class ReviewsAndTestimonials extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 10,
+            fontSize: AppFontSizes.extraSmall,
             color: ColorRes.leadGreyColor.shade600,
-            fontWeight: FontWeight.w500,
+            fontWeight: AppFontWeights.medium,
           ),
         ),
       ],
@@ -1810,7 +1810,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                             style: const TextStyle(
 //                               color: ColorRes.white,
 //                               fontSize: 10,
-//                               fontWeight: FontWeight.w600,
+//                               fontWeight: AppFontWeights.semiBold,
 //                             ),
 //                           ),
 //                         ),
@@ -1835,7 +1835,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                               style: TextStyle(
 //                                 color: ColorRes.white,
 //                                 fontSize: 9,
-//                                 fontWeight: FontWeight.bold,
+//                                 fontWeight: AppFontWeights.extraBold,
 //                                 letterSpacing: 0.5,
 //                               ),
 //                             ),
@@ -1861,7 +1861,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                                 overflow: TextOverflow.ellipsis,
 //                                 style: const TextStyle(
 //                                   fontSize: 14,
-//                                   fontWeight: FontWeight.w700,
+//                                   fontWeight: AppFontWeights.bold,
 //                                   color: Color(0xFF1A1A1A),
 //                                   height: 1.3,
 //                                 ),
@@ -1875,7 +1875,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                                   fontSize: 11,
 //                                   color: Colors.grey.shade600,
 //                                   height: 1.4,
-//                                   fontWeight: FontWeight.w400,
+//                                   fontWeight: AppFontWeights.regular,
 //                                 ),
 //                               ),
 //                             ],
@@ -1898,7 +1898,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                                     style: TextStyle(
 //                                       fontSize: 12,
 //                                       color: Colors.grey.shade500,
-//                                       fontWeight: FontWeight.w500,
+//                                       fontWeight: AppFontWeights.medium,
 //                                     ),
 //                                   ),
 //                                 ],
@@ -2113,7 +2113,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                             style: const TextStyle(
 //                               color: ColorRes.white,
 //                               fontSize: 10,
-//                               fontWeight: FontWeight.w600,
+//                               fontWeight: AppFontWeights.semiBold,
 //                             ),
 //                           ),
 //                         ),
@@ -2138,7 +2138,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                               style: TextStyle(
 //                                 color: ColorRes.white,
 //                                 fontSize: 9,
-//                                 fontWeight: FontWeight.bold,
+//                                 fontWeight: AppFontWeights.extraBold,
 //                               ),
 //                             ),
 //                           ),
@@ -2163,7 +2163,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                                 overflow: TextOverflow.ellipsis,
 //                                 style: const TextStyle(
 //                                   fontSize: 14,
-//                                   fontWeight: FontWeight.w700,
+//                                   fontWeight: AppFontWeights.bold,
 //                                   color: Color(0xFF1A1A1A),
 //                                 ),
 //                               ),
@@ -2193,7 +2193,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 //                                       style: TextStyle(
 //                                         fontSize: 11,
 //                                         color: Colors.grey.shade700,
-//                                         fontWeight: FontWeight.w500,
+//                                         fontWeight: AppFontWeights.medium,
 //                                       ),
 //                                       overflow: TextOverflow.ellipsis,
 //                                     ),
@@ -2416,10 +2416,11 @@ class NewsAndArticles extends StatelessWidget {
                               article.category!.capitalize
                                   .toString()
                                   .replaceAll("_", " "),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: ColorRes.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
+                                fontSize: AppFontSizes.extraSmall,
+                                fontWeight:
+                                AppFontWeights.semiBold,
                               ),
                             ),
                           ),
@@ -2439,12 +2440,12 @@ class NewsAndArticles extends StatelessWidget {
                               color: ColorRes.homeRed,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Text(
+                            child: Text(
                               "NEW",
                               style: TextStyle(
                                 color: ColorRes.white,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
+                                fontSize: AppFontSizes.mini,
+                                fontWeight: AppFontWeights.extraBold,
                               ),
                             ),
                           ),
@@ -2467,9 +2468,9 @@ class NewsAndArticles extends StatelessWidget {
                                 article.title ?? '',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.medium,
+                                  fontWeight: AppFontWeights.bold,
                                   color: ColorRes.homeBlackFade,
                                 ),
                               ),
@@ -2479,7 +2480,7 @@ class NewsAndArticles extends StatelessWidget {
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: 11,
+                                  fontSize: AppFontSizes.caption,
                                   color: Colors.grey.shade600,
                                 ),
                               ),
@@ -2497,9 +2498,9 @@ class NewsAndArticles extends StatelessWidget {
                                     Text(
                                       article.author ?? '',
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: AppFontSizes.caption,
                                         color: ColorRes.leadGreyColor.shade700,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: AppFontWeights.medium,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -2507,8 +2508,8 @@ class NewsAndArticles extends StatelessWidget {
                                     Text(
                                       '${article.readTime ?? 0} min read',
                                       style: TextStyle(
-                                        fontSize: 10,
-                                        color: ColorRes.leadGreyColor.shade500,
+                                        fontSize: AppFontSizes.extraSmall,
+                                        color:ColorRes.leadGreyColor.shade500,
                                       ),
                                     ),
                                   ],
@@ -2607,9 +2608,9 @@ class ExploreLocalities extends StatelessWidget {
                   /// Locality name
                   Text(
                     locality["name"] as String,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
 
@@ -2618,7 +2619,7 @@ class ExploreLocalities extends StatelessWidget {
                   /// Avg Price
                   Text(
                     "Avg Price: ${locality["price"]}",
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor.shade600),
                   ),
 
                   const Spacer(),
@@ -2630,12 +2631,12 @@ class ExploreLocalities extends StatelessWidget {
                       Text(
                         locality["change"] as String,
                         style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.semiBold,
                           color:
                               isUp
-                                  ? Colors.green.shade600
-                                  : Colors.red.shade600,
+                                  ? ColorRes.green.shade600
+                                  : ColorRes.error.shade600,
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -2645,7 +2646,7 @@ class ExploreLocalities extends StatelessWidget {
                             : Icons.trending_down_rounded,
                         size: 16,
                         color:
-                            isUp ? Colors.green.shade600 : Colors.red.shade600,
+                            isUp ? ColorRes.green.shade600 : ColorRes.error.shade600,
                       ),
                     ],
                   ),
@@ -2773,7 +2774,7 @@ class CompactInsightCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: ColorRes.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300, width: 1),
+          border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2789,7 +2790,7 @@ class CompactInsightCard extends StatelessWidget {
             //       style: TextStyle(
             //         fontSize: 10,
             //         color: Colors.grey.shade600,
-            //         fontWeight: FontWeight.w500,
+            //         fontWeight: AppFontWeights.medium,
             //       ),
             //     ),
             //     const Spacer(),
@@ -2812,8 +2813,8 @@ class CompactInsightCard extends StatelessWidget {
                   child: Text(
                     title,
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.primary,
                       // color: color,
                     ),
@@ -2825,7 +2826,7 @@ class CompactInsightCard extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 12,
-                  color: Colors.grey.shade400,
+                  color: ColorRes.leadGreyColor.shade400,
                 ),
               ],
             ),
@@ -2836,9 +2837,9 @@ class CompactInsightCard extends StatelessWidget {
             Text(
               value,
               style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
+                fontSize: AppFontSizes.small,
+                color: ColorRes.leadGreyColor.shade600,
+                fontWeight: AppFontWeights.medium,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -2924,7 +2925,7 @@ class InsightsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300),
         // boxShadow: [
         //   BoxShadow(
         //     color: Colors.grey.shade200,
@@ -2949,7 +2950,7 @@ class InsightsCard extends StatelessWidget {
                 return Container(
                   width: 100,
                   height: double.infinity,
-                  color: Colors.grey.shade300,
+                  color: ColorRes.leadGreyColor.shade300,
                   child: const Icon(Icons.broken_image, color: ColorRes.white),
                 );
               },
@@ -2975,9 +2976,9 @@ class InsightsCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      fontWeight: AppFontWeights.semiBold,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -2985,7 +2986,7 @@ class InsightsCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     description,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    style: const TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -2995,9 +2996,9 @@ class InsightsCard extends StatelessWidget {
                     child: Text(
                       "Read More",
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: AppFontSizes.extraSmall,
                         color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: AppFontWeights.semiBold,
                       ),
                     ),
                   ),
@@ -3379,11 +3380,11 @@ class ReferralCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Refer Friends",
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontSize: AppFontSizes.large,
+                  fontWeight: AppFontWeights.bold,
                   color: ColorRes.white,
                 ),
               ),
@@ -3393,7 +3394,7 @@ class ReferralCard extends StatelessWidget {
                 child: const Text(
                   "Share app and help your friends discover great real estate options!",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: AppFontSizes.medium,
                     fontWeight: FontWeight.normal,
                     color: ColorRes.white,
                   ),
@@ -3449,18 +3450,18 @@ class CustomerSupport extends StatelessWidget {
       width: double.infinity,
       child: Card(
         elevation: 6,
-        color: Colors.yellow.shade900,
+        color: ColorRes.homeYellowDark.shade900,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Customer Support",
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontSize: AppFontSizes.large,
+                  fontWeight: AppFontWeights.bold,
                   color: ColorRes.white,
                 ),
               ),
@@ -3470,7 +3471,7 @@ class CustomerSupport extends StatelessWidget {
                 child: const Text(
                   "Need help? Call our support team for assistance anytime.",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: AppFontSizes.medium,
                     fontWeight: FontWeight.normal,
                     color: ColorRes.white,
                   ),
@@ -3481,7 +3482,7 @@ class CustomerSupport extends StatelessWidget {
                 onPressed: _callSupport,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorRes.white,
-                  foregroundColor: Colors.yellow.shade900,
+                  foregroundColor: ColorRes.homeYellowDark.shade900,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -3490,10 +3491,10 @@ class CustomerSupport extends StatelessWidget {
                     vertical: 12,
                   ),
                 ),
-                icon: Icon(Icons.call, color: Colors.yellow.shade900),
+                icon: Icon(Icons.call, color: ColorRes.homeYellowDark.shade900),
                 label: Text(
                   "Call Support",
-                  style: TextStyle(color: Colors.yellow.shade900),
+                  style: TextStyle(color: ColorRes.homeYellowDark.shade900),
                 ),
               ),
             ],
@@ -3525,19 +3526,19 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
         padding: const EdgeInsets.all(16),
         width: MediaQuery.of(context).size.width * 0.9,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade400, width: 1),
+          border: Border.all(color: ColorRes.leadGreyColor.shade400, width: 1),
           borderRadius: BorderRadius.circular(15),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               "Rate Our App",
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
+                fontSize: AppFontSizes.subtitle,
+                fontWeight: AppFontWeights.bold,
                 color: ColorRes.primary,
               ),
               textAlign: TextAlign.center,
@@ -3547,10 +3548,11 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
               "Rating ($_rating/5)",
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                // fontSize: ,
+                fontWeight: AppFontWeights.medium,
+                color: ColorRes.leadGreyColor,
               ),
               textAlign: TextAlign.center,
             ),
@@ -3569,7 +3571,7 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
                     color:
                         index < _rating
                             ? ColorRes.primary
-                            : Colors.grey.shade400,
+                            : ColorRes.leadGreyColor.shade400,
                   ),
                 );
               }),
@@ -3581,7 +3583,7 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
             //   style: TextStyle(
             //     color: Colors.grey[800],
             //     fontSize: 13,
-            //     fontWeight: FontWeight.w400,
+            //     fontWeight: AppFontWeights.regular,
             //   ),
             // ),
             const SizedBox(height: 10),
@@ -3591,15 +3593,15 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: "Write your feedback...",
-                hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
+                hintStyle: const TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor),
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: ColorRes.leadGreyColor[100],
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: ColorRes.leadGreyColor),
                 ),
                 border: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: ColorRes.leadGreyColor),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -3649,7 +3651,7 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
                 ),
                 child: const Text(
                   "Submit",
-                  style: TextStyle(fontSize: 16, color: ColorRes.white),
+                  style: TextStyle(fontSize: AppFontSizes.body, color: ColorRes.white),
                 ),
               ),
             ),
@@ -3721,7 +3723,7 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
 //                   title,
 //                   style: const TextStyle(
 //                     fontSize: 16,
-//                     fontWeight: FontWeight.bold,
+//                     fontWeight: AppFontWeights.extraBold,
 //                   ),
 //                 ),
 //                 const SizedBox(height: 6),
@@ -3732,7 +3734,7 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
 //                     Text(
 //                       "$rating",
 //                       style: const TextStyle(
-//                         fontWeight: FontWeight.w600,
+//                         fontWeight: AppFontWeights.semiBold,
 //                         fontSize: 14,
 //                       ),
 //                     ),
@@ -3747,7 +3749,7 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
 //                   price,
 //                   style: const TextStyle(
 //                     fontSize: 14,
-//                     fontWeight: FontWeight.w500,
+//                     fontWeight: AppFontWeights.medium,
 //                     color: Colors.deepPurple,
 //                   ),
 //                 ),
@@ -3758,7 +3760,7 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
 //                     "See all reviews",
 //                     style: TextStyle(
 //                       fontSize: 13,
-//                       fontWeight: FontWeight.w500,
+//                       fontWeight: AppFontWeights.medium,
 //                       color: Colors.blue,
 //                     ),
 //                   ),
@@ -3829,16 +3831,16 @@ class PropertyHorizontalCard extends StatelessWidget {
   const PropertyHorizontalCard({
     super.key,
     required this.title,
-    this.ratingFont = 11,
-    this.ratingFontWeight = FontWeight.w600,
+    this.ratingFont = AppFontSizes.caption,
+    this.ratingFontWeight = AppFontWeights.semiBold,
     this.locationColor = ColorRes.textSecondary,
     required this.imagePath,
     required this.location,
     this.price = '2020',
     this.priceColor = ColorRes.textPrimary,
-    this.priceFontWeight = FontWeight.w700,
-    this.locationWeight = FontWeight.w400,
-    this.titleFontWeight = FontWeight.w600,
+    this.priceFontWeight = AppFontWeights.bold,
+    this.locationWeight = AppFontWeights.regular,
+    this.titleFontWeight = AppFontWeights.semiBold,
     this.maxLine = 2,
     this.maxLineTitle = 1,
     this.maxLineSubtitle = 1,
@@ -3856,22 +3858,22 @@ class PropertyHorizontalCard extends StatelessWidget {
     this.imageWidth = 70,
 
     // font sizes (slightly smaller)
-    this.titleFontSize = 12,
-    this.locationFontSize = 9,
-    this.priceFontSize = 12,
+    this.titleFontSize = AppFontSizes.small,
+    this.locationFontSize = AppFontSizes.mini,
+    this.priceFontSize = AppFontSizes.small,
 
     // rating
     this.rating,
     this.ratingIcon = Icons.star,
-    this.ratingColor = Colors.amber,
+    this.ratingColor = ColorRes.homeAmber,
 
     // button row
     this.buttonText = "View",
-    this.buttonTextColor = Colors.indigo,
-    this.buttonFontSize = 11,
-    this.buttonFontWeight = FontWeight.w500,
+    this.buttonTextColor = ColorRes.leadIndigoColor,
+    this.buttonFontSize = AppFontSizes.caption,
+    this.buttonFontWeight = AppFontWeights.medium,
     this.actionIcon = Icons.arrow_forward_ios,
-    this.iconColor = Colors.indigo,
+    this.iconColor = ColorRes.leadIndigoColor,
 
     this.showRowLayout = true,
 
@@ -4062,8 +4064,8 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
         Text(
           title,
           style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 12,
+            fontWeight: AppFontWeights.semiBold,
+            fontSize: AppFontSizes.small,
             color: ColorRes.textPrimary,
           ),
         ),
@@ -4086,7 +4088,7 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
                   e,
                   style: const TextStyle(
                     fontSize: AppFontSizes.caption,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: AppFontWeights.medium,
                     color: ColorRes.grey,
                   ),
                 ),
@@ -4101,14 +4103,14 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                    color: ColorRes.leadGreyColor.shade200,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     "+$remainingCount more",
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textColor,
                     ),
                   ),
@@ -4123,7 +4125,7 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
   Widget buildHeading(BuildContext context, String text) {
     return Text(
       text,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize:AppFontSizes.body, fontWeight: AppFontWeights.extraBold),
     );
   }
 }
@@ -4142,14 +4144,14 @@ Widget _buildShimmerLoader() {
           decoration: BoxDecoration(
             color: ColorRes.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: ColorRes.leadGreyColor.shade200),
           ),
           child: Column(
             children: [
               Container(
                 height: 130,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: ColorRes.leadGreyColor.shade200,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
@@ -4164,7 +4166,7 @@ Widget _buildShimmerLoader() {
                     Container(
                       height: 20,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: ColorRes.leadGreyColor.shade200,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -4195,20 +4197,20 @@ Widget _buildErrorState(String error) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 48, color: Colors.grey.shade400),
+          Icon(Icons.error_outline, size: 48, color: ColorRes.leadGreyColor.shade400),
           const SizedBox(height: 16),
           Text(
             'Something went wrong',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade600,
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.leadGreyColor.shade600,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Please try again later',
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+            style: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor.shade500),
           ),
         ],
       ),
@@ -4223,20 +4225,20 @@ Widget _buildEmptyState() {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.home_outlined, size: 48, color: Colors.grey.shade400),
+          Icon(Icons.home_outlined, size: 48, color: ColorRes.leadGreyColor.shade400),
           const SizedBox(height: 16),
           Text(
             'No Properties Available',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade600,
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.leadGreyColor.shade600,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Check back later for new listings',
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+            style: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor.shade500),
           ),
         ],
       ),

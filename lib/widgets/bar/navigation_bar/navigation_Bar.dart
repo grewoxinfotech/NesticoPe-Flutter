@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/size_manager.dart';
 
 class NesticoPeNavigationBar extends StatelessWidget {
@@ -13,8 +14,8 @@ class NesticoPeNavigationBar extends StatelessWidget {
     Get.lazyPut<NavigationController>(() => NavigationController());
     NavigationController controller = Get.find();
     TextStyle style = TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w800,
+      fontSize: AppFontSizes.small,
+      fontWeight: AppFontWeights.extraBold,
       color: Get.theme.colorScheme.primary,
     );
     double iconSize = 18;

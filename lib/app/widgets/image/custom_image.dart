@@ -142,6 +142,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../../constants/color_res.dart';
+
 /// Supported image sources
 enum CustomImageType { asset, network, file, memory }
 
@@ -219,7 +221,7 @@ class CustomImage extends StatelessWidget {
           errorWidget:
               networkError ??
               (context, url, error) =>
-                  const Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                  const Icon(Icons.broken_image, size: 40, color: ColorRes.leadGreyColor),
         );
 
       case CustomImageType.file:
@@ -250,7 +252,7 @@ class CustomImage extends StatelessWidget {
     Object error,
     StackTrace? stackTrace,
   ) {
-    return const Icon(Icons.broken_image, color: Colors.grey, size: 40);
+    return  Icon(Icons.broken_image, color: ColorRes.leadGreyColor, size: 40);
   }
 
   /// Default frame handler (fade-in effect)

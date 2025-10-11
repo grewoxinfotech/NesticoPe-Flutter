@@ -51,7 +51,7 @@ class MultiSelectChip extends StatelessWidget {
                     option,
                     style: TextStyle(
                       color: selected ? ColorRes.primary : ColorRes.textPrimary,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: AppFontWeights.medium,
                       fontSize: AppFontSizes.small,
                     ),
                   ),

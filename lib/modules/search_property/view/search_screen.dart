@@ -79,7 +79,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
         title: buildCommonText(
           'Search in Surat',
           20,
-          FontWeight.w600,
+          AppFontWeights.semiBold,
           ColorRes.black,
           1,
         ),
@@ -154,7 +154,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                       ),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Colors.grey.shade300,
+                          color: ColorRes.leadGreyColor.shade300,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(16),
@@ -185,8 +185,8 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                     child: buildCommonText(
                       'No results found',
                       AppFontSizes.medium,
-                      FontWeight.w400,
-                      Colors.grey.shade600,
+                      AppFontWeights.regular,
+                      ColorRes.leadGreyColor.shade600,
                       1,
                     ),
                   );
@@ -198,7 +198,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                   itemCount: controller.predictions.length,
                   separatorBuilder:
                       (context, index) => Divider(
-                        color: Colors.grey.shade300,
+                        color: ColorRes.leadGreyColor.shade300,
                         height: 2,
                         indent: 16,
                         endIndent: 16,
@@ -260,12 +260,12 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                         '',
                                     normalStyle: const TextStyle(
                                       fontSize: AppFontSizes.bodySmall,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: AppFontWeights.medium,
                                       color: ColorRes.textColor,
                                     ),
                                     highlightStyle: const TextStyle(
                                       fontSize: AppFontSizes.extraSmall,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: AppFontWeights.extraBold,
                                       color: ColorRes.error,
                                     ),
                                   ),
@@ -276,7 +276,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                         '',
                                     style: const TextStyle(
                                       fontSize: AppFontSizes.extraSmall,
-                                      fontWeight: FontWeight.w400,
+                                      fontWeight: AppFontWeights.regular,
                                       color:
                                           ColorRes
                                               .grey, // Optional, lighter color
@@ -347,15 +347,15 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                         //               AppRadius.small,
                         //             ),
                         //             border: Border.all(
-                        //               color: Colors.grey.shade300,
+                        //               color: ColorRes.leadGreyColor.shade300,
                         //               width: 1,
                         //             ),
-                        //             color: Colors.grey.shade100,
+                        //             color: ColorRes.leadGreyColor.shade100,
                         //           ),
                         //           child: buildCommonText(
                         //             'Change Location',
                         //             AppFontSizes.small,
-                        //             FontWeight.w600,
+                        //             AppFontWeights.semiBold,
                         //             ColorRes.textColor,
                         //             1,
                         //           ),
@@ -419,9 +419,9 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+               Text(
                 "Voice Search",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.extraBold),
               ),
               const SizedBox(height: 20),
 
@@ -436,12 +436,12 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                       shape: BoxShape.circle,
                       color:
                           isListening
-                              ? Colors.red.shade100
-                              : Colors.grey.shade200,
+                              ? ColorRes.error.shade100
+                              : ColorRes.leadGreyColor.shade200,
                     ),
                     child: Icon(
                       isListening ? Icons.mic : Icons.mic_none,
-                      color: isListening ? Colors.red : Colors.black54,
+                      color: isListening ? ColorRes.error : ColorRes.blackShade54,
                       size: 40,
                     ),
                   ),
@@ -454,7 +454,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                   micController.isListening.value
                       ? "Listening..."
                       : "Tap mic to start",
-                  style: const TextStyle(fontSize: 16),
+                  style:  TextStyle(fontSize: AppFontSizes.body),
                 ),
               ),
 
@@ -465,9 +465,9 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                 final words = micController.lastWords.value;
                 return Text(
                   words,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                  style:  TextStyle(
+                    fontSize: AppFontSizes.body,
+                    fontWeight: AppFontWeights.medium,
                   ),
                 );
               }),
@@ -522,7 +522,7 @@ Widget highlightText(
 //         child: buildCommonText(
 //           title,
 //           12,
-//           FontWeight.w600,
+//           AppFontWeights.semiBold,
 //           ColorRes.textColor,
 //           1,
 //         ),
@@ -561,8 +561,8 @@ Widget buildSection(String title, List<CityData> data) {
         padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
         child: buildCommonText(
           title,
-          12,
-          FontWeight.w600,
+          AppFontSizes.small,
+          AppFontWeights.semiBold,
           ColorRes.textColor,
           1,
         ),
@@ -606,8 +606,8 @@ Widget buildSectionTrending(String title, List<TrendingCityData> data) {
         padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
         child: buildCommonText(
           title,
-          12,
-          FontWeight.w600,
+          AppFontSizes.small,
+          AppFontWeights.semiBold,
           ColorRes.textColor,
           1,
         ),
@@ -661,7 +661,7 @@ Padding buildFilterHeadingPadding(String title) {
     child: buildCommonText(
       title,
       AppFontSizes.medium,
-      FontWeight.w600,
+      AppFontWeights.semiBold,
       ColorRes.textColor,
       1,
     ),

@@ -112,7 +112,7 @@
 //       padding: const EdgeInsets.symmetric(vertical: 4),
 //       child: Row(
 //         children: [
-//           Expanded(flex: 2, child: Text(k, style: const TextStyle(fontWeight: FontWeight.w600))),
+//           Expanded(flex: 2, child: Text(k, style: const TextStyle(fontWeight: AppFontWeights.semiBold))),
 //           Expanded(flex: 3, child: Text(v)),
 //         ],
 //       ),
@@ -188,7 +188,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                 'Review & Confirm',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.medium,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: AppFontWeights.semiBold,
                                   color: ColorRes.textPrimary,
                                 ),
                               ),
@@ -232,7 +232,7 @@ class StepReview extends GetView<ProjectWizardController> {
                               p.projectName,
                               style: TextStyle(
                                 fontSize: AppFontSizes.medium,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: AppFontWeights.semiBold,
                                 color: ColorRes.textPrimary,
                               ),
                             ),
@@ -378,7 +378,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                 'Highlight',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.bodySmall,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: AppFontWeights.semiBold,
                                   color: ColorRes.textPrimary,
                                 ),
                               ),
@@ -405,7 +405,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                         (e) => Text(' $e',  style: TextStyle(
                                           fontSize: AppFontSizes.small,
                                           color: ColorRes.textPrimary,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: AppFontWeights.medium,
                                         ),),
                                       )
                                       .toList(),
@@ -523,8 +523,8 @@ class StepReview extends GetView<ProjectWizardController> {
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: valueSize ?? 16,
-                    fontWeight: FontWeight.w600,
+                    fontSize: valueSize ?? AppFontSizes.body,
+                    fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textPrimary,
                   ),
                   maxLines: 1,
@@ -536,7 +536,7 @@ class StepReview extends GetView<ProjectWizardController> {
                   style: TextStyle(
                     fontSize: AppFontSizes.small,
                     color: ColorRes.textSecondary,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: AppFontWeights.medium,
                   ),
                   maxLines: 1, // Added to prevent overflow
                   overflow:
@@ -587,7 +587,7 @@ class StepReview extends GetView<ProjectWizardController> {
                 'Project Timeline',
                 style: TextStyle(
                   fontSize: AppFontSizes.medium,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: AppFontWeights.semiBold,
                   color: ColorRes.textPrimary,
                 ),
               ),
@@ -645,7 +645,7 @@ class StepReview extends GetView<ProjectWizardController> {
                 style: TextStyle(
                   fontSize: AppFontSizes.small,
                   color: ColorRes.textSecondary,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: AppFontWeights.medium,
                 ),
               ),
             ],
@@ -655,7 +655,7 @@ class StepReview extends GetView<ProjectWizardController> {
             date.toLocal().toString().split(' ').first,
             style: TextStyle(
               fontSize: AppFontSizes.body,
-              fontWeight: FontWeight.bold,
+              fontWeight: AppFontWeights.extraBold,
               color: ColorRes.textPrimary,
             ),
           ),
@@ -707,7 +707,7 @@ class StepReview extends GetView<ProjectWizardController> {
                   title,
                   style: TextStyle(
                     fontSize: AppFontSizes.medium,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textPrimary,
                   ),
                 ),
@@ -748,7 +748,7 @@ class StepReview extends GetView<ProjectWizardController> {
                   value,
                   style: TextStyle(
                     fontSize: AppFontSizes.bodySmall,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textPrimary,
                   ),
                 ),
@@ -789,7 +789,7 @@ class StepReview extends GetView<ProjectWizardController> {
             value,
             style: TextStyle(
               fontSize: AppFontSizes.bodySmall,
-              fontWeight: FontWeight.w600,
+              fontWeight: AppFontWeights.semiBold,
               color: ColorRes.textPrimary,
             ),
             maxLines: 1,
@@ -828,7 +828,7 @@ class StepReview extends GetView<ProjectWizardController> {
                   value,
                   style: TextStyle(
                     fontSize: AppFontSizes.bodySmall,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textPrimary,
                   ),
                 ),
@@ -852,7 +852,7 @@ class StepReview extends GetView<ProjectWizardController> {
               title,
               style: TextStyle(
                 fontSize: AppFontSizes.bodySmall,
-                fontWeight: FontWeight.w600,
+                fontWeight: AppFontWeights.semiBold,
                 color: ColorRes.textPrimary,
               ),
             ),
@@ -882,7 +882,7 @@ class StepReview extends GetView<ProjectWizardController> {
                         style: TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.textPrimary,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: AppFontWeights.medium,
                         ),
                       ),
                     ),
@@ -930,7 +930,7 @@ class StepReview extends GetView<ProjectWizardController> {
                 'Contact Details',
                 style: TextStyle(
                   fontSize: AppFontSizes.bodySmall,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: AppFontWeights.semiBold,
                   color: ColorRes.textPrimary,
                 ),
               ),
@@ -961,7 +961,7 @@ class StepReview extends GetView<ProjectWizardController> {
               style: TextStyle(
                 fontSize: AppFontSizes.bodySmall,
                 color: ColorRes.textPrimary,
-                fontWeight: FontWeight.w500,
+                fontWeight: AppFontWeights.medium,
               ),
             ),
           ),
@@ -1000,7 +1000,7 @@ class StepReview extends GetView<ProjectWizardController> {
                       'Project Images',
                       style: TextStyle(
                         fontSize: AppFontSizes.bodySmall,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.textPrimary,
                       ),
                     ),
@@ -1018,7 +1018,7 @@ class StepReview extends GetView<ProjectWizardController> {
                         '${p.imageList.length} Photos',
                         style: TextStyle(
                           fontSize: AppFontSizes.extraSmall,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.primary,
                         ),
                       ),
@@ -1083,7 +1083,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                       style: TextStyle(
                                         color: ColorRes.white,
                                         fontSize: AppFontSizes.medium,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: AppFontWeights.extraBold,
                                       ),
                                     ),
                                   ),
@@ -1112,7 +1112,7 @@ class StepReview extends GetView<ProjectWizardController> {
                       'Project Videos',
                       style: TextStyle(
                         fontSize: AppFontSizes.bodySmall,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.textPrimary,
                       ),
                     ),
@@ -1130,7 +1130,7 @@ class StepReview extends GetView<ProjectWizardController> {
                         '${p.videoList.length} Videos',
                         style: TextStyle(
                           fontSize: AppFontSizes.extraSmall,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.builderGridPink,
                         ),
                       ),
@@ -1219,7 +1219,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                         style: TextStyle(
                                           color: ColorRes.white,
                                           fontSize: AppFontSizes.medium,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: AppFontWeights.extraBold,
                                         ),
                                       ),
                                     ),
@@ -1276,7 +1276,7 @@ class StepReview extends GetView<ProjectWizardController> {
                               'Project Brochure',
                               style: TextStyle(
                                 fontSize: AppFontSizes.bodySmall,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: AppFontWeights.semiBold,
                                 color: ColorRes.textPrimary,
                               ),
                             ),
@@ -1348,9 +1348,9 @@ class StepReview extends GetView<ProjectWizardController> {
                           child: Center(
                             child: Text(
                               config.bhk.toString(),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.body,
+                                fontWeight: AppFontWeights.semiBold,
                                 color: ColorRes.white,
                               ),
                             ),
@@ -1365,7 +1365,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                 '${config.bhk} BHK Configuration',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.small,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: AppFontWeights.semiBold,
                                   color: ColorRes.textPrimary,
                                 ),
                               ),
@@ -1432,7 +1432,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                       variant.name,
                                       style: TextStyle(
                                         fontSize: AppFontSizes.bodySmall,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: AppFontWeights.extraBold,
                                         color: ColorRes.primary,
                                       ),
                                     ),
@@ -1461,7 +1461,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                             'Available',
                                             style: TextStyle(
                                               fontSize: AppFontSizes.extraSmall,
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight: AppFontWeights.semiBold,
                                               color: ColorRes.builderGridLightGreen,
                                             ),
                                           ),
@@ -1482,7 +1482,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                         'Sold Out',
                                         style: TextStyle(
                                           fontSize: AppFontSizes.extraSmall,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: AppFontWeights.semiBold,
                                           color: ColorRes.error.shade700,
                                         ),
                                       ),
@@ -1523,7 +1523,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                           '₹${_formatPrice(variant.price)}',
                                           style: TextStyle(
                                             fontSize: AppFontSizes.body,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: AppFontWeights.extraBold,
                                             color: ColorRes.builderGridLightGreen
                                           ),
                                         ),
@@ -1545,7 +1545,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                             '₹${_formatPrice(variant.pricePerSqFt!)}',
                                             style: TextStyle(
                                               fontSize: AppFontSizes.bodySmall,
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight: AppFontWeights.semiBold,
                                               color: ColorRes.textPrimary,
                                             ),
                                           ),
@@ -1620,7 +1620,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                       'Specifications',
                                       style: TextStyle(
                                         fontSize: AppFontSizes.bodySmall,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: AppFontWeights.semiBold,
                                         color: ColorRes.textPrimary,
                                       ),
                                     ),
@@ -1649,7 +1649,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                         style: TextStyle(
                                           fontSize: AppFontSizes.small,
                                           color: ColorRes.textPrimary,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: AppFontWeights.medium,
                                         ),
                                       ),
                                     ),
@@ -1711,7 +1711,7 @@ class StepReview extends GetView<ProjectWizardController> {
             value,
             style: TextStyle(
               fontSize: AppFontSizes.caption,
-              fontWeight: FontWeight.w600,
+              fontWeight: AppFontWeights.semiBold,
               color: ColorRes.textPrimary,
             ),
           ),
@@ -1762,9 +1762,9 @@ class StepReview extends GetView<ProjectWizardController> {
               child: Center(
                 child: Text(
                   config.bhk.toString(),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.body,
+                    fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.white,
                   ),
                 ),
@@ -1779,7 +1779,7 @@ class StepReview extends GetView<ProjectWizardController> {
                     '${config.bhk} BHK Configuration',
                     style: TextStyle(
                       fontSize: AppFontSizes.small,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textPrimary,
                     ),
                   ),

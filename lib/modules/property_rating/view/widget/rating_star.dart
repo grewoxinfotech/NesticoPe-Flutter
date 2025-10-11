@@ -1,5 +1,8 @@
  import 'package:flutter/material.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../app/constants/color_res.dart';
+
 class RatingStars extends StatelessWidget {
   const RatingStars({
     super.key,
@@ -7,10 +10,10 @@ class RatingStars extends StatelessWidget {
     this.starCount = 5,
     this.size = 20,
     this.spacing = 4,
-    this.fillColor = const Color(0xFFFFC107),
+    this.fillColor =  ColorRes.homeYellow,
     this.emptyColor = const Color(0xFFBDBDBD),
     this.showValue = true, // show numeric text beside stars
-    this.textStyle = const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+    this.textStyle = const TextStyle(fontSize: AppFontSizes.medium, fontWeight: AppFontWeights.medium),
   });
 
   final double value;

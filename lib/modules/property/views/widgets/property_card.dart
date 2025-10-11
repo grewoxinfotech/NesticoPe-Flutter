@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/favorite.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
@@ -139,7 +140,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           );
                           return Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.red : Colors.grey,
+                            color: isFavorite ? ColorRes.error : ColorRes.leadGreyColor,
                             size: 20,
                           );
                         }),
@@ -168,11 +169,11 @@ class _PropertyCardState extends State<PropertyCard> {
                   if (widget.property.type!.toLowerCase() == "residential")
                     Text(
                       "${widget.property.propertyDetails?.bhk ?? 0} BHK ${widget.property.propertyType?.capitalize}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
+                      style:  TextStyle(
+                        fontWeight: AppFontWeights.semiBold,
 
-                        fontSize: 16,
-                        color: Colors.black87,
+                        fontSize: AppFontSizes.body,
+                        color: ColorRes.blackShade87,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -180,11 +181,11 @@ class _PropertyCardState extends State<PropertyCard> {
                   if (widget.property.type!.toLowerCase() == "commercial")
                     Text(
                       "${widget.property.propertyType?.capitalize}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
+                      style: TextStyle(
+                        fontWeight: AppFontWeights.semiBold,
 
-                        fontSize: 16,
-                        color: Colors.black87,
+                        fontSize: AppFontSizes.body,
+                        color: ColorRes.blackShade87,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -204,8 +205,8 @@ class _PropertyCardState extends State<PropertyCard> {
                         child: Text(
                           widget.property.address ?? "-",
                           style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey.shade700,
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.leadGreyColor.shade700,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -377,9 +378,9 @@ class _PropertyCardState extends State<PropertyCard> {
                             children: [
                               Text(
                                 "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
+                                style: TextStyle(
+                                  fontWeight: AppFontWeights.semiBold,
+                                  fontSize: AppFontSizes.body,
                                   color: ColorRes.textColor,
                                 ),
                               ),
@@ -391,9 +392,9 @@ class _PropertyCardState extends State<PropertyCard> {
                       ] else ...[
                         Text(
                           "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.price ?? 0)}",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                          style: TextStyle(
+                            fontWeight: AppFontWeights.semiBold,
+                            fontSize:AppFontSizes.body,
                             color: ColorRes.textColor,
                           ),
                         ),
@@ -411,8 +412,8 @@ class _PropertyCardState extends State<PropertyCard> {
                         child: const Text(
                           'Contact Now',
                           style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.white,
                           ),
                         ),
@@ -436,7 +437,7 @@ class _PropertyCardState extends State<PropertyCard> {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: ColorRes.black.withOpacity(0.08),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -444,9 +445,9 @@ class _PropertyCardState extends State<PropertyCard> {
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
+        style:  TextStyle(
+          fontSize: AppFontSizes.small,
+          fontWeight: AppFontWeights.semiBold,
           color: ColorRes.primary,
         ),
       ),
@@ -457,15 +458,15 @@ class _PropertyCardState extends State<PropertyCard> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.75),
+        color: ColorRes.black.withOpacity(0.75),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         text,
-        style: const TextStyle(
+        style:  TextStyle(
           color: ColorRes.white,
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
+          fontSize: AppFontSizes.extraSmall,
+          fontWeight: AppFontWeights.medium,
         ),
       ),
     );
@@ -494,8 +495,8 @@ class _PropertyCardState extends State<PropertyCard> {
           Text(
             text,
             style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontSize: AppFontSizes.small,
+              fontWeight: AppFontWeights.medium,
               color: ColorRes.grey,
             ),
           ),
@@ -615,9 +616,9 @@ class Facilities extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           text,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+          style: TextStyle(
+            fontSize: AppFontSizes.small,
+            fontWeight: AppFontWeights.medium,
             color: ColorRes.grey,
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
 import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
@@ -60,7 +61,8 @@ class BasicDetail extends StatelessWidget {
                           'Please select property type',
                           style: TextStyle(
                             color: ColorRes.error.shade700,
-                            fontSize: 12,
+                            fontSize: AppFontSizes.small,
+                            // fontSize: 12,
                           ),
                         ),
                       )
@@ -138,7 +140,8 @@ class BasicDetail extends StatelessWidget {
                               'Please select what you are looking to do',
                               style: TextStyle(
                                 color: ColorRes.error.shade700,
-                                fontSize: 12,
+                                fontSize: AppFontSizes.small,
+                                // fontSize: 12,
                               ),
                             ),
                           )
@@ -196,7 +199,8 @@ class BasicDetail extends StatelessWidget {
                             'Please select any one category',
                             style: TextStyle(
                               color: ColorRes.error.shade700,
-                              fontSize: 12,
+                              fontSize: AppFontSizes.small,
+                              // fontSize: 12,
                             ),
                           ),
                         )
@@ -228,7 +232,7 @@ class BasicDetail extends StatelessWidget {
             //       style: TextStyle(
             //         fontSize: 14,
             //         color: ColorRes.white,
-            //         fontWeight: FontWeight.w500,
+            //         fontWeight: AppFontWeights.medium,
             //       ),
             //     ),
             //   ),

@@ -44,7 +44,7 @@ class RoomDetail extends StatelessWidget {
                           title: Text(
                             "${room.roomType} ",
                             style: TextStyle(
-                              fontWeight: FontWeight.w600,
+                              fontWeight: AppFontWeights.semiBold,
                               fontSize: AppFontSizes.bodySmall,
                               color: ColorRes.textPrimary,
                             ),
@@ -52,7 +52,7 @@ class RoomDetail extends StatelessWidget {
                           subtitle: Text(
                             "Deposit: ₹${room.deposit} - ₹${room.monthlyRent} / month",
                             style: TextStyle(
-                              fontWeight: FontWeight.w500,
+                              fontWeight: AppFontWeights.medium,
                               fontSize: AppFontSizes.small,
                             ),
                           ),
@@ -103,7 +103,7 @@ class RoomDetail extends StatelessWidget {
                       controller.rooms.isEmpty ? "Add Room Detail" : "Add Another Room",
                       style: TextStyle(
                         color: ColorRes.primary,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: AppFontWeights.medium,
                       ),
                     ),
                   ),
@@ -137,7 +137,7 @@ class RoomDetail extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: AppFontSizes.small,
                                     color: ColorRes.primary,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: AppFontWeights.medium,
                                   ),
                                 ),
                               ),
@@ -260,10 +260,10 @@ class RoomDetail extends StatelessWidget {
                                 controller.editingIndex.value == -1
                                     ? "Add Room"
                                     : "Update Room",
-                                style: const TextStyle(
-                                  fontSize: 14,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.medium,
                                   color: ColorRes.primary,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: AppFontWeights.medium,
                                 ),
                               ),
                             ),
@@ -280,11 +280,11 @@ class RoomDetail extends StatelessWidget {
                                   controller.showAddRoomCard.value = false;
                                   controller.clearRoomDetail();
                                 },
-                                child: const Text(
+                                child: Text(
                                   "Cancel",
                                   style: TextStyle(
                                     color: ColorRes.leadGreyColor,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: AppFontWeights.medium,
                                   ),
                                 ),
                               ),

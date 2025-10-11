@@ -94,7 +94,7 @@
 //                         radius: 18,
 //                         child: Icon(
 //                           isFavorite ? Icons.favorite : Icons.favorite_border,
-//                           color: isFavorite ? Colors.red : Colors.grey,
+//                           color: isFavorite ? Colors.red : ColorRes.leadGreyColor,
 //                           size: 20,
 //                         ),
 //                       ),
@@ -122,7 +122,7 @@
 //                   Text(
 //                     widget.property.title ?? "-",
 //                     style: const TextStyle(
-//                       fontWeight: FontWeight.w600,
+//                       fontWeight: AppFontWeights.semiBold,
 //                       fontSize: 16,
 //                       color: Colors.black87,
 //                     ),
@@ -145,7 +145,7 @@
 //                           widget.property.address ?? "-",
 //                           style: TextStyle(
 //                             fontSize: 11,
-//                             color: Colors.grey.shade700,
+//                             color: ColorRes.leadGreyColor.shade700,
 //                           ),
 //                           maxLines: 1,
 //                           overflow: TextOverflow.ellipsis,
@@ -239,7 +239,7 @@
 //                           'Book Now',
 //                           style: TextStyle(
 //                             fontSize: 11,
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semiBold,
 //                             color: ColorRes.white,
 //                           ),
 //                         ),
@@ -273,7 +273,7 @@
 //         text,
 //         style: const TextStyle(
 //           fontSize: 12,
-//           fontWeight: FontWeight.w600,
+//           fontWeight: AppFontWeights.semiBold,
 //           color: ColorRes.primary,
 //         ),
 //       ),
@@ -292,7 +292,7 @@
 //         style: const TextStyle(
 //           color: ColorRes.white,
 //           fontSize: 10,
-//           fontWeight: FontWeight.w500,
+//           fontWeight: AppFontWeights.medium,
 //         ),
 //       ),
 //     );
@@ -311,7 +311,7 @@
 //             text,
 //             style: const TextStyle(
 //               fontSize: 10,
-//               fontWeight: FontWeight.w500,
+//               fontWeight: AppFontWeights.medium,
 //               color: ColorRes.grey,
 //             ),
 //           ),
@@ -329,6 +329,7 @@ import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart';
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../data/network/property/models/property_model.dart';
 
 class SellerPropertyCard extends StatefulWidget {
@@ -389,7 +390,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
-                            color: Colors.grey.shade200,
+                            color: ColorRes.leadGreyColor.shade200,
                             image:
                                 (widget
                                             .property
@@ -423,7 +424,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                                   ? const Icon(
                                     Icons.image,
                                     size: 36,
-                                    color: Colors.grey,
+                                    color: ColorRes.leadGreyColor,
                                   )
                                   : null,
                         ),
@@ -439,8 +440,8 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                               Text(
                                 widget.property.title ?? "-",
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  fontSize: AppFontSizes.medium,
                                   color: ColorRes.textPrimary,
                                 ),
                                 maxLines: 1,
@@ -461,8 +462,8 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                                     child: Text(
                                       widget.property.address ?? "-",
                                       style: TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.grey.shade700,
+                                        fontSize: AppFontSizes.extraSmall,
+                                        color: ColorRes.leadGreyColor.shade700,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -531,7 +532,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                     margin: const EdgeInsets.symmetric(horizontal: 12),
                     width: 1,
                     height: 50,
-                    color: Colors.grey.withOpacity(0.2),
+                    color: ColorRes.leadGreyColor.withOpacity(0.2),
                   ),
 
                   Column(
@@ -546,9 +547,9 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                                   ?.price ??
                               0,
                         ),
-                        style: const TextStyle(
+                        style:  TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          fontSize: AppFontSizes.bodyMedium,
                           color: ColorRes.textColor,
                         ),
                       ),
@@ -569,8 +570,8 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                             Text(
                               "4.8",
                               style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
+                                fontSize: AppFontSizes.extraSmall,
+                                fontWeight: AppFontWeights.semiBold,
                                 color: ColorRes.white,
                               ),
                             ),
@@ -622,9 +623,9 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
     ),
     child: Text(
       text,
-      style: const TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.w600,
+      style:  TextStyle(
+        fontSize: AppFontSizes.extraSmall,
+        fontWeight: AppFontWeights.semiBold,
         color: ColorRes.primary,
       ),
     ),
@@ -638,10 +639,10 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
     ),
     child: Text(
       text,
-      style: const TextStyle(
+      style:  TextStyle(
         color: ColorRes.white,
-        fontSize: 9,
-        fontWeight: FontWeight.w500,
+        fontSize: AppFontSizes.mini,
+        fontWeight: AppFontWeights.medium,
       ),
     ),
   );
@@ -654,9 +655,9 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
         const SizedBox(width: 3),
         Text(
           text,
-          style: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
+          style:  TextStyle(
+            fontSize: AppFontSizes.extraSmall,
+            fontWeight: AppFontWeights.medium,
             color: ColorRes.grey,
           ),
         ),

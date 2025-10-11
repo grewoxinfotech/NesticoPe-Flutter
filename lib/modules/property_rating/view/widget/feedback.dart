@@ -5,6 +5,8 @@ import 'package:housing_flutter_app/modules/property_rating/view/widget/rating_s
 import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
+
 class FeedbackCard extends StatelessWidget {
   final String userName;
   final String feedback;
@@ -29,7 +31,7 @@ class FeedbackCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         // margin: EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300, width: 1),
+          border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
           borderRadius: BorderRadius.circular(15),
         ),
         child: Column(
@@ -55,8 +57,8 @@ class FeedbackCard extends StatelessWidget {
                         children: [
                           buildCommonText(
                             userName,
-                            14,
-                            FontWeight.w600,
+                            AppFontSizes.medium,
+                            AppFontWeights.semiBold,
                             ColorRes.textPrimary,
                             1,
                           ),
@@ -86,9 +88,9 @@ class FeedbackCard extends StatelessWidget {
 
                           buildCommonText(
                             date,
-                            10,
-                            FontWeight.w400,
-                            Colors.grey,
+                            AppFontSizes.extraSmall,
+                            AppFontWeights.regular,
+                            ColorRes.leadGreyColor,
                             1,
                           ),
                         ],

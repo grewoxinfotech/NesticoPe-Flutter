@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.d
 
 import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/property/models/property_model.dart';
 
 import '../../property/controllers/property_controller.dart';
@@ -116,7 +117,7 @@ class PropertyDetail extends StatelessWidget {
                 title: const Text(
                   "Property List",
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textColor,
                   ),
                 ),
@@ -160,8 +161,8 @@ class PropertyDetail extends StatelessWidget {
                                   '${selectedFilters.length}',
                                   style: const TextStyle(
                                     color: ColorRes.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: AppFontSizes.extraSmall,
+                                    fontWeight: AppFontWeights.extraBold,
                                   ),
                                 ),
                               ),
@@ -238,7 +239,7 @@ class PropertyDetail extends StatelessWidget {
                 //                                 style: TextStyle(
                 //                                   fontSize: 12,
                 //                                   color: ColorRes.primary,
-                //                                   fontWeight: FontWeight.w500,
+                //                                   fontWeight: AppFontWeights.medium,
                 //                                 ),
                 //                               ),
                 //                               SizedBox(width: 4),
@@ -289,7 +290,7 @@ class PropertyDetail extends StatelessWidget {
                 //                               style: const TextStyle(
                 //                                 fontSize: 12,
                 //                                 color: ColorRes.primary,
-                //                                 fontWeight: FontWeight.w500,
+                //                                 fontWeight: AppFontWeights.medium,
                 //                               ),
                 //                             ),
                 //                             const SizedBox(width: 6),
@@ -378,7 +379,7 @@ class PropertyDetail extends StatelessWidget {
       //             "No properties found",
       //             style: TextStyle(
       //               fontSize: 18,
-      //               fontWeight: FontWeight.w600,
+      //               fontWeight: AppFontWeights.semiBold,
       //               color: ColorRes.textColor,
       //             ),
       //           ),
@@ -457,7 +458,7 @@ class PropertyDetail extends StatelessWidget {
                 color: ColorRes.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: ColorRes.black.withOpacity(0.05),
                     blurRadius: 2,
                   ),
                 ],
@@ -490,9 +491,9 @@ class PropertyDetail extends StatelessWidget {
                             Text(
                               "Clear All",
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: AppFontSizes.small,
                                 color: ColorRes.primary,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: AppFontWeights.medium,
                               ),
                             ),
                             SizedBox(width: 4),
@@ -529,9 +530,9 @@ class PropertyDetail extends StatelessWidget {
                             Text(
                               "$key: $value",
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: AppFontSizes.small,
                                 color: ColorRes.primary,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: AppFontWeights.medium,
                               ),
                             ),
                             const SizedBox(width: 6),
@@ -568,7 +569,7 @@ class PropertyDetail extends StatelessWidget {
                       SizedBox(height: 16),
                       Text(
                         "Loading properties...",
-                        style: TextStyle(color: ColorRes.textColor, fontSize: 14),
+                        style: TextStyle(color: ColorRes.textColor, fontSize: AppFontSizes.medium),
                       ),
                     ],
                   ),
@@ -589,8 +590,8 @@ class PropertyDetail extends StatelessWidget {
                       const Text(
                         "No properties found",
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                          fontSize: AppFontSizes.body,
+                          fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.textColor,
                         ),
                       ),
@@ -600,7 +601,7 @@ class PropertyDetail extends StatelessWidget {
                             ? "Try adjusting your search criteria"
                             : "Try removing some filters",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: AppFontSizes.medium,
                           color: ColorRes.textColor.withOpacity(0.7),
                         ),
                       ),

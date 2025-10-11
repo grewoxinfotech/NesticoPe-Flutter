@@ -82,7 +82,7 @@
 //                 label,
 //                 style: TextStyle(
 //                   fontSize: 11,
-//                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+//                   fontWeight: isSelected ? AppFontWeights.semiBold : AppFontWeights.medium,
 //                   color: isSelected ? ColorRes.primary : Colors.grey[600],
 //                 ),
 //                 maxLines: 1,
@@ -136,7 +136,7 @@ class BuilderMainScreen extends StatelessWidget {
         //     Get.put(ProjectWizardController());
         //   },));
 
-      },label: Text('+ Add Project',style: TextStyle(color: ColorRes.white,fontWeight: FontWeight.w600),),),
+      },label: Text('+ Add Project',style: TextStyle(color: ColorRes.white,fontWeight: AppFontWeights.semiBold),),),
 
       bottomNavigationBar: Obx(
             () => SafeArea(
@@ -148,11 +148,11 @@ class BuilderMainScreen extends StatelessWidget {
             unselectedItemColor: Colors.grey,
             selectedLabelStyle: TextStyle(
               fontSize: AppFontSizes.caption,
-              fontWeight: FontWeight.w600,
+              fontWeight: AppFontWeights.semiBold,
             ),
             unselectedLabelStyle: TextStyle(
               fontSize: AppFontSizes.caption,
-              fontWeight: FontWeight.w500,
+              fontWeight: AppFontWeights.medium,
             ),
             backgroundColor: ColorRes.white,
             elevation: 0,

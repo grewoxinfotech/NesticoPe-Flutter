@@ -70,7 +70,7 @@
 //                       "G",
 //                       style: TextStyle(
 //                         fontSize: 20,
-//                         fontWeight: FontWeight.w800,
+//                         fontWeight: AppFontWeights.extraBold,
 //                         color: ColorRes.white,
 //                       ),
 //                     ),

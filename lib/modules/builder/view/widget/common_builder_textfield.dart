@@ -77,10 +77,10 @@ class CommonTextField extends StatelessWidget {
       children: [
         ((label?.isNotEmpty??false))?SizedBox(height: 10):SizedBox.shrink(),
         (label?.isNotEmpty??false)?Text(label??'',textAlign: TextAlign.left,
-          style: const TextStyle(
+          style: TextStyle(
 
             fontSize: AppFontSizes.caption,
-            fontWeight: FontWeight.w500,
+            fontWeight: AppFontWeights.medium,
             color: ColorRes.textPrimary,
           ),):SizedBox.shrink(),
         ((label?.isNotEmpty??false))?SizedBox(height: 8):SizedBox.shrink(),
@@ -91,7 +91,7 @@ class CommonTextField extends StatelessWidget {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           initialValue: controller == null ? initialValue : null,
           keyboardType: keyboardType,
-          style: const TextStyle(fontSize: 14, color: ColorRes.textPrimary),
+          style:  TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.textPrimary),
           textCapitalization: textCapitalization,
           textInputAction: textInputAction,
           validator: validator,
@@ -105,7 +105,7 @@ class CommonTextField extends StatelessWidget {
               maxHeight: 20,
             ),
             hintText: hint,
-            hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+            hintStyle: TextStyle(fontSize: AppFontSizes.medium, color: Colors.grey.shade500),
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
             suffixText: suffixText,
@@ -135,7 +135,7 @@ class CommonTextField extends StatelessWidget {
             ),
             filled: borderType == 'filled',
             fillColor: Colors.grey.shade50,
-            errorStyle: TextStyle(color: Colors.red.shade700, fontSize: 12),
+            errorStyle: TextStyle(color: Colors.red.shade700, fontSize: AppFontSizes.small),
           ),
         ),
       ],

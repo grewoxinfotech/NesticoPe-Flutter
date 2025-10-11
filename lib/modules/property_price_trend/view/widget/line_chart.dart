@@ -22,7 +22,7 @@ Padding buildPriceTrendingChart(
           gridData: const FlGridData(show: false),
           borderData: FlBorderData(
             show: false,
-            border: Border.all(color: Colors.black26, width: 1),
+            border: Border.all(color: ColorRes.blackShade26, width: 1),
           ),
           minX: 0,
 

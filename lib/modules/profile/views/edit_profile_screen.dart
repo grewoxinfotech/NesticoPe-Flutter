@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/app/constants/font_res.dart';
 import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
 import '../controllers/edit_profile_controller.dart';
 
@@ -53,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 "User Type",
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                   fontFamily: FontRes.nuNunitoSans,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: AppFontWeights.extraBold,
                 ),
               ),
               const SizedBox(height: 18),

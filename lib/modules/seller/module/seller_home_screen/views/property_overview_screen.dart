@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/property_overview_seller.dart';
 
+import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../../app/manager/property_highlight_manager.dart';
 import '../../../../../app/utils/svg_widget.dart';
@@ -26,9 +27,9 @@ class PropertyOverviewScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: ColorRes.white,
         foregroundColor: ColorRes.textPrimary,
-        title: const Text(
+        title:  Text(
           "Property Overview",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+          style: TextStyle(fontWeight: AppFontWeights.semiBold, fontSize: AppFontSizes.subtitle),
         ),
         actions: [
           IconButton(icon: const Icon(Icons.filter_list), onPressed: () {}),
@@ -100,15 +101,15 @@ class PropertyOverviewScreen extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: isSold ? Colors.red : ColorRes.white,
+                          color: isSold ? ColorRes.error : ColorRes.white,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           property.propertyStatus?.capitalize ?? 'Available',
                           style: TextStyle(
                             color: isSold ? ColorRes.white : ColorRes.primary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.semiBold,
                           ),
                         ),
                       ),
@@ -131,8 +132,8 @@ class PropertyOverviewScreen extends StatelessWidget {
                             property.listingType!.capitalize.toString(),
                             style: TextStyle(
                               color: ColorRes.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.semiBold,
                             ),
                           ),
                         ),
@@ -158,9 +159,9 @@ class PropertyOverviewScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   property.propertyType ?? 'Property Title',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                                  style:  TextStyle(
+                                    fontSize: AppFontSizes.body,
+                                    fontWeight: AppFontWeights.semiBold,
                                     color: ColorRes.textPrimary,
                                   ),
                                 ),
@@ -170,15 +171,15 @@ class PropertyOverviewScreen extends StatelessWidget {
                                     const Icon(
                                       Icons.location_on,
                                       size: 14,
-                                      color: Colors.grey,
+                                      color: ColorRes.leadGreyColor,
                                     ),
                                     const SizedBox(width: 4),
                                     Expanded(
                                       child: Text(
                                         property.location ?? 'Location',
                                         style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[600],
+                                          fontSize: AppFontSizes.medium,
+                                          color: ColorRes.leadGreyColor[600],
                                         ),
                                       ),
                                     ),
@@ -193,15 +194,15 @@ class PropertyOverviewScreen extends StatelessWidget {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.blue[50],
+                              color: ColorRes.blueColor[50],
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               priceManager.displayPrice,
                               style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.blue[700],
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.blueColor[700],
                               ),
                             ),
                           ),
@@ -236,7 +237,7 @@ class PropertyOverviewScreen extends StatelessWidget {
                       const SizedBox(height: 16),
 
                       // Divider
-                      Container(height: 1, color: Colors.grey[200]),
+                      Container(height: 1, color: ColorRes.leadGreyColor[200]),
 
                       const SizedBox(height: 16),
 
@@ -291,20 +292,20 @@ class PropertyOverviewScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: ColorRes.leadGreyColor[100],
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: Colors.grey[600]),
+          Icon(icon, size: 14, color: ColorRes.leadGreyColor[600]),
           const SizedBox(width: 4),
           Text(
             label,
             style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w500,
+              fontSize: AppFontSizes.small,
+              color: ColorRes.leadGreyColor[700],
+              fontWeight: AppFontWeights.medium,
             ),
           ),
         ],
@@ -331,9 +332,9 @@ class PropertyOverviewScreen extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
+          style:  TextStyle(
+            fontSize: AppFontSizes.bodySmall,
+            fontWeight: AppFontWeights.semiBold,
             color: ColorRes.textPrimary,
           ),
         ),
@@ -341,9 +342,9 @@ class PropertyOverviewScreen extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 11,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
+            fontSize: AppFontSizes.caption,
+            color: ColorRes.leadGreyColor[600],
+            fontWeight: AppFontWeights.medium,
           ),
         ),
       ],
@@ -496,7 +497,7 @@ class Facilities extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: ColorRes.leadGreyColor[200],
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -508,9 +509,9 @@ class Facilities extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             text,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+            style:  TextStyle(
+              fontSize:AppFontSizes.small,
+              fontWeight: AppFontWeights.medium,
               color: ColorRes.grey,
             ),
           ),

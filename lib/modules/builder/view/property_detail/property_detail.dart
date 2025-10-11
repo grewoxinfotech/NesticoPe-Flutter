@@ -43,9 +43,9 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                   Text(
                     'Configurations',
                     textAlign: TextAlign.left,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: AppFontSizes.bodySmall,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textSecondary,
                     ),
                   ),
@@ -55,11 +55,11 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                     child: ElevatedButton.icon(
                       onPressed: controller.addConfiguration,
                       icon: const Icon(Icons.add_rounded, size: 20,color: ColorRes.white,),
-                      label: const Text(
+                      label: Text(
                         'Add BHK',
                         style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
+                          fontWeight: AppFontWeights.semiBold,
+                          fontSize: AppFontSizes.medium,
                           color: ColorRes.white,
                           letterSpacing: 0.3,
                         ),
@@ -128,7 +128,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                     'BHK Configuration',
                                     style: TextStyle(
                                       fontSize: AppFontSizes.medium,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: AppFontWeights.semiBold,
                                       color: ColorRes.textPrimary,
                                       letterSpacing: 0.2,
                                     ),
@@ -208,7 +208,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                         'Variants ${cfg.variants.length}',
                                         style: TextStyle(
                                           fontSize: AppFontSizes.bodySmall,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: AppFontWeights.semiBold,
                                           color: ColorRes.textPrimary,
                                           letterSpacing: 0.2,
                                         ),
@@ -217,12 +217,12 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                       FilledButton.tonalIcon(
                                         onPressed: () => controller.addVariant(ci),
                                         icon: const Icon(Icons.add_rounded, size: 20,color: ColorRes.white,),
-                                        label: const Text(
+                                        label: Text(
                                           'Add Variant',
                                           style: TextStyle(
 
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
+                                            fontSize: AppFontSizes.medium,
+                                            fontWeight: AppFontWeights.semiBold,
                                             color: ColorRes.white,
                                             letterSpacing: 0.3,
                                           ),
@@ -292,7 +292,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                       'Variant ${vi+1}',
                                       style: TextStyle(
                                         fontSize: AppFontSizes.medium,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: AppFontWeights.semiBold,
                                         color: ColorRes.textPrimary,
                                         letterSpacing: 0.2,
                                       ),
@@ -300,7 +300,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                     const Spacer(),
                                     TextButton(
                                       onPressed: () => controller.removeVariant(ci, vi),
-                                    child: Text('Remove',style: TextStyle(color: ColorRes.redAccentColor,fontSize: 12),),
+                                    child: Text('Remove',style: TextStyle(color: ColorRes.redAccentColor,fontSize: AppFontSizes.small),),
 
                                       // color: Colors.red.shade600,
                                       // tooltip: 'Remove Configuration',

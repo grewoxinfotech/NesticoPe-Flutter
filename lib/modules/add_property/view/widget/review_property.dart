@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/add_property/model/review_property_model.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../model/commercial_model.dart';
 
@@ -22,7 +23,7 @@ class ListingReviewCard extends StatelessWidget {
                padding: EdgeInsets.all(20.0),
                child: Text(
                  'No review yet.',
-                 style: TextStyle(fontSize: 16, color: ColorRes.leadGreyColor),
+                 style: TextStyle(fontSize: AppFontSizes.body, color: ColorRes.leadGreyColor),
                ),
              ),
            );
@@ -53,8 +54,8 @@ class ListingReviewCard extends StatelessWidget {
                          "Congratulations! Your property listing has been created.",
                          style: TextStyle(
                            color: ColorRes.green.shade800,
-                           fontWeight: FontWeight.w600,
-                           fontSize: 12,
+                           fontWeight: AppFontWeights.semiBold,
+                           fontSize: AppFontSizes.small,
                          ),
                          textAlign: TextAlign.start,
                        ),
@@ -74,7 +75,7 @@ class ListingReviewCard extends StatelessWidget {
                padding: EdgeInsets.all(20.0),
                child: Text(
                  'No review yet.',
-                 style: TextStyle(fontSize: 16, color: ColorRes.leadGreyColor),
+                 style: TextStyle(fontSize: AppFontSizes.body, color: ColorRes.leadGreyColor),
                ),
              ),
            );
@@ -106,8 +107,10 @@ class ListingReviewCard extends StatelessWidget {
                          "Congratulations! Your property listing has been created.",
                          style: TextStyle(
                            color: ColorRes.green.shade800,
-                           fontWeight: FontWeight.w600,
-                           fontSize: 12,
+                           // fontWeight: AppFontWeights.semiBold,
+                           fontWeight: AppFontWeights.semiBold,
+                           fontSize: AppFontSizes.small,
+                           // fontSize: 12,
                          ),
                          textAlign: TextAlign.start,
                        ),
@@ -233,7 +236,8 @@ class _ReviewCardItem extends StatelessWidget {
         // PG Name
         Text(
           pgName,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style:  TextStyle(fontSize: AppFontSizes.body, fontWeight: AppFontWeights.semiBold),
+          // style: const TextStyle(fontSize: 16, fontWeight: AppFontWeights.semiBold),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
@@ -260,7 +264,8 @@ class _ReviewCardItem extends StatelessWidget {
   Widget _buildInfoText(String text) {
     return Text(
       text,
-      style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
+      style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor.shade600),
+      // style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
     );
@@ -276,9 +281,11 @@ class _ReviewCardItem extends StatelessWidget {
       child: Text(
         'Under Review',
         style: TextStyle(
-          fontSize: 11,
+          // fontSize: 11,
+          fontSize: AppFontSizes.caption,
           color: ColorRes.green.shade800,
-          fontWeight: FontWeight.w600,
+          fontWeight: AppFontWeights.semiBold,
+          // fontWeight: AppFontWeights.semiBold,
         ),
       ),
     );
@@ -291,9 +298,11 @@ class _ReviewCardItem extends StatelessWidget {
         Flexible(
           child: Text(
             "₹ $rent",
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              // fontSize: 14,
+              fontWeight: AppFontWeights.extraBold,
+              // fontWeight: FontWeight.bold,
               color: ColorRes.textPrimary,
             ),
             overflow: TextOverflow.ellipsis,
@@ -302,7 +311,8 @@ class _ReviewCardItem extends StatelessWidget {
         Flexible(
           child: Text(
             "Notice: $noticePeriod days",
-            style: TextStyle(fontSize: 12, color: ColorRes.leadGreyColor.shade600),
+            style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor.shade600),
+            // style: TextStyle(fontSize: 12, color: ColorRes.leadGreyColor.shade600),
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.end,
           ),
@@ -407,7 +417,8 @@ class _CommercialReviewCardItem extends StatelessWidget {
         // Building Name
         Text(
           buildingName,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: AppFontSizes.body, fontWeight: AppFontWeights.semiBold),
+          // style: const TextStyle(fontSize: 16, fontWeight: AppFontWeights.semiBold),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
@@ -435,7 +446,8 @@ class _CommercialReviewCardItem extends StatelessWidget {
   Widget _buildInfoText(String text) {
     return Text(
       text,
-      style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
+      style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor.shade600),
+      // style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
     );
@@ -451,9 +463,11 @@ class _CommercialReviewCardItem extends StatelessWidget {
       child: Text(
         'Under Review',
         style: TextStyle(
-          fontSize: 11,
+          fontSize: AppFontSizes.caption,
+          // fontSize: 11,
           color: ColorRes.green.shade800,
-          fontWeight: FontWeight.w600,
+          fontWeight: AppFontWeights.semiBold,
+          // fontWeight: AppFontWeights.semiBold,
         ),
       ),
     );
@@ -466,9 +480,14 @@ class _CommercialReviewCardItem extends StatelessWidget {
         Flexible(
           child: Text(
             "₹ $rent",
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              // fontSize: 14,
+              fontWeight: AppFontWeights.extraBold,
+              // fontWeight: FontWeight.bold,
+              // color: ColorRes.textPrimary,
+              // fontSize: 14,
+              // fontWeight: FontWeight.bold,
               color: ColorRes.textPrimary,
             ),
             overflow: TextOverflow.ellipsis,

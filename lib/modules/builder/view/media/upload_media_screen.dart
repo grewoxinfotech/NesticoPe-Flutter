@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/modules/builder/view/additional_deatil/addit
 import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../controller/builder_form_controller.dart';
 
 class UploadMediaScreen extends GetView<ProjectWizardController> {
@@ -54,7 +55,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     buildBuilderDefaultHeaderText('Project Images'),
                     Text(
                       'Required • Max 5MB each',
-                      style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
+                      style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor.shade600),
                     ),
                   ],
                 ),
@@ -75,8 +76,8 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                   child: Text(
                     '${ controller.project.value.imageList.length}/5',
                     style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
+                      fontSize: AppFontSizes.caption,
+                      fontWeight: AppFontWeights.semiBold,
                       color:
                       controller.project.value.imageList.isEmpty
                               ? ColorRes.orangeColor.shade700
@@ -154,16 +155,16 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Project Videos',
                       style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
+                        fontSize: AppFontSizes.bodyMedium,
+                        fontWeight: AppFontWeights.semiBold,
                       ),
                     ),
                     Text(
                       'Optional • Max 50MB each',
-                      style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor[600]),
+                      style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor[600]),
                     ),
                   ],
                 ),
@@ -181,8 +182,8 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                   child: Text(
                     '${ controller.project.value.videoList.length}/5',
                     style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
+                      fontSize: AppFontSizes.caption,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.leadGreyColor[700],
                     ),
                   ),
@@ -263,17 +264,17 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Project Brochure',
                             style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
+                              fontSize: AppFontSizes.bodyMedium,
+                              fontWeight: AppFontWeights.semiBold,
                             ),
                           ),
                           Text(
                             'Optional • PDF only • Max 10MB',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: AppFontSizes.caption,
                               color: ColorRes.leadGreyColor[600],
                             ),
                           ),
@@ -334,8 +335,8 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                               Text(
                                 'Uploaded Document',
                                 style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.medium,
                                   color: ColorRes.primary.withOpacity(0.8),
                                 ),
                               ),
@@ -343,8 +344,8 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                               Text(
                                 controller.uploadBrocherName.value,
                                 style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: AppFontSizes.medium,
+                                  fontWeight: AppFontWeights.semiBold,
                                   color: ColorRes.primary,
                                 ),
                                 maxLines: 1,
@@ -416,14 +417,14 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
             const SizedBox(height: 12),
             Text(
               title,
-              style: TextStyle(fontSize: 14, color: ColorRes.leadGreyColor[700]),
+              style: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor[700]),
             ),
             const SizedBox(height: 4),
             Text(
               subtitle,
               style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+                fontSize: AppFontSizes.bodySmall,
+                fontWeight: AppFontWeights.semiBold,
                 color: color[700],
                 decoration: TextDecoration.underline,
               ),
@@ -628,8 +629,8 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
             Text(
               'Add More',
               style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontSize: AppFontSizes.caption,
+                fontWeight: AppFontWeights.medium,
                 color: ColorRes.leadGreyColor[700],
               ),
             ),

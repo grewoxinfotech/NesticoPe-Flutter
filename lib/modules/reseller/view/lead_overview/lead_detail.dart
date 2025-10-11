@@ -119,7 +119,7 @@ class LeadDetailScreen extends StatelessWidget {
             // 2. Property Image Gallery (Always Visible)
             _buildPropertyImageGallery(context),
 
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // 3. Property Overview (Always Visible)
             _buildPropertyOverviewSection(context, isCompact),
@@ -132,12 +132,12 @@ class LeadDetailScreen extends StatelessWidget {
                   controller.isResellerDetailExpanded.value
                       ? Column(
                         children: [
-                          Divider(thickness: 8, color: Colors.grey[100]),
+                          Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
                           // 4. Property Details
                           _buildPropertyDetailsSection(context, isCompact),
 
-                          Divider(thickness: 8, color: Colors.grey[100]),
+                          Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
                           // 5. Amenities
                           _buildAmenitiesSection(context, isCompact),
@@ -147,19 +147,19 @@ class LeadDetailScreen extends StatelessWidget {
                       )
                       : Obx(() => _buildExpandButton(context)),
             ),
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // 6. Financial Information
             _buildFinancialSection(context, isCompact),
 
             if (isFromLead) ...[
-              Divider(thickness: 8, color: Colors.grey[100]),
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
               // 7. Lead Status & Timeline
               _buildStatusTimelineSection(context, isCompact),
             ],
 
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child:
@@ -190,7 +190,7 @@ class LeadDetailScreen extends StatelessWidget {
               _buildNotesSection(context, isCompact),
             ],
 
-            Divider(thickness: 8, color: Colors.grey[100]),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // 9. Action Buttons
             _buildActionButtons(context, isCompact),
@@ -272,15 +272,15 @@ class LeadDetailScreen extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.grey[200],
+                              color: ColorRes.leadGreyColor[200],
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               'Lead Source: ${lead!.source.toUpperCase()}',
                               style: TextStyle(
-                                color: Colors.grey[700],
+                                color: ColorRes.leadGreyColor[700],
                                 fontSize: AppFontSizes.extraSmall,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: AppFontWeights.medium,
                               ),
                             ),
                           ),
@@ -291,15 +291,15 @@ class LeadDetailScreen extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.grey[200],
+                              color: ColorRes.leadGreyColor[200],
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               'Property Type: ${propertyType.toUpperCase()}',
                               style: TextStyle(
                                 fontSize: AppFontSizes.extraSmall,
-                                color: Colors.grey[700],
-                                fontWeight: FontWeight.w500,
+                                color: ColorRes.leadGreyColor[700],
+                                fontWeight: AppFontWeights.medium,
                               ),
                             ),
                           ),
@@ -369,16 +369,16 @@ class LeadDetailScreen extends StatelessWidget {
                   Text(
                     label,
                     style: TextStyle(
-                      fontWeight: FontWeight.w500,
+                      fontWeight: AppFontWeights.medium,
                       fontSize: AppFontSizes.extraSmall,
-                      color: Colors.grey[700],
+                      color: ColorRes.leadGreyColor[700],
                     ),
                   ),
                   Text(
                     value,
                     style: TextStyle(
                       fontSize: AppFontSizes.small,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: AppFontWeights.medium,
                       color: ColorRes.textColor,
                     ),
                   ),
@@ -412,18 +412,18 @@ class LeadDetailScreen extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: Colors.grey[300],
+                    color: ColorRes.leadGreyColor[300],
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.home, size: 80, color: Colors.grey[400]),
+                        Icon(Icons.home, size: 80, color: ColorRes.leadGreyColor[400]),
                         SizedBox(height: 8),
                         Text(
                           propertyTitle,
                           style: TextStyle(
                             fontSize: AppFontSizes.large,
                             fontWeight: AppFontWeights.bold,
-                            color: Colors.grey[600],
+                            color: ColorRes.leadGreyColor[600],
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -440,7 +440,7 @@ class LeadDetailScreen extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
+                color: ColorRes.black.withOpacity(0.6),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -513,7 +513,7 @@ class LeadDetailScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize:
                     isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
-                color: Colors.grey[700],
+                color: ColorRes.leadGreyColor[700],
               ),
             ),
           ),
@@ -531,13 +531,13 @@ class LeadDetailScreen extends StatelessWidget {
               _buildOverviewChip(
                 propertyType.toUpperCase(),
                 Icons.apartment_outlined,
-                Colors.purple,
+                ColorRes.purpleColor,
                 isCompact,
               ),
               _buildOverviewChip(
                 listingType,
                 Icons.sell_outlined,
-                Colors.orange,
+                ColorRes.orangeColor,
                 isCompact,
               ),
             ],
@@ -552,14 +552,14 @@ class LeadDetailScreen extends StatelessWidget {
                 Icons.straighten,
                 isCompact,
               ),
-              Container(width: 1, height: 50, color: Colors.grey[300]),
+              Container(width: 1, height: 50, color: ColorRes.leadGreyColor[300]),
               _buildStatItem(
                 '${details.bathroom ?? 0}',
                 'Bathrooms',
                 Icons.bathtub_outlined,
                 isCompact,
               ),
-              Container(width: 1, height: 50, color: Colors.grey[300]),
+              Container(width: 1, height: 50, color: ColorRes.leadGreyColor[300]),
               _buildStatItem(
                 '${details.balcony ?? 0}',
                 'Balconies',
@@ -648,7 +648,7 @@ class LeadDetailScreen extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
-            color: Colors.grey[700],
+            color: ColorRes.leadGreyColor[700],
           ),
           textAlign: TextAlign.center,
         ),
@@ -732,8 +732,8 @@ class LeadDetailScreen extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: AppFontSizes.caption,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+                color: ColorRes.leadGreyColor[600],
+                fontWeight: AppFontWeights.medium,
               ),
             ),
           ),
@@ -839,7 +839,7 @@ class LeadDetailScreen extends StatelessWidget {
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.green.shade200, width: 1),
+              border: Border.all(color: ColorRes.success.shade200, width: 1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -859,8 +859,8 @@ class LeadDetailScreen extends StatelessWidget {
                                 'Property Price',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.medium,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey[700],
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.leadGreyColor[700],
                                   letterSpacing: 0.3,
                                 ),
                               ),
@@ -871,8 +871,8 @@ class LeadDetailScreen extends StatelessWidget {
                             Formatter.formatPrice(financialInfo.price),
                             style: TextStyle(
                               fontSize: isCompact ? AppFontSizes.large : 32,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.green.shade800,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.success.shade800,
                               height: 1.2,
                             ),
                           ),
@@ -930,7 +930,7 @@ class LeadDetailScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: ColorRes.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                    border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -954,8 +954,8 @@ class LeadDetailScreen extends StatelessWidget {
                             'Broker Commission',
                             style: TextStyle(
                               fontSize: AppFontSizes.small,
-                              color: Colors.grey[700],
-                              fontWeight: FontWeight.w600,
+                              color: ColorRes.leadGreyColor[700],
+                              fontWeight: AppFontWeights.semiBold,
                             ),
                           ),
                         ],
@@ -967,7 +967,7 @@ class LeadDetailScreen extends StatelessWidget {
                               isCompact
                                   ? AppFontSizes.medium
                                   : AppFontSizes.large,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.primary,
                         ),
                       ),
@@ -989,7 +989,7 @@ class LeadDetailScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Colors.grey.shade300,
+                              color: ColorRes.leadGreyColor.shade300,
                               width: 1,
                             ),
                           ),
@@ -1004,7 +1004,7 @@ class LeadDetailScreen extends StatelessWidget {
                                       Container(
                                         padding: EdgeInsets.all(8),
                                         decoration: BoxDecoration(
-                                          color: Colors.orange.shade50,
+                                          color: ColorRes.orangeColor.shade50,
                                           borderRadius: BorderRadius.circular(
                                             8,
                                           ),
@@ -1012,7 +1012,7 @@ class LeadDetailScreen extends StatelessWidget {
                                         child: Icon(
                                           Icons.handshake_rounded,
                                           size: 20,
-                                          color: Colors.orange.shade700,
+                                          color: ColorRes.orangeColor.shade700,
                                         ),
                                       ),
                                       SizedBox(width: 12),
@@ -1039,8 +1039,8 @@ class LeadDetailScreen extends StatelessWidget {
                                           isCompact
                                               ? AppFontSizes.medium
                                               : AppFontSizes.large,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.orange,
+                                      fontWeight: AppFontWeights.extraBold,
+                                      color: ColorRes.orangeColor,
                                     ),
                                   ),
                                 ],
@@ -1052,10 +1052,10 @@ class LeadDetailScreen extends StatelessWidget {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.orange.withOpacity(0.08),
+                                  color: ColorRes.orangeColor.withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: Colors.orange.withOpacity(0.3),
+                                    color: ColorRes.orangeColor.withOpacity(0.3),
                                     width: 1,
                                   ),
                                 ),
@@ -1065,15 +1065,15 @@ class LeadDetailScreen extends StatelessWidget {
                                     Icon(
                                       Icons.pending_outlined,
                                       size: 14,
-                                      color: Colors.orange.shade700,
+                                      color: ColorRes.orangeColor.shade700,
                                     ),
                                     SizedBox(width: 6),
                                     Text(
                                       'Pending Review',
                                       style: TextStyle(
                                         fontSize: AppFontSizes.extraSmall,
-                                        color: Colors.orange.shade700,
-                                        fontWeight: FontWeight.w600,
+                                        color: ColorRes.orangeColor.shade700,
+                                        fontWeight: AppFontWeights.semiBold,
                                       ),
                                     ),
                                   ],
@@ -1113,15 +1113,15 @@ class LeadDetailScreen extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   !hasOffer
-                                      ? Colors.green.shade600
-                                      : Colors.grey.shade400,
+                                      ? ColorRes.success.shade600
+                                      : ColorRes.leadGreyColor.shade400,
                               foregroundColor: ColorRes.white,
                               padding: EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               elevation: 0,
-                              shadowColor: Colors.green.withOpacity(0.3),
+                              shadowColor: ColorRes.success.withOpacity(0.3),
                             ),
                           ),
                         ),
@@ -1150,9 +1150,9 @@ class LeadDetailScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              color: ColorRes.leadGreyColor.shade50,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade300, width: 1),
+              border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
             ),
             child: Column(
               children: [
@@ -1160,7 +1160,7 @@ class LeadDetailScreen extends StatelessWidget {
                   'Lead Created',
                   _formatDateTime(lead!.createdAt),
                   Icons.add_circle_outline,
-                  Colors.blue,
+                  ColorRes.blueColor,
                   true,
                   false,
                 ),
@@ -1169,7 +1169,7 @@ class LeadDetailScreen extends StatelessWidget {
                     'Last Contacted',
                     _formatDateTime(lead!.lastContactedAt!),
                     Icons.phone_outlined,
-                    Colors.orange,
+                    ColorRes.orangeColor,
                     false,
                     false,
                   ),
@@ -1235,7 +1235,7 @@ class LeadDetailScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300, width: 1),
+                border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1244,7 +1244,7 @@ class LeadDetailScreen extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontSize: AppFontSizes.bodySmall,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textColor,
                     ),
                   ),
@@ -1254,7 +1254,7 @@ class LeadDetailScreen extends StatelessWidget {
                       Icon(
                         Icons.access_time,
                         size: 12,
-                        color: Colors.grey[500],
+                        color: ColorRes.leadGreyColor[500],
                       ),
                       SizedBox(width: 4),
                       Expanded(
@@ -1262,8 +1262,8 @@ class LeadDetailScreen extends StatelessWidget {
                           subtitle,
                           style: TextStyle(
                             fontSize: AppFontSizes.caption,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
+                            color: ColorRes.leadGreyColor[600],
+                            fontWeight: AppFontWeights.medium,
                           ),
                         ),
                       ),
@@ -1284,7 +1284,7 @@ class LeadDetailScreen extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: ColorRes.transparentColor,
       isDismissible: true,
       enableDrag: true,
       builder: (context) {
@@ -1705,7 +1705,7 @@ class LeadDetailScreen extends StatelessWidget {
             lead!.notes!,
             style: TextStyle(
               fontSize: AppFontSizes.small,
-              color: Colors.grey[800],
+              color: ColorRes.leadGreyColor[800],
               height: 1.5,
             ),
           ),
@@ -1734,7 +1734,7 @@ class LeadDetailScreen extends StatelessWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: ColorRes.success,
                   foregroundColor: ColorRes.white,
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -1790,12 +1790,12 @@ class LeadDetailScreen extends StatelessWidget {
                 height: 4,
                 margin: EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: ColorRes.leadGreyColor[300],
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.share, color: Colors.blue),
+                leading: Icon(Icons.share, color: ColorRes.blueColor),
                 title: Text('Share Lead'),
                 onTap: () {
                   Navigator.pop(context);
@@ -1803,7 +1803,7 @@ class LeadDetailScreen extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.flag, color: Colors.orange),
+                leading: Icon(Icons.flag, color: ColorRes.orangeColor),
                 title: Text('Mark as Fake'),
                 onTap: () {
                   Navigator.pop(context);
@@ -1811,7 +1811,7 @@ class LeadDetailScreen extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
+                leading: Icon(Icons.delete, color: ColorRes.error),
                 title: Text('Delete Lead'),
                 onTap: () {
                   Navigator.pop(context);
@@ -1829,19 +1829,19 @@ class LeadDetailScreen extends StatelessWidget {
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'new':
-        return Colors.blue;
+        return ColorRes.blueColor;
       case 'contacted':
-        return Colors.orange;
+        return ColorRes.orangeColor;
       case 'qualified':
-        return Colors.purple;
+        return ColorRes.purpleColor;
       case 'negotiating':
-        return Colors.indigo;
+        return ColorRes.leadIndigoColor;
       case 'sold':
-        return Colors.green;
+        return ColorRes.success;
       case 'lost':
-        return Colors.red;
+        return ColorRes.error;
       default:
-        return Colors.grey;
+        return ColorRes.leadGreyColor;
     }
   }
 

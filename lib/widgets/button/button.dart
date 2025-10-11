@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 import '../../app/constants/font_res.dart';
 import '../../app/constants/size_manager.dart';
@@ -44,9 +45,9 @@ class NesticoPeButton extends StatelessWidget {
           style:
               titleTextStyle ??
               TextStyle(
-                fontSize: 16,
+                fontSize: AppFontSizes.body,
                 fontFamily: FontRes.nuNunitoSans,
-                fontWeight: FontWeight.w700,
+                fontWeight: AppFontWeights.bold,
                 color: Get.theme.colorScheme.surface,
               ),
         ),

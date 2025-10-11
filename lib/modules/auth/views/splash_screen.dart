@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
@@ -129,7 +130,7 @@ class _SplashScreenState extends State<SplashScreen>
                       'NesticoPe',
                       style: TextStyle(
                         color: theme.colorScheme.primary,
-                        fontSize: 28,
+                        fontSize: AppFontSizes.displaySmall,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
                       ),
@@ -147,7 +148,7 @@ class _SplashScreenState extends State<SplashScreen>
                 'House Cleaning Service',
                 style: TextStyle(
                   color: ColorRes.leadGreyColor.shade700,
-                  fontSize: 16,
+                  fontSize: AppFontSizes.body,
                   letterSpacing: 0.5,
                 ),
               ),

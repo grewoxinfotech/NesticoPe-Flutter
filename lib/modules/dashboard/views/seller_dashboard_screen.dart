@@ -19,7 +19,7 @@
 //     final navigationController = Get.put(NavigationController());
 //     TextStyle style = TextStyle(
 //       fontSize: 12,
-//       fontWeight: FontWeight.w800,
+//       fontWeight: AppFontWeights.extraBold,
 //       color: Get.theme.colorScheme.primary,
 //     );
 //     double iconSize = 18;
@@ -116,6 +116,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
@@ -164,8 +165,8 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
     final navigationController = Get.put(NavigationController());
 
     TextStyle style = TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w800,
+      fontSize: AppFontSizes.small,
+      fontWeight: AppFontWeights.extraBold,
       color: Get.theme.colorScheme.primary,
     );
     double iconSize = 20;
@@ -329,13 +330,13 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
               showSelectedLabels: true,
               showUnselectedLabels: true,
               selectedLabelStyle: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
               ),
 
               unselectedLabelStyle: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.normal,
+                fontSize: AppFontSizes.extraSmall,
+                fontWeight: AppFontWeights.regular,
               ),
               items: const [
                 BottomNavigationBarItem(

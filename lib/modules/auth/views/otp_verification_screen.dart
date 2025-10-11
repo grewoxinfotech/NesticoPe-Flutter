@@ -354,6 +354,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
@@ -639,7 +640,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 Text(
                   'Enter OTP',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: AppFontWeights.extraBold,
+                    // fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),

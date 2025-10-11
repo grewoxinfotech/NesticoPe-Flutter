@@ -18,7 +18,7 @@ class InsightsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Insights in Mumbai",
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: AppFontSizes.bodyMedium, fontWeight: AppFontWeights.medium),
         ),
       ),
       body: SafeArea(
@@ -31,9 +31,9 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Personalized Insights Just for you",
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    fontSize: AppFontSizes.body,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.blackShade87,
                   ),
                 ),
               ),
@@ -42,9 +42,9 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Discover homes faster with tailored insights based on your prefrences",
                   style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black54,
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.regular,
+                    color: ColorRes.blackShade54,
                   ),
                 ),
               ),
@@ -55,9 +55,9 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Top Localities",
                   style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    fontSize: AppFontSizes.bodySmall,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.blackShade87,
                   ),
                 ),
               ),
@@ -66,9 +66,9 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Rediscover past areas and explore new ones tailored to you",
                   style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black54,
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.blackShade54,
+                    fontWeight:AppFontWeights.regular,
                   ),
                 ),
               ),
@@ -83,9 +83,9 @@ class InsightsScreen extends StatelessWidget {
                     Text(
                       "Top Rated Projects",
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.blackShade87,
                       ),
                     ),
                     SizedBox(height: 12),
@@ -103,9 +103,9 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Discover top-rated projects tailored to you interest",
                   style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black54,
+                    fontSize: AppFontSizes.caption,
+                    fontWeight: AppFontWeights.regular,
+                    color: ColorRes.blackShade54,
                   ),
                 ),
               ),
@@ -120,9 +120,9 @@ class InsightsScreen extends StatelessWidget {
                     Text(
                       "Top Rated Projects",
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.blackShade87,
                       ),
                     ),
                     SizedBox(height: 12),
@@ -140,9 +140,9 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Discover top-rated projects tailored to you interest",
                   style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black54,
+                    fontSize: AppFontSizes.caption,
+                    fontWeight: AppFontWeights.regular,
+                    color: ColorRes.blackShade54,
                   ),
                 ),
               ),
@@ -217,12 +217,12 @@ class InsightProperty extends StatelessWidget {
             padding: const EdgeInsets.only(right: 10),
             child: PropertyHorizontalCard(
               imageHeight: double.infinity,
-              titleFontWeight: FontWeight.w600,
+              titleFontWeight: AppFontWeights.semiBold,
               buttonText: 'View More',
               locationFontSize: AppFontSizes.caption,
               maxLineTitle: 1,
               buttonFontWeight: AppFontWeights.semiBold,
-              buttonFontSize: 10,
+              buttonFontSize: AppFontSizes.extraSmall,
               buttonTextColor: ColorRes.primary,
               borderColor: ColorRes.grey,
               maxLine: 1,
@@ -232,7 +232,7 @@ class InsightProperty extends StatelessWidget {
               rating: (property["totalViews"] as int).toDouble(),
               price: property["price"],
               priceFontSize: AppFontSizes.caption,
-              priceFontWeight: FontWeight.w600,
+              priceFontWeight: AppFontWeights.semiBold,
               ratingColor: ColorRes.primary,
               accentColor: ColorRes.primary,
               onTap: () {
@@ -307,12 +307,12 @@ class RatedProperty extends StatelessWidget {
             padding: const EdgeInsets.only(right: 10),
             child: PropertyHorizontalCard(
               imageHeight: double.infinity,
-              titleFontWeight: FontWeight.w600,
+              titleFontWeight: AppFontWeights.semiBold,
               buttonText: 'View More',
               locationFontSize: AppFontSizes.caption,
               maxLineTitle: 1,
               buttonFontWeight: AppFontWeights.semiBold,
-              buttonFontSize: 10,
+              buttonFontSize: AppFontSizes.extraSmall,
               buttonTextColor: ColorRes.primary,
               borderColor: ColorRes.grey,
               maxLine: 1,
@@ -322,7 +322,7 @@ class RatedProperty extends StatelessWidget {
               rating: (property["totalViews"] as int).toDouble(),
               price: property["price"],
               priceFontSize: AppFontSizes.caption,
-              priceFontWeight: FontWeight.w600,
+              priceFontWeight: AppFontWeights.semiBold,
               ratingColor: ColorRes.primary,
               accentColor: ColorRes.primary,
               onTap: () {
@@ -386,7 +386,7 @@ class RatedProperty extends StatelessWidget {
 //                       name,
 //                       style: const TextStyle(
 //                         fontSize: 14,
-//                         fontWeight: FontWeight.w600,
+//                         fontWeight: AppFontWeights.semiBold,
 //                       ),
 //                       maxLines: 1,
 //                       overflow: TextOverflow.ellipsis, // ✅ avoids overflow
@@ -410,7 +410,7 @@ class RatedProperty extends StatelessWidget {
 //                             price,
 //                             style: const TextStyle(
 //                               fontSize: 12,
-//                               fontWeight: FontWeight.w500,
+//                               fontWeight: AppFontWeights.medium,
 //                             ),
 //                             maxLines: 1,
 //                             overflow: TextOverflow.ellipsis,
@@ -424,7 +424,7 @@ class RatedProperty extends StatelessWidget {
 //                             const Text(
 //                               "4.5 Ratings",
 //                               style: TextStyle(
-//                                 fontWeight: FontWeight.w500,
+//                                 fontWeight: AppFontWeights.medium,
 //                                 fontSize: 12,
 //                               ),
 //                             ),
@@ -533,7 +533,7 @@ class PropertyCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: ColorRes.leadGreyColor[300]!),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -582,14 +582,14 @@ class PropertyCard extends StatelessWidget {
                 Text(
                   property.name,
                   style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    fontSize: AppFontSizes.bodySmall,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.blackShade87,
                   ),
                 ),
                 Text(
                   property.location,
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor.shade600),
                 ),
                 // Rating
                 SizedBox(height: 4),
@@ -599,9 +599,9 @@ class PropertyCard extends StatelessWidget {
                     Text(
                       '₹${property.pricePerSqFt}/sq.ft.',
                       style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.blackShade87,
                       ),
                     ),
                     Row(
@@ -611,8 +611,8 @@ class PropertyCard extends StatelessWidget {
                         Text(
                           property.rating.toString(),
                           style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: AppFontWeights.medium,
+                            fontSize: AppFontSizes.small,
                           ),
                         ),
                       ],
@@ -633,7 +633,7 @@ class PropertyCard extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: ColorRes.green,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
@@ -649,8 +649,8 @@ class PropertyCard extends StatelessWidget {
                                 '${property.priceChangePercent}%',
                                 style: const TextStyle(
                                   color: ColorRes.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: AppFontSizes.extraSmall,
+                                  fontWeight: AppFontWeights.medium,
                                 ),
                               ),
                             ],
@@ -660,8 +660,8 @@ class PropertyCard extends StatelessWidget {
                         Text(
                           'in ${property.priceChangePeriod}',
                           style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey.shade600,
+                            fontSize: AppFontSizes.extraSmall,
+                            color: ColorRes.leadGreyColor.shade600,
                           ),
                         ),
                         const Spacer(),
@@ -669,9 +669,9 @@ class PropertyCard extends StatelessWidget {
                           child: Text(
                             'View price trend',
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: AppFontSizes.extraSmall,
                               color: ColorRes.primary,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: AppFontWeights.medium,
                             ),
                           ),
                         ),
@@ -737,9 +737,9 @@ class PropertyCard extends StatelessWidget {
                     child: Text(
                       'View Property',
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: AppFontSizes.extraSmall,
                         color: ColorRes.primary,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: AppFontWeights.semiBold,
                       ),
                     ),
                   ),
@@ -759,12 +759,12 @@ class BuildingPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = Colors.grey.shade300
+          ..color = ColorRes.leadGreyColor.shade300
           ..style = PaintingStyle.fill;
 
     final windowPaint =
         Paint()
-          ..color = Colors.grey.shade500
+          ..color = ColorRes.leadGreyColor.shade500
           ..style = PaintingStyle.fill;
 
     // Draw building outline

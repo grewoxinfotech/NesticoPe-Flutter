@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
@@ -87,9 +88,9 @@ class SelectAccountTypeScreen extends StatelessWidget {
                           const SizedBox(height: 12),
                           Text(
                             _roleToDisplayText(role),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
+                            style:  TextStyle(
+                              fontSize: AppFontSizes.large,
+                              fontWeight: AppFontWeights.semiBold,
                               color: ColorRes.white,
                             ),
                           ),

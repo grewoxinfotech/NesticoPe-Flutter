@@ -5,6 +5,8 @@ import 'package:housing_flutter_app/modules/property_price_trend/controller/pric
 import 'package:housing_flutter_app/modules/property_price_trend/view/property_price_trend.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
+
 
 SizedBox buildFilter(BuildContext context) {
   final controller = Get.find<PriceTrendController>();
@@ -42,8 +44,8 @@ SizedBox buildFilter(BuildContext context) {
                       },
                       title: buildCommonText(
                         'Locality',
-                        12,
-                        FontWeight.w500,
+                        AppFontSizes.small,
+                        AppFontWeights.medium,
                         ColorRes.textColor,
                         1,
                       ),
@@ -63,8 +65,8 @@ SizedBox buildFilter(BuildContext context) {
                       },
                       title: buildCommonText(
                         'Project',
-                        12,
-                        FontWeight.w500,
+                        AppFontSizes.small,
+                        AppFontWeights.medium,
                         ColorRes.textColor,
                         1,
                       ),
@@ -123,8 +125,8 @@ SizedBox buildFilter(BuildContext context) {
             Obx(
               () => buildCommonText(
                 "Selected: ${controller.currentDiscreteSliderValue.value.round()} years",
-                16,
-                FontWeight.w500,
+                AppFontSizes.body,
+                AppFontWeights.medium,
                   ColorRes.primary,
                 1,
               ),
@@ -155,8 +157,8 @@ SizedBox buildFilter(BuildContext context) {
                 alignment: Alignment.center,
                 child: buildCommonText(
                   'Filter Apply',
-                  13,
-                  FontWeight.w600,
+                  AppFontSizes.bodySmall,
+                  AppFontWeights.semiBold,
                   ColorRes.white,
                   1,
                 ),
@@ -171,7 +173,7 @@ SizedBox buildFilter(BuildContext context) {
 }
 
 Widget buildHeading(String title) {
-  return buildCommonText(title, 15, FontWeight.w600, ColorRes.textColor, 1);
+  return buildCommonText(title, AppFontSizes.bodyMedium, AppFontWeights.semiBold, ColorRes.textColor, 1);
 }
 
 Widget buildFilterPropertyTypes({
@@ -195,15 +197,15 @@ Widget buildFilterPropertyTypes({
           border:
               isSelected
                   ? null
-                  : Border.all(color: Colors.grey.shade300, width: 1),
-          color: isSelected ? ColorRes.primary : Colors.grey.shade100,
+                  : Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+          color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
           borderRadius: BorderRadius.circular(10),
         ),
         alignment: Alignment.center,
         child: buildCommonText(
           title,
-          11,
-          FontWeight.w500,
+          AppFontSizes.caption,
+          AppFontWeights.medium,
           isSelected ? ColorRes.white : ColorRes.textColor,
           1,
         ),
@@ -217,14 +219,14 @@ Widget buildFilterPropertyTypes({
           border:
               isSelected
                   ? null
-                  : Border.all(color: Colors.grey.shade300, width: 1),
-          color: isSelected ? ColorRes.primary : Colors.grey.shade100,
+                  : Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+          color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
           borderRadius: BorderRadius.circular(10),
         ),
         child: buildCommonText(
           title,
-          11,
-          FontWeight.w500,
+          AppFontSizes.caption,
+          AppFontWeights.medium,
           isSelected ? ColorRes.white : ColorRes.textColor,
           1,
         ),

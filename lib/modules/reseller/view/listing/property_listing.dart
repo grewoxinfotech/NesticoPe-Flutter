@@ -25,7 +25,7 @@
 //           'Property Listing',
 //           style: TextStyle(
 //             color: ColorRes.textColor,
-//             fontWeight: FontWeight.w700,
+//             fontWeight: AppFontWeights.bold,
 //             fontSize: getResponsiveFontSize(
 //                 context, AppFontSizes.large, AppFontSizes.body),
 //
@@ -35,7 +35,7 @@
 //         bottom: PreferredSize(
 //           preferredSize: Size.fromHeight(1),
 //           child: Container(
-//             color: Colors.grey[200],
+//             color: ColorRes.leadGreyColor[200],
 //             height: 1,
 //           ),
 //         ),
@@ -79,7 +79,7 @@
 //                     style: TextStyle(
 //                       color: ColorRes.primary,
 //                       fontSize: 13,
-//                       fontWeight: FontWeight.w600,
+//                       fontWeight: AppFontWeights.semiBold,
 //                     ),
 //                   ),
 //                 ],
@@ -91,21 +91,21 @@
 //           Container(
 //             margin: EdgeInsets.only(right: 12),
 //             decoration: BoxDecoration(
-//               color: Colors.grey[100],
+//               color: ColorRes.leadGreyColor[100],
 //               borderRadius: BorderRadius.circular(20),
 //             ),
 //             child: PopupMenuButton<SortOption>(
 //               icon: Row(
 //                 mainAxisSize: MainAxisSize.min,
 //                 children: [
-//                   Icon(Icons.sort_rounded, color: Colors.grey[700], size: 18),
+//                   Icon(Icons.sort_rounded, color: ColorRes.leadGreyColor[700], size: 18),
 //                   SizedBox(width: 4),
 //                   Text(
 //                     'Sort',
 //                     style: TextStyle(
-//                       color: Colors.grey[700],
+//                       color: ColorRes.leadGreyColor[700],
 //                       fontSize: 13,
-//                       fontWeight: FontWeight.w600,
+//                       fontWeight: AppFontWeights.semiBold,
 //                     ),
 //                   ),
 //                   SizedBox(width: 4),
@@ -121,8 +121,8 @@
 //               itemBuilder: (context) => [
 //                 _buildSortMenuItem(Icons.sort_by_alpha_rounded, 'Name', SortOption.name, ColorRes.primary),
 //                 _buildSortMenuItem(Icons.arrow_upward_rounded, 'Price: Low to High', SortOption.priceAsc, ColorRes.green),
-//                 _buildSortMenuItem(Icons.arrow_downward_rounded, 'Price: High to Low', SortOption.priceDesc, Colors.red),
-//                 _buildSortMenuItem(Icons.star_rounded, 'Rating', SortOption.rating, Colors.amber),
+//                 _buildSortMenuItem(Icons.arrow_downward_rounded, 'Price: High to Low', SortOption.priceDesc, ColorRes.error),
+//                 _buildSortMenuItem(Icons.star_rounded, 'Rating', SortOption.rating, ColorRes.homeAmber),
 //               ],
 //             ),
 //           ),
@@ -137,7 +137,7 @@
 //             decoration: BoxDecoration(
 //                 color: ColorRes.white,
 //                 borderRadius: BorderRadius.circular(14),
-//                 border: Border.all(color: Colors.grey.shade300, width: 1)
+//                 border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1)
 //             ),
 //             child: TextField(
 //
@@ -210,7 +210,7 @@
 //                   'Filters',
 //                   style: TextStyle(
 //                     fontSize: 16,
-//                     fontWeight: FontWeight.w600,
+//                     fontWeight: AppFontWeights.semiBold,
 //                     color: ColorRes.textColor
 //                   ),
 //                 ),
@@ -227,7 +227,7 @@
 //               'Category',
 //               style: TextStyle(
 //                 fontSize: 14,
-//                 fontWeight: FontWeight.w600,
+//                 fontWeight: AppFontWeights.semiBold,
 //                 color: ColorRes.textColor
 //               ),
 //             ),
@@ -267,7 +267,7 @@
 //               'Price Range',
 //               style: TextStyle(
 //                 fontSize: 14,
-//                 fontWeight: FontWeight.w600,
+//                 fontWeight: AppFontWeights.semiBold,
 //                 color: ColorRes.textColor
 //               ),
 //             ),
@@ -395,14 +395,14 @@
 //                             '${product.name}',
 //                             style: TextStyle(
 //                               fontSize: 14,
-//                               fontWeight: FontWeight.w600,
+//                               fontWeight: AppFontWeights.semiBold,
 //                               color: ColorRes.textColor,
 //                             ),
 //                             maxLines: 1,
 //                             overflow: TextOverflow.ellipsis,
 //                           ),
 //                         ),
-//                         Icon(Icons.favorite_border, color: Colors.grey[600],size: 20,),
+//                         Icon(Icons.favorite_border, color: ColorRes.leadGreyColor[600],size: 20,),
 //                       ],
 //                     ),
 //                     SizedBox(height: 8),
@@ -442,7 +442,7 @@
 //                           '${Formatter.formatPrice(product.price)}',
 //                           style: TextStyle(
 //                             fontSize: 16,
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semiBold,
 //                             color: ColorRes.primary,
 //                           ),
 //                         ),
@@ -454,7 +454,7 @@
 //                             borderRadius: BorderRadius.circular(10),
 //                           ),
 //                           child: Text('Visit',style: TextStyle(
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semiBold,
 //                             fontSize: 10,
 //                             color: ColorRes.white
 //                           ),),
@@ -483,16 +483,16 @@
 //       child: Column(
 //         mainAxisAlignment: MainAxisAlignment.center,
 //         children: [
-//           Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+//           Icon(Icons.error_outline, size: 64, color: ColorRes.error[300]),
 //           SizedBox(height: 16),
 //           Text(
 //             'Something went wrong',
-//             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+//             style: TextStyle(fontSize: 18, fontWeight: AppFontWeights.semiBold),
 //           ),
 //           SizedBox(height: 8),
 //           Obx(() => Text(
 //             controller.error.value,
-//             style: TextStyle(color: Colors.grey[600]),
+//             style: TextStyle(color: ColorRes.leadGreyColor[600]),
 //           )),
 //           SizedBox(height: 24),
 //           ElevatedButton(
@@ -514,16 +514,16 @@
 //         child: Column(
 //           mainAxisAlignment: MainAxisAlignment.center,
 //           children: [
-//             Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+//             Icon(Icons.search_off, size: 64, color: ColorRes.leadGreyColor[400]),
 //             SizedBox(height: 16),
 //             Text(
 //               'No products found',
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+//               style: TextStyle(fontSize: 18, fontWeight: AppFontWeights.semiBold),
 //             ),
 //             SizedBox(height: 8),
 //             Text(
 //               'Try adjusting your filters or search terms',
-//               style: TextStyle(color: Colors.grey[600]),
+//               style: TextStyle(color: ColorRes.leadGreyColor[600]),
 //             ),
 //           ],
 //         ),
@@ -578,14 +578,14 @@
 // //             alignment: Alignment.center,
 // //             children: [
 // //               Material(
-// //                 color: Colors.transparent,
+// //                 color: ColorRes.transparentColor,
 // //                 child: InkWell(
 // //                   onTap: () {
 // //                     FocusScope.of(context).unfocus();
 // //                     showModalBottomSheet(
 // //                       context: context,
 // //                       isScrollControlled: true,
-// //                       backgroundColor: Colors.transparent,
+// //                       backgroundColor: ColorRes.transparentColor,
 // //                       builder: (_) => FilterPanel(),
 // //                     );
 // //                   },
@@ -631,7 +631,7 @@
 // //
 // //           // Sort Menu with improved design
 // //           Material(
-// //             color: Colors.transparent,
+// //             color: ColorRes.transparentColor,
 // //             child: PopupMenuButton<SortOption>(
 // //               icon: Container(
 // //                 padding: EdgeInsets.all(10),
@@ -666,11 +666,11 @@
 // //                 onChanged: controller.updateSearch,
 // //                 decoration: InputDecoration(
 // //                   hintText: 'Search by name, location, or type...',
-// //                   hintStyle: TextStyle(color: Colors.grey[400]),
-// //                   prefixIcon: Icon(Icons.search_rounded, color: Colors.grey[500]),
+// //                   hintStyle: TextStyle(color: ColorRes.leadGreyColor[400]),
+// //                   prefixIcon: Icon(Icons.search_rounded, color: ColorRes.leadGreyColor[500]),
 // //                   suffixIcon: Obx(() => controller.searchQuery.value.isNotEmpty
 // //                       ? IconButton(
-// //                     icon: Icon(Icons.clear_rounded, color: Colors.grey[500], size: 20),
+// //                     icon: Icon(Icons.clear_rounded, color: ColorRes.leadGreyColor[500], size: 20),
 // //                     onPressed: () => controller.updateSearch(''),
 // //                   )
 // //                       : SizedBox.shrink()),
@@ -821,7 +821,7 @@
 // //             width: 40,
 // //             height: 4,
 // //             decoration: BoxDecoration(
-// //               color: Colors.grey[300],
+// //               color: ColorRes.leadGreyColor[300],
 // //               borderRadius: BorderRadius.circular(2),
 // //             ),
 // //           ),
@@ -861,7 +861,7 @@
 // //                       icon: Icon(Icons.clear_all_rounded, size: 16),
 // //                       label: Text('Clear All', style: TextStyle(fontSize: 12)),
 // //                       style: TextButton.styleFrom(
-// //                         foregroundColor: Colors.red[400],
+// //                         foregroundColor: ColorRes.error[400],
 // //                       ),
 // //                     ),
 // //                   ],
@@ -872,7 +872,7 @@
 // //                 Container(
 // //                   padding: EdgeInsets.all(16),
 // //                   decoration: BoxDecoration(
-// //                     color: Colors.grey[50],
+// //                     color: ColorRes.leadGreyColor[50],
 // //                     borderRadius: BorderRadius.circular(12),
 // //                   ),
 // //                   child: Column(
@@ -886,7 +886,7 @@
 // //                             'Category',
 // //                             style: TextStyle(
 // //                               fontSize: 14,
-// //                               fontWeight: FontWeight.w600,
+// //                               fontWeight: AppFontWeights.semiBold,
 // //                               color: ColorRes.textColor,
 // //                             ),
 // //                           ),
@@ -908,16 +908,16 @@
 // //                               selected: isSelected,
 // //                               onSelected: (_) => controller.updateCategory(category),
 // //                               backgroundColor: ColorRes.white,
-// //                               checkmarkColor: isSelected ? ColorRes.white : Colors.grey[700],
+// //                               checkmarkColor: isSelected ? ColorRes.white : ColorRes.leadGreyColor[700],
 // //                               selectedColor: ColorRes.primary,
 // //                               shape: RoundedRectangleBorder(
 // //                                 borderRadius: BorderRadius.circular(20),
 // //                                 side: BorderSide(
-// //                                   color: isSelected ? ColorRes.primary : Colors.grey[300]!,
+// //                                   color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor[300]!,
 // //                                 ),
 // //                               ),
 // //                               labelStyle: TextStyle(
-// //                                 color: isSelected ? ColorRes.white : Colors.grey[700],
+// //                                 color: isSelected ? ColorRes.white : ColorRes.leadGreyColor[700],
 // //                                 fontWeight: isSelected
 // //                                     ? AppFontWeights.semiBold
 // //                                     : AppFontWeights.regular,
@@ -936,7 +936,7 @@
 // //                 Container(
 // //                   padding: EdgeInsets.all(16),
 // //                   decoration: BoxDecoration(
-// //                     color: Colors.grey[50],
+// //                     color: ColorRes.leadGreyColor[50],
 // //                     borderRadius: BorderRadius.circular(12),
 // //                   ),
 // //                   child: Column(
@@ -950,7 +950,7 @@
 // //                             'Price Range',
 // //                             style: TextStyle(
 // //                               fontSize: 14,
-// //                               fontWeight: FontWeight.w600,
+// //                               fontWeight: AppFontWeights.semiBold,
 // //                               color: ColorRes.textColor,
 // //                             ),
 // //                           ),
@@ -973,7 +973,7 @@
 // //                           max: controller.maxPrice.value,
 // //                           divisions: 50,
 // //                           activeColor: ColorRes.primary,
-// //                           inactiveColor: Colors.grey[300],
+// //                           inactiveColor: ColorRes.leadGreyColor[300],
 // //                           labels: RangeLabels(
 // //                             '${Formatter.formatPrice(controller.filterMinPrice.value)}',
 // //                             '${Formatter.formatPrice(controller.filterMaxPrice.value)}',
@@ -992,31 +992,31 @@
 // //                             decoration: BoxDecoration(
 // //                               color: ColorRes.white,
 // //                               borderRadius: BorderRadius.circular(8),
-// //                               border: Border.all(color: Colors.grey[300]!),
+// //                               border: Border.all(color: ColorRes.leadGreyColor[300]!),
 // //                             ),
 // //                             child: Text(
 // //                               '${Formatter.formatPrice(controller.filterMinPrice.value)}',
 // //                               style: TextStyle(
 // //                                 color: ColorRes.textColor,
 // //                                 fontSize: 12,
-// //                                 fontWeight: FontWeight.w500,
+// //                                 fontWeight: AppFontWeights.medium,
 // //                               ),
 // //                             ),
 // //                           ),
-// //                           Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.grey[400]),
+// //                           Icon(Icons.arrow_forward_rounded, size: 16, color: ColorRes.leadGreyColor[400]),
 // //                           Container(
 // //                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 // //                             decoration: BoxDecoration(
 // //                               color: ColorRes.white,
 // //                               borderRadius: BorderRadius.circular(8),
-// //                               border: Border.all(color: Colors.grey[300]!),
+// //                               border: Border.all(color: ColorRes.leadGreyColor[300]!),
 // //                             ),
 // //                             child: Text(
 // //                               '${Formatter.formatPrice(controller.filterMaxPrice.value)}',
 // //                               style: TextStyle(
 // //                                 color: ColorRes.textColor,
 // //                                 fontSize: 12,
-// //                                 fontWeight: FontWeight.w500,
+// //                                 fontWeight: AppFontWeights.medium,
 // //                               ),
 // //                             ),
 // //                           ),
@@ -1101,7 +1101,7 @@
 // //       shape: RoundedRectangleBorder(
 // //         borderRadius: BorderRadius.circular(20),
 // //       ),
-// //       shadowColor: Colors.black.withOpacity(0.15),
+// //       shadowColor: ColorRes.black.withOpacity(0.15),
 // //       child: InkWell(
 // //         borderRadius: BorderRadius.circular(20),
 // //         onTap: () {
@@ -1145,18 +1145,18 @@
 // //                             fit: BoxFit.cover,
 // //                             errorBuilder: (context, error, stackTrace) {
 // //                               return Container(
-// //                                 color: Colors.grey[200],
+// //                                 color: ColorRes.leadGreyColor[200],
 // //                                 child: Icon(
 // //                                   Icons.broken_image_outlined,
 // //                                   size: 50,
-// //                                   color: Colors.grey[400],
+// //                                   color: ColorRes.leadGreyColor[400],
 // //                                 ),
 // //                               );
 // //                             },
 // //                             loadingBuilder: (context, child, loadingProgress) {
 // //                               if (loadingProgress == null) return child;
 // //                               return Container(
-// //                                 color: Colors.grey[200],
+// //                                 color: ColorRes.leadGreyColor[200],
 // //                                 child: Center(
 // //                                   child: CircularProgressIndicator(
 // //                                     value: loadingProgress.expectedTotalBytes != null
@@ -1181,8 +1181,8 @@
 // //                                 begin: Alignment.topCenter,
 // //                                 end: Alignment.bottomCenter,
 // //                                 colors: [
-// //                                   Colors.transparent,
-// //                                   Colors.black.withOpacity(0.3),
+// //                                   ColorRes.transparentColor,
+// //                                   ColorRes.black.withOpacity(0.3),
 // //                                 ],
 // //                               ),
 // //                             ),
@@ -1226,7 +1226,7 @@
 // //                         shape: BoxShape.circle,
 // //                       ),
 // //                       child: Material(
-// //                         color: Colors.transparent,
+// //                         color: ColorRes.transparentColor,
 // //                         child: InkWell(
 // //                           onTap: () {},
 // //                           borderRadius: BorderRadius.circular(20),
@@ -1271,7 +1271,7 @@
 // //                             style: TextStyle(
 // //                               fontSize: 9,
 // //                               color: ColorRes.primary,
-// //                               fontWeight: FontWeight.w600,
+// //                               fontWeight: AppFontWeights.semiBold,
 // //                               letterSpacing: 0.5,
 // //                             ),
 // //                           ),
@@ -1285,7 +1285,7 @@
 // //                       product.name,
 // //                       style: TextStyle(
 // //                         fontSize: 16,
-// //                         fontWeight: FontWeight.w600,
+// //                         fontWeight: AppFontWeights.semiBold,
 // //                         color: ColorRes.textColor,
 // //                         height: 1.3,
 // //                       ),
@@ -1302,13 +1302,13 @@
 // //                         //   begin: Alignment.topLeft,
 // //                         //   end: Alignment.bottomRight,
 // //                         //   colors: [
-// //                         //     Colors.grey[50]!,
-// //                         //     Colors.grey[100]!,
+// //                         //     ColorRes.leadGreyColor[50]!,
+// //                         //     ColorRes.leadGreyColor[100]!,
 // //                         //   ],
 // //                         // ),
 // //                         borderRadius: BorderRadius.circular(12),
 // //                         border: Border.all(
-// //                           color: Colors.grey[200]!,
+// //                           color: ColorRes.leadGreyColor[200]!,
 // //                           width: 1,
 // //                         ),
 // //                       ),
@@ -1338,8 +1338,8 @@
 // //                                 'Starting from',
 // //                                 style: TextStyle(
 // //                                   fontSize: 10,
-// //                                   color: Colors.grey[600],
-// //                                   fontWeight: FontWeight.w500,
+// //                                   color: ColorRes.leadGreyColor[600],
+// //                                   fontWeight: AppFontWeights.medium,
 // //                                 ),
 // //                               ),
 // //                               SizedBox(height: 4),
@@ -1365,7 +1365,7 @@
 // //                             borderRadius: BorderRadius.circular(12),
 // //                           ),
 // //                           child: Material(
-// //                             color: Colors.transparent,
+// //                             color: ColorRes.transparentColor,
 // //                             child: InkWell(
 // //                               onTap: () {},
 // //                               borderRadius: BorderRadius.circular(12),
@@ -1426,8 +1426,8 @@
 // //             label,
 // //             style: TextStyle(
 // //               fontSize: 10,
-// //               color: Colors.grey[600],
-// //               fontWeight: FontWeight.w500,
+// //               color: ColorRes.leadGreyColor[600],
+// //               fontWeight: AppFontWeights.medium,
 // //             ),
 // //           ),
 // //         ],
@@ -1445,9 +1445,9 @@
 // //           begin: Alignment.topCenter,
 // //           end: Alignment.bottomCenter,
 // //           colors: [
-// //             Colors.transparent,
-// //             Colors.grey[300]!,
-// //             Colors.transparent,
+// //             ColorRes.transparentColor,
+// //             ColorRes.leadGreyColor[300]!,
+// //             ColorRes.transparentColor,
 // //           ],
 // //         ),
 // //       ),
@@ -1471,7 +1471,7 @@
 // //             borderRadius: BorderRadius.circular(16),
 // //             boxShadow: [
 // //               BoxShadow(
-// //                 color: Colors.black.withOpacity(0.05),
+// //                 color: ColorRes.black.withOpacity(0.05),
 // //                 blurRadius: 10,
 // //               ),
 // //             ],
@@ -1481,7 +1481,7 @@
 // //               Container(
 // //                 height: 180,
 // //                 decoration: BoxDecoration(
-// //                   color: Colors.grey[300],
+// //                   color: ColorRes.leadGreyColor[300],
 // //                   borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
 // //                 ),
 // //                 child: Center(
@@ -1500,7 +1500,7 @@
 // //                       width: 80,
 // //                       height: 20,
 // //                       decoration: BoxDecoration(
-// //                         color: Colors.grey[300],
+// //                         color: ColorRes.leadGreyColor[300],
 // //                         borderRadius: BorderRadius.circular(4),
 // //                       ),
 // //                     ),
@@ -1509,7 +1509,7 @@
 // //                       width: double.infinity,
 // //                       height: 16,
 // //                       decoration: BoxDecoration(
-// //                         color: Colors.grey[300],
+// //                         color: ColorRes.leadGreyColor[300],
 // //                         borderRadius: BorderRadius.circular(4),
 // //                       ),
 // //                     ),
@@ -1518,7 +1518,7 @@
 // //                       width: 120,
 // //                       height: 24,
 // //                       decoration: BoxDecoration(
-// //                         color: Colors.grey[300],
+// //                         color: ColorRes.leadGreyColor[300],
 // //                         borderRadius: BorderRadius.circular(4),
 // //                       ),
 // //                     ),
@@ -1548,10 +1548,10 @@
 // //             Container(
 // //               padding: EdgeInsets.all(24),
 // //               decoration: BoxDecoration(
-// //                 color: Colors.red[50],
+// //                 color: ColorRes.error[50],
 // //                 shape: BoxShape.circle,
 // //               ),
-// //               child: Icon(Icons.error_outline_rounded, size: 48, color: Colors.red[400]),
+// //               child: Icon(Icons.error_outline_rounded, size: 48, color: ColorRes.error[400]),
 // //             ),
 // //             SizedBox(height: 24),
 // //             Text(
@@ -1566,7 +1566,7 @@
 // //             Obx(() => Text(
 // //               controller.error.value,
 // //               style: TextStyle(
-// //                 color: Colors.grey[600],
+// //                 color: ColorRes.leadGreyColor[600],
 // //                 fontSize: 14,
 // //               ),
 // //               textAlign: TextAlign.center,
@@ -1607,10 +1607,10 @@
 // //               Container(
 // //                 padding: EdgeInsets.all(32),
 // //                 decoration: BoxDecoration(
-// //                   color: Colors.grey[100],
+// //                   color: ColorRes.leadGreyColor[100],
 // //                   shape: BoxShape.circle,
 // //                 ),
-// //                 child: Icon(Icons.search_off_rounded, size: 64, color: Colors.grey[400]),
+// //                 child: Icon(Icons.search_off_rounded, size: 64, color: ColorRes.leadGreyColor[400]),
 // //               ),
 // //               SizedBox(height: 24),
 // //               Text(
@@ -1625,7 +1625,7 @@
 // //               Text(
 // //                 'Try adjusting your filters or search terms',
 // //                 style: TextStyle(
-// //                   color: Colors.grey[600],
+// //                   color: ColorRes.leadGreyColor[600],
 // //                   fontSize: 14,
 // //                 ),
 // //                 textAlign: TextAlign.center,
@@ -1711,7 +1711,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: ColorRes.leadGreyColor[50],
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,
@@ -1719,7 +1719,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
           'Property Listing',
           style: TextStyle(
             color: ColorRes.textColor,
-            fontWeight: FontWeight.w700,
+            fontWeight: AppFontWeights.bold,
             fontSize: getResponsiveFontSize(
               context,
               AppFontSizes.large,
@@ -1730,7 +1730,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
         automaticallyImplyLeading: false,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1),
-          child: Container(color: Colors.grey[200], height: 1),
+          child: Container(color: ColorRes.leadGreyColor[200], height: 1),
         ),
         actions: [
           // Filter Button with Active Badge
@@ -1740,7 +1740,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                backgroundColor: Colors.transparent,
+                backgroundColor: ColorRes.transparentColor,
                 builder: (_) => FilterPanel(),
               );
             },
@@ -1761,7 +1761,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 style: TextStyle(
                   color: ColorRes.primary,
                   fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: AppFontWeights.semiBold,
                 ),
               ),
             ),
@@ -1773,17 +1773,17 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
             margin: EdgeInsets.only(right: 12),
             padding: EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: ColorRes.leadGreyColor[100],
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[300]!, width: 1),
+              border: Border.all(color: ColorRes.leadGreyColor[300]!, width: 1),
             ),
             child: PopupMenuButton<SortOption>(
               icon: Text(
                 'Sort',
                 style: TextStyle(
-                  color: Colors.grey[700],
+                  color: ColorRes.leadGreyColor[700],
                   fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: AppFontWeights.semiBold,
                 ),
               ),
               onSelected: controller.updateSortOption,
@@ -1811,13 +1811,13 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                       Icons.arrow_downward_rounded,
                       'Price: High to Low',
                       SortOption.priceDesc,
-                      Colors.red,
+                      ColorRes.error,
                     ),
                     _buildSortMenuItem(
                       Icons.star_rounded,
                       'Rating',
                       SortOption.rating,
-                      Colors.amber,
+                      ColorRes.homeAmber,
                     ),
                   ],
             ),
@@ -1837,9 +1837,9 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
             ),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: ColorRes.leadGreyColor[50],
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade200, width: 1.5),
+                border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1.5),
               ),
               child: TextField(
                 onChanged: controller.updateSearch,
@@ -1848,11 +1848,11 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                   hintText: 'Search properties by name or location...',
                   hintStyle: TextStyle(
                     fontSize: AppFontSizes.medium,
-                    color: Colors.grey[400],
+                    color: ColorRes.leadGreyColor[400],
                   ),
                   prefixIcon: Icon(
                     Icons.search_rounded,
-                    color: Colors.grey[400],
+                    color: ColorRes.leadGreyColor[400],
                   ),
                   suffixIcon: Obx(
                     () =>
@@ -1860,7 +1860,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                             ? IconButton(
                               icon: Icon(
                                 Icons.clear_rounded,
-                                color: Colors.grey[400],
+                                color: ColorRes.leadGreyColor[400],
                               ),
                               onPressed: () => controller.updateSearch(''),
                             )
@@ -2207,7 +2207,7 @@ class _FilterPanelState extends State<FilterPanel> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: ColorRes.leadGreyColor[300],
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -2225,7 +2225,7 @@ class _FilterPanelState extends State<FilterPanel> {
                     Text(
                       'Filters',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: AppFontSizes.body,
                         fontWeight: AppFontWeights.semiBold,
                       ),
                     ),
@@ -2243,9 +2243,9 @@ class _FilterPanelState extends State<FilterPanel> {
                       child: Text(
                         'Clear All',
                         style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                          color: Colors.red[400],
+                          fontWeight: AppFontWeights.medium,
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.error[400],
                         ),
                       ),
                     ),
@@ -2272,8 +2272,8 @@ class _FilterPanelState extends State<FilterPanel> {
                     Text(
                       'Property Type',
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.textColor,
                       ),
                     ),
@@ -2359,8 +2359,8 @@ class _FilterPanelState extends State<FilterPanel> {
                     Text(
                       'Price Range',
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.textColor,
                       ),
                     ),
@@ -2382,7 +2382,7 @@ class _FilterPanelState extends State<FilterPanel> {
                   return SliderTheme(
                     data: SliderThemeData(
                       activeTrackColor: ColorRes.primary,
-                      inactiveTrackColor: Colors.grey[200],
+                      inactiveTrackColor: ColorRes.leadGreyColor[200],
                       thumbColor: ColorRes.primary,
                       overlayColor: ColorRes.primary.withOpacity(0.2),
                       rangeThumbShape: RoundRangeSliderThumbShape(
@@ -2430,8 +2430,8 @@ class _FilterPanelState extends State<FilterPanel> {
                         '${Formatter.formatPrice(tempMinPrice)}',
                         style: TextStyle(
                           color: ColorRes.primary,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.semiBold,
                         ),
                       ),
                     ),
@@ -2451,8 +2451,8 @@ class _FilterPanelState extends State<FilterPanel> {
                         '${Formatter.formatPrice(tempMaxPrice)}',
                         style: TextStyle(
                           color: ColorRes.primary,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.semiBold,
                         ),
                       ),
                     ),
@@ -2546,14 +2546,14 @@ class ProductsGrid extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+              Icon(Icons.search_off, size: 64, color: ColorRes.leadGreyColor[400]),
               SizedBox(height: 16),
               Text(
                 'No properties found',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[600],
+                  fontSize: AppFontSizes.large,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.leadGreyColor[600],
                 ),
               ),
               SizedBox(height: 8),
@@ -2596,7 +2596,7 @@ class ProductCard extends StatelessWidget {
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
       elevation: 1,
-      shadowColor: Colors.black.withOpacity(0.06),
+      shadowColor: ColorRes.black.withOpacity(0.06),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
@@ -2607,7 +2607,7 @@ class ProductCard extends StatelessWidget {
           height: 120,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade200, width: 1),
+            border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
           ),
           child: Row(
             children: [
@@ -2650,8 +2650,8 @@ class ProductCard extends StatelessWidget {
                         child: Text(
                           '${manager.displayName}',
                           style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
+                            fontSize: AppFontSizes.bodyMedium,
+                            fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.textColor,
                             height: 1.2,
                           ),
@@ -2670,8 +2670,8 @@ class ProductCard extends StatelessWidget {
                             child: Text(
                               product.address ?? 'No address provided',
                               style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey[600],
+                                fontSize: AppFontSizes.caption,
+                                color: ColorRes.leadGreyColor[600],
                                 height: 1.3,
                               ),
                               maxLines: 1,
@@ -2715,8 +2715,8 @@ class ProductCard extends StatelessWidget {
                             child: Text(
                               '${priceManager.displayPrice}',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
+                                fontSize: AppFontSizes.body,
+                                fontWeight: AppFontWeights.bold,
                                 color: ColorRes.textColor,
                                 height: 1,
                               ),
@@ -2737,8 +2737,8 @@ class ProductCard extends StatelessWidget {
                             child: Text(
                               'Visit',
                               style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
+                                fontWeight: AppFontWeights.semiBold,
+                                fontSize: AppFontSizes.small,
                                 color: ColorRes.white,
                               ),
                             ),
@@ -2760,14 +2760,14 @@ class ProductCard extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 13, color: Colors.grey[600]),
+        Icon(icon, size: 13, color: ColorRes.leadGreyColor[600]),
         SizedBox(width: 4),
         Text(
           text,
           style: TextStyle(
-            fontSize: 11,
-            color: Colors.grey[700],
-            fontWeight: FontWeight.w500,
+            fontSize: AppFontSizes.caption,
+            color: ColorRes.leadGreyColor[700],
+            fontWeight: AppFontWeights.medium,
           ),
         ),
       ],
@@ -2837,7 +2837,7 @@ class Facilities extends StatelessWidget {
 //       color: ColorRes.white,
 //       borderRadius: BorderRadius.circular(16),
 //       elevation: 2,
-//       shadowColor: Colors.black.withOpacity(0.08),
+//       shadowColor: ColorRes.black.withOpacity(0.08),
 //       child: InkWell(
 //         borderRadius: BorderRadius.circular(16),
 //         onTap: () {
@@ -2856,7 +2856,7 @@ class Facilities extends StatelessWidget {
 //           height: 125,
 //           decoration: BoxDecoration(
 //             borderRadius: BorderRadius.circular(16),
-//             border: Border.all(color: Colors.grey.shade200, width: 1),
+//             border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
 //           ),
 //           child: Row(
 //             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2886,7 +2886,7 @@ class Facilities extends StatelessWidget {
 //                         children: [
 //                           Icon(
 //                             Icons.star_rounded,
-//                             color: Colors.amber[600],
+//                             color: ColorRes.homeAmber[600],
 //                             size: 12,
 //                           ),
 //                           SizedBox(width: 4),
@@ -2920,7 +2920,7 @@ class Facilities extends StatelessWidget {
 //                           '${product.customFields.builderName}',
 //                           style: TextStyle(
 //                             fontSize: 14,
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semiBold,
 //                             color: ColorRes.textColor,
 //                           ),
 //                           maxLines: 1,
@@ -2954,7 +2954,7 @@ class Facilities extends StatelessWidget {
 //                           SizedBox(width: 4),
 //                           Text(
 //                             '${product.customFields.propertyDetails.furnishInfo.furnishDetails.bed}',
-//                             style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
+//                             style: TextStyle(fontSize: 10, fontWeight: AppFontWeights.medium),
 //                           ),
 //                           SizedBox(width: 12),
 //                           Icon(
@@ -2965,7 +2965,7 @@ class Facilities extends StatelessWidget {
 //                           SizedBox(width: 4),
 //                           Text(
 //                             '${product.customFields.propertyDetails.propertyBuiltUpArea} m²',
-//                             style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
+//                             style: TextStyle(fontSize: 10, fontWeight: AppFontWeights.medium),
 //                           ),
 //                           SizedBox(width: 12),
 //                           Icon(
@@ -2976,7 +2976,7 @@ class Facilities extends StatelessWidget {
 //                           SizedBox(width: 4),
 //                           Text(
 //                             '${product.customFields.propertyDetails.bhk}',
-//                             style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
+//                             style: TextStyle(fontSize: 10, fontWeight: AppFontWeights.medium),
 //                           ),
 //                         ],
 //                       ),
@@ -2990,7 +2990,7 @@ class Facilities extends StatelessWidget {
 //                             '${Formatter.formatPrice(product.customFields.propertyDetails.financialInfo.propertyPrice)}',
 //                             style: TextStyle(
 //                               fontSize: 16,
-//                               fontWeight: FontWeight.w600,
+//                               fontWeight: AppFontWeights.semiBold,
 //                               color: ColorRes.primary,
 //                             ),
 //                           ),
@@ -3006,7 +3006,7 @@ class Facilities extends StatelessWidget {
 //                             child: Text(
 //                               'Visit',
 //                               style: TextStyle(
-//                                 fontWeight: FontWeight.w600,
+//                                 fontWeight: AppFontWeights.semiBold,
 //                                 fontSize: 10,
 //                                 color: ColorRes.white,
 //                               ),
@@ -3034,8 +3034,8 @@ class Facilities extends StatelessWidget {
 //           text,
 //           style: TextStyle(
 //             fontSize: 11,
-//             color: Colors.grey[700],
-//             fontWeight: FontWeight.w500,
+//             color: ColorRes.leadGreyColor[700],
+//             fontWeight: AppFontWeights.medium,
 //           ),
 //         ),
 //       ],
@@ -3057,21 +3057,21 @@ class ErrorWidgetCustom extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.red[50],
+                color: ColorRes.error[50],
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.error_outline_rounded,
                 size: 48,
-                color: Colors.red[400],
+                color: ColorRes.error[400],
               ),
             ),
             SizedBox(height: 24),
             Text(
               'Something went wrong',
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontSize: AppFontSizes.large,
+                fontWeight: AppFontWeights.extraBold,
                 color: ColorRes.textColor,
               ),
             ),
@@ -3079,7 +3079,7 @@ class ErrorWidgetCustom extends StatelessWidget {
             Obx(
               () => Text(
                 controller.error.value,
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                style: TextStyle(color: ColorRes.leadGreyColor[600], fontSize: AppFontSizes.medium),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -3119,28 +3119,28 @@ class EmptyStateWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: ColorRes.leadGreyColor[100],
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.search_off_rounded,
                   size: 64,
-                  color: Colors.grey[400],
+                  color: ColorRes.leadGreyColor[400],
                 ),
               ),
               SizedBox(height: 24),
               Text(
                 'No properties found',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontSize: AppFontSizes.large,
+                  fontWeight: AppFontWeights.extraBold,
                   color: ColorRes.textColor,
                 ),
               ),
               SizedBox(height: 8),
               Text(
                 'Try adjusting your filters or search terms',
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                style: TextStyle(color: ColorRes.leadGreyColor[600], fontSize: AppFontSizes.medium),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 24),

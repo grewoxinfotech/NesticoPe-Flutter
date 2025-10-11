@@ -81,7 +81,7 @@
 //                             rating.toStringAsFixed(1),
 //                             style: const TextStyle(
 //                               fontSize: 11,
-//                               fontWeight: FontWeight.w700,
+//                               fontWeight: AppFontWeights.bold,
 //                               color: ColorRes.textPrimary,
 //                             ),
 //                           ),
@@ -100,7 +100,7 @@
 //                   CustomText(
 //                     property.title ?? "Property",
 //                     fontSize: 13,
-//                     fontWeight: FontWeight.w600,
+//                     fontWeight: AppFontWeights.semiBold,
 //                     color: ColorRes.textPrimary,
 //                     maxLines: 1,
 //                     overflow: TextOverflow.ellipsis,
@@ -110,7 +110,7 @@
 //                   CustomText(
 //                     "${property.city}, ${property.state}",
 //                     fontSize: 11,
-//                     fontWeight: FontWeight.w400,
+//                     fontWeight: AppFontWeights.regular,
 //                     color: Colors.grey.shade700,
 //                     maxLines: 1,
 //                     overflow: TextOverflow.ellipsis,
@@ -121,7 +121,7 @@
 //                       CustomText(
 //                         '${Formatter.formatPriceCompact(property.propertyDetails!.financialInfo!.price ?? 0.0)} ',
 //                         fontSize: 11,
-//                         fontWeight: FontWeight.w600,
+//                         fontWeight: AppFontWeights.semiBold,
 //                         color: ColorRes.textColor,
 //                       ),
 //                       const Spacer(),
@@ -136,7 +136,7 @@
 //                                 maxLines: 1,
 //                                 style: TextStyle(
 //                                   fontSize: 10,
-//                                   fontWeight: FontWeight.w400,
+//                                   fontWeight: AppFontWeights.regular,
 //                                   color: Colors.grey.shade600,
 //                                 ),
 //                               ),
@@ -145,7 +145,7 @@
 //                               '/ sqft',
 //                               style: TextStyle(
 //                                 fontSize: 10,
-//                                 fontWeight: FontWeight.w400,
+//                                 fontWeight: AppFontWeights.regular,
 //                                 color: Colors.grey.shade600,
 //                               ),
 //                             ),
@@ -168,7 +168,7 @@
 //                         CustomText(
 //                           "Price Trends",
 //                           fontSize: 12,
-//                           fontWeight: FontWeight.w600,
+//                           fontWeight: AppFontWeights.semiBold,
 //                           color: ColorRes.primary,
 //                         ),
 //                         SizedBox(width: 4),
@@ -206,6 +206,7 @@ import 'package:housing_flutter_app/app/utils/common_text.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/property_price_trend/view/property_price_trend.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/property/models/property_model.dart';
 
 class TopPropertyByLocation extends StatelessWidget {
@@ -283,8 +284,8 @@ class TopPropertyByLocation extends StatelessWidget {
                       Text(
                         rating.toStringAsFixed(1),
                         style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
+                          fontSize: AppFontSizes.caption,
+                          fontWeight: AppFontWeights.bold,
                           color: ColorRes.textPrimary,
                         ),
                       ),
@@ -306,8 +307,8 @@ class TopPropertyByLocation extends StatelessWidget {
                     children: [
                       CustomText(
                         property.title ?? "Property",
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.white,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -316,9 +317,9 @@ class TopPropertyByLocation extends StatelessWidget {
 
                       CustomText(
                         "${property.city}, ${property.state}",
-                        fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white70,
+                        fontSize: AppFontSizes.caption,
+                        fontWeight: AppFontWeights.regular,
+                        color: ColorRes.whiteShade,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -331,8 +332,8 @@ class TopPropertyByLocation extends StatelessWidget {
                               null)
                             CustomText(
                               '${Formatter.formatPriceCompact(property.propertyDetails!.financialInfo!.price ?? 0.0)} ',
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
+                              fontSize: AppFontSizes.caption,
+                              fontWeight: AppFontWeights.bold,
                               color: ColorRes.white,
                             ),
                           Container(
@@ -346,8 +347,8 @@ class TopPropertyByLocation extends StatelessWidget {
                             ),
                             child: CustomText(
                               "Price Trends",
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
+                              fontSize: AppFontSizes.extraSmall,
+                              fontWeight: AppFontWeights.semiBold,
                               color: ColorRes.white,
                             ),
                           ),

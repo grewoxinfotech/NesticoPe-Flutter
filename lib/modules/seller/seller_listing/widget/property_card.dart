@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
+
 class PropertyListCard extends StatelessWidget {
   final String id;
   final String title;
@@ -81,9 +83,9 @@ class PropertyListCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               title,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                              style:  TextStyle(
+                                fontSize:AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -129,7 +131,7 @@ class PropertyListCard extends StatelessWidget {
                                         child: Text('Delete'),
                                       ),
                                     ],
-                                    color: Colors.grey.shade300,
+                                    color: ColorRes.leadGreyColor.shade300,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -153,17 +155,17 @@ class PropertyListCard extends StatelessWidget {
                       // const SizedBox(height: 4),
                       Text(
                         location,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.black54,
+                        style:  TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          color: ColorRes.blackShade54,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         "$roomType : $price",
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.black87,
+                        style:  TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          color: ColorRes.blackShade87,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -196,13 +198,13 @@ class PropertyListCard extends StatelessWidget {
                     children: [
                       Text(
                         "Last Added",
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor[600]),
                       ),
                       Text(
                         lastAddedDate,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                        style:  TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.medium,
                         ),
                       ),
                     ],
@@ -217,14 +219,14 @@ class PropertyListCard extends StatelessWidget {
                   //     style: TextStyle(
                   //       fontSize: 14,
                   //       color: Colors.blue,
-                  //       fontWeight: FontWeight.w600,
+                  //       fontWeight: AppFontWeights.semiBold,
                   //       decoration: TextDecoration.underline,
                   //     ),
                   //   ),
                   // ),
                   ElevatedButton(
                     onPressed: () {},
-                    child: Text("Repost", style: TextStyle(fontSize: 12)),
+                    child: Text("Repost", style: TextStyle(fontSize: AppFontSizes.small)),
                   ),
                 ],
               ),
@@ -241,23 +243,23 @@ class PropertyListCard extends StatelessWidget {
 
     switch (status.toLowerCase()) {
       case "active":
-        bgColor = Colors.green;
+        bgColor = ColorRes.success;
         text = "ACTIVE";
         break;
       case "inactive":
-        bgColor = Colors.red;
+        bgColor = ColorRes.error;
         text = "INACTIVE";
         break;
       case "pending":
-        bgColor = Colors.orange;
+        bgColor = ColorRes.orangeColor;
         text = "PENDING";
         break;
       case "deleted":
-        bgColor = Colors.grey;
+        bgColor = ColorRes.leadGreyColor;
         text = "DELETED";
         break;
       default:
-        bgColor = Colors.blueGrey;
+        bgColor = ColorRes.blueGrey?? Colors.black;
         text = status.toUpperCase();
     }
 
@@ -272,8 +274,8 @@ class PropertyListCard extends StatelessWidget {
         text,
         style: TextStyle(
           color: bgColor,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
+          fontSize: AppFontSizes.small,
+          fontWeight: AppFontWeights.extraBold,
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 
 class ReraComponent extends StatelessWidget {
@@ -19,8 +20,8 @@ class ReraComponent extends StatelessWidget {
     this.text = "Rera",
     this.backgroundColor = ColorRes.success,
     this.textColor = ColorRes.white,
-    this.fontSize = 12,
-    this.fontWeight = FontWeight.w600,
+    this.fontSize = AppFontSizes.small,
+    this.fontWeight = AppFontWeights.semiBold,
     this.borderRadius = 8,
     this.showIcon = true,
     this.icon = Icons.verified, // Default icon

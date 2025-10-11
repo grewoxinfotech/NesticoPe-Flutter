@@ -67,7 +67,7 @@
 //         appBar: AppBar(
 //           title: const Text(
 //             "Leads",
-//             style: TextStyle(fontWeight: FontWeight.w600),
+//             style: TextStyle(fontWeight: AppFontWeights.semiBold),
 //           ),
 //           elevation: 0,
 //           backgroundColor: ColorRes.white,
@@ -163,7 +163,7 @@
 //                           style: Theme.of(
 //                             context,
 //                           ).textTheme.titleMedium?.copyWith(
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semiBold,
 //                             fontSize: 16,
 //                           ),
 //                           overflow: TextOverflow.ellipsis,
@@ -245,7 +245,7 @@
 //         style: TextStyle(
 //           color: textColor,
 //           fontSize: 12,
-//           fontWeight: FontWeight.w600,
+//           fontWeight: AppFontWeights.semiBold,
 //         ),
 //       ),
 //     );

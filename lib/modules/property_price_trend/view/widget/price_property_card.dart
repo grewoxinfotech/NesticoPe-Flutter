@@ -37,7 +37,7 @@ class PricePropertyCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey.withOpacity(0.3), width: 0.8),
+          border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3), width: 0.8),
         ),
         alignment: Alignment.centerLeft,
         child: Row(
@@ -64,7 +64,7 @@ class PricePropertyCard extends StatelessWidget {
             SizedBox(
               height: 60,
               child: VerticalDivider(
-                color: Colors.grey.withOpacity(0.3),
+                color: ColorRes.leadGreyColor.withOpacity(0.3),
                 indent: 5,
                 endIndent: 5,
                 thickness: 1.2,
@@ -81,8 +81,8 @@ class PricePropertyCard extends StatelessWidget {
                 children: [
                   buildCommonText(
                     title,
-                    12,
-                    FontWeight.w600,
+                    AppFontSizes.small,
+                    AppFontWeights.semiBold,
                     ColorRes.textColor,
                     1,
                   ),
@@ -92,7 +92,7 @@ class PricePropertyCard extends StatelessWidget {
                   buildCommonText(
                     "Location: $address",
                     AppFontSizes.extraSmall,
-                    FontWeight.w400,
+                    AppFontWeights.regular,
                     ColorRes.grey.withOpacity(0.7),
                     1,
                   ),
@@ -106,15 +106,15 @@ class PricePropertyCard extends StatelessWidget {
                           isPositive
                               ? Icons.arrow_upward
                               : Icons.arrow_downward,
-                          color: isPositive ? Colors.green : Colors.red,
+                          color: isPositive ? ColorRes.green : ColorRes.error,
                           size: 14,
                         ),
                         const SizedBox(width: 4),
                         buildCommonText(
                           "${percentageIncrease!.toStringAsFixed(1)}%",
                           AppFontSizes.caption,
-                          FontWeight.bold,
-                          isPositive ? Colors.green : Colors.red,
+                          AppFontWeights.extraBold,
+                          isPositive ? ColorRes.green : ColorRes.error,
                           1,
                         ),
                       ],
@@ -131,17 +131,17 @@ class PricePropertyCard extends StatelessWidget {
                           const SizedBox(width: 3),
                           buildCommonText(
                             rating!.toStringAsFixed(1),
-                            10,
-                            FontWeight.w600,
-                            Colors.grey,
+                            AppFontSizes.extraSmall,
+                            AppFontWeights.semiBold,
+                            ColorRes.leadGreyColor,
                             1,
                           ),
                         ],
                         buildCommonText(
                           ' | Per sqft : ₹ ${pricePerSqft?.toStringAsFixed(0) ?? '2500'}',
-                          10,
-                          FontWeight.w500,
-                          Colors.grey,
+                          AppFontSizes.extraSmall,
+                          AppFontWeights.medium,
+                          ColorRes.leadGreyColor,
                           1,
                         ),
                       ],

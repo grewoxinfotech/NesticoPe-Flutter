@@ -61,7 +61,7 @@
 //                   child: Text(
 //                     cityName,
 //                     style: const TextStyle(
-//                       fontWeight: FontWeight.w700,
+//                       fontWeight: AppFontWeights.bold,
 //                       fontSize: 16,
 //                       color: ColorRes.white,
 //                       letterSpacing: 0.5,
@@ -102,7 +102,7 @@
 //                     propertyCount,
 //                     style: TextStyle(
 //                       fontSize: 10,
-//                       fontWeight: FontWeight.w600,
+//                       fontWeight: AppFontWeights.semiBold,
 //                       color: Colors.grey.shade800,
 //                       letterSpacing: 0.3,
 //                     ),
@@ -121,6 +121,8 @@
 ///MARK:New City Card Widget Change in 15-09-2025
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+
+import '../../../app/constants/app_font_sizes.dart';
 
 class CityCard extends StatelessWidget {
   final String imageUrl;
@@ -185,9 +187,9 @@ class CityCard extends StatelessWidget {
                     children: [
                       Text(
                         cityName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18,
+                        style:  TextStyle(
+                          fontWeight: AppFontWeights.bold,
+                          fontSize: AppFontSizes.large,
                           color: ColorRes.white,
                           letterSpacing: 0.6,
                           // shadows: [
@@ -203,8 +205,8 @@ class CityCard extends StatelessWidget {
                       Text(
                         "$propertyCount ",
                         style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.medium,
                           color: ColorRes.white.withOpacity(0.9),
                         ),
                       ),
@@ -224,9 +226,9 @@ class CityCard extends StatelessWidget {
                 Text(
                   "Explore",
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade800,
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.leadGreyColor.shade800,
                     letterSpacing: 0.4,
                   ),
                   maxLines: 1,

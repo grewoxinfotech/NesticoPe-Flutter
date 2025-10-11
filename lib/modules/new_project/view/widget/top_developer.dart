@@ -73,7 +73,7 @@ class DeveloperSection extends StatelessWidget {
                         Text(
                           developerName,
                           style: const TextStyle(
-                            fontWeight: FontWeight.w600,
+                            fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.textPrimary,
                             fontSize: AppFontSizes.large,
                           ),
@@ -92,7 +92,7 @@ class DeveloperSection extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 8),
-                Divider(color: Colors.grey.shade300, height: 1),
+                Divider(color: ColorRes.leadGreyColor.shade300, height: 1),
                 const SizedBox(height: 8),
 
                 /// Info Row (Dynamic)
@@ -120,7 +120,7 @@ class DeveloperSection extends StatelessWidget {
                 projectsTitle,
                 style: const TextStyle(
                   fontSize: AppFontSizes.bodySmall,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: AppFontWeights.semiBold,
                   color: ColorRes.textSecondary,
                 ),
               ),
@@ -130,7 +130,7 @@ class DeveloperSection extends StatelessWidget {
                   "See all",
                   style: TextStyle(
                     color: ColorRes.primary,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppFontWeights.semiBold,
                     fontSize: AppFontSizes.caption,
                   ),
                 ),
@@ -184,7 +184,7 @@ class DeveloperSection extends StatelessWidget {
           value,
           style: const TextStyle(
             fontSize: AppFontSizes.bodySmall,
-            fontWeight: FontWeight.w600,
+            fontWeight: AppFontWeights.semiBold,
             color: ColorRes.textPrimary,
           ),
         ),
@@ -196,7 +196,7 @@ class DeveloperSection extends StatelessWidget {
   Widget _customDivider() => Container(
     height: 28,
     width: 1,
-    color: Colors.grey.shade300,
+    color: ColorRes.leadGreyColor.shade300,
     margin: const EdgeInsets.symmetric(horizontal: 12),
   );
 
@@ -240,7 +240,7 @@ class DeveloperSection extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: AppFontSizes.bodySmall,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textPrimary,
                     ),
                   ),
@@ -258,8 +258,8 @@ class DeveloperSection extends StatelessWidget {
                     ].join(" · "),
                     style: TextStyle(
                       fontSize: AppFontSizes.extraSmall,
-                      color: Colors.grey.shade800,
-                      fontWeight: FontWeight.w500,
+                      color: ColorRes.leadGreyColor.shade800,
+                      fontWeight: AppFontWeights.medium,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -273,7 +273,7 @@ class DeveloperSection extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: AppFontSizes.extraSmall,
-                      color: Colors.black54,
+                      color: ColorRes.blackShade54,
                     ),
                   ),
                 ),
@@ -286,7 +286,7 @@ class DeveloperSection extends StatelessWidget {
                       : 'Price not available',
                   style: const TextStyle(
                     fontSize: AppFontSizes.medium,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.primary,
                   ),
                 ),

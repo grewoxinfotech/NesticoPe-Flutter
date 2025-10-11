@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
@@ -254,7 +255,8 @@ class RentAdvanceDetail extends StatelessWidget {
                     controller.toggleItemInList(controller.rent_Legal, option);
                   },
                   // chipWidth: 180,
-                  fontSize: 12,
+                  // fontSize: 12,
+                  fontSize: AppFontSizes.small,
                   selectedColor: ColorRes.primary,
                   unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
@@ -273,7 +275,7 @@ class RentAdvanceDetail extends StatelessWidget {
                     );
                   },
 
-                  fontSize: 12,
+                  fontSize: AppFontSizes.small,
                   selectedColor: ColorRes.primary,
                   unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
@@ -292,7 +294,8 @@ class RentAdvanceDetail extends StatelessWidget {
                     );
                   },
 
-                  fontSize: 12,
+                  // fontSize: 12,
+                  fontSize: AppFontSizes.small,
                   selectedColor: ColorRes.primary,
                   unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
@@ -311,7 +314,8 @@ class RentAdvanceDetail extends StatelessWidget {
                     );
                   },
 
-                  fontSize: 12,
+                  // fontSize: 12,
+                  fontSize: AppFontSizes.small,
                   selectedColor: ColorRes.primary,
                   unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
@@ -330,7 +334,8 @@ class RentAdvanceDetail extends StatelessWidget {
                     );
                   },
                   // chipWidth: 180,
-                  fontSize: 12,
+                  // fontSize: 12,
+                  fontSize: AppFontSizes.small,
                   selectedColor: ColorRes.primary,
                   unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
@@ -368,7 +373,8 @@ class RentAdvanceDetail extends StatelessWidget {
                     );
                   },
                   // chipWidth: 180,
-                  fontSize: 12,
+                  // fontSize: 12,
+                  fontSize: AppFontSizes.small,
                   selectedColor: ColorRes.primary,
                   unselectedColor: ColorRes.white,
                   selectedTextColor: ColorRes.primary,
@@ -482,8 +488,9 @@ class RentAdvanceDetail extends StatelessWidget {
                         },
                         underline: Container(),
                         style: const TextStyle(
-                          fontSize: 12,
+                          // fontSize: 12,
                           color: ColorRes.black,
+                            fontSize: AppFontSizes.small
                         ),
                         dropdownColor: ColorRes.white,
                       ),
@@ -806,7 +813,7 @@ class RentAdvanceDetail extends StatelessWidget {
               SizedBox(height: 4),
               Text(
                 "Tell us more about the specific features of your property.",
-                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                style: TextStyle(fontSize: AppFontSizes.extraSmall, color: Colors.grey.shade600),
               ),
             ],
           ),
@@ -834,7 +841,7 @@ class SelectableChipRow extends StatelessWidget {
     required this.selectedItems,
     required this.onTap,
 
-    this.fontSize = 12,
+    this.fontSize = AppFontSizes.small,
     this.selectedColor = const Color(0xFF1976D2), // Example primary color
     this.unselectedColor = ColorRes.white,
     this.selectedTextColor = const Color(0xFF1976D2),
@@ -877,7 +884,8 @@ class SelectableChipRow extends StatelessWidget {
                       style: TextStyle(
                         color:
                             selected ? selectedTextColor : unselectedTextColor,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: AppFontWeights.medium,
+                        // fontWeight: AppFontWeights.medium,
                         fontSize: fontSize,
                       ),
                     ),

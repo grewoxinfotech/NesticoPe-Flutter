@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 
+import '../../app/constants/color_res.dart';
+
 class NesticoPeCard extends StatelessWidget {
   final double? width;
   final double? height;
@@ -55,8 +57,8 @@ class NesticoPeCard extends StatelessWidget {
         boxShadow:
         boxShadow ??
             [
-              const BoxShadow(
-                  color: Colors.black12,
+              BoxShadow(
+                  color: ColorRes.blackShade12,
                   spreadRadius: 0,
                   blurRadius: 10,
                   offset: Offset(0,10)

@@ -423,7 +423,7 @@
 //                                           color: isSelected
 //                                               ? Theme.of(context).primaryColor
 //                                               : Colors.black,
-//                                           fontWeight: FontWeight.w400,
+//                                           fontWeight: AppFontWeights.regular,
 //                                           fontSize: 10,
 //                                         ),
 //                                       ),
@@ -497,7 +497,7 @@
 //                         Text(
 //                           'Project Documents',
 //                           style: theme.textTheme.titleSmall?.copyWith(
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semibold,
 //                           ),
 //                         ),
 //                       ],
@@ -550,7 +550,7 @@
 //                         Text(
 //                           'Contact Information',
 //                           style: theme.textTheme.titleSmall?.copyWith(
-//                             fontWeight: FontWeight.w600,
+//                             fontWeight: AppFontWeights.semibold,
 //                           ),
 //                         ),
 //                       ],
@@ -639,7 +639,7 @@
 //               title,
 //               style: TextStyle(
 //                 fontSize: AppFontSizes.bodySmall,
-//                 fontWeight: FontWeight.w600,
+//                 fontWeight: AppFontWeights.semibold,
 //                 color: ColorRes.textSecondary,
 //               ),
 //             ),
@@ -703,7 +703,7 @@
 //     '$text',
 //     style: const TextStyle(
 //       fontSize: AppFontSizes.small,
-//       fontWeight: FontWeight.w500,
+//       fontWeight: AppFontWeights.medium,
 //       color: ColorRes.textSecondary,
 //     ),
 //   );
@@ -714,7 +714,7 @@
 //     '$text',
 //     style: const TextStyle(
 //       fontSize: AppFontSizes.medium,
-//       fontWeight: FontWeight.w500,
+//       fontWeight: AppFontWeights.medium,
 //       color: ColorRes.textSecondary,
 //     ),
 //   );
@@ -867,8 +867,8 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                             )
                                                 .primaryColor
                                                 : ColorRes.black,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 10,
+                                            fontWeight: AppFontWeights.regular,
+                                            fontSize: AppFontSizes.extraSmall,
                                           ),
                                         ),
                                       ],
@@ -890,7 +890,7 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                       style: TextStyle(
                                         color: theme.colorScheme.primary,
                                         fontSize: AppFontSizes.small,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: AppFontWeights.semiBold,
                                       ),
                                     ),
                                     const SizedBox(width: 4),
@@ -1058,7 +1058,7 @@ class StepAdditional extends GetView<ProjectWizardController> {
   //             title,
   //             style: TextStyle(
   //               fontSize: AppFontSizes.body,
-  //               fontWeight: FontWeight.w400,
+  //               fontWeight: AppFontWeights.regular,
   //               color: ColorRes.textSecondary,
   //             ),
   //           ),
@@ -1121,9 +1121,9 @@ class StepAdditional extends GetView<ProjectWizardController> {
 Text buildBuilderDefaultText(String text) {
   return Text(
     text,
-    style: const TextStyle(
+    style: TextStyle(
       fontSize: AppFontSizes.small,
-      fontWeight: FontWeight.w500,
+      fontWeight: AppFontWeights.medium,
       color: ColorRes.textSecondary,
     ),
   );
@@ -1132,9 +1132,9 @@ Text buildBuilderDefaultText(String text) {
 Text buildBuilderDefaultHeaderText(String text) {
   return Text(
     text,
-    style: const TextStyle(
+    style: TextStyle(
       fontSize: AppFontSizes.body,
-      fontWeight: FontWeight.w500,
+      fontWeight: AppFontWeights.medium,
       color: ColorRes.textSecondary,
     ),
   );
@@ -1181,7 +1181,7 @@ Widget builderPropertyType(ProjectWizardController controller) {
                     item.title,
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: AppFontWeights.medium,
                       color: isSelected ? ColorRes.primary : ColorRes.black,
                     ),
                     textAlign: TextAlign.center,

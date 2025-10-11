@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/font_res.dart';
 import '../../app/constants/size_manager.dart';
 import '../button/button.dart';
@@ -36,10 +37,10 @@ class NesticoPeDeleteDialog extends StatelessWidget {
                 child: Text(
                   "Delete Confirmation",
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: AppFontSizes.large,
                     fontFamily: FontRes.nuNunitoSans,
                     color: Get.theme.colorScheme.error,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: AppFontWeights.bold,
                     decoration: TextDecoration.none,
                   ),
                 ),
@@ -48,10 +49,10 @@ class NesticoPeDeleteDialog extends StatelessWidget {
               Text(
                 "Are you sure you want to delete this $entityType?",
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: AppFontSizes.medium,
                   fontFamily: FontRes.nuNunitoSans,
                   color: Get.theme.colorScheme.onSecondary,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: AppFontWeights.semiBold,
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -68,8 +69,8 @@ class NesticoPeDeleteDialog extends StatelessWidget {
                       "Cancel",
                       style: TextStyle(
                         color: Get.theme.colorScheme.onSecondary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.medium,
                         fontFamily: FontRes.nuNunitoSans,
                       ),
                     ),

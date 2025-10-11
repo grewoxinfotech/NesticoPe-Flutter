@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../app/constants/color_res.dart';
 import '../../app/constants/ic_res.dart';
 
 class NesticoPeAppLogo extends StatelessWidget {
@@ -18,7 +19,7 @@ class NesticoPeAppLogo extends StatelessWidget {
       ICRes.member,
       width: 24,
       height: 24,
-      color: Colors.black, // Optional color tint
+      color: ColorRes.black, // Optional color tint
     );
 
     return GestureDetector(

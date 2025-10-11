@@ -42,6 +42,7 @@ class ColorRes {
   static const blackShade54 = Colors.black54;
   static const blackShade87 = Colors.black87;
   static const blackShade12 = Colors.black12;
+  static const blackShade26 = Colors.black26;
 
   //other
   static const green = Colors.green;
@@ -79,7 +80,7 @@ static const builderGridLightGreen = Color(0xFF10B981);
 static const builderGridLightYellow = Color(0xFFF59E0B);
 static const builderGridLightBlue = Color(0xFF3B82F6);
 
-
+static const builderGridLightSky = Color(0xFF3B82F6);
 
 //// home screen different colors
 
@@ -90,5 +91,23 @@ static const homeBlackFade = Color(0xFF1A1A1A) ;
 static const homeYellow = Color(0xFFFFB800) ;
 
 static const homeRed = Color(0xFFE74C3C);
+static const homeYellowDark = Colors.yellow;
+static const homeAmber = Colors.amber;
+static const homedeepOrange = Colors.deepOrange;
+
+
+
+/// Property Detail Screen Colors
+static const propertyBg = Color(0xFFDBEAFE);
+static const propertyText = Color(0xFF2563EB);
+
+/// report card
+static const reportCardBG = Color(0xFFE0E0E0);
+static const reportCardText = Color(0xFF424242);
+static const reportCardred = Color(0xFFD32F2F);
+static const reportCardblue = Color(0xFF4A73E8);
+static const reportCardhint = Color(0xFF9E9E9E);
+static const reportCardboarder = Color(0xFFE0E0E0);
+static const reportCardTextFiled = Color(0xFF757575);
 
 }

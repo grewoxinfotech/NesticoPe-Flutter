@@ -13,6 +13,8 @@ import 'package:housing_flutter_app/modules/filter_property/view/widget/pg_prope
 import 'package:housing_flutter_app/modules/filter_property/view/widget/rent_component/rented_filter.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../../app/constants/app_font_sizes.dart';
+
 class RealEstateFilterScreen extends StatefulWidget {
   final Map<String, String> initialFilters;
   final bool showSearchById;
@@ -54,8 +56,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
         ),
         title: buildCommonText(
           'Filters',
-          18,
-          FontWeight.w600,
+          AppFontSizes.large,
+          AppFontWeights.semiBold,
           ColorRes.textColor,
           1,
         ),
@@ -68,8 +70,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               'Reset',
               style: TextStyle(
                 color: ColorRes.primary,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.semiBold,
               ),
             ),
           ),
@@ -171,8 +173,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: buildCommonText(
                 'Property Type',
-                14,
-                FontWeight.w600,
+                AppFontSizes.medium,
+                AppFontWeights.semiBold,
                 ColorRes.textColor.withOpacity(0.7),
                 1,
               ),
@@ -221,8 +223,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                             ),
                             child: buildCommonText(
                               controllerForFilter.propertyType[index],
-                              12,
-                              FontWeight.w600,
+                              AppFontSizes.small,
+                              AppFontWeights.semiBold,
                               isSelected ? ColorRes.white : ColorRes.textColor,
                               1,
                             ),
@@ -250,8 +252,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                       children: [
                         buildCommonText(
                           'Selected',
-                          14,
-                          FontWeight.w600,
+                          AppFontSizes.medium,
+                          AppFontWeights.semiBold,
                           ColorRes.textColor.withOpacity(0.7),
                           1,
                         ),
@@ -262,7 +264,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                             'Clear all',
                             style: TextStyle(
                               color: ColorRes.primary,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: AppFontWeights.semiBold,
                             ),
                           ),
                         ),
@@ -350,16 +352,16 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                     children: [
                       buildCommonText(
                         '1,234 Properties',
-                        12,
-                        FontWeight.w500,
+                        AppFontSizes.small,
+                        AppFontWeights.medium,
                         ColorRes.textColor.withOpacity(0.6),
                         1,
                       ),
                       const SizedBox(height: 2),
                       buildCommonText(
                         'Available',
-                        10,
-                        FontWeight.w400,
+                        AppFontSizes.extraSmall,
+                        AppFontWeights.regular,
                         ColorRes.textColor.withOpacity(0.5),
                         1,
                       ),
@@ -399,8 +401,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                       children: [
                         buildCommonText(
                           'Apply Filters',
-                          16,
-                          FontWeight.w600,
+                          AppFontSizes.body,
+                          AppFontWeights.semiBold,
                           ColorRes.white,
                           1,
                         ),

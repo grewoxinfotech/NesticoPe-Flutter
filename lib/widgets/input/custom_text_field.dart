@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../app/constants/app_font_sizes.dart';
+import '../../app/constants/color_res.dart';
 import '../../app/constants/font_res.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -58,7 +60,7 @@ class CustomTextField extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius ?? 8.0),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: ColorRes.leadGreyColor.shade300),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius ?? 8.0),
@@ -82,13 +84,13 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         filled: true,
-        fillColor: fillColor ?? Colors.grey.shade100,
         contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        fillColor: fillColor ?? ColorRes.leadGreyColor.shade100,
       ),
-      style: const TextStyle(
-        fontSize: 16.0,
+      style: TextStyle(
+        fontSize: AppFontSizes.body,
         fontFamily: FontRes.nuNunitoSans,
-        fontWeight: FontWeight.w500,
+        fontWeight: AppFontWeights.medium,
       ),
     );
   }

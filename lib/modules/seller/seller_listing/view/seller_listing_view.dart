@@ -53,7 +53,7 @@
 // //                   ),
 // //                   textStyle: const TextStyle(
 // //                     fontSize: 14,
-// //                     fontWeight: FontWeight.w500,
+// //                     fontWeight: AppFontWeights.medium,
 // //                   ),
 // //                   children: const [Text('Residential'), Text('Commercial')],
 // //                   isSelected: controller.isSelected,
@@ -78,7 +78,7 @@
 // //                           ),
 // //                           labelStyle: TextStyle(
 // //                             fontSize: 14,
-// //                             fontWeight: FontWeight.w600,
+// //                             fontWeight: AppFontWeights.semiBold,
 // //                             color: ColorRes.primary,
 // //                           ),
 // //                           tabs: [
@@ -370,7 +370,7 @@
 // //                                 index == 0 ? 'Residential' : 'Commercial',
 // //                                 style: TextStyle(
 // //                                   fontSize: 14,
-// //                                   fontWeight: FontWeight.w500,
+// //                                   fontWeight: AppFontWeights.medium,
 // //                                   color:
 // //                                       isSelected
 // //                                           ? ColorRes.primary
@@ -400,7 +400,7 @@
 // //                                 ),
 // //                                 labelStyle: TextStyle(
 // //                                   fontSize: 14,
-// //                                   fontWeight: FontWeight.w600,
+// //                                   fontWeight: AppFontWeights.semiBold,
 // //                                   color: ColorRes.primary,
 // //                                 ),
 // //                                 tabs: [
@@ -443,7 +443,7 @@
 // //                                   ),
 // //                                   labelStyle: TextStyle(
 // //                                     fontSize: 14,
-// //                                     fontWeight: FontWeight.w600,
+// //                                     fontWeight: AppFontWeights.semiBold,
 // //                                     color: ColorRes.primary,
 // //                                   ),
 // //                                   tabs: [Tab(text: "Sell"), Tab(text: "Rent")],
@@ -519,7 +519,7 @@
 // //             //                 index == 0 ? 'Residential' : 'Commercial',
 // //             //                 style: TextStyle(
 // //             //                   fontSize: 14,
-// //             //                   fontWeight: FontWeight.w500,
+// //             //                   fontWeight: AppFontWeights.medium,
 // //             //                   color:
 // //             //                       isSelected
 // //             //                           ? ColorRes.primary
@@ -549,7 +549,7 @@
 // //             //                 ),
 // //             //                 labelStyle: TextStyle(
 // //             //                   fontSize: 14,
-// //             //                   fontWeight: FontWeight.w600,
+// //             //                   fontWeight: AppFontWeights.semiBold,
 // //             //                   color: ColorRes.primary,
 // //             //                 ),
 // //             //                 tabs: [
@@ -592,7 +592,7 @@
 // //             //                   ),
 // //             //                   labelStyle: TextStyle(
 // //             //                     fontSize: 14,
-// //             //                     fontWeight: FontWeight.w600,
+// //             //                     fontWeight: AppFontWeights.semiBold,
 // //             //                     color: ColorRes.primary,
 // //             //                   ),
 // //             //                   tabs: [Tab(text: "Sell"), Tab(text: "Rent")],
@@ -883,7 +883,7 @@
 // //                             index == 0 ? 'Residential' : 'Commercial',
 // //                             style: TextStyle(
 // //                               fontSize: 14,
-// //                               fontWeight: FontWeight.w500,
+// //                               fontWeight: AppFontWeights.medium,
 // //                               color:
 // //                                   isSelected
 // //                                       ? ColorRes.primary
@@ -916,7 +916,7 @@
 // //                             ),
 // //                             labelStyle: TextStyle(
 // //                               fontSize: 14,
-// //                               fontWeight: FontWeight.w600,
+// //                               fontWeight: AppFontWeights.semiBold,
 // //                             ),
 // //                             unselectedLabelStyle: TextStyle(
 // //                               fontSize: 14,
@@ -961,7 +961,7 @@
 // //                             ),
 // //                             labelStyle: TextStyle(
 // //                               fontSize: 14,
-// //                               fontWeight: FontWeight.w600,
+// //                               fontWeight: AppFontWeights.semiBold,
 // //                             ),
 // //                             unselectedLabelStyle: TextStyle(
 // //                               fontSize: 14,
@@ -1036,7 +1036,7 @@
 // //                   controller.listingFilter[index],
 // //                   style: TextStyle(
 // //                     color: isSelected ? ColorRes.primary : Colors.black87,
-// //                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+// //                     fontWeight: isSelected ? AppFontWeights.semiBold : FontWeight.w400,
 // //                     fontSize: 14,
 // //                   ),
 // //                 ),
@@ -1086,7 +1086,7 @@
 // //                 style: TextStyle(
 // //                   fontSize: 16,
 // //                   color: Colors.grey[600],
-// //                   fontWeight: FontWeight.w500,
+// //                   fontWeight: AppFontWeights.medium,
 // //                 ),
 // //               ),
 // //             ],
@@ -1164,7 +1164,7 @@
 // //                 style: TextStyle(
 // //                   fontSize: 16,
 // //                   color: Colors.grey[600],
-// //                   fontWeight: FontWeight.w500,
+// //                   fontWeight: AppFontWeights.medium,
 // //                 ),
 // //               ),
 // //             ],
@@ -1370,7 +1370,7 @@
 //                             index == 0 ? 'Residential' : 'Commercial',
 //                             style: TextStyle(
 //                               fontSize: 14,
-//                               fontWeight: FontWeight.w500,
+//                               fontWeight: AppFontWeights.medium,
 //                               color:
 //                                   isSelected
 //                                       ? ColorRes.primary
@@ -1409,7 +1409,7 @@
 //                             ),
 //                             labelStyle: TextStyle(
 //                               fontSize: 14,
-//                               fontWeight: FontWeight.w600,
+//                               fontWeight: AppFontWeights.semiBold,
 //                             ),
 //                             unselectedLabelStyle: TextStyle(
 //                               fontSize: 14,
@@ -1454,7 +1454,7 @@
 //                             ),
 //                             labelStyle: TextStyle(
 //                               fontSize: 14,
-//                               fontWeight: FontWeight.w600,
+//                               fontWeight: AppFontWeights.semiBold,
 //                             ),
 //                             unselectedLabelStyle: TextStyle(
 //                               fontSize: 14,
@@ -1534,7 +1534,7 @@
 //                   controller.listingFilter[index],
 //                   style: TextStyle(
 //                     color: isSelected ? ColorRes.primary : Colors.black87,
-//                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+//                     fontWeight: isSelected ? AppFontWeights.semiBold : FontWeight.w400,
 //                     fontSize: 14,
 //                   ),
 //                 ),
@@ -1589,7 +1589,7 @@
 //                 style: TextStyle(
 //                   fontSize: 16,
 //                   color: Colors.grey[600],
-//                   fontWeight: FontWeight.w500,
+//                   fontWeight: AppFontWeights.medium,
 //                 ),
 //               ),
 //             ],
@@ -1669,7 +1669,7 @@
 //                 style: TextStyle(
 //                   fontSize: 16,
 //                   color: Colors.grey[600],
-//                   fontWeight: FontWeight.w500,
+//                   fontWeight: AppFontWeights.medium,
 //                 ),
 //               ),
 //             ],
