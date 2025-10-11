@@ -557,6 +557,8 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
 import 'package:housing_flutter_app/modules/builder/view/builder_dashboard.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
@@ -580,6 +582,9 @@ class ProjectWizardController extends GetxController {
   RxString uploadBrocherPath = ''.obs;
 
   RxBool isLoading = false.obs;
+  final Rxn<UserModel> user = Rxn<UserModel>();
+
+
 
   final project =
       ProjectModel(
@@ -619,7 +624,11 @@ class ProjectWizardController extends GetxController {
         videoList: [],
         brochure: null,
         projectHighlights: [],
-        projectContactInfo: ProjectContactInfo(name: 'name', phone: '123456', email: 'abc@gmail.com'),
+        projectContactInfo: ProjectContactInfo(
+          name: "",
+          phone:"",
+          email: "",
+        ),
       ).obs;
 
   late TextEditingController projectNameController;
@@ -655,6 +664,27 @@ class ProjectWizardController extends GetxController {
     stateController = TextEditingController(text: project.value.state);
     zipCodeController = TextEditingController(text: project.value.zipCode);
     locationController = TextEditingController(text: project.value.location);
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    isLoading.value = true;
+    try {
+      final userData = await SecureStorage.getUserData();
+      if (userData != null) {
+        user.value = userData;
+        // Update contact info with fetched user data
+        project.update((p) {
+          p?.projectContactInfo?.name = userData.user?.username ?? '';
+          p?.projectContactInfo?.phone = userData.user?.phone ?? '';
+          p?.projectContactInfo?.email = userData.user?.email ?? '';
+        });
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void removeBuilderImage(int index) {
@@ -902,6 +932,7 @@ class ProjectWizardController extends GetxController {
   Future<void> submit() async{
     try{
       isLoading.value = true;
+      printProjectDetails();
       await createBuilderProject();
 
     }catch (e){
@@ -914,7 +945,7 @@ class ProjectWizardController extends GetxController {
   Future<void> createBuilderProject() async {
     try {
       final success = await _builderService.createProject(
-        projectData: _buildProjectPayload(),
+        projectData: await _buildProjectPayload(),
         images: project.value.imageList.map((path) => File(path)).toList(),
         videos: project.value.videoList.map((path) => File(path)).toList(),
         documents: project.value.brochure != null ? File(project.value.brochure!) : null,
@@ -946,9 +977,10 @@ class ProjectWizardController extends GetxController {
     }
   }
 
-  ProjectModel _buildProjectPayload() {
+  Future<ProjectModel> _buildProjectPayload() async{
     final ProjectModel p = project.value;
     print('Building payload ---- > ${p.projectContactInfo?.toJson()}');
+    final user = await SecureStorage.getUserData();
     return ProjectModel(
       projectName: p.projectName,
       projectArea: p.projectArea,
@@ -966,7 +998,11 @@ class ProjectWizardController extends GetxController {
       amenities: p.amenities,
       brochure: p.brochure,
       nearbyLocations: p.nearbyLocations,
-      projectContactInfo: p.projectContactInfo,
+      projectContactInfo: ProjectContactInfo(
+        name: user?.user?.username ?? '',
+        phone: user?.user?.phone ?? '',
+        email: user?.user?.email ?? '',
+      ),
       propertyTypes: p.propertyTypes,
       projectHighlights: p.projectHighlights,
     );

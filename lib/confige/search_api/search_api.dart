@@ -91,4 +91,9 @@ class GoogleMapApi {
     // Google type 'geocode' + component filter gives local areas
     return _fetchPredictions(query, 'geocode');
   }
+
+  Future<Map<String, dynamic>> searchLocalities(String query) async {
+    // Google type 'geocode' + component filter gives local areas
+    return _fetchPredictions(query, 'locality');
+  }
 }

@@ -59,10 +59,10 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
       micController.searchText.value.text = widget.initialSearchText!;
       print('micro jsdewud ${micController.searchText.value.text}');
       // Fetch predictions for initial text
-      controller.fetchPredictions(widget.initialSearchText!);
+      controller.fetchPredictionsCity(widget.initialSearchText!);
     }
     micController.searchText.value.addListener(() {
-      controller.fetchPredictions(micController.searchText.value.text);
+      controller.fetchPredictionsCity(micController.searchText.value.text);
     });
   }
 

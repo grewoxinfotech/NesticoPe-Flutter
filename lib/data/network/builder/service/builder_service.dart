@@ -45,21 +45,21 @@ class BuilderService {
       final projectMap = projectData.toJson();
 
       // ====== Handle brochure (document) properly ======
-      if (documents != null) {
-        final brochureObject = {
-          "name": documents.path.split('/').last,
-          "file": "brochureFile"
-        };
-
-        // Attach file with same key as mentioned inside brochureObject
-        request.files.add(await http.MultipartFile.fromPath(
-          'brochureFile', // this must match the key in "file"
-          documents.path,
-        ));
-
-        // Replace the brochure field with an object instead of a flat string
-        projectMap["brochure"] = brochureObject;
-      }
+      // if (documents != null) {
+      //   final brochureObject = {
+      //     "name": documents.path.split('/').last,
+      //     "file": "brochureFile"
+      //   };
+      //
+      //   // Attach file with same key as mentioned inside brochureObject
+      //   request.files.add(await http.MultipartFile.fromPath(
+      //     'brochureFile', // this must match the key in "file"
+      //     documents.path,
+      //   ));
+      //
+      //   // Replace the brochure field with an object instead of a flat string
+      //   projectMap["brochure"] = brochureObject;
+      // }
 
       // ====== Add all other fields ======
       projectMap.forEach((key, value) {
@@ -73,24 +73,24 @@ class BuilderService {
       });
 
       // ====== Attach Images ======
-      if (images != null && images.isNotEmpty) {
-        for (var i = 0; i < images.length; i++) {
-          request.files.add(await http.MultipartFile.fromPath(
-            'images[$i]',
-            images[i].path,
-          ));
-        }
-      }
-
-      // ====== Attach Videos ======
-      if (videos != null && videos.isNotEmpty) {
-        for (var i = 0; i < videos.length; i++) {
-          request.files.add(await http.MultipartFile.fromPath(
-            'videos[$i]',
-            videos[i].path,
-          ));
-        }
-      }
+      // if (images != null && images.isNotEmpty) {
+      //   for (var i = 0; i < images.length; i++) {
+      //     request.files.add(await http.MultipartFile.fromPath(
+      //       'images[$i]',
+      //       images[i].path,
+      //     ));
+      //   }
+      // }
+      //
+      // // ====== Attach Videos ======
+      // if (videos != null && videos.isNotEmpty) {
+      //   for (var i = 0; i < videos.length; i++) {
+      //     request.files.add(await http.MultipartFile.fromPath(
+      //       'videos[$i]',
+      //       videos[i].path,
+      //     ));
+      //   }
+      // }
 
       debugPrint("🧾 Multipart fields: ${request.fields}");
       debugPrint("📎 Attached files: ${request.files.length}");
