@@ -270,6 +270,7 @@ import 'package:get/get.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
+import '../../../../data/network/property/models/property_model.dart';
 import '../../controller/report/report_controller.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 
@@ -881,7 +882,9 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 // }
 
 class ReportPropertyCard extends StatelessWidget {
-  const ReportPropertyCard({Key? key}) : super(key: key);
+  final String propertyId;
+  const ReportPropertyCard({Key? key, required this.propertyId})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1041,7 +1044,7 @@ class ReportPropertyCard extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      TextField(
+                      TextFormField(
                         maxLines: 3,
                         maxLength: 500,
                         style: const TextStyle(fontSize: 13, height: 1.4),
@@ -1056,6 +1059,22 @@ class ReportPropertyCard extends StatelessWidget {
                           counterText: '',
                           isDense: true,
                         ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value != null && value.isEmpty) {
+                            return "Additional details cannot be empty";
+                          }
+                          if (value != null && value.length > 500) {
+                            return "Maximum 500 characters allowed";
+                          }
+
+                          if (value != null &&
+                              value.length <= 10 &&
+                              value.isNotEmpty) {
+                            return "Please provide (min 10 characters)";
+                          }
+                          return null;
+                        },
                         onChanged:
                             (value) => controller.setAdditionalDetails(value),
                       ),
@@ -1067,7 +1086,8 @@ class ReportPropertyCard extends StatelessWidget {
                         decoration: const BoxDecoration(
                           border: Border(
                             top: BorderSide(
-                              color: Color(0xFFE0E0E0), width: 0.5,
+                              color: Color(0xFFE0E0E0),
+                              width: 0.5,
                             ),
                           ),
                         ),
@@ -1123,33 +1143,95 @@ class ReportPropertyCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
+                    // Expanded(
+                    //   flex: 2,
+                    //   child: Obx(
+                    //     () => ElevatedButton(
+                    //       onPressed:
+                    //           controller.selectedReason.value.isEmpty
+                    //               ? null
+                    //               : (controller
+                    //                           .additionalDetails
+                    //                           .value
+                    //                           .length <=
+                    //                       10 ||
+                    //                   controller
+                    //                           .additionalDetails
+                    //                           .value
+                    //                           .length >
+                    //                       500)
+                    //               ? null
+                    //               : controller.isSubmitting.value
+                    //               ? null
+                    //               : () => controller.submitReport(propertyId),
+                    //       style: ElevatedButton.styleFrom(
+                    //         backgroundColor:
+                    //             controller.isSubmitting.value
+                    //                 ? ColorRes.primary.withOpacity(0.3)
+                    //                 : ColorRes.primary,
+                    //         disabledBackgroundColor: const Color(0xFFE0E0E0),
+                    //         padding: const EdgeInsets.symmetric(vertical: 11),
+                    //         elevation: 0,
+                    //         shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(8),
+                    //         ),
+                    //       ),
+                    //       child: Text(
+                    //         controller.isSubmitting.value
+                    //             ? "Submitting..."
+                    //             : 'Submit Report',
+                    //         style: TextStyle(
+                    //           color: ColorRes.white,
+                    //           fontSize: 14,
+                    //           fontWeight: FontWeight.w600,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Expanded(
                       flex: 2,
-                      child: Obx(
-                        () => ElevatedButton(
+                      child: Obx(() {
+                        // Determine if button should be enabled
+                        bool isButtonEnabled =
+                            controller.selectedReason.value.isNotEmpty &&
+                            controller.additionalDetails.value.length > 10 &&
+                            controller.additionalDetails.value.length <= 500 &&
+                            !controller.isSubmitting.value;
+
+                        return ElevatedButton(
                           onPressed:
-                              controller.selectedReason.value.isEmpty
-                                  ? null
-                                  : () => controller.submitReport(),
+                              isButtonEnabled
+                                  ? () => controller.submitReport(propertyId)
+                                  : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4A73E8),
-                            disabledBackgroundColor: const Color(0xFFE0E0E0),
+                            backgroundColor:
+                                controller.isSubmitting.value
+                                    ? ColorRes.primary.withOpacity(0.3)
+                                    : isButtonEnabled
+                                    ? ColorRes.primary
+                                    : const Color(0xFFE0E0E0), // Disabled color
                             padding: const EdgeInsets.symmetric(vertical: 11),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text(
-                            'Submit Report',
+                          child: Text(
+                            controller.isSubmitting.value
+                                ? "Submitting..."
+                                : 'Submit Report',
                             style: TextStyle(
-                              color: ColorRes.white,
+                              color:
+                                  isButtonEnabled
+                                      ? ColorRes.white
+                                      : const Color(0xFF9E9E9E),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      }),
                     ),
                   ],
                 ),
@@ -1351,9 +1433,14 @@ class ReportPropertyCard extends StatelessWidget {
 // }
 
 class PropertyOverviewCard extends StatelessWidget {
-  final ResellerLeadOverview lead;
+  final ResellerLeadOverview? lead;
+  final Items? property;
 
-  const PropertyOverviewCard({super.key, required this.lead});
+  const PropertyOverviewCard({super.key, this.lead, this.property})
+    : assert(
+        (lead != null) != (property != null),
+        'You must provide either lead OR property, not both.',
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -1492,7 +1579,8 @@ class PropertyOverviewCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: item["color"] as Color,
                           ),
-                        ), const SizedBox(height: 2),
+                        ),
+                        const SizedBox(height: 2),
                         Text(
                           item["title"]!,
                           style: TextStyle(

@@ -522,19 +522,21 @@ class PropertyDetailScreen extends StatelessWidget {
                 right: 16,
                 child: Row(
                   children: [
-                    Obx(
-                      () {
-                        final isFavorite = controller.favoriteIds.contains(id);
-                        return CircularIcon(
-                        icon: isFavorite ? Icons.favorite :Icons.favorite_border_rounded,
+                    Obx(() {
+                      final isFavorite = controller.favoriteIds.contains(id);
+                      return CircularIcon(
+                        icon:
+                            isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border_rounded,
                         backgroundColor: ColorRes.white,
-                        iconColor: isFavorite ? Colors.redAccent: ColorRes.black,
+                        iconColor:
+                            isFavorite ? Colors.redAccent : ColorRes.black,
                         onPressed: () {
                           controller.toggleFavorite(id);
                         },
                       );
-                      },
-                    ),
+                    }),
                     const SizedBox(width: 12),
                     CircularIcon(
                       icon: Icons.share_outlined,
@@ -1387,35 +1389,124 @@ class PricingBottomSheet extends StatelessWidget {
 //   }
 // }
 
+// class Facilities extends StatelessWidget {
+//   final Items property;
+//   final Color bgColor;
+//   final Color txtColor;
+//
+//   Facilities({
+//     super.key,
+//     required this.property,
+//     this.bgColor = const Color(0xFFDBEAFE),
+//     this.txtColor = const Color(0xFF2563EB),
+//   });
+//
+//   // Map detail keys to icons
+//   final Map<String, IconData> iconMap = {
+//     "BHK": Icons.bed,
+//     "Furnishing": Icons.chair_alt,
+//     "Built-up Area": Icons.zoom_out_map_outlined,
+//     "Carpet Area": Icons.square_foot,
+//     "Floor": Icons.layers_outlined,
+//     "Age of Property": Icons.date_range,
+//     "Rent": Icons.attach_money,
+//     "Price": Icons.price_change,
+//     "Possession": Icons.home_work,
+//     "Amenities": Icons.checklist_rtl,
+//     "Parking": Icons.local_parking,
+//     "Facing": Icons.explore,
+//     "Condition": Icons.handyman,
+//     // Add more mappings if needed
+//   };
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final highlights = PropertyHighlightManager(property).getHighlights();
+//
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//       child: Wrap(
+//         spacing: 12,
+//         runSpacing: 12,
+//         children:
+//             highlights.map((item) {
+//               final key = item.keys.first;
+//               final value = item.values.first;
+//               final icon = iconMap[key] ?? Icons.info_outline;
+//
+//               return FacilitiesCard(
+//                 label: value,
+//                 icon: icon,
+//                 bgColor: bgColor,
+//                 foreColor: txtColor,
+//               );
+//             }).toList(),
+//       ),
+//     );
+//   }
+// }
+//
+// class FacilitiesCard extends StatelessWidget {
+//   final String label;
+//   final IconData icon;
+//   final Color bgColor;
+//   final Color foreColor;
+//
+//   const FacilitiesCard({
+//     Key? key,
+//     required this.label,
+//     required this.icon,
+//     required this.bgColor,
+//     required this.foreColor,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       constraints: const BoxConstraints(
+//         minWidth: 80,
+//       ), // 👈 ensures small labels don't shrink too much
+//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+//       decoration: BoxDecoration(
+//         border: Border.all(color: ColorRes.primary, width: 1),
+//         borderRadius: BorderRadius.circular(20), // pill-like
+//         color: ColorRes.white,
+//       ),
+//       child: Row(
+//         mainAxisSize: MainAxisSize.min,
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           Icon(icon, size: 16, color: ColorRes.primary),
+//           const SizedBox(width: 6),
+//           Flexible(
+//             child: Text(
+//               label,
+//               textAlign: TextAlign.center,
+//               overflow: TextOverflow.ellipsis, // prevent overflow
+//               style: TextStyle(
+//                 fontSize: 13,
+//                 fontWeight: FontWeight.w500,
+//                 color: Colors.grey.shade800,
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
 class Facilities extends StatelessWidget {
   final Items property;
   final Color bgColor;
   final Color txtColor;
 
-  Facilities({
+  const Facilities({
     super.key,
     required this.property,
     this.bgColor = const Color(0xFFDBEAFE),
     this.txtColor = const Color(0xFF2563EB),
   });
-
-  // Map detail keys to icons
-  final Map<String, IconData> iconMap = {
-    "BHK": Icons.bed,
-    "Furnishing": Icons.chair_alt,
-    "Built-up Area": Icons.zoom_out_map_outlined,
-    "Carpet Area": Icons.square_foot,
-    "Floor": Icons.layers_outlined,
-    "Age of Property": Icons.date_range,
-    "Rent": Icons.attach_money,
-    "Price": Icons.price_change,
-    "Possession": Icons.home_work,
-    "Amenities": Icons.checklist_rtl,
-    "Parking": Icons.local_parking,
-    "Facing": Icons.explore,
-    "Condition": Icons.handyman,
-    // Add more mappings if needed
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -1428,13 +1519,13 @@ class Facilities extends StatelessWidget {
         runSpacing: 12,
         children:
             highlights.map((item) {
-              final key = item.keys.first;
-              final value = item.values.first;
-              final icon = iconMap[key] ?? Icons.info_outline;
+              // final key = item.keys.first;
+              // final value = item.values.first;
+              // final icon = iconMap[key] ?? Icons.info_outline;
 
               return FacilitiesCard(
-                label: value,
-                icon: icon,
+                label: item.value,
+                icon: item.icon ?? Icons.info_outline,
                 bgColor: bgColor,
                 foreColor: txtColor,
               );
@@ -1493,170 +1584,6 @@ class FacilitiesCard extends StatelessWidget {
     );
   }
 }
-// Example of FacilitiesCard widget
-// class FacilitiesCard extends StatelessWidget {
-//   final String label;
-//   final IconData icon;
-//   final Color bgColor;
-//   final Color foreColor;
-//
-//   const FacilitiesCard({
-//     super.key,
-//     required this.label,
-//     required this.icon,
-//     required this.bgColor,
-//     required this.foreColor,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-//       decoration: BoxDecoration(
-//         color: bgColor,
-//         borderRadius: BorderRadius.circular(12),
-//       ),
-//       child: Row(
-//         children: [
-//           Icon(icon, color: foreColor, size: 20),
-//           const SizedBox(width: 6),
-//           Text(
-//             label,
-//             style: TextStyle(
-//               color: foreColor,
-//               fontWeight: FontWeight.w600,
-//               fontSize: 12,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// class Details extends StatelessWidget {
-//   Details({super.key});
-//
-//   final List<String> title = [
-//     "Age of the Property",
-//     "BHK Types",
-//     "Furnished Types",
-//     "Built-up Area",
-//     "Floors",
-//     "Notice Period",
-//   ];
-//
-//   final List<String> data = [
-//     "3 to 5 years old",
-//     "3 BHK",
-//     "Fully Furnished",
-//     "1,650 Sq.ft.",
-//     "6 of 8",
-//     "1 month",
-//   ];
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView.builder(
-//       shrinkWrap: true,
-//       physics: NeverScrollableScrollPhysics(),
-//       // disable scroll if inside another scroll
-//       itemCount: title.length,
-//       padding: const EdgeInsets.symmetric(horizontal: 24),
-//       itemBuilder: (context, index) {
-//         return Padding(
-//           padding: const EdgeInsets.symmetric(vertical: 4),
-//           child: Row(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               SizedBox(
-//                 width: MediaQuery.of(context).size.width / 2.2,
-//                 child: Text(
-//                   title[index],
-//                   overflow: TextOverflow.ellipsis,
-//                   style: TextStyle(
-//                     fontSize: 12,
-//                     fontWeight: FontWeight.w500,
-//                     color: Colors.grey[600],
-//                   ),
-//                 ),
-//               ),
-//               const SizedBox(width: 4),
-//               Expanded(
-//                 child: Text(
-//                   data[index],
-//                   overflow: TextOverflow.ellipsis,
-//                   style: const TextStyle(
-//                     fontSize: 12,
-//                     fontWeight: FontWeight.w600,
-//                     color: Colors.black,
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
-
-// class Details extends StatelessWidget {
-//   final Items property;
-
-//   const Details({super.key, required this.property});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final manager = PropertyDetailManager(property);
-//     final details = manager.getDetails(); // Returns List<Map<String, String>>
-
-//     return ListView.builder(
-//       shrinkWrap: true,
-//       physics: const NeverScrollableScrollPhysics(),
-//       padding: const EdgeInsets.symmetric(horizontal: 24),
-//       itemCount: details.length,
-//       itemBuilder: (context, index) {
-//         final entry = details[index];
-//         final title = entry.keys.first;
-//         final value = entry.values.first;
-
-//         return Padding(
-//           padding: const EdgeInsets.symmetric(vertical: 4),
-//           child: Row(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               SizedBox(
-//                 width: MediaQuery.of(context).size.width / 2.2,
-//                 child: Text(
-//                   title,
-//                   overflow: TextOverflow.ellipsis,
-//                   style: TextStyle(
-//                     fontSize: 12,
-//                     fontWeight: FontWeight.w500,
-//                     color: Colors.grey[600],
-//                   ),
-//                 ),
-//               ),
-//               const SizedBox(width: 4),
-//               Expanded(
-//                 child: Text(
-//                   value,
-//                   overflow: TextOverflow.ellipsis,
-//                   style: const TextStyle(
-//                     fontSize: 12,
-//                     fontWeight: FontWeight.w600,
-//                     color: Colors.black,
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
 
 class Details extends StatelessWidget {
   final Items property;
@@ -2067,7 +1994,9 @@ class OwnerInformation extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 40),
                 backgroundColor:
-                    controller.isDeveloper.value ? ColorRes.white : ColorRes.white,
+                    controller.isDeveloper.value
+                        ? ColorRes.white
+                        : ColorRes.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   side: BorderSide(

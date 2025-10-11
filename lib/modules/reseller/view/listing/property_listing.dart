@@ -1659,18 +1659,54 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/model/reseller_lead_model/reseller_lead_overview.dart';
+import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../app/manager/property/property_name_manager.dart';
+import '../../../../app/manager/property/property_pricemanager.dart';
+import '../../../../app/manager/property_highlight_manager.dart';
+import '../../../../data/network/property/models/property_model.dart';
+import '../../../seller/view/widget/property_overview_seller.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../lead/lead_screen.dart';
 import '../lead_overview/lead_detail.dart';
 import '../report/report_screen.dart';
 
-class ProductListingScreen extends StatelessWidget {
+const String reseller = "ReSeller";
+
+class ProductListingScreen extends StatefulWidget {
+  ProductListingScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ProductListingScreen> createState() => _ProductListingScreenState();
+}
+
+class _ProductListingScreenState extends State<ProductListingScreen> {
   final DashboardController controller = Get.put(DashboardController());
 
-  ProductListingScreen({Key? key}) : super(key: key);
+  final PropertyController propertyController = Get.put(
+    PropertyController(),
+    tag: reseller,
+  );
+
+  @override
+  void initState() {
+    fetchResellerAssignProperty();
+    super.initState();
+  }
+
+  Future<void> fetchResellerAssignProperty() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? '';
+    if (user != null) {
+      final filter = {"assignedTo": userId};
+      propertyController.applyFilters(filter);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1734,7 +1770,7 @@ class ProductListingScreen extends StatelessWidget {
           // Sort Button
           Container(
             height: 35,
-            margin: EdgeInsets.only(right: 12,),
+            margin: EdgeInsets.only(right: 12),
             padding: EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: Colors.grey[100],
@@ -1754,7 +1790,7 @@ class ProductListingScreen extends StatelessWidget {
               offset: Offset(0, 40),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: Colors.grey.shade300,width: 0.7)
+                side: BorderSide(color: Colors.grey.shade300, width: 0.7),
               ),
               elevation: 8,
               itemBuilder:
@@ -1840,196 +1876,230 @@ class ProductListingScreen extends StatelessWidget {
           // Active Filters Display
           // Replace the Active Filters Display section in your ProductListingScreen
 
-// Active Filters Display - UPDATED VERSION
+          // Active Filters Display - UPDATED VERSION
           Obx(() {
             bool hasPriceFilter =
                 controller.filterMinPrice.value > controller.minPrice.value ||
-                    controller.filterMaxPrice.value < controller.maxPrice.value;
+                controller.filterMaxPrice.value < controller.maxPrice.value;
 
-            bool hasCategoryFilter = controller.selectedProductCategories.isNotEmpty;
+            bool hasCategoryFilter =
+                controller.selectedProductCategories.isNotEmpty;
 
             bool hasActiveFilters = hasCategoryFilter || hasPriceFilter;
 
             return hasActiveFilters
                 ? Container(
-              color: ColorRes.white,
-              padding: EdgeInsets.symmetric(
-                horizontal: getResponsivePadding(context),
-                vertical: 8,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+                  color: ColorRes.white,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: getResponsivePadding(context),
+                    vertical: 8,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Active Filters:',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.small,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      const Spacer(),
-                      TextButton.icon(
-                        onPressed: () {
-                          controller.clearFilters();
-
-                          controller.selectedProductCategories.addAll([]);
-
-                        },
-
-                        label: Text(
-                          'Clear All',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            color: ColorRes.primary,
-                            fontWeight: AppFontWeights.medium,
+                      Row(
+                        children: [
+                          Text(
+                            'Active Filters:',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: Colors.grey[700],
+                            ),
                           ),
-                        ),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          const Spacer(),
+                          TextButton.icon(
+                            onPressed: () {
+                              controller.clearFilters();
+
+                              controller.selectedProductCategories.addAll([]);
+                            },
+
+                            label: Text(
+                              'Clear All',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.primary,
+                                fontWeight: AppFontWeights.medium,
+                              ),
+                            ),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 36,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            // Category filters
+                            ...controller.selectedProductCategories.map((
+                              category,
+                            ) {
+                              return Container(
+                                margin: EdgeInsets.only(right: 8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: ColorRes.primary.withOpacity(0.1),
+                                  border: Border.all(
+                                    color: ColorRes.primary.withOpacity(0.3),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        category,
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          color: ColorRes.primary,
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      InkWell(
+                                        onTap: () {
+                                          controller.selectedProductCategories
+                                              .remove(category);
+                                          controller.applyFilters();
+                                        },
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 14,
+                                            color: ColorRes.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+
+                            // Price filter
+                            if (hasPriceFilter)
+                              Container(
+                                margin: EdgeInsets.only(right: 8),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.primary.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: ColorRes.primary.withOpacity(0.3),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '${Formatter.formatPrice(controller.filterMinPrice.value)} - ${Formatter.formatPrice(controller.filterMaxPrice.value)}',
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          color: ColorRes.primary,
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      InkWell(
+                                        onTap: () {
+                                          controller.updatePriceRange(
+                                            controller.minPrice.value,
+                                            controller.maxPrice.value,
+                                          );
+                                          controller.applyFilters();
+                                        },
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 14,
+                                            color: ColorRes.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 36,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        // Category filters
-                        ...controller.selectedProductCategories.map((category) {
-                          return Container(
-                            margin: EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: ColorRes.primary.withOpacity(0.1),
-                              border: Border.all(
-                                color: ColorRes.primary.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-
-                                  Text(
-                                    category,
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.small,
-                                      color: ColorRes.primary,
-                                      fontWeight: AppFontWeights.semiBold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  InkWell(
-                                    onTap: () {
-                                      controller.selectedProductCategories.remove(category);
-                                      controller.applyFilters();
-                                    },
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(2),
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 14,
-                                        color: ColorRes.primary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }).toList(),
-
-                        // Price filter
-                        if (hasPriceFilter)
-                          Container(
-                            margin: EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              color: ColorRes.primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: ColorRes.primary.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    '${Formatter.formatPrice(controller.filterMinPrice.value)} - ${Formatter.formatPrice(controller.filterMaxPrice.value)}',
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.small,
-                                      color: ColorRes.primary,
-                                      fontWeight: AppFontWeights.semiBold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  InkWell(
-                                    onTap: () {
-                                      controller.updatePriceRange(
-                                        controller.minPrice.value,
-                                        controller.maxPrice.value,
-                                      );
-                                      controller.applyFilters();
-                                    },
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(2),
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 14,
-                                        color: ColorRes.primary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
+                )
                 : SizedBox.shrink();
           }),
 
           // Products Grid
+          // Expanded(
+          //   child: Obx(() {
+          //     if (controller.isLoading.value) {
+          //       return Center(
+          //         child: CircularProgressIndicator(color: ColorRes.primary),
+          //       );
+          //     }
+          //
+          //     if (controller.error.value.isNotEmpty) {
+          //       return ErrorWidgetCustom();
+          //     }
+          //
+          //     if (controller.filteredProducts.isEmpty) {
+          //       return EmptyStateWidget();
+          //     }
+          //
+          //     return ProductsGrid();
+          //   }),
+          // ),
           Expanded(
             child: Obx(() {
-              if (controller.isLoading.value) {
+              if (propertyController.isLoading.value) {
                 return Center(
                   child: CircularProgressIndicator(color: ColorRes.primary),
                 );
               }
 
-              if (controller.error.value.isNotEmpty) {
+              if (!propertyController.isLoading.value &&
+                  propertyController.items.isEmpty) {
                 return ErrorWidgetCustom();
               }
 
-              if (controller.filteredProducts.isEmpty) {
-                return EmptyStateWidget();
-              }
+              // if (propertyController.filteredProducts.isEmpty) {
+              //   return EmptyStateWidget();
+              // }
 
-              return ProductsGrid();
+              return NotificationListener<ScrollEndNotification>(
+                onNotification: (scrollEnd) {
+                  final metrics = scrollEnd.metrics;
+                  if (metrics.atEdge && metrics.pixels != 0) {
+                    propertyController.loadMore();
+                  }
+                  return false;
+                },
+                child: RefreshIndicator(
+                  onRefresh: propertyController.refreshList,
+                  child: ProductsGrid(),
+                ),
+              );
             }),
           ),
         ],
@@ -2043,7 +2113,11 @@ class ProductListingScreen extends StatelessWidget {
       child: Chip(
         label: Text(
           label,
-          style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.primary,fontWeight: AppFontWeights.semiBold,),
+          style: TextStyle(
+            fontSize: AppFontSizes.small,
+            color: ColorRes.primary,
+            fontWeight: AppFontWeights.semiBold,
+          ),
         ),
         deleteIcon: Icon(
           Icons.close_rounded,
@@ -2072,13 +2146,13 @@ class ProductListingScreen extends StatelessWidget {
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.08),
-              border: Border.all(width: 1,color: color.withOpacity(0.3)),
+              border: Border.all(width: 1, color: color.withOpacity(0.3)),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 15, color: color),
           ),
           SizedBox(width: 12),
-          Text(text, style: TextStyle(fontSize: 11,)),
+          Text(text, style: TextStyle(fontSize: 11)),
         ],
       ),
     );
@@ -2102,9 +2176,8 @@ class _FilterPanelState extends State<FilterPanel> {
   void initState() {
     super.initState();
 
-    tempSelectedCategories = <String>[
-      ...controller.selectedProductCategories
-    ].obs;
+    tempSelectedCategories =
+        <String>[...controller.selectedProductCategories].obs;
 
     // FIX: Ensure we use the actual filter values, not uninitialized ones
     tempMinPrice = controller.filterMinPrice.value;
@@ -2129,7 +2202,6 @@ class _FilterPanelState extends State<FilterPanel> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-
           Container(
             margin: EdgeInsets.only(top: 12),
             width: 40,
@@ -2176,7 +2248,7 @@ class _FilterPanelState extends State<FilterPanel> {
                           color: Colors.red[400],
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 SizedBox(height: 24),
@@ -2208,56 +2280,64 @@ class _FilterPanelState extends State<FilterPanel> {
                   ],
                 ),
                 SizedBox(height: 12),
-                Obx(() => Wrap(
-                  spacing: 8,
-                  runSpacing: -4,
-                  children: controller.categories
-                      .where((cat) => cat != 'All')
-                      .map((category) {
-                    bool isSelected = tempSelectedCategories.contains(category);
-                    return FilterChip(
-                      label: Text(
-                        category,
-                        style: TextStyle(fontSize: AppFontSizes.caption),
-                      ),
-                      selected: isSelected,
-                      onSelected: (_) {
-                        setState(() {
-                          if (isSelected) {
-                            tempSelectedCategories.remove(category);
-                          } else {
-                            tempSelectedCategories.add(category);
-                          }
-                        });
-                      },
-                      backgroundColor: Colors.grey[100],
-                      checkmarkColor: ColorRes.primary,
-                      selectedColor: ColorRes.primary.withOpacity(0.15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(
-                          color: isSelected
-                              ? ColorRes.primary
-                              : Colors.grey[300]!,
-                          width: 1,
-                        ),
-                      ),
-                      labelStyle: TextStyle(
-                        color: isSelected
-                            ? ColorRes.primary
-                            : Colors.black87,
-                        fontWeight: isSelected
-                            ? AppFontWeights.semiBold
-                            : AppFontWeights.regular,
-                        fontSize: AppFontSizes.small,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    );
-                  }).toList(),
-                )),
+                Obx(
+                  () => Wrap(
+                    spacing: 8,
+                    runSpacing: -4,
+                    children:
+                        controller.categories.where((cat) => cat != 'All').map((
+                          category,
+                        ) {
+                          bool isSelected = tempSelectedCategories.contains(
+                            category,
+                          );
+                          return FilterChip(
+                            label: Text(
+                              category,
+                              style: TextStyle(fontSize: AppFontSizes.caption),
+                            ),
+                            selected: isSelected,
+                            onSelected: (_) {
+                              setState(() {
+                                if (isSelected) {
+                                  tempSelectedCategories.remove(category);
+                                } else {
+                                  tempSelectedCategories.add(category);
+                                }
+                              });
+                            },
+                            backgroundColor: Colors.grey[100],
+                            checkmarkColor: ColorRes.primary,
+                            selectedColor: ColorRes.primary.withOpacity(0.15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(
+                                color:
+                                    isSelected
+                                        ? ColorRes.primary
+                                        : Colors.grey[300]!,
+                                width: 1,
+                              ),
+                            ),
+                            labelStyle: TextStyle(
+                              color:
+                                  isSelected
+                                      ? ColorRes.primary
+                                      : Colors.black87,
+                              fontWeight:
+                                  isSelected
+                                      ? AppFontWeights.semiBold
+                                      : AppFontWeights.regular,
+                              fontSize: AppFontSizes.small,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          );
+                        }).toList(),
+                  ),
+                ),
                 SizedBox(height: 24),
 
                 // Price Range Filter Section
@@ -2396,19 +2476,23 @@ class _FilterPanelState extends State<FilterPanel> {
                       onPressed: () {
                         // Apply all filters to controller
                         controller.selectedProductCategories.clear();
-                        controller.selectedProductCategories.addAll(tempSelectedCategories);
+                        controller.selectedProductCategories.addAll(
+                          tempSelectedCategories,
+                        );
                         controller.updatePriceRange(tempMinPrice, tempMaxPrice);
                         controller.applyFilters();
                         Navigator.pop(context);
                       },
-                      child: Obx(() => Text(
-                        'Apply Filters (${tempSelectedCategories.length})',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: ColorRes.white,
+                      child: Obx(
+                        () => Text(
+                          'Apply Filters (${tempSelectedCategories.length})',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: ColorRes.white,
+                          ),
                         ),
-                      )),
+                      ),
                     ),
                   ),
                 ),
@@ -2449,12 +2533,13 @@ class _FilterPanelState extends State<FilterPanel> {
 
 class ProductsGrid extends StatelessWidget {
   final DashboardController controller = Get.find();
+  final PropertyController propertyController = Get.find(tag: reseller);
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       // Use the already filtered products from controller
-      final displayProducts = controller.filteredProducts;
+      final displayProducts = propertyController.items.value;
 
       if (displayProducts.isEmpty) {
         return Center(
@@ -2474,10 +2559,7 @@ class ProductsGrid extends StatelessWidget {
               SizedBox(height: 8),
               Text(
                 'Try adjusting your filters',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[500],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[500]),
               ),
             ],
           ),
@@ -2499,12 +2581,17 @@ class ProductsGrid extends StatelessWidget {
 }
 
 class ProductCard extends StatelessWidget {
-  final ResellerLeadOverview product;
+  final Items product;
 
   const ProductCard({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final manager = PropertyNameManager(product);
+    final priceManager = PropertyPriceManager(
+      listingType: product.listingType ?? 'sale',
+      financialInfo: product.propertyDetails?.financialInfo,
+    );
     return Material(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
@@ -2513,9 +2600,8 @@ class ProductCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          Get.to(()=>LeadDetailScreen(lead: product,
-
-          ));
+          Get.to(() => LeadDetailScreen(property: product));
+          // Get.to(() => PropertyOverviewSellerScreen(property: product));
         },
         child: Container(
           height: 120,
@@ -2526,10 +2612,24 @@ class ProductCard extends StatelessWidget {
           child: Row(
             children: [
               // Image Section
+              // ClipRRect(
+              //   borderRadius: BorderRadius.horizontal(
+              //     left: Radius.circular(11),
+              //   ),
+              //   child: Image.network(
+              //     'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800',
+              //     width: 110,
+              //     height: 121,
+              //     fit: BoxFit.cover,
+              //   ),
+              // ),
               ClipRRect(
-                borderRadius: BorderRadius.horizontal(left: Radius.circular(11)),
-                child: Image.network(
-                  'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800',
+                borderRadius: BorderRadius.horizontal(
+                  left: Radius.circular(11),
+                ),
+                child: CustomImage(
+                  type: CustomImageType.network,
+                  src: product.propertyMedia?.images?.first,
                   width: 110,
                   height: 121,
                   fit: BoxFit.cover,
@@ -2548,7 +2648,7 @@ class ProductCard extends StatelessWidget {
                       SizedBox(
                         width: 180,
                         child: Text(
-                          '${product.customFields.builderName}',
+                          '${manager.displayName}',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -2560,15 +2660,15 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
 
-                      SizedBox(height: 6),
+                      // SizedBox(height: 6),
+                      Spacer(),
 
                       // Address with icon
                       Row(
                         children: [
-
                           Expanded(
                             child: Text(
-                              product.customFields.address,
+                              product.address ?? 'No address provided',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: Colors.grey[600],
@@ -2581,29 +2681,30 @@ class ProductCard extends StatelessWidget {
                         ],
                       ),
 
-                      SizedBox(height: 8),
+                      // SizedBox(height: 8),
+                      Spacer(),
 
                       // Features Row
-                      Row(
-                        children: [
-                          _buildFeature(
-                            Icons.bed_outlined,
-                            '${product.customFields.propertyDetails.furnishInfo.furnishDetails.bed}',
-                          ),
-                          SizedBox(width: 14),
-                          _buildFeature(
-                            Icons.square_foot,
-                            '${product.customFields.propertyDetails.propertyBuiltUpArea}',
-                          ),
-                          SizedBox(width: 14),
-                          _buildFeature(
-                            Icons.meeting_room_outlined,
-                            '${product.customFields.propertyDetails.bhk}',
-                          ),
-                        ],
-                      ),
-
-
+                      // Row(
+                      //   children: [
+                      //     _buildFeature(
+                      //       Icons.bed_outlined,
+                      //       '${product.customFields.propertyDetails.furnishInfo.furnishDetails.bed}',
+                      //     ),
+                      //     SizedBox(width: 14),
+                      //     _buildFeature(
+                      //       Icons.square_foot,
+                      //       '${product.customFields.propertyDetails.propertyBuiltUpArea}',
+                      //     ),
+                      //     SizedBox(width: 14),
+                      //     _buildFeature(
+                      //       Icons.meeting_room_outlined,
+                      //       '${product.customFields.propertyDetails.bhk}',
+                      //     ),
+                      //   ],
+                      // ),
+                      Facilities(property: product),
+                      Spacer(),
 
                       // Price and Visit Button Row
                       Row(
@@ -2612,7 +2713,7 @@ class ProductCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              '${Formatter.formatPrice(product.customFields.propertyDetails.financialInfo.propertyPrice)}',
+                              '${priceManager.displayPrice}',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
@@ -2674,6 +2775,56 @@ class ProductCard extends StatelessWidget {
   }
 }
 
+class Facilities extends StatelessWidget {
+  final Items property;
+
+  const Facilities({super.key, required this.property});
+
+  @override
+  Widget build(BuildContext context) {
+    final highlights = PropertyHighlightManager(property).getHighlights();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(highlights.length > 3 ? 3 : highlights.length, (
+          index,
+        ) {
+          final item = highlights[index];
+
+          return Row(
+            children: [
+              if (index != 0) ...[
+                const Text('  •', style: TextStyle(fontSize: 10)),
+                const SizedBox(width: 6),
+              ],
+              _buildChip(item.value, 13, icon: item.icon),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildChip(String text, double size, {IconData? icon}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (icon != null)
+          Icon(icon, size: size, color: const Color(0xFF2563EB)),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: Colors.black54,
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 // class ProductCard extends StatelessWidget {
 //   final ResellerLeadOverview product;
@@ -2891,18 +3042,6 @@ class ProductCard extends StatelessWidget {
 //     );
 //   }
 // }
-
-
-
-
-
-
-
-
-
-
-
-
 
 class ErrorWidgetCustom extends StatelessWidget {
   final DashboardController controller = Get.find();

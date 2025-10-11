@@ -505,36 +505,74 @@ class _PropertyCardState extends State<PropertyCard> {
   }
 }
 
+// class Facilities extends StatelessWidget {
+//   final Items property;
+//   final Color bgColor;
+//   final Color txtColor;
+//
+//   Facilities({
+//     super.key,
+//     required this.property,
+//     this.bgColor = const Color(0xFFDBEAFE),
+//     this.txtColor = const Color(0xFF2563EB),
+//   });
+//
+//   // Map detail keys to icons
+//   final Map<String, IconData> iconMap = {
+//     "BHK": Icons.bed,
+//     "Furnishing": Icons.chair_alt,
+//     "Built-up Area": Icons.zoom_out_map_outlined,
+//     "Carpet Area": Icons.square_foot,
+//     "Floor": Icons.layers_outlined,
+//     "Age of Property": Icons.date_range,
+//     "Rent": Icons.attach_money,
+//     "Price": Icons.price_change,
+//     "Possession": Icons.home_work,
+//     "Amenities": Icons.checklist_rtl,
+//     "Parking": Icons.local_parking,
+//     "Facing": Icons.explore,
+//     "Condition": Icons.handyman,
+//     "Room Type": Icons.meeting_room,
+//     // Add more mappings if needed
+//   };
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final highlights = PropertyHighlightManager(property).getHighlights();
+//
+//     return SingleChildScrollView(
+//       scrollDirection: Axis.horizontal,
+//       child: Row(
+//         children: List.generate(highlights.length > 3 ? 3 : highlights.length, (
+//           index,
+//         ) {
+//           final item = highlights[index];
+//           final key = item.keys.first;
+//           final value = item.values.first;
+//           final icon = iconMap[key];
+//
+//           return Row(
+//             children: [
+//               if (index != 0) ...[
+//                 const Text('  •', style: TextStyle(fontSize: 10)),
+//                 const SizedBox(width: 6),
+//               ],
+//               _buildChip(
+//                 value.toString(),
+//                 16, // icon size
+//                 icon: icon,
+//               ),
+//             ],
+//           );
+//         }),
+//       ),
+//     );
+//   }
+
 class Facilities extends StatelessWidget {
   final Items property;
-  final Color bgColor;
-  final Color txtColor;
 
-  Facilities({
-    super.key,
-    required this.property,
-    this.bgColor = const Color(0xFFDBEAFE),
-    this.txtColor = const Color(0xFF2563EB),
-  });
-
-  // Map detail keys to icons
-  final Map<String, IconData> iconMap = {
-    "BHK": Icons.bed,
-    "Furnishing": Icons.chair_alt,
-    "Built-up Area": Icons.zoom_out_map_outlined,
-    "Carpet Area": Icons.square_foot,
-    "Floor": Icons.layers_outlined,
-    "Age of Property": Icons.date_range,
-    "Rent": Icons.attach_money,
-    "Price": Icons.price_change,
-    "Possession": Icons.home_work,
-    "Amenities": Icons.checklist_rtl,
-    "Parking": Icons.local_parking,
-    "Facing": Icons.explore,
-    "Condition": Icons.handyman,
-    "Room Type": Icons.meeting_room,
-    // Add more mappings if needed
-  };
+  const Facilities({super.key, required this.property});
 
   @override
   Widget build(BuildContext context) {
@@ -547,9 +585,6 @@ class Facilities extends StatelessWidget {
           index,
         ) {
           final item = highlights[index];
-          final key = item.keys.first;
-          final value = item.values.first;
-          final icon = iconMap[key];
 
           return Row(
             children: [
@@ -557,11 +592,7 @@ class Facilities extends StatelessWidget {
                 const Text('  •', style: TextStyle(fontSize: 10)),
                 const SizedBox(width: 6),
               ],
-              _buildChip(
-                value.toString(),
-                16, // icon size
-                icon: icon,
-              ),
+              _buildChip(item.value, 16, icon: item.icon),
             ],
           );
         }),

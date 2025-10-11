@@ -607,6 +607,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../app/constants/color_res.dart';
+import '../../../../data/network/property/models/property_model.dart';
 import '../../../../utils/global.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
@@ -625,10 +626,10 @@ class DashboardController extends GetxController {
 
   final RxList<Lead> recentLeads = <Lead>[].obs;
   final RxList<Product> topProducts = <Product>[].obs;
-  final RxList<ResellerLeadOverview> _allProducts = <ResellerLeadOverview>[]
-      .obs;
-  final RxList<ResellerLeadOverview> filteredProducts = <ResellerLeadOverview>[]
-      .obs;
+  final RxList<ResellerLeadOverview> _allProducts =
+      <ResellerLeadOverview>[].obs;
+  final RxList<ResellerLeadOverview> filteredProducts =
+      <ResellerLeadOverview>[].obs;
   final RxString searchQuery = ''.obs;
   final RxString selectedCategory = 'All'.obs;
   final RxString selectedCategoryInLead = "All".obs;
@@ -646,19 +647,19 @@ class DashboardController extends GetxController {
   final messageController = TextEditingController();
 
   // Categories
-  final RxList<String> categories = <String>[
-    'All',
-    'Apartment',
-    'Villa',
-    'Plot',
-    'Independent Floor',
-    'Showroom',
+  final RxList<String> categories =
+      <String>[
+        'All',
+        'Apartment',
+        'Villa',
+        'Plot',
+        'Independent Floor',
+        'Showroom',
 
-    'Independent House',
-    'Penthouse',
-    'Office',
-  ].obs;
-
+        'Independent House',
+        'Penthouse',
+        'Office',
+      ].obs;
 
   @override
   void onInit() {
@@ -741,10 +742,10 @@ class DashboardController extends GetxController {
   // Filter and Search Methods
   List<Lead> getFilteredLeads() {
     List<Lead> filtered =
-    recentLeads.where((lead) {
-      // Search filter
-      bool matchesSearch =
-          searchQuery.value.isEmpty ||
+        recentLeads.where((lead) {
+          // Search filter
+          bool matchesSearch =
+              searchQuery.value.isEmpty ||
               lead.name.toLowerCase().contains(
                 searchQuery.value.toLowerCase(),
               ) ||
@@ -755,51 +756,50 @@ class DashboardController extends GetxController {
                 searchQuery.value.toLowerCase(),
               );
 
-      // Multi-filter selection logic
-      bool matchesFilters = true;
+          // Multi-filter selection logic
+          bool matchesFilters = true;
 
-      if (selectedLeadFilters.isNotEmpty) {
-        // Separate stage and status filters
-        final stageFilters =
-        selectedLeadFilters
-            .where((f) => f.startsWith('Stage:'))
-            .map((f) => f.split(':')[1].trim())
-            .toList();
+          if (selectedLeadFilters.isNotEmpty) {
+            // Separate stage and status filters
+            final stageFilters =
+                selectedLeadFilters
+                    .where((f) => f.startsWith('Stage:'))
+                    .map((f) => f.split(':')[1].trim())
+                    .toList();
 
-        final statusFilters =
-        selectedLeadFilters
-            .where((f) => f.startsWith('Status:'))
-            .map((f) => f.split(':')[1].trim())
-            .toList();
+            final statusFilters =
+                selectedLeadFilters
+                    .where((f) => f.startsWith('Status:'))
+                    .map((f) => f.split(':')[1].trim())
+                    .toList();
 
-        bool matchesStage =
-            stageFilters.isEmpty; // Default true if no stage filters
-        bool matchesStatus =
-            statusFilters.isEmpty; // Default true if no status filters
+            bool matchesStage =
+                stageFilters.isEmpty; // Default true if no stage filters
+            bool matchesStatus =
+                statusFilters.isEmpty; // Default true if no status filters
 
-        // Get lead's stage and status text
-        final leadStageText = _getStageText(lead.stage);
-        final leadStatusText = _getStatusText(lead.status);
+            // Get lead's stage and status text
+            final leadStageText = _getStageText(lead.stage);
+            final leadStatusText = _getStatusText(lead.status);
 
-        // If stage filters exist, check if lead's stage matches any of them
-        if (stageFilters.isNotEmpty) {
-          matchesStage = stageFilters.contains(leadStageText);
-        }
+            // If stage filters exist, check if lead's stage matches any of them
+            if (stageFilters.isNotEmpty) {
+              matchesStage = stageFilters.contains(leadStageText);
+            }
 
-        // If status filters exist, check if lead's status matches any of them
-        if (statusFilters.isNotEmpty) {
-          matchesStatus = statusFilters.contains(leadStatusText);
-        }
+            // If status filters exist, check if lead's status matches any of them
+            if (statusFilters.isNotEmpty) {
+              matchesStatus = statusFilters.contains(leadStatusText);
+            }
 
-        matchesFilters = matchesStage && matchesStatus;
-      }
+            matchesFilters = matchesStage && matchesStatus;
+          }
 
-      return matchesSearch && matchesFilters;
-    }).toList();
+          return matchesSearch && matchesFilters;
+        }).toList();
 
     return filtered;
   }
-
 
   String _getStatusText(LeadStatus status) {
     switch (status) {
@@ -869,7 +869,7 @@ class DashboardController extends GetxController {
           stage: LeadStage.interested,
           // add stage
           notes:
-          'Looking for 3-bed luxury apartment, prefers high floor with city view. Budget flexible.',
+              'Looking for 3-bed luxury apartment, prefers high floor with city view. Budget flexible.',
           createdAt: DateTime.now().subtract(const Duration(hours: 3)),
         ),
         Lead(
@@ -884,7 +884,7 @@ class DashboardController extends GetxController {
           property: 'Spacious 4BHK Apartment with City View',
           stage: LeadStage.siteVisit,
           notes:
-          'Interested in RedStone Station property. Submitted offer, awaiting seller response.',
+              'Interested in RedStone Station property. Submitted offer, awaiting seller response.',
           createdAt: DateTime.now().subtract(const Duration(hours: 6)),
         ),
         Lead(
@@ -898,7 +898,7 @@ class DashboardController extends GetxController {
           status: LeadStatus.contacted,
           stage: LeadStage.contacted,
           notes:
-          'First-time buyer, needs mortgage assistance. Showed 2 properties, following up.',
+              'First-time buyer, needs mortgage assistance. Showed 2 properties, following up.',
           createdAt: DateTime.now().subtract(const Duration(days: 1)),
         ),
         Lead(
@@ -913,7 +913,7 @@ class DashboardController extends GetxController {
           property: 'Sea-facing 3BHK Apartment',
           stage: LeadStage.newLead,
           notes:
-          'High-value prospect, wants 4+ bed penthouse. Urgent - relocating in 2 months.',
+              'High-value prospect, wants 4+ bed penthouse. Urgent - relocating in 2 months.',
           createdAt: DateTime.now().subtract(const Duration(hours: 12)),
         ),
         Lead(
@@ -927,7 +927,7 @@ class DashboardController extends GetxController {
           stage: LeadStage.siteVisit,
           property: 'Modern 2BHK Flat near IT Park',
           notes:
-          'Shown Blue Lagoon House, very interested. Ready for site visit this weekend.',
+              'Shown Blue Lagoon House, very interested. Ready for site visit this weekend.',
           createdAt: DateTime.now().subtract(const Duration(days: 2)),
         ),
         Lead(
@@ -942,7 +942,7 @@ class DashboardController extends GetxController {
           stage: LeadStage.sell,
           property: '4BHK Penthouse with Private Terrace',
           notes:
-          'Deal closed! Purchased City Loft Apartment. Payment received, closing scheduled.',
+              'Deal closed! Purchased City Loft Apartment. Payment received, closing scheduled.',
           createdAt: DateTime.now().subtract(const Duration(days: 4)),
         ),
         Lead(
@@ -957,7 +957,7 @@ class DashboardController extends GetxController {
           property: '3BHK Luxury Flat with Park View',
           stage: LeadStage.siteVisit,
           notes:
-          'Negotiating on Hilltop Mansion. Counter-offer submitted. High probability close.',
+              'Negotiating on Hilltop Mansion. Counter-offer submitted. High probability close.',
           createdAt: DateTime.now().subtract(const Duration(days: 3)),
         ),
         Lead(
@@ -971,7 +971,7 @@ class DashboardController extends GetxController {
           property: 'Affordable 1BHK Studio Apartment',
           stage: LeadStage.contacted,
           notes:
-          'Young professional, interested in modern lofts. Scheduled viewing next Tuesday.',
+              'Young professional, interested in modern lofts. Scheduled viewing next Tuesday.',
           createdAt: DateTime.now().subtract(const Duration(hours: 18)),
         ),
       ];
@@ -1049,293 +1049,6 @@ class DashboardController extends GetxController {
   }
 
   final List<ResellerLeadOverview> dummyResellerLeads = [
-    // ───── Existing Leads ─────
-    ResellerLeadOverview(
-      id: "wZuCaH0VeeY2MmHGfDsl7Xu",
-      createdBy: "Dn6Qh1b5eErAyjNUR8feRWC",
-      updatedBy: "Agent123",
-      name: "John Doe",
-      email: "john.doe@example.com",
-      phone: "9876543210",
-      propertyId: "PcXNBFWtmuCNN1mpFbjeeZn",
-      resellerId: "T3PWXm5AlA7XUEP1Iv5EK2v",
-      source: "direct",
-      status: "new",
-      stage: "new_lead",
-      notes: "Interested in scheduling a site visit next week",
-      lastContactedAt: DateTime.parse("2025-09-28T15:30:00.000Z"),
-      isFake: false,
-      fakeReason: "",
-      markedFakeBy: "",
-      markedFakeAt: DateTime.parse("2025-09-26T11:48:01.000Z"),
-      customFields: ResellerLeadCustomFields(
-        city: "Udaipur",
-        type: "residential",
-        state: "Rajasthan",
-        title: "Luxury Lakeside Villa with Private Pool",
-        address: "42 Lake View Road, Villa Enclave",
-        zipCode: "313001",
-        builderName: "Prestige Luxury Homes",
-        listingType: "Sell",
-        projectName: "Lake Shore Villas",
-        propertyType: "villa",
-        propertyDetails: ResellerLeadPropertyDetails(
-          bhk: 5,
-          balcony: 3,
-          bathroom: 6,
-          amenities: [
-            "Swimming Pool",
-            "Garden",
-            "Security",
-            "Gym",
-            "Home Theater",
-            "BBQ Area",
-          ],
-          zoneType: "Residential",
-          floorInfo: ResellerLeadFloorInfo(floorNumber: 0, totalFloors: 2),
-          furnishInfo: ResellerLeadFurnishInfo(
-            furnishType: "fully-furnished",
-            furnishDetails: ResellerLeadFurnishDetails(
-              bed: 5,
-              fan: 10,
-              other: "Home theater, Wine cellar, Library",
-              balcony: true,
-              kitchen: true,
-              bathroom: true,
-            ),
-          ),
-          parkingInfo: ResellerLeadParkingInfo(
-            openParking: true,
-            coveredParking: true,
-          ),
-          ///jhgfrehgki
-          financialInfo: ResellerLeadFinancialInfo(
-            negotiable: true,
-            propertyPrice: 65000000,
-            brokerCommission: 200000,
-          ),
-          possessionInfo: ResellerLeadPossessionInfo(
-            possessionStatus: "Ready to Move",
-            propertyAgeInYears: 2,
-          ),
-          propertyFacing: "East",
-          propertyCondition: "ready-to-move",
-          propertyCarpetArea: 4500,
-          propertyBuiltUpArea: 5800,
-        ),
-      ),
-      createdAt: DateTime.parse("2025-09-26T11:48:01.000Z"),
-      updatedAt: DateTime.parse("2025-09-26T11:48:01.000Z"),
-    ),
-    ResellerLeadOverview(
-      id: "XyZaB1C2dEfG3HiJkLmnOp",
-      createdBy: "AbCdEfGhIjKlMnOpQrStUv",
-      updatedBy: null,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      phone: "9123456780",
-      propertyId: "QrStUvWxYz1234567890",
-      resellerId: "LmNoPqRsTuVwXyZaBcDeF",
-      source: "referral",
-      status: "contacted",
-      stage: "follow_up",
-      notes: "Interested in villa with garden",
-      lastContactedAt: DateTime.parse("2025-09-28T10:30:00.000Z"),
-      isFake: false,
-      fakeReason: null,
-      markedFakeBy: null,
-      markedFakeAt: null,
-      customFields: ResellerLeadCustomFields(
-        city: "Jaipur",
-        type: "residential",
-        state: "Rajasthan",
-        title: "Spacious 4BHK Apartment with City View",
-        address: "101 City Center, Jaipur",
-        zipCode: "302001",
-        builderName: "Royal Estates",
-        listingType: "Sell",
-        projectName: "Royal Heights",
-        propertyType: "apartment",
-        propertyDetails: ResellerLeadPropertyDetails(
-          bhk: 4,
-          balcony: 2,
-          bathroom: 4,
-          amenities: ["Gym", "Swimming Pool", "Clubhouse", "Parking"],
-          zoneType: "Residential",
-          floorInfo: ResellerLeadFloorInfo(floorNumber: 3, totalFloors: 10),
-          furnishInfo: ResellerLeadFurnishInfo(
-            furnishType: "semi-furnished",
-            furnishDetails: ResellerLeadFurnishDetails(
-              bed: 4,
-              fan: 6,
-              other: "Modular Kitchen, Wardrobes",
-              balcony: true,
-              kitchen: true,
-              bathroom: true,
-            ),
-          ),
-          parkingInfo: ResellerLeadParkingInfo(
-            openParking: true,
-            coveredParking: false,
-          ),
-          financialInfo: ResellerLeadFinancialInfo(
-            negotiable: false,
-            propertyPrice: 35000000,
-            brokerCommission: 150000,
-          ),
-          possessionInfo: ResellerLeadPossessionInfo(
-            possessionStatus: "Under Construction",
-            propertyAgeInYears: 0,
-          ),
-          propertyFacing: "North",
-          propertyCondition: "under-construction",
-          propertyCarpetArea: 2200,
-          propertyBuiltUpArea: 2500,
-        ),
-      ),
-      createdAt: DateTime.parse("2025-09-20T09:00:00.000Z"),
-      updatedAt: DateTime.parse("2025-09-28T10:30:00.000Z"),
-    ),
-
-    // ───── Additional Dummy Leads ─────
-    ResellerLeadOverview(
-      id: "Lead003",
-      createdBy: "Agent789",
-      updatedBy: "Agent456",
-      name: "Rahul Verma",
-      email: "rahul.verma@example.com",
-      phone: "9812345678",
-      propertyId: "Prop003",
-      resellerId: "Reseller003",
-      source: "social_media",
-      status: "negotiating",
-      stage: "proposal_sent",
-      notes: "Client negotiating on price, asked for lower commission",
-      lastContactedAt: DateTime.parse("2025-09-27T12:00:00.000Z"),
-      isFake: false,
-      fakeReason: "",
-      markedFakeBy: "",
-      markedFakeAt: null,
-      customFields: ResellerLeadCustomFields(
-        city: "Delhi",
-        type: "commercial",
-        state: "Delhi",
-        title: "Prime Office Space in Connaught Place",
-        address: "E Block, Connaught Place",
-        zipCode: "110001",
-        builderName: "Metro Builders",
-        listingType: "Lease",
-        projectName: "Metro Towers",
-        propertyType: "office",
-        propertyDetails: ResellerLeadPropertyDetails(
-          bhk: 0,
-          balcony: 0,
-          bathroom: 2,
-          amenities: ["Central AC", "Power Backup", "Conference Room"],
-          zoneType: "Commercial",
-          floorInfo: ResellerLeadFloorInfo(floorNumber: 5, totalFloors: 12),
-          furnishInfo: ResellerLeadFurnishInfo(
-            furnishType: "fully-furnished",
-            furnishDetails: ResellerLeadFurnishDetails(
-              bed: 0,
-              fan: 20,
-              other: "Conference Room Setup",
-              balcony: false,
-              kitchen: false,
-              bathroom: true,
-            ),
-          ),
-          parkingInfo: ResellerLeadParkingInfo(
-            openParking: false,
-            coveredParking: true,
-          ),
-          financialInfo: ResellerLeadFinancialInfo(
-            negotiable: true,
-            propertyPrice: 1200000,
-            brokerCommission: 50000,
-          ),
-          possessionInfo: ResellerLeadPossessionInfo(
-            possessionStatus: "Immediate",
-            propertyAgeInYears: 5,
-          ),
-          propertyFacing: "West",
-          propertyCondition: "ready-to-move",
-          propertyCarpetArea: 3000,
-          propertyBuiltUpArea: 3500,
-        ),
-      ),
-      createdAt: DateTime.parse("2025-09-15T10:00:00.000Z"),
-      updatedAt: DateTime.parse("2025-09-27T12:00:00.000Z"),
-    ),
-    ResellerLeadOverview(
-      id: "Lead004",
-      createdBy: "Agent001",
-      updatedBy: null,
-      name: "Ayesha Khan",
-      email: "ayesha.khan@example.com",
-      phone: "9900112233",
-      propertyId: "Prop004",
-      resellerId: "Reseller004",
-      source: "website",
-      status: "sold",
-      stage: "deal_closed",
-      notes: "Villa sold successfully, awaiting commission",
-      lastContactedAt: DateTime.parse("2025-09-22T18:30:00.000Z"),
-      isFake: false,
-      fakeReason: null,
-      markedFakeBy: null,
-      markedFakeAt: null,
-      customFields: ResellerLeadCustomFields(
-        city: "Mumbai",
-        type: "residential",
-        state: "Maharashtra",
-        title: "Sea-facing 3BHK Apartment",
-        address: "Marine Drive, Mumbai",
-        zipCode: "400001",
-        builderName: "Oceanic Realty",
-        listingType: "Sell",
-        projectName: "Marine Heights",
-        propertyType: "apartment",
-        propertyDetails: ResellerLeadPropertyDetails(
-          bhk: 3,
-          balcony: 2,
-          bathroom: 3,
-          amenities: ["Swimming Pool", "Gym", "Security"],
-          zoneType: "Residential",
-          floorInfo: ResellerLeadFloorInfo(floorNumber: 7, totalFloors: 20),
-          furnishInfo: ResellerLeadFurnishInfo(
-            furnishType: "furnished",
-            furnishDetails: ResellerLeadFurnishDetails(
-              bed: 3,
-              fan: 6,
-              other: "Sea view balcony",
-              balcony: true,
-              kitchen: true,
-              bathroom: true,
-            ),
-          ),
-          parkingInfo: ResellerLeadParkingInfo(
-            openParking: false,
-            coveredParking: true,
-          ),
-          financialInfo: ResellerLeadFinancialInfo(
-            negotiable: false,
-            propertyPrice: 75000000,
-            brokerCommission: 300000,
-          ),
-          possessionInfo: ResellerLeadPossessionInfo(
-            possessionStatus: "Ready to Move",
-            propertyAgeInYears: 1,
-          ),
-          propertyFacing: "South",
-          propertyCondition: "ready-to-move",
-          propertyCarpetArea: 1800,
-          propertyBuiltUpArea: 2200,
-        ),
-      ),
-      createdAt: DateTime.parse("2025-09-10T09:30:00.000Z"),
-      updatedAt: DateTime.parse("2025-09-22T18:30:00.000Z"),
-    ),
     ResellerLeadOverview(
       id: "Lead005",
       createdBy: "Agent999",
@@ -1354,269 +1067,163 @@ class DashboardController extends GetxController {
       fakeReason: null,
       markedFakeBy: null,
       markedFakeAt: null,
-      customFields: ResellerLeadCustomFields(
-        city: "Pune",
+      customFields: Items(
+        id: "prop_001",
+        createdBy: "user_123",
+        updatedBy: "user_456",
+        title: "Luxury 3BHK Apartment in Pune",
         type: "residential",
-        state: "Maharashtra",
-        title: "Modern 2BHK Flat near IT Park",
-        address: "Hinjewadi, Pune",
-        zipCode: "411057",
-        builderName: "TechCity Developers",
-        listingType: "Sell",
-        projectName: "IT Heights",
+        listingType: "Sale",
         propertyType: "apartment",
-        propertyDetails: ResellerLeadPropertyDetails(
-          bhk: 2,
-          balcony: 1,
-          bathroom: 2,
-          amenities: ["Gym", "Security", "Power Backup"],
-          zoneType: "Residential",
-          floorInfo: ResellerLeadFloorInfo(floorNumber: 10, totalFloors: 15),
-          furnishInfo: ResellerLeadFurnishInfo(
-            furnishType: "unfurnished",
-            furnishDetails: ResellerLeadFurnishDetails(
-              bed: 0,
-              fan: 0,
-              other: "Bare shell",
-              balcony: true,
-              kitchen: true,
-              bathroom: true,
+        propertyDescription:
+            "Spacious 3BHK apartment with modern amenities located in Kalyani Nagar, Pune.",
+        keywords: ["3BHK", "Balcony", "Furnished", "Near IT Park"],
+        propertyImages: [
+          "https://example.com/images/property1.jpg",
+          "https://example.com/images/property2.jpg",
+        ],
+        propertyMedia: PropertyMedia(
+          images: [
+            "https://example.com/media/image1.jpg",
+            "https://example.com/media/image2.jpg",
+          ],
+          videos: ["https://example.com/media/video1.mp4"],
+          documents: ["https://example.com/media/floorplan.pdf"],
+        ),
+        propertyDetails: PropertyDetails(
+          bhk: 3,
+          balcony: 2,
+          bathroom: 3,
+          amenities: ["Gym", "Swimming Pool", "Power Backup", "Parking"],
+          zoneType: "Residential Zone",
+          floorInfo: FloorInfo(floorNumber: 5, totalFloors: 12),
+          furnishInfo: FurnishInfo(
+            furnishType: "Fully Furnished",
+            furnishDetails: FurnishDetails(
+              modularKitchen: true,
+              wardrobes: true,
+              acInstalled: true,
             ),
           ),
-          parkingInfo: ResellerLeadParkingInfo(
-            openParking: true,
-            coveredParking: false,
-          ),
-          financialInfo: ResellerLeadFinancialInfo(
+          parkingInfo: ParkingInfo(covered: true, open: false),
+          financialInfo: FinancialInfo(
+            price: 12500000,
+            propertyRentPerMonth: 0,
+            maintenance: 2500,
+            pricePerSqft: 8500,
+            brokerCommission: 2,
+            propertySecurityDeposit: 0,
             negotiable: true,
-            propertyPrice: 8500000,
-            brokerCommission: 50000,
           ),
-          possessionInfo: ResellerLeadPossessionInfo(
-            possessionStatus: "Under Construction",
-            propertyAgeInYears: 0,
+          possessionInfo: PossessionInfo(
+            possessionStatus: "Ready to Move",
+            propertyAgeInYear: "2",
           ),
           propertyFacing: "East",
-          propertyCondition: "under-construction",
-          propertyCarpetArea: 1100,
-          propertyBuiltUpArea: 1300,
+          propertyCondition: "Excellent",
+          propertyCarpetArea: 1400.0,
+          propertyBuiltUpArea: 1650.0,
+          propertyCarpetAreaUnit: "sqft",
+          propertyBuiltUpAreaUnit: "sqft",
+          facilitiesInfo: FacilitiesInfo(
+            minSeats: 0,
+            numberOfCabins: 0,
+            numberOfMeetingRooms: 0,
+          ),
+          pgInfo: PgInfo(
+            pgName: "Elite PG",
+            pgFor: "Students",
+            pgSuitedFor: "Boys",
+            pgMealOffered: "Breakfast, Dinner",
+            pgCommonArea: "TV Room, Study Hall",
+            pgManageBy: "Owner",
+            pgOwnerStaysAtPg: false,
+            mealChargesPerMonth: 3000,
+            electricityChargesPerMonth: 1500,
+            pgRules: PgRules(
+              nonVegAllowed: true,
+              smokingAllowed: false,
+              drinkingAllowed: false,
+              petsAllowed: false,
+              lateEntryAllowed: true,
+              lateEntryTime: "11:00 PM",
+              visitorAllowed: true,
+              gurdianAllowed: false,
+            ),
+            pgRoomInfo: [
+              PgRoomInfo(
+                roomType: "Single Sharing",
+                totalBeds: 1,
+                roomFacilityInfo: RoomFacilityInfo(
+                  wifi: true,
+                  tv: true,
+                  ac: true,
+                  other: "Private Balcony",
+                ),
+              ),
+              PgRoomInfo(
+                roomType: "Double Sharing",
+                totalBeds: 2,
+                roomFacilityInfo: RoomFacilityInfo(
+                  wifi: true,
+                  tv: false,
+                  ac: true,
+                  other: "Common Bathroom",
+                ),
+              ),
+            ],
+          ),
         ),
+        address: "Sunshine Residency, Kalyani Nagar",
+        city: "Pune",
+        state: "Maharashtra",
+        zipCode: "411014",
+        location: "18.5516, 73.9035",
+        nearbyLocations: [
+          NearbyLocations(name: "Phoenix Mall", distance: 1.5),
+          NearbyLocations(name: "Pune Airport", distance: 4.2),
+        ],
+        reraId: "RERA-PN-12345",
+        propertyStatus: "Available",
+        builderName: "Sunshine Developers",
+        projectName: "Sunshine Residency",
+        ownerPhone: "+91 9876543210",
+        ownerName: "Rahul Mehta",
+        ownerEmail: "rahul.mehta@example.com",
+        isVerified: true,
+        verifiedBy: "admin_user",
+        verifiedAt: "2025-10-05T12:00:00Z",
+        totalInquiries: 12,
+        totalViews: 480,
+        approvalStatus: "approved",
+        approvalComment: "All documents verified",
+        approvedBy: "admin_1",
+        approvedAt: "2025-10-06T09:00:00Z",
+        totalFavorites: 14,
+        totalShares: 5,
+        totalVisits: 60,
+        totalSales: 1,
+        totalCommissions: "50000",
+        assignedTo: "agent_009",
+        assignmentDate: "2025-09-01",
+        assignmentExpiryDate: "2025-12-01",
+        potentialEarnings: "1,20,000",
+        assignmentStatus: "active",
+        performanceScore: "8.5",
+        expiryDate: "2026-09-01",
+        lastRenewalDate: "2025-08-01",
+        renewalCount: 2,
+        isExpired: false,
+        totalReports: 0,
+        isHiddenDueToReports: false,
+        lastReportedAt: null,
+        createdAt: "2025-07-01T10:00:00Z",
+        updatedAt: "2025-09-15T10:00:00Z",
       ),
       createdAt: DateTime.parse("2025-09-05T14:00:00.000Z"),
       updatedAt: DateTime.parse("2025-09-19T16:00:00.000Z"),
     ),
-    // Add these at the end of your dummyResellerLeads list:
-    ResellerLeadOverview(
-      id: "Lead006",
-      createdBy: "Agent777",
-      updatedBy: "Agent888",
-      name: "Neha Sharma",
-      email: "neha.sharma@example.com",
-      phone: "9876001122",
-      propertyId: "Prop006",
-      resellerId: "Reseller006",
-      source: "email_campaign",
-      status: "new",
-      stage: "initial_contact",
-      notes: "Requested brochure for 1BHK studio apartments",
-      lastContactedAt: DateTime.parse("2025-09-29T11:00:00.000Z"),
-      isFake: false,
-      fakeReason: null,
-      markedFakeBy: null,
-      markedFakeAt: null,
-      customFields: ResellerLeadCustomFields(
-        city: "Bengaluru",
-        type: "residential",
-        state: "Karnataka",
-        title: "Affordable 1BHK Studio Apartment",
-        address: "Electronic City Phase 1, Bengaluru",
-        zipCode: "560100",
-        builderName: "Urban Homes",
-        listingType: "Sell",
-        projectName: "Urban Studios",
-        propertyType: "apartment",
-        propertyDetails: ResellerLeadPropertyDetails(
-          bhk: 1,
-          balcony: 1,
-          bathroom: 1,
-          amenities: ["Security", "Lift", "Power Backup"],
-          zoneType: "Residential",
-          floorInfo: ResellerLeadFloorInfo(floorNumber: 2, totalFloors: 8),
-          furnishInfo: ResellerLeadFurnishInfo(
-            furnishType: "semi-furnished",
-            furnishDetails: ResellerLeadFurnishDetails(
-              bed: 1,
-              fan: 2,
-              other: "Basic Wardrobe",
-              balcony: true,
-              kitchen: true,
-              bathroom: true,
-            ),
-          ),
-          parkingInfo: ResellerLeadParkingInfo(
-            openParking: true,
-            coveredParking: false,
-          ),
-          financialInfo: ResellerLeadFinancialInfo(
-            negotiable: true,
-            propertyPrice: 2500000,
-            brokerCommission: 30000,
-          ),
-          possessionInfo: ResellerLeadPossessionInfo(
-            possessionStatus: "Ready to Move",
-            propertyAgeInYears: 1,
-          ),
-          propertyFacing: "West",
-          propertyCondition: "ready-to-move",
-          propertyCarpetArea: 600,
-          propertyBuiltUpArea: 700,
-        ),
-      ),
-      createdAt: DateTime.parse("2025-09-29T10:00:00.000Z"),
-      updatedAt: DateTime.parse("2025-09-29T11:00:00.000Z"),
-    ),
-    ResellerLeadOverview(
-      id: "Lead007",
-      createdBy: "Agent222",
-      updatedBy: "Agent333",
-      name: "Siddharth Jain",
-      email: "siddharth.jain@example.com",
-      phone: "9823456712",
-      propertyId: "Prop007",
-      resellerId: "Reseller007",
-      source: "referral",
-      status: "contacted",
-      stage: "site_visit_scheduled",
-      notes: "Site visit scheduled for weekend",
-      lastContactedAt: DateTime.parse("2025-09-30T09:30:00.000Z"),
-      isFake: false,
-      fakeReason: null,
-      markedFakeBy: null,
-      markedFakeAt: null,
-      customFields: ResellerLeadCustomFields(
-        city: "Chandigarh",
-        type: "residential",
-        state: "Chandigarh",
-        title: "3BHK Luxury Flat with Park View",
-        address: "Sector 22, Chandigarh",
-        zipCode: "160022",
-        builderName: "Green Estates",
-        listingType: "Sell",
-        projectName: "Green Residency",
-        propertyType: "apartment",
-        propertyDetails: ResellerLeadPropertyDetails(
-          bhk: 3,
-          balcony: 2,
-          bathroom: 3,
-          amenities: ["Clubhouse", "Parking", "Security"],
-          zoneType: "Residential",
-          floorInfo: ResellerLeadFloorInfo(floorNumber: 4, totalFloors: 12),
-          furnishInfo: ResellerLeadFurnishInfo(
-            furnishType: "furnished",
-            furnishDetails: ResellerLeadFurnishDetails(
-              bed: 3,
-              fan: 6,
-              other: "Modular Kitchen",
-              balcony: true,
-              kitchen: true,
-              bathroom: true,
-            ),
-          ),
-          parkingInfo: ResellerLeadParkingInfo(
-            openParking: false,
-            coveredParking: true,
-          ),
-          financialInfo: ResellerLeadFinancialInfo(
-            negotiable: true,
-            propertyPrice: 5500000,
-            brokerCommission: 75000,
-          ),
-          possessionInfo: ResellerLeadPossessionInfo(
-            possessionStatus: "Under Construction",
-            propertyAgeInYears: 0,
-          ),
-          propertyFacing: "East",
-          propertyCondition: "under-construction",
-          propertyCarpetArea: 1400,
-          propertyBuiltUpArea: 1600,
-        ),
-      ),
-      createdAt: DateTime.parse("2025-09-25T08:00:00.000Z"),
-      updatedAt: DateTime.parse("2025-09-30T09:30:00.000Z"),
-    ),
-    ResellerLeadOverview(
-      id: "Lead008",
-      createdBy: "Agent555",
-      updatedBy: null,
-      name: "Priya Desai",
-      email: "priya.desai@example.com",
-      phone: "9977886655",
-      propertyId: "Prop008",
-      resellerId: "Reseller008",
-      source: "call_center",
-      status: "negotiating",
-      stage: "price_discussion",
-      notes: "Negotiating final price for penthouse",
-      lastContactedAt: DateTime.parse("2025-10-01T14:15:00.000Z"),
-      isFake: false,
-      fakeReason: null,
-      markedFakeBy: null,
-      markedFakeAt: null,
-      customFields: ResellerLeadCustomFields(
-        city: "Ahmedabad",
-        type: "residential",
-        state: "Gujarat",
-        title: "4BHK Penthouse with Private Terrace",
-        address: "Satellite, Ahmedabad",
-        zipCode: "380015",
-        builderName: "Skyline Developers",
-        listingType: "Sell",
-        projectName: "Skyline Heights",
-        propertyType: "penthouse",
-        propertyDetails: ResellerLeadPropertyDetails(
-          bhk: 4,
-          balcony: 3,
-          bathroom: 5,
-          amenities: ["Swimming Pool", "Gym", "Private Terrace"],
-          zoneType: "Residential",
-          floorInfo: ResellerLeadFloorInfo(floorNumber: 15, totalFloors: 15),
-          furnishInfo: ResellerLeadFurnishInfo(
-            furnishType: "fully-furnished",
-            furnishDetails: ResellerLeadFurnishDetails(
-              bed: 4,
-              fan: 8,
-              other: "Jacuzzi, Terrace Garden",
-              balcony: true,
-              kitchen: true,
-              bathroom: true,
-            ),
-          ),
-          parkingInfo: ResellerLeadParkingInfo(
-            openParking: true,
-            coveredParking: true,
-          ),
-          financialInfo: ResellerLeadFinancialInfo(
-            negotiable: false,
-            propertyPrice: 95000000,
-            brokerCommission: 400000,
-          ),
-          possessionInfo: ResellerLeadPossessionInfo(
-            possessionStatus: "Ready to Move",
-            propertyAgeInYears: 1,
-          ),
-          propertyFacing: "South-East",
-          propertyCondition: "ready-to-move",
-          propertyCarpetArea: 3000,
-          propertyBuiltUpArea: 3500,
-        ),
-      ),
-      createdAt: DateTime.parse("2025-09-18T12:00:00.000Z"),
-      updatedAt: DateTime.parse("2025-10-01T14:15:00.000Z"),
-    ),
-
   ];
-
-
 
   // void _updatePriceRange() {
   //   if (_allProducts.isNotEmpty) {
@@ -1651,15 +1258,52 @@ class DashboardController extends GetxController {
     return categoryMap[category.toLowerCase()] ?? category.toLowerCase();
   }
 
+  // void _updatePriceRange() {
+  //   if (_allProducts.isNotEmpty) {
+  //     double min = _allProducts
+  //         .map(
+  //           (p) =>
+  //               p.customFields.propertyDetails.financialInfo.propertyPrice
+  //                   .toDouble(),
+  //         )
+  //         .reduce((a, b) => a < b ? a : b);
+  //     double max = _allProducts
+  //         .map(
+  //           (p) =>
+  //               p.customFields.propertyDetails.financialInfo.propertyPrice
+  //                   .toDouble(),
+  //         )
+  //         .reduce((a, b) => a > b ? a : b);
+  //
+  //     minPrice.value = min;
+  //     maxPrice.value = max;
+  //     filterMinPrice.value = min;
+  //     filterMaxPrice.value = max;
+  //
+  //     print(
+  //       '💰 Price range: ${min.toStringAsFixed(0)} - ${max.toStringAsFixed(0)}',
+  //     );
+  //   }
+  // }
+
   void _updatePriceRange() {
     if (_allProducts.isNotEmpty) {
       double min = _allProducts
-          .map((p) =>
-          p.customFields.propertyDetails.financialInfo.propertyPrice.toDouble())
+          .map(
+            (p) =>
+                p.customFields.propertyDetails?.financialInfo?.price
+                    .toDouble() ??
+                0,
+          )
           .reduce((a, b) => a < b ? a : b);
+
       double max = _allProducts
-          .map((p) =>
-          p.customFields.propertyDetails.financialInfo.propertyPrice.toDouble())
+          .map(
+            (p) =>
+                p.customFields.propertyDetails?.financialInfo?.price
+                    .toDouble() ??
+                0,
+          )
           .reduce((a, b) => a > b ? a : b);
 
       minPrice.value = min;
@@ -1667,11 +1311,11 @@ class DashboardController extends GetxController {
       filterMinPrice.value = min;
       filterMaxPrice.value = max;
 
-      print('💰 Price range: ${min.toStringAsFixed(0)} - ${max.toStringAsFixed(
-          0)}');
+      print(
+        '💰 Price range: ${min.toStringAsFixed(0)} - ${max.toStringAsFixed(0)}',
+      );
     }
   }
-
 
   //
   // void applyFilters() {
@@ -1714,6 +1358,110 @@ class DashboardController extends GetxController {
   //   applySorting();
   // }
 
+  // void applyFilters() {
+  //   print('\n🔍 === APPLYING FILTERS ===');
+  //   print('Search: "${searchQuery.value}"');
+  //   print('Categories: $selectedProductCategories');
+  //   print('Price: ${filterMinPrice.value} - ${filterMaxPrice.value}');
+  //
+  //   List<ResellerLeadOverview> filtered =
+  //       _allProducts.where((property) {
+  //         // Search filter
+  //         bool matchesSearch =
+  //             searchQuery.value.isEmpty ||
+  //             property.name.toLowerCase().contains(
+  //               searchQuery.value.toLowerCase(),
+  //             ) ||
+  //             property.customFields.builderName.toLowerCase().contains(
+  //               searchQuery.value.toLowerCase(),
+  //             ) ||
+  //             property.customFields.address.toLowerCase().contains(
+  //               searchQuery.value.toLowerCase(),
+  //             ) ||
+  //             property.customFields.city.toLowerCase().contains(
+  //               searchQuery.value.toLowerCase(),
+  //             );
+  //
+  //         // Category filter with proper mapping
+  //         bool matchesCategory =
+  //             selectedProductCategories.isEmpty ||
+  //             selectedProductCategories.any((cat) {
+  //               String mappedType = _mapCategoryToPropertyType(cat);
+  //               bool matches =
+  //                   mappedType ==
+  //                   property.customFields.propertyType.toLowerCase();
+  //               return matches;
+  //             });
+  //
+  //         // Price filter
+  //         double propertyPrice =
+  //             property.customFields.propertyDetails.financialInfo.propertyPrice
+  //                 .toDouble();
+  //         bool matchesPrice =
+  //             propertyPrice >= filterMinPrice.value &&
+  //             propertyPrice <= filterMaxPrice.value;
+  //
+  //         // Debug individual property
+  //         if (!matchesSearch && searchQuery.value.isNotEmpty) {
+  //           print('❌ Search miss: ${property.name}');
+  //         }
+  //         if (!matchesCategory && selectedProductCategories.isNotEmpty) {
+  //           print(
+  //             '❌ Category miss: ${property.name} (type: ${property.customFields.propertyType})',
+  //           );
+  //         }
+  //         if (!matchesPrice) {
+  //           print(
+  //             '❌ Price miss: ${property.name} (₹${propertyPrice.toStringAsFixed(0)})',
+  //           );
+  //         }
+  //
+  //         return matchesSearch && matchesCategory && matchesPrice;
+  //       }).toList();
+  //
+  //   print('✅ Filtered: ${filtered.length}/${_allProducts.length} properties');
+  //   print('=========================\n');
+  //
+  //   filteredProducts.assignAll(filtered);
+  //   applySorting();
+  // }
+  //
+  // void applySorting() {
+  //   List<ResellerLeadOverview> sorted = List.from(filteredProducts);
+  //
+  //   switch (sortOption.value) {
+  //     case SortOption.name:
+  //       sorted.sort((a, b) => a.name.compareTo(b.name));
+  //       break;
+  //     case SortOption.priceAsc:
+  //       sorted.sort(
+  //         (a, b) => a.customFields.propertyDetails.financialInfo.propertyPrice
+  //             .compareTo(
+  //               b.customFields.propertyDetails.financialInfo.propertyPrice,
+  //             ),
+  //       );
+  //       break;
+  //     case SortOption.priceDesc:
+  //       sorted.sort(
+  //         (a, b) => b.customFields.propertyDetails.financialInfo.propertyPrice
+  //             .compareTo(
+  //               a.customFields.propertyDetails.financialInfo.propertyPrice,
+  //             ),
+  //       );
+  //       break;
+  //     case SortOption.rating:
+  //       sorted.sort(
+  //         (a, b) => b.customFields.propertyDetails.financialInfo.propertyPrice
+  //             .compareTo(
+  //               a.customFields.propertyDetails.financialInfo.propertyPrice,
+  //             ),
+  //       );
+  //       break;
+  //   }
+  //
+  //   filteredProducts.assignAll(sorted);
+  //   print('🔄 Sorted by: ${sortOption.value}');
+  // }
 
   void applyFilters() {
     print('\n🔍 === APPLYING FILTERS ===');
@@ -1721,48 +1469,56 @@ class DashboardController extends GetxController {
     print('Categories: $selectedProductCategories');
     print('Price: ${filterMinPrice.value} - ${filterMaxPrice.value}');
 
-    List<ResellerLeadOverview> filtered = _allProducts.where((property) {
-      // Search filter
-      bool matchesSearch = searchQuery.value.isEmpty ||
-          property.name.toLowerCase().contains(
-              searchQuery.value.toLowerCase()) ||
-          property.customFields.builderName.toLowerCase().contains(
-              searchQuery.value.toLowerCase()) ||
-          property.customFields.address.toLowerCase().contains(
-              searchQuery.value.toLowerCase()) ||
-          property.customFields.city.toLowerCase().contains(
-              searchQuery.value.toLowerCase());
+    List<ResellerLeadOverview> filtered =
+        _allProducts.where((property) {
+          final custom = property.customFields;
+          final details = custom.propertyDetails;
+          final finance = details?.financialInfo;
 
-      // Category filter with proper mapping
-      bool matchesCategory = selectedProductCategories.isEmpty ||
-          selectedProductCategories.any((cat) {
-            String mappedType = _mapCategoryToPropertyType(cat);
-            bool matches = mappedType ==
-                property.customFields.propertyType.toLowerCase();
-            return matches;
-          });
+          // Safely extract values
+          final double propertyPrice = finance?.price.toDouble() ?? 0;
+          final String name = property.name.toLowerCase();
+          final String builderName = custom.builderName?.toLowerCase() ?? '';
+          final String address = custom.address?.toLowerCase() ?? '';
+          final String city = custom.city?.toLowerCase() ?? '';
+          final String propertyType = custom.propertyType?.toLowerCase() ?? '';
 
-      // Price filter
-      double propertyPrice = property.customFields.propertyDetails.financialInfo
-          .propertyPrice.toDouble();
-      bool matchesPrice = propertyPrice >= filterMinPrice.value &&
-          propertyPrice <= filterMaxPrice.value;
+          // Search filter
+          bool matchesSearch =
+              searchQuery.value.isEmpty ||
+              name.contains(searchQuery.value.toLowerCase()) ||
+              builderName.contains(searchQuery.value.toLowerCase()) ||
+              address.contains(searchQuery.value.toLowerCase()) ||
+              city.contains(searchQuery.value.toLowerCase());
 
-      // Debug individual property
-      if (!matchesSearch && searchQuery.value.isNotEmpty) {
-        print('❌ Search miss: ${property.name}');
-      }
-      if (!matchesCategory && selectedProductCategories.isNotEmpty) {
-        print('❌ Category miss: ${property.name} (type: ${property.customFields
-            .propertyType})');
-      }
-      if (!matchesPrice) {
-        print('❌ Price miss: ${property.name} (₹${propertyPrice.toStringAsFixed(
-            0)})');
-      }
+          // Category filter
+          bool matchesCategory =
+              selectedProductCategories.isEmpty ||
+              selectedProductCategories.any((cat) {
+                String mappedType = _mapCategoryToPropertyType(cat);
+                return mappedType == propertyType;
+              });
 
-      return matchesSearch && matchesCategory && matchesPrice;
-    }).toList();
+          // Price filter
+          bool matchesPrice =
+              propertyPrice >= filterMinPrice.value &&
+              propertyPrice <= filterMaxPrice.value;
+
+          // Debug
+          if (!matchesSearch && searchQuery.value.isNotEmpty) {
+            print('❌ Search miss: ${property.name}');
+          }
+          if (!matchesCategory && selectedProductCategories.isNotEmpty) {
+            print('❌ Category miss: ${property.name} (type: $propertyType)');
+          }
+          if (!matchesPrice) {
+            print(
+              '❌ Price miss: ${property.name} (₹${propertyPrice.toStringAsFixed(0)})',
+            );
+          }
+
+          return matchesSearch && matchesCategory && matchesPrice;
+        }).toList();
 
     print('✅ Filtered: ${filtered.length}/${_allProducts.length} properties');
     print('=========================\n');
@@ -1778,31 +1534,39 @@ class DashboardController extends GetxController {
       case SortOption.name:
         sorted.sort((a, b) => a.name.compareTo(b.name));
         break;
+
       case SortOption.priceAsc:
-        sorted.sort((a, b) =>
-            a.customFields.propertyDetails.financialInfo.propertyPrice
-                .compareTo(
-                b.customFields.propertyDetails.financialInfo.propertyPrice));
+        sorted.sort(
+          (a, b) => (a.customFields.propertyDetails?.financialInfo?.price ?? 0)
+              .compareTo(
+                (b.customFields.propertyDetails?.financialInfo?.price ?? 0),
+              ),
+        );
         break;
+
       case SortOption.priceDesc:
-        sorted.sort((a, b) =>
-            b.customFields.propertyDetails.financialInfo.propertyPrice
-                .compareTo(
-                a.customFields.propertyDetails.financialInfo.propertyPrice));
+        sorted.sort(
+          (a, b) => (b.customFields.propertyDetails?.financialInfo?.price ?? 0)
+              .compareTo(
+                (a.customFields.propertyDetails?.financialInfo?.price ?? 0),
+              ),
+        );
         break;
+
       case SortOption.rating:
-        sorted.sort((a, b) =>
-            b.customFields.propertyDetails.financialInfo.propertyPrice
-                .compareTo(
-                a.customFields.propertyDetails.financialInfo.propertyPrice));
+        // Placeholder (no rating field yet)
+        sorted.sort(
+          (a, b) => (b.customFields.propertyDetails?.financialInfo?.price ?? 0)
+              .compareTo(
+                (a.customFields.propertyDetails?.financialInfo?.price ?? 0),
+              ),
+        );
         break;
     }
 
     filteredProducts.assignAll(sorted);
     print('🔄 Sorted by: ${sortOption.value}');
   }
-
-
 
   // void applySorting() {
   //   List<ResellerLeadOverview> sorted = List.from(filteredProducts);
@@ -1859,8 +1623,8 @@ class DashboardController extends GetxController {
     print('🧹 Clearing all filters');
     searchQuery.value = '';
     selectedProductCategories.clear();
-    filterMinPrice.value = minPrice.value;  // ✅ Use actual min
-    filterMaxPrice.value = maxPrice.value;  // ✅ Use actual max
+    filterMinPrice.value = minPrice.value; // ✅ Use actual min
+    filterMaxPrice.value = maxPrice.value; // ✅ Use actual max
     sortOption.value = SortOption.name;
     applyFilters();
   }

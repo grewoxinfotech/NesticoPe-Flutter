@@ -1,12 +1,18 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/data/network/report/model/property_report_model.dart';
+import 'package:housing_flutter_app/data/network/report/property_report_service.dart';
+import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 
 import '../../../../app/constants/color_res.dart';
 
 // Controller
 class ReportPropertyController extends GetxController {
+  final PropertyReportService _reportService = PropertyReportService();
   var selectedReason = ''.obs;
   var additionalDetails = ''.obs;
+  final isSubmitting = false.obs;
 
   final List<String> reportReasons = [
     'Already Sold',
@@ -24,38 +30,49 @@ class ReportPropertyController extends GetxController {
     additionalDetails.value = details;
   }
 
-  void submitReport() {
-    print('dhufgyuedgyujhsudhjsahxsiusbusdysdhsudsh');
+  Future<void> submitReport(String propertyId) async {
     if (selectedReason.value.isEmpty) {
       print('Not sfijwdjish');
-      Get.snackbar(
-        'Error',
-        'Please select a reason for reporting',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Please select a reason for reporting',
+        contentType: ContentType.failure,
       );
+      return;
     }
-    else
-      {
-        print('ntiy gkfgki kgk ');
-        // Handle report submission
-        Get.snackbar(
-          'Success',
-          'Report submitted successfully',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-        );
-
+    try {
+      isSubmitting.value = true;
+      final data = PropertyReportModel(
+        propertyId: propertyId,
+        reason: selectedReason.value.toLowerCase().replaceAll(' ', '_'),
+        description: additionalDetails.value,
+      );
+      final success = await _reportService.createPropertyReport(data);
+      if (!success) {
+        throw Exception('Failed to submit report');
       }
 
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Success",
+        message: 'Report submitted successfully',
+        contentType: ContentType.success,
+      );
+    } catch (e) {
+      print('Error submitting report: $e');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Failed to submit report. Please try again later.',
+        contentType: ContentType.failure,
+      );
+      return;
+    } finally {
+      isSubmitting.value = false;
+    }
   }
 
   void cancel() {
     Get.back();
   }
 }
-
 
 // Report Property Screen

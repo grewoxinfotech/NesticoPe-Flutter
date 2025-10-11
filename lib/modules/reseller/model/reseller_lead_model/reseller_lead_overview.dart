@@ -1,3 +1,5 @@
+import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+
 class ResellerLeadOverview {
   String id;
   String createdBy;
@@ -16,7 +18,7 @@ class ResellerLeadOverview {
   String? fakeReason;
   String? markedFakeBy;
   DateTime? markedFakeAt;
-  ResellerLeadCustomFields customFields;
+  Items customFields;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -57,12 +59,18 @@ class ResellerLeadOverview {
       status: json['status'],
       stage: json['stage'],
       notes: json['notes'],
-      lastContactedAt: json['lastContactedAt'] != null ? DateTime.parse(json['lastContactedAt']) : null,
+      lastContactedAt:
+          json['lastContactedAt'] != null
+              ? DateTime.parse(json['lastContactedAt'])
+              : null,
       isFake: json['isFake'],
       fakeReason: json['fakeReason'],
       markedFakeBy: json['markedFakeBy'],
-      markedFakeAt: json['markedFakeAt'] != null ? DateTime.parse(json['markedFakeAt']) : null,
-      customFields: ResellerLeadCustomFields.fromJson(json['customFields']),
+      markedFakeAt:
+          json['markedFakeAt'] != null
+              ? DateTime.parse(json['markedFakeAt'])
+              : null,
+      customFields: Items.fromJson(json['customFields']),
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
@@ -133,7 +141,9 @@ class ResellerLeadCustomFields {
       listingType: json['listingType'],
       projectName: json['projectName'],
       propertyType: json['propertyType'],
-      propertyDetails: ResellerLeadPropertyDetails.fromJson(json['propertyDetails']),
+      propertyDetails: ResellerLeadPropertyDetails.fromJson(
+        json['propertyDetails'],
+      ),
     );
   }
 
@@ -198,7 +208,9 @@ class ResellerLeadPropertyDetails {
       furnishInfo: ResellerLeadFurnishInfo.fromJson(json['furnish_info']),
       parkingInfo: ResellerLeadParkingInfo.fromJson(json['parking_info']),
       financialInfo: ResellerLeadFinancialInfo.fromJson(json['financial_info']),
-      possessionInfo: ResellerLeadPossessionInfo.fromJson(json['possession_info']),
+      possessionInfo: ResellerLeadPossessionInfo.fromJson(
+        json['possession_info'],
+      ),
       propertyFacing: json['property_facing'],
       propertyCondition: json['property_condition'],
       propertyCarpetArea: json['property_carpet_area'].toDouble(),
@@ -251,12 +263,17 @@ class ResellerLeadFurnishInfo {
   String furnishType;
   ResellerLeadFurnishDetails furnishDetails;
 
-  ResellerLeadFurnishInfo({required this.furnishType, required this.furnishDetails});
+  ResellerLeadFurnishInfo({
+    required this.furnishType,
+    required this.furnishDetails,
+  });
 
   factory ResellerLeadFurnishInfo.fromJson(Map<String, dynamic> json) {
     return ResellerLeadFurnishInfo(
       furnishType: json['furnish_type'],
-      furnishDetails: ResellerLeadFurnishDetails.fromJson(json['furnish_details']),
+      furnishDetails: ResellerLeadFurnishDetails.fromJson(
+        json['furnish_details'],
+      ),
     );
   }
 
@@ -308,7 +325,10 @@ class ResellerLeadParkingInfo {
   bool openParking;
   bool coveredParking;
 
-  ResellerLeadParkingInfo({required this.openParking, required this.coveredParking});
+  ResellerLeadParkingInfo({
+    required this.openParking,
+    required this.coveredParking,
+  });
 
   factory ResellerLeadParkingInfo.fromJson(Map<String, dynamic> json) {
     return ResellerLeadParkingInfo(
