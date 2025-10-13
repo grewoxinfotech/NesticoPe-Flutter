@@ -40,12 +40,15 @@ class LeadService {
 
         queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
       }
-
+      print('$baseUrl/sellerleads/${user?.user?.id ?? ''}');
       final uri = Uri.parse(
-        "$baseUrl/sellerleads/${user?.user?.id ?? ''}",
+        "$baseUrl",
+        // "$baseUrl/sellerleads/${user?.user?.id ?? ''}",
       ).replace(queryParameters: queryParameters);
       print("Leads API URL: $uri");
       final response = await http.get(uri, headers: await headers());
+      print("Leads API response: ${response.body}");
+
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

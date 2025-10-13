@@ -7,15 +7,19 @@ import 'package:housing_flutter_app/app/manager/property/property_name_manager.d
 import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/contact_helper.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../data/network/property/models/property_model.dart';
+import '../../../property/views/widgets/property_media_gallery.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 import '../report/report_screen.dart';
 
-class LeadDetailScreen extends StatelessWidget {
-  final ResellerLeadOverview? lead;
+class LeadDetailScreen extends StatefulWidget {
+  final LeadItem? lead;
   final Items? property;
   final bool isFromLead;
 
@@ -30,51 +34,93 @@ class LeadDetailScreen extends StatelessWidget {
        ),
        super(key: key);
 
+  @override
+  State<LeadDetailScreen> createState() => _LeadDetailScreenState();
+}
+
+class _LeadDetailScreenState extends State<LeadDetailScreen> {
+  Rxn<Items> leadProperty = Rxn<Items>();
+
+  RxBool isLoadingProperty = false.obs;
+
+  @override
+  void initState() {
+    if (widget.isFromLead && widget.lead?.propertyId != null) {
+      _initializeProperty();
+    }
+    super.initState();
+  }
+
   // Initialize controller
   final DashboardController controller = Get.put(DashboardController());
 
+  void _initializeProperty() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!Get.isRegistered<PropertyController>()) {
+        Get.put(PropertyController());
+      }
+      final propertyController = Get.find<PropertyController>();
+      isLoadingProperty.value = true;
+      leadProperty.value = await propertyController.getPropertyById(
+        widget.lead!.propertyId,
+      );
+      isLoadingProperty.value = false;
+    });
+  }
+
   // Helper getters to access data from either lead or property
-  Items get propertyData => isFromLead ? lead!.customFields : property!;
+  Items get propertyData =>
+      widget.isFromLead ? widget.lead!.customFields ?? Items() : widget.property!;
 
   String get propertyTitle =>
-      isFromLead ? lead!.customFields.title ?? '' : property!.title ?? '';
+      widget.isFromLead ? widget.lead!.customFields?.title ?? '' : widget.property!.title ?? '';
 
   String get propertyAddress =>
-      isFromLead ? lead!.customFields.address ?? '' : property!.address ?? '';
+      widget.isFromLead ? widget.lead!.customFields?.address ?? '' : widget.property!.address ?? '';
 
   String get propertyCity =>
-      isFromLead ? lead!.customFields.city ?? '' : property!.city ?? '';
+      widget.isFromLead ? widget.lead!.customFields?.city ?? '' : widget.property!.city ?? '';
 
   String get propertyState =>
-      isFromLead ? lead!.customFields.state ?? '' : property!.state ?? '';
+      widget.isFromLead ? widget.lead!.customFields?.state ?? '' : widget.property!.state ?? '';
 
   String get propertyZipCode =>
-      isFromLead ? lead!.customFields.zipCode ?? '' : property!.zipCode ?? '';
+      widget.isFromLead ? widget.lead!.customFields?.zipCode ?? '' : widget.property!.zipCode ?? '';
 
   String get propertyType =>
-      isFromLead
-          ? lead!.customFields.propertyType ?? ''
-          : property!.propertyType ?? '';
+      widget.isFromLead
+          ? widget.lead!.customFields?.propertyType ?? ''
+          : widget.property!.propertyType ?? '';
 
   String get listingType =>
-      isFromLead
-          ? lead!.customFields.listingType ?? ''
-          : property!.listingType ?? '';
+      widget.isFromLead
+          ? widget.lead!.customFields?.listingType ?? ''
+          : widget.property!.listingType ?? '';
 
   String get builderName =>
-      isFromLead
-          ? lead!.customFields.builderName ?? ''
-          : property!.builderName ?? '';
+      widget.isFromLead
+          ? leadProperty.value?.ownerName ?? ''
+          : widget.property!.ownerName ?? '';
 
   String get projectName =>
-      isFromLead
-          ? lead!.customFields.projectName ?? ''
-          : property!.projectName ?? '';
+      widget.isFromLead
+          ? widget.lead!.customFields?.projectName ?? ''
+          : widget.property!.projectName ?? '';
+
+  List<String> get propertyImages =>
+      widget.isFromLead
+          ? leadProperty.value?.propertyMedia?.images ?? []
+          : widget.property!.propertyMedia?.images ?? [];
+
+  List<String> get propertyVideos =>
+      widget.isFromLead
+          ? leadProperty.value?.propertyMedia?.videos ?? []
+          : widget.property!.propertyMedia?.videos ?? [];
 
   PropertyDetails? get propertyDetails =>
-      isFromLead
-          ? lead!.customFields.propertyDetails
-          : property!.propertyDetails;
+      widget.isFromLead
+          ? widget.lead!.customFields?.propertyDetails
+          : widget.property!.propertyDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +137,7 @@ class LeadDetailScreen extends StatelessWidget {
           },
         ),
         title: Text(
-          '${(isFromLead) ? 'Lead Details' : 'Property Overview'}',
+          '${(widget.isFromLead) ? 'Lead Details' : 'Property Overview'}',
           style: TextStyle(
             fontWeight: AppFontWeights.bold,
             fontSize: AppFontSizes.large,
@@ -111,13 +157,35 @@ class LeadDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 1. Contact Information (Only for Leads)
-            if (isFromLead) ...[
+            if (widget.isFromLead) ...[
               _buildContactSection(context, isCompact),
               Divider(thickness: 8, color: Colors.grey[100]),
             ],
 
             // 2. Property Image Gallery (Always Visible)
-            _buildPropertyImageGallery(context),
+            // _buildPropertyImageGallery(context),
+            Obx(() {
+              if(leadProperty.value == null && widget.isFromLead && isLoadingProperty.value){
+                return Container(
+                  height: 280,
+                  color: ColorRes.leadGreyColor[200],
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(ColorRes.primary),
+                    ),
+                  ),
+                );
+              }
+
+
+              return PropertyMediaGallery(
+                images: propertyImages,
+                videos: propertyVideos,
+                showShare: false,
+                showFavorite: false,
+                showBackButton: false,
+              );
+            }),
 
             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
@@ -132,12 +200,18 @@ class LeadDetailScreen extends StatelessWidget {
                   controller.isResellerDetailExpanded.value
                       ? Column(
                         children: [
-                          Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                          Divider(
+                            thickness: 8,
+                            color: ColorRes.leadGreyColor[100],
+                          ),
 
                           // 4. Property Details
                           _buildPropertyDetailsSection(context, isCompact),
 
-                          Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                          Divider(
+                            thickness: 8,
+                            color: ColorRes.leadGreyColor[100],
+                          ),
 
                           // 5. Amenities
                           _buildAmenitiesSection(context, isCompact),
@@ -152,7 +226,7 @@ class LeadDetailScreen extends StatelessWidget {
             // 6. Financial Information
             _buildFinancialSection(context, isCompact),
 
-            if (isFromLead) ...[
+            if (widget.isFromLead) ...[
               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
               // 7. Lead Status & Timeline
@@ -163,12 +237,12 @@ class LeadDetailScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child:
-                  lead != null
-                      ? PropertyOverviewCard(lead: lead)
-                      : PropertyOverviewCard(property: property),
+                  widget.lead != null
+                      ? PropertyOverviewCard(lead: widget.lead)
+                      : PropertyOverviewCard(property: widget.property),
             ),
 
-            if (property != null) ...[
+            if (widget.property != null) ...[
               Divider(thickness: 8, color: Colors.grey[100]),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -181,11 +255,11 @@ class LeadDetailScreen extends StatelessWidget {
                   isCompact,
                 ),
               ),
-              ReportPropertyCard(propertyId: property!.id!),
+              ReportPropertyCard(propertyId: widget.property!.id!),
             ],
 
             // 8. Notes Section (Only for Leads)
-            if (isFromLead && lead?.notes != null) ...[
+            if (widget.isFromLead && widget.lead?.notes != null) ...[
               Divider(thickness: 8, color: Colors.grey[100]),
               _buildNotesSection(context, isCompact),
             ],
@@ -238,7 +312,7 @@ class LeadDetailScreen extends StatelessWidget {
                 radius: isCompact ? 24 : 28,
                 backgroundColor: ColorRes.primary.withOpacity(0.2),
                 child: Text(
-                  lead!.name.split(' ').map((e) => e[0]).join().toUpperCase(),
+                  widget.lead!.name.split(' ').map((e) => e[0]).join().toUpperCase(),
                   style: TextStyle(
                     color: ColorRes.primary,
                     fontWeight: AppFontWeights.semiBold,
@@ -253,7 +327,7 @@ class LeadDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      lead!.name,
+                      widget.lead!.name,
                       style: TextStyle(
                         fontSize:
                             isCompact ? AppFontSizes.body : AppFontSizes.large,
@@ -276,7 +350,7 @@ class LeadDetailScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              'Lead Source: ${lead!.source.toUpperCase()}',
+                              'Lead Source: ${widget.lead!.source.toUpperCase()}',
                               style: TextStyle(
                                 color: ColorRes.leadGreyColor[700],
                                 fontSize: AppFontSizes.extraSmall,
@@ -315,9 +389,9 @@ class LeadDetailScreen extends StatelessWidget {
           _buildContactRow(
             Icons.email_outlined,
             'Email',
-            lead!.email,
+            widget.lead!.email,
             Colors.blue,
-            () => _launchEmail(lead!.email),
+            () => _launchEmail(widget.lead!.email),
           ),
           SizedBox(height: 12),
           Row(
@@ -326,9 +400,9 @@ class LeadDetailScreen extends StatelessWidget {
                 child: _buildContactRow(
                   Icons.phone_outlined,
                   'Phone',
-                  lead!.phone,
+                  widget.lead!.phone,
                   Colors.green,
-                  () => _launchPhone(lead!.phone),
+                  () => _launchPhone(widget.lead!.phone),
                 ),
               ),
             ],
@@ -416,7 +490,11 @@ class LeadDetailScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.home, size: 80, color: ColorRes.leadGreyColor[400]),
+                        Icon(
+                          Icons.home,
+                          size: 80,
+                          color: ColorRes.leadGreyColor[400],
+                        ),
                         SizedBox(height: 8),
                         Text(
                           propertyTitle,
@@ -453,22 +531,22 @@ class LeadDetailScreen extends StatelessWidget {
               ),
             ),
           ),
-          if (isFromLead)
+          if (widget.isFromLead)
             Positioned(
               top: 16,
               left: 16,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(lead!.status),
+                  color: _getStatusColor(widget.lead!.status),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: _getStatusColor(lead!.status).withOpacity(0.3),
+                    color: _getStatusColor(widget.lead!.status).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
-                  _getStatusText(lead!.status),
+                  _getStatusText(widget.lead!.status),
                   style: TextStyle(
                     color: ColorRes.white,
                     fontSize: AppFontSizes.extraSmall,
@@ -552,14 +630,22 @@ class LeadDetailScreen extends StatelessWidget {
                 Icons.straighten,
                 isCompact,
               ),
-              Container(width: 1, height: 50, color: ColorRes.leadGreyColor[300]),
+              Container(
+                width: 1,
+                height: 50,
+                color: ColorRes.leadGreyColor[300],
+              ),
               _buildStatItem(
                 '${details.bathroom ?? 0}',
                 'Bathrooms',
                 Icons.bathtub_outlined,
                 isCompact,
               ),
-              Container(width: 1, height: 50, color: ColorRes.leadGreyColor[300]),
+              Container(
+                width: 1,
+                height: 50,
+                color: ColorRes.leadGreyColor[300],
+              ),
               _buildStatItem(
                 '${details.balcony ?? 0}',
                 'Balconies',
@@ -822,6 +908,10 @@ class LeadDetailScreen extends StatelessWidget {
 
   Widget _buildFinancialSection(BuildContext context, bool isCompact) {
     final financialInfo = _resolvedFinancialInfo;
+    final priceManager = PropertyPriceManager(
+      listingType: widget.lead?.customFields?.listingType ?? '',
+      financialInfo: widget.lead?.customFields?.propertyDetails?.financialInfo,
+    );
     if (financialInfo == null) return SizedBox.shrink();
 
     return Padding(
@@ -868,7 +958,7 @@ class LeadDetailScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            Formatter.formatPrice(financialInfo.price),
+                            priceManager.displayPrice,
                             style: TextStyle(
                               fontSize: isCompact ? AppFontSizes.large : 32,
                               fontWeight: AppFontWeights.semiBold,
@@ -886,14 +976,14 @@ class LeadDetailScreen extends StatelessWidget {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: (isFromLead
-                                  ? _getStatusColor(lead!.status)
+                          color: (widget.isFromLead
+                                  ? _getStatusColor(widget.lead!.status)
                                   : Colors.green)
                               .withOpacity(0.08),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: (isFromLead
-                                    ? _getStatusColor(lead!.status)
+                            color: (widget.isFromLead
+                                    ? _getStatusColor(widget.lead!.status)
                                     : Colors.green)
                                 .withOpacity(0.3),
                             width: 1,
@@ -907,8 +997,8 @@ class LeadDetailScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: AppFontSizes.extraSmall,
                                 color:
-                                    isFromLead
-                                        ? _getStatusColor(lead!.status)
+                                    widget.isFromLead
+                                        ? _getStatusColor(widget.lead!.status)
                                         : Colors.green,
                                 fontWeight: AppFontWeights.extraBold,
                                 letterSpacing: 0.5,
@@ -930,7 +1020,10 @@ class LeadDetailScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: ColorRes.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+                    border: Border.all(
+                      color: ColorRes.leadGreyColor.shade300,
+                      width: 1,
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -961,7 +1054,7 @@ class LeadDetailScreen extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        Formatter.formatPrice(financialInfo.brokerCommission),
+                        priceManager.brokerCommission ?? '0.00',
                         style: TextStyle(
                           fontSize:
                               isCompact
@@ -1055,7 +1148,9 @@ class LeadDetailScreen extends StatelessWidget {
                                   color: ColorRes.orangeColor.withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: ColorRes.orangeColor.withOpacity(0.3),
+                                    color: ColorRes.orangeColor.withOpacity(
+                                      0.3,
+                                    ),
                                     width: 1,
                                   ),
                                 ),
@@ -1138,7 +1233,7 @@ class LeadDetailScreen extends StatelessWidget {
   }
 
   Widget _buildStatusTimelineSection(BuildContext context, bool isCompact) {
-    if (!isFromLead) return SizedBox.shrink();
+    if (!widget.isFromLead) return SizedBox.shrink();
 
     return Padding(
       padding: EdgeInsets.all(16),
@@ -1152,22 +1247,28 @@ class LeadDetailScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: ColorRes.leadGreyColor.shade50,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+              border: Border.all(
+                color: ColorRes.leadGreyColor.shade300,
+                width: 1,
+              ),
             ),
             child: Column(
               children: [
                 _buildTimelineItem(
                   'Lead Created',
-                  _formatDateTime(lead!.createdAt),
+                  _formatDateTime(widget.lead!.createdAt),
                   Icons.add_circle_outline,
                   ColorRes.blueColor,
                   true,
                   false,
                 ),
-                if (lead!.lastContactedAt != null)
+                if (widget.lead!.lastContactedAt != null)
                   _buildTimelineItem(
                     'Last Contacted',
-                    _formatDateTime(lead!.lastContactedAt!),
+                    _formatDateTime(
+                      DateTime.tryParse(widget.lead!.lastContactedAt!) ??
+                          DateTime.now(),
+                    ),
                     Icons.phone_outlined,
                     ColorRes.orangeColor,
                     false,
@@ -1175,9 +1276,9 @@ class LeadDetailScreen extends StatelessWidget {
                   ),
                 _buildTimelineItem(
                   'Current Status',
-                  _getStatusText(lead!.status),
+                  _getStatusText(widget.lead!.status),
                   Icons.flag_outlined,
-                  _getStatusColor(lead!.status),
+                  _getStatusColor(widget.lead!.status),
                   false,
                   true,
                 ),
@@ -1235,7 +1336,10 @@ class LeadDetailScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+                border: Border.all(
+                  color: ColorRes.leadGreyColor.shade300,
+                  width: 1,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1584,7 +1688,8 @@ class LeadDetailScreen extends StatelessWidget {
                                       ),
                                     ),
                                     style: OutlinedButton.styleFrom(
-                                      foregroundColor: ColorRes.leadGreyColor[700],
+                                      foregroundColor:
+                                          ColorRes.leadGreyColor[700],
                                       side: BorderSide(
                                         color: ColorRes.leadGreyColor.shade400,
                                         width: 1.5,
@@ -1636,7 +1741,8 @@ class LeadDetailScreen extends StatelessWidget {
                                                     'Offer submitted successfully!',
                                                     style: TextStyle(
                                                       fontWeight:
-                                                          AppFontWeights.semiBold,
+                                                          AppFontWeights
+                                                              .semiBold,
                                                     ),
                                                   ),
                                                 ),
@@ -1702,7 +1808,7 @@ class LeadDetailScreen extends StatelessWidget {
           _buildSectionHeader('Notes', Icons.note_outlined, true),
           SizedBox(height: 16),
           Text(
-            lead!.notes!,
+            widget.lead!.notes!,
             style: TextStyle(
               fontSize: AppFontSizes.small,
               color: ColorRes.leadGreyColor[800],
@@ -1724,7 +1830,7 @@ class LeadDetailScreen extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed:
                     () =>
-                        _launchPhone(lead?.phone ?? property?.ownerPhone ?? ''),
+                        ContactHelper.openDialer(widget.lead?.phone ?? widget.property?.ownerPhone ?? ''),
                 icon: Icon(Icons.phone),
                 label: Text(
                   'Call',
@@ -1748,7 +1854,7 @@ class LeadDetailScreen extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed:
                     () =>
-                        _launchEmail(lead?.email ?? property?.ownerEmail ?? ''),
+                        ContactHelper.sendEmail(widget.lead?.email ?? widget.property?.ownerEmail ?? ''),
                 icon: Icon(Icons.email),
                 label: Text(
                   'Email',
@@ -1881,16 +1987,16 @@ class LeadDetailScreen extends StatelessWidget {
   }
 
   String get _listingTypeValue {
-    if (property != null) return property!.listingType ?? '';
-    if (lead != null) return lead!.customFields.listingType ?? '';
+    if (widget.property != null) return widget.property!.listingType ?? '';
+    if (widget.lead != null) return widget.lead!.customFields?.listingType ?? '';
     return '';
   }
 
   FinancialInfo? get _resolvedFinancialInfo {
-    if (property?.propertyDetails?.financialInfo != null)
-      return property!.propertyDetails!.financialInfo;
-    if (lead?.customFields.propertyDetails?.financialInfo != null)
-      return lead!.customFields.propertyDetails!.financialInfo;
+    if (widget.property?.propertyDetails?.financialInfo != null)
+      return widget.property!.propertyDetails!.financialInfo;
+    if (widget.lead?.customFields?.propertyDetails?.financialInfo != null)
+      return widget.lead!.customFields?.propertyDetails!.financialInfo;
     return null;
   }
 }

@@ -2,11 +2,15 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../utils/global.dart';
 import '../../../add_property/view/create_property.dart';
+import '../../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../lead_overview/lead_detail.dart';
@@ -17,6 +21,9 @@ class ResellerLeadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(()=>LeadController(),tag: "reseller");
+    final leadController = Get.find<LeadController>(tag: "reseller");
+
     final controller = Get.find<DashboardController>();
 
     return Scaffold(
@@ -62,11 +69,25 @@ class ResellerLeadScreen extends StatelessWidget {
         ],
       ),
       body: Obx(() {
-        if (controller.isLoading.value && controller.recentLeads.isEmpty) {
+        if (leadController.isLoading.value && leadController.items.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final filteredLeads = controller.getFilteredLeads();
+        if (!leadController.isLoading.value && leadController.items.isEmpty) {
+          return Center(
+            child: Text(
+              'No leads available. Tap + to add a new lead.',
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                color: ColorRes.leadGreyColor[600],
+                fontWeight: AppFontWeights.medium,
+              ),
+            ),
+          );
+        }
+
+        final filteredLeads = leadController.items.value;
+        // final filteredLeads = controller.getFilteredLeads();
 
         return Column(
           children: [
@@ -298,11 +319,12 @@ class ResellerLeadScreen extends StatelessWidget {
 
   Widget _buildLeadCard(
     BuildContext context,
-    Lead lead,
+    LeadItem lead,
     DashboardController controller,
   ) {
     final isCompact = MediaQuery.of(context).size.width < 600;
     final cardPadding = isCompact ? 12.0 : 16.0;
+    final priceManager = PropertyPriceManager(listingType: lead.customFields?.listingType ?? '', financialInfo: lead.customFields?.propertyDetails?.financialInfo );
 
     return Container(
       padding: EdgeInsets.all(cardPadding),
@@ -355,7 +377,7 @@ class ResellerLeadScreen extends StatelessWidget {
                     SizedBox(
                       width: 180,
                       child: Text(
-                        '${lead.company}',
+                        '${lead.name}',
                         style: TextStyle(
                           fontSize:
                               isCompact
@@ -374,7 +396,7 @@ class ResellerLeadScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              lead.email,
+                              lead.email.replaceRange(lead.email.length<4 ? lead.email.length :4, lead.email.length, 'XXXXXXXXXXX'),
                               style: TextStyle(
                                 fontSize: AppFontSizes.extraSmall,
                                 color: ColorRes.leadGreyColor[600],
@@ -403,7 +425,7 @@ class ResellerLeadScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    '${Formatter.formatPrice(lead.estimatedValue)}',
+                    '${priceManager.displayPrice}',
                     style: TextStyle(
                       fontSize:
                           isCompact ? AppFontSizes.medium : AppFontSizes.body,
@@ -437,21 +459,21 @@ class ResellerLeadScreen extends StatelessWidget {
                   vertical: isCompact ? 6 : 8,
                 ),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(lead.status).withOpacity(0.08),
+                  color: _getStatusColor(getLeadStatusFromString(lead.status)).withOpacity(0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: _getStatusColor(lead.status).withOpacity(0.3),
+                    color: _getStatusColor(getLeadStatusFromString(lead.status)).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
-                  _getStatusText(lead.status),
+                  _getStatusText(getLeadStatusFromString(lead.status)),
                   style: TextStyle(
                     fontSize:
                         isCompact
                             ? AppFontSizes.extraSmall
                             : AppFontSizes.small,
-                    color: _getStatusColor(lead.status),
+                    color: _getStatusColor(getLeadStatusFromString(lead.status)),
                     fontWeight: AppFontWeights.bold,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -465,21 +487,21 @@ class ResellerLeadScreen extends StatelessWidget {
                   vertical: isCompact ? 6 : 8,
                 ),
                 decoration: BoxDecoration(
-                  color: _getStageColor(lead.stage).withOpacity(0.08),
+                  color: _getStageColor(getLeadStageFromString(lead.stage)).withOpacity(0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: _getStageColor(lead.stage).withOpacity(0.3),
+                    color: _getStageColor(getLeadStageFromString(lead.stage)).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
-                  _getStageText(lead.stage),
+                  _getStageText(getLeadStageFromString(lead.stage)),
                   style: TextStyle(
                     fontSize:
                         isCompact
                             ? AppFontSizes.extraSmall
                             : AppFontSizes.small,
-                    color: _getStageColor(lead.stage),
+                    color: _getStageColor(getLeadStageFromString(lead.stage)),
                     fontWeight: AppFontWeights.bold,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -494,7 +516,7 @@ class ResellerLeadScreen extends StatelessWidget {
                     onPressed: () {
                       Get.to(
                         () => LeadDetailScreen(
-                          lead: dummyResellerLead,
+                          lead: lead,
                           isFromLead: true,
                         ),
                       );
@@ -1216,23 +1238,24 @@ Widget _buildFilterSection({
 void showLeadForm(
   BuildContext context,
   DashboardController controller, {
-  Lead? lead,
+  LeadItem? lead,
 }) {
+  final priceManager  = PropertyPriceManager(listingType: lead?.customFields?.listingType ?? '', financialInfo: lead?.customFields?.propertyDetails?.financialInfo);
   final formKey = GlobalKey<FormState>();
   final nameController = TextEditingController(text: lead?.name ?? '');
-  final locationController = TextEditingController(text: lead?.company ?? '');
+  final locationController = TextEditingController(text: lead?.customFields?.address ?? '');
   final emailController = TextEditingController(text: lead?.email ?? '');
   final phoneController = TextEditingController(text: lead?.phone ?? '');
   final resellerTextController = TextEditingController(text: 'Reseller ID');
   final budgetController = TextEditingController(
-    text: lead?.estimatedValue.toString() ?? '',
+    text: priceManager.displayPrice.toString() ?? '',
   );
   final notesController = TextEditingController(text: lead?.notes ?? '');
   final statusController = ValueNotifier<LeadStatus>(
-    lead?.status ?? LeadStatus.new_,
+    getLeadStatusFromString(lead?.status ?? 'new'),
   );
   final stageController = ValueNotifier<LeadStage>(
-    lead?.stage ?? LeadStage.newLead,
+    getLeadStageFromString(lead?.stage ?? 'newlead') ,
   );
 
   // FIX: Initialize property with null if empty or not found in list
@@ -1243,13 +1266,12 @@ void showLeadForm(
           .toList();
 
   final initialProperty =
-      (lead?.property != null &&
-              lead!.property.isNotEmpty &&
-              propertyTitles.contains(lead.property))
-          ? lead.property
+      (lead?.customFields != null &&
+              propertyTitles.contains(lead?.customFields))
+          ? lead?.customFields
           : null;
 
-  final propertyController = ValueNotifier<String?>(initialProperty);
+  final propertyController = ValueNotifier(initialProperty);
 
   showModalBottomSheet(
     context: context,
@@ -1368,85 +1390,87 @@ void showLeadForm(
                           SizedBox(height: getResponsiveSpacing(context)),
 
                           // FIXED PROPERTY DROPDOWN
-                          ValueListenableBuilder<String?>(
-                            valueListenable: propertyController,
-                            builder: (context, selectedProperty, _) {
-                              final currentValue =
-                                  propertyTitles.contains(selectedProperty)
-                                      ? selectedProperty
-                                      : null;
+                          // ValueListenableBuilder(
+                          //   valueListenable: propertyController,
+                          //   builder: (context, selectedProperty, _) {
+                          //     final currentValue =
+                          //         propertyTitles.contains(selectedProperty)
+                          //             ? selectedProperty
+                          //             : null;
+                          //
+                          //     final OutlineInputBorder commonBorder =
+                          //         OutlineInputBorder(
+                          //           borderRadius: BorderRadius.circular(12),
+                          //           borderSide: BorderSide(
+                          //             color: ColorRes.grey.withOpacity(0.3),
+                          //             width: 1,
+                          //           ),
+                          //         );
+                          //
+                          //     return SizedBox(
+                          //       height: 50,
+                          //       child: DropdownButtonFormField(
+                          //         value: currentValue,
+                          //         decoration: InputDecoration(
+                          //           labelText: 'Select Property',
+                          //           labelStyle: const TextStyle(fontSize: 12),
+                          //           prefixIcon: const Icon(
+                          //             Icons.home_outlined,
+                          //             size: 20,
+                          //           ),
+                          //           border: commonBorder,
+                          //           enabledBorder: commonBorder,
+                          //           focusedBorder: commonBorder.copyWith(
+                          //             borderSide: BorderSide(
+                          //               color: ColorRes.primary,
+                          //               width: 1.5,
+                          //             ),
+                          //           ),
+                          //           disabledBorder: commonBorder,
+                          //           errorBorder: commonBorder.copyWith(
+                          //             borderSide: const BorderSide(
+                          //               color: Colors.red,
+                          //               width: 1,
+                          //             ),
+                          //           ),
+                          //           focusedErrorBorder: commonBorder.copyWith(
+                          //             borderSide: const BorderSide(
+                          //               color: Colors.red,
+                          //               width: 1.5,
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         isExpanded: true,
+                          //         items:
+                          //             propertyTitles.map((title) {
+                          //               return DropdownMenuItem<Items>(
+                          //                 value: title,
+                          //                 child: Text(
+                          //                   title ?? 'Unknown Property',
+                          //                   maxLines: 1,
+                          //                   overflow: TextOverflow.ellipsis,
+                          //                   style:  TextStyle(
+                          //                     fontSize: AppFontSizes.small,
+                          //                     fontWeight: AppFontWeights.medium,
+                          //                   ),
+                          //                 ),
+                          //               );
+                          //             }).toList(),
+                          //         onChanged: (value) {
+                          //           propertyController.value = value;
+                          //           debugPrint('Selected property: $value');
+                          //         },
+                          //         validator:
+                          //             (value) =>
+                          //                 (value == null || value.isEmpty)
+                          //                     ? 'Please select a property'
+                          //                     : null,
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
 
-                              final OutlineInputBorder commonBorder =
-                                  OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: ColorRes.grey.withOpacity(0.3),
-                                      width: 1,
-                                    ),
-                                  );
-
-                              return SizedBox(
-                                height: 50,
-                                child: DropdownButtonFormField<String>(
-                                  value: currentValue,
-                                  decoration: InputDecoration(
-                                    labelText: 'Select Property',
-                                    labelStyle: const TextStyle(fontSize: 12),
-                                    prefixIcon: const Icon(
-                                      Icons.home_outlined,
-                                      size: 20,
-                                    ),
-                                    border: commonBorder,
-                                    enabledBorder: commonBorder,
-                                    focusedBorder: commonBorder.copyWith(
-                                      borderSide: BorderSide(
-                                        color: ColorRes.primary,
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    disabledBorder: commonBorder,
-                                    errorBorder: commonBorder.copyWith(
-                                      borderSide: const BorderSide(
-                                        color: Colors.red,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    focusedErrorBorder: commonBorder.copyWith(
-                                      borderSide: const BorderSide(
-                                        color: Colors.red,
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                  ),
-                                  isExpanded: true,
-                                  items:
-                                      propertyTitles.map((title) {
-                                        return DropdownMenuItem<String>(
-                                          value: title,
-                                          child: Text(
-                                            title ?? 'Unknown Property',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style:  TextStyle(
-                                              fontSize: AppFontSizes.small,
-                                              fontWeight: AppFontWeights.medium,
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                  onChanged: (value) {
-                                    propertyController.value = value;
-                                    debugPrint('Selected property: $value');
-                                  },
-                                  validator:
-                                      (value) =>
-                                          (value == null || value.isEmpty)
-                                              ? 'Please select a property'
-                                              : null,
-                                ),
-                              );
-                            },
-                          ),
+                          //TODO: Aavesh Property Dropdown
 
                           SizedBox(height: getResponsiveSpacing(context)),
                           SizedBox(
@@ -1641,9 +1665,9 @@ void showLeadForm(
                                     ),
                                     status: statusController.value,
                                     notes: notesController.text,
-                                    property:
-                                        propertyController.value ??
-                                        '', // Save selected property
+                                    // property:
+                                    //     propertyController.value ??
+                                    //     '', // Save selected property
                                     createdAt:
                                         lead?.createdAt ?? DateTime.now(),
                                     stage: stageController.value,
@@ -1819,7 +1843,7 @@ Widget _buildDetailRow(BuildContext context, String label, String value) {
 
 void showDeleteConfirmation(
   BuildContext context,
-  Lead lead,
+  LeadItem lead,
   DashboardController controller,
 ) {
   showDialog(
@@ -1925,6 +1949,28 @@ Color _getStatusColor(LeadStatus status) {
   }
 }
 
+LeadStatus getLeadStatusFromString(String status) {
+  switch (status.toLowerCase()) {
+    case 'new':
+      return LeadStatus.new_;
+    case 'contacted':
+      return LeadStatus.contacted;
+    case 'qualified':
+      return LeadStatus.qualified;
+    case 'negotiation':
+      return LeadStatus.negotiation;
+    case 'lost':
+      return LeadStatus.lost;
+    case 'convert':
+      return LeadStatus.convert;
+    case 'all':
+      return LeadStatus.all;
+    default:
+      return LeadStatus.all;
+  }
+}
+
+
 String _getStatusText(LeadStatus status) {
   switch (status) {
     case LeadStatus.new_:
@@ -1962,6 +2008,30 @@ Color _getStageColor(LeadStage stage) {
       return ColorRes.leadGreyColor;
   }
 }
+
+LeadStage getLeadStageFromString(String? stage) {
+  switch (stage?.toLowerCase()) {
+    case 'newlead':
+    case 'new_lead':
+    case 'new lead':
+      return LeadStage.newLead;
+    case 'contacted':
+      return LeadStage.contacted;
+    case 'interested':
+      return LeadStage.interested;
+    case 'sitevisit':
+    case 'site_visit':
+    case 'site visit':
+      return LeadStage.siteVisit;
+    case 'sell':
+      return LeadStage.sell;
+    case 'all':
+      return LeadStage.all;
+    default:
+      return LeadStage.all; // fallback
+  }
+}
+
 
 String _getStageText(LeadStage stage) {
   switch (stage) {

@@ -616,8 +616,10 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/reseller/view/profile/reseller_profile.dart';
+import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 
 import '../../../app/constants/size_manager.dart';
+import '../../../app/manager/property/property_pricemanager.dart';
 import '../../../app/utils/formater/formater.dart';
 import '../../../utils/global.dart';
 import '../../dashboard/views/dashboard_screen.dart';
@@ -770,114 +772,104 @@ Widget _buildRecentLeads(DashboardController controller) {
           ],
         ),
       ),
-      Obx(
-        () => ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: controller.recentLeads.take(5).length,
-          separatorBuilder: (context, index) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            final lead = controller.recentLeads[index];
-            return _buildLeadCard(context, lead, controller);
-          },
-        ),
-      ),
+      // Obx(
+      //   () => ListView.separated(
+      //     shrinkWrap: true,
+      //     physics: const NeverScrollableScrollPhysics(),
+      //     itemCount: controller.recentLeads.take(5).length,
+      //     separatorBuilder: (context, index) => const SizedBox(height: 10),
+      //     itemBuilder: (context, index) {
+      //       final lead = controller.recentLeads[index];
+      //       return _buildLeadCard(context, lead, controller);
+      //     },
+      //   ),
+      // ),
     ],
   );
 }
 
 Widget _buildLeadCard(
-  BuildContext context,
-  Lead lead,
-  DashboardController controller,
-) {
+    BuildContext context,
+    LeadItem lead,
+    DashboardController controller,
+    ) {
   final isCompact = MediaQuery.of(context).size.width < 600;
   final cardPadding = isCompact ? 12.0 : 16.0;
+  final priceManager = PropertyPriceManager(listingType: lead.customFields?.listingType ?? '', financialInfo: lead.customFields?.propertyDetails?.financialInfo );
 
   return Container(
     padding: EdgeInsets.all(cardPadding),
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header Row with Avatar and Basic Info
         Row(
           children: [
-            // Column 1: Avatar
             CircleAvatar(
               radius: isCompact ? 18 : 20,
               backgroundColor: ColorRes.primary.withOpacity(0.2),
-              child: Text(
-                lead.name.split(' ').map((e) => e[0]).join().toUpperCase(),
+              child: Text(lead.name,
                 style: TextStyle(
                   color: ColorRes.primary,
                   fontWeight: AppFontWeights.bold,
                   fontSize:
-                      isCompact ? AppFontSizes.small : AppFontSizes.medium,
+                  isCompact ? AppFontSizes.small : AppFontSizes.medium,
                 ),
               ),
             ),
             SizedBox(width: isCompact ? 8 : 12),
-
-            // Column 2: Lead Details
             Expanded(
               flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name
                   SizedBox(
                     width: 180,
                     child: Text(
                       lead.name,
                       style: TextStyle(
                         fontSize:
-                            isCompact ? AppFontSizes.medium : AppFontSizes.body,
+                        isCompact
+                            ? AppFontSizes.medium
+                            : AppFontSizes.body,
                         fontWeight: AppFontWeights.bold,
                         color: ColorRes.textColor,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  SizedBox(height: 2),
-
-                  // Company with location icon
-                  SizedBox(
-                    width: 180,
-                    child: Text(
-                      '${lead.company}',
-                      style: TextStyle(
-                        fontSize:
-                            isCompact
-                                ? AppFontSizes.extraSmall
-                                : AppFontSizes.small,
-                        color: ColorRes.leadGreyColor.shade700,
-                        fontWeight: AppFontWeights.regular,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   SizedBox(height: 2),
-
-                  // Email
+                  SizedBox(
+                    width: 180,
+                    child: Text(
+                      '${lead.name}',
+                      style: TextStyle(
+                        fontSize:
+                        isCompact
+                            ? AppFontSizes.extraSmall
+                            : AppFontSizes.small,
+                        color: ColorRes.leadGreyColor[700],
+                        fontWeight: AppFontWeights.regular,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   if (lead.email.isNotEmpty) ...[
                     SizedBox(height: 4),
                     Row(
                       children: [
                         Expanded(
                           child: Text(
-                            lead.email,
+                            lead.email.replaceRange(lead.email.length<4 ? lead.email.length :4, lead.email.length, 'XXXXXXXXXXX'),
                             style: TextStyle(
                               fontSize: AppFontSizes.extraSmall,
-                              color: ColorRes.leadGreyColor.shade600,
+                              color: ColorRes.leadGreyColor[600],
                               fontWeight: AppFontWeights.regular,
                             ),
                             maxLines: 1,
@@ -890,8 +882,6 @@ Widget _buildLeadCard(
                 ],
               ),
             ),
-
-            // Column 3: Budget & Time Info
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -899,18 +889,18 @@ Widget _buildLeadCard(
                   'Budget',
                   style: TextStyle(
                     fontSize: AppFontSizes.extraSmall,
-                    color: ColorRes.leadGreyColor.shade800,
+                    color: ColorRes.leadGreyColor[800],
                     fontWeight: AppFontWeights.regular,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
-                  '${Formatter.formatPrice(lead.estimatedValue)}',
+                  '${priceManager.displayPrice}',
                   style: TextStyle(
                     fontSize:
-                        isCompact ? AppFontSizes.medium : AppFontSizes.body,
+                    isCompact ? AppFontSizes.medium : AppFontSizes.body,
                     fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.green,
+                    color: ColorRes.success,
                   ),
                 ),
                 SizedBox(height: 4),
@@ -918,7 +908,7 @@ Widget _buildLeadCard(
                   _formatTime(lead.createdAt),
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
-                    color: ColorRes.leadGreyColor.shade600,
+                    color: ColorRes.leadGreyColor[600],
                     fontWeight: AppFontWeights.regular,
                   ),
                 ),
@@ -926,12 +916,10 @@ Widget _buildLeadCard(
             ),
           ],
         ),
-
         SizedBox(height: isCompact ? 8 : 12),
         Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
         SizedBox(height: isCompact ? 8 : 12),
 
-        // Bottom Row with Status and Actions
         Row(
           children: [
             // Status Badge
@@ -941,19 +929,21 @@ Widget _buildLeadCard(
                 vertical: isCompact ? 6 : 8,
               ),
               decoration: BoxDecoration(
-                color: _getStatusColor(lead.status).withOpacity(0.08),
+                color: _getStatusColor(getLeadStatusFromString(lead.status)).withOpacity(0.08),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: _getStatusColor(lead.status).withOpacity(0.3),
+                  color: _getStatusColor(getLeadStatusFromString(lead.status)).withOpacity(0.3),
                   width: 1,
                 ),
               ),
               child: Text(
-                _getStatusText(lead.status),
+                _getStatusText(getLeadStatusFromString(lead.status)),
                 style: TextStyle(
                   fontSize:
-                      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
-                  color: _getStatusColor(lead.status),
+                  isCompact
+                      ? AppFontSizes.extraSmall
+                      : AppFontSizes.small,
+                  color: _getStatusColor(getLeadStatusFromString(lead.status)),
                   fontWeight: AppFontWeights.bold,
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -967,19 +957,21 @@ Widget _buildLeadCard(
                 vertical: isCompact ? 6 : 8,
               ),
               decoration: BoxDecoration(
-                color: _getStageColor(lead.stage).withOpacity(0.08),
+                color: _getStageColor(getLeadStageFromString(lead.stage)).withOpacity(0.08),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: _getStageColor(lead.stage).withOpacity(0.3),
+                  color: _getStageColor(getLeadStageFromString(lead.stage)).withOpacity(0.3),
                   width: 1,
                 ),
               ),
               child: Text(
-                _getStageText(lead.stage),
+                _getStageText(getLeadStageFromString(lead.stage)),
                 style: TextStyle(
                   fontSize:
-                      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
-                  color: _getStageColor(lead.stage),
+                  isCompact
+                      ? AppFontSizes.extraSmall
+                      : AppFontSizes.small,
+                  color: _getStageColor(getLeadStageFromString(lead.stage)),
                   fontWeight: AppFontWeights.bold,
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -992,7 +984,12 @@ Widget _buildLeadCard(
                   icon: Icons.visibility,
                   color: ColorRes.blueColor,
                   onPressed: () {
-                    Get.to(() => LeadDetailScreen(lead: dummyResellerLead));
+                    Get.to(
+                          () => LeadDetailScreen(
+                        lead: lead,
+                        isFromLead: true,
+                      ),
+                    );
                   },
                   tooltip: 'View Details',
                   isCompact: isCompact,
@@ -1023,6 +1020,7 @@ Widget _buildLeadCard(
     ),
   );
 }
+
 
 Widget _buildTopProducts(DashboardController controller) {
   return Column(

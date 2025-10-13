@@ -267,6 +267,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -1500,7 +1501,7 @@ class _ReportPropertyCardState extends State<ReportPropertyCard> {
 // }
 
 class PropertyOverviewCard extends StatelessWidget {
-  final ResellerLeadOverview? lead;
+  final LeadItem? lead;
   final Items? property;
 
   const PropertyOverviewCard({super.key, this.lead, this.property})
@@ -1514,37 +1515,37 @@ class PropertyOverviewCard extends StatelessWidget {
     final List<Map<String, dynamic>> overviewData = [
       {
         "title": "Views",
-        "value": "12.4K",
+        "value": property?.totalViews.toString() ?? "12.4K",
         "icon": Icons.remove_red_eye_outlined,
         "color": Colors.blue,
       },
       {
         "title": "Likes",
-        "value": "2.3K",
+        "value": property?.totalFavorites.toString() ??"2.3K",
         "icon": Icons.favorite_border,
         "color": Colors.red,
       },
       {
         "title": "Shares",
-        "value": "540",
+        "value": property?.totalShares.toString() ??"540",
         "icon": Icons.share_outlined,
         "color": Colors.green,
       },
       {
         "title": "Visits",
-        "value": "8.9K",
+        "value": property?.totalVisits.toString() ??"8.9K",
         "icon": Icons.travel_explore,
         "color": Colors.orange,
       },
       {
         "title": "Inquiries",
-        "value": "245",
+        "value": property?.totalInquiries.toString() ??"245",
         "icon": Icons.question_answer_outlined,
         "color": Colors.purple,
       },
       {
         "title": "Saved",
-        "value": "1.1K",
+        "value": property?.totalViews.toString() ??"1.1K",
         "icon": Icons.bookmark_border,
         "color": Colors.teal,
       },
