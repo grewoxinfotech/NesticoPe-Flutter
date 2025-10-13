@@ -881,366 +881,433 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 //   }
 // }
 
-class ReportPropertyCard extends StatelessWidget {
+class ReportPropertyCard extends StatefulWidget {
   final String propertyId;
+
   const ReportPropertyCard({Key? key, required this.propertyId})
     : super(key: key);
 
   @override
+  State<ReportPropertyCard> createState() => _ReportPropertyCardState();
+}
+
+class _ReportPropertyCardState extends State<ReportPropertyCard> {
+  final controller = Get.put(ReportPropertyController());
+
+  @override
+  void initState() {
+    controller.getPropertyReportsById(widget.propertyId);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ReportPropertyController());
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: ColorRes.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color:  ColorRes.reportCardBG, width: 1),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Compact Header
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                margin: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: ColorRes.redAccentColor.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: ColorRes.redAccentColor.withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child:  Icon(
-                  Icons.report_problem_outlined,
-                  color: ColorRes.error,
-                  size: 20,
-                ),
-              ),
-              // const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  'Report Property',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.bodyMedium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.reportCardText,
-                  ),
-                ),
-              ),
-            ],
+    return Obx(() {
+      if (controller.isLoading.value && controller.items.isEmpty) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (controller.items.isNotEmpty) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: ColorRes.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: ColorRes.leadGreyColor.shade300,
+              width: 1,
+            ),
           ),
-
-          // Compact Form
-          Padding(
+          child: Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+            child: Row(
               children: [
-                // Reason Dropdown - Compact
-                RichText(
-                  text: const TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Reason ',
-                        style: TextStyle(
-                          color: ColorRes.reportCardText,
-                          fontSize: AppFontSizes.medium,
-                          fontWeight: AppFontWeights.medium,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '*',
-                        style: TextStyle(
-                          color: ColorRes.reportCardred,
-                          fontSize: AppFontSizes.medium,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Obx(
-                  () => Container(
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: ColorRes.white,
-                      border: Border.all(
-                        color:
-                            controller.selectedReason.value.isEmpty
-                                ?  ColorRes.reportCardboarder
-                                :  ColorRes.reportCardblue,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
-                        border: InputBorder.none,
-                        isDense: true,
-                      ),
-                      hint: const Text(
-                        'Select reason',
-                        style: TextStyle(
-                          color: ColorRes.reportCardhint,
-                          fontSize: AppFontSizes.medium,
-                        ),
-                      ),
-                      value:
-                          controller.selectedReason.value.isEmpty
-                              ? null
-                              : controller.selectedReason.value,
-                      isExpanded: true,
-                      icon: const Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: 20,
-                        color: Color(0xFF757575),
-                      ),
-                      dropdownColor: ColorRes.white,
-                      style:  TextStyle(
-                        color: ColorRes.textColor,
-                        fontSize: AppFontSizes.medium,
-                      ),
-                      items:
-                          controller.reportReasons.map((String reason) {
-                            return DropdownMenuItem<String>(
-                              value: reason,
-                              child: Text(reason),
-                            );
-                          }).toList(),
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          controller.setReason(newValue);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Additional Details - Compact
-                 Text(
-                  'Additional Details (Optional)',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.medium,
-                    color: ColorRes.reportCardText,
-                  ),
-                ),
-                const SizedBox(height: 8),
                 Container(
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color:  ColorRes.white,
-                    border: Border.all(color: ColorRes.reportCardboarder),
-                    borderRadius: BorderRadius.circular(8),
+                    color: ColorRes.green.shade50,
+                    shape: BoxShape.circle,
                   ),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        maxLines: 3,
-                        maxLength: 500,
-                        style: const TextStyle(fontSize: 13, height: 1.4),
-                        decoration: const InputDecoration(
-                          hintText: 'Describe the issue...',
-                          hintStyle: TextStyle(
-                            color: ColorRes.reportCardhint,
-                            fontSize: AppFontSizes.bodySmall,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.all(12),
-                          counterText: '',
-                          isDense: true,
-                        ),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) {
-                          if (value != null && value.isEmpty) {
-                            return "Additional details cannot be empty";
-                          }
-                          if (value != null && value.length > 500) {
-                            return "Maximum 500 characters allowed";
-                          }
-
-                          if (value != null &&
-                              value.length <= 10 &&
-                              value.isNotEmpty) {
-                            return "Please provide (min 10 characters)";
-                          }
-                          return null;
-                        },
-                        onChanged:
-                            (value) => controller.setAdditionalDetails(value),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: Color(0xFFE0E0E0),
-                              width: 0.5,
-                            ),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Obx(
-                              () => Text(
-                                '${controller.additionalDetails.value.length}/500',
-                                style: TextStyle(
-                                  color:
-                                      controller
-                                                  .additionalDetails
-                                                  .value
-                                                  .length >
-                                              450
-                                          ?  ColorRes.reportCardred
-                                          :  ColorRes.reportCardTextFiled,
-                                  fontSize: AppFontSizes.caption,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  child: Icon(
+                    Icons.check_circle_outline,
+                    color: ColorRes.green,
+                    size: 24,
                   ),
                 ),
-
-                const SizedBox(height: 20),
-
-                // Compact Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => controller.cancel(),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 11),
-                          side: const BorderSide(color: ColorRes.reportCardBG),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
-                            color: ColorRes.textDisabled,
-                            fontSize: AppFontSizes.medium,
-                            fontWeight: AppFontWeights.medium,
-                          ),
-                        ),
-                      ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'You Have Already Submitted Report',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      fontWeight: AppFontWeights.regular,
+                      color: ColorRes.blackShade54,
                     ),
-                    const SizedBox(width: 10),
-                    // Expanded(
-                    //   flex: 2,
-                    //   child: Obx(
-                    //     () => ElevatedButton(
-                    //       onPressed:
-                    //           controller.selectedReason.value.isEmpty
-                    //               ? null
-                    //               : (controller
-                    //                           .additionalDetails
-                    //                           .value
-                    //                           .length <=
-                    //                       10 ||
-                    //                   controller
-                    //                           .additionalDetails
-                    //                           .value
-                    //                           .length >
-                    //                       500)
-                    //               ? null
-                    //               : controller.isSubmitting.value
-                    //               ? null
-                    //               : () => controller.submitReport(propertyId),
-                    //       style: ElevatedButton.styleFrom(
-                    //         backgroundColor:
-                    //             controller.isSubmitting.value
-                    //                 ? ColorRes.primary.withOpacity(0.3)
-                    //                 : ColorRes.primary,
-                    //         disabledBackgroundColor: const Color(0xFFE0E0E0),
-                    //         padding: const EdgeInsets.symmetric(vertical: 11),
-                    //         elevation: 0,
-                    //         shape: RoundedRectangleBorder(
-                    //           borderRadius: BorderRadius.circular(8),
-                    //         ),
-                    //       ),
-                    //       child: Text(
-                    //         controller.isSubmitting.value
-                    //             ? "Submitting..."
-                    //             : 'Submit Report',
-                    //         style: TextStyle(
-                    //           color: ColorRes.white,
-                    //           fontSize: 14,
-                    //           fontWeight: FontWeight.w600,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    Expanded(
-                      flex: 2,
-                      child: Obx(() {
-                        // Determine if button should be enabled
-                        bool isButtonEnabled =
-                            controller.selectedReason.value.isNotEmpty &&
-                            controller.additionalDetails.value.length > 10 &&
-                            controller.additionalDetails.value.length <= 500 &&
-                            !controller.isSubmitting.value;
-
-                        return ElevatedButton(
-                          onPressed:
-                              isButtonEnabled
-                                  ? () => controller.submitReport(propertyId)
-                                  : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                controller.isSubmitting.value
-                                    ? ColorRes.primary.withOpacity(0.3)
-                                    : isButtonEnabled
-                                    ? ColorRes.primary
-                                    : const Color(0xFFE0E0E0), // Disabled color
-                            padding: const EdgeInsets.symmetric(vertical: 11),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            controller.isSubmitting.value
-                                ? "Submitting..."
-                                : 'Submit Report',
-                            style: TextStyle(
-                              color:
-                                  isButtonEnabled
-                                      ? ColorRes.white
-                                      : const Color(0xFF9E9E9E),
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    );
+        );
+      }
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: ColorRes.reportCardBG, width: 1),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Compact Header
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: ColorRes.redAccentColor.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: ColorRes.redAccentColor.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.report_problem_outlined,
+                    color: ColorRes.error,
+                    size: 20,
+                  ),
+                ),
+                // const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    'Report Property',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodyMedium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.reportCardText,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Compact Form
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Reason Dropdown - Compact
+                  RichText(
+                    text: const TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Reason ',
+                          style: TextStyle(
+                            color: ColorRes.reportCardText,
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.medium,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '*',
+                          style: TextStyle(
+                            color: ColorRes.reportCardred,
+                            fontSize: AppFontSizes.medium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Obx(
+                    () => Container(
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: ColorRes.white,
+                        border: Border.all(
+                          color:
+                              controller.selectedReason.value.isEmpty
+                                  ? ColorRes.reportCardboarder
+                                  : ColorRes.reportCardblue,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                        hint: const Text(
+                          'Select reason',
+                          style: TextStyle(
+                            color: ColorRes.reportCardhint,
+                            fontSize: AppFontSizes.medium,
+                          ),
+                        ),
+                        value:
+                            controller.selectedReason.value.isEmpty
+                                ? null
+                                : controller.selectedReason.value,
+                        isExpanded: true,
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 20,
+                          color: Color(0xFF757575),
+                        ),
+                        dropdownColor: ColorRes.white,
+                        style: TextStyle(
+                          color: ColorRes.textColor,
+                          fontSize: AppFontSizes.medium,
+                        ),
+                        items:
+                            controller.reportReasons.map((String reason) {
+                              return DropdownMenuItem<String>(
+                                value: reason,
+                                child: Text(reason),
+                              );
+                            }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            controller.setReason(newValue);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Additional Details - Compact
+                  Text(
+                    'Additional Details (Optional)',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.medium,
+                      color: ColorRes.reportCardText,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: ColorRes.white,
+                      border: Border.all(color: ColorRes.reportCardboarder),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          maxLines: 3,
+                          maxLength: 500,
+                          style: const TextStyle(fontSize: 13, height: 1.4),
+                          decoration: const InputDecoration(
+                            hintText: 'Describe the issue...',
+                            hintStyle: TextStyle(
+                              color: ColorRes.reportCardhint,
+                              fontSize: AppFontSizes.bodySmall,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.all(12),
+                            counterText: '',
+                            isDense: true,
+                          ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if (value != null && value.isEmpty) {
+                              return "Additional details cannot be empty";
+                            }
+                            if (value != null && value.length > 500) {
+                              return "Maximum 500 characters allowed";
+                            }
+
+                            if (value != null &&
+                                value.length <= 10 &&
+                                value.isNotEmpty) {
+                              return "Please provide (min 10 characters)";
+                            }
+                            return null;
+                          },
+                          onChanged:
+                              (value) => controller.setAdditionalDetails(value),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: Color(0xFFE0E0E0),
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Obx(
+                                () => Text(
+                                  '${controller.additionalDetails.value.length}/500',
+                                  style: TextStyle(
+                                    color:
+                                        controller
+                                                    .additionalDetails
+                                                    .value
+                                                    .length >
+                                                450
+                                            ? ColorRes.reportCardred
+                                            : ColorRes.reportCardTextFiled,
+                                    fontSize: AppFontSizes.caption,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Compact Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => controller.cancel(),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 11),
+                            side: const BorderSide(
+                              color: ColorRes.reportCardBG,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: ColorRes.textDisabled,
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // Expanded(
+                      //   flex: 2,
+                      //   child: Obx(
+                      //     () => ElevatedButton(
+                      //       onPressed:
+                      //           controller.selectedReason.value.isEmpty
+                      //               ? null
+                      //               : (controller
+                      //                           .additionalDetails
+                      //                           .value
+                      //                           .length <=
+                      //                       10 ||
+                      //                   controller
+                      //                           .additionalDetails
+                      //                           .value
+                      //                           .length >
+                      //                       500)
+                      //               ? null
+                      //               : controller.isSubmitting.value
+                      //               ? null
+                      //               : () => controller.submitReport(propertyId),
+                      //       style: ElevatedButton.styleFrom(
+                      //         backgroundColor:
+                      //             controller.isSubmitting.value
+                      //                 ? ColorRes.primary.withOpacity(0.3)
+                      //                 : ColorRes.primary,
+                      //         disabledBackgroundColor: const Color(0xFFE0E0E0),
+                      //         padding: const EdgeInsets.symmetric(vertical: 11),
+                      //         elevation: 0,
+                      //         shape: RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(8),
+                      //         ),
+                      //       ),
+                      //       child: Text(
+                      //         controller.isSubmitting.value
+                      //             ? "Submitting..."
+                      //             : 'Submit Report',
+                      //         style: TextStyle(
+                      //           color: ColorRes.white,
+                      //           fontSize: 14,
+                      //           fontWeight: FontWeight.w600,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      Expanded(
+                        flex: 2,
+                        child: Obx(() {
+                          // Determine if button should be enabled
+                          bool isButtonEnabled =
+                              controller.selectedReason.value.isNotEmpty &&
+                              controller.additionalDetails.value.length > 10 &&
+                              controller.additionalDetails.value.length <=
+                                  500 &&
+                              !controller.isSubmitting.value;
+
+                          return ElevatedButton(
+                            onPressed:
+                                isButtonEnabled
+                                    ? () => controller.submitReport(
+                                      widget.propertyId,
+                                    )
+                                    : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  controller.isSubmitting.value
+                                      ? ColorRes.primary.withOpacity(0.3)
+                                      : isButtonEnabled
+                                      ? ColorRes.primary
+                                      : const Color(
+                                        0xFFE0E0E0,
+                                      ), // Disabled color
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              controller.isSubmitting.value
+                                  ? "Submitting..."
+                                  : 'Submit Report',
+                              style: TextStyle(
+                                color:
+                                    isButtonEnabled
+                                        ? ColorRes.white
+                                        : const Color(0xFF9E9E9E),
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 

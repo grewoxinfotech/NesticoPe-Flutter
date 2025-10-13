@@ -3,6 +3,8 @@ import '../../../../data/network/city/tending_city/trending_city_model.dart';
 import '../../../../data/network/city/tending_city/trending_city_service.dart';
 
 class TrendingCityController extends GetxController {
+  final isLoading = false.obs;
+
   final TrendingCityService trendingCityService = Get.put(
     TrendingCityService(),
   );
@@ -25,11 +27,18 @@ class TrendingCityController extends GetxController {
 
   // Fetch trending cities and process data
   Future<void> fetchTrendingCities() async {
-    await trendingCityService.fetchTrendingCities();
-    allTrendingCities.value = trendingCityService.trendingCities;
+    try {
+      isLoading.value = true;
+      await trendingCityService.fetchTrendingCities();
+      allTrendingCities.value = trendingCityService.trendingCities;
 
-    _generatePropertyRangeData();
-    _getTopViewedCities();
+      _generatePropertyRangeData();
+      _getTopViewedCities();
+    } catch (e) {
+      print("Error fetching trending cities: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   // Categorize cities by property count range (optional grouping)

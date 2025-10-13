@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -42,6 +43,72 @@ class PropertyReportService {
       );
 
       return false;
+    }
+  }
+
+  // Future<PaginationResponse?> getPropertyReports({
+  //   required String propertyId,
+  //   required String createdBy,
+  // }) async {
+  //   try {
+  //     final uri = Uri.parse('$baseUrl/propertyReports').replace(
+  //       queryParameters: {'propertyId': propertyId, 'created_by': createdBy},
+  //     );
+  //
+  //     final response = await http.get(uri);
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = json.decode(response.body);
+  //       return PaginationResponse<PropertyReportItem>.fromJson(
+  //         data,
+  //         (json) => PropertyReportItem.fromJson(json),
+  //       );
+  //     } else {
+  //       print(
+  //         'Failed to fetch reports. Status: ${response.statusCode}, Body: ${response.body}',
+  //       );
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching property reports: $e');
+  //     return null;
+  //   }
+  // }
+
+  Future<PaginationResponse<PropertyReportItem>> fetchPropertyReports({
+    int page = 1,
+    Map<String, String>? filters,
+  }) async {
+    try {
+      final queryParameters = {
+        'page': page.toString(),
+        if (filters != null) ...filters,
+      };
+
+      final uri = Uri.parse(
+        '$baseUrl',
+      ).replace(queryParameters: queryParameters);
+
+      print("uri: $uri");
+
+      final response = await http.get(uri, headers: await headers());
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("data: $data");
+
+        return PaginationResponse<PropertyReportItem>.fromJson(
+          data,
+          (json) => PropertyReportItem.fromJson(json),
+        );
+      } else {
+        print("Failed to load property reports: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to load property reports");
+      }
+    } catch (e) {
+      print("Exception in fetchPropertyReports: $e");
+      rethrow; // Let the controller handle it
     }
   }
 }

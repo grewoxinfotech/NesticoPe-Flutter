@@ -55,7 +55,6 @@ class PropertyController extends PaginatedController<Items> {
   Map<String, String>? filters = {};
   var favoriteIds = <String>{}.obs;
 
-
   @override
   void onInit() {
     super.onInit();
@@ -75,7 +74,6 @@ class PropertyController extends PaginatedController<Items> {
 
     refreshList();
   }
-
 
   void toggleFavorite(String propertyId) async {
     if (favoriteIds.contains(propertyId)) {
@@ -173,11 +171,10 @@ class PropertyController extends PaginatedController<Items> {
     return null;
   }
 
-  Future<void> getFavoriteProperty()async{
-    for(var favorite in favoriteIds){
-       await getPropertyById(favorite);
+  Future<void> getFavoriteProperty() async {
+    for (var favorite in favoriteIds) {
+      await getPropertyById(favorite);
     }
-
   }
 
   /// Create a new property
@@ -227,7 +224,7 @@ class PropertyController extends PaginatedController<Items> {
     isLoading.value = true;
     filters = newFilters;
     await refreshList();
-    isLoading.value=false;
+    isLoading.value = false;
   }
 
   void lessOrReadMore() {
@@ -257,10 +254,9 @@ class PropertyController extends PaginatedController<Items> {
 
   Future<void> getFavorite(String userId) async {
     final data = await _service.getFavorite(userId);
-    if(data != null){
+    if (data != null) {
       FavoriteManager().addAllFavorites(data);
       favoriteIds.addAll(data);
-
     }
     // return success;
   }

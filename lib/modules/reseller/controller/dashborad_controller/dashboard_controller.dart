@@ -1029,7 +1029,7 @@ class DashboardController extends GetxController {
     }
   }
 
-  void loadProducts() {
+  Future<void> loadProducts() async {
     isLoading.value = true;
     error.value = '';
 

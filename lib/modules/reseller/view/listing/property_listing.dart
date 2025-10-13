@@ -1790,7 +1790,10 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               offset: Offset(0, 40),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 0.7),
+                side: BorderSide(
+                  color: ColorRes.leadGreyColor.shade300,
+                  width: 0.7,
+                ),
               ),
               elevation: 8,
               itemBuilder:
@@ -1839,7 +1842,10 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               decoration: BoxDecoration(
                 color: ColorRes.leadGreyColor[50],
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1.5),
+                border: Border.all(
+                  color: ColorRes.leadGreyColor.shade200,
+                  width: 1.5,
+                ),
               ),
               child: TextField(
                 onChanged: controller.updateSearch,
@@ -2080,7 +2086,11 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
               if (!propertyController.isLoading.value &&
                   propertyController.items.isEmpty) {
-                return ErrorWidgetCustom();
+                return ErrorWidgetCustom(
+                  onPressed: () {
+                    fetchResellerAssignProperty();
+                  },
+                );
               }
 
               // if (propertyController.filteredProducts.isEmpty) {
@@ -2546,7 +2556,11 @@ class ProductsGrid extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.search_off, size: 64, color: ColorRes.leadGreyColor[400]),
+              Icon(
+                Icons.search_off,
+                size: 64,
+                color: ColorRes.leadGreyColor[400],
+              ),
               SizedBox(height: 16),
               Text(
                 'No properties found',
@@ -2559,7 +2573,10 @@ class ProductsGrid extends StatelessWidget {
               SizedBox(height: 8),
               Text(
                 'Try adjusting your filters',
-                style: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor[500]),
+                style: TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  color: ColorRes.leadGreyColor[500],
+                ),
               ),
             ],
           ),
@@ -2607,7 +2624,10 @@ class ProductCard extends StatelessWidget {
           height: 120,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
+            border: Border.all(
+              color: ColorRes.leadGreyColor.shade200,
+              width: 1,
+            ),
           ),
           child: Row(
             children: [
@@ -3044,7 +3064,10 @@ class Facilities extends StatelessWidget {
 // }
 
 class ErrorWidgetCustom extends StatelessWidget {
+  final VoidCallback? onPressed;
   final DashboardController controller = Get.find();
+
+  ErrorWidgetCustom({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -3079,13 +3102,16 @@ class ErrorWidgetCustom extends StatelessWidget {
             Obx(
               () => Text(
                 controller.error.value,
-                style: TextStyle(color: ColorRes.leadGreyColor[600], fontSize: AppFontSizes.medium),
+                style: TextStyle(
+                  color: ColorRes.leadGreyColor[600],
+                  fontSize: AppFontSizes.medium,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
             SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: controller.loadProducts,
+              onPressed: onPressed ?? controller.loadProducts,
               icon: Icon(Icons.refresh_rounded),
               label: Text('Try Again'),
               style: ElevatedButton.styleFrom(
@@ -3140,7 +3166,10 @@ class EmptyStateWidget extends StatelessWidget {
               SizedBox(height: 8),
               Text(
                 'Try adjusting your filters or search terms',
-                style: TextStyle(color: ColorRes.leadGreyColor[600], fontSize: AppFontSizes.medium),
+                style: TextStyle(
+                  color: ColorRes.leadGreyColor[600],
+                  fontSize: AppFontSizes.medium,
+                ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 24),

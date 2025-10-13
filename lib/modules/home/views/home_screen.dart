@@ -42,6 +42,7 @@ import '../../builder/view/builder_form_screen.dart';
 import '../../builder/view/builder_main_screen.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../news/view/news_detail_screen.dart';
+import '../../other/trending_city/controllers/trending_city_controller.dart';
 import '../../platform_service/views/widgets/platform_service_card.dart';
 import '../../property/views/widgets/city_filter.dart';
 import '../../property/views/widgets/property_card.dart';
@@ -219,6 +220,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final PropertyController controller = Get.put(PropertyController());
   final NewsController newsController = Get.put(NewsController());
+  final trendingCityController = Get.put(TrendingCityController());
   final RecommendedPropertyController _recommendedPropertyController = Get.put(
     RecommendedPropertyController(),
   );
@@ -855,7 +857,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                   const SizedBox(height: 12),
-                  const CityFilterList(),
+                  Obx(() {
+                    if (trendingCityController.isLoading.value &&
+                        trendingCityController.allTrendingCities.isNotEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!trendingCityController.isLoading.value &&
+                        trendingCityController.allTrendingCities.isEmpty) {
+                      return const Center(child: Text("No Cities Found"));
+                    }
+
+                    return CityFilterList();
+                  }),
                   const SizedBox(height: 20),
 
                   // const TitleWithViewAll(title: "Residential Properties"),
@@ -1500,8 +1514,9 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                           testimonial["name"]!.toString(),
                                           style: TextStyle(
                                             fontSize: AppFontSizes.body,
-                                            fontWeight: AppFontWeights.extraBold,
-                                            color: ColorRes.homeBlackFade
+                                            fontWeight:
+                                                AppFontWeights.extraBold,
+                                            color: ColorRes.homeBlackFade,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -2237,6 +2252,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 
 class NewsAndArticles extends StatelessWidget {
   final List<NewsItem> articles;
+
   const NewsAndArticles({super.key, required this.articles});
 
   @override
@@ -2416,8 +2432,7 @@ class NewsAndArticles extends StatelessWidget {
                               style: TextStyle(
                                 color: ColorRes.white,
                                 fontSize: AppFontSizes.extraSmall,
-                                fontWeight:
-                                AppFontWeights.semiBold,
+                                fontWeight: AppFontWeights.semiBold,
                               ),
                             ),
                           ),
@@ -2506,7 +2521,7 @@ class NewsAndArticles extends StatelessWidget {
                                       '${article.readTime ?? 0} min read',
                                       style: TextStyle(
                                         fontSize: AppFontSizes.extraSmall,
-                                        color:ColorRes.leadGreyColor.shade500,
+                                        color: ColorRes.leadGreyColor.shade500,
                                       ),
                                     ),
                                   ],
@@ -2616,7 +2631,10 @@ class ExploreLocalities extends StatelessWidget {
                   /// Avg Price
                   Text(
                     "Avg Price: ${locality["price"]}",
-                    style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor.shade600),
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      color: ColorRes.leadGreyColor.shade600,
+                    ),
                   ),
 
                   const Spacer(),
@@ -2643,7 +2661,9 @@ class ExploreLocalities extends StatelessWidget {
                             : Icons.trending_down_rounded,
                         size: 16,
                         color:
-                            isUp ? ColorRes.green.shade600 : ColorRes.error.shade600,
+                            isUp
+                                ? ColorRes.green.shade600
+                                : ColorRes.error.shade600,
                       ),
                     ],
                   ),
@@ -2983,7 +3003,10 @@ class InsightsCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     description,
-                    style: const TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor),
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.small,
+                      color: ColorRes.leadGreyColor,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -3590,7 +3613,10 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: "Write your feedback...",
-                hintStyle: const TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor),
+                hintStyle: const TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  color: ColorRes.leadGreyColor,
+                ),
                 filled: true,
                 fillColor: ColorRes.leadGreyColor[100],
                 enabledBorder: OutlineInputBorder(
@@ -3648,7 +3674,10 @@ class _FeedbackComponentState extends State<FeedbackComponent> {
                 ),
                 child: const Text(
                   "Submit",
-                  style: TextStyle(fontSize: AppFontSizes.body, color: ColorRes.white),
+                  style: TextStyle(
+                    fontSize: AppFontSizes.body,
+                    color: ColorRes.white,
+                  ),
                 ),
               ),
             ),
@@ -4122,7 +4151,10 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
   Widget buildHeading(BuildContext context, String text) {
     return Text(
       text,
-      style: const TextStyle(fontSize:AppFontSizes.body, fontWeight: AppFontWeights.extraBold),
+      style: const TextStyle(
+        fontSize: AppFontSizes.body,
+        fontWeight: AppFontWeights.extraBold,
+      ),
     );
   }
 }
@@ -4194,7 +4226,11 @@ Widget _buildErrorState(String error) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 48, color: ColorRes.leadGreyColor.shade400),
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: ColorRes.leadGreyColor.shade400,
+          ),
           const SizedBox(height: 16),
           Text(
             'Something went wrong',
@@ -4207,7 +4243,10 @@ Widget _buildErrorState(String error) {
           const SizedBox(height: 8),
           Text(
             'Please try again later',
-            style: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor.shade500),
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              color: ColorRes.leadGreyColor.shade500,
+            ),
           ),
         ],
       ),
@@ -4222,7 +4261,11 @@ Widget _buildEmptyState() {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.home_outlined, size: 48, color: ColorRes.leadGreyColor.shade400),
+          Icon(
+            Icons.home_outlined,
+            size: 48,
+            color: ColorRes.leadGreyColor.shade400,
+          ),
           const SizedBox(height: 16),
           Text(
             'No Properties Available',
@@ -4235,7 +4278,10 @@ Widget _buildEmptyState() {
           const SizedBox(height: 8),
           Text(
             'Check back later for new listings',
-            style: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor.shade500),
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              color: ColorRes.leadGreyColor.shade500,
+            ),
           ),
         ],
       ),

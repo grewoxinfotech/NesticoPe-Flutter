@@ -482,7 +482,7 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Get.offAll(
+                    Get.to(
                       () => SellerDashboardScreen(),
                       binding: BindingsBuilder(() {
                         Get.lazyPut<PropertyController>(
@@ -497,24 +497,18 @@ class DashboardScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    Get.offAll(
-                          () => MainNavigationScreen(),
-                    );
+                    Get.to(() => MainNavigationScreen());
                   },
 
                   child: Text("Reseller"),
-
                 ),
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    Get.offAll(
-                          () => BuilderMainScreen(),
-                    );
+                    Get.to(() => BuilderMainScreen());
                   },
 
                   child: Text("Builder"),
-
                 ),
                 // ElevatedButton(
                 //   onPressed: () {

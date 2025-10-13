@@ -12,13 +12,42 @@ import '../../../data/network/property/models/property_model.dart';
 
 import '../../property/controllers/property_controller.dart';
 
-class PropertyDetail extends StatelessWidget {
+class PropertyDetail extends StatefulWidget {
   List<Map<String, String>>? filters;
   final bool isAppBarShow;
   final Color backgroundColor;
-  final PropertyController controller = Get.find<PropertyController>();
-  // final PropertyController controller = Get.put(PropertyController());
 
+  PropertyDetail({
+    super.key,
+    this.isAppBarShow = true,
+    this.backgroundColor = ColorRes.white,
+    this.filters,
+  });
+
+  @override
+  State<PropertyDetail> createState() => _PropertyDetailState();
+}
+
+class _PropertyDetailState extends State<PropertyDetail> {
+  final PropertyController controller = Get.find<PropertyController>();
+  RxMap<String, String> selectedFilters = <String, String>{}.obs;
+
+  @override
+  void initState() {
+    if (widget.filters != null) {
+      final Map<String, String> filterMap = {};
+      for (var filter in widget.filters!) {
+        filterMap.addAll(filter);
+      }
+      selectedFilters.addAll(filterMap);
+      controller.applyFilters(filterMap);
+    } else {
+      controller.loadInitial();
+    }
+    super.initState();
+  }
+
+  // final PropertyController controller = Get.put(PropertyController());
   final List<Map<String, dynamic>> properties = [
     {
       'title': 'The White Abode',
@@ -85,21 +114,13 @@ class PropertyDetail extends StatelessWidget {
       ],
     },
   ];
-  RxMap<String, String> selectedFilters = <String, String>{}.obs;
-
-  PropertyDetail({
-    super.key,
-    this.isAppBarShow = true,
-    this.backgroundColor = ColorRes.white,
-    this.filters,
-  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: widget.backgroundColor,
       appBar:
-          isAppBarShow
+          widget.isAppBarShow
               ? AppBar(
                 elevation: 0,
                 backgroundColor: ColorRes.white,
@@ -172,278 +193,8 @@ class PropertyDetail extends StatelessWidget {
                     ),
                   ),
                 ],
-                // bottom:
-                //     selectedFilters.isEmpty
-                //         ? PreferredSize(
-                //           preferredSize: const Size.fromHeight(0),
-                //           child: SizedBox.shrink(),
-                //         )
-                //         : PreferredSize(
-                //           preferredSize: const Size.fromHeight(50),
-                //           child: Obx(() {
-                //             if (selectedFilters.isEmpty)
-                //               return const SizedBox.shrink();
-                //
-                //             return Container(
-                //               padding: const EdgeInsets.symmetric(
-                //                 horizontal: 12,
-                //                 vertical: 8,
-                //               ),
-                //               width: double.infinity,
-                //               decoration: BoxDecoration(
-                //                 color: ColorRes.white,
-                //                 boxShadow: [
-                //                   BoxShadow(
-                //                     color: Colors.black.withOpacity(0.05),
-                //                     blurRadius: 2,
-                //                   ),
-                //                 ],
-                //               ),
-                //               child: SingleChildScrollView(
-                //                 scrollDirection: Axis.horizontal,
-                //                 child: Row(
-                //                   children: [
-                //                     if (selectedFilters.isNotEmpty)
-                //                       GestureDetector(
-                //                         onTap: () {
-                //                           selectedFilters.clear();
-                //                           controller.applyFilters(
-                //                             selectedFilters,
-                //                           );
-                //                         },
-                //                         child: Container(
-                //                           margin: const EdgeInsets.only(
-                //                             right: 8,
-                //                           ),
-                //                           padding: const EdgeInsets.symmetric(
-                //                             horizontal: 10,
-                //                             vertical: 6,
-                //                           ),
-                //                           decoration: BoxDecoration(
-                //                             color: ColorRes.primary.withOpacity(
-                //                               0.1,
-                //                             ),
-                //                             borderRadius: BorderRadius.circular(
-                //                               8,
-                //                             ),
-                //                             border: Border.all(
-                //                               color: ColorRes.primary
-                //                                   .withOpacity(0.3),
-                //                             ),
-                //                           ),
-                //                           child: const Row(
-                //                             mainAxisSize: MainAxisSize.min,
-                //                             children: [
-                //                               Text(
-                //                                 "Clear All",
-                //                                 style: TextStyle(
-                //                                   fontSize: 12,
-                //                                   color: ColorRes.primary,
-                //                                   fontWeight: AppFontWeights.medium,
-                //                                 ),
-                //                               ),
-                //                               SizedBox(width: 4),
-                //                               Icon(
-                //                                 Icons.close,
-                //                                 size: 16,
-                //                                 color: ColorRes.primary,
-                //                               ),
-                //                             ],
-                //                           ),
-                //                         ),
-                //                       ),
-                //                     ...selectedFilters.entries.map((entry) {
-                //                       final key = entry.key;
-                //                       final value = entry.value;
-                //
-                //                       if (value == null ||
-                //                           (value is String &&
-                //                               value.trim().isEmpty) ||
-                //                           (value is Map && value.isEmpty)) {
-                //                         return const SizedBox.shrink();
-                //                       }
-                //
-                //                       return Container(
-                //                         margin: const EdgeInsets.only(right: 8),
-                //                         padding: const EdgeInsets.symmetric(
-                //                           horizontal: 10,
-                //                           vertical: 6,
-                //                         ),
-                //                         decoration: BoxDecoration(
-                //                           color: ColorRes.primary.withOpacity(
-                //                             0.1,
-                //                           ),
-                //                           borderRadius: BorderRadius.circular(
-                //                             8,
-                //                           ),
-                //                           border: Border.all(
-                //                             color: ColorRes.primary.withOpacity(
-                //                               0.3,
-                //                             ),
-                //                           ),
-                //                         ),
-                //                         child: Row(
-                //                           mainAxisSize: MainAxisSize.min,
-                //                           children: [
-                //                             Text(
-                //                               "$key: $value",
-                //                               style: const TextStyle(
-                //                                 fontSize: 12,
-                //                                 color: ColorRes.primary,
-                //                                 fontWeight: AppFontWeights.medium,
-                //                               ),
-                //                             ),
-                //                             const SizedBox(width: 6),
-                //                             GestureDetector(
-                //                               onTap: () {
-                //                                 selectedFilters.remove(key);
-                //                                 controller.applyFilters(
-                //                                   selectedFilters,
-                //                                 );
-                //                               },
-                //                               child: const Icon(
-                //                                 Icons.close,
-                //                                 size: 16,
-                //                                 color: ColorRes.primary,
-                //                               ),
-                //                             ),
-                //                           ],
-                //                         ),
-                //                       );
-                //                     }).toList(),
-                //                   ],
-                //                 ),
-                //               ),
-                //             );
-                //           }),
-                //         ),
               )
               : null,
-      // body: Obx(() {
-      //   if (controller.isLoading.value && controller.items.isEmpty) {
-      //     return const Center(
-      //       child: Column(
-      //         mainAxisAlignment: MainAxisAlignment.center,
-      //         children: [
-      //           CircularProgressIndicator(),
-      //           SizedBox(height: 16),
-      //           Text(
-      //             "Loading properties...",
-      //             style: TextStyle(color: ColorRes.textColor, fontSize: 14),
-      //           ),
-      //         ],
-      //       ),
-      //     );
-      //   }
-      //
-      //   if (controller.isLoading.value) {
-      //     return Stack(
-      //       children: [
-      //         ListView.builder(
-      //           padding: const EdgeInsets.symmetric(
-      //             vertical: AppPadding.small,
-      //             horizontal: AppPadding.small,
-      //           ),
-      //           itemCount: controller.items.length,
-      //           itemBuilder: (context, index) {
-      //             final property = properties[index % properties.length];
-      //             final data = controller.items[index];
-      //             return PropertyCardWidget(
-      //               property: data,
-      //               role: property['role'],
-      //             );
-      //           },
-      //         ),
-      //         Positioned.fill(
-      //           child: Container(
-      //             color: ColorRes.white.withOpacity(0.7),
-      //             child: const Center(child: CircularProgressIndicator()),
-      //           ),
-      //         ),
-      //       ],
-      //     );
-      //   }
-      //
-      //   if (!controller.isLoading.value && controller.items.isEmpty) {
-      //     return Center(
-      //       child: Column(
-      //         mainAxisAlignment: MainAxisAlignment.center,
-      //         children: [
-      //           const Icon(
-      //             Icons.search_off_rounded,
-      //             size: 64,
-      //             color: ColorRes.primary,
-      //           ),
-      //           const SizedBox(height: 16),
-      //           const Text(
-      //             "No properties found",
-      //             style: TextStyle(
-      //               fontSize: 18,
-      //               fontWeight: AppFontWeights.semiBold,
-      //               color: ColorRes.textColor,
-      //             ),
-      //           ),
-      //           const SizedBox(height: 8),
-      //           Text(
-      //             selectedFilters.isEmpty
-      //                 ? "Try adjusting your search criteria"
-      //                 : "Try removing some filters",
-      //             style: TextStyle(
-      //               fontSize: 14,
-      //               color: ColorRes.textColor.withOpacity(0.7),
-      //             ),
-      //           ),
-      //           if (selectedFilters.isNotEmpty) ...[
-      //             const SizedBox(height: 24),
-      //             ElevatedButton(
-      //               onPressed: () {
-      //                 selectedFilters.clear();
-      //                 controller.applyFilters(selectedFilters);
-      //               },
-      //               style: ElevatedButton.styleFrom(
-      //                 backgroundColor: ColorRes.primary,
-      //                 foregroundColor: ColorRes.white,
-      //                 padding: const EdgeInsets.symmetric(
-      //                   horizontal: 24,
-      //                   vertical: 12,
-      //                 ),
-      //               ),
-      //               child: const Text("Clear All Filters"),
-      //             ),
-      //           ],
-      //         ],
-      //       ),
-      //     );
-      //   }
-      //
-      //   return NotificationListener<ScrollNotification>(
-      //     onNotification: (scrollEnd) {
-      //       final metrics = scrollEnd.metrics;
-      //       if (metrics.atEdge && metrics.pixels != 0) {
-      //         controller.loadMore();
-      //       }
-      //       return false;
-      //     },
-      //     child: RefreshIndicator(
-      //       onRefresh: controller.refreshList,
-      //       child: ListView.builder(
-      //         padding: const EdgeInsets.symmetric(
-      //           vertical: AppPadding.small,
-      //           horizontal: AppPadding.small,
-      //         ),
-      //         itemCount: controller.items.length,
-      //         itemBuilder: (context, index) {
-      //           final property = properties[index % properties.length];
-      //           final data = controller.items[index];
-      //           return PropertyCardWidget(
-      //             property: data,
-      //             role: property['role'],
-      //           );
-      //         },
-      //       ),
-      //     ),
-      //   );
-      // }),
 
       body: Column(
         children: [
@@ -569,7 +320,10 @@ class PropertyDetail extends StatelessWidget {
                       SizedBox(height: 16),
                       Text(
                         "Loading properties...",
-                        style: TextStyle(color: ColorRes.textColor, fontSize: AppFontSizes.medium),
+                        style: TextStyle(
+                          color: ColorRes.textColor,
+                          fontSize: AppFontSizes.medium,
+                        ),
                       ),
                     ],
                   ),
@@ -659,7 +413,6 @@ class PropertyDetail extends StatelessWidget {
           ),
         ],
       ),
-
     );
   }
 }

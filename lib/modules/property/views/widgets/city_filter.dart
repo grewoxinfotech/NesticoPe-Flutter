@@ -509,8 +509,12 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/modules/other/trending_city/controllers/trending_city_controller.dart';
+import 'package:housing_flutter_app/modules/propert_detail/view/property_details.dart';
 import '../../../../app/constants/img_res.dart';
 
 class CityFilterList extends StatefulWidget {
@@ -541,21 +545,27 @@ class _CityFilterListState extends State<CityFilterList> {
     IMGRes.city7,
   ];
 
-
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<TrendingCityController>();
     return SizedBox(
       height: 100, // Fixed height for horizontal list
       child: ListView.builder(
         clipBehavior: Clip.none,
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
-        itemCount: cities.length,
+        itemCount: controller.allTrendingCities.length,
         itemBuilder: (context, index) {
-
+          final city = controller.allTrendingCities[index];
           return GestureDetector(
             onTap: () {
-
+              Get.to(
+                () => PropertyDetail(
+                  filters: [
+                    {'city': '${city.city}'},
+                  ],
+                ),
+              );
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
@@ -569,12 +579,19 @@ class _CityFilterListState extends State<CityFilterList> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: Image.asset(
-                      images[index],
+                    child: CustomImage(
+                      type: CustomImageType.network,
+                      src: city.cityImage,
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: double.infinity,
                     ),
+                    // child: Image.asset(
+                    //   images[index],
+                    //   fit: BoxFit.cover,
+                    //   width: double.infinity,
+                    //   height: double.infinity,
+                    // ),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -592,7 +609,7 @@ class _CityFilterListState extends State<CityFilterList> {
                   Positioned(
                     bottom: 10,
                     child: Text(
-                      cities[index],
+                      city.city,
                       style: TextStyle(
                         color: ColorRes.white,
                         fontWeight: FontWeight.bold,
