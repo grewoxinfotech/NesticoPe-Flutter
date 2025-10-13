@@ -13,6 +13,7 @@ import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/widgets/texts/headline_text.dart';
 import '../../../../../data/network/property/models/property_model.dart';
 import '../../../../profile/views/profile_screen.dart';
+import '../../../../reseller/view/property_reseller.dart';
 
 final List<Map<String, dynamic>> addonData = [
   {
@@ -1718,35 +1719,12 @@ class OverViewCard extends StatelessWidget {
               onTap: () {
                 Get.to(() => PropertyOverviewScreen(properties: property));
               },
-              child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color:color.withOpacity(0.02) ,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: color.withOpacity(0.3),width: 1),
-                ),
-
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: Text(item["title"].toString(), overflow: TextOverflow.ellipsis,maxLines: 2,style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.textSecondary,fontWeight: AppFontWeights.medium,height: 1.2))),
-
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(color: color.withOpacity(0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: color.withOpacity(0.3),width: 1),),
-                          child: Icon(item["icon"] as IconData, size: 20, color: color),
-                        ),
-                      ],
-                    ),
-                    Text(item["value"].toString(), style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.semiBold, color: ColorRes.textPrimary,     height: 1.0,)),
-                  ],
-                ),
-              ),
+              child:buildMetricCard(
+                item['title'].toString(),
+                item['value'].toString(),
+                item['icon'] as IconData,
+                 color,
+              )
             );
           },
         ),

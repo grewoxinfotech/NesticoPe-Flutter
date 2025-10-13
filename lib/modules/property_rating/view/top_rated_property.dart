@@ -263,35 +263,75 @@ class _RatingDetailState extends State<RatingDetail> {
                     const SizedBox(height: 16),
 
                     /// Property cards
+                    // ...List.generate(widget.propertyController.items.length, (
+                    //   index,
+                    // ) {
+                    //   final property = widget.propertyController.items[index];
+                    //   print("Property: ${property.propertyDetails}");
+                    //
+                    //   return Padding(
+                    //     padding: const EdgeInsets.only(bottom: 12),
+                    //     child: PricePropertyCard(
+                    //       title: property.title ?? 'Unknown Property',
+                    //       address: property.address ?? "City",
+                    //       imagePath:
+                    //           property.propertyMedia?.images?.isNotEmpty == true
+                    //               ? property.propertyMedia!.images!.first
+                    //               : 'assets/logo/Avant.jpg',
+                    //       rating: 4.2,
+                    //       pricePerSqft:
+                    //           property
+                    //                       .propertyDetails
+                    //                       ?.financialInfo
+                    //                       ?.pricePerSqft !=
+                    //                   null
+                    //               ? int.tryParse(
+                    //                 property
+                    //                     .propertyDetails!
+                    //                     .financialInfo!
+                    //                     .pricePerSqft
+                    //                     .toString(),
+                    //               )
+                    //               : null,
+                    //       showPercentage: true,
+                    //       onTap: () {
+                    //         print(
+                    //           "Tapped on ${int.tryParse(property.propertyDetails!.financialInfo!.pricePerSqft.toString())}",
+                    //         );
+                    //       },
+                    //     ),
+                    //   );
+                    // }),
                     ...List.generate(widget.propertyController.items.length, (
-                      index,
-                    ) {
+                        index,
+                        ) {
                       final property = widget.propertyController.items[index];
+                      print("Property: ${property.propertyDetails}");
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: PricePropertyCard(
-                          title: property.title ?? '',
+                          title: property.title ?? 'Unknown Property',
                           address: property.address ?? "City",
                           imagePath:
-                              property.propertyMedia?.images?.isNotEmpty == true
-                                  ? property.propertyMedia!.images!.first
-                                  : 'assets/logo/Avant.jpg',
+                          property.propertyMedia?.images?.isNotEmpty == true
+                              ? property.propertyMedia!.images!.first
+                              : 'assets/logo/Avant.jpg',
                           rating: 4.2,
                           pricePerSqft:
-                              property
-                                          .propertyDetails
-                                          ?.financialInfo
-                                          ?.pricePerSqft !=
-                                      null
-                                  ? int.tryParse(
-                                    property
-                                        .propertyDetails!
-                                        .financialInfo!
-                                        .pricePerSqft
-                                        .toString(),
-                                  )
-                                  : null,
+                          property
+                              .propertyDetails
+                              ?.financialInfo
+                              ?.pricePerSqft !=
+                              null
+                              ? int.tryParse(
+                            property
+                                .propertyDetails!
+                                .financialInfo!
+                                .pricePerSqft
+                                .toString(),
+                          )
+                              : null,
                           showPercentage: true,
                           onTap: () {
                             print(
@@ -301,6 +341,7 @@ class _RatingDetailState extends State<RatingDetail> {
                         ),
                       );
                     }),
+
 
                     const SizedBox(height: 20),
                   ],

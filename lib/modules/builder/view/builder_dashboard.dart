@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+
+import '../../dashboard/views/dashboard_screen.dart';
+import '../../reseller/view/property_reseller.dart';
 
 class BuilderDashboard extends StatelessWidget {
   const BuilderDashboard({Key? key}) : super(key: key);
@@ -15,6 +19,11 @@ class BuilderDashboard extends StatelessWidget {
         backgroundColor: ColorRes.white,
         elevation: 0,
         automaticallyImplyLeading: false,
+        actions: [
+          TextButton(onPressed: () {
+            Get.offAll(() => DashboardScreen());
+          }, child: Text('Back')),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -80,10 +89,10 @@ class BuilderDashboard extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.5,
               children: [
-                _buildMetricCard('Total Properties', '24', Icons.apartment_rounded, const Color(0xFF6366F1)),
-                _buildMetricCard('Active Leads', '156', Icons.people_rounded, const Color(0xFFEC4899)),
-                _buildMetricCard('Sold Units', '18', Icons.check_circle_rounded, const Color(0xFF10B981)),
-                _buildMetricCard('Revenue', '₹2.4Cr', Icons.currency_rupee_rounded, const Color(0xFFF59E0B)),
+                buildMetricCard('Total Properties', '24', Icons.apartment_rounded, const Color(0xFF6366F1)),
+                buildMetricCard('Active Leads', '156', Icons.people_rounded, const Color(0xFFEC4899)),
+                buildMetricCard('Sold Units', '18', Icons.check_circle_rounded, const Color(0xFF10B981)),
+                buildMetricCard('Revenue', '₹2.4Cr', Icons.currency_rupee_rounded, const Color(0xFFF59E0B)),
               ],
             ),
             const SizedBox(height: 24),
@@ -100,30 +109,7 @@ class BuilderDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricCard(String label, String value, IconData icon, Color color) {
-    return Container(
 
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color:color.withOpacity(0.02),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3),width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: color.withOpacity(0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: color.withOpacity(0.3),width: 1),),
-            child: Icon(icon, size: 20, color: color),
-          ),
-          Text(value, style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.semiBold, color: ColorRes.textPrimary)),
-          Text(label, style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.textSecondary)),
-        ],
-      ),
-    );
-  }
 
   Widget _buildActivityItem(String title, String time, IconData icon, Color color) {
     return Container(

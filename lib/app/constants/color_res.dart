@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ColorRes {
+
   //common color
   static const black = Color(0xff000000);
   static const white = Color(0xffffffff);

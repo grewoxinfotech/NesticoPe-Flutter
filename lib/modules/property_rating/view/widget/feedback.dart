@@ -105,7 +105,7 @@ class FeedbackCard extends StatelessWidget {
 
             ReadMoreClass(
               description: feedback,
-              size: 11,
+              size: AppFontSizes.small,
               trimLines: 3,
               colorClickableText: ColorRes.primary,
             ),

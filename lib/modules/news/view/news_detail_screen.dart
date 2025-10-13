@@ -9,6 +9,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/news/news_model.dart';
+import '../../property_rating/view/widget/read_more_or_less.dart';
 
 class NewsDetailScreen extends StatefulWidget {
   final NewsItem newsItem;
@@ -70,12 +71,13 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     final isTablet = screenWidth > 600;
 
     return Scaffold(
+      backgroundColor: ColorRes.white,
       body: Stack(
         children: [
           CustomScrollView(
             controller: _scrollController,
             slivers: [
-              // App Bar with Cover Image
+
               SliverAppBar(
                 expandedHeight: isTablet ? 400 : 250,
                 floating: false,
@@ -93,17 +95,17 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                   ),
                 ),
                 actions: [
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: ColorRes.black.withOpacity(0.5),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.share, color: ColorRes.white),
-                      onPressed: _shareArticle,
-                    ),
-                  ),
+                  // Container(
+                  //   margin: const EdgeInsets.all(8),
+                  //   decoration: BoxDecoration(
+                  //     color: ColorRes.black.withOpacity(0.5),
+                  //     shape: BoxShape.circle,
+                  //   ),
+                  //   child: IconButton(
+                  //     icon: const Icon(Icons.share, color: ColorRes.white),
+                  //     onPressed: _shareArticle,
+                  //   ),
+                  // ),
                   Container(
                     margin: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -196,10 +198,11 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                               "_",
                               " ",
                             ),
-                            style: const TextStyle(
+                            style:  TextStyle(
                               color: ColorRes.white,
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.extraBold,
+                              fontSize: AppFontSizes.extraSmall,
+                              fontWeight: AppFontWeights.semiBold,
+                              letterSpacing: 0.5
                             ),
                           ),
                         ),
@@ -209,29 +212,33 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       Text(
                         newsItem.title ?? 'Untitled',
                         style: TextStyle(
-                          fontSize: isTablet ? AppFontSizes.displayMedium : AppFontSizes.large,
+                          fontSize: isTablet ? AppFontSizes.subtitle : AppFontSizes.large,
                           fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textPrimary,
+                          height: 1.3,
+                          letterSpacing: -0.2,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
 
                       // Summary
                       if (newsItem.summary != null)
                         Text(
                           newsItem.summary!,
                           style: TextStyle(
-                            fontSize: isTablet ? AppFontSizes.large : AppFontSizes.bodyMedium,
+                            fontSize: isTablet ? AppFontSizes.bodyMedium : AppFontSizes.small,
                             color: ColorRes.leadGreyColor[600],
                             fontWeight: AppFontWeights.regular,
+                            height: 1.6,
                           ),
                         ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 8),
 
                       // Author Info and Metadata
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
-                          color: ColorRes.leadGreyColor[100],
+                          color: ColorRes.white,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -246,8 +253,8 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                     'A',
                                 style: const TextStyle(
                                   color: ColorRes.white,
-                                  fontSize: AppFontSizes.subtitle,
-                                  fontWeight: AppFontWeights.extraBold,
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.bold,
                                 ),
                               ),
                             ),
@@ -258,9 +265,10 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                 children: [
                                   Text(
                                     newsItem.author ?? 'Unknown Author',
-                                    style: const TextStyle(
-                                      fontWeight: AppFontWeights.extraBold,
-                                      fontSize: AppFontSizes.body,
+                                    style:  TextStyle(
+                                      fontWeight: AppFontWeights.semiBold,
+                                      fontSize: AppFontSizes.bodyMedium,
+                                      color: ColorRes.textPrimary
                                     ),
                                   ),
                                   if (newsItem.authorDesignation != null)
@@ -268,9 +276,11 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                       newsItem.authorDesignation!,
                                       style: TextStyle(
                                         color: ColorRes.leadGreyColor[600],
-                                        fontSize: AppFontSizes.medium,
+                                        fontSize: AppFontSizes.caption,
+                                        fontWeight: AppFontWeights.regular,
                                       ),
                                     ),
+
                                 ],
                               ),
                             ),
@@ -281,7 +291,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
 
                       // Article Stats
                       Wrap(
-                        spacing: 20,
+                        spacing: 16,
                         runSpacing: 8,
                         children: [
                           _buildIconText(
@@ -296,88 +306,12 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                             Icons.visibility,
                             '${newsItem.viewCount ?? 0} views',
                           ),
-                          // Row(
-                          //   mainAxisSize: MainAxisSize.min,
-                          //   children: [
-                          //
-                          //     Icon(
-                          //       Icons.calendar_today,
-                          //       size: 16,
-                          //       color: Colors.grey[600],
-                          //     ),
-                          //     const SizedBox(width: 4),
-                          //     Text(
-                          //       _formatDate(newsItem.publishDate),
-                          //       style: TextStyle(
-                          //         color: Colors.grey[600],
-                          //         fontSize: 14,
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                          //
-                          // // const SizedBox(width: 20),
-                          // Row(
-                          //   mainAxisSize: MainAxisSize.min,
-                          //
-                          //   children: [
-                          //     Icon(
-                          //       Icons.access_time,
-                          //       size: 16,
-                          //       color: Colors.grey[600],
-                          //     ),
-                          //     const SizedBox(width: 4),
-                          //     Text(
-                          //       '${newsItem.readTime ?? 5} min read',
-                          //       style: TextStyle(
-                          //         color: Colors.grey[600],
-                          //         fontSize: 14,
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                          //
-                          // // const SizedBox(width: 20),
-                          // Row(
-                          //   mainAxisSize: MainAxisSize.min,
-                          //
-                          //   children: [
-                          //     Icon(
-                          //       Icons.visibility,
-                          //       size: 16,
-                          //       color: Colors.grey[600],
-                          //     ),
-                          //     const SizedBox(width: 4),
-                          //     Text(
-                          //       '${newsItem.viewCount ?? 0} views',
-                          //       style: TextStyle(
-                          //         color: Colors.grey[600],
-                          //         fontSize: 14,
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
+
                         ],
                       ),
                       const SizedBox(height: 24),
 
                       // Tags
-                      if (newsItem.tags != null && newsItem.tags!.isNotEmpty)
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children:
-                              newsItem.tags!.map((tag) {
-                                return Text(
-                                  '#$tag',
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.small,
-                                    color: ColorRes.primary,
-                                  ),
-                                );
-                              }).toList(),
-                        ),
-                      const SizedBox(height: 24),
 
                       // Content
                       // if (newsItem.content != null)
@@ -425,58 +359,149 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       //     },
                       //   )
                       // else
-                      Text(
-                        '${newsItem.content}',
-                        style: TextStyle(fontSize: AppFontSizes.bodySmall, color: ColorRes.leadGreyColor[600]),
+                      // Text(
+                      //   '${newsItem.content}',
+                      //   style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor[800],fontWeight: AppFontWeights.regular,height: 1.6,),
+                      // ),
+                      ReadMoreClass(
+                        description: '${newsItem.content}',
+                        size: AppFontSizes.small,
+                        trimLines: 18,
+                        colorClickableText: ColorRes.primary,
+
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 24),
+                      if (newsItem.tags != null && newsItem.tags!.isNotEmpty)
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children:
+                          newsItem.tags!.map((tag) {
+                            return Text(
+                              '#$tag',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.bodySmall,
+                                color: ColorRes.primary,
+                                fontWeight: AppFontWeights.medium,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+
+                      const SizedBox(height: 20),
 
                       // Share Section
+                      // Container(
+                      //   padding: const EdgeInsets.all(20),
+                      //   decoration: BoxDecoration(
+                      //     border: Border.all(color: ColorRes.leadGreyColor[300]!),
+                      //     borderRadius: BorderRadius.circular(12),
+                      //   ),
+                      //   child: Column(
+                      //     children: [
+                      //       const Text(
+                      //         'Share this article',
+                      //         style: TextStyle(
+                      //           fontSize: AppFontSizes.large,
+                      //           fontWeight: AppFontWeights.extraBold,
+                      //         ),
+                      //       ),
+                      //       const SizedBox(height: 16),
+                      //       Row(
+                      //         mainAxisAlignment: MainAxisAlignment.center,
+                      //         children: [
+                      //           IconButton(
+                      //             icon: const Icon(Icons.share),
+                      //             onPressed: _shareArticle,
+                      //             tooltip: 'Share',
+                      //           ),
+                      //           IconButton(
+                      //             icon: const Icon(Icons.copy),
+                      //             onPressed: () {
+                      //               Clipboard.setData(
+                      //                 ClipboardData(text: newsItem.title ?? ''),
+                      //               );
+                      //               ScaffoldMessenger.of(context).showSnackBar(
+                      //                 const SnackBar(
+                      //                   content: Text(
+                      //                     'Link copied to clipboard',
+                      //                   ),
+                      //                 ),
+                      //               );
+                      //             },
+                      //             tooltip: 'Copy Link',
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+
+
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        margin: const EdgeInsets.only(top: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                         decoration: BoxDecoration(
-                          border: Border.all(color: ColorRes.leadGreyColor[300]!),
-                          borderRadius: BorderRadius.circular(12),
+                          color: ColorRes.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: ColorRes.leadGreyColor[300]!,width: 1),
                         ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               'Share this article',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.large,
-                                fontWeight: AppFontWeights.extraBold,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.body,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textPrimary,
+                                letterSpacing: 0.3,
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Help others discover this story by sharing it on your favorite platform.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor[600],
+                                height: 1.5,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                IconButton(
-                                  icon: const Icon(Icons.share),
-                                  onPressed: _shareArticle,
-                                  tooltip: 'Share',
+                                _buildShareButton(
+                                  icon: Icons.share,
+                                  label: 'Share',
+                                  onTap: _shareArticle,
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.copy),
-                                  onPressed: () {
+                                const SizedBox(width: 16),
+                                _buildShareButton(
+                                  icon: Icons.copy,
+                                  label: 'Copy',
+                                  onTap: () {
                                     Clipboard.setData(
                                       ClipboardData(text: newsItem.title ?? ''),
                                     );
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text(
-                                          'Link copied to clipboard',
-                                        ),
+                                        content: Text('Link copied to clipboard'),
                                       ),
                                     );
                                   },
-                                  tooltip: 'Copy Link',
                                 ),
                               ],
                             ),
                           ],
                         ),
                       ),
+
+
+
+
                       const SizedBox(height: 40),
                     ],
                   ),
@@ -502,13 +527,46 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     );
   }
 
+
+  Widget _buildShareButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+        decoration: BoxDecoration(
+          color: ColorRes.leadGreyColor[100],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: ColorRes.primary),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.medium,
+                color: ColorRes.primary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildIconText(IconData icon, String text) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: ColorRes.primary),
+        Icon(icon, size: 14, color: ColorRes.primary),
         const SizedBox(width: 4),
-        Text(text, style: TextStyle(color: ColorRes.leadGreyColor[600], fontSize: AppFontSizes.medium)),
+        Text(text, style: TextStyle(color: ColorRes.leadGreyColor[600], fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium)),
       ],
     );
   }

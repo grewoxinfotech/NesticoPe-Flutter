@@ -438,10 +438,10 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                             children: [
                               // Title
                               Text(
-                                widget.property.title ?? "-",
+                                widget.property.title ?? "Unknown Property",
                                 style: const TextStyle(
                                   fontWeight: AppFontWeights.semiBold,
-                                  fontSize: AppFontSizes.medium,
+                                  fontSize: AppFontSizes.bodySmall,
                                   color: ColorRes.textPrimary,
                                 ),
                                 maxLines: 1,
@@ -452,12 +452,6 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                               // Location
                               Row(
                                 children: [
-                                  const Icon(
-                                    Icons.location_on_rounded,
-                                    size: 10,
-                                    color: ColorRes.grey,
-                                  ),
-                                  const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
                                       widget.property.address ?? "-",
@@ -474,7 +468,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                               const SizedBox(height: 8),
 
                               // Chips Row
-                              if (widget.property.propertyDetails != null)
+                              if (widget.property.propertyDetails != null)...[
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
@@ -521,6 +515,16 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                                     ],
                                   ),
                                 ),
+                  ]else... [
+                Text(
+                "No details available",
+                style:  TextStyle(
+                  fontSize: AppFontSizes.extraSmall,
+                  fontWeight: AppFontWeights.medium,
+                  color: ColorRes.grey,
+                ),
+              ),
+            ],
                             ],
                           ),
                         ),

@@ -505,18 +505,18 @@ class CategoryChip extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Column(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             label,
             style: TextStyle(
               fontSize: AppFontSizes.medium,
-              fontWeight: AppFontWeights.regular,
+              fontWeight: AppFontWeights.medium,
               color: isSelected ? ColorRes.primary : ColorRes.textPrimary,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(width: 4),
           Text(
             "($number)",
             style: TextStyle(

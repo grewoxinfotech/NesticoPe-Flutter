@@ -723,6 +723,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: controller.items.length.clamp(0, 10),
+                          padding: EdgeInsets.symmetric(horizontal: 12),
                           separatorBuilder:
                               (_, __) => const SizedBox(width: 10),
                           itemBuilder: (context, index) {
@@ -1029,10 +1030,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   TitleWithViewAll(
                     title: "Recommended Sellers",
                     showViewAll: true,
-
-                    onViewAll: () {
-                      Get.to(() => FileUploadSection());
-                    },
                   ),
                   const SizedBox(height: 12),
 

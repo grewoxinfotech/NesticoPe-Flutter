@@ -1271,9 +1271,9 @@ void showLeadForm(
                 Container(
                   width: 40,
                   height: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  margin:  EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: ColorRes.leadGreyColor[300],
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1288,7 +1288,7 @@ void showLeadForm(
                               ? 'Add New Buyer Lead'
                               : 'Edit Buyer Lead',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: AppFontSizes.body,
                             fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.textColor,
                           ),
@@ -1427,9 +1427,9 @@ void showLeadForm(
                                             title ?? 'Unknown Property',
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
+                                            style:  TextStyle(
+                                              fontSize: AppFontSizes.small,
+                                              fontWeight: AppFontWeights.medium,
                                             ),
                                           ),
                                         );

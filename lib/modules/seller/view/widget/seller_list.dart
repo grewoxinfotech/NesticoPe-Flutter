@@ -47,8 +47,7 @@ class SellerListWidget extends StatelessWidget {
                       categories: [
                         {'type': 'Buy', 'number': 17},
                         {'type': 'Rent', 'number': 17},
-                        {'type': 'Buy', 'number': 17},
-                        {'type': 'Rent', 'number': 17},
+                        {'type': 'PG', 'number': 17},
                       ],
                       tags: [
                         AgentTagData(

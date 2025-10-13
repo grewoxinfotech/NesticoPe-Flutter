@@ -836,7 +836,7 @@ class ResellerProfileScreen extends StatelessWidget {
               value,
               style: TextStyle(
                 fontSize: AppFontSizes.medium,
-                fontWeight: AppFontWeights.extraBold,
+                fontWeight: AppFontWeights.semiBold,
                 color: ColorRes.homeBlackFade,
                 height: 1.2,
               ),

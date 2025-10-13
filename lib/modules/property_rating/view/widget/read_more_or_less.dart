@@ -27,9 +27,11 @@ class ReadMoreClass extends StatelessWidget {
       trimLines: trimLines,
       colorClickableText: colorClickableText,
 
+
       style: TextStyle(
         fontSize: size,
-        fontWeight: FontWeight.w400,
+        fontWeight: AppFontWeights.regular,
+        height: 1.6,
       ),
       trimMode: TrimMode.Line,
 

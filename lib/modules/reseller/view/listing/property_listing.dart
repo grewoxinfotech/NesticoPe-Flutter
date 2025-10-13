@@ -1711,7 +1711,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.leadGreyColor[50],
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,
@@ -1760,7 +1760,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 'Filter',
                 style: TextStyle(
                   color: ColorRes.primary,
-                  fontSize: 13,
+                  fontSize: AppFontSizes.bodySmall,
                   fontWeight: AppFontWeights.semiBold,
                 ),
               ),
@@ -1782,7 +1782,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 'Sort',
                 style: TextStyle(
                   color: ColorRes.leadGreyColor[700],
-                  fontSize: 13,
+                  fontSize: AppFontSizes.bodySmall,
                   fontWeight: AppFontWeights.semiBold,
                 ),
               ),
@@ -1790,7 +1790,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               offset: Offset(0, 40),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: Colors.grey.shade300, width: 0.7),
+                side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 0.7),
               ),
               elevation: 8,
               itemBuilder:
@@ -1904,7 +1904,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                             style: TextStyle(
                               fontSize: AppFontSizes.small,
                               fontWeight: AppFontWeights.semiBold,
-                              color: Colors.grey[700],
+                              color: ColorRes.leadGreyColor[700],
                             ),
                           ),
                           const Spacer(),
@@ -2152,7 +2152,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
             child: Icon(icon, size: 15, color: color),
           ),
           SizedBox(width: 12),
-          Text(text, style: TextStyle(fontSize: 11)),
+          Text(text, style: TextStyle(fontSize: AppFontSizes.caption)),
         ],
       ),
     );
@@ -2315,7 +2315,7 @@ class _FilterPanelState extends State<FilterPanel> {
                                 color:
                                     isSelected
                                         ? ColorRes.primary
-                                        : Colors.grey[300]!,
+                                        : ColorRes.leadGreyColor[300]!,
                                 width: 1,
                               ),
                             ),
@@ -2323,7 +2323,7 @@ class _FilterPanelState extends State<FilterPanel> {
                               color:
                                   isSelected
                                       ? ColorRes.primary
-                                      : Colors.black87,
+                                      : ColorRes.blackShade87,
                               fontWeight:
                                   isSelected
                                       ? AppFontWeights.semiBold
@@ -2487,8 +2487,8 @@ class _FilterPanelState extends State<FilterPanel> {
                         () => Text(
                           'Apply Filters (${tempSelectedCategories.length})',
                           style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
+                            fontSize: AppFontSizes.bodyMedium,
+                            fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.white,
                           ),
                         ),
@@ -2559,7 +2559,7 @@ class ProductsGrid extends StatelessWidget {
               SizedBox(height: 8),
               Text(
                 'Try adjusting your filters',
-                style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                style: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor[500]),
               ),
             ],
           ),
@@ -2815,10 +2815,10 @@ class Facilities extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           text,
-          style: const TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: Colors.black54,
+          style: TextStyle(
+            fontSize: AppFontSizes.caption,
+            fontWeight: AppFontWeights.medium,
+            color: ColorRes.blackShade54,
           ),
         ),
       ],

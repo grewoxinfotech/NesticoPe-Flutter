@@ -1226,8 +1226,8 @@ class ReportPropertyCard extends StatelessWidget {
                                   isButtonEnabled
                                       ? ColorRes.white
                                       : const Color(0xFF9E9E9E),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
                             ),
                           ),
                         );
@@ -1576,11 +1576,11 @@ class PropertyOverviewCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: AppFontSizes.medium,
                             height: 1,
-                            fontWeight: AppFontWeights.extraBold,
+                            fontWeight: AppFontWeights.semiBold,
                             color: item["color"] as Color,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 4),
                         Text(
                           item["title"]!,
                           style: TextStyle(

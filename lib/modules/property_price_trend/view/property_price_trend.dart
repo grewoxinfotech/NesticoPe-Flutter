@@ -379,7 +379,7 @@ class _PriceDetailsState extends State<PriceDetails> {
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 12),
                                   child: PricePropertyCard(
-                                    title: property.title ?? '',
+                                    title: property.title ?? 'Unknown Property',
                                     address: property.address ?? "City",
                                     imagePath:
                                         property
@@ -393,6 +393,7 @@ class _PriceDetailsState extends State<PriceDetails> {
                                                 .first
                                             : 'assets/logo/Avant.jpg',
                                     percentageIncrease: percentage,
+                                    price: property.propertyDetails?.financialInfo?.price??0.0,
                                     onTap:
                                         () => print(
                                           "Tapped on ${property.title}",

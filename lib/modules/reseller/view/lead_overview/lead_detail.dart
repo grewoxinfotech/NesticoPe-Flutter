@@ -910,7 +910,7 @@ class LeadDetailScreen extends StatelessWidget {
                                     isFromLead
                                         ? _getStatusColor(lead!.status)
                                         : Colors.green,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: AppFontWeights.extraBold,
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -1022,7 +1022,7 @@ class LeadDetailScreen extends StatelessWidget {
                                           'Negotiable Price',
                                           style: TextStyle(
                                             fontSize: AppFontSizes.small,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: AppFontWeights.semiBold,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -1310,7 +1310,7 @@ class LeadDetailScreen extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: ColorRes.leadGreyColor.shade300,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1329,8 +1329,8 @@ class LeadDetailScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  Colors.green.shade50,
-                                  Colors.green.shade100.withOpacity(0.5),
+                                  ColorRes.green.shade50,
+                                  ColorRes.green.shade100.withOpacity(0.5),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(16),
@@ -1349,7 +1349,7 @@ class LeadDetailScreen extends StatelessWidget {
                                   ),
                                   child: Icon(
                                     Icons.handshake_rounded,
-                                    color: Colors.green.shade700,
+                                    color: ColorRes.green.shade700,
                                     size: 25,
                                   ),
                                 ),
@@ -1362,9 +1362,9 @@ class LeadDetailScreen extends StatelessWidget {
                                       Text(
                                         'Negotiate Price',
                                         style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey[900],
+                                          fontSize: AppFontSizes.large,
+                                          fontWeight: AppFontWeights.extraBold,
+                                          color: ColorRes.leadGreyColor[900],
                                         ),
                                       ),
                                       SizedBox(height: 4),
@@ -1372,8 +1372,8 @@ class LeadDetailScreen extends StatelessWidget {
                                         'Make your best offer',
                                         style: TextStyle(
                                           fontSize: AppFontSizes.caption,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500,
+                                          color: ColorRes.leadGreyColor[600],
+                                          fontWeight: AppFontWeights.medium,
                                         ),
                                       ),
                                     ],
@@ -1410,8 +1410,8 @@ class LeadDetailScreen extends StatelessWidget {
                                         'Current Asking Price',
                                         style: TextStyle(
                                           fontSize: AppFontSizes.extraSmall,
-                                          color: Colors.blue.shade700,
-                                          fontWeight: FontWeight.w600,
+                                          color: ColorRes.blueColor.shade700,
+                                          fontWeight: AppFontWeights.semiBold,
                                         ),
                                       ),
                                       SizedBox(height: 2),
@@ -1419,8 +1419,8 @@ class LeadDetailScreen extends StatelessWidget {
                                         priceManager.displayPrice,
                                         style: TextStyle(
                                           fontSize: AppFontSizes.medium,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blue.shade900,
+                                          color: ColorRes.blueColor.shade900,
+                                          fontWeight: AppFontWeights.semiBold,
                                         ),
                                       ),
                                     ],
@@ -1439,8 +1439,8 @@ class LeadDetailScreen extends StatelessWidget {
                                 'Your Offer Amount *',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.small,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey[800],
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.leadGreyColor[800],
                                 ),
                               ),
                               SizedBox(height: 8),
@@ -1513,8 +1513,8 @@ class LeadDetailScreen extends StatelessWidget {
                                 'Message (Optional)',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.small,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey[800],
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.leadGreyColor[800],
                                 ),
                               ),
                               SizedBox(height: 8),
@@ -1525,24 +1525,24 @@ class LeadDetailScreen extends StatelessWidget {
                                 decoration: InputDecoration(
                                   hintText: 'Add a message...',
                                   hintStyle: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[400],
+                                    fontSize: AppFontSizes.medium,
+                                    color: ColorRes.leadGreyColor[400],
                                   ),
                                   prefixIcon: Icon(
                                     Icons.message_outlined,
-                                    color: Colors.orange.shade700,
+                                    color: ColorRes.orangeColor.shade700,
                                     size: 22,
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(14),
                                     borderSide: BorderSide(
-                                      color: Colors.grey.shade300,
+                                      color: ColorRes.leadGreyColor.shade300,
                                     ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(14),
                                     borderSide: BorderSide(
-                                      color: Colors.grey.shade300,
+                                      color: ColorRes.leadGreyColor.shade300,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
@@ -1580,13 +1580,13 @@ class LeadDetailScreen extends StatelessWidget {
                                       'Cancel',
                                       style: TextStyle(
                                         fontSize: AppFontSizes.medium,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: AppFontWeights.extraBold,
                                       ),
                                     ),
                                     style: OutlinedButton.styleFrom(
-                                      foregroundColor: Colors.grey[700],
+                                      foregroundColor: ColorRes.leadGreyColor[700],
                                       side: BorderSide(
-                                        color: Colors.grey.shade400,
+                                        color: ColorRes.leadGreyColor.shade400,
                                         width: 1.5,
                                       ),
                                       padding: EdgeInsets.symmetric(
@@ -1636,7 +1636,7 @@ class LeadDetailScreen extends StatelessWidget {
                                                     'Offer submitted successfully!',
                                                     style: TextStyle(
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          AppFontWeights.semiBold,
                                                     ),
                                                   ),
                                                 ),
@@ -1671,7 +1671,7 @@ class LeadDetailScreen extends StatelessWidget {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(14),
                                       ),
-                                      shadowColor: Colors.green.withOpacity(
+                                      shadowColor: ColorRes.green.withOpacity(
                                         0.3,
                                       ),
                                     ),

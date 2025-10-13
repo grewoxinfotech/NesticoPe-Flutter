@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/reseller/view/property_reseller.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../widgets/dialogs/delete_dialog.dart';
@@ -9,6 +10,7 @@ import '../../../widgets/drawer/drawer.dart';
 import 'package:get/get.dart';
 
 import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dart';
+import '../../builder/view/builder_main_screen.dart';
 import '../../home/views/home_screen.dart';
 import '../../insights/views/insights_screen.dart';
 import '../../referral/view/referral_dashboard.dart';
@@ -495,20 +497,41 @@ class DashboardScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    Get.to(() => ResellerConversionScreen());
+                    Get.offAll(
+                          () => MainNavigationScreen(),
+                    );
                   },
 
-                  child: Text("Convert Reseller"),
-                ),
+                  child: Text("Reseller"),
 
+                ),
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    Get.to(() => SellerConversionScreen());
+                    Get.offAll(
+                          () => BuilderMainScreen(),
+                    );
                   },
 
-                  child: Text("Convert seller"),
+                  child: Text("Builder"),
+
                 ),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     Get.to(() => ResellerConversionScreen());
+                //   },
+                //
+                //   child: Text("Convert Reseller"),
+                // ),
+                //
+                // SizedBox(height: 16),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     Get.to(() => SellerConversionScreen());
+                //   },
+                //
+                //   child: Text("Convert seller"),
+                // ),
               ],
             ),
           );

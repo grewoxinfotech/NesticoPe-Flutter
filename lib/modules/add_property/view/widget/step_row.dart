@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
-class StepChipsRow extends StatelessWidget {
+class StepChipsRow extends StatefulWidget {
   final int selectedIndex;
   final List<String> steps;
 
@@ -13,16 +13,21 @@ class StepChipsRow extends StatelessWidget {
   });
 
   @override
+  State<StepChipsRow> createState() => _StepChipsRowState();
+}
+
+class _StepChipsRowState extends State<StepChipsRow> {
+  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children:
-          steps.asMap().entries.map((entry) {
+          widget.steps.asMap().entries.map((entry) {
             int idx = entry.key;
             String step = entry.value;
 
-            bool isSelected = idx == selectedIndex;
-            bool isCompleted = idx < selectedIndex;
+            bool isSelected = idx == widget.selectedIndex;
+            bool isCompleted = idx < widget.selectedIndex;
 
             return Column(
               children: [
@@ -39,7 +44,7 @@ class StepChipsRow extends StatelessWidget {
                             : isSelected
                             ? ColorRes.primary
                             : ColorRes.leadGreyColor.shade300,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   alignment: Alignment.center,
                   child: Text(

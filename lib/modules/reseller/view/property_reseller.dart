@@ -620,6 +620,7 @@ import 'package:housing_flutter_app/modules/reseller/view/profile/reseller_profi
 import '../../../app/constants/size_manager.dart';
 import '../../../app/utils/formater/formater.dart';
 import '../../../utils/global.dart';
+import '../../dashboard/views/dashboard_screen.dart';
 import '../../profile/views/profile_screen.dart';
 import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
 import '../controller/dashborad_controller/dashboard_controller.dart';
@@ -647,6 +648,11 @@ class ResellerDashboardScreen extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: false,
+        actions: [
+          TextButton(onPressed: () {
+            Get.offAll(() => DashboardScreen());
+          }, child: Text('Back')),
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.recentLeads.isEmpty) {
@@ -721,76 +727,7 @@ Widget buildOverviewCards(DashboardController controller) {
   });
 }
 
-Widget buildMetricCard(String title, String value, IconData icon, Color color) {
-  return LayoutBuilder(
-    builder: (context, constraints) {
-      final cardWidth = constraints.maxWidth;
-      final isCompact = cardWidth < 150;
 
-      final titleFontSize =
-          isCompact ? AppFontSizes.extraSmall : AppFontSizes.small;
-      final valueFontSize = isCompact ? AppFontSizes.body : AppFontSizes.large;
-      final iconSize = isCompact ? 16.0 : 18.0;
-      final iconPadding = isCompact ? 6.0 : 8.0;
-      final cardPadding = isCompact ? 12.0 : 16.0;
-
-      return Container(
-        padding: EdgeInsets.all(cardPadding),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.02),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(width: 1, color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: titleFontSize,
-                      color: Colors.grey[600],
-                      fontWeight: AppFontWeights.medium,
-                      height: 1.2,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: EdgeInsets.all(iconPadding),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(width: 1, color: color.withOpacity(0.3)),
-                  ),
-                  child: Icon(icon, color: color, size: iconSize),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: valueFontSize,
-                fontWeight: AppFontWeights.bold,
-                color: ColorRes.textPrimary,
-                height: 1.0,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
 
 Widget _buildRecentLeads(DashboardController controller) {
   return Column(
@@ -801,11 +738,11 @@ Widget _buildRecentLeads(DashboardController controller) {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+             Text(
               'Recent Buyer Leads',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontSize: AppFontSizes.body,
+                fontWeight: AppFontWeights.semiBold,
                 color: ColorRes.textPrimary,
               ),
             ),
@@ -821,12 +758,12 @@ Widget _buildRecentLeads(DashboardController controller) {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text(
+              child:  Text(
                 'View All',
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
+                  fontWeight: AppFontWeights.medium,
                   color: ColorRes.primary,
-                  fontSize: 11,
+                  fontSize: AppFontSizes.caption,
                 ),
               ),
             ),
@@ -1096,11 +1033,11 @@ Widget _buildTopProducts(DashboardController controller) {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+             Text(
               'Top Property',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontSize: AppFontSizes.body,
+                fontWeight: AppFontWeights.semiBold,
                 color: ColorRes.textPrimary,
               ),
             ),
@@ -1116,12 +1053,12 @@ Widget _buildTopProducts(DashboardController controller) {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text(
+              child: Text(
                 'View All',
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
+                  fontWeight: AppFontWeights.medium,
                   color: ColorRes.primary,
-                  fontSize: 11,
+                  fontSize: AppFontSizes.caption,
                 ),
               ),
             ),
@@ -1187,11 +1124,11 @@ Widget _buildProductCard(Product product) {
                       width: 1,
                     ),
                   ),
-                  child: const Text(
+                  child:  Text(
                     'Added Today',
                     style: TextStyle(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w600,
+                      fontSize: AppFontSizes.tiny,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textPrimary,
                     ),
                   ),
@@ -1225,8 +1162,8 @@ Widget _buildProductCard(Product product) {
                   child: Text(
                     product.name,
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textColor,
                       // height: 1.2,
                     ),
@@ -1240,7 +1177,7 @@ Widget _buildProductCard(Product product) {
                   child: Text(
                     product.category,
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: AppFontSizes.extraSmall,
                       color: ColorRes.leadGreyColor.shade700,
                       // height: 1.3,
                     ),
@@ -1271,8 +1208,8 @@ Widget _buildProductCard(Product product) {
                     Text(
                       '${Formatter.formatPrice(product.price)}',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontSize: AppFontSizes.body,
+                        fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.textColor,
                         // height: 1.0,
                       ),
@@ -1286,11 +1223,11 @@ Widget _buildProductCard(Product product) {
                         borderRadius: BorderRadius.circular(8),
                         color: ColorRes.primary,
                       ),
-                      child: const Text(
+                      child:  Text(
                         'Contact ',
                         style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
+                          fontSize: AppFontSizes.extraSmall,
+                          fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.white,
                         ),
                       ),
@@ -1315,7 +1252,7 @@ Widget _buildPropertyFeature(
     mainAxisSize: MainAxisSize.min,
     children: [
       if (!isFirst) ...[
-        const Text('-', style: TextStyle(fontSize: 10)),
+         Text('-', style: TextStyle(fontSize: AppFontSizes.extraSmall)),
         // const Text('•', style: TextStyle(fontSize: 10)),
         const SizedBox(width: 2),
       ],
@@ -1324,7 +1261,7 @@ Widget _buildPropertyFeature(
       Text(
         text,
         style: TextStyle(
-          fontSize: 9,
+          fontSize: AppFontSizes.mini,
           color: ColorRes.leadGreyColor.shade800,
           height: 1.0,
         ),
@@ -1512,4 +1449,74 @@ class MainNavigationScreen extends StatelessWidget {
       ),
     );
   }
+}
+Widget buildMetricCard(String title, String value, IconData icon, Color color) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      final cardWidth = constraints.maxWidth;
+      final isCompact = cardWidth < 150;
+
+      final titleFontSize =
+      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small;
+      final valueFontSize = isCompact ? AppFontSizes.body : AppFontSizes.large;
+      final iconSize = isCompact ? 16.0 : 18.0;
+      final iconPadding = isCompact ? 6.0 : 8.0;
+      final cardPadding = isCompact ? 12.0 : 16.0;
+
+      return Container(
+        padding: EdgeInsets.all(cardPadding),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.02),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(width: 1, color: color.withOpacity(0.3)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: titleFontSize,
+                      color: ColorRes.leadGreyColor[600],
+                      fontWeight: AppFontWeights.medium,
+                      height: 1.2,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: EdgeInsets.all(iconPadding),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(width: 1, color: color.withOpacity(0.3)),
+                  ),
+                  child: Icon(icon, color: color, size: iconSize),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: valueFontSize,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textPrimary,
+                height: 1.0,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
