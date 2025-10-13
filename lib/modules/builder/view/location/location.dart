@@ -69,6 +69,7 @@ class StepLocation extends GetView<ProjectWizardController> {
                       Icons.search,
                       controller.cityController,
                       isEnable: false,
+
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please select a city';
@@ -93,6 +94,8 @@ class StepLocation extends GetView<ProjectWizardController> {
 
                         controller.cityController.text =
                             selectedCity.description?.split(',')[0] ?? '';
+                        p.city = controller.cityController.text;
+
                         // controller.cityController.text = selectedCity.split(',')[0];
 
                         print("city ${controller.cityController.text}");
@@ -139,6 +142,8 @@ class StepLocation extends GetView<ProjectWizardController> {
 
                         controller.stateController.text =
                             selectedState.description?.split(',')[0] ?? '';
+                        p.state = controller.stateController.text;
+
                         // controller.cityController.text = selectedCity.split(',')[0];
                       },
                     ),

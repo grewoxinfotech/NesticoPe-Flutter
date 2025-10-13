@@ -584,8 +584,6 @@ class ProjectWizardController extends GetxController {
   RxBool isLoading = false.obs;
   final Rxn<UserModel> user = Rxn<UserModel>();
 
-
-
   final project =
       ProjectModel(
         projectName: '',
@@ -624,11 +622,7 @@ class ProjectWizardController extends GetxController {
         videoList: [],
         brochure: null,
         projectHighlights: [],
-        projectContactInfo: ProjectContactInfo(
-          name: "",
-          phone:"",
-          email: "",
-        ),
+        projectContactInfo: ProjectContactInfo(name: "", phone: "", email: ""),
       ).obs;
 
   late TextEditingController projectNameController;
@@ -929,16 +923,15 @@ class ProjectWizardController extends GetxController {
     });
   }
 
-  Future<void> submit() async{
-    try{
+  Future<void> submit() async {
+    try {
       isLoading.value = true;
       printProjectDetails();
       await createBuilderProject();
-
-    }catch (e){
+    } catch (e) {
       print('Create builder project error: $e');
-    }finally{
-      isLoading.value =false;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -948,7 +941,10 @@ class ProjectWizardController extends GetxController {
         projectData: await _buildProjectPayload(),
         images: project.value.imageList.map((path) => File(path)).toList(),
         videos: project.value.videoList.map((path) => File(path)).toList(),
-        documents: project.value.brochure != null ? File(project.value.brochure!) : null,
+        documents:
+            project.value.brochure != null
+                ? File(project.value.pdfPath ?? '')
+                : null,
       );
       if (success) {
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -977,14 +973,17 @@ class ProjectWizardController extends GetxController {
     }
   }
 
-  Future<ProjectModel> _buildProjectPayload() async{
+  Future<ProjectModel> _buildProjectPayload() async {
     final ProjectModel p = project.value;
     print('Building payload ---- > ${p.projectContactInfo?.toJson()}');
     final user = await SecureStorage.getUserData();
     return ProjectModel(
       projectName: p.projectName,
       projectArea: p.projectArea,
-      projectSize: ProjectSize(totalBuildings: p.projectSize.totalBuildings, totalUnits: p.projectSize.totalUnits),
+      projectSize: ProjectSize(
+        totalBuildings: p.projectSize.totalBuildings,
+        totalUnits: p.projectSize.totalUnits,
+      ),
       launchDate: p.launchDate,
       possessionDate: p.possessionDate,
       configurations: p.configurations,

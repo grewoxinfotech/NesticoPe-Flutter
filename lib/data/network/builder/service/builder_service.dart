@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:http_parser/http_parser.dart';
 
 class BuilderService {
   final String baseUrl = ApiConstants.builderProject; // Adjust endpoint
@@ -20,7 +21,6 @@ class BuilderService {
   static Future<Map<String, String>> headers() async {
     return await ApiConstants.getHeaders();
   }
-
 
   ///==================== Create Project under a Builder ====================
   Future<bool> createProject({
@@ -44,26 +44,21 @@ class BuilderService {
       // Convert model to Map
       final projectMap = projectData.toJson();
 
-      // ====== Handle brochure (document) properly ======
-      // if (documents != null) {
-      //   final brochureObject = {
-      //     "name": documents.path.split('/').last,
-      //     "file": "brochureFile"
-      //   };
-      //
-      //   // Attach file with same key as mentioned inside brochureObject
-      //   request.files.add(await http.MultipartFile.fromPath(
-      //     'brochureFile', // this must match the key in "file"
-      //     documents.path,
-      //   ));
-      //
-      //   // Replace the brochure field with an object instead of a flat string
-      //   projectMap["brochure"] = brochureObject;
-      // }
+      if (documents != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'brochure',
+            documents.path,
+            contentType: MediaType('application', 'pdf'),
+          ),
+        );
+      }
 
       // ====== Add all other fields ======
       projectMap.forEach((key, value) {
         if (value == null) return;
+
+        if (key == 'brochure') return;
 
         if (value is Map || value is List) {
           request.fields[key] = jsonEncode(value);
@@ -72,26 +67,31 @@ class BuilderService {
         }
       });
 
-      // ====== Attach Images ======
-      // if (images != null && images.isNotEmpty) {
-      //   for (var i = 0; i < images.length; i++) {
-      //     request.files.add(await http.MultipartFile.fromPath(
-      //       'images[$i]',
-      //       images[i].path,
-      //     ));
-      //   }
-      // }
+      // ==== Attach Project Images ====
+      if (images != null && images.isNotEmpty) {
+        for (var image in images) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'project_images',
+              image.path,
+              contentType: MediaType('image', 'jpeg'),
+            ),
+          );
+        }
+      }
       //
-      // // ====== Attach Videos ======
-      // if (videos != null && videos.isNotEmpty) {
-      //   for (var i = 0; i < videos.length; i++) {
-      //     request.files.add(await http.MultipartFile.fromPath(
-      //       'videos[$i]',
-      //       videos[i].path,
-      //     ));
-      //   }
-      // }
-
+      // ==== Attach Project Videos ====
+      if (videos != null && videos.isNotEmpty) {
+        for (var video in videos) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'project_videos',
+              video.path,
+              contentType: MediaType('video', 'mp4'),
+            ),
+          );
+        }
+      }
       debugPrint("🧾 Multipart fields: ${request.fields}");
       debugPrint("📎 Attached files: ${request.files.length}");
 
@@ -108,7 +108,8 @@ class BuilderService {
           type: SnackBarType.success,
         );
         return true;
-      } return false;
+      }
+      return false;
     } catch (e) {
       debugPrint("❌ Create project exception: $e");
       CustomSnackBar.show(
@@ -119,5 +120,4 @@ class BuilderService {
       return false;
     }
   }
-
 }
