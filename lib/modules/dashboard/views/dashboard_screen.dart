@@ -14,6 +14,7 @@ import '../../builder/view/builder_main_screen.dart';
 import '../../home/views/home_screen.dart';
 import '../../insights/views/insights_screen.dart';
 import '../../referral/view/referral_dashboard.dart';
+import '../../reseller/view/reseller_success_stories/reseller_success_stories.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import '../../seller/seller_listing/view/seller_listing_view.dart';
 
@@ -509,6 +510,13 @@ class DashboardScreen extends StatelessWidget {
                   },
 
                   child: Text("Builder"),
+                ),SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => ResellerSuccessStoryScreen());
+                  },
+
+                  child: Text("Reseller Stories"),
                 ),
                 // ElevatedButton(
                 //   onPressed: () {
