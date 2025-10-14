@@ -557,17 +557,21 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
 import 'package:housing_flutter_app/modules/builder/view/builder_dashboard.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../data/network/builder/model/builder_model.dart';
 
-class ProjectWizardController extends GetxController {
+class ProjectWizardController extends PaginatedController {
   final BuilderService _builderService = BuilderService();
   final currentStep = 0.obs;
   ImagePicker picker = ImagePicker();
@@ -584,8 +588,11 @@ class ProjectWizardController extends GetxController {
   RxBool isLoading = false.obs;
   final Rxn<UserModel> user = Rxn<UserModel>();
 
+  Map<String, String>? filters = {};
+
   final project =
       ProjectModel(
+        mediaGallery: MediaGallery(images: [], videos: []),
         projectName: '',
         projectArea: 0,
         projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
@@ -639,7 +646,11 @@ class ProjectWizardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    setUserIdFilter().then((_) => loadInitial());
+    assignData();
+  }
 
+  Future<void> assignData() async {
     projectNameController = TextEditingController(
       text: project.value.projectName,
     );
@@ -658,7 +669,29 @@ class ProjectWizardController extends GetxController {
     stateController = TextEditingController(text: project.value.state);
     zipCodeController = TextEditingController(text: project.value.zipCode);
     locationController = TextEditingController(text: project.value.location);
-    fetchUserData();
+    await fetchUserData();
+  }
+
+  @override
+  Future<PaginationResponse> fetchItems(int page) async {
+    try {
+      final response = await _builderService.fetchProjects(
+        page: page,
+        filters: filters,
+      );
+
+      print("Fetched items: ${response.items.length}");
+      return response; // ✅ full response with items + meta
+    } catch (e) {
+      print("Exception in fetchItems: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> setUserIdFilter() async {
+    final userData = await SecureStorage.getUserData();
+    final userId = userData?.user?.id ?? '';
+    filters = {'created_by': userId};
   }
 
   Future<void> fetchUserData() async {
@@ -817,9 +850,79 @@ class ProjectWizardController extends GetxController {
     }
   }
 
-  Future<void> pdfPreviewByDefaultApp(String path) async {
-    final result = await OpenFilex.open(path);
-    print('Open result: ${result.message}');
+  // Future<void> pdfPreviewByDefaultApp(String path) async {
+  //   final result = await OpenFilex.open(path);
+  //   print('Open result: ${result.message}');
+  // }
+  // Future<void> pdfPreviewByDefaultApp(String pathOrUrl) async {
+  //   try {
+  //     String localPath = pathOrUrl;
+  //
+  //     // Check if it's a network URL
+  //     final isNetwork = Uri.tryParse(pathOrUrl)?.isAbsolute ?? false;
+  //
+  //     if (isNetwork) {
+  //       // Download the PDF to temporary directory
+  //       final response = await http.get(Uri.parse(pathOrUrl));
+  //       if (response.statusCode != 200) {
+  //         print('Failed to download PDF');
+  //         return;
+  //       }
+  //
+  //       final tempDir = await getTemporaryDirectory();
+  //       final fileName = pathOrUrl.split('/').last;
+  //       final file = File('${tempDir.path}/$fileName');
+  //       await file.writeAsBytes(response.bodyBytes);
+  //       localPath = file.path;
+  //     }
+  //
+  //     // Open the PDF using the default app
+  //     final result = await OpenFilex.open(localPath);
+  //     print('Open result: ${result.message}');
+  //   } catch (e) {
+  //     print('PDF open error: $e');
+  //   }
+  // }
+
+  Future<void> pdfPreviewByDefaultApp(String pathOrUrl) async {
+    // Show loading dialog
+    showDialog(
+      context: Get.context!,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      String localPath = pathOrUrl;
+
+      // Check if it's a network URL
+      final isNetwork = Uri.tryParse(pathOrUrl)?.isAbsolute ?? false;
+
+      if (isNetwork) {
+        // Download the PDF to temporary directory
+        final response = await http.get(Uri.parse(pathOrUrl));
+        if (response.statusCode != 200) {
+          print('Failed to download PDF');
+          Navigator.of(Get.context!).pop(); // close loader
+          return;
+        }
+
+        final tempDir = await getTemporaryDirectory();
+        final fileName = pathOrUrl.split('/').last;
+        final file = File('${tempDir.path}/$fileName');
+        await file.writeAsBytes(response.bodyBytes);
+        localPath = file.path;
+      }
+
+      // Open the PDF using the default app
+      final result = await OpenFilex.open(localPath);
+      print('Open result: ${result.message}');
+    } catch (e) {
+      print('PDF open error: $e');
+    } finally {
+      // Close loader
+      Navigator.of(Get.context!).pop();
+    }
   }
 
   void removeBuilderBrocher() {
@@ -935,6 +1038,18 @@ class ProjectWizardController extends GetxController {
     }
   }
 
+  Future<void> updateProject(String projectId) async {
+    try {
+      isLoading.value = true;
+      printProjectDetails();
+      await updateBuilderProject(projectId);
+    } catch (e) {
+      print('Create builder project error: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> createBuilderProject() async {
     try {
       final success = await _builderService.createProject(
@@ -973,11 +1088,52 @@ class ProjectWizardController extends GetxController {
     }
   }
 
+  Future<void> updateBuilderProject(String projectId) async {
+    try {
+      final success = await _builderService.updateProject(
+        projectId: projectId,
+        projectData: await _buildProjectPayload(),
+        images: project.value.imageList.map((path) => File(path)).toList(),
+        videos: project.value.videoList.map((path) => File(path)).toList(),
+        documents:
+            project.value.brochure != null
+                ? File(project.value.brochure ?? '')
+                : null,
+      );
+
+      if (success) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Project Updated Successfully",
+          message: "",
+          contentType: ContentType.success,
+        );
+        Get.offUntil(
+          MaterialPageRoute(builder: (_) => BuilderDashboard()),
+          (route) => route.isFirst,
+        );
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Failed to Update Project",
+          message: "",
+          contentType: ContentType.failure,
+        );
+      }
+    } catch (e) {
+      print('Update builder project error: $e');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Failed to Update Project",
+        message: "",
+        contentType: ContentType.failure,
+      );
+    }
+  }
+
   Future<ProjectModel> _buildProjectPayload() async {
     final ProjectModel p = project.value;
     print('Building payload ---- > ${p.projectContactInfo?.toJson()}');
     final user = await SecureStorage.getUserData();
     return ProjectModel(
+      mediaGallery: MediaGallery(images: p.imageList, videos: p.videoList),
       projectName: p.projectName,
       projectArea: p.projectArea,
       projectSize: ProjectSize(
@@ -1005,6 +1161,94 @@ class ProjectWizardController extends GetxController {
       propertyTypes: p.propertyTypes,
       projectHighlights: p.projectHighlights,
     );
+  }
+
+  // Future<ProjectModel> updateProjectData(ProjectModel updatedData) async {
+  //   final ProjectModel p = project.value;
+  //   final user = await SecureStorage.getUserData();
+  //
+  //   // Reverse assignment: fill existing project `p` with new `updatedData`
+  //   p.projectName = updatedData.projectName;
+  //   p.projectArea = updatedData.projectArea;
+  //   p.projectSize = ProjectSize(
+  //     totalBuildings: updatedData.projectSize.totalBuildings,
+  //     totalUnits: updatedData.projectSize.totalUnits,
+  //   );
+  //   p.launchDate = updatedData.launchDate;
+  //   p.possessionDate = updatedData.possessionDate;
+  //   p.configurations = updatedData.configurations;
+  //   p.reraId = updatedData.reraId;
+  //   p.address = updatedData.address;
+  //   p.status = updatedData.status;
+  //   p.city = updatedData.city;
+  //   p.state = updatedData.state;
+  //   p.zipCode = updatedData.zipCode;
+  //   p.location = updatedData.location;
+  //   p.amenities = updatedData.amenities;
+  //   p.brochure = updatedData.brochure;
+  //   p.nearbyLocations = updatedData.nearbyLocations;
+  //   p.projectContactInfo = ProjectContactInfo(
+  //     name: user?.user?.username ?? updatedData.projectContactInfo?.name ?? '',
+  //     phone: user?.user?.phone ?? updatedData.projectContactInfo?.phone ?? '',
+  //     email: user?.user?.email ?? updatedData.projectContactInfo?.email ?? '',
+  //   );
+  //   p.propertyTypes = updatedData.propertyTypes;
+  //   p.projectHighlights = updatedData.projectHighlights;
+  //   await assignData();
+  //   print("Updated Project Data: ${p.toJson()}");
+  //   return p;
+  // }
+
+  Future<ProjectModel> updateProjectData(ProjectModel updatedData) async {
+    final user = await SecureStorage.getUserData();
+    print("Images : ${updatedData.mediaGallery.images!}");
+    project.update((p) {
+      if (p == null) return;
+      p.id = updatedData.id;
+      p.pdfPath = updatedData.brochure;
+      p.imageList =
+          updatedData.mediaGallery.images!.isNotEmpty
+              ? updatedData.mediaGallery.images!
+              : p.imageList;
+      p.videoList =
+          updatedData.mediaGallery.videos!.isNotEmpty
+              ? updatedData.mediaGallery.videos!
+              : p.videoList;
+      p.projectName = updatedData.projectName;
+      p.projectArea = updatedData.projectArea;
+      p.projectSize = ProjectSize(
+        totalBuildings: updatedData.projectSize.totalBuildings,
+        totalUnits: updatedData.projectSize.totalUnits,
+      );
+      p.launchDate = updatedData.launchDate;
+      p.possessionDate = updatedData.possessionDate;
+      p.configurations = updatedData.configurations;
+      p.reraId = updatedData.reraId;
+      p.address = updatedData.address;
+      p.status = updatedData.status;
+      p.city = updatedData.city;
+      p.state = updatedData.state;
+      p.zipCode = updatedData.zipCode;
+      p.location = updatedData.location;
+      p.amenities = updatedData.amenities;
+      p.brochure = updatedData.brochure;
+      p.nearbyLocations = updatedData.nearbyLocations;
+      p.projectContactInfo = ProjectContactInfo(
+        name:
+            user?.user?.username ?? updatedData.projectContactInfo?.name ?? '',
+        phone: user?.user?.phone ?? updatedData.projectContactInfo?.phone ?? '',
+        email: user?.user?.email ?? updatedData.projectContactInfo?.email ?? '',
+      );
+      p.propertyTypes = updatedData.propertyTypes;
+      p.projectHighlights = updatedData.projectHighlights;
+      p.brochure = updatedData.brochure;
+      print("✅ Updated Project Data: ${p.toJson()}");
+      // p.imageList = updatedData.mea
+    });
+
+    await assignData();
+
+    return project.value;
   }
 
   void printProjectDetails() {

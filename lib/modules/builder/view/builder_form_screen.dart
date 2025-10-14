@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 import 'package:housing_flutter_app/modules/builder/view/media/upload_media_screen.dart';
 import 'package:housing_flutter_app/modules/builder/view/property_detail/property_detail.dart';
 import 'package:housing_flutter_app/modules/builder/view/review/builder_property_review.dart';
@@ -20,141 +21,148 @@ import 'location/location.dart';
 // import 'steps/step_review.dart';
 
 class ProjectWizardView extends GetView<ProjectWizardController> {
-  const ProjectWizardView({super.key});
+  // final ProjectModel? project;
+  final bool isFromEdit;
+  const ProjectWizardView({
+    super.key,
+    this.isFromEdit = false,
+    // this.project
+  });
 
   @override
   Widget build(BuildContext context) {
+    final String projectId = Get.arguments;
+
     return Scaffold(
-      backgroundColor:ColorRes.addPropertyBackgroundColor,
+      backgroundColor: ColorRes.addPropertyBackgroundColor,
       body: SafeArea(
         child: LayoutBuilder(
-          builder:(context, constraints) =>  SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight
-              ),
-              child: IntrinsicHeight(
-
-                child: Column(
-                  children: [
-                    Container(
-                      height: 50,
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
-                      alignment: Alignment.topLeft,
-                      decoration: const BoxDecoration(
-                        color: ColorRes.addPropertyBackgroundColor
-                      ),
-                      child: Row(
-                        children: [
-                          (controller.currentStep.value==0)?Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: ColorRes.leadGreyColor.shade300,
+          builder:
+              (context, constraints) => SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 50,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 16,
+                          ),
+                          alignment: Alignment.topLeft,
+                          decoration: const BoxDecoration(
+                            color: ColorRes.addPropertyBackgroundColor,
+                          ),
+                          child: Row(
+                            children: [
+                              (controller.currentStep.value == 0)
+                                  ? Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: ColorRes.leadGreyColor.shade300,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                      icon: const Icon(
+                                        Icons.arrow_back,
+                                        color: ColorRes.black,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  )
+                                  : SizedBox.shrink(),
+                              const SizedBox(width: 10),
+                              Text(
+                                isFromEdit ? "Edit Listing" : "Create Listing",
+                                style: TextStyle(
+                                  color: ColorRes.white,
+                                  fontSize: AppFontSizes.large,
+                                  fontWeight: AppFontWeights.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: const BoxDecoration(
+                            color: ColorRes.addPropertyBackgroundColor,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 5),
+                              Text(
+                                "Sell or rent your property faster",
+                                style: TextStyle(
+                                  color: ColorRes.white,
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 20,
                             ),
-                            alignment: Alignment.center,
-                            child: IconButton(
-                              onPressed: () {
-                                Get.back();
-                              },
-                              icon: const Icon(
-                                Icons.arrow_back,
-                                color: ColorRes.black,
-                                size: 20,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: ColorRes.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(28),
+                                topRight: Radius.circular(28),
                               ),
                             ),
-                          ):SizedBox.shrink(),
-                          const SizedBox(width: 10),
-                          Text(
-                            "Create Listing",
-                            style: TextStyle(
-                              color: ColorRes.white,
-                              fontSize: AppFontSizes.large,
-                              fontWeight: AppFontWeights.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: const BoxDecoration(
-                        color: ColorRes.addPropertyBackgroundColor
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 5),
-                          Text(
-                            "Sell or rent your property faster",
-                            style: TextStyle(
-                              color: ColorRes.white,
-                              fontSize: AppFontSizes.body,
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 20,
-                        ),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: ColorRes.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(28),
-                            topRight: Radius.circular(28),
-                          ),
-                        ),
-                        child: Obx(() {
-                          final step = controller.currentStep.value;
-                          print('Current styep $step');
-                          return SingleChildScrollView(
-
-                            child: Column(
-                              children: [
-                                StepProgress(
-                                  totalSteps: 6,
-                                  currentStep: step,
-                                  labels: const [
-                                    'Basic Info',
-                                    'Property Config',
-                                    'Location',
-                                    'Additional Details',
-                                    'Upload Media',
-                                    'Review',
+                            child: Obx(() {
+                              final step = controller.currentStep.value;
+                              print('Current styep $step');
+                              return SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    StepProgress(
+                                      totalSteps: 6,
+                                      currentStep: step,
+                                      labels: const [
+                                        'Basic Info',
+                                        'Property Config',
+                                        'Location',
+                                        'Additional Details',
+                                        'Upload Media',
+                                        'Review',
+                                      ],
+                                    ),
+                                    AnimatedSwitcher(
+                                      duration: const Duration(
+                                        milliseconds: 250,
+                                      ),
+                                      switchInCurve: Curves.easeOut,
+                                      switchOutCurve: Curves.easeIn,
+                                      child: _buildStep(step),
+                                    ),
                                   ],
                                 ),
-                                AnimatedSwitcher(
-                                  duration: const Duration(
-                                    milliseconds: 250,
-                                  ),
-                                  switchInCurve: Curves.easeOut,
-                                  switchOutCurve: Curves.easeIn,
-                                  child: _buildStep(step),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
         ),
       ),
       bottomNavigationBar: Obx(() {
@@ -182,7 +190,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                         child: Text(
                           'Back',
                           style: TextStyle(
-                           fontSize:  AppFontSizes.medium,
+                            fontSize: AppFontSizes.medium,
                             color: ColorRes.textColor,
                             fontWeight: AppFontWeights.medium,
                           ),
@@ -200,27 +208,56 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
                   child: SizedBox(
                     height: 45,
                     child: ElevatedButton(
-                      onPressed: step == 5 ? controller.isLoading.value ? null :controller.submit : controller.next,
+                      onPressed: () {
+                        if (step == 5) {
+                          if (controller.isLoading.value)
+                            return; // do nothing while loading
+
+                          if (isFromEdit) {
+                            controller.updateProject(
+                              projectId,
+                            ); // update existing project
+                          } else {
+                            controller.submit(); // create new project
+                          }
+                        } else {
+                          controller.next(); // move to next step
+                        }
+                      },
+
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        backgroundColor:controller.isLoading.value ?ColorRes.primary.withOpacity(0.3): ColorRes.primary, // your theme color
+                        backgroundColor:
+                            controller.isLoading.value
+                                ? ColorRes.primary.withOpacity(0.3)
+                                : ColorRes.primary, // your theme color
                       ),
-                      child: controller.isLoading.value ? Text("Submitting...",style: TextStyle(
-                        fontSize:  AppFontSizes.medium,
-                        color: ColorRes.white,
-                        fontWeight: AppFontWeights.medium,
-                      ),): Text(
-                        step == 5 ? 'Submit' : 'Next',
-                        style: TextStyle(
-                         fontSize:  AppFontSizes.medium,
-                          color: Colors.white,
-                          fontWeight: AppFontWeights.medium,
-                        ),
-                      ),
+                      child:
+                          controller.isLoading.value
+                              ? Text(
+                                isFromEdit ? "Updating..." : "Submitting...",
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.medium,
+                                  color: ColorRes.white,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              )
+                              : Text(
+                                step == 5
+                                    ? isFromEdit
+                                        ? 'Update'
+                                        : 'Submit'
+                                    : 'Next',
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.medium,
+                                  color: Colors.white,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              ),
                     ),
                   ),
                 ),
@@ -229,7 +266,6 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
           ),
         );
       }),
-
     );
   }
 
@@ -238,7 +274,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
     if (step < 0 || step >= controller.formKeys.length) {
       return const Center(child: Text('Invalid step'));
     }
-    
+
     switch (step) {
       case 0:
         return StepBasicInfo(formKey: controller.formKeys[0]);
@@ -251,7 +287,9 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
       case 4:
         return UploadMediaScreen(formKey: controller.formKeys[4]);
       case 5:
-        return StepReview(formKey: controller.formKeys[5]); // Use index 5 since formKeys now has 6 elements (0-5)
+        return StepReview(
+          formKey: controller.formKeys[5],
+        ); // Use index 5 since formKeys now has 6 elements (0-5)
       default:
         return const Center(child: Text('Step not found'));
     }

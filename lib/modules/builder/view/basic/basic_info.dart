@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:intl/intl.dart';
 
 import '../../controller/builder_form_controller.dart';
 
@@ -147,39 +148,77 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
               ),
               const SizedBox(height: 12),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: _CommonDatePickerField(
-                      label: 'Launch Date',
-                      date: controller.project.value.launchDate,
-                      onSaved: (pickedDate) {
-                        controller.project.update(
-                          (p) => p!.launchDate = pickedDate,
-                        );
-                      },
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: _CommonDatePickerField(
+              //         label: 'Launch Date',
+              //         date: controller.project.value.launchDate,
+              //         onSaved: (pickedDate) {
+              //           controller.project.update(
+              //             (p) => p!.launchDate = pickedDate,
+              //           );
+              //         },
+              //       ),
+              //     ),
+              //     const SizedBox(width: 12),
+              //     Expanded(
+              //       child: _CommonDatePickerField(
+              //         label: 'Possession Date',
+              //         date: controller.project.value.possessionDate,
+              //         onSaved: (pickedDate) {
+              //           controller.project.update(
+              //             (p) => p!.possessionDate = pickedDate,
+              //           );
+              //         },
+              //         extraValidator:
+              //             (pickedDate) =>
+              //                 ProjectValidators.possessionAfterLaunch(
+              //                   pickedDate,
+              //                   controller.project.value.launchDate,
+              //                 ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              Obx(() {
+                final project = controller.project.value;
+
+                return Row(
+                  children: [
+                    Expanded(
+                      child: _CommonDatePickerField(
+                        label: 'Launch Date',
+                        date: project.launchDate,
+                        onSaved: (pickedDate) {
+                          print('Lunched Date: ${p.launchDate}');
+                          controller.project.update(
+                            (p) => p!.launchDate = pickedDate,
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _CommonDatePickerField(
-                      label: 'Possession Date',
-                      date: controller.project.value.possessionDate,
-                      onSaved: (pickedDate) {
-                        controller.project.update(
-                          (p) => p!.possessionDate = pickedDate,
-                        );
-                      },
-                      extraValidator:
-                          (pickedDate) =>
-                              ProjectValidators.possessionAfterLaunch(
-                                pickedDate,
-                                controller.project.value.launchDate,
-                              ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _CommonDatePickerField(
+                        label: 'Possession Date',
+                        date: project.possessionDate,
+                        onSaved: (pickedDate) {
+                          controller.project.update(
+                            (p) => p!.possessionDate = pickedDate,
+                          );
+                        },
+                        extraValidator:
+                            (pickedDate) =>
+                                ProjectValidators.possessionAfterLaunch(
+                                  pickedDate,
+                                  project.launchDate,
+                                ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                );
+              }),
 
               const SizedBox(height: 12),
               CommonTextField(
@@ -225,6 +264,65 @@ class _CommonDatePickerField extends StatefulWidget {
   State<_CommonDatePickerField> createState() => _CommonDatePickerFieldState();
 }
 
+// class _CommonDatePickerFieldState extends State<_CommonDatePickerField> {
+//   late TextEditingController _controller;
+//   DateTime? _selectedDate;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _selectedDate = widget.date;
+//     _controller = TextEditingController(
+//       text:
+//           _selectedDate != null
+//               ? _selectedDate.toString().split(' ').first
+//               : '',
+//     );
+//   }
+//
+//   Future<void> _pickDate() async {
+//     final now = DateTime.now();
+//     final picked = await showDatePicker(
+//       context: context,
+//       firstDate: DateTime(now.year - 30),
+//       lastDate: DateTime(now.year + 30),
+//       initialDate: _selectedDate ?? now,
+//     );
+//     if (picked != null) {
+//       setState(() {
+//         _selectedDate = picked;
+//         _controller.text = picked.toString().split(' ').first;
+//         widget.onSaved(_selectedDate!);
+//       });
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: _pickDate,
+//       child: AbsorbPointer(
+//         child: CommonTextField(
+//           label: widget.label,
+//           prefixIcon: Icon(
+//             Icons.calendar_month_outlined,
+//             size: 20,
+//             color: ColorRes.primary,
+//           ),
+//           enabled: false,
+//           controller: _controller,
+//           validator: (_) {
+//             if (_selectedDate == null) return 'Required date';
+//             if (widget.extraValidator != null)
+//               return widget.extraValidator!(_selectedDate);
+//             return null;
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class _CommonDatePickerFieldState extends State<_CommonDatePickerField> {
   late TextEditingController _controller;
   DateTime? _selectedDate;
@@ -236,9 +334,21 @@ class _CommonDatePickerFieldState extends State<_CommonDatePickerField> {
     _controller = TextEditingController(
       text:
           _selectedDate != null
-              ? _selectedDate.toString().split(' ').first
+              ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
               : '',
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant _CommonDatePickerField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.date != oldWidget.date) {
+      _selectedDate = widget.date;
+      _controller.text =
+          _selectedDate != null
+              ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+              : '';
+    }
   }
 
   Future<void> _pickDate() async {
@@ -249,10 +359,12 @@ class _CommonDatePickerFieldState extends State<_CommonDatePickerField> {
       lastDate: DateTime(now.year + 30),
       initialDate: _selectedDate ?? now,
     );
+
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
-        _controller.text = picked.toString().split(' ').first;
+        _controller.text = DateFormat('yyyy-MM-dd').format(picked);
+        widget.onSaved(_selectedDate!);
       });
     }
   }
@@ -277,11 +389,14 @@ class _CommonDatePickerFieldState extends State<_CommonDatePickerField> {
               return widget.extraValidator!(_selectedDate);
             return null;
           },
-          onSaved: (_) {
-            if (_selectedDate != null) widget.onSaved(_selectedDate!);
-          },
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

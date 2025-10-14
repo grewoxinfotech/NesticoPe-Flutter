@@ -264,10 +264,8 @@ class ProjectConfiguration {
   int bhk;
   List<ProjectVariant> variants;
 
-  ProjectConfiguration({
-    required this.bhk,
-    List<ProjectVariant>? variants,
-  }) : variants = variants ?? [];
+  ProjectConfiguration({required this.bhk, List<ProjectVariant>? variants})
+    : variants = variants ?? [];
 
   Map<String, dynamic> toJson() => {
     'bhk': bhk,
@@ -277,9 +275,10 @@ class ProjectConfiguration {
   factory ProjectConfiguration.fromJson(Map<String, dynamic> json) =>
       ProjectConfiguration(
         bhk: json['bhk'] ?? 1,
-        variants: (json['variants'] as List<dynamic>? ?? [])
-            .map((v) => ProjectVariant.fromJson(v))
-            .toList(),
+        variants:
+            (json['variants'] as List<dynamic>? ?? [])
+                .map((v) => ProjectVariant.fromJson(v))
+                .toList(),
       );
 }
 
@@ -287,10 +286,7 @@ class ProjectSize {
   int totalBuildings;
   int totalUnits;
 
-  ProjectSize({
-    required this.totalBuildings,
-    required this.totalUnits,
-  });
+  ProjectSize({required this.totalBuildings, required this.totalUnits});
 
   Map<String, dynamic> toJson() => {
     'totalBuildings': totalBuildings,
@@ -325,6 +321,8 @@ class ProjectContactInfo {
 }
 
 class ProjectModel {
+  String? id;
+  MediaGallery mediaGallery;
   String projectName;
   double projectArea;
   ProjectSize projectSize;
@@ -349,6 +347,8 @@ class ProjectModel {
   ProjectContactInfo? projectContactInfo;
 
   ProjectModel({
+    this.id,
+    required this.mediaGallery,
     required this.projectName,
     required this.projectArea,
     required this.projectSize,
@@ -371,11 +371,11 @@ class ProjectModel {
     this.projectContactInfo,
     List<String>? imageList,
     List<String>? videoList,
-  })  : nearbyLocations = nearbyLocations ?? [],
-        amenities = amenities ?? [],
-        projectHighlights = projectHighlights ?? [],
-        imageList = imageList ?? [],
-        videoList = videoList ?? [];
+  }) : nearbyLocations = nearbyLocations ?? [],
+       amenities = amenities ?? [],
+       projectHighlights = projectHighlights ?? [],
+       imageList = imageList ?? [],
+       videoList = videoList ?? [];
 
   Map<String, dynamic> toJson() => {
     'projectName': projectName,
@@ -403,20 +403,33 @@ class ProjectModel {
   };
 
   factory ProjectModel.fromJson(Map<String, dynamic> json) => ProjectModel(
+    id: json['id'] ?? '',
+    mediaGallery:
+        json['mediaGallery'] != null
+            ? MediaGallery.fromJson(json['mediaGallery'])
+            : MediaGallery(images: [], videos: []),
     projectName: json['projectName'] ?? '',
-    projectArea: (json['projectArea'] ?? 0).toDouble(),
-    projectSize: json['projectSize'] != null
-        ? ProjectSize.fromJson(json['projectSize'])
-        : ProjectSize(totalBuildings: 0, totalUnits: 0),
-    launchDate: json['launchDate'] != null
-        ? DateTime.parse(json['launchDate'])
-        : DateTime.now(),
-    possessionDate: json['possessionDate'] != null
-        ? DateTime.parse(json['possessionDate'])
-        : DateTime.now(),
-    configurations: (json['configurations'] as List<dynamic>? ?? [])
-        .map((c) => ProjectConfiguration.fromJson(c))
-        .toList(),
+    projectArea:
+        json['projectArea'] is num
+            ? (json['projectArea'] as num).toDouble()
+            : double.tryParse(json['projectArea'].toString()) ?? 0.0,
+
+    projectSize:
+        json['projectSize'] != null
+            ? ProjectSize.fromJson(json['projectSize'])
+            : ProjectSize(totalBuildings: 0, totalUnits: 0),
+    launchDate:
+        json['launchDate'] != null
+            ? DateTime.parse(json['launchDate'])
+            : DateTime.now(),
+    possessionDate:
+        json['possessionDate'] != null
+            ? DateTime.parse(json['possessionDate'])
+            : DateTime.now(),
+    configurations:
+        (json['configurations'] as List<dynamic>? ?? [])
+            .map((c) => ProjectConfiguration.fromJson(c))
+            .toList(),
     reraId: json['reraId'] ?? '',
     propertyTypes: json['propertyTypes'],
     status: json['status'] ?? 'upcoming',
@@ -426,15 +439,66 @@ class ProjectModel {
     zipCode: json['zipCode'] ?? '',
     location: json['location'] ?? '',
     pdfPath: json['pdfPath'],
-    nearbyLocations:
-    List<Map<String, dynamic>>.from(json['nearbyLocations'] ?? []),
+    nearbyLocations: List<Map<String, dynamic>>.from(
+      json['nearbyLocations'] ?? [],
+    ),
     amenities: List<String>.from(json['amenities'] ?? []),
     imageList: List<String>.from(json['imageList'] ?? []),
     videoList: List<String>.from(json['videoList'] ?? []),
-    brochure: json['brochure'],
+    brochure:
+        json['brochure'] is String
+            ? json['brochure']
+            : json['brochure']?['url'],
     projectHighlights: List<String>.from(json['projectHighlights'] ?? []),
-    projectContactInfo: json['projectContactInfo'] != null
-        ? ProjectContactInfo.fromJson(json['projectContactInfo'])
-        : null,
+    projectContactInfo:
+        json['projectContactInfo'] != null
+            ? ProjectContactInfo.fromJson(json['projectContactInfo'])
+            : null,
   );
+}
+
+class MediaGallery {
+  final List<String>? images;
+  final List<String>? videos;
+
+  MediaGallery({this.images, this.videos});
+
+  factory MediaGallery.fromJson(Map<String, dynamic> json) {
+    return MediaGallery(
+      images:
+          (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      videos:
+          (json['videos'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'images': images, 'videos': videos};
+  }
+
+  MediaGallery copyWith({List<String>? images, List<String>? videos}) {
+    return MediaGallery(
+      images: images ?? this.images,
+      videos: videos ?? this.videos,
+    );
+  }
+}
+
+class Brochure {
+  final String? url;
+  final String? name;
+
+  Brochure({this.url, this.name});
+
+  factory Brochure.fromJson(Map<String, dynamic> json) {
+    return Brochure(url: json['url'] as String?, name: json['name'] as String?);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'url': url, 'name': name};
+  }
+
+  Brochure copyWith({String? url, String? name}) {
+    return Brochure(url: url ?? this.url, name: name ?? this.name);
+  }
 }

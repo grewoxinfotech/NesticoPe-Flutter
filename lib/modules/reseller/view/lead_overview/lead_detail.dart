@@ -70,22 +70,34 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
 
   // Helper getters to access data from either lead or property
   Items get propertyData =>
-      widget.isFromLead ? widget.lead!.customFields ?? Items() : widget.property!;
+      widget.isFromLead
+          ? widget.lead!.customFields ?? Items()
+          : widget.property!;
 
   String get propertyTitle =>
-      widget.isFromLead ? widget.lead!.customFields?.title ?? '' : widget.property!.title ?? '';
+      widget.isFromLead
+          ? widget.lead!.customFields?.title ?? ''
+          : widget.property!.title ?? '';
 
   String get propertyAddress =>
-      widget.isFromLead ? widget.lead!.customFields?.address ?? '' : widget.property!.address ?? '';
+      widget.isFromLead
+          ? widget.lead!.customFields?.address ?? ''
+          : widget.property!.address ?? '';
 
   String get propertyCity =>
-      widget.isFromLead ? widget.lead!.customFields?.city ?? '' : widget.property!.city ?? '';
+      widget.isFromLead
+          ? widget.lead!.customFields?.city ?? ''
+          : widget.property!.city ?? '';
 
   String get propertyState =>
-      widget.isFromLead ? widget.lead!.customFields?.state ?? '' : widget.property!.state ?? '';
+      widget.isFromLead
+          ? widget.lead!.customFields?.state ?? ''
+          : widget.property!.state ?? '';
 
   String get propertyZipCode =>
-      widget.isFromLead ? widget.lead!.customFields?.zipCode ?? '' : widget.property!.zipCode ?? '';
+      widget.isFromLead
+          ? widget.lead!.customFields?.zipCode ?? ''
+          : widget.property!.zipCode ?? '';
 
   String get propertyType =>
       widget.isFromLead
@@ -165,18 +177,21 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             // 2. Property Image Gallery (Always Visible)
             // _buildPropertyImageGallery(context),
             Obx(() {
-              if(leadProperty.value == null && widget.isFromLead && isLoadingProperty.value){
+              if (leadProperty.value == null &&
+                  widget.isFromLead &&
+                  isLoadingProperty.value) {
                 return Container(
                   height: 280,
                   color: ColorRes.leadGreyColor[200],
                   child: Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(ColorRes.primary),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        ColorRes.primary,
+                      ),
                     ),
                   ),
                 );
               }
-
 
               return PropertyMediaGallery(
                 images: propertyImages,
@@ -312,7 +327,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 radius: isCompact ? 24 : 28,
                 backgroundColor: ColorRes.primary.withOpacity(0.2),
                 child: Text(
-                  widget.lead!.name.split(' ').map((e) => e[0]).join().toUpperCase(),
+                  widget.lead!.name
+                      .split(' ')
+                      .map((e) => e[0])
+                      .join()
+                      .toUpperCase(),
                   style: TextStyle(
                     color: ColorRes.primary,
                     fontWeight: AppFontWeights.semiBold,
@@ -541,7 +560,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   color: _getStatusColor(widget.lead!.status),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: _getStatusColor(widget.lead!.status).withOpacity(0.3),
+                    color: _getStatusColor(
+                      widget.lead!.status,
+                    ).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
@@ -757,8 +778,8 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
         children: [
           _buildSectionHeader('Property Details', Icons.info_outline, true),
           SizedBox(height: 16),
-          _buildDetailRow('Builder', builderName),
-          _buildDetailRow('Project', projectName),
+          if (builderName.isNotEmpty) _buildDetailRow('Builder', builderName),
+          if (projectName.isNotEmpty) _buildDetailRow('Project', projectName),
           _buildDetailRow('Property Type', propertyType.toUpperCase()),
           if (details.zoneType != null)
             _buildDetailRow('Zone Type', details.zoneType!),
@@ -795,7 +816,12 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               '${details.parkingInfo!.open == true ? "Open" : ""}${details.parkingInfo!.open == true && details.parkingInfo!.covered == true ? " & " : ""}${details.parkingInfo!.covered == true ? "Covered" : ""}',
             ),
           if (possessionInfo?.possessionStatus != null)
-            _buildDetailRow('Possession', possessionInfo!.possessionStatus!),
+            _buildDetailRow(
+              'Possession',
+              possessionInfo!.possessionStatus!.capitalize
+                  .toString()
+                  .replaceAll("_", " "),
+            ),
           if (possessionInfo?.propertyAgeInYear != null)
             _buildDetailRow(
               'Property Age',
@@ -1829,8 +1855,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed:
-                    () =>
-                        ContactHelper.openDialer(widget.lead?.phone ?? widget.property?.ownerPhone ?? ''),
+                    () => ContactHelper.openDialer(
+                      widget.lead?.phone ?? widget.property?.ownerPhone ?? '',
+                    ),
                 icon: Icon(Icons.phone),
                 label: Text(
                   'Call',
@@ -1853,8 +1880,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed:
-                    () =>
-                        ContactHelper.sendEmail(widget.lead?.email ?? widget.property?.ownerEmail ?? ''),
+                    () => ContactHelper.sendEmail(
+                      widget.lead?.email ?? widget.property?.ownerEmail ?? '',
+                    ),
                 icon: Icon(Icons.email),
                 label: Text(
                   'Email',
@@ -1988,7 +2016,8 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
 
   String get _listingTypeValue {
     if (widget.property != null) return widget.property!.listingType ?? '';
-    if (widget.lead != null) return widget.lead!.customFields?.listingType ?? '';
+    if (widget.lead != null)
+      return widget.lead!.customFields?.listingType ?? '';
     return '';
   }
 

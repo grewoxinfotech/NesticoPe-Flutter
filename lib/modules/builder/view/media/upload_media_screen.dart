@@ -46,7 +46,11 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
         children: [
           Row(
             children: [
-              Icon(Icons.image_outlined, size: 20, color: ColorRes.blueColor.shade700),
+              Icon(
+                Icons.image_outlined,
+                size: 20,
+                color: ColorRes.blueColor.shade700,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -55,7 +59,10 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     buildBuilderDefaultHeaderText('Project Images'),
                     Text(
                       'Required • Max 5MB each',
-                      style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor.shade600),
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.leadGreyColor.shade600,
+                      ),
                     ),
                   ],
                 ),
@@ -74,12 +81,12 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${ controller.project.value.imageList.length}/5',
+                    '${controller.project.value.imageList.length}/5',
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       fontWeight: AppFontWeights.semiBold,
                       color:
-                      controller.project.value.imageList.isEmpty
+                          controller.project.value.imageList.isEmpty
                               ? ColorRes.orangeColor.shade700
                               : ColorRes.success.shade700,
                     ),
@@ -91,7 +98,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
           const SizedBox(height: 16),
           Obx(
             () =>
-            controller.project.value.imageList.isEmpty
+                controller.project.value.imageList.isEmpty
                     ? _buildUploadBox(
                       onTap: controller.builderImagePicker,
                       icon: Icons.cloud_upload_outlined,
@@ -105,19 +112,22 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                           spacing: 8,
                           runSpacing: 8,
                           children: [
-                            ... controller.project.value.imageList.asMap().entries.map((
-                              entry,
-                            ) {
-                              final index = entry.key;
-                              final filePath = entry.value;
-                              return _buildMediaThumbnail(
-                                filePath: filePath,
-                                isVideo: false,
-                                onRemove:
-                                    () => controller.removeBuilderImage(index),
-                              );
-                            }),
-                            if ( controller.project.value.imageList.length < 5)
+                            ...controller.project.value.imageList
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                                  final index = entry.key;
+                                  final filePath = entry.value;
+                                  return _buildMediaThumbnail(
+                                    filePath: filePath,
+                                    isVideo: false,
+                                    onRemove:
+                                        () => controller.removeBuilderImage(
+                                          index,
+                                        ),
+                                  );
+                                }),
+                            if (controller.project.value.imageList.length < 5)
                               _buildAddMoreButton(
                                 onTap: controller.builderImagePicker,
                                 icon: Icons.add_photo_alternate_outlined,
@@ -164,7 +174,10 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     ),
                     Text(
                       'Optional • Max 50MB each',
-                      style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor[600]),
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.leadGreyColor[600],
+                      ),
                     ),
                   ],
                 ),
@@ -180,7 +193,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${ controller.project.value.videoList.length}/5',
+                    '${controller.project.value.videoList.length}/5',
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       fontWeight: AppFontWeights.semiBold,
@@ -194,7 +207,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
           const SizedBox(height: 16),
           Obx(
             () =>
-            controller.project.value.videoList.isEmpty
+                controller.project.value.videoList.isEmpty
                     ? _buildUploadBox(
                       onTap: controller.builderVideoPicker,
                       icon: Icons.cloud_upload_outlined,
@@ -208,18 +221,21 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                           spacing: 8,
                           runSpacing: 8,
                           children: [
-                            ...controller.project.value.videoList.asMap().entries.map((
-                              entry,
-                            ) {
-                              final index = entry.key;
-                              final filePath = entry.value;
-                              return _buildMediaThumbnail(
-                                filePath: filePath,
-                                isVideo: true,
-                                onRemove:
-                                    () => controller.removeBuilderVideo(index),
-                              );
-                            }),
+                            ...controller.project.value.videoList
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                                  final index = entry.key;
+                                  final filePath = entry.value;
+                                  return _buildMediaThumbnail(
+                                    filePath: filePath,
+                                    isVideo: true,
+                                    onRemove:
+                                        () => controller.removeBuilderVideo(
+                                          index,
+                                        ),
+                                  );
+                                }),
                             if (controller.project.value.videoList.length < 5)
                               _buildAddMoreButton(
                                 onTap: controller.builderVideoPicker,
@@ -299,7 +315,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
               ],
             ),
             const SizedBox(height: 16),
-            (controller.uploadBrocherPath.value.isNotEmpty)
+            (controller.project.value.brochure?.isNotEmpty ?? false)
                 ? InkWell(
                   onTap: () {},
                   borderRadius: BorderRadius.circular(12),
@@ -358,8 +374,8 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                         // View/Action Icon
                         InkWell(
                           onTap: () async {
-                           await  controller.pdfPreviewByDefaultApp(
-                              controller.uploadBrocherPath.value,
+                            await controller.pdfPreviewByDefaultApp(
+                              controller.project.value.brochure ?? '',
                             );
                           },
 
@@ -417,7 +433,10 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
             const SizedBox(height: 12),
             Text(
               title,
-              style: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor[700]),
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                color: ColorRes.leadGreyColor[700],
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -446,10 +465,16 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
           width: 90,
           height: 90,
           decoration: BoxDecoration(
-            color: isVideo ? ColorRes.purpleColor[50] : ColorRes.leadGreyColor[100],
+            color:
+                isVideo
+                    ? ColorRes.purpleColor[50]
+                    : ColorRes.leadGreyColor[100],
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isVideo ? ColorRes.purpleColor[200]! : ColorRes.leadGreyColor[300]!,
+              color:
+                  isVideo
+                      ? ColorRes.purpleColor[200]!
+                      : ColorRes.leadGreyColor[300]!,
             ),
           ),
           child: ClipRRect(
@@ -491,9 +516,34 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                         );
                       },
                     )
+                    // : Image.file(
+                    //   File(filePath),
+                    //   fit: BoxFit.cover,
+                    //   errorBuilder:
+                    //       (_, __, ___) =>
+                    //           const Icon(Icons.broken_image, size: 32),
+                    // ),
+                    : Uri.tryParse(filePath)?.isAbsolute ?? false
+                    ? Image.network(
+                      filePath,
+                      fit: BoxFit.cover,
+                      width: 128,
+                      height: 128,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      },
+                      errorBuilder:
+                          (_, __, ___) =>
+                              const Icon(Icons.broken_image, size: 32),
+                    )
                     : Image.file(
                       File(filePath),
                       fit: BoxFit.cover,
+                      width: 128,
+                      height: 128,
                       errorBuilder:
                           (_, __, ___) =>
                               const Icon(Icons.broken_image, size: 32),
@@ -521,7 +571,6 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
   }
 
   /// Generates a safe video thumbnail to a temporary directory.
-
 
   //
   // Widget _buildMediaThumbnail({
@@ -624,7 +673,11 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_circle_outline, size: 28, color: ColorRes.blueColor[600]),
+            Icon(
+              Icons.add_circle_outline,
+              size: 28,
+              color: ColorRes.blueColor[600],
+            ),
             const SizedBox(height: 4),
             Text(
               'Add More',
@@ -640,6 +693,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
     );
   }
 }
+
 Future<String?> generateVideoThumbnail(String videoPath) async {
   try {
     final tempDir = await getTemporaryDirectory();
