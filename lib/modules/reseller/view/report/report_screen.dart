@@ -1501,14 +1501,9 @@ class _ReportPropertyCardState extends State<ReportPropertyCard> {
 // }
 
 class PropertyOverviewCard extends StatelessWidget {
-  final LeadItem? lead;
   final Items? property;
 
-  const PropertyOverviewCard({super.key, this.lead, this.property})
-    : assert(
-        (lead != null) != (property != null),
-        'You must provide either lead OR property, not both.',
-      );
+  const PropertyOverviewCard({super.key, this.property});
 
   @override
   Widget build(BuildContext context) {
@@ -1521,31 +1516,31 @@ class PropertyOverviewCard extends StatelessWidget {
       },
       {
         "title": "Likes",
-        "value": property?.totalFavorites.toString() ??"2.3K",
+        "value": property?.totalFavorites.toString() ?? "2.3K",
         "icon": Icons.favorite_border,
         "color": Colors.red,
       },
       {
         "title": "Shares",
-        "value": property?.totalShares.toString() ??"540",
+        "value": property?.totalShares.toString() ?? "540",
         "icon": Icons.share_outlined,
         "color": Colors.green,
       },
       {
         "title": "Visits",
-        "value": property?.totalVisits.toString() ??"8.9K",
+        "value": property?.totalVisits.toString() ?? "8.9K",
         "icon": Icons.travel_explore,
         "color": Colors.orange,
       },
       {
         "title": "Inquiries",
-        "value": property?.totalInquiries.toString() ??"245",
+        "value": property?.totalInquiries.toString() ?? "245",
         "icon": Icons.question_answer_outlined,
         "color": Colors.purple,
       },
       {
         "title": "Saved",
-        "value": property?.totalViews.toString() ??"1.1K",
+        "value": property?.totalViews.toString() ?? "1.1K",
         "icon": Icons.bookmark_border,
         "color": Colors.teal,
       },

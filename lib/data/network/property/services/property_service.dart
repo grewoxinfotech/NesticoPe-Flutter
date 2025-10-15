@@ -96,6 +96,7 @@ class PropertyService {
   /// Get single property by ID
   Future<Items?> getPropertyById(String id) async {
     try {
+      print("baseUrl : $baseUrl/$id");
       final response = await http.get(
         Uri.parse("$baseUrl/$id"),
         headers: await headers(),
@@ -103,7 +104,7 @@ class PropertyService {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        return PropertyModel.fromJson(jsonData).data?.items?.first;
+        return Items.fromJson(jsonData['data']);
       }
     } catch (e) {
       print("Get property by ID exception: $e");

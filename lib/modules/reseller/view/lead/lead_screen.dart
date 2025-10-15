@@ -58,6 +58,7 @@ class ResellerLeadScreen extends StatelessWidget {
             icon: const Icon(Icons.add),
             onPressed: () {
               FocusScope.of(context).unfocus();
+              leadController.resetForm();
               Get.to(
                 () => AddLeadScreen(),
                 binding: BindingsBuilder(() {
@@ -104,16 +105,22 @@ class ResellerLeadScreen extends StatelessWidget {
               child:
                   filteredLeads.isEmpty
                       ? _buildEmptyState(context)
-                      : ListView.separated(
-                        padding: EdgeInsets.all(getResponsivePadding(context)),
-                        itemCount: filteredLeads.length,
-                        separatorBuilder:
-                            (context, index) =>
-                                SizedBox(height: getResponsiveSpacing(context)),
-                        itemBuilder: (context, index) {
-                          final lead = filteredLeads[index];
-                          return _buildLeadCard(context, lead, controller);
-                        },
+                      : RefreshIndicator(
+                        onRefresh: leadController.refreshList,
+                        child: ListView.separated(
+                          padding: EdgeInsets.all(
+                            getResponsivePadding(context),
+                          ),
+                          itemCount: filteredLeads.length,
+                          separatorBuilder:
+                              (context, index) => SizedBox(
+                                height: getResponsiveSpacing(context),
+                              ),
+                          itemBuilder: (context, index) {
+                            final lead = filteredLeads[index];
+                            return _buildLeadCard(context, lead, controller);
+                          },
+                        ),
                       ),
             ),
           ],
@@ -158,7 +165,7 @@ class ResellerLeadScreen extends StatelessWidget {
       if (selectedFilters.isEmpty) {
         return const SizedBox.shrink();
       }
-
+      print("Selected Filters: $selectedFilters");
       return Container(
         padding: EdgeInsets.symmetric(
           horizontal: getResponsivePadding(context),
@@ -333,6 +340,7 @@ class ResellerLeadScreen extends StatelessWidget {
     LeadItem lead,
     DashboardController controller,
   ) {
+    final leadController = Get.find<LeadController>(tag: "reseller");
     final isCompact = MediaQuery.of(context).size.width < 600;
     final cardPadding = isCompact ? 12.0 : 16.0;
     final priceManager = PropertyPriceManager(
@@ -553,8 +561,11 @@ class ResellerLeadScreen extends StatelessWidget {
                   buildActionButton(
                     icon: Icons.edit,
                     color: ColorRes.orangeColor,
-                    onPressed: () {},
-                    // () => showLeadForm(context, controller, lead: lead),
+                    onPressed: () {
+                      leadController.resetForm();
+                      Get.to(() => AddLeadScreen(lead: lead, isEditMode: true));
+                    },
+
                     tooltip: 'Edit Lead',
                     isCompact: isCompact,
                   ),
@@ -711,6 +722,19 @@ void showFilterBottomSheet(
                           controller.selectedLeadFilters.addAll(
                             tempSelectedFilters,
                           );
+                          controller.filterMaps.value =
+                              controller.selectedLeadFilters.map((filter) {
+                                var parts = filter.split(':');
+                                return {
+                                  parts[0].trim().toLowerCase(): parts[1]
+                                      .trim()
+                                      .toLowerCase()
+                                      .replaceAll(" ", "_"),
+                                };
+                              }).toList();
+
+                          controller.applyFilter(controller.filterMaps.value);
+
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1876,6 +1900,7 @@ void showDeleteConfirmation(
   LeadItem lead,
   DashboardController controller,
 ) {
+  final leadController = Get.find<LeadController>(tag: "reseller");
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -1913,15 +1938,8 @@ void showDeleteConfirmation(
           // Delete Button
           TextButton(
             onPressed: () {
+              leadController.deleteLead(lead.id ?? '');
               Navigator.of(context).pop();
-              controller.recentLeads.removeWhere((l) => l.id == lead.id);
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Buyer lead deleted successfully'),
-                  backgroundColor: ColorRes.error,
-                ),
-              );
             },
             child: Text(
               'Delete',

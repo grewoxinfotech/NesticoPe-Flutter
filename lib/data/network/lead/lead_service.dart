@@ -34,7 +34,7 @@ class LeadService {
         // First page: ignore filters
         queryParameters = {
           'page': page.toString(),
-          // if (filters != null) ...filters,
+          if (filters != null) ...filters,
         };
       } else {
         // Subsequent pages: include filters if any

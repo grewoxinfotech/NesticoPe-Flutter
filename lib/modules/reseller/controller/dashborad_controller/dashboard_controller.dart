@@ -605,6 +605,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/property/models/property_model.dart';
@@ -641,10 +642,12 @@ class DashboardController extends GetxController {
   final Rx<SortOption> sortOption = SortOption.name.obs;
   RxDouble submittedOfferAmount = 0.0.obs;
   final RxList<String> selectedLeadFilters = <String>[].obs;
+  final RxList<Map<String, String>> filterMaps = <Map<String, String>>[].obs;
   final RxString error = ''.obs;
   final RxBool showFilters = false.obs;
   final offerController = TextEditingController();
   final messageController = TextEditingController();
+  final leadController = Get.find<LeadController>(tag: "reseller");
 
   // Categories
   final RxList<String> categories =
@@ -666,6 +669,7 @@ class DashboardController extends GetxController {
     super.onInit();
     loadProducts();
     fetchDashboardData();
+    Get.lazyPut(() => LeadController(), tag: "reseller");
     // Simulate real-time updates every 30 seconds
     _startRealTimeUpdates();
     ever(searchQuery, (_) => applyFilters());
@@ -673,6 +677,18 @@ class DashboardController extends GetxController {
     ever(filterMinPrice, (_) => applyFilters());
     ever(filterMaxPrice, (_) => applyFilters());
     ever(sortOption, (_) => applySorting());
+  }
+
+  void applyFilter(List<Map<String, String>> filterList) {
+    // Merge all maps into one
+    final mergedFilters = <String, String>{};
+    for (var f in filterList) {
+      mergedFilters.addAll(f); // combine key-value pairs
+    }
+
+    print('Merged Filters: $mergedFilters');
+
+    leadController.applyFilters(mergedFilters);
   }
 
   void toggleExpanded() {

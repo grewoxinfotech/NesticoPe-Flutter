@@ -316,20 +316,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 
+import '../../../../../data/database/secure_storage_service.dart';
 import '../../../../../data/network/lead/lead_service.dart';
+import '../../../../property/controllers/property_controller.dart';
+import '../../../../reseller/controller/dashborad_controller/dashboard_controller.dart';
 import '../model/lead_model.dart';
 
 class LeadController extends PaginatedController<LeadItem> {
   final LeadService _service = LeadService();
+  final PropertyController propertyController = Get.put(
+    PropertyController(),
+    tag: "reseller",
+  );
 
   // --- Form Controllers ---
   final formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController notesController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
+
+  RxString selectedSource = ''.obs;
+  RxString selectedStatus = 'New Lead'.obs;
+  RxString selectedStage = ''.obs;
 
   // --- Lead Status & Type Lists ---
   final List<String> statusList = [
@@ -364,10 +376,12 @@ class LeadController extends PaginatedController<LeadItem> {
 
   // --- Reactive Fields ---
   RxString selectedFilterStatus = 'All Status'.obs;
-  RxString selectedStatus = 'New Lead'.obs;
+  // RxString selectedStatus = 'New Lead'.obs;
   RxString selectedLeadType = 'All Leads'.obs;
   Rxn<DateTime> selectedDate = Rxn<DateTime>();
   RxString notes = ''.obs;
+  RxList<Items> propertyList = <Items>[].obs;
+  Rxn<Items> selectedProperty = Rxn<Items>();
 
   // --- Optional filters for API ---
   RxMap<String, String> filters = <String, String>{}.obs;
@@ -375,8 +389,20 @@ class LeadController extends PaginatedController<LeadItem> {
   @override
   void onInit() {
     super.onInit();
+
+    fetchResellerAssignProperty();
     loadVariables();
     loadInitial(); // Load first page of leads automatically
+  }
+
+  Future<void> fetchResellerAssignProperty() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? '';
+    if (user != null) {
+      final filter = {"assignedTo": userId};
+      await propertyController.applyFilters(filter);
+      propertyList.value = propertyController.items;
+    }
   }
 
   @override
@@ -384,7 +410,7 @@ class LeadController extends PaginatedController<LeadItem> {
     nameController.dispose();
     phoneController.dispose();
     emailController.dispose();
-    notesController.dispose();
+    noteController.dispose();
     dateController.dispose();
     super.onClose();
   }
@@ -408,22 +434,36 @@ class LeadController extends PaginatedController<LeadItem> {
   // --- CRUD Methods ---
   Future<bool> createLead(LeadItem lead) async {
     try {
+      isLoading.value = true;
       final success = await _service.createLead(lead);
       if (success) await loadInitial();
       return success;
     } catch (e) {
       print("Create lead error: $e");
       return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 
   Future<bool> updateLead(String id, LeadItem updatedLead) async {
     try {
+      isLoading.value = true;
       final success = await _service.updateLead(id, updatedLead);
       if (success) {
         int index = items.indexWhere((item) => item.id == id);
         if (index != -1) {
-          items[index] = updatedLead;
+          items[index] = items[index].copyWith(
+            name: updatedLead.name,
+            email: updatedLead.email,
+            phone: updatedLead.phone,
+            propertyId: updatedLead.propertyId,
+            source: updatedLead.source,
+            status: updatedLead.status,
+            stage: updatedLead.stage,
+            notes: updatedLead.notes,
+          );
+
           items.refresh();
         }
       }
@@ -431,6 +471,8 @@ class LeadController extends PaginatedController<LeadItem> {
     } catch (e) {
       print("Update lead error: $e");
       return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -485,12 +527,12 @@ class LeadController extends PaginatedController<LeadItem> {
 
   void updateNotes(String newNotes) {
     notes.value = newNotes;
-    notesController.text = newNotes;
+    noteController.text = newNotes;
   }
 
   void clearNotes() {
     notes.value = '';
-    notesController.clear();
+    noteController.clear();
   }
 
   void resetFilters() {
@@ -522,11 +564,36 @@ class LeadController extends PaginatedController<LeadItem> {
     nameController.clear();
     phoneController.clear();
     emailController.clear();
-    notesController.clear();
+    noteController.clear();
     dateController.clear();
     notes.value = '';
     selectedDate.value = null;
     selectedStatus.value = statusList.first;
+    selectedStage.value = stageList.first;
+    selectedSource.value = sourceList.first;
+    if (propertyController.items.isNotEmpty) {
+      selectedProperty.value = propertyController.items.first;
+    }
     selectedLeadType.value = leadTypeList.first;
+  }
+
+  void populateLeadData(LeadItem lead) {
+    nameController.text = lead.name ?? '';
+    phoneController.text = lead.phone ?? '';
+    emailController.text = lead.email ?? '';
+    noteController.text = lead.notes ?? '';
+    notes.value = lead.notes ?? '';
+    selectedStatus.value = lead.status ?? statusList.first;
+    selectedStage.value = lead.stage ?? stageList.first;
+    selectedSource.value = lead.source ?? sourceList.first;
+
+    if (lead.propertyId != null && propertyList.isNotEmpty) {
+      selectedProperty.value = propertyList.firstWhere(
+        (prop) => prop.id == lead.propertyId,
+        orElse: () => propertyList.first,
+      );
+    } else {
+      selectedProperty.value = null;
+    }
   }
 }

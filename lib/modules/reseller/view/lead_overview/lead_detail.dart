@@ -253,7 +253,10 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child:
                   widget.lead != null
-                      ? PropertyOverviewCard(lead: widget.lead)
+                      ? Obx(
+                        () =>
+                            PropertyOverviewCard(property: leadProperty.value),
+                      )
                       : PropertyOverviewCard(property: widget.property),
             ),
 
