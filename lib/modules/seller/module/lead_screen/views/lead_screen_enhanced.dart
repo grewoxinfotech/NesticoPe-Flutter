@@ -2460,8 +2460,6 @@ final List<Map<String, dynamic>> dummyLeads = [
 //   }
 // }
 
-
-
 ///upafet
 ///upafet
 class LeadScreen extends StatelessWidget {
@@ -2508,7 +2506,9 @@ class LeadScreen extends StatelessWidget {
           foregroundColor: ColorRes.blackShade87,
           centerTitle: false,
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(70.0), // Increased height for better spacing
+            preferredSize: const Size.fromHeight(
+              70.0,
+            ), // Increased height for better spacing
             child: Container(
               decoration: BoxDecoration(
                 border: Border(
@@ -2519,66 +2519,90 @@ class LeadScreen extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16), // Better vertical spacing
+                padding: const EdgeInsets.fromLTRB(
+                  16,
+                  8,
+                  16,
+                  16,
+                ), // Better vertical spacing
                 child: Obx(
-                      () => Container(
-                    padding: const EdgeInsets.all(4), // Reduced padding for sleeker look
+                  () => Container(
+                    padding: const EdgeInsets.all(
+                      4,
+                    ), // Reduced padding for sleeker look
                     decoration: BoxDecoration(
                       color: ColorRes.leadGreyColor.shade100,
-                      borderRadius: BorderRadius.circular(12), // Modern rounded corners
+                      borderRadius: BorderRadius.circular(
+                        12,
+                      ), // Modern rounded corners
                       border: Border.all(
                         color: ColorRes.leadGreyColor.shade200,
                         width: 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: ColorRes.black.withOpacity(0.03), // Subtle depth
+                          color: ColorRes.black.withOpacity(
+                            0.03,
+                          ), // Subtle depth
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                     child: Row(
-                      children: controller.filterType.asMap().entries.map((entry) {
-                        final filter = entry.value;
-                        final isSelected = controller.selectedFilterType.value == filter;
+                      children:
+                          controller.filterType.asMap().entries.map((entry) {
+                            final filter = entry.value;
+                            final isSelected =
+                                controller.selectedFilterType.value == filter;
 
-                        return Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              HapticFeedback.lightImpact(); // Haptic feedback for better UX
-                              controller.selectedFilterType.value = filter;
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeInOut,
-                              padding: const EdgeInsets.symmetric(vertical: 12), // Better touch target
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? ColorRes.primary
-                                    : ColorRes.transparentColor,
-                                borderRadius: BorderRadius.circular(10),
-
-                              ),
-                              child: Center(
-                                child: Text(
-                                  filter,
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.medium,
-                                    fontWeight: isSelected ? AppFontWeights.bold : AppFontWeights.semiBold,
-                                    color: isSelected ? ColorRes.white : ColorRes.leadGreyColor[700],
-                                    letterSpacing: 0.2, // Improved readability
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.lightImpact(); // Haptic feedback for better UX
+                                  controller.selectedFilterType.value = filter;
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  curve: Curves.easeInOut,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ), // Better touch target
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 3,
                                   ),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isSelected
+                                            ? ColorRes.primary
+                                            : ColorRes.transparentColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      filter,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight:
+                                            isSelected
+                                                ? AppFontWeights.bold
+                                                : AppFontWeights.semiBold,
+                                        color:
+                                            isSelected
+                                                ? ColorRes.white
+                                                : ColorRes.leadGreyColor[700],
+                                        letterSpacing:
+                                            0.2, // Improved readability
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                            );
+                          }).toList(),
                     ),
                   ),
                 ),
@@ -2597,7 +2621,9 @@ class LeadScreen extends StatelessWidget {
                   height: MediaQuery.of(context).size.height * 0.7,
                   child: Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(ColorRes.primary),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        ColorRes.primary,
+                      ),
                     ),
                   ),
                 );
@@ -2606,127 +2632,161 @@ class LeadScreen extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Column(
-                  children: getFilterList(controller).map((status) {
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: ColorRes.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(width: 1,color: ColorRes.grey.withOpacity(0.3))
-                        ),
-                        child: NesticoPeExpandableTile(
-                          title: status.capitalize.toString(),
-                          expandedBackgroundColor: ColorRes.white,
-                          borderRadius: BorderRadius.circular(16),
-                          trailingIcon: Icons.keyboard_arrow_down_rounded,
-                          onTap: () {
-                            controller.filters.value = {
-                              controller.selectedFilterType.value: status,
-                            };
-                            controller.loadMore();
-                          },
-                          onExpansionChanged: (value) {
-                            if (value) {
-                              controller.filters.value = {
-                                controller.selectedFilterType.value: status,
-                              };
-                            }
-                          },
-                          initiallyExpanded: false,
-                          backgroundColor: ColorRes.white,
-                          children: [
-                            Obx(() {
-                              final filteredLeads = getFilteredLeads(controller, status);
+                  children:
+                      getFilterList(controller).map((status) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 12,
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: ColorRes.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                width: 1,
+                                color: ColorRes.grey.withOpacity(0.3),
+                              ),
+                            ),
+                            child: NesticoPeExpandableTile(
+                              title: status.capitalize.toString(),
+                              expandedBackgroundColor: ColorRes.white,
+                              borderRadius: BorderRadius.circular(16),
+                              trailingIcon: Icons.keyboard_arrow_down_rounded,
+                              onTap: () {
+                                controller.filters.value = {
+                                  controller.selectedFilterType.value: status,
+                                };
+                                controller.loadMore();
+                              },
+                              onExpansionChanged: (value) {
+                                if (value) {
+                                  controller.filters.value = {
+                                    controller.selectedFilterType.value: status,
+                                  };
+                                }
+                              },
+                              initiallyExpanded: false,
+                              backgroundColor: ColorRes.white,
+                              children: [
+                                Obx(() {
+                                  final filteredLeads = getFilteredLeads(
+                                    controller,
+                                    status,
+                                  );
 
-                              if (filteredLeads.isEmpty && !controller.isLoading.value) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(32.0),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(16),
-                                          decoration: BoxDecoration(
-                                            color: ColorRes.leadGreyColor[100],
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Icon(
-                                            Icons.search_off_rounded,
-                                            size: 48,
-                                            color: ColorRes.leadGreyColor[400],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          'No leads found',
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.body,
-                                            color: ColorRes.leadGreyColor[700],
-                                            fontWeight: AppFontWeights.semiBold,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Try adjusting your filters',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: ColorRes.leadGreyColor[500],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              return SizedBox(
-                                height: 320,
-                                child: NotificationListener<ScrollNotification>(
-                                  onNotification: (scrollInfo) {
-                                    if (scrollInfo is ScrollUpdateNotification) {
-                                      final threshold = 100.0;
-                                      if (!controller.isPaging.value &&
-                                          controller.hasMore.value &&
-                                          scrollInfo.metrics.pixels >
-                                              scrollInfo.metrics.maxScrollExtent - threshold) {
-                                        controller.loadMore();
-                                      }
-                                    }
-                                    return false;
-                                  },
-                                  child: ListView.builder(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                    itemCount: filteredLeads.length + (controller.isPaging.value ? 1 : 0),
-                                    itemBuilder: (context, index) {
-                                      if (index == filteredLeads.length) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: Center(
-                                            child: SizedBox(
-                                              width: 24,
-                                              height: 24,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                valueColor: AlwaysStoppedAnimation<Color>(ColorRes.primary),
+                                  if (filteredLeads.isEmpty &&
+                                      !controller.isLoading.value) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(32.0),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(16),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    ColorRes.leadGreyColor[100],
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(
+                                                Icons.search_off_rounded,
+                                                size: 48,
+                                                color:
+                                                    ColorRes.leadGreyColor[400],
                                               ),
                                             ),
-                                          ),
-                                        );
-                                      }
-                                      final lead = filteredLeads[index];
-                                      return LeadCard(lead: lead);
-                                    },
-                                  ),
-                                ),
-                              );
-                            }),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              'No leads found',
+                                              style: TextStyle(
+                                                fontSize: AppFontSizes.body,
+                                                color:
+                                                    ColorRes.leadGreyColor[700],
+                                                fontWeight:
+                                                    AppFontWeights.semiBold,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Try adjusting your filters',
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color:
+                                                    ColorRes.leadGreyColor[500],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return SizedBox(
+                                    height: 320,
+                                    child: NotificationListener<
+                                      ScrollNotification
+                                    >(
+                                      onNotification: (scrollInfo) {
+                                        if (scrollInfo
+                                            is ScrollUpdateNotification) {
+                                          final threshold = 100.0;
+                                          if (!controller.isPaging.value &&
+                                              controller.hasMore.value &&
+                                              scrollInfo.metrics.pixels >
+                                                  scrollInfo
+                                                          .metrics
+                                                          .maxScrollExtent -
+                                                      threshold) {
+                                            controller.loadMore();
+                                          }
+                                        }
+                                        return false;
+                                      },
+                                      child: ListView.builder(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 12,
+                                        ),
+                                        itemCount:
+                                            filteredLeads.length +
+                                            (controller.isPaging.value ? 1 : 0),
+                                        itemBuilder: (context, index) {
+                                          if (index == filteredLeads.length) {
+                                            return Padding(
+                                              padding: const EdgeInsets.all(
+                                                16.0,
+                                              ),
+                                              child: Center(
+                                                child: SizedBox(
+                                                  width: 24,
+                                                  height: 24,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                          Color
+                                                        >(ColorRes.primary),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          final lead = filteredLeads[index];
+                                          return LeadCard(lead: lead);
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
                 ),
               );
             }),
@@ -2795,14 +2855,12 @@ class LeadCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
+                      decoration: BoxDecoration(shape: BoxShape.circle),
                       child: CircleAvatar(
                         radius: 22,
                         backgroundColor: ColorRes.primary.withOpacity(0.12),
                         child: Text(
-                          getInitials(lead.name),
+                          getInitials(lead.name!),
                           style: TextStyle(
                             color: ColorRes.primary,
                             fontWeight: AppFontWeights.bold,
@@ -2817,7 +2875,7 @@ class LeadCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            lead.name,
+                            lead.name!,
                             style: TextStyle(
                               fontSize: AppFontSizes.medium,
                               fontWeight: AppFontWeights.bold,
@@ -2866,7 +2924,12 @@ class LeadCard extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           Formatter.formatPrice(
-                            lead.customFields?.propertyDetails?.financialInfo?.price ?? 0.0,
+                            lead
+                                    .customFields
+                                    ?.propertyDetails
+                                    ?.financialInfo
+                                    ?.price ??
+                                0.0,
                           ),
                           style: TextStyle(
                             fontSize: AppFontSizes.medium,
@@ -2877,7 +2940,7 @@ class LeadCard extends StatelessWidget {
                         const SizedBox(height: 8),
 
                         Text(
-                          _formatTime(lead.createdAt),
+                          _formatTime(lead.createdAt!),
                           style: TextStyle(
                             fontSize: AppFontSizes.mini,
                             color: ColorRes.leadGreyColor[600],
@@ -2889,23 +2952,27 @@ class LeadCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 14),
-                Divider(color: ColorRes.leadGreyColor[200], thickness: 1, height: 1),
+                Divider(
+                  color: ColorRes.leadGreyColor[200],
+                  thickness: 1,
+                  height: 1,
+                ),
                 const SizedBox(height: 14),
                 Row(
                   children: [
-                    _buildChip(lead.status),
+                    _buildChip(lead.status!),
                     const Spacer(),
                     Row(
                       children: [
                         _buildActionButton(
                           Icons.phone_rounded,
-                              () => ContactHelper.openDialer(lead.phone),
+                          () => ContactHelper.openDialer(lead.phone!),
                           ColorRes.blueColor,
                         ),
                         const SizedBox(width: 8),
                         _buildActionButton(
                           Icons.email_rounded,
-                              () => ContactHelper.sendEmail(lead.email),
+                          () => ContactHelper.sendEmail(lead.email!),
                           Colors.orange,
                         ),
                       ],
@@ -2945,7 +3012,10 @@ class LeadCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: _getStageColor(text).withOpacity(0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _getStageColor(text).withOpacity(0.3), width: 1),
+        border: Border.all(
+          color: _getStageColor(text).withOpacity(0.3),
+          width: 1,
+        ),
       ),
       child: Text(
         text,
@@ -2978,9 +3048,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
       lastDate: DateTime(2100),
       builder: (context, child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(primary: ColorRes.primary),
-          ),
+          data: Theme.of(
+            context,
+          ).copyWith(colorScheme: ColorScheme.light(primary: ColorRes.primary)),
           child: child!,
         );
       },
@@ -3010,7 +3080,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
         );
 
         controller.selectedDate.value = fullDateTime;
-        controller.dateController.text = DateFormat('dd MMM yyyy, hh:mm a').format(fullDateTime);
+        controller.dateController.text = DateFormat(
+          'dd MMM yyyy, hh:mm a',
+        ).format(fullDateTime);
 
         Get.snackbar(
           'Follow-up Scheduled',
@@ -3034,7 +3106,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
       AlertDialog(
         backgroundColor: ColorRes.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Edit Notes', style: TextStyle(fontWeight: AppFontWeights.bold)),
+        title: const Text(
+          'Edit Notes',
+          style: TextStyle(fontWeight: AppFontWeights.bold),
+        ),
         content: TextField(
           controller: notesController,
           maxLines: 5,
@@ -3057,7 +3132,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('Cancel', style: TextStyle(color: ColorRes.leadGreyColor[600])),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: ColorRes.leadGreyColor[600]),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -3076,7 +3154,9 @@ class LeadDetailBottomSheet extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorRes.primary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Save'),
           ),
@@ -3120,8 +3200,8 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      leadData.name,
-                      style:  TextStyle(
+                      leadData.name!,
+                      style: TextStyle(
                         fontSize: AppFontSizes.large,
                         color: ColorRes.blackShade87,
                         fontWeight: AppFontWeights.bold,
@@ -3129,12 +3209,16 @@ class LeadDetailBottomSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Obx(
-                          () => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      () => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
-                          color: controller.selectedDate.value != null
-                              ? ColorRes.primary.withOpacity(0.08)
-                              : ColorRes.leadGreyColor[100],
+                          color:
+                              controller.selectedDate.value != null
+                                  ? ColorRes.primary.withOpacity(0.08)
+                                  : ColorRes.leadGreyColor[100],
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
@@ -3143,21 +3227,24 @@ class LeadDetailBottomSheet extends StatelessWidget {
                             Icon(
                               Icons.schedule_rounded,
                               size: 14,
-                              color: controller.selectedDate.value != null
-                                  ? ColorRes.primary
-                                  : ColorRes.leadGreyColor[500],
+                              color:
+                                  controller.selectedDate.value != null
+                                      ? ColorRes.primary
+                                      : ColorRes.leadGreyColor[500],
                             ),
                             const SizedBox(width: 6),
                             Text(
                               controller.selectedDate.value != null
-                                  ? DateFormat('dd MMM yyyy, hh:mm a')
-                                  .format(controller.selectedDate.value!)
+                                  ? DateFormat(
+                                    'dd MMM yyyy, hh:mm a',
+                                  ).format(controller.selectedDate.value!)
                                   : "No follow-up set",
                               style: TextStyle(
                                 fontSize: AppFontSizes.caption,
-                                color: controller.selectedDate.value != null
-                                    ? ColorRes.primary
-                                    : ColorRes.leadGreyColor[500],
+                                color:
+                                    controller.selectedDate.value != null
+                                        ? ColorRes.primary
+                                        : ColorRes.leadGreyColor[500],
                                 fontWeight: AppFontWeights.semiBold,
                               ),
                             ),
@@ -3170,7 +3257,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Obx(
-                    () => Container(
+                () => Container(
                   width: 130,
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   decoration: BoxDecoration(
@@ -3180,19 +3267,20 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   ),
                   child: NesticoPeDropdownField(
                     value: controller.selectedStatus.value,
-                    items: controller.statusList.map((e) {
-                      return DropdownMenuItem(
-                        value: e,
-                        child: Text(
-                          e,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            color: ColorRes.leadGreyColor[800],
-                            fontWeight: AppFontWeights.semiBold,
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                    items:
+                        controller.statusList.map((e) {
+                          return DropdownMenuItem(
+                            value: e,
+                            child: Text(
+                              e,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor[800],
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          );
+                        }).toList(),
                     onChanged: (value) {
                       if (value != null) {
                         controller.selectedStatus.value = value;
@@ -3207,15 +3295,17 @@ class LeadDetailBottomSheet extends StatelessWidget {
           _buildActionRow(
             Icons.calendar_month_rounded,
             "Follow up",
-            controller.selectedDate.value != null ? "Update Date" : "Set Date & Time",
-                () => pickDateTime(context, controller),
+            controller.selectedDate.value != null
+                ? "Update Date"
+                : "Set Date & Time",
+            () => pickDateTime(context, controller),
           ),
           const SizedBox(height: 12),
           _buildActionRow(
             Icons.note_add_rounded,
             "Notes",
             "Edit",
-                () => _showNotesDialog(context),
+            () => _showNotesDialog(context),
           ),
           Obx(() {
             if (controller.notes.value.isNotEmpty) {
@@ -3245,26 +3335,39 @@ class LeadDetailBottomSheet extends StatelessWidget {
           const SizedBox(height: 20),
           Divider(color: ColorRes.leadGreyColor[200], thickness: 1),
           const SizedBox(height: 16),
-          if (leadData.customFields?.title != null && leadData.customFields!.title!.isNotEmpty) ...[
+          if (leadData.customFields?.title != null &&
+              leadData.customFields!.title!.isNotEmpty) ...[
             _buildInfoRow("Property", leadData.customFields?.title ?? "N/A"),
             const SizedBox(height: 10),
           ],
-          if (leadData.customFields?.type != null && leadData.customFields!.type!.isNotEmpty) ...[
+          if (leadData.customFields?.type != null &&
+              leadData.customFields!.type!.isNotEmpty) ...[
             _buildInfoRow("Type", leadData.customFields?.type ?? "N/A"),
             const SizedBox(height: 10),
           ],
-          if (leadData.customFields?.propertyDetails?.financialInfo?.price != null &&
-              leadData.customFields!.propertyDetails!.financialInfo!.price.toString().isNotEmpty) ...[
+          if (leadData.customFields?.propertyDetails?.financialInfo?.price !=
+                  null &&
+              leadData.customFields!.propertyDetails!.financialInfo!.price
+                  .toString()
+                  .isNotEmpty) ...[
             _buildInfoRow(
               "Price",
               Formatter.formatPrice(
-                leadData.customFields!.propertyDetails!.financialInfo!.price,
-              ) ?? "0",
+                    leadData
+                        .customFields!
+                        .propertyDetails!
+                        .financialInfo!
+                        .price,
+                  ) ??
+                  "0",
             ),
             const SizedBox(height: 10),
           ],
-          if (leadData.customFields?.propertyDetails?.propertyBuiltUpArea != null &&
-              leadData.customFields!.propertyDetails!.propertyBuiltUpArea!.toString().isNotEmpty) ...[
+          if (leadData.customFields?.propertyDetails?.propertyBuiltUpArea !=
+                  null &&
+              leadData.customFields!.propertyDetails!.propertyBuiltUpArea!
+                  .toString()
+                  .isNotEmpty) ...[
             _buildInfoRow(
               "Area",
               "${leadData.customFields?.propertyDetails?.propertyBuiltUpArea.toString()} sq.ft",
@@ -3290,14 +3393,17 @@ class LeadDetailBottomSheet extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () => ContactHelper.openWhatsApp(leadData.phone),
+                  onPressed: () => ContactHelper.openWhatsApp(leadData.phone!),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF25D366).withOpacity(0.02),
                     foregroundColor: const Color(0xFF25D366),
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                      side: const BorderSide(color: Color(0xFF25D366), width: 1),
+                      side: const BorderSide(
+                        color: Color(0xFF25D366),
+                        width: 1,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
@@ -3308,7 +3414,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ElevatedButton.icon(
-                  onPressed: () => ContactHelper.sendEmail(leadData.email),
+                  onPressed: () => ContactHelper.sendEmail(leadData.email!),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange.withOpacity(0.02),
                     foregroundColor: Colors.orange,
@@ -3322,7 +3428,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   icon: const Icon(Icons.email_rounded, size: 20),
                   label: const Text(
                     "Email",
-                    style: TextStyle(fontSize: AppFontSizes.bodySmall, fontWeight: AppFontWeights.semiBold),
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
                   ),
                 ),
               ),
@@ -3330,7 +3439,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ElevatedButton.icon(
-                  onPressed: () => ContactHelper.openDialer(leadData.phone),
+                  onPressed: () => ContactHelper.openDialer(leadData.phone!),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorRes.primary,
                     foregroundColor: ColorRes.white,
@@ -3344,7 +3453,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
                   icon: const Icon(Icons.phone_rounded, size: 20),
                   label: const Text(
                     "Call",
-                    style: TextStyle(fontSize: AppFontSizes.bodySmall, fontWeight: AppFontWeights.semiBold),
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
                   ),
                 ),
               ),
@@ -3356,7 +3468,12 @@ class LeadDetailBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildActionRow(IconData icon, String text, String buttonText, VoidCallback onPressed) {
+  Widget _buildActionRow(
+    IconData icon,
+    String text,
+    String buttonText,
+    VoidCallback onPressed,
+  ) {
     return Material(
       color: ColorRes.transparentColor,
       child: InkWell(
@@ -3382,7 +3499,7 @@ class LeadDetailBottomSheet extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 text,
-                style:  TextStyle(
+                style: TextStyle(
                   fontSize: AppFontSizes.bodySmall,
                   color: ColorRes.blackShade87,
                   fontWeight: AppFontWeights.semiBold,
@@ -3390,14 +3507,17 @@ class LeadDetailBottomSheet extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   buttonText,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.white,
                     fontWeight: AppFontWeights.semiBold,
@@ -3459,9 +3579,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
                 bottomLeft: Radius.circular(10),
               ),
               image: DecorationImage(
-                image: property.propertyImages != null
-                    ? NetworkImage(property.propertyImages!.first)
-                    : AssetImage(IMGRes.home3) as ImageProvider,
+                image:
+                    property.propertyImages != null
+                        ? NetworkImage(property.propertyImages!.first)
+                        : AssetImage(IMGRes.home3) as ImageProvider,
                 fit: BoxFit.cover,
               ),
             ),
@@ -3492,7 +3613,10 @@ class LeadDetailBottomSheet extends StatelessWidget {
                       Expanded(
                         child: Text(
                           property.address ?? 'N/A',
-                          style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor[600]),
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.leadGreyColor[600],
+                          ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -3504,13 +3628,18 @@ class LeadDetailBottomSheet extends StatelessWidget {
                     spacing: 6,
                     runSpacing: 6,
                     children: [
-                      if (property.propertyDetails?.financialInfo?.price.toString() != null) ...[
+                      if (property.propertyDetails?.financialInfo?.price
+                              .toString() !=
+                          null) ...[
                         _buildPropertyChip(
-                          Formatter.formatPrice(property.propertyDetails!.financialInfo!.price),
+                          Formatter.formatPrice(
+                            property.propertyDetails!.financialInfo!.price,
+                          ),
                           Icons.currency_rupee_rounded,
                         ),
                       ],
-                      if (property.propertyDetails?.propertyBuiltUpArea != null) ...[
+                      if (property.propertyDetails?.propertyBuiltUpArea !=
+                          null) ...[
                         _buildPropertyChip(
                           "${property.propertyDetails?.propertyBuiltUpArea.toString()} sq.ft",
                           Icons.square_foot_rounded,

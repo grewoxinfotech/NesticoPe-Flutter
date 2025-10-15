@@ -125,21 +125,31 @@ class BuilderMainScreen extends StatelessWidget {
 
     return Scaffold(
       body: Obx(
-            () => IndexedStack(
+        () => IndexedStack(
           index: navigationController.currentIndex.value,
           children: screens,
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(onPressed: () {
-        Get.to(ProjectWizardView(),binding: BindingsBuilder(() {Get.put( ProjectWizardController());},));
-        // Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
-        //     Get.put(ProjectWizardController());
-        //   },));
-
-      },label: Text('+ Add Project',style: TextStyle(color: ColorRes.white,fontWeight: AppFontWeights.semiBold),),),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          final controller = Get.put(ProjectWizardController());
+          controller.resetForm();
+          Get.to(ProjectWizardView());
+          // Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
+          //     Get.put(ProjectWizardController());
+          //   },));
+        },
+        label: Text(
+          '+ Add Project',
+          style: TextStyle(
+            color: ColorRes.white,
+            fontWeight: AppFontWeights.semiBold,
+          ),
+        ),
+      ),
 
       bottomNavigationBar: Obx(
-            () => SafeArea(
+        () => SafeArea(
           child: BottomNavigationBar(
             currentIndex: navigationController.currentIndex.value,
             onTap: navigationController.changeTabIndex,

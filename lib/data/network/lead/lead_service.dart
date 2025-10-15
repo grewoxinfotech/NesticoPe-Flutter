@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
@@ -49,7 +50,6 @@ class LeadService {
       final response = await http.get(uri, headers: await headers());
       print("Leads API response: ${response.body}");
 
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print("Leads API data: $data");
@@ -77,6 +77,7 @@ class LeadService {
         headers: await headers(),
         body: jsonEncode(lead.toJson()),
       );
+      debugPrint("Create lead response: ${response.body}");
       return response.statusCode == 201 || response.statusCode == 200;
     } catch (e) {
       print("Create lead exception: $e");

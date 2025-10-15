@@ -1362,4 +1362,81 @@ class ProjectWizardController extends PaginatedController {
       return false;
     }
   }
+
+  void resetForm() {
+    // Reset current step
+    currentStep.value = 0;
+
+    // Reset reactive fields
+    selectedListOfAmenities.clear();
+    showAllAmenities.value = false;
+    builderPropertyType.value = '';
+    selectedPropertyStatus.value = '';
+    uploadBrocherName.value = '';
+    uploadBrocherPath.value = '';
+    isLoading.value = false;
+
+    // Reset Project model
+    project.value = ProjectModel(
+      mediaGallery: MediaGallery(images: [], videos: []),
+      projectName: '',
+      projectArea: 0,
+      projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
+      launchDate: DateTime.now(),
+      possessionDate: DateTime.now(),
+      configurations: [
+        ProjectConfiguration(
+          bhk: 1,
+          variants: [
+            ProjectVariant(
+              name: '',
+              builtUpArea: 0,
+              carpetArea: 0,
+              price: 0,
+              pricePerSqFt: 0,
+              totalUnits: 1,
+              availableUnits: 1,
+              specifications: [],
+            ),
+          ],
+        ),
+      ],
+      reraId: '',
+      propertyTypes: 'apartment',
+      status: 'upcoming',
+      address: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      location: '',
+      nearbyLocations: [],
+      amenities: [],
+      imageList: [],
+      videoList: [],
+      brochure: null,
+      projectHighlights: [],
+      projectContactInfo: ProjectContactInfo(name: "", phone: "", email: ""),
+    );
+
+    // Reset text controllers
+    projectNameController.clear();
+    projectAreaController.clear();
+    totalBuildingsController.clear();
+    totalUnitsController.clear();
+    reraIdController.clear();
+    addressController.clear();
+    cityController.clear();
+    stateController.clear();
+    zipCodeController.clear();
+    locationController.clear();
+
+    // Reassign default contact info from stored user data
+    fetchUserData();
+
+    // Refresh observables
+    project.refresh();
+    uploadBrocherPath.refresh();
+
+    print('✅ Form has been reset successfully');
+  }
 }

@@ -642,7 +642,7 @@ class ResellerDashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
-        title:  Text(
+        title: Text(
           'Dashboard',
           style: TextStyle(fontWeight: AppFontWeights.extraBold),
         ),
@@ -651,9 +651,12 @@ class ResellerDashboardScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         centerTitle: false,
         actions: [
-          TextButton(onPressed: () {
-            Get.offAll(() => DashboardScreen());
-          }, child: Text('Back')),
+          TextButton(
+            onPressed: () {
+              Get.offAll(() => DashboardScreen());
+            },
+            child: Text('Back'),
+          ),
         ],
       ),
       body: Obx(() {
@@ -729,8 +732,6 @@ Widget buildOverviewCards(DashboardController controller) {
   });
 }
 
-
-
 Widget _buildRecentLeads(DashboardController controller) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -740,7 +741,7 @@ Widget _buildRecentLeads(DashboardController controller) {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-             Text(
+            Text(
               'Recent Buyer Leads',
               style: TextStyle(
                 fontSize: AppFontSizes.body,
@@ -760,7 +761,7 @@ Widget _buildRecentLeads(DashboardController controller) {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child:  Text(
+              child: Text(
                 'View All',
                 style: TextStyle(
                   fontWeight: AppFontWeights.medium,
@@ -789,13 +790,16 @@ Widget _buildRecentLeads(DashboardController controller) {
 }
 
 Widget _buildLeadCard(
-    BuildContext context,
-    LeadItem lead,
-    DashboardController controller,
-    ) {
+  BuildContext context,
+  LeadItem lead,
+  DashboardController controller,
+) {
   final isCompact = MediaQuery.of(context).size.width < 600;
   final cardPadding = isCompact ? 12.0 : 16.0;
-  final priceManager = PropertyPriceManager(listingType: lead.customFields?.listingType ?? '', financialInfo: lead.customFields?.propertyDetails?.financialInfo );
+  final priceManager = PropertyPriceManager(
+    listingType: lead.customFields?.listingType ?? '',
+    financialInfo: lead.customFields?.propertyDetails?.financialInfo,
+  );
 
   return Container(
     padding: EdgeInsets.all(cardPadding),
@@ -812,12 +816,13 @@ Widget _buildLeadCard(
             CircleAvatar(
               radius: isCompact ? 18 : 20,
               backgroundColor: ColorRes.primary.withOpacity(0.2),
-              child: Text(lead.name,
+              child: Text(
+                lead.name ?? '',
                 style: TextStyle(
                   color: ColorRes.primary,
                   fontWeight: AppFontWeights.bold,
                   fontSize:
-                  isCompact ? AppFontSizes.small : AppFontSizes.medium,
+                      isCompact ? AppFontSizes.small : AppFontSizes.medium,
                 ),
               ),
             ),
@@ -830,12 +835,10 @@ Widget _buildLeadCard(
                   SizedBox(
                     width: 180,
                     child: Text(
-                      lead.name,
+                      lead.name ?? '',
                       style: TextStyle(
                         fontSize:
-                        isCompact
-                            ? AppFontSizes.medium
-                            : AppFontSizes.body,
+                            isCompact ? AppFontSizes.medium : AppFontSizes.body,
                         fontWeight: AppFontWeights.bold,
                         color: ColorRes.textColor,
                       ),
@@ -850,9 +853,9 @@ Widget _buildLeadCard(
                       '${lead.name}',
                       style: TextStyle(
                         fontSize:
-                        isCompact
-                            ? AppFontSizes.extraSmall
-                            : AppFontSizes.small,
+                            isCompact
+                                ? AppFontSizes.extraSmall
+                                : AppFontSizes.small,
                         color: ColorRes.leadGreyColor[700],
                         fontWeight: AppFontWeights.regular,
                       ),
@@ -860,13 +863,17 @@ Widget _buildLeadCard(
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  if (lead.email.isNotEmpty) ...[
+                  if (lead.email != null && lead.email!.isNotEmpty) ...[
                     SizedBox(height: 4),
                     Row(
                       children: [
                         Expanded(
                           child: Text(
-                            lead.email.replaceRange(lead.email.length<4 ? lead.email.length :4, lead.email.length, 'XXXXXXXXXXX'),
+                            lead.email!.replaceRange(
+                              lead.email!.length < 4 ? lead.email!.length : 4,
+                              lead.email!.length,
+                              '**********',
+                            ),
                             style: TextStyle(
                               fontSize: AppFontSizes.extraSmall,
                               color: ColorRes.leadGreyColor[600],
@@ -898,14 +905,14 @@ Widget _buildLeadCard(
                   '${priceManager.displayPrice}',
                   style: TextStyle(
                     fontSize:
-                    isCompact ? AppFontSizes.medium : AppFontSizes.body,
+                        isCompact ? AppFontSizes.medium : AppFontSizes.body,
                     fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.success,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
-                  _formatTime(lead.createdAt),
+                  _formatTime(lead.createdAt ?? DateTime.now()),
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.leadGreyColor[600],
@@ -929,21 +936,25 @@ Widget _buildLeadCard(
                 vertical: isCompact ? 6 : 8,
               ),
               decoration: BoxDecoration(
-                color: _getStatusColor(getLeadStatusFromString(lead.status)).withOpacity(0.08),
+                color: _getStatusColor(
+                  getLeadStatusFromString(lead.status ?? ""),
+                ).withOpacity(0.08),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: _getStatusColor(getLeadStatusFromString(lead.status)).withOpacity(0.3),
+                  color: _getStatusColor(
+                    getLeadStatusFromString(lead.status ?? ""),
+                  ).withOpacity(0.3),
                   width: 1,
                 ),
               ),
               child: Text(
-                _getStatusText(getLeadStatusFromString(lead.status)),
+                _getStatusText(getLeadStatusFromString(lead.status ?? "")),
                 style: TextStyle(
                   fontSize:
-                  isCompact
-                      ? AppFontSizes.extraSmall
-                      : AppFontSizes.small,
-                  color: _getStatusColor(getLeadStatusFromString(lead.status)),
+                      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+                  color: _getStatusColor(
+                    getLeadStatusFromString(lead.status ?? ''),
+                  ),
                   fontWeight: AppFontWeights.bold,
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -957,10 +968,14 @@ Widget _buildLeadCard(
                 vertical: isCompact ? 6 : 8,
               ),
               decoration: BoxDecoration(
-                color: _getStageColor(getLeadStageFromString(lead.stage)).withOpacity(0.08),
+                color: _getStageColor(
+                  getLeadStageFromString(lead.stage),
+                ).withOpacity(0.08),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: _getStageColor(getLeadStageFromString(lead.stage)).withOpacity(0.3),
+                  color: _getStageColor(
+                    getLeadStageFromString(lead.stage),
+                  ).withOpacity(0.3),
                   width: 1,
                 ),
               ),
@@ -968,9 +983,7 @@ Widget _buildLeadCard(
                 _getStageText(getLeadStageFromString(lead.stage)),
                 style: TextStyle(
                   fontSize:
-                  isCompact
-                      ? AppFontSizes.extraSmall
-                      : AppFontSizes.small,
+                      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
                   color: _getStageColor(getLeadStageFromString(lead.stage)),
                   fontWeight: AppFontWeights.bold,
                 ),
@@ -985,10 +998,7 @@ Widget _buildLeadCard(
                   color: ColorRes.blueColor,
                   onPressed: () {
                     Get.to(
-                          () => LeadDetailScreen(
-                        lead: lead,
-                        isFromLead: true,
-                      ),
+                      () => LeadDetailScreen(lead: lead, isFromLead: true),
                     );
                   },
                   tooltip: 'View Details',
@@ -998,8 +1008,8 @@ Widget _buildLeadCard(
                 buildActionButton(
                   icon: Icons.edit,
                   color: ColorRes.orangeColor,
-                  onPressed:
-                      () => showLeadForm(context, controller, lead: lead),
+                  onPressed: () {},
+                  // () => showLeadForm(context, controller, lead: lead),
                   tooltip: 'Edit Lead',
                   isCompact: isCompact,
                 ),
@@ -1021,7 +1031,6 @@ Widget _buildLeadCard(
   );
 }
 
-
 Widget _buildTopProducts(DashboardController controller) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1031,7 +1040,7 @@ Widget _buildTopProducts(DashboardController controller) {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-             Text(
+            Text(
               'Top Property',
               style: TextStyle(
                 fontSize: AppFontSizes.body,
@@ -1122,7 +1131,7 @@ Widget _buildProductCard(Product product) {
                       width: 1,
                     ),
                   ),
-                  child:  Text(
+                  child: Text(
                     'Added Today',
                     style: TextStyle(
                       fontSize: AppFontSizes.tiny,
@@ -1221,7 +1230,7 @@ Widget _buildProductCard(Product product) {
                         borderRadius: BorderRadius.circular(8),
                         color: ColorRes.primary,
                       ),
-                      child:  Text(
+                      child: Text(
                         'Contact ',
                         style: TextStyle(
                           fontSize: AppFontSizes.extraSmall,
@@ -1250,7 +1259,7 @@ Widget _buildPropertyFeature(
     mainAxisSize: MainAxisSize.min,
     children: [
       if (!isFirst) ...[
-         Text('-', style: TextStyle(fontSize: AppFontSizes.extraSmall)),
+        Text('-', style: TextStyle(fontSize: AppFontSizes.extraSmall)),
         // const Text('•', style: TextStyle(fontSize: 10)),
         const SizedBox(width: 2),
       ],
@@ -1448,6 +1457,7 @@ class MainNavigationScreen extends StatelessWidget {
     );
   }
 }
+
 Widget buildMetricCard(String title, String value, IconData icon, Color color) {
   return LayoutBuilder(
     builder: (context, constraints) {
@@ -1455,7 +1465,7 @@ Widget buildMetricCard(String title, String value, IconData icon, Color color) {
       final isCompact = cardWidth < 150;
 
       final titleFontSize =
-      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small;
+          isCompact ? AppFontSizes.extraSmall : AppFontSizes.small;
       final valueFontSize = isCompact ? AppFontSizes.body : AppFontSizes.large;
       final iconSize = isCompact ? 16.0 : 18.0;
       final iconPadding = isCompact ? 6.0 : 8.0;

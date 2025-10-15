@@ -23,7 +23,8 @@ import 'location/location.dart';
 class ProjectWizardView extends GetView<ProjectWizardController> {
   // final ProjectModel? project;
   final bool isFromEdit;
-  const ProjectWizardView({
+  String? projectId;
+  ProjectWizardView({
     super.key,
     this.isFromEdit = false,
     // this.project
@@ -31,7 +32,9 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
 
   @override
   Widget build(BuildContext context) {
-    final String projectId = Get.arguments;
+    if (isFromEdit) {
+      projectId = Get.arguments;
+    }
 
     return Scaffold(
       backgroundColor: ColorRes.addPropertyBackgroundColor,
@@ -215,7 +218,7 @@ class ProjectWizardView extends GetView<ProjectWizardController> {
 
                           if (isFromEdit) {
                             controller.updateProject(
-                              projectId,
+                              projectId ?? '',
                             ); // update existing project
                           } else {
                             controller.submit(); // create new project

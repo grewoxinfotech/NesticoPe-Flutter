@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 
-
 // LeadResponse leadResponseFromJson(String str) =>
 //     LeadResponse.fromJson(json.decode(str));
 //
@@ -71,48 +70,48 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
 // }
 
 class LeadItem {
-  final String id;
-  final String createdBy;
+  final String? id;
+  final String? createdBy;
   final String? updatedBy;
-  final String name;
-  final String email;
-  final String phone;
-  final String propertyId;
-  final String resellerId;
-  final String source;
-  final String status;
-  final String stage;
+  final String? name;
+  final String? email;
+  final String? phone;
+  final String? propertyId;
+  final String? resellerId;
+  final String? source;
+  final String? status;
+  final String? stage;
   final String? notes;
   final String? lastContactedAt;
-  final bool isFake;
+  final bool? isFake;
   final String? fakeReason;
   final String? markedFakeBy;
   final String? markedFakeAt;
   final Items? customFields;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   LeadItem({
-    required this.id,
-    required this.createdBy,
+    this.id,
+    this.createdBy,
     this.updatedBy,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.propertyId,
-    required this.resellerId,
-    required this.source,
-    required this.status,
-    required this.stage,
+    this.name,
+    this.email,
+    this.phone,
+    this.propertyId,
+    this.resellerId,
+    this.source,
+    this.status,
+    this.stage,
     this.notes,
     this.lastContactedAt,
-    required this.isFake,
+    this.isFake,
     this.fakeReason,
     this.markedFakeBy,
     this.markedFakeAt,
     this.customFields,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory LeadItem.fromJson(Map<String, dynamic> json) => LeadItem(
@@ -133,35 +132,35 @@ class LeadItem {
     fakeReason: json["fakeReason"],
     markedFakeBy: json["markedFakeBy"],
     markedFakeAt: json["markedFakeAt"],
-    customFields: json["customFields"] != null &&
-        json["customFields"].isNotEmpty
-        ? Items.fromJson(json["customFields"])
-        : null,
+    customFields:
+        json["customFields"] != null && json["customFields"].isNotEmpty
+            ? Items.fromJson(json["customFields"])
+            : null,
     createdAt: DateTime.parse(json["createdAt"]),
     updatedAt: DateTime.parse(json["updatedAt"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "created_by": createdBy,
-    "updated_by": updatedBy,
-    "name": name,
-    "email": email,
-    "phone": phone,
-    "property_id": propertyId,
-    "reseller_id": resellerId,
-    "source": source,
-    "status": status,
-    "stage": stage,
-    "notes": notes,
-    "lastContactedAt": lastContactedAt,
-    "isFake": isFake,
-    "fakeReason": fakeReason,
-    "markedFakeBy": markedFakeBy,
-    "markedFakeAt": markedFakeAt,
-    "customFields": customFields?.toJson(),
-    "createdAt": createdAt.toIso8601String(),
-    "updatedAt": updatedAt.toIso8601String(),
+    if (id != null) "id": id,
+    if (createdBy != null) "created_by": createdBy,
+    if (updatedBy != null) "updated_by": updatedBy,
+    if (name != null) "name": name,
+    if (email != null) "email": email,
+    if (phone != null) "phone": phone,
+    if (propertyId != null) "property_id": propertyId,
+    if (resellerId != null) "reseller_id": resellerId,
+    if (source != null) "source": source,
+    if (status != null) "status": status,
+    if (stage != null) "stage": stage,
+    if (notes != null) "notes": notes,
+    if (lastContactedAt != null) "lastContactedAt": lastContactedAt,
+    if (isFake != null) "isFake": isFake,
+    if (fakeReason != null) "fakeReason": fakeReason,
+    if (markedFakeBy != null) "markedFakeBy": markedFakeBy,
+    if (markedFakeAt != null) "markedFakeAt": markedFakeAt,
+    if (customFields != null) "customFields": customFields?.toJson(),
+    if (createdAt != null) "createdAt": createdAt?.toIso8601String(),
+    if (updatedAt != null) "updatedAt": updatedAt?.toIso8601String(),
   };
 }
 

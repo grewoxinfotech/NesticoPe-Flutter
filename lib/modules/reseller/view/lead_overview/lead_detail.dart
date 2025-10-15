@@ -62,7 +62,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
       final propertyController = Get.find<PropertyController>();
       isLoadingProperty.value = true;
       leadProperty.value = await propertyController.getPropertyById(
-        widget.lead!.propertyId,
+        widget.lead!.propertyId ?? '',
       );
       isLoadingProperty.value = false;
     });
@@ -327,7 +327,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 radius: isCompact ? 24 : 28,
                 backgroundColor: ColorRes.primary.withOpacity(0.2),
                 child: Text(
-                  widget.lead!.name
+                  widget.lead!.name!
                       .split(' ')
                       .map((e) => e[0])
                       .join()
@@ -346,7 +346,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.lead!.name,
+                      widget.lead!.name!,
                       style: TextStyle(
                         fontSize:
                             isCompact ? AppFontSizes.body : AppFontSizes.large,
@@ -369,7 +369,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              'Lead Source: ${widget.lead!.source.toUpperCase()}',
+                              'Lead Source: ${widget.lead!.source!.toUpperCase()}',
                               style: TextStyle(
                                 color: ColorRes.leadGreyColor[700],
                                 fontSize: AppFontSizes.extraSmall,
@@ -408,9 +408,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           _buildContactRow(
             Icons.email_outlined,
             'Email',
-            widget.lead!.email,
+            widget.lead!.email!,
             Colors.blue,
-            () => _launchEmail(widget.lead!.email),
+            () => _launchEmail(widget.lead!.email!),
           ),
           SizedBox(height: 12),
           Row(
@@ -419,9 +419,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 child: _buildContactRow(
                   Icons.phone_outlined,
                   'Phone',
-                  widget.lead!.phone,
+                  widget.lead!.phone!,
                   Colors.green,
-                  () => _launchPhone(widget.lead!.phone),
+                  () => _launchPhone(widget.lead!.phone!),
                 ),
               ),
             ],
@@ -557,17 +557,17 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(widget.lead!.status),
+                  color: _getStatusColor(widget.lead!.status!),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: _getStatusColor(
-                      widget.lead!.status,
+                      widget.lead!.status!,
                     ).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
-                  _getStatusText(widget.lead!.status),
+                  _getStatusText(widget.lead!.status!),
                   style: TextStyle(
                     color: ColorRes.white,
                     fontSize: AppFontSizes.extraSmall,
@@ -1003,13 +1003,13 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: (widget.isFromLead
-                                  ? _getStatusColor(widget.lead!.status)
+                                  ? _getStatusColor(widget.lead!.status!)
                                   : Colors.green)
                               .withOpacity(0.08),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: (widget.isFromLead
-                                    ? _getStatusColor(widget.lead!.status)
+                                    ? _getStatusColor(widget.lead!.status!)
                                     : Colors.green)
                                 .withOpacity(0.3),
                             width: 1,
@@ -1024,7 +1024,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                                 fontSize: AppFontSizes.extraSmall,
                                 color:
                                     widget.isFromLead
-                                        ? _getStatusColor(widget.lead!.status)
+                                        ? _getStatusColor(widget.lead!.status!)
                                         : Colors.green,
                                 fontWeight: AppFontWeights.extraBold,
                                 letterSpacing: 0.5,
@@ -1282,7 +1282,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               children: [
                 _buildTimelineItem(
                   'Lead Created',
-                  _formatDateTime(widget.lead!.createdAt),
+                  _formatDateTime(widget.lead!.createdAt!),
                   Icons.add_circle_outline,
                   ColorRes.blueColor,
                   true,
@@ -1302,9 +1302,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   ),
                 _buildTimelineItem(
                   'Current Status',
-                  _getStatusText(widget.lead!.status),
+                  _getStatusText(widget.lead!.status!),
                   Icons.flag_outlined,
-                  _getStatusColor(widget.lead!.status),
+                  _getStatusColor(widget.lead!.status!),
                   false,
                   true,
                 ),

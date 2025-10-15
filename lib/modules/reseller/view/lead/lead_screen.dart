@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
@@ -21,7 +22,7 @@ class ResellerLeadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(()=>LeadController(),tag: "reseller");
+    Get.lazyPut(() => LeadController(), tag: "reseller");
     final leadController = Get.find<LeadController>(tag: "reseller");
 
     final controller = Get.find<DashboardController>();
@@ -57,7 +58,13 @@ class ResellerLeadScreen extends StatelessWidget {
             icon: const Icon(Icons.add),
             onPressed: () {
               FocusScope.of(context).unfocus();
-              showLeadForm(context, controller);
+              Get.to(
+                () => AddLeadScreen(),
+                binding: BindingsBuilder(() {
+                  Get.lazyPut(() => LeadController(), tag: "reseller");
+                }),
+              );
+              // showLeadForm(context, controller);
             },
           ),
           IconButton(
@@ -290,7 +297,11 @@ class ResellerLeadScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.real_estate_agent, size: 64, color: ColorRes.leadGreyColor[400]),
+          Icon(
+            Icons.real_estate_agent,
+            size: 64,
+            color: ColorRes.leadGreyColor[400],
+          ),
           const SizedBox(height: 16),
           Text(
             'No buyer leads found',
@@ -324,7 +335,10 @@ class ResellerLeadScreen extends StatelessWidget {
   ) {
     final isCompact = MediaQuery.of(context).size.width < 600;
     final cardPadding = isCompact ? 12.0 : 16.0;
-    final priceManager = PropertyPriceManager(listingType: lead.customFields?.listingType ?? '', financialInfo: lead.customFields?.propertyDetails?.financialInfo );
+    final priceManager = PropertyPriceManager(
+      listingType: lead.customFields?.listingType ?? '',
+      financialInfo: lead.customFields?.propertyDetails?.financialInfo,
+    );
 
     return Container(
       padding: EdgeInsets.all(cardPadding),
@@ -342,7 +356,7 @@ class ResellerLeadScreen extends StatelessWidget {
                 radius: isCompact ? 18 : 20,
                 backgroundColor: ColorRes.primary.withOpacity(0.2),
                 child: Text(
-                  getInitials(lead.name),
+                  getInitials(lead.name!),
                   style: TextStyle(
                     color: ColorRes.primary,
                     fontWeight: AppFontWeights.bold,
@@ -360,7 +374,7 @@ class ResellerLeadScreen extends StatelessWidget {
                     SizedBox(
                       width: 180,
                       child: Text(
-                        lead.name,
+                        lead.name!,
                         style: TextStyle(
                           fontSize:
                               isCompact
@@ -390,13 +404,17 @@ class ResellerLeadScreen extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (lead.email.isNotEmpty) ...[
+                    if (lead.email != null && lead.email!.isNotEmpty) ...[
                       SizedBox(height: 4),
                       Row(
                         children: [
                           Expanded(
                             child: Text(
-                              lead.email.replaceRange(lead.email.length<4 ? lead.email.length :4, lead.email.length, 'XXXXXXXXXXX'),
+                              lead.email!.replaceRange(
+                                lead.email!.length < 4 ? lead.email!.length : 4,
+                                lead.email!.length,
+                                'XXXXXXXXXXX',
+                              ),
                               style: TextStyle(
                                 fontSize: AppFontSizes.extraSmall,
                                 color: ColorRes.leadGreyColor[600],
@@ -435,7 +453,7 @@ class ResellerLeadScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    _formatTime(lead.createdAt),
+                    _formatTime(lead.createdAt!),
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       color: ColorRes.leadGreyColor[600],
@@ -459,21 +477,27 @@ class ResellerLeadScreen extends StatelessWidget {
                   vertical: isCompact ? 6 : 8,
                 ),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(getLeadStatusFromString(lead.status)).withOpacity(0.08),
+                  color: _getStatusColor(
+                    getLeadStatusFromString(lead.status!),
+                  ).withOpacity(0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: _getStatusColor(getLeadStatusFromString(lead.status)).withOpacity(0.3),
+                    color: _getStatusColor(
+                      getLeadStatusFromString(lead.status!),
+                    ).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
-                  _getStatusText(getLeadStatusFromString(lead.status)),
+                  _getStatusText(getLeadStatusFromString(lead.status!)),
                   style: TextStyle(
                     fontSize:
                         isCompact
                             ? AppFontSizes.extraSmall
                             : AppFontSizes.small,
-                    color: _getStatusColor(getLeadStatusFromString(lead.status)),
+                    color: _getStatusColor(
+                      getLeadStatusFromString(lead.status!),
+                    ),
                     fontWeight: AppFontWeights.bold,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -487,10 +511,14 @@ class ResellerLeadScreen extends StatelessWidget {
                   vertical: isCompact ? 6 : 8,
                 ),
                 decoration: BoxDecoration(
-                  color: _getStageColor(getLeadStageFromString(lead.stage)).withOpacity(0.08),
+                  color: _getStageColor(
+                    getLeadStageFromString(lead.stage),
+                  ).withOpacity(0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: _getStageColor(getLeadStageFromString(lead.stage)).withOpacity(0.3),
+                    color: _getStageColor(
+                      getLeadStageFromString(lead.stage),
+                    ).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
@@ -515,10 +543,7 @@ class ResellerLeadScreen extends StatelessWidget {
                     color: ColorRes.blueColor,
                     onPressed: () {
                       Get.to(
-                        () => LeadDetailScreen(
-                          lead: lead,
-                          isFromLead: true,
-                        ),
+                        () => LeadDetailScreen(lead: lead, isFromLead: true),
                       );
                     },
                     tooltip: 'View Details',
@@ -528,8 +553,8 @@ class ResellerLeadScreen extends StatelessWidget {
                   buildActionButton(
                     icon: Icons.edit,
                     color: ColorRes.orangeColor,
-                    onPressed:
-                        () => showLeadForm(context, controller, lead: lead),
+                    onPressed: () {},
+                    // () => showLeadForm(context, controller, lead: lead),
                     tooltip: 'Edit Lead',
                     isCompact: isCompact,
                   ),
@@ -581,7 +606,7 @@ void showFilterBottomSheet(
                     height: 4,
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                             color: ColorRes.leadGreyColor[300],
+                      color: ColorRes.leadGreyColor[300],
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -595,8 +620,8 @@ void showFilterBottomSheet(
                         Text(
                           'Filter Leads',
                           style: TextStyle(
-                        fontSize: AppFontSizes.body,
-                        fontWeight: AppFontWeights.semiBold,
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.semiBold,
                           ),
                         ),
                         Row(
@@ -609,12 +634,13 @@ void showFilterBottomSheet(
                                 setState(() {});
                               },
                               style: TextButton.styleFrom(
-                         foregroundColor: ColorRes.error[400],
+                                foregroundColor: ColorRes.error[400],
                               ),
                               child: Text(
                                 'Clear All',
                                 style: TextStyle(
-                                fontWeight: AppFontWeights.medium,fontSize: AppFontSizes.small
+                                  fontWeight: AppFontWeights.medium,
+                                  fontSize: AppFontSizes.small,
                                 ),
                               ),
                             ),
@@ -779,14 +805,18 @@ Widget _buildFilterSection({
                   checkmarkColor: ColorRes.primary,
                   backgroundColor: ColorRes.leadGreyColor[100],
                   shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(
-                  color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor[300]!,
-                  width: isSelected ? 1.5 : 1,
-                ),
-              ),
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                      color:
+                          isSelected
+                              ? ColorRes.primary
+                              : ColorRes.leadGreyColor[300]!,
+                      width: isSelected ? 1.5 : 1,
+                    ),
+                  ),
                   labelStyle: TextStyle(
-                   color: isSelected ? ColorRes.primary : ColorRes.blackShade87,
+                    color:
+                        isSelected ? ColorRes.primary : ColorRes.blackShade87,
                     fontWeight:
                         isSelected
                             ? AppFontWeights.semiBold
@@ -1235,500 +1265,500 @@ Widget _buildFilterSection({
 //   );
 // }
 
-void showLeadForm(
-  BuildContext context,
-  DashboardController controller, {
-  LeadItem? lead,
-}) {
-  final priceManager  = PropertyPriceManager(listingType: lead?.customFields?.listingType ?? '', financialInfo: lead?.customFields?.propertyDetails?.financialInfo);
-  final formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController(text: lead?.name ?? '');
-  final locationController = TextEditingController(text: lead?.customFields?.address ?? '');
-  final emailController = TextEditingController(text: lead?.email ?? '');
-  final phoneController = TextEditingController(text: lead?.phone ?? '');
-  final resellerTextController = TextEditingController(text: 'Reseller ID');
-  final budgetController = TextEditingController(
-    text: priceManager.displayPrice.toString() ?? '',
-  );
-  final notesController = TextEditingController(text: lead?.notes ?? '');
-  final statusController = ValueNotifier<LeadStatus>(
-    getLeadStatusFromString(lead?.status ?? 'new'),
-  );
-  final stageController = ValueNotifier<LeadStage>(
-    getLeadStageFromString(lead?.stage ?? 'newlead') ,
-  );
-
-  // FIX: Initialize property with null if empty or not found in list
-  final propertyTitles =
-      controller.dummyResellerLeads
-          .map((lead) => lead.customFields.title)
-          .toSet()
-          .toList();
-
-  final initialProperty =
-      (lead?.customFields != null &&
-              propertyTitles.contains(lead?.customFields))
-          ? lead?.customFields
-          : null;
-
-  final propertyController = ValueNotifier(initialProperty);
-
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: ColorRes.transparentColor,
-    builder:
-        (context) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.9,
-            decoration: const BoxDecoration(
-              color: ColorRes.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin:  EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: ColorRes.leadGreyColor[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(getResponsivePadding(context)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          lead == null
-                              ? 'Add New Buyer Lead'
-                              : 'Edit Buyer Lead',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.body,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textColor,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(getResponsivePadding(context)),
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _buildFormField(
-                            context: context,
-                            controller: nameController,
-                            label: 'Buyer Name',
-                            icon: Icons.person_outline,
-                            validator:
-                                (value) =>
-                                    value?.isEmpty ?? true
-                                        ? 'Name is required'
-                                        : null,
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          _buildFormField(
-                            context: context,
-                            controller: locationController,
-                            label: 'Preferred Location',
-                            icon: Icons.location_city_outlined,
-                            validator:
-                                (value) =>
-                                    value?.isEmpty ?? true
-                                        ? 'Location is required'
-                                        : null,
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          _buildFormField(
-                            context: context,
-                            controller: emailController,
-                            label: 'Email',
-                            icon: Icons.email_outlined,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value?.isEmpty ?? true)
-                                return 'Email is required';
-                              if (!GetUtils.isEmail(value!))
-                                return 'Enter a valid email';
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          _buildFormField(
-                            context: context,
-                            controller: resellerTextController,
-                            label: 'Reseller ID',
-                            icon: Icons.perm_identity_outlined,
-                            isEnable: false,
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          _buildFormField(
-                            context: context,
-                            controller: phoneController,
-                            label: 'Phone',
-                            icon: Icons.phone_outlined,
-                            keyboardType: TextInputType.phone,
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-
-                          // FIXED PROPERTY DROPDOWN
-                          // ValueListenableBuilder(
-                          //   valueListenable: propertyController,
-                          //   builder: (context, selectedProperty, _) {
-                          //     final currentValue =
-                          //         propertyTitles.contains(selectedProperty)
-                          //             ? selectedProperty
-                          //             : null;
-                          //
-                          //     final OutlineInputBorder commonBorder =
-                          //         OutlineInputBorder(
-                          //           borderRadius: BorderRadius.circular(12),
-                          //           borderSide: BorderSide(
-                          //             color: ColorRes.grey.withOpacity(0.3),
-                          //             width: 1,
-                          //           ),
-                          //         );
-                          //
-                          //     return SizedBox(
-                          //       height: 50,
-                          //       child: DropdownButtonFormField(
-                          //         value: currentValue,
-                          //         decoration: InputDecoration(
-                          //           labelText: 'Select Property',
-                          //           labelStyle: const TextStyle(fontSize: 12),
-                          //           prefixIcon: const Icon(
-                          //             Icons.home_outlined,
-                          //             size: 20,
-                          //           ),
-                          //           border: commonBorder,
-                          //           enabledBorder: commonBorder,
-                          //           focusedBorder: commonBorder.copyWith(
-                          //             borderSide: BorderSide(
-                          //               color: ColorRes.primary,
-                          //               width: 1.5,
-                          //             ),
-                          //           ),
-                          //           disabledBorder: commonBorder,
-                          //           errorBorder: commonBorder.copyWith(
-                          //             borderSide: const BorderSide(
-                          //               color: Colors.red,
-                          //               width: 1,
-                          //             ),
-                          //           ),
-                          //           focusedErrorBorder: commonBorder.copyWith(
-                          //             borderSide: const BorderSide(
-                          //               color: Colors.red,
-                          //               width: 1.5,
-                          //             ),
-                          //           ),
-                          //         ),
-                          //         isExpanded: true,
-                          //         items:
-                          //             propertyTitles.map((title) {
-                          //               return DropdownMenuItem<Items>(
-                          //                 value: title,
-                          //                 child: Text(
-                          //                   title ?? 'Unknown Property',
-                          //                   maxLines: 1,
-                          //                   overflow: TextOverflow.ellipsis,
-                          //                   style:  TextStyle(
-                          //                     fontSize: AppFontSizes.small,
-                          //                     fontWeight: AppFontWeights.medium,
-                          //                   ),
-                          //                 ),
-                          //               );
-                          //             }).toList(),
-                          //         onChanged: (value) {
-                          //           propertyController.value = value;
-                          //           debugPrint('Selected property: $value');
-                          //         },
-                          //         validator:
-                          //             (value) =>
-                          //                 (value == null || value.isEmpty)
-                          //                     ? 'Please select a property'
-                          //                     : null,
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
-
-                          //TODO: Aavesh Property Dropdown
-
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          SizedBox(
-                            height: 50,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: ValueListenableBuilder<LeadStatus>(
-                                    valueListenable: statusController,
-                                    builder: (context, status, child) {
-                                      return DropdownButtonFormField<
-                                        LeadStatus
-                                      >(
-                                        value: status,
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color: Colors.black87,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: 'Status',
-                                          labelStyle: TextStyle(
-                                            fontSize: AppFontSizes.small,
-                                          ),
-                                          prefixIcon: const Icon(
-                                            Icons.flag_outlined,
-                                            size: 20,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(
-                                                0.3,
-                                              ),
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.primary,
-                                            ),
-                                          ),
-                                          disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(
-                                                0.3,
-                                              ),
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(
-                                                0.3,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        items:
-                                            LeadStatus.values.map((status) {
-                                              return DropdownMenuItem(
-                                                value: status,
-                                                child: Text(
-                                                  _getStatusText(status),
-                                                ),
-                                              );
-                                            }).toList(),
-                                        onChanged:
-                                            (value) =>
-                                                statusController.value = value!,
-                                      );
-                                    },
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                Expanded(
-                                  child: ValueListenableBuilder<LeadStage>(
-                                    valueListenable: stageController,
-                                    builder: (context, stage, child) {
-                                      return DropdownButtonFormField<LeadStage>(
-                                        value: stage,
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color: Colors.black87,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: 'Stages',
-                                          labelStyle: TextStyle(
-                                            fontSize: AppFontSizes.small,
-                                          ),
-                                          prefixIcon: const Icon(
-                                            Icons.show_chart,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(
-                                                0.3,
-                                              ),
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.primary,
-                                            ),
-                                          ),
-                                          disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(
-                                                0.3,
-                                              ),
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: ColorRes.grey.withOpacity(
-                                                0.3,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        items:
-                                            LeadStage.values.map((stage) {
-                                              return DropdownMenuItem(
-                                                value: stage,
-                                                child: Text(
-                                                  _getStageText(stage),
-                                                ),
-                                              );
-                                            }).toList(),
-                                        onChanged:
-                                            (value) =>
-                                                stageController.value = value!,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: getResponsiveSpacing(context)),
-                          _buildFormField(
-                            context: context,
-                            controller: notesController,
-                            label: 'Requirements & Notes',
-                            icon: Icons.note_outlined,
-                            maxLines: 4,
-                          ),
-                          const SizedBox(height: 24),
-                          SafeArea(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  final newLead = Lead(
-                                    id:
-                                        lead?.id ??
-                                        DateTime.now().millisecondsSinceEpoch
-                                            .toString(),
-                                    name: nameController.text,
-                                    company: locationController.text,
-                                    email: emailController.text,
-                                    phone: phoneController.text,
-                                    estimatedValue: double.parse(
-                                      budgetController.text,
-                                    ),
-                                    status: statusController.value,
-                                    notes: notesController.text,
-                                    // property:
-                                    //     propertyController.value ??
-                                    //     '', // Save selected property
-                                    createdAt:
-                                        lead?.createdAt ?? DateTime.now(),
-                                    stage: stageController.value,
-                                  );
-
-                                  if (lead == null) {
-                                    controller.recentLeads.add(newLead);
-                                    Get.snackbar(
-                                      'Success',
-                                      'Buyer lead added successfully',
-                                      backgroundColor: Colors.green,
-                                      colorText: ColorRes.white,
-                                    );
-                                  } else {
-                                    final index = controller.recentLeads
-                                        .indexWhere((l) => l.id == lead.id);
-                                    if (index != -1) {
-                                      controller.recentLeads[index] = newLead;
-                                      Get.snackbar(
-                                        'Success',
-                                        'Buyer lead updated successfully',
-                                        backgroundColor: Colors.green,
-                                        colorText: ColorRes.white,
-                                      );
-                                    }
-                                  }
-                                  Navigator.pop(context);
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                foregroundColor: ColorRes.white,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Text(
-                                lead == null
-                                    ? 'Add Buyer Lead'
-                                    : 'Update Buyer Lead',
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.body,
-                                  fontWeight: AppFontWeights.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-  );
-}
+// void showLeadForm(
+//   BuildContext context,
+//   DashboardController controller, {
+//   LeadItem? lead,
+// }) {
+//   final priceManager  = PropertyPriceManager(listingType: lead?.customFields?.listingType ?? '', financialInfo: lead?.customFields?.propertyDetails?.financialInfo);
+//   final formKey = GlobalKey<FormState>();
+//   final nameController = TextEditingController(text: lead?.name ?? '');
+//   final locationController = TextEditingController(text: lead?.customFields?.address ?? '');
+//   final emailController = TextEditingController(text: lead?.email ?? '');
+//   final phoneController = TextEditingController(text: lead?.phone ?? '');
+//   final resellerTextController = TextEditingController(text: 'Reseller ID');
+//   final budgetController = TextEditingController(
+//     text: priceManager.displayPrice.toString() ?? '',
+//   );
+//   final notesController = TextEditingController(text: lead?.notes ?? '');
+//   final statusController = ValueNotifier<LeadStatus>(
+//     getLeadStatusFromString(lead?.status ?? 'new'),
+//   );
+//   final stageController = ValueNotifier<LeadStage>(
+//     getLeadStageFromString(lead?.stage ?? 'newlead') ,
+//   );
+//
+//   // FIX: Initialize property with null if empty or not found in list
+//   final propertyTitles =
+//       controller.dummyResellerLeads
+//           .map((lead) => lead.customFields.title)
+//           .toSet()
+//           .toList();
+//
+//   final initialProperty =
+//       (lead?.customFields != null &&
+//               propertyTitles.contains(lead?.customFields))
+//           ? lead?.customFields
+//           : null;
+//
+//   final propertyController = ValueNotifier(initialProperty);
+//
+//   showModalBottomSheet(
+//     context: context,
+//     isScrollControlled: true,
+//     backgroundColor: ColorRes.transparentColor,
+//     builder:
+//         (context) => Padding(
+//           padding: EdgeInsets.only(
+//             bottom: MediaQuery.of(context).viewInsets.bottom,
+//           ),
+//           child: Container(
+//             height: MediaQuery.of(context).size.height * 0.9,
+//             decoration: const BoxDecoration(
+//               color: ColorRes.white,
+//               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+//             ),
+//             child: Column(
+//               children: [
+//                 Container(
+//                   width: 40,
+//                   height: 4,
+//                   margin:  EdgeInsets.symmetric(vertical: 8),
+//                   decoration: BoxDecoration(
+//                     color: ColorRes.leadGreyColor[300],
+//                     borderRadius: BorderRadius.circular(2),
+//                   ),
+//                 ),
+//                 Padding(
+//                   padding: EdgeInsets.all(getResponsivePadding(context)),
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Flexible(
+//                         child: Text(
+//                           lead == null
+//                               ? 'Add New Buyer Lead'
+//                               : 'Edit Buyer Lead',
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.body,
+//                             fontWeight: AppFontWeights.semiBold,
+//                             color: ColorRes.textColor,
+//                           ),
+//                           overflow: TextOverflow.ellipsis,
+//                         ),
+//                       ),
+//                       IconButton(
+//                         icon: const Icon(Icons.close),
+//                         onPressed: () => Navigator.pop(context),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 Expanded(
+//                   child: SingleChildScrollView(
+//                     padding: EdgeInsets.all(getResponsivePadding(context)),
+//                     child: Form(
+//                       key: formKey,
+//                       child: Column(
+//                         mainAxisSize: MainAxisSize.min,
+//                         crossAxisAlignment: CrossAxisAlignment.stretch,
+//                         children: [
+//                           _buildFormField(
+//                             context: context,
+//                             controller: nameController,
+//                             label: 'Buyer Name',
+//                             icon: Icons.person_outline,
+//                             validator:
+//                                 (value) =>
+//                                     value?.isEmpty ?? true
+//                                         ? 'Name is required'
+//                                         : null,
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           _buildFormField(
+//                             context: context,
+//                             controller: locationController,
+//                             label: 'Preferred Location',
+//                             icon: Icons.location_city_outlined,
+//                             validator:
+//                                 (value) =>
+//                                     value?.isEmpty ?? true
+//                                         ? 'Location is required'
+//                                         : null,
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           _buildFormField(
+//                             context: context,
+//                             controller: emailController,
+//                             label: 'Email',
+//                             icon: Icons.email_outlined,
+//                             keyboardType: TextInputType.emailAddress,
+//                             validator: (value) {
+//                               if (value?.isEmpty ?? true)
+//                                 return 'Email is required';
+//                               if (!GetUtils.isEmail(value!))
+//                                 return 'Enter a valid email';
+//                               return null;
+//                             },
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           _buildFormField(
+//                             context: context,
+//                             controller: resellerTextController,
+//                             label: 'Reseller ID',
+//                             icon: Icons.perm_identity_outlined,
+//                             isEnable: false,
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           _buildFormField(
+//                             context: context,
+//                             controller: phoneController,
+//                             label: 'Phone',
+//                             icon: Icons.phone_outlined,
+//                             keyboardType: TextInputType.phone,
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//
+//                           // FIXED PROPERTY DROPDOWN
+//                           // ValueListenableBuilder(
+//                           //   valueListenable: propertyController,
+//                           //   builder: (context, selectedProperty, _) {
+//                           //     final currentValue =
+//                           //         propertyTitles.contains(selectedProperty)
+//                           //             ? selectedProperty
+//                           //             : null;
+//                           //
+//                           //     final OutlineInputBorder commonBorder =
+//                           //         OutlineInputBorder(
+//                           //           borderRadius: BorderRadius.circular(12),
+//                           //           borderSide: BorderSide(
+//                           //             color: ColorRes.grey.withOpacity(0.3),
+//                           //             width: 1,
+//                           //           ),
+//                           //         );
+//                           //
+//                           //     return SizedBox(
+//                           //       height: 50,
+//                           //       child: DropdownButtonFormField(
+//                           //         value: currentValue,
+//                           //         decoration: InputDecoration(
+//                           //           labelText: 'Select Property',
+//                           //           labelStyle: const TextStyle(fontSize: 12),
+//                           //           prefixIcon: const Icon(
+//                           //             Icons.home_outlined,
+//                           //             size: 20,
+//                           //           ),
+//                           //           border: commonBorder,
+//                           //           enabledBorder: commonBorder,
+//                           //           focusedBorder: commonBorder.copyWith(
+//                           //             borderSide: BorderSide(
+//                           //               color: ColorRes.primary,
+//                           //               width: 1.5,
+//                           //             ),
+//                           //           ),
+//                           //           disabledBorder: commonBorder,
+//                           //           errorBorder: commonBorder.copyWith(
+//                           //             borderSide: const BorderSide(
+//                           //               color: Colors.red,
+//                           //               width: 1,
+//                           //             ),
+//                           //           ),
+//                           //           focusedErrorBorder: commonBorder.copyWith(
+//                           //             borderSide: const BorderSide(
+//                           //               color: Colors.red,
+//                           //               width: 1.5,
+//                           //             ),
+//                           //           ),
+//                           //         ),
+//                           //         isExpanded: true,
+//                           //         items:
+//                           //             propertyTitles.map((title) {
+//                           //               return DropdownMenuItem<Items>(
+//                           //                 value: title,
+//                           //                 child: Text(
+//                           //                   title ?? 'Unknown Property',
+//                           //                   maxLines: 1,
+//                           //                   overflow: TextOverflow.ellipsis,
+//                           //                   style:  TextStyle(
+//                           //                     fontSize: AppFontSizes.small,
+//                           //                     fontWeight: AppFontWeights.medium,
+//                           //                   ),
+//                           //                 ),
+//                           //               );
+//                           //             }).toList(),
+//                           //         onChanged: (value) {
+//                           //           propertyController.value = value;
+//                           //           debugPrint('Selected property: $value');
+//                           //         },
+//                           //         validator:
+//                           //             (value) =>
+//                           //                 (value == null || value.isEmpty)
+//                           //                     ? 'Please select a property'
+//                           //                     : null,
+//                           //       ),
+//                           //     );
+//                           //   },
+//                           // ),
+//
+//                           //TODO: Aavesh Property Dropdown
+//
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           SizedBox(
+//                             height: 50,
+//                             child: Row(
+//                               children: [
+//                                 Expanded(
+//                                   child: ValueListenableBuilder<LeadStatus>(
+//                                     valueListenable: statusController,
+//                                     builder: (context, status, child) {
+//                                       return DropdownButtonFormField<
+//                                         LeadStatus
+//                                       >(
+//                                         value: status,
+//                                         style: TextStyle(
+//                                           fontSize: AppFontSizes.small,
+//                                           color: Colors.black87,
+//                                         ),
+//                                         decoration: InputDecoration(
+//                                           labelText: 'Status',
+//                                           labelStyle: TextStyle(
+//                                             fontSize: AppFontSizes.small,
+//                                           ),
+//                                           prefixIcon: const Icon(
+//                                             Icons.flag_outlined,
+//                                             size: 20,
+//                                           ),
+//                                           border: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(
+//                                               12,
+//                                             ),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(
+//                                                 0.3,
+//                                               ),
+//                                             ),
+//                                           ),
+//                                           focusedBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(
+//                                               12,
+//                                             ),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.primary,
+//                                             ),
+//                                           ),
+//                                           disabledBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(
+//                                               12,
+//                                             ),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(
+//                                                 0.3,
+//                                               ),
+//                                             ),
+//                                           ),
+//                                           enabledBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(
+//                                               12,
+//                                             ),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(
+//                                                 0.3,
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         items:
+//                                             LeadStatus.values.map((status) {
+//                                               return DropdownMenuItem(
+//                                                 value: status,
+//                                                 child: Text(
+//                                                   _getStatusText(status),
+//                                                 ),
+//                                               );
+//                                             }).toList(),
+//                                         onChanged:
+//                                             (value) =>
+//                                                 statusController.value = value!,
+//                                       );
+//                                     },
+//                                   ),
+//                                 ),
+//                                 SizedBox(width: 8),
+//                                 Expanded(
+//                                   child: ValueListenableBuilder<LeadStage>(
+//                                     valueListenable: stageController,
+//                                     builder: (context, stage, child) {
+//                                       return DropdownButtonFormField<LeadStage>(
+//                                         value: stage,
+//                                         style: TextStyle(
+//                                           fontSize: AppFontSizes.small,
+//                                           color: Colors.black87,
+//                                         ),
+//                                         decoration: InputDecoration(
+//                                           labelText: 'Stages',
+//                                           labelStyle: TextStyle(
+//                                             fontSize: AppFontSizes.small,
+//                                           ),
+//                                           prefixIcon: const Icon(
+//                                             Icons.show_chart,
+//                                           ),
+//                                           border: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(
+//                                               12,
+//                                             ),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(
+//                                                 0.3,
+//                                               ),
+//                                             ),
+//                                           ),
+//                                           focusedBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(
+//                                               12,
+//                                             ),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.primary,
+//                                             ),
+//                                           ),
+//                                           disabledBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(
+//                                               12,
+//                                             ),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(
+//                                                 0.3,
+//                                               ),
+//                                             ),
+//                                           ),
+//                                           enabledBorder: OutlineInputBorder(
+//                                             borderRadius: BorderRadius.circular(
+//                                               12,
+//                                             ),
+//                                             borderSide: BorderSide(
+//                                               width: 1,
+//                                               color: ColorRes.grey.withOpacity(
+//                                                 0.3,
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         items:
+//                                             LeadStage.values.map((stage) {
+//                                               return DropdownMenuItem(
+//                                                 value: stage,
+//                                                 child: Text(
+//                                                   _getStageText(stage),
+//                                                 ),
+//                                               );
+//                                             }).toList(),
+//                                         onChanged:
+//                                             (value) =>
+//                                                 stageController.value = value!,
+//                                       );
+//                                     },
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                           SizedBox(height: getResponsiveSpacing(context)),
+//                           _buildFormField(
+//                             context: context,
+//                             controller: notesController,
+//                             label: 'Requirements & Notes',
+//                             icon: Icons.note_outlined,
+//                             maxLines: 4,
+//                           ),
+//                           const SizedBox(height: 24),
+//                           SafeArea(
+//                             child: ElevatedButton(
+//                               onPressed: () {
+//                                 if (formKey.currentState!.validate()) {
+//                                   final newLead = Lead(
+//                                     id:
+//                                         lead?.id ??
+//                                         DateTime.now().millisecondsSinceEpoch
+//                                             .toString(),
+//                                     name: nameController.text,
+//                                     company: locationController.text,
+//                                     email: emailController.text,
+//                                     phone: phoneController.text,
+//                                     estimatedValue: double.parse(
+//                                       budgetController.text,
+//                                     ),
+//                                     status: statusController.value,
+//                                     notes: notesController.text,
+//                                     // property:
+//                                     //     propertyController.value ??
+//                                     //     '', // Save selected property
+//                                     createdAt:
+//                                         lead?.createdAt ?? DateTime.now(),
+//                                     stage: stageController.value,
+//                                   );
+//
+//                                   if (lead == null) {
+//                                     controller.recentLeads.add(newLead);
+//                                     Get.snackbar(
+//                                       'Success',
+//                                       'Buyer lead added successfully',
+//                                       backgroundColor: Colors.green,
+//                                       colorText: ColorRes.white,
+//                                     );
+//                                   } else {
+//                                     final index = controller.recentLeads
+//                                         .indexWhere((l) => l.id == lead.id);
+//                                     if (index != -1) {
+//                                       controller.recentLeads[index] = newLead;
+//                                       Get.snackbar(
+//                                         'Success',
+//                                         'Buyer lead updated successfully',
+//                                         backgroundColor: Colors.green,
+//                                         colorText: ColorRes.white,
+//                                       );
+//                                     }
+//                                   }
+//                                   Navigator.pop(context);
+//                                 }
+//                               },
+//                               style: ElevatedButton.styleFrom(
+//                                 backgroundColor: Colors.blue,
+//                                 foregroundColor: ColorRes.white,
+//                                 padding: const EdgeInsets.symmetric(
+//                                   vertical: 16,
+//                                 ),
+//                                 shape: RoundedRectangleBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                 ),
+//                               ),
+//                               child: Text(
+//                                 lead == null
+//                                     ? 'Add Buyer Lead'
+//                                     : 'Update Buyer Lead',
+//                                 style: TextStyle(
+//                                   fontSize: AppFontSizes.body,
+//                                   fontWeight: AppFontWeights.bold,
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//   );
+// }
 
 Widget _buildFormField({
   required BuildContext context,
@@ -1970,7 +2000,6 @@ LeadStatus getLeadStatusFromString(String status) {
   }
 }
 
-
 String _getStatusText(LeadStatus status) {
   switch (status) {
     case LeadStatus.new_:
@@ -2031,7 +2060,6 @@ LeadStage getLeadStageFromString(String? stage) {
       return LeadStage.all; // fallback
   }
 }
-
 
 String _getStageText(LeadStage stage) {
   switch (stage) {
