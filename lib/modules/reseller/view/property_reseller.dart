@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/reseller/view/profile/reseller_profile.dart';
+import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:housing_flutter_app/modules/reseller/widget/graph/linear_graph.dart';
 
@@ -3028,6 +3029,8 @@ class MainNavigationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationController = Get.put(ResellerNavigationController());
+    Get.lazyPut(()=>DashboardController(),tag: "reseller");
+    Get.lazyPut(()=>LeadController(),tag: "reseller");
 
     final screens = [
       const ResellerDashboardScreen(),

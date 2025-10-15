@@ -13,6 +13,7 @@ import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dar
 import '../../builder/view/builder_main_screen.dart';
 import '../../home/views/home_screen.dart';
 import '../../insights/views/insights_screen.dart';
+import '../../location_price_matrix/views/location_price_mtrix_screen.dart';
 import '../../referral/view/referral_dashboard.dart';
 import '../../reseller/view/reseller_success_stories/reseller_success_stories.dart';
 import '../../saved_property/views/saved_property_screen.dart';
@@ -534,6 +535,13 @@ class DashboardScreen extends StatelessWidget {
                   },
 
                   child: Text("Convert seller"),
+                ),SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => LocationPriceMatrixScreen());
+                  },
+
+                  child: Text("Location Price Matrix Screen"),
                 ),
               ],
             ),
