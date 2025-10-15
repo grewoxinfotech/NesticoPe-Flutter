@@ -1280,7 +1280,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             ),
             child: Column(
               children: [
-                _buildTimelineItem(
+                buildTimelineItem(
                   'Lead Created',
                   _formatDateTime(widget.lead!.createdAt!),
                   Icons.add_circle_outline,
@@ -1289,7 +1289,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   false,
                 ),
                 if (widget.lead!.lastContactedAt != null)
-                  _buildTimelineItem(
+                  buildTimelineItem(
                     'Last Contacted',
                     _formatDateTime(
                       DateTime.tryParse(widget.lead!.lastContactedAt!) ??
@@ -1300,7 +1300,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     false,
                     false,
                   ),
-                _buildTimelineItem(
+                buildTimelineItem(
                   'Current Status',
                   _getStatusText(widget.lead!.status!),
                   Icons.flag_outlined,
@@ -1316,7 +1316,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     );
   }
 
-  Widget _buildTimelineItem(
+  Widget buildTimelineItem(
     String title,
     String subtitle,
     IconData icon,

@@ -6,6 +6,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 
 import '../../login_screen.dart';
+import '../covert_to_reseller/convert_to_reseller.dart';
 
 class SellerConversionScreen extends StatefulWidget {
   const SellerConversionScreen({super.key});
@@ -22,6 +23,14 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
     Get.lazyPut(() => AuthController());
     final controller = Get.find<AuthController>();
     final theme = Theme.of(context);
+    final text="What happens next?";
+    final List<String> sellerOption=[
+      "Your account will be converted to a seller account",
+      "You can immediately start posting properties",
+      "Access to seller dashboard and analytic",
+      "Manage your property listings"
+    ];
+
 
     return Scaffold(
       backgroundColor: ColorRes.white,
@@ -34,10 +43,10 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
               // LEFT SECTION (Top)
               Container(
                 padding: const EdgeInsets.only(
-                  top: 40,
-                  bottom: 24,
+                  top: 60,
+                  bottom: 20,
                   left: 16,
-                  right: 24,
+                  right: 16,
                 ),
                 decoration: const BoxDecoration(
                   color: ColorRes.primary,
@@ -52,26 +61,33 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                      Text(
                       "Welcome",
                       style: TextStyle(
-                        color: ColorRes.whiteShade,
-                        fontWeight: AppFontWeights.bold,
+                        color: ColorRes.whiteShade.withOpacity(0.9),
+                        fontSize: AppFontSizes.bodyMedium,
+                        fontWeight:AppFontWeights.regular,
+                        // letterSpacing: 0.5,
                         // fontWeight: AppFontWeights.bold,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     Text(
-                      "Find Your Perfect\nLuxury Home",
-                      style: theme.textTheme.headlineSmall?.copyWith(
+                      "Find Your Perfect Luxury Home",
+                      style: TextStyle(
+                        // fontFamily: 'Exo',
                         color: ColorRes.white,
-                        fontWeight: AppFontWeights.extraBold,
+                        fontWeight: AppFontWeights.semiBold,
+                        fontSize: AppFontSizes.large,
+                        // letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 8),
                     Text(
                       "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
                       style: TextStyle(
-                        color: ColorRes.whiteShade,
-                        fontWeight: AppFontWeights.bold,
-                        // fontWeight: AppFontWeights.bold,
+                        fontFamily: 'Exo',
+                        color: ColorRes.whiteShade.withOpacity(0.85),
+                        fontWeight: AppFontWeights.regular,
+                        fontSize: AppFontSizes.small,
+
                       ),
                     ),
                   ],
@@ -94,97 +110,45 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // TAG
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorRes.deepPurpleColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        "Seller Conversion",
-                        style: TextStyle(
-                          color: ColorRes.white,
-                          // fontWeight: AppFontWeights.semiBold,
-                          // fontSize: 12,
-                          fontWeight: AppFontWeights.semiBold,
-                          fontSize: AppFontSizes.small,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
 
                     // TITLE
                     Text(
                       "Become a Seller",
                       style: theme.textTheme.titleLarge?.copyWith(
+                        fontFamily: 'Exo',
                         color: ColorRes.primary,
-                        // fontWeight: FontWeight.bold,
-
                         fontWeight: AppFontWeights.bold,
-
+                        fontSize: AppFontSizes.large,
+                        // letterSpacing: 0.3,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     const Text(
                       "You're just one step away from posting your properties!",
-                      style: TextStyle(color: ColorRes.blackShade54, fontSize: 12),
+                      style: TextStyle (fontFamily: 'Exo',
+                      color: ColorRes.blackShade54,
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.regular,
+
+                      ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
                     // INFO BOX
-                    Container(
-                      decoration: BoxDecoration(
-                        color: ColorRes.leadGreyColor.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: ColorRes.leadGreyColor.shade300),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 16,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "What happens next?",
-                            style: TextStyle(
-                              fontWeight: AppFontWeights.semiBold,
-                              // fontWeight: FontWeight.bold,
-                              color: ColorRes.blackShade87,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildCheckText(
-                            "Your account will be converted to a seller account",
-                          ),
-                          const SizedBox(height: 8),
-                          _buildCheckText(
-                            "You can immediately start posting properties",
-                          ),
-                          const SizedBox(height: 8),
-                          _buildCheckText(
-                            "Access to seller dashboard and analytics",
-                          ),
-                          const SizedBox(height: 8),
-                          _buildCheckText("Manage your property listings"),
-                        ],
-                      ),
-                    ),
+                    buildContentContainer(text, sellerOption),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
                     // SELLER TYPE SELECTION
                     Text(
-                      "Seller Type*",
+                      "Seller Type",
                       style: TextStyle(
                         // fontWeight: FontWeight.bold,
                         // fontSize: 14,
+
+                        color: ColorRes.textPrimary,
                         fontSize: AppFontSizes.medium,
-                        fontWeight: AppFontWeights.extraBold,
+                        fontWeight: AppFontWeights.semiBold,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -255,11 +219,11 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                           text: "Already have an account? ",
                           style: const TextStyle(
                             color: ColorRes.blackShade87,
-                            fontSize: AppFontSizes.medium,
+                            fontSize: AppFontSizes.bodySmall,
                           ),
                           children: [
                             TextSpan(
-                              text: "Login here",
+                              text: " Login here",
                               style: TextStyle(
                                 color: ColorRes.primary,
                                 decoration: TextDecoration.underline,

@@ -15,6 +15,15 @@ class ColorRes {
   static const background = Color(0xffF5F5F5);
   static const surface = Color(0xFFFFFFFF);
 
+
+  static const lightPurpleColor= Color(0xFF6C63FF);
+  static const bgColor=Color(0xcdf8f6f6);
+  static const lightpurple=Color(0x33000000);
+
+
+
+
+
   // Status
   // static const error = Color(0xFFF70031);
   static const error = Colors.red;
@@ -102,6 +111,7 @@ static const homedeepOrange = Colors.deepOrange;
 static const propertyBg = Color(0xFFDBEAFE);
 static const propertyText = Color(0xFF2563EB);
 
+
 /// report card
 static const reportCardBG = Color(0xFFE0E0E0);
 static const reportCardText = Color(0xFF424242);
@@ -110,5 +120,6 @@ static const reportCardblue = Color(0xFF4A73E8);
 static const reportCardhint = Color(0xFF9E9E9E);
 static const reportCardboarder = Color(0xFFE0E0E0);
 static const reportCardTextFiled = Color(0xFF757575);
+static const reportCardTextFiledHint = Color(0xFF6F5FF6);
 
 }

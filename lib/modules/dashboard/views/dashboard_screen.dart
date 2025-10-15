@@ -518,22 +518,23 @@ class DashboardScreen extends StatelessWidget {
 
                   child: Text("Reseller Stories"),
                 ),
-                // ElevatedButton(
-                //   onPressed: () {
-                //     Get.to(() => ResellerConversionScreen());
-                //   },
-                //
-                //   child: Text("Convert Reseller"),
-                // ),
-                //
-                // SizedBox(height: 16),
-                // ElevatedButton(
-                //   onPressed: () {
-                //     Get.to(() => SellerConversionScreen());
-                //   },
-                //
-                //   child: Text("Convert seller"),
-                // ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => ResellerConversionScreen());
+                  },
+
+                  child: Text("Convert Reseller"),
+                ),
+
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => SellerConversionScreen());
+                  },
+
+                  child: Text("Convert seller"),
+                ),
               ],
             ),
           );

@@ -375,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Get.lazyPut(() => PropertyController());
     // final PropertyController controller = Get.find();
     return Scaffold(
-      backgroundColor: ColorRes.white,
+      backgroundColor: ColorRes.bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
