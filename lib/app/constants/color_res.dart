@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ColorRes {
-
   //common color
   static const black = Color(0xff000000);
   static const white = Color(0xffffffff);
@@ -15,14 +14,9 @@ class ColorRes {
   static const background = Color(0xffF5F5F5);
   static const surface = Color(0xFFFFFFFF);
 
-
-  static const lightPurpleColor= Color(0xFF6C63FF);
-  static const bgColor=Color(0xcdf8f6f6);
-  static const lightpurple=Color(0x33000000);
-
-
-
-
+  static const lightPurpleColor = Color(0xFF6C63FF);
+  static const bgColor = Color(0xcdf8f6f6);
+  static const lightpurple = Color(0x33000000);
 
   // Status
   // static const error = Color(0xFFF70031);
@@ -56,7 +50,7 @@ class ColorRes {
 
   //other
   static const green = Colors.green;
-  static final blueGrey =Colors.blueGrey[900];
+  static final blueGrey = Colors.blueGrey[900];
 
   ///Dashboard Grid Colors
   static const success = Colors.green;
@@ -66,60 +60,55 @@ class ColorRes {
 
   static const whiteShade = Colors.white70;
 
-
   ///Lead section Colors
-static const leadIndigoColor = Colors.indigo;
-static const leadTealColor = Colors.teal;
-static const leadGreyColor = Colors.grey;
-static const deepPurpleColor = Colors.deepPurple;
-static const redAccentColor = Colors.redAccent;
+  static const leadIndigoColor = Colors.indigo;
+  static const leadTealColor = Colors.teal;
+  static const leadGreyColor = Colors.grey;
+  static const deepPurpleColor = Colors.deepPurple;
+  static const redAccentColor = Colors.redAccent;
 
-static const transparentColor = Colors.transparent;
+  static const transparentColor = Colors.transparent;
 
-static const addPropertyBackgroundColor = Color(0xff091F48);
+  static const addPropertyBackgroundColor = Color(0xff091F48);
 
+  ///builderOverViewScreenGridColors
 
+  static const builderGridPurple = Color(0xFF6366F1);
+  static const builderGridPink = Color(0xFFEC4899);
+  static const builderGridLightPurple = Color(0xFF8B5CF6);
+  static const builderGridLightGreen = Color(0xFF10B981);
 
-///builderOverViewScreenGridColors
+  static const builderGridLightYellow = Color(0xFFF59E0B);
+  static const builderGridLightBlue = Color(0xFF3B82F6);
 
-static const builderGridPurple = Color(0xFF6366F1);
-static const builderGridPink = Color(0xFFEC4899);
-static const builderGridLightPurple = Color(0xFF8B5CF6);
-static const builderGridLightGreen = Color(0xFF10B981);
+  static const builderGridLightSky = Color(0xFF3B82F6);
 
-static const builderGridLightYellow = Color(0xFFF59E0B);
-static const builderGridLightBlue = Color(0xFF3B82F6);
+  //// home screen different colors
 
-static const builderGridLightSky = Color(0xFF3B82F6);
+  static const homeGreenFade = Color(0xFF2E7D63);
+  static const homeGreenDarkFade = Color(0xFF27AE60);
+  static const homeBlackFade = Color(0xFF1A1A1A);
 
-//// home screen different colors
+  static const homeYellow = Color(0xFFFFB800);
 
-static const homeGreenFade = Color(0xFF2E7D63) ;
-static const homeGreenDarkFade = Color(0xFF27AE60) ;
-static const homeBlackFade = Color(0xFF1A1A1A) ;
+  static const homeRed = Color(0xFFE74C3C);
+  static const homeYellowDark = Colors.yellow;
+  static const homeAmber = Colors.amber;
+  static const homedeepOrange = Colors.deepOrange;
 
-static const homeYellow = Color(0xFFFFB800) ;
+  /// Property Detail Screen Colors
+  static const propertyBg = Color(0xFFDBEAFE);
+  static const propertyText = Color(0xFF2563EB);
 
-static const homeRed = Color(0xFFE74C3C);
-static const homeYellowDark = Colors.yellow;
-static const homeAmber = Colors.amber;
-static const homedeepOrange = Colors.deepOrange;
+  /// report card
+  static const reportCardBG = Color(0xFFE0E0E0);
+  static const reportCardText = Color(0xFF424242);
+  static const reportCardred = Color(0xFFD32F2F);
+  static const reportCardblue = Color(0xFF4A73E8);
+  static const reportCardhint = Color(0xFF9E9E9E);
+  static const reportCardboarder = Color(0xFFE0E0E0);
+  static const reportCardTextFiled = Color(0xFF757575);
+  static const reportCardTextFiledHint = Color(0xFF6F5FF6);
 
-
-
-/// Property Detail Screen Colors
-static const propertyBg = Color(0xFFDBEAFE);
-static const propertyText = Color(0xFF2563EB);
-
-
-/// report card
-static const reportCardBG = Color(0xFFE0E0E0);
-static const reportCardText = Color(0xFF424242);
-static const reportCardred = Color(0xFFD32F2F);
-static const reportCardblue = Color(0xFF4A73E8);
-static const reportCardhint = Color(0xFF9E9E9E);
-static const reportCardboarder = Color(0xFFE0E0E0);
-static const reportCardTextFiled = Color(0xFF757575);
-static const reportCardTextFiledHint = Color(0xFF6F5FF6);
-
+  /// Rating Color
 }

@@ -27,6 +27,8 @@ class ApiConstants {
   static const String propertyReport = "$baseURL/propertyReport";
   static const String resellerSuccessStory = "$baseURL/resellerSuccessStory";
   static const String locationPriceMetrics = "$baseURL/locationPriceMetrics";
+  static const String review = "$baseURL/review";
+  static const String user = "$baseURL/user";
 
   //---------------------------------other-----------------------------//
 

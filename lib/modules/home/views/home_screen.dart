@@ -753,6 +753,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   const SizedBox(height: 12),
+
                   // FutureBuilder(
                   //   future: controller.loadInitial(),
                   //   builder: (context, asyncSnapshot) {
@@ -853,81 +854,70 @@ class _HomeScreenState extends State<HomeScreen> {
                   //     }
                   //   },
                   // ),
+                  Obx(() {
+                    if (!controller.isLoading.value &&
+                        controller.items.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-            Obx(() {
-              if (!controller.isLoading.value &&
-                  controller.items.isEmpty) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+                    if (!controller.isLoading.value &&
+                        controller.items.isEmpty) {
+                      return const Center(child: Text("No Property found."));
+                    }
 
-              if (!controller.isLoading.value &&
-                  controller.items.isEmpty) {
-                return const Center(
-                  child: Text("No Property found."),
-                );
-              }
+                    return SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.items.length,
+                        padding: const EdgeInsets.only(left: 10),
+                        itemBuilder: (context, index) {
+                          final property = controller.items[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 10), //
+                            child: PropertyHorizontalCard(
+                              imageHeight: double.infinity,
+                              titleFontWeight: AppFontWeights.semiBold,
 
-              return SizedBox(
-                height: 100,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: controller.items.length,
-                  padding: const EdgeInsets.only(left: 10),
-                  itemBuilder: (context, index) {
-                    final property = controller.items[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 10), //
-                      child: PropertyHorizontalCard(
-                        imageHeight: double.infinity,
-                        titleFontWeight: AppFontWeights.semiBold,
+                              buttonText: 'View More',
+                              locationFontSize: AppFontSizes.caption,
+                              maxLineTitle: 1,
+                              buttonFontWeight: AppFontWeights.semiBold,
+                              buttonFontSize: 10,
+                              buttonTextColor: ColorRes.primary,
+                              borderColor: ColorRes.grey,
+                              maxLine: 1,
+                              title: '${property.title}',
+                              imagePath:
+                                  (property.propertyMedia?.images != null &&
+                                          property
+                                              .propertyMedia!
+                                              .images!
+                                              .isNotEmpty)
+                                      ? property.propertyMedia!.images!.first
+                                      : 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg',
 
-                        buttonText: 'View More',
-                        locationFontSize: AppFontSizes.caption,
-                        maxLineTitle: 1,
-                        buttonFontWeight: AppFontWeights.semiBold,
-                        buttonFontSize: 10,
-                        buttonTextColor: ColorRes.primary,
-                        borderColor: ColorRes.grey,
-                        maxLine: 1,
-                        title: '${property.title}',
-                        imagePath:
-                        (property.propertyMedia?.images !=
-                            null &&
-                            property
-                                .propertyMedia!
-                                .images!
-                                .isNotEmpty)
-                            ? property
-                            .propertyMedia!
-                            .images!
-                            .first
-                            : 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg',
-
-                        location:
-                        'Location : ${property.address ?? 'N/A'}',
-                        rating:
-                        property.totalViews != null
-                            ? property.totalViews?.toDouble()
-                            : 0.0,
-                        price:
-                        '${property.propertyDetails?.financialInfo?.price ?? 'N/A'}',
-                        priceFontSize: AppFontSizes.caption,
-                        priceFontWeight: AppFontWeights.semiBold,
-                        ratingColor: ColorRes.primary,
-                        accentColor: ColorRes.primary,
-                        onTap: () {
-                          Get.to(
-                                () => RatingDetail(property: property),
+                              location:
+                                  'Location : ${property.address ?? 'N/A'}',
+                              rating:
+                                  property.totalViews != null
+                                      ? property.totalViews?.toDouble()
+                                      : 0.0,
+                              price:
+                                  '${property.propertyDetails?.financialInfo?.price ?? 'N/A'}',
+                              priceFontSize: AppFontSizes.caption,
+                              priceFontWeight: AppFontWeights.semiBold,
+                              ratingColor: ColorRes.primary,
+                              accentColor: ColorRes.primary,
+                              onTap: () {
+                                Get.to(() => RatingDetail(property: property));
+                              },
+                            ),
                           );
                         },
                       ),
                     );
-                  },
-                ),
-              );
-            }),
+                  }),
 
                   /// Filters by cities
                   const SizedBox(height: 20),
@@ -1371,128 +1361,6 @@ class ReviewsAndTestimonials extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // /// Enhanced section header
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //   children: [
-        //     Column(
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: [
-        //         Row(
-        //           children: [
-        //             Container(
-        //               padding: const EdgeInsets.symmetric(
-        //                 horizontal: 8,
-        //                 vertical: 4,
-        //               ),
-        //               decoration: BoxDecoration(
-        //                 color: const Color(0xFF2E7D63).withOpacity(0.1),
-        //                 borderRadius: BorderRadius.circular(12),
-        //               ),
-        //               child: const Row(
-        //                 mainAxisSize: MainAxisSize.min,
-        //                 children: [
-        //                   Icon(
-        //                     Icons.star,
-        //                     color: Color(0xFFFFB800),
-        //                     size: 16,
-        //                   ),
-        //                   SizedBox(width: 4),
-        //                   Text(
-        //                     "4.8",
-        //                     style: TextStyle(
-        //                       fontSize: 12,
-        //                       fontWeight: AppFontWeights.extraBold,
-        //                       color: Color(0xFF2E7D63),
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //             const SizedBox(width: 12),
-        //             const Text(
-        //               "Reviews & Testimonials",
-        //               style: TextStyle(
-        //                 fontSize: 22,
-        //                 fontWeight: AppFontWeights.extraBold,
-        //                 color: Color(0xFF1A1A1A),
-        //               ),
-        //             ),
-        //           ],
-        //         ),
-        //         const SizedBox(height: 4),
-        //         Text(
-        //           "What our happy clients say about us",
-        //           style: TextStyle(
-        //             fontSize: 14,
-        //             color: Colors.grey.shade600,
-        //             fontWeight: AppFontWeights.regular,
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //     TextButton.icon(
-        //       onPressed: () {
-        //         // Navigate to all reviews
-        //       },
-        //       icon: const Icon(
-        //         Icons.arrow_forward_ios,
-        //         size: 16,
-        //         color: Color(0xFF2E7D63),
-        //       ),
-        //       label: const Text(
-        //         "View All",
-        //         style: TextStyle(
-        //           color: Color(0xFF2E7D63),
-        //           fontWeight: AppFontWeights.semiBold,
-        //           fontSize: 14,
-        //         ),
-        //       ),
-        //     ),
-        //   ],
-        // ),
-        //
-        // const SizedBox(height: AppSpacing.large),
-
-        /// Statistics row
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 12),
-        //   child: Container(
-        //     padding: const EdgeInsets.all(12),
-        //     decoration: BoxDecoration(
-        //       gradient: LinearGradient(
-        //         colors: [
-        //           const Color(0xFF2E7D63).withOpacity(0.05),
-        //           const Color(0xFF27AE60).withOpacity(0.05),
-        //         ],
-        //         begin: Alignment.topLeft,
-        //         end: Alignment.bottomRight,
-        //       ),
-        //       borderRadius: BorderRadius.circular(16),
-        //       border: Border.all(
-        //         color: const Color(0xFF2E7D63).withOpacity(0.1),
-        //       ),
-        //     ),
-        //     child: Row(
-        //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        //       children: [
-        //         _buildStatItem("2,500+", "Happy Clients", Icons.people_outline),
-        //         Container(height: 40, width: 1, color: Colors.grey.shade300),
-        //         _buildStatItem("4.8", "Average Rating", Icons.star_outline),
-        //         Container(height: 40, width: 1, color: Colors.grey.shade300),
-        //         _buildStatItem(
-        //           "98%",
-        //           "Success Rate",
-        //           Icons.trending_up_outlined,
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
-        //
-        // const SizedBox(height: AppSpacing.large),
-
-        /// Testimonials list
         SizedBox(
           height: 280,
           child: ListView.separated(

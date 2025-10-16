@@ -10,8 +10,12 @@ import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/app/widgets/video_player/custom_video_player.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/recommended_property.dart';
+import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
+import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
+import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
 
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
@@ -26,10 +30,29 @@ class PropertyDetailScreen extends StatelessWidget {
   final Items? property;
 
   PropertyDetailScreen({super.key, this.property});
+
   final PropertyController controller = Get.put(PropertyController());
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => ReviewController());
+    final reviewController = Get.find<ReviewController>();
+    final RxBool canAddReview = true.obs;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      reviewController.filters.value = {"entity_id": property?.id ?? ""};
+      reviewController.filters.refresh();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id ?? '';
+      if (property?.id != null) {
+        final exists = await reviewController.isReviewExist(
+          entityId: property!.id!,
+          reviewerId: userId,
+        );
+        canAddReview.value = !exists;
+      }
+    });
     controller.addView(property?.id ?? '');
     print("[DEBUG]=> Property : ${property?.toJson()}");
     print(
@@ -53,21 +76,33 @@ class PropertyDetailScreen extends StatelessWidget {
                 property?.id ?? '',
               ),
               _buildTitleSection(property ?? Items()),
-              Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
 
               const SizedBox(height: 12),
               const TitleWithViewAll(title: 'Facilities'),
               const SizedBox(height: 0),
               Facilities(property: property ?? Items()),
               const SizedBox(height: 0),
-              Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
 
               const SizedBox(height: 12),
               const TitleWithViewAll(title: 'Property Details'),
               const SizedBox(height: 12),
               Details(property: property!),
               const SizedBox(height: 12),
-              Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
 
               if (property?.propertyDetails?.amenities != null) ...[
                 const SizedBox(height: 12),
@@ -77,7 +112,11 @@ class PropertyDetailScreen extends StatelessWidget {
                   amenities: property!.propertyDetails!.amenities ?? [],
                 ),
                 const SizedBox(height: 8),
-                Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
+                ),
               ],
 
               if (property?.propertyDescription != null) ...[
@@ -95,7 +134,11 @@ class PropertyDetailScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
+                ),
               ],
 
               const SizedBox(height: 12),
@@ -160,7 +203,11 @@ class PropertyDetailScreen extends StatelessWidget {
                 );
               }),
               const SizedBox(height: 12),
-              Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
 
               const SizedBox(height: 8),
               const TitleWithViewAll(title: 'Nearby Landmarks'),
@@ -170,14 +217,22 @@ class PropertyDetailScreen extends StatelessWidget {
                   nearbyLocations: property?.nearbyLocations ?? [],
                 ),
               const SizedBox(height: 12),
-              Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
 
               const SizedBox(height: 12),
               const TitleWithViewAll(title: 'Owner Details'),
               const SizedBox(height: 12),
               OwnerInformation(property: property!, controller: controller),
               const SizedBox(height: 12),
-              Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
               const SizedBox(height: 12),
               const TitleWithViewAll(title: 'Check availability of Agent'),
               const SizedBox(height: 12),
@@ -232,19 +287,80 @@ class PropertyDetailScreen extends StatelessWidget {
                   ],
                 );
               }),
-              // PropertyFeedbackComponent(
-              //   onSubmit: (rating, feedback) {
-              //     print("Rating: $rating, Feedback: $feedback");
-              //   },
-              // ),
-              // SizedBox(height: 12),
 
-              // Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
-              // SizedBox(height: 12),
-              // TitleWithViewAll(title: 'Recommended Project', showViewAll: true),
-              // SizedBox(height: 12),
-              // RecommendedProperty(),
-              Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+              const SizedBox(height: 12),
+              Obx(() {
+                if (reviewController.isLoading.value &&
+                    reviewController.items.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!reviewController.isLoading.value &&
+                    reviewController.items.isEmpty) {
+                  return SizedBox.shrink();
+                }
+                return Column(
+                  children: [
+                    Divider(
+                      indent: 18,
+                      endIndent: 18,
+                      color: ColorRes.leadGreyColor.shade300,
+                    ),
+                    const SizedBox(height: 12),
+                    const TitleWithViewAll(
+                      title: 'Reviews & Ratings',
+                      showViewAll: true,
+                    ),
+                    SizedBox(
+                      height: 320,
+                      // must be slightly more than card height (280 + padding)
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: reviewController.items.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 16),
+                        itemBuilder: (context, index) {
+                          final review = reviewController.items[index];
+                          return PropertyReviewCard(reviewItem: review);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }),
+              Obx(() {
+                if (!canAddReview.value) {
+                  return SizedBox.shrink();
+                }
+                return Column(
+                  children: [
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: NesticoPeButton(
+                        width: double.infinity,
+                        boxShadow: [],
+                        onTap: () {
+                          Get.to(
+                            () => AddReviewScreen(
+                              entityType: 'property',
+                              entityId: property?.id ?? '',
+                            ),
+                          );
+                        },
+                        title: "Add Review",
+                      ),
+                    ),
+                  ],
+                );
+              }),
+
+              const SizedBox(height: 12),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
               const SizedBox(height: 12),
               const TitleWithViewAll(
                 title: 'Recommended Project',
@@ -253,7 +369,11 @@ class PropertyDetailScreen extends StatelessWidget {
               const SizedBox(height: 12),
               const RecommendedProperty(),
               const SizedBox(height: 12),
-              Divider(indent: 18, endIndent: 18, color: ColorRes.leadGreyColor.shade300),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
               const SizedBox(height: 12),
               const TitleWithViewAll(
                 title: 'Better Price Property',
@@ -283,7 +403,8 @@ class PropertyDetailScreen extends StatelessWidget {
               builder:
                   (context) => DraggableScrollableSheet(
                     expand: false,
-                    initialChildSize: 0.85, // start with 85% of screen
+                    initialChildSize: 0.85,
+                    // start with 85% of screen
                     minChildSize: 0.5,
                     maxChildSize: 0.85,
                     builder:
@@ -361,106 +482,6 @@ class PropertyDetailScreen extends StatelessWidget {
     );
   }
 
-  // Widget _buildImageBanner(PropertyMedia media) {
-  //   final PageController _pageController = PageController();
-  //   final images = media.images ?? [];
-  //   // final List<String> images = [
-  //   //   IMGRes.home1,
-  //   //   IMGRes.home2,
-  //   //   IMGRes.home3,
-  //   //   IMGRes.home4,
-  //   //   IMGRes.home4,
-  //   //   IMGRes.home4,
-  //   // ];
-  //
-  //   int currentPage = 0;
-  //
-  //   return SafeArea(
-  //     // top: true, // ensures it stays below status bar
-  //     child: StatefulBuilder(
-  //       builder: (context, setState) {
-  //         return Stack(
-  //           children: [
-  //             SizedBox(
-  //               height: 350,
-  //               width: double.infinity,
-  //               child: PageView.builder(
-  //                 controller: _pageController,
-  //                 itemCount: images.length,
-  //                 onPageChanged: (index) {
-  //                   setState(() {
-  //                     currentPage = index;
-  //                   });
-  //                 },
-  //                 itemBuilder: (context, index) {
-  //                   return Image.network(
-  //                     images[index],
-  //                     fit: BoxFit.cover,
-  //                     width: double.infinity,
-  //                   );
-  //                 },
-  //               ),
-  //             ),
-  //             // Back button
-  //             Positioned(
-  //               top: 16,
-  //               left: 16,
-  //               child: CircularIcon(
-  //                 icon: Icons.arrow_back_rounded,
-  //                 backgroundColor: ColorRes.white, // set background color
-  //                 onPressed: () => Get.back(),
-  //               ),
-  //             ),
-  //             // Right side icons
-  //             Positioned(
-  //               top: 16,
-  //               right: 16,
-  //               child: Row(
-  //                 children: [
-  //                   CircularIcon(
-  //                     icon: Icons.favorite_border_rounded,
-  //                     backgroundColor: ColorRes.white,
-  //                     onPressed: () {},
-  //                   ),
-  //                   const SizedBox(width: 12),
-  //                   CircularIcon(
-  //                     icon: Icons.share_outlined,
-  //                     onPressed: () {},
-  //                     backgroundColor: ColorRes.white,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             // Page indicator
-  //             Positioned(
-  //               bottom: 16,
-  //               right: 16,
-  //               child: Container(
-  //                 padding: const EdgeInsets.symmetric(
-  //                   horizontal: 8,
-  //                   vertical: 4,
-  //                 ),
-  //                 decoration: BoxDecoration(
-  //                   color: Colors.black54,
-  //                   borderRadius: BorderRadius.circular(AppRadius.small),
-  //                 ),
-  //                 child: Text(
-  //                   '${currentPage + 1}/${images.length}',
-  //                   style: const TextStyle(
-  //                     color: ColorRes.white,
-  //                     fontSize: 12,
-  //                     fontWeight: AppFontWeights.semiBold,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
   Widget _buildMediaBanner(PropertyMedia media, String id) {
     final PageController pageController = PageController();
     final images = media.images ?? [];
@@ -530,7 +551,10 @@ class PropertyDetailScreen extends StatelessWidget {
                                 ? Icons.favorite
                                 : Icons.favorite_border_rounded,
                         backgroundColor: ColorRes.white,
-                        iconColor: isFavorite ? ColorRes.redAccentColor: ColorRes.black,
+                        iconColor:
+                            isFavorite
+                                ? ColorRes.redAccentColor
+                                : ColorRes.black,
                         onPressed: () {
                           controller.toggleFavorite(id);
                         },
@@ -741,7 +765,10 @@ class PropertyDetailScreen extends StatelessWidget {
               Expanded(
                 child: Text(
                   '${property.city ?? '-'}, ${property.state ?? "-"}',
-                  style: TextStyle(fontSize: AppFontSizes.bodySmall, color: ColorRes.leadGreyColor[600]),
+                  style: TextStyle(
+                    fontSize: AppFontSizes.bodySmall,
+                    color: ColorRes.leadGreyColor[600],
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -765,7 +792,7 @@ class PropertyDetailScreen extends StatelessWidget {
                   ),
                   child: Text(
                     property.listingType!.toUpperCase(),
-                    style:  TextStyle(
+                    style: TextStyle(
                       fontSize: AppFontSizes.small,
                       fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.primary,
@@ -974,7 +1001,10 @@ class PropertyDetailScreen extends StatelessWidget {
         children: [
           const Text(
             "₹8.9 Cr",
-            style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.semiBold),
+            style: TextStyle(
+              fontSize: AppFontSizes.large,
+              fontWeight: AppFontWeights.semiBold,
+            ),
           ),
           const SizedBox(width: 16),
           Chip(
@@ -1012,7 +1042,10 @@ class PropertyDetailScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: AppFontSizes.large, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: AppFontSizes.large,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Text(content),
@@ -1084,6 +1117,7 @@ class CircularIcon extends StatelessWidget {
 
 class PropertyBottomBar extends StatelessWidget {
   final FinancialInfo financialInfo;
+
   // final String price;
   final VoidCallback onCallOwner;
   final VoidCallback onScheduleVisit;
@@ -1183,6 +1217,7 @@ class PropertyBottomBar extends StatelessWidget {
 
 class PricingBottomSheet extends StatelessWidget {
   final FinancialInfo? financialInfo;
+
   const PricingBottomSheet({super.key, required this.financialInfo});
 
   @override
@@ -1304,15 +1339,24 @@ class PricingBottomSheet extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
-              fontWeight: isHighlight ? AppFontWeights.semiBold : AppFontWeights.regular,
-              color: isHighlight ? ColorRes.black : ColorRes.leadGreyColor.shade700,
+              fontWeight:
+                  isHighlight
+                      ? AppFontWeights.semiBold
+                      : AppFontWeights.regular,
+              color:
+                  isHighlight
+                      ? ColorRes.black
+                      : ColorRes.leadGreyColor.shade700,
             ),
           ),
           Text(
             value,
             style: TextStyle(
               fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
-              fontWeight: isHighlight ? AppFontWeights.extraBold : AppFontWeights.medium,
+              fontWeight:
+                  isHighlight
+                      ? AppFontWeights.extraBold
+                      : AppFontWeights.medium,
               color: isHighlight ? ColorRes.green : ColorRes.black,
             ),
           ),
@@ -1688,8 +1732,8 @@ class AmenitiesSection extends StatelessWidget {
   //   {'icon': Icons.solar_power, 'label': "Solar Panels"},
   // ];
 
-  Color bgColor =  ColorRes.propertyBg; // single background color
-  Color txtColor =  ColorRes.propertyText; // single text/icon color
+  Color bgColor = ColorRes.propertyBg; // single background color
+  Color txtColor = ColorRes.propertyText; // single text/icon color
 
   @override
   Widget build(BuildContext context) {
@@ -1750,7 +1794,10 @@ class AddressAndMapDetails extends StatelessWidget {
           Flexible(
             child: Text(
               "${property.address ?? ''}, ${property.city ?? ''}, ${property.state ?? ''}, ${property.zipCode ?? ''},",
-              style: const TextStyle(fontSize: AppFontSizes.caption, fontWeight: FontWeight.w400),
+              style: const TextStyle(
+                fontSize: AppFontSizes.caption,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -1788,7 +1835,10 @@ class NearbyPropertyDetails extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white, // ✅ soft background
                 borderRadius: BorderRadius.circular(AppRadius.medium),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.8),
+                border: Border.all(
+                  color: ColorRes.leadGreyColor.shade300,
+                  width: 0.8,
+                ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1857,7 +1907,10 @@ class RecommendedInsights extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white, // ✅ soft background
                 borderRadius: BorderRadius.circular(AppRadius.medium),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.8),
+                border: Border.all(
+                  color: ColorRes.leadGreyColor.shade300,
+                  width: 0.8,
+                ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -2813,7 +2866,7 @@ class _PropertyFeedbackComponentState extends State<PropertyFeedbackComponent> {
               "Rating ($_rating/5)",
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-              style:  TextStyle(
+              style: TextStyle(
                 fontSize: AppFontSizes.small,
                 fontWeight: AppFontWeights.medium,
                 color: ColorRes.leadGreyColor,
@@ -2857,7 +2910,10 @@ class _PropertyFeedbackComponentState extends State<PropertyFeedbackComponent> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: "Write your feedback...",
-                hintStyle: const TextStyle(fontSize: 14, color: ColorRes.leadGreyColor),
+                hintStyle: const TextStyle(
+                  fontSize: 14,
+                  color: ColorRes.leadGreyColor,
+                ),
                 filled: true,
                 fillColor: ColorRes.leadGreyColor[100],
                 enabledBorder: OutlineInputBorder(
@@ -2913,9 +2969,12 @@ class _PropertyFeedbackComponentState extends State<PropertyFeedbackComponent> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child:  Text(
+                child: Text(
                   "Submit",
-                  style: TextStyle(fontSize: AppFontSizes.body, color: ColorRes.white),
+                  style: TextStyle(
+                    fontSize: AppFontSizes.body,
+                    color: ColorRes.white,
+                  ),
                 ),
               ),
             ),

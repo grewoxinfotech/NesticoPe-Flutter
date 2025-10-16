@@ -6,16 +6,15 @@ import 'package:housing_flutter_app/modules/auth/views/splash_screen.dart';
 import 'package:housing_flutter_app/app/services/network_status_service.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 
-
 import 'app/services/network_status_service.dart';
 import 'app/theme/themes.dart' as AppTheme;
 
 void main() async {
-   debugProfileBuildsEnabled = true;
+  debugProfileBuildsEnabled = true;
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: ColorRes.primary, 
+      statusBarColor: ColorRes.primary,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
       systemNavigationBarColor: ColorRes.primary,
@@ -23,9 +22,7 @@ void main() async {
     ),
   );
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp
-    ]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await Get.putAsync(() => NetworkStatusService().init());
   runApp(
