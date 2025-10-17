@@ -118,6 +118,11 @@ class ResellerDashboardScreen extends StatelessWidget {
   }
 }
 
+
+Widget buildTopPropertyForGoodCommission(DashboardController controller) {
+  return Container();
+}
+
 Widget buildLeadGraph(DashboardController controller) {
   final List<double> monthlyData = [
     15,
