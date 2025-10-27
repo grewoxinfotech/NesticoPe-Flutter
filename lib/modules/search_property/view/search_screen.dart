@@ -20,6 +20,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../filter_property/controller/city_insigths_controller.dart';
 import '../../filter_property/model/city_insigths_model.dart';
+import '../../property/controllers/property_controller.dart';
 import '../model/search_model.dart';
 
 class CommonSearchField extends StatefulWidget {
@@ -34,7 +35,7 @@ class CommonSearchField extends StatefulWidget {
     this.onCitySelected,
     this.isFromAddProperty = false,
     this.initialSearchText,
-    this.hintText = 'Surat , Gujarat , 395010',
+    this.hintText = 'Change City...',
     this.onTap,
   });
 
@@ -72,12 +73,14 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
     Get.lazyPut(() => TrendingCityController());
     final cityController = Get.find<CityController>();
     final trendingCityController = Get.find<TrendingCityController>();
+    final PropertyController propertyController =
+        Get.find<PropertyController>();
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         title: buildCommonText(
-          'Search in Surat',
+          'Search in ${propertyController.selectedCity.value}',
           20,
           AppFontWeights.semiBold,
           ColorRes.black,
@@ -419,9 +422,12 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-               Text(
+              Text(
                 "Voice Search",
-                style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.extraBold),
+                style: TextStyle(
+                  fontSize: AppFontSizes.large,
+                  fontWeight: AppFontWeights.extraBold,
+                ),
               ),
               const SizedBox(height: 20),
 
@@ -441,7 +447,8 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                     ),
                     child: Icon(
                       isListening ? Icons.mic : Icons.mic_none,
-                      color: isListening ? ColorRes.error : ColorRes.blackShade54,
+                      color:
+                          isListening ? ColorRes.error : ColorRes.blackShade54,
                       size: 40,
                     ),
                   ),
@@ -454,7 +461,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                   micController.isListening.value
                       ? "Listening..."
                       : "Tap mic to start",
-                  style:  TextStyle(fontSize: AppFontSizes.body),
+                  style: TextStyle(fontSize: AppFontSizes.body),
                 ),
               ),
 
@@ -465,7 +472,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                 final words = micController.lastWords.value;
                 return Text(
                   words,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: AppFontSizes.body,
                     fontWeight: AppFontWeights.medium,
                   ),

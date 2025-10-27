@@ -19,13 +19,11 @@ import '../../builder/view/builder_form_screen.dart';
 import '../../property/controllers/property_controller.dart';
 
 class HomeHeader extends StatefulWidget {
-  final String cityName;
   final List<String> propertyTypes;
   final String backgroundImage;
 
   const HomeHeader({
     super.key,
-    this.cityName = "Surat, Gujarat",
     this.backgroundImage =
         "https://sitasurat.in/assets/images/about/surat-city.jpg",
     this.propertyTypes = const [
@@ -46,13 +44,11 @@ class HomeHeader extends StatefulWidget {
 }
 
 class _HomeHeaderState extends State<HomeHeader> {
+  final propertyController = Get.find<PropertyController>();
   int selectedIndex = 0;
-  final RxString selectedCity = "Surat".obs;
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => PropertyController());
-    final propertyController = Get.find<PropertyController>();
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,18 +94,24 @@ class _HomeHeaderState extends State<HomeHeader> {
                                 fontWeight: AppFontWeights.medium,
                               ),
                             ),
-                            Obx(
-                              () => Text(
+                            Obx(() {
+                              if (propertyController
+                                  .selectedCity
+                                  .value
+                                  .isEmpty) {
+                                return SizedBox.shrink();
+                              }
+                              return Text(
                                 // widget.cityName,
-                                selectedCity.value,
+                                propertyController.selectedCity.value,
                                 style: const TextStyle(
                                   fontSize: AppFontSizes.body,
                                   color: ColorRes.textColor,
                                   fontWeight: AppFontWeights.semiBold,
                                   // fontFamily: 'Roboto',
                                 ),
-                              ),
-                            ),
+                              );
+                            }),
                           ],
                         ),
                       ],
@@ -165,7 +167,11 @@ class _HomeHeaderState extends State<HomeHeader> {
                       },
                     ),
                   );
-                  selectedCity.value = filter['city'] ?? "Surat";
+                  if (filter['city'] != null) {
+                    await SecureStorage.saveSelectedCity(filter['city']);
+                  }
+                  propertyController.selectedCity.value =
+                      filter['city'] ?? "Surat";
                   propertyController.applyFilters(filter);
                 }),
               ),

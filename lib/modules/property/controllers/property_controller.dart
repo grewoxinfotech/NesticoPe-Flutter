@@ -274,36 +274,12 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
 import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
 
 import '../../../app/care/pagination/models/pagination_models.dart';
+import '../../../data/database/secure_storage_service.dart';
 
 class PropertyController extends PaginatedController<Items> {
   final PropertyService _service = PropertyService();
 
-  // Form controllers
-  final formKey = GlobalKey<FormState>();
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController typeController = TextEditingController();
-  final TextEditingController listingTypeController = TextEditingController();
-  final TextEditingController propertyTypeController = TextEditingController();
-  final TextEditingController propertyDescriptionController =
-  TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final TextEditingController stateController = TextEditingController();
-  final TextEditingController zipCodeController = TextEditingController();
-  final TextEditingController builderNameController = TextEditingController();
-  final TextEditingController projectNameController = TextEditingController();
-  final TextEditingController ownerNameController = TextEditingController();
-  final TextEditingController ownerPhoneController = TextEditingController();
-  final TextEditingController ownerEmailController = TextEditingController();
-  final TextEditingController reraIdController = TextEditingController();
-  final TextEditingController propertyFacingController =
-  TextEditingController();
-  final TextEditingController propertyConditionController =
-  TextEditingController();
-  final TextEditingController propertyCarpetAreaController =
-  TextEditingController();
-  final TextEditingController propertyBuiltUpAreaController =
-  TextEditingController();
+  final RxString selectedCity = "".obs;
 
   // Reactive fields
   Rxn<PropertyMedia> propertyMedia = Rxn<PropertyMedia>();
@@ -325,7 +301,18 @@ class PropertyController extends PaginatedController<Items> {
   @override
   void onInit() {
     super.onInit();
-    loadInitial(); // Load first page automatically
+    getCity();
+  }
+
+  Future<void> getCity() async {
+    final city = await SecureStorage.getSelectedCity();
+    if (city != null && city.isNotEmpty) {
+      print("City : ${city}");
+      selectedCity.value = city;
+    }
+    final filter = {'city': selectedCity.value};
+    applyFilters(filter);
+    loadInitial();
   }
 
   /// Apply a single key-value filter (replaces existing filters)
@@ -371,37 +358,6 @@ class PropertyController extends PaginatedController<Items> {
       print("Exception in fetchItems: $e");
       rethrow;
     }
-  }
-
-  /// Reset form
-  void resetForm() {
-    titleController.clear();
-    typeController.clear();
-    listingTypeController.clear();
-    propertyTypeController.clear();
-    propertyDescriptionController.clear();
-    addressController.clear();
-    cityController.clear();
-    stateController.clear();
-    zipCodeController.clear();
-    builderNameController.clear();
-    projectNameController.clear();
-    ownerNameController.clear();
-    ownerPhoneController.clear();
-    ownerEmailController.clear();
-    reraIdController.clear();
-    propertyFacingController.clear();
-    propertyConditionController.clear();
-    propertyCarpetAreaController.clear();
-    propertyBuiltUpAreaController.clear();
-
-    propertyMedia.value = null;
-    propertyDetails.value = null;
-    location.value = null;
-    nearbyLocations.clear();
-    approvalStatus.value = "pending";
-    assignmentStatus.value = "available";
-    isVerified.value = false;
   }
 
   /// Get single property by ID (returns cached one if found)

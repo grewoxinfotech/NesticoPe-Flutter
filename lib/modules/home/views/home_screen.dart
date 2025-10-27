@@ -381,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              const HomeHeader(),
+              HomeHeader(),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
