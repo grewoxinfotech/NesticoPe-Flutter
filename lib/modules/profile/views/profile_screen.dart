@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/font_res.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
@@ -245,6 +246,18 @@ class ProfileScreen extends StatelessWidget {
               // _buildSettingsSection(),
               const SizedBox(height: 20),
               _buildHelpCenter(),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () {
+                    Get.lazyPut(() => AuthController());
+                    final controller = Get.find<AuthController>();
+                    controller.logout();
+                  },
+                  child: Text('Logout', style: TextStyle(fontSize: 14)),
+                ),
+              ),
             ],
           ),
         ),
@@ -258,15 +271,20 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: ColorRes.white,
       title: const Text(
         "My Activity",
-        style: TextStyle(color: ColorRes.black, fontWeight: AppFontWeights.extraBold),
+        style: TextStyle(
+          color: ColorRes.black,
+          fontWeight: AppFontWeights.extraBold,
+        ),
       ),
       actions: [
-        TextButton(
-          onPressed: () {
-            // TODO: Implement login functionality
-          },
-          child: const Text("Login", style: TextStyle(color: ColorRes.green)),
-        ),
+        if (UserHelper.isGuest) ...[
+          TextButton(
+            onPressed: () {
+              Get.to(() => LoginScreen());
+            },
+            child: const Text("Login", style: TextStyle(color: ColorRes.green)),
+          ),
+        ],
       ],
     );
   }
@@ -407,19 +425,36 @@ class _ProfileWelcomeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch string values (safe for null)
+    final userType = UserHelper.userTypeString ?? "guest";
+    final sellerType = UserHelper.sellerTypeStringValue;
+
+    // Capitalize first letter for UI
+    String displayRole = userType[0].toUpperCase() + userType.substring(1);
+    String displaySellerType =
+        sellerType != null
+            ? "(${sellerType[0].toUpperCase()}${sellerType.substring(1)})"
+            : "";
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
+      children: [
         Text(
-          "Hello 👋",
-          style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.extraBold),
+          "Hello 👋 $displayRole $displaySellerType",
+          style: TextStyle(
+            fontSize: AppFontSizes.large,
+            fontWeight: AppFontWeights.extraBold,
+          ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
-          "✓ Easy Contact with sellers",
+          "✓ Easy contact with sellers",
           style: TextStyle(color: ColorRes.leadGreyColor),
         ),
-        Text("✓ Personalized experience", style: TextStyle(color: ColorRes.leadGreyColor)),
+        Text(
+          "✓ Personalized experience",
+          style: TextStyle(color: ColorRes.leadGreyColor),
+        ),
       ],
     );
   }
@@ -464,11 +499,17 @@ class SettingsMenuTile extends StatelessWidget {
       leading: Icon(icon, size: 28, color: ColorRes.primary),
       title: Text(
         title,
-        style: TextStyle(fontSize: AppFontSizes.medium, fontWeight: AppFontWeights.semiBold),
+        style: TextStyle(
+          fontSize: AppFontSizes.medium,
+          fontWeight: AppFontWeights.semiBold,
+        ),
       ),
       subtitle: Text(
         subTitle,
-        style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor[600]),
+        style: TextStyle(
+          fontSize: AppFontSizes.caption,
+          color: ColorRes.leadGreyColor[600],
+        ),
       ),
       trailing: trailing ?? const Icon(Icons.chevron_right),
       onTap: onTap,
@@ -541,19 +582,28 @@ class _ExpandableTileState extends State<ExpandableTile>
           leading: Icon(widget.leadingIcon, color: ColorRes.primary),
           title: Text(
             widget.title,
-            style: TextStyle(fontSize: AppFontSizes.medium, fontWeight: AppFontWeights.semiBold),
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.semiBold,
+            ),
           ),
           subtitle:
               widget.subtitle != null
                   ? Text(
                     widget.subtitle!,
-                    style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor[600]),
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      color: ColorRes.leadGreyColor[600],
+                    ),
                   )
                   : null,
           trailing: AnimatedRotation(
             turns: _isExpanded ? 0.5 : 0,
             duration: const Duration(milliseconds: 300),
-            child: Icon(widget.trailingIcon, color: ColorRes.leadGreyColor[700]),
+            child: Icon(
+              widget.trailingIcon,
+              color: ColorRes.leadGreyColor[700],
+            ),
           ),
           onTap: _toggleExpand,
         ),
@@ -620,7 +670,10 @@ class SubItems extends StatelessWidget {
             //     spreadRadius: 0,
             //   ),
             // ],
-            border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 0.5),
+            border: Border.all(
+              color: ColorRes.leadGreyColor.shade200,
+              width: 0.5,
+            ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

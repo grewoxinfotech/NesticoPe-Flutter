@@ -45,29 +45,30 @@ class User {
   String? createdAt;
   String? updatedAt;
 
-  User(
-      {this.id,
-      this.createdBy,
-      this.updatedBy,
-      this.username,
-      this.password,
-      this.email,
-      this.userType,
-      this.sellerType,
-      this.roleId,
-      this.profilePic,
-      this.firstName,
-      this.lastName,
-      this.phone,
-      this.otp,
-      this.otpExpiry,
-      this.address,
-      this.city,
-      this.state,
-      this.zipCode,
-      this.isVerified,
-      this.createdAt,
-      this.updatedAt});
+  User({
+    this.id,
+    this.createdBy,
+    this.updatedBy,
+    this.username,
+    this.password,
+    this.email,
+    this.userType,
+    this.sellerType,
+    this.roleId,
+    this.profilePic,
+    this.firstName,
+    this.lastName,
+    this.phone,
+    this.otp,
+    this.otpExpiry,
+    this.address,
+    this.city,
+    this.state,
+    this.zipCode,
+    this.isVerified,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];

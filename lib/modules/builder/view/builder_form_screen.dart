@@ -20,11 +20,11 @@ import 'location/location.dart';
 // import 'steps/step_additional.dart';
 // import 'steps/step_review.dart';
 
-class ProjectWizardView extends GetView<ProjectWizardController> {
+class CreateProjectScreen extends GetView<ProjectWizardController> {
   // final ProjectModel? project;
   final bool isFromEdit;
   String? projectId;
-  ProjectWizardView({
+  CreateProjectScreen({
     super.key,
     this.isFromEdit = false,
     // this.project

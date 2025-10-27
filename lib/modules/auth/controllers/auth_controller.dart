@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart'
     show UserModel, UserRole, User;
 import 'package:housing_flutter_app/data/network/auth/service/auth_service.dart';
@@ -14,6 +15,7 @@ import '../../add_property/view/create_property.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../views/login_screen.dart';
 import '../views/otp_verification_screen.dart';
+import '../views/splash_screen.dart';
 
 enum AuthState { initial, authenticated, unauthenticated }
 
@@ -62,10 +64,12 @@ class AuthController extends GetxController {
     // emailController.text = "Super@gmail.com";
     // emailController.text = "fffdsdfuu.doe@example.com";
     // emailController.text = "fffdsu.doe@example.com";
-    emailController.text = "fffdsaldlu.doe@example.com";
+    emailController.text = "none@example.com";
+    // emailController.text = "fffdsaldlu.doe@example.com";
     // emailController.text = "reseller11@example.com";
     // emailController.text = "abc@gmail.com";
-    passwordController.text = "CRM_GrewoxAdmin@123";
+    passwordController.text = "password123";
+    // passwordController.text = "CRM_GrewoxAdmin@123";
   }
 
   void setRole(UserRole role) => selectedRole.value = role;
@@ -78,9 +82,12 @@ class AuthController extends GetxController {
       await SecureStorage.saveToken(user.token!);
       await SecureStorage.saveUserData(user);
       await SecureStorage.saveLoggedIn(true);
+      await UserHelper.setUserType(
+        user.user?.userType,
+        sellerType: user.user?.sellerType,
+      );
 
       currentUser.value = user;
-      print("[Debug]-> User data: ${currentUser.value!.user!.firstName}");
       authState.value = AuthState.authenticated;
 
       Get.offAll(() => const DashboardScreen());
@@ -140,6 +147,7 @@ class AuthController extends GetxController {
             phone: phone,
             token: token,
             verifyOTPFor: VerifyOTPFor.registration,
+            redirectAfterOtp: LoginScreen(),
           ),
         );
 
@@ -482,8 +490,10 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     await SecureStorage.clearAll();
+    UserHelper.clearUserType();
     currentUser.value = null;
     authState.value = AuthState.unauthenticated;
-    Get.offAll(() => const LoginScreen());
+    // Get.offAll(() => const LoginScreen());
+    Get.offAll(() => const SplashScreen());
   }
 }

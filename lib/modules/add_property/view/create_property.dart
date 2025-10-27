@@ -1461,6 +1461,7 @@ import 'package:housing_flutter_app/modules/add_property/view/widget/stepper_pro
 import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../auth/controllers/auth_controller.dart';
 
@@ -1528,7 +1529,7 @@ class CreatePropertyScreen extends StatelessWidget {
 
       if (controller.isLogin.value) {
         return Scaffold(
-          backgroundColor:  ColorRes.addPropertyBackgroundColor,
+          backgroundColor: ColorRes.addPropertyBackgroundColor,
           body: SafeArea(
             child: LayoutBuilder(
               builder:
@@ -2000,7 +2001,7 @@ class CreatePropertyScreen extends StatelessWidget {
         // Login section
         final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
         return Scaffold(
-          backgroundColor:ColorRes.addPropertyBackgroundColor,
+          backgroundColor: ColorRes.addPropertyBackgroundColor,
           body: SafeArea(
             child: LayoutBuilder(
               builder:
@@ -2021,7 +2022,7 @@ class CreatePropertyScreen extends StatelessWidget {
                               ),
                               alignment: Alignment.topLeft,
                               decoration: const BoxDecoration(
-                                color: ColorRes.addPropertyBackgroundColor
+                                color: ColorRes.addPropertyBackgroundColor,
                               ),
                               child: Row(
                                 children: [
@@ -2065,7 +2066,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                 horizontal: 16,
                               ),
                               decoration: const BoxDecoration(
-                                color: ColorRes.addPropertyBackgroundColor
+                                color: ColorRes.addPropertyBackgroundColor,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2115,7 +2116,8 @@ class CreatePropertyScreen extends StatelessWidget {
                                         Container(
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
-                                            color: ColorRes.leadGreyColor.shade200,
+                                            color:
+                                                ColorRes.leadGreyColor.shade200,
                                             borderRadius: BorderRadius.circular(
                                               14,
                                             ),
@@ -2394,8 +2396,10 @@ class CreatePropertyScreen extends StatelessWidget {
                                             child: Text(
                                               'Continue',
                                               style: TextStyle(
-                                                fontSize: AppFontSizes.bodyMedium,
-                                                fontWeight: AppFontWeights.semiBold,
+                                                fontSize:
+                                                    AppFontSizes.bodyMedium,
+                                                fontWeight:
+                                                    AppFontWeights.semiBold,
                                                 color: ColorRes.white,
                                               ),
                                             ),
@@ -2410,8 +2414,10 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: ColorRes.leadGreyColor,
-                                                  fontSize: AppFontSizes.extraSmall,
-                                                  fontWeight: AppFontWeights.semiBold,
+                                                  fontSize:
+                                                      AppFontSizes.extraSmall,
+                                                  fontWeight:
+                                                      AppFontWeights.semiBold,
                                                 ),
                                               ),
                                               Text(
@@ -2419,8 +2425,10 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: ColorRes.primary,
-                                                  fontSize: AppFontSizes.caption,
-                                                  fontWeight: AppFontWeights.semiBold,
+                                                  fontSize:
+                                                      AppFontSizes.caption,
+                                                  fontWeight:
+                                                      AppFontWeights.semiBold,
                                                 ),
                                               ),
                                             ],
@@ -2443,7 +2451,8 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 child: Text(
                                                   'OR',
                                                   style: TextStyle(
-                                                    color: ColorRes.leadGreyColor,
+                                                    color:
+                                                        ColorRes.leadGreyColor,
                                                     fontSize: 12,
                                                   ),
                                                 ),
@@ -2465,10 +2474,11 @@ class CreatePropertyScreen extends StatelessWidget {
                                                   BorderRadius.circular(8),
                                               onTap: controller.submitForm,
                                               child: Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                  vertical: 6,
-                                                  horizontal: 12,
-                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 6,
+                                                      horizontal: 12,
+                                                    ),
                                                 child: Row(
                                                   mainAxisSize:
                                                       MainAxisSize.min,
@@ -2476,22 +2486,27 @@ class CreatePropertyScreen extends StatelessWidget {
                                                     Text(
                                                       "Existing User?",
                                                       style: TextStyle(
-                                                        fontSize: AppFontSizes.small,
+                                                        fontSize:
+                                                            AppFontSizes.small,
                                                         color:
                                                             ColorRes
                                                                 .textSecondary,
                                                         fontWeight:
-                                                        AppFontWeights.medium,
+                                                            AppFontWeights
+                                                                .medium,
                                                       ),
                                                     ),
                                                     const SizedBox(width: 6),
                                                     Text(
                                                       "Login Here",
                                                       style: TextStyle(
-                                                        fontSize: AppFontSizes.bodySmall,
+                                                        fontSize:
+                                                            AppFontSizes
+                                                                .bodySmall,
                                                         color: ColorRes.primary,
                                                         fontWeight:
-                                                            AppFontWeights.semiBold,
+                                                            AppFontWeights
+                                                                .semiBold,
                                                         decoration:
                                                             TextDecoration
                                                                 .underline,
@@ -2570,7 +2585,13 @@ Widget buildInfoPoint(String text) {
       children: [
         const Icon(Icons.check_circle, color: Colors.yellow, size: 15),
         const SizedBox(width: 8),
-        Text(text, style: const TextStyle(color: ColorRes.white, fontSize: AppFontSizes.bodySmall),),
+        Text(
+          text,
+          style: const TextStyle(
+            color: ColorRes.white,
+            fontSize: AppFontSizes.bodySmall,
+          ),
+        ),
       ],
     ),
   );
@@ -2581,7 +2602,9 @@ Widget buildTab(String title, bool isSelected) {
     padding: const EdgeInsets.symmetric(vertical: 10),
     decoration: BoxDecoration(
       color:
-          isSelected ? ColorRes.primary.withOpacity(0.15) : ColorRes.transparentColor,
+          isSelected
+              ? ColorRes.primary.withOpacity(0.15)
+              : ColorRes.transparentColor,
       borderRadius: BorderRadius.circular(10),
     ),
     alignment: Alignment.center,
@@ -2672,7 +2695,10 @@ Widget buildTextField(
       maxLines: maxLines,
       minLines: minLines,
       keyboardType: isPhoneKey ? TextInputType.phone : TextInputType.text,
-      style:  TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.textPrimary),
+      style: TextStyle(
+        fontSize: AppFontSizes.medium,
+        color: ColorRes.textPrimary,
+      ),
       validator: validator,
       decoration: InputDecoration(
         prefixIcon:
@@ -2687,7 +2713,10 @@ Widget buildTextField(
           maxHeight: 20,
         ),
         hintText: label,
-        hintStyle: TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.leadGreyColor.shade500),
+        hintStyle: TextStyle(
+          fontSize: AppFontSizes.medium,
+          color: ColorRes.leadGreyColor.shade500,
+        ),
         contentPadding: const EdgeInsets.symmetric(
           vertical: 14,
           horizontal: 12,
@@ -2720,7 +2749,10 @@ Widget buildTextField(
         ),
         filled: true,
         fillColor: Colors.grey.shade50,
-        errorStyle: TextStyle(color: ColorRes.error.shade700, fontSize: AppFontSizes.small),
+        errorStyle: TextStyle(
+          color: ColorRes.error.shade700,
+          fontSize: AppFontSizes.small,
+        ),
       ),
     ),
   );
@@ -2773,7 +2805,10 @@ Widget buildPhonePrefix() {
               return countryCodes.map((entry) {
                 return Row(
                   children: [
-                    Text(entry['flag']!, style: const TextStyle(fontSize: AppFontSizes.body)),
+                    Text(
+                      entry['flag']!,
+                      style: const TextStyle(fontSize: AppFontSizes.body),
+                    ),
                     const SizedBox(width: 3),
                     Text(entry['code']!),
                   ],
@@ -2814,7 +2849,10 @@ Widget subPropertyType(CreatePropertyController controller) {
                         : ColorRes.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isSelected ? ColorRes.transparentColor: ColorRes.leadGreyColor.shade300,
+                  color:
+                      isSelected
+                          ? ColorRes.transparentColor
+                          : ColorRes.leadGreyColor.shade300,
                   width: 1,
                 ),
               ),
@@ -2824,7 +2862,10 @@ Widget subPropertyType(CreatePropertyController controller) {
                   AppSvgIcon(
                     assetName: item.key,
                     size: 24,
-                    color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade600,
+                    color:
+                        isSelected
+                            ? ColorRes.primary
+                            : ColorRes.leadGreyColor.shade600,
                   ),
                   const SizedBox(height: 8),
                   Text(

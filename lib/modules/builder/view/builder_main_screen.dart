@@ -134,7 +134,7 @@ class BuilderMainScreen extends StatelessWidget {
         onPressed: () {
           final controller = Get.put(ProjectWizardController());
           controller.resetForm();
-          Get.to(ProjectWizardView());
+          Get.to(CreateProjectScreen());
           // Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
           //     Get.put(ProjectWizardController());
           //   },));

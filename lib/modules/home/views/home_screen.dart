@@ -568,17 +568,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 12),
-                  TitleWithDescription(
-                    title: "Recommended Properties",
-                    showViewAll: true,
-                    description: "Best properties for you",
-                    // onViewAll: () => Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
-                    //   Get.put(ProjectWizardController());
-                    // },)),
-                    onViewAll: () => Get.to(BuilderMainScreen()),
-                  ),
-                  SizedBox(height: 4),
                   Obx(() {
                     if (_recommendedPropertyController.isLoading.value &&
                         _recommendedPropertyController.items.isEmpty) {
@@ -587,57 +576,80 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     if (!_recommendedPropertyController.isLoading.value &&
                         _recommendedPropertyController.items.isEmpty) {
-                      return const Center(child: Text("No Property found."));
+                      return SizedBox.shrink();
                     }
 
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: Row(
-                          children: List.generate(
-                            _recommendedPropertyController.items.length,
-                            (index) {
-                              final data =
-                                  _recommendedPropertyController.items[index];
-                              final propertyPrice = PropertyPriceManager(
-                                listingType: data.listingType ?? "",
-                                financialInfo:
-                                    data.propertyDetails?.financialInfo,
-                              );
-                              final propertyHighlight =
-                                  PropertyHighlightManager(data);
-                              return GestureDetector(
-                                onTap: () {},
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 12),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Get.to(
-                                        PropertyDetailScreen(property: data),
-                                      );
-                                    },
-                                    child: NesticoPeBannerCardWithText(
-                                      height: 260,
-                                      width: 240,
-                                      imageUrl:
-                                          data.propertyMedia?.images?.first ??
-                                          IMGRes.home3,
-                                      price: propertyPrice.displayPrice,
-                                      developersName: data.ownerName ?? '',
-                                      location:
-                                          data.address ??
-                                          "Location not specified",
-                                      propertySize:
-                                          propertyHighlight.highlightsString,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 12),
+                        TitleWithDescription(
+                          title: "Recommended Properties",
+                          showViewAll: true,
+                          description: "Best properties for you",
+                          // onViewAll: () => Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
+                          //   Get.put(ProjectWizardController());
+                          // },)),
+                          onViewAll: () => Get.to(BuilderMainScreen()),
+                        ),
+                        SizedBox(height: 4),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 12),
+                            child: Row(
+                              children: List.generate(
+                                _recommendedPropertyController.items.length,
+                                (index) {
+                                  final data =
+                                      _recommendedPropertyController
+                                          .items[index];
+                                  final propertyPrice = PropertyPriceManager(
+                                    listingType: data.listingType ?? "",
+                                    financialInfo:
+                                        data.propertyDetails?.financialInfo,
+                                  );
+                                  final propertyHighlight =
+                                      PropertyHighlightManager(data);
+                                  return GestureDetector(
+                                    onTap: () {},
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Get.to(
+                                            PropertyDetailScreen(
+                                              property: data,
+                                            ),
+                                          );
+                                        },
+                                        child: NesticoPeBannerCardWithText(
+                                          height: 260,
+                                          width: 240,
+                                          imageUrl:
+                                              data
+                                                  .propertyMedia
+                                                  ?.images
+                                                  ?.first ??
+                                              IMGRes.home3,
+                                          price: propertyPrice.displayPrice,
+                                          developersName: data.ownerName ?? '',
+                                          location:
+                                              data.address ??
+                                              "Location not specified",
+                                          propertySize:
+                                              propertyHighlight
+                                                  .highlightsString,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            },
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     );
                   }),
 

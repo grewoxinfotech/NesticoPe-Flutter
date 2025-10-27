@@ -12,6 +12,7 @@ class SecureStorage {
   static const String _keyLoggedIn = 'isLogin';
   static const String _keyUserData = 'user';
   static const String _keyClientId = 'clientId';
+  static const _selectedCityKey = 'selected_city';
 
   // Token
   static Future<void> saveToken(String token) async {
@@ -28,10 +29,7 @@ class SecureStorage {
 
   // User data
   static Future<void> saveUserData(UserModel data) async {
-    await _storage.write(
-      key: _keyUserData,
-      value: jsonEncode(data.toJson()),
-    );
+    await _storage.write(key: _keyUserData, value: jsonEncode(data.toJson()));
   }
 
   static Future<UserModel?> getUserData() async {
@@ -77,6 +75,23 @@ class SecureStorage {
 
   static Future<void> deleteLoggedIn() async {
     await _storage.delete(key: _keyLoggedIn);
+  }
+
+  static Future<void> saveSelectedCity(String city) async {
+    final storage = FlutterSecureStorage();
+    await storage.write(key: _selectedCityKey, value: city);
+  }
+
+  // Get selected city
+  static Future<String?> getSelectedCity() async {
+    final storage = FlutterSecureStorage();
+    return await storage.read(key: _selectedCityKey);
+  }
+
+  // Clear selected city (optional)
+  static Future<void> clearSelectedCity() async {
+    final storage = FlutterSecureStorage();
+    await storage.delete(key: _selectedCityKey);
   }
 
   // Clear everything

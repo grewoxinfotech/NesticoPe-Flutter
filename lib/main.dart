@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dar
 
 import 'app/services/network_status_service.dart';
 import 'app/theme/themes.dart' as AppTheme;
+import 'app/utils/helper_function/user_helper/user_helper.dart';
 
 void main() async {
   debugProfileBuildsEnabled = true;
@@ -25,6 +26,7 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await Get.putAsync(() => NetworkStatusService().init());
+  await UserHelper.initUserType();
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,

@@ -147,7 +147,7 @@ class BuilderProjectCard extends StatelessWidget {
               onPressed: () async {
                 // Navigate to ProjectWizardView and wait for result
                 final result = await Get.to(
-                  () => ProjectWizardView(isFromEdit: true),
+                  () => CreateProjectScreen(isFromEdit: true),
                   arguments: project.id,
                   binding: BindingsBuilder(() async {
                     // Create a new controller instance with the project data

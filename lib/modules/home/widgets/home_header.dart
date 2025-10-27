@@ -3,12 +3,19 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart'
+    hide SellerType;
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
+import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
+import '../../auth/views/select_account_type_screen.dart';
+import '../../builder/controller/builder_form_controller.dart';
+import '../../builder/view/builder_form_screen.dart';
 import '../../property/controllers/property_controller.dart';
 
 class HomeHeader extends StatefulWidget {
@@ -163,19 +170,91 @@ class _HomeHeaderState extends State<HomeHeader> {
                 }),
               ),
               const SizedBox(width: 8),
+
+              // GestureDetector(
+              //   onTap: () async {
+              //     print("Mic tapped");
+              //     final user = await SecureStorage.getUserData();
+              //     final userType = user!.user!.userType ?? "Buyer";
+              //     // Get.to(() => const CommonSearchField());
+              //     Get.to(() {
+              //       return CreatePropertyScreen(
+              //         sellerType: mapUserRoleToSellerType(UserRole.seller),
+              //         isLogin:
+              //             userType.toLowerCase() == "seller" ? true : false,
+              //       );
+              //     });
+              //   },
+              //   child: Container(
+              //     height: 52,
+              //     padding: const EdgeInsets.symmetric(
+              //       vertical: 14,
+              //       horizontal: 15,
+              //     ),
+              //     decoration: BoxDecoration(
+              //       color: ColorRes.white,
+              //       borderRadius: BorderRadius.circular(16),
+              //       border: Border.all(color: ColorRes.grey.withOpacity(0.2)),
+              //     ),
+              //     child: const Icon(
+              //       Icons.add,
+              //       color: ColorRes.primary,
+              //       size: 24,
+              //     ),
+              //   ),
+              // ),
               GestureDetector(
                 onTap: () async {
                   print("Mic tapped");
-                  final user = await SecureStorage.getUserData();
-                  final userType = user!.user!.userType ?? "Buyer";
-                  // Get.to(() => const CommonSearchField());
-                  Get.to(() {
-                    return CreatePropertyScreen(
-                      sellerType: mapUserRoleToSellerType(UserRole.seller),
-                      isLogin:
-                          userType.toLowerCase() == "seller" ? true : false,
+
+                  try {
+                    // Get cached user type (sync, since you initialized it in splash)
+                    final userType = UserHelper.userType;
+
+                    // If not initialized, fetch directly from secure storage (fallback)
+                    if (userType == null) {
+                      final user = await SecureStorage.getUserData();
+                      final role = user?.user?.userType?.toLowerCase() ?? '';
+                      UserHelper.setUserType(role);
+                    }
+
+                    print("DEBUG >> Current UserType: ${UserHelper.userType}");
+
+                    if (UserHelper.isGuest) {
+                      Get.to(() => const LoginScreen());
+                    }
+
+                    if (UserHelper.isBuyer) {
+                      Get.to(() => const SellerConversionScreen());
+                    }
+
+                    // Handle behavior by role
+                    if (UserHelper.isSeller) {
+                      // ✅ Seller → can create property directly
+                      if (UserHelper.isSellerOwner) {
+                        Get.to(
+                          () => CreatePropertyScreen(
+                            sellerType: mapUserRoleToSellerType(
+                              UserRole.seller,
+                            ),
+                            isLogin: true,
+                          ),
+                        );
+                      }
+
+                      if (UserHelper.isSellerBuilder) {
+                        Get.lazyPut(() => ProjectWizardController());
+                        Get.to(() => CreateProjectScreen());
+                      }
+                    }
+                  } catch (e) {
+                    print("Error checking user type: $e");
+                    Get.snackbar(
+                      "Error",
+                      "Something went wrong. Please try again.",
+                      snackPosition: SnackPosition.BOTTOM,
                     );
-                  });
+                  }
                 },
                 child: Container(
                   height: 52,

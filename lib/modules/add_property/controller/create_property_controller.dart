@@ -20,9 +20,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 
+import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../model/commercial_model.dart';
 
-enum SellerType { owner, builder }
+// enum SellerType { owner, builder }
 
 class CreatePropertyController extends GetxController {
   final _propertyService = PropertyService();
