@@ -745,3 +745,55 @@ final dummyResellerLead = ResellerLeadOverview(
 );
 
 // Example: list of dummy leads
+List<Map<String,dynamic>> propertyCommissionList = [
+  {
+    'title': 'Luxury Apartment',
+    'address': '123 Main St, City',
+    'price': '1,00,000',
+    'views': '1.2K',
+    'postedAgo': '2d',
+    'commission': '5,000',
+    'commissionRate': '5',
+    'image': 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg',
+  },
+  {
+    'title': 'Modern Villa',
+    'address': 'Palm Avenue, Mumbai',
+    'price': '2,50,000',
+    'views': '2.1K',
+    'postedAgo': '1d',
+    'commission': '12,000',
+    'commissionRate': '6',
+    'image': 'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg',
+  },
+];
+
+final List<double> monthlyData = [
+  15,
+  28,
+  35,
+  42,
+  18,
+  25,
+  38,
+  45,
+  22,
+  30,
+  12,
+  40,
+];
+
+final List<String> months = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];

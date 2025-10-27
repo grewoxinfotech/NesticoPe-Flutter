@@ -60,11 +60,10 @@ class AuthController extends GetxController {
   }
 
   void fillTestCredentials() {
-    // emailController.text = "Supercuc@gmail.com";
+    emailController.text = "Supercuc@gmail.com";
     // emailController.text = "Super@gmail.com";
     // emailController.text = "fffdsdfuu.doe@example.com";
     // emailController.text = "fffdsu.doe@example.com";
-    emailController.text = "none@example.com";
     // emailController.text = "fffdsaldlu.doe@example.com";
     // emailController.text = "reseller11@example.com";
     // emailController.text = "abc@gmail.com";

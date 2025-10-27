@@ -7,6 +7,7 @@ class LocationPriceMatrixController extends GetxController {
 
   var isLoading = false.obs;
   var propertyResponse = Rxn<LocationPriceMatrixModel>();
+  var selectedIndex = 0.obs;
 
   @override
   void onInit() {

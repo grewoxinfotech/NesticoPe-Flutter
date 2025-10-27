@@ -28,15 +28,6 @@ class ResellerDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int currentStep = 4;
-    int currentProgress = 8;
-    double targetProgress = 13;
-    double bonus = 1000;
-
-    /// curret=8 target 13 bonus=1000
-    /// currentProgress / targetProgress
-
-    /// remaining = targetProgress - currentProgress
 
     final controller = Get.put(DashboardController());
 
@@ -78,28 +69,201 @@ class ResellerDashboardScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 // Monthly Performance Section (NEW)
-                buildMonthlyPerformance(controller),
-                const SizedBox(height: 20),
-                buildDailyGoals(controller, currentStep, context),
-                const SizedBox(height: 20),
-                buildBestResellerOnTheMonth(controller),
+                // buildMonthlyPerformance(controller),
+                buildMonthlyPerformance(
+                  title: 'Monthly Performance',
+                  levelName: 'Pro Level',
+                  levelIcon: Icons.star,
+                  levelIconColor: ColorRes.orangeColor,
+                  benefits: ['Priority Support', 'Access to Premium Listings'],
+                  progressValue: 0.65,
+                  currentAmount: '₹65K',
+                  targetAmount: '₹1L',
+                  unlockMessage: '₹35K more to unlock next level!',
+                  streakDays: 7,
+                  commissionCurrent: '₹2.9L',
+                  commissionPrevious: '₹2.3L',
+                  commissionChange: '25% increase',
+                  commissionPositive: true,
+                  leadsCurrent: '12',
+                  leadsPrevious: '9',
+                  leadsChange: '33% increase',
+                  leadsPositive: true,
+                ),
 
                 const SizedBox(height: 20),
-                resellerLeaderBoard(controller),
-                const SizedBox(height: 20),
-                buildLeaderBoardRanking(controller),
-                const SizedBox(height: 20),
-                buildReferralProgram(
-                  controller,
-                  context,
-                  bonus,
-                  currentProgress,
-                  targetProgress,
+                // buildDailyGoals(controller, currentStep, context),
+                buildDailyGoals(
+                  title: 'Daily Goal',
+                  goalText: 'Try to generate 5 leads today',
+                  date: '27 Oct 2025',
+                  currentStep: 3,
+                  totalSteps: 5,
+                  currentStreak: 2,
+                  primaryColor: ColorRes.purpleColor.shade500,
+                  accentColor: ColorRes.homeAmber.shade800,
+                  context: context,
                 ),
+
                 const SizedBox(height: 20),
-                buildLeadGraph(controller),
+                // buildBestResellerOnTheMonth(controller),
+              buildBestResellerOnTheMonth(
+
+                month: "October",
+                year: "2025",
+                totalCommission: "₹2.9L",
+                commissionSubtitle: "2,85,000 earned this month",
+                level: "Noob",
+                levelSubtitle: "0% to next level",
+                totalLeads: "8",
+                leadsSubtitle: "Generated this month",
+                commissionColor: ColorRes.success,
+                levelColor: ColorRes.purpleColor.shade800,
+                leadsColor: ColorRes.blueColor,
+              ),
+
                 const SizedBox(height: 20),
-                buildCommissionGraph(controller),
+                // resellerLeaderBoard(controller),
+              resellerLeaderBoard(
+                title: 'Leaderboard',
+                bannerTitle: 'Top 10 (Overall)',
+                bannerSubtitle: 'Gets Extra Rewards',
+                leaderboardData: [
+                  {
+                    'rank': 1,
+                    'name': 'Rajesh Kumar',
+                    'tier': 'Platinum',
+                    'amount': '₹35L',
+                    'emoji': '👨',
+                    'isTopRank': true,
+                  },
+                  {
+                    'rank': 2,
+                    'name': 'Priya Sharma',
+                    'tier': 'Platinum',
+                    'amount': '₹32L',
+                    'emoji': '👩',
+                    'isTopRank': true,
+                  },
+                  {
+                    'rank': 3,
+                    'name': 'You',
+                    'tier': 'Gold',
+                    'amount': '₹29L',
+                    'emoji': '⭐',
+                    'isCurrentUser': true,
+                  },
+                  {
+                    'rank': 4,
+                    'name': 'Amit Patel',
+                    'tier': 'Gold',
+                    'amount': '₹24L',
+                    'emoji': '👨',
+                  },
+                  {
+                    'rank': 5,
+                    'name': 'Neha Desai',
+                    'tier': 'Silver',
+                    'amount': '₹21L',
+                    'emoji': '👩',
+                    'isLast': true,
+                  },
+                ],
+              ),
+              const SizedBox(height: 20),
+                // buildLeaderBoardRanking(controller),
+              buildLeaderBoardRanking(
+
+                title: 'Leaderboard Rankings',
+                subtitle: 'Top performers across regions',
+                filters: ['All', 'City-wise', 'Monthly'],
+                leaderboardData: [
+                  {
+                    'rank': 1,
+                    'name': 'Rajesh Kumar',
+                    'level': 'Platinum Level',
+                    'city': 'Ahmedabad',
+                    'sales': '₹35L',
+                    'deals': '70',
+                    'color': ColorRes.orangeColor.withOpacity(0.05),
+                    'borderColor': ColorRes.orangeColor.withOpacity(0.3),
+                    'medalIcon': Icons.emoji_events,
+                  },
+                  {
+                    'rank': 2,
+                    'name': 'Priya Sharma',
+                    'level': 'Platinum Level',
+                    'city': 'Ahmedabad',
+                    'sales': '₹32L',
+                    'deals': '64',
+                    'color': ColorRes.orangeColor.withOpacity(0.05),
+                    'borderColor': ColorRes.orangeColor.withOpacity(0.3),
+                    'medalIcon': Icons.emoji_events,
+                  },
+                  {
+                    'rank': 3,
+                    'name': 'You',
+                    'level': 'Gold Level',
+                    'city': 'Ahmedabad',
+                    'sales': '₹29L',
+                    'deals': '57',
+                    'color': ColorRes.green.withOpacity(0.05),
+                    'borderColor': ColorRes.green.withOpacity(0.3),
+                    'medalIcon': Icons.emoji_events,
+                    'isCurrentUser': true,
+                  },
+                  {
+                    'rank': 4,
+                    'name': 'Amit Patel',
+                    'level': 'Gold Level',
+                    'city': 'Ahmedabad',
+                    'sales': '₹24L',
+                    'deals': '48',
+                    'color': ColorRes.leadGreyColor.withOpacity(0.05),
+                    'borderColor': ColorRes.leadGreyColor.withOpacity(0.3),
+                    'medalIcon': null,
+                  },
+                  {
+                    'rank': 5,
+                    'name': 'Neha Desai',
+                    'level': 'Silver Level',
+                    'city': 'Ahmedabad',
+                    'sales': '₹21L',
+                    'deals': '42',
+                    'color': ColorRes.blueColor.withOpacity(0.05),
+                    'borderColor': ColorRes.blueColor.withOpacity(0.3),
+                    'medalIcon': null,
+                  },
+                ],
+              ),
+              const SizedBox(height: 20),
+                // buildTopPropertyForGoodCommission(controller),
+                buildTopPropertyForGoodCommission(controller, propertyCommissionList),
+                const SizedBox(height: 20),
+              buildReferralProgram(
+                // controller: controller,
+                context: context,
+                bonus: 5000,
+                currentProgress: 4,
+                targetProgress: 10,
+                title: 'Referral Program',
+                subtitle: 'Get ₹5000 for every new active reseller',
+                pointsEarned: '2400',
+                totalEarnings: '₹4K',
+                earningSubtitle: '8 x ₹5000 each',
+                referralCode: 'REF12345',
+                leftIcon: Icons.card_giftcard_rounded,
+                iconColor: ColorRes.textPrimary,
+                iconBackground: ColorRes.textPrimary.withOpacity(0.08),
+                card1BorderColor: ColorRes.homeAmber.withOpacity(0.3),
+                card1BgColor: ColorRes.homeAmber.withOpacity(0.08),
+                card2BorderColor: ColorRes.green.withOpacity(0.3),
+                card2BgColor: ColorRes.green.withOpacity(0.08),
+              ),
+              const SizedBox(height: 20),
+                buildLeadGraph(),
+                const SizedBox(height: 20),
+                buildCommissionGraph(),
                 const SizedBox(height: 20),
 
                 // Recent Leads
@@ -118,41 +282,300 @@ class ResellerDashboardScreen extends StatelessWidget {
   }
 }
 
+Widget buildTopPropertyForGoodCommission(
+    DashboardController controller,
+    List<Map<String, dynamic>> propertyList,
+    ) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header Section
+        Row(
+          children: [
+            Icon(
+              Icons.apartment_outlined,
+              color: ColorRes.leadIndigoColor,
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Best Commission',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: ColorRes.leadIndigoColor,
+                      fontSize: AppFontSizes.body,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                  Text(
+                    'Top earning opportunities',
+                    style: TextStyle(
+                      color: ColorRes.textColor,
+                      fontSize: AppFontSizes.extraSmall,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                // View all tap
+              },
+              child: Text(
+                'View All',
+                style: TextStyle(
+                  color: ColorRes.leadIndigoColor,
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+            ),
+          ],
+        ),
 
-Widget buildTopPropertyForGoodCommission(DashboardController controller) {
-  return Container();
+        const SizedBox(height: 20),
+
+        // Horizontal Property List
+        SizedBox(
+          height: 185, // enough to fit property cards
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: propertyList.length,
+            itemBuilder: (context, index) {
+              final property = propertyList[index];
+              return Container(
+                width: 280,
+                margin: EdgeInsets.only(right: index == propertyList.length - 1 ? 0 : 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: ColorRes.leadGreyColor.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Property Image
+                        Stack(
+                          children: [
+                            Container(
+                              height: 80,
+                              width: 80,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                    property['image'] ??
+                                        'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 12),
+
+                        // Property Details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                property['title'] ?? 'Luxury Apartment',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: ColorRes.textColor,
+                                  fontSize: AppFontSizes.bodyMedium,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                property['address'] ?? '123 Main St, City, State',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: ColorRes.leadGreyColor,
+                                  fontSize: AppFontSizes.extraSmall,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                '₹${property['price'] ?? '1,00,000'}',
+                                style: TextStyle(
+                                  color: ColorRes.textColor,
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Text(
+                                    '${property['views'] ?? '1.2K'} views',
+                                    style: TextStyle(
+                                      color: ColorRes.textColor,
+                                      fontSize: AppFontSizes.extraSmall,
+                                      fontWeight: AppFontWeights.medium,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Posted ${property['postedAgo'] ?? '2d'} ago',
+                                    style: TextStyle(
+                                      color: ColorRes.textColor,
+                                      fontSize: AppFontSizes.extraSmall,
+                                      fontWeight: AppFontWeights.medium,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Commission Section
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: ColorRes.leadIndigoColor.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: ColorRes.leadIndigoColor.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Your Commission',
+                                style: TextStyle(
+                                  color: ColorRes.textColor,
+                                  fontSize: AppFontSizes.extraSmall,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                '₹${property['commission'] ?? '5,000'}',
+                                style: TextStyle(
+                                  color: ColorRes.leadIndigoColor,
+                                  fontSize: AppFontSizes.bodyMedium,
+                                  fontWeight: AppFontWeights.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorRes.leadIndigoColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.trending_up,
+                                  color: ColorRes.white,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${property['commissionRate'] ?? '5'}%',
+                                  style: TextStyle(
+                                    color: ColorRes.white,
+                                    fontSize: AppFontSizes.small,
+                                    fontWeight: AppFontWeights.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
-Widget buildLeadGraph(DashboardController controller) {
-  final List<double> monthlyData = [
-    15,
-    28,
-    35,
-    42,
-    18,
-    25,
-    38,
-    45,
-    22,
-    30,
-    12,
-    40,
-  ];
+// Helper method to build feature items
+Widget _buildFeatureItem(IconData icon, String label) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+    decoration: BoxDecoration(
+      color: ColorRes.leadGreyColor.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(6),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          icon,
+          size: 14,
+          color: ColorRes.leadGreyColor,
+        ),
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: ColorRes.textColor,
+              fontSize: AppFontSizes.extraSmall,
+              fontWeight: AppFontWeights.medium,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
-  final List<String> months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
+Widget buildLeadGraph() {
+
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -167,11 +590,7 @@ Widget buildLeadGraph(DashboardController controller) {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.area_chart_outlined,
-              color:ColorRes.green,
-              size: 24,
-            ),
+            Icon(Icons.area_chart_outlined, color: ColorRes.green, size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -182,7 +601,8 @@ Widget buildLeadGraph(DashboardController controller) {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
-                      color:ColorRes.green,      fontSize: AppFontSizes.body,
+                      color: ColorRes.green,
+                      fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
@@ -204,42 +624,14 @@ Widget buildLeadGraph(DashboardController controller) {
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyLineChart (monthlyData: monthlyData,months: months,)
+          child: MonthlyLineChart(monthlyData: monthlyData, months: months),
         ),
       ],
     ),
   );
 }
-Widget buildCommissionGraph(DashboardController controller) {
-  final List<double> monthlyData = [
-    15,
-    28,
-    35,
-    42,
-    18,
-    25,
-    38,
-    45,
-    22,
-    30,
-    12,
-    40,
-  ];
 
-  final List<String> months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
+Widget buildCommissionGraph() {
 
   return Container(
     padding: const EdgeInsets.all(16),
@@ -247,18 +639,17 @@ Widget buildCommissionGraph(DashboardController controller) {
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
-        color:  ColorRes.leadGreyColor.withOpacity(0.3),
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
         width: 1,
       ),
-    
     ),
     child: Column(
       children: [
         Row(
           children: [
-             Icon(
+            Icon(
               Icons.area_chart_outlined,
-              color:ColorRes.lightPurpleColor,
+              color: ColorRes.lightPurpleColor,
               size: 24,
             ),
             const SizedBox(width: 12),
@@ -271,7 +662,8 @@ Widget buildCommissionGraph(DashboardController controller) {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
-                      color:ColorRes.lightPurpleColor,      fontSize: AppFontSizes.body,
+                      color: ColorRes.lightPurpleColor,
+                      fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
@@ -293,16 +685,12 @@ Widget buildCommissionGraph(DashboardController controller) {
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyBarChart(
-            monthlyData: monthlyData,
-            months: months,
-          ),
+          child: MonthlyBarChart(monthlyData: monthlyData, months: months),
         ),
       ],
     ),
   );
 }
-
 
 // class MonthlyBarChart extends StatelessWidget {
 //   final List<double> monthlyData; // e.g., 12 values
@@ -435,7 +823,6 @@ Widget buildCommissionGraph(DashboardController controller) {
 //   }
 // }
 
-
 class MonthlyLineChart extends StatelessWidget {
   final List<double> monthlyData;
   final List<String> months;
@@ -450,13 +837,15 @@ class MonthlyLineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final spots = List.generate(
       monthlyData.length,
-          (index) => FlSpot(index.toDouble(), monthlyData[index]),
+      (index) => FlSpot(index.toDouble(), monthlyData[index]),
     );
 
     // Show only alternate month labels (Jan, Mar, May…)
-    final visibleIndexes = List.generate(months.length, (i) => i)
-        .where((i) => i % 2 == 0)
-        .toList();
+    final visibleIndexes =
+        List.generate(
+          months.length,
+          (i) => i,
+        ).where((i) => i % 2 == 0).toList();
 
     return LineChart(
       LineChartData(
@@ -466,7 +855,6 @@ class MonthlyLineChart extends StatelessWidget {
         // --- Line style ---
         lineBarsData: [
           LineChartBarData(
-
             spots: spots,
             isCurved: true,
             color: Colors.green.shade600,
@@ -479,8 +867,8 @@ class MonthlyLineChart extends StatelessWidget {
                 // Highlight dots for in-between months (Feb, Apr, etc.)
 
                 return FlDotCirclePainter(
-                  radius:  4,
-                  color:  Colors.green,
+                  radius: 4,
+                  color: Colors.green,
                   strokeColor: Colors.white,
                   strokeWidth: 1.5,
                 );
@@ -530,25 +918,29 @@ class MonthlyLineChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               interval: 10,
-              getTitlesWidget: (value, meta) => Text(
-                value.toInt().toString(),
-                style: const TextStyle(fontSize: 10),
-              ),
+              getTitlesWidget:
+                  (value, meta) => Text(
+                    value.toInt().toString(),
+                    style: const TextStyle(fontSize: 10),
+                  ),
               reservedSize: 28,
             ),
           ),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
 
         // --- Grid + Border ---
         gridData: FlGridData(
           show: false,
           drawVerticalLine: false,
-          getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.grey.withOpacity(0.2),
-            strokeWidth: 1,
-          ),
+          getDrawingHorizontalLine:
+              (value) =>
+                  FlLine(color: Colors.grey.withOpacity(0.2), strokeWidth: 1),
         ),
         borderData: FlBorderData(
           show: true,
@@ -569,10 +961,7 @@ class MonthlyLineChart extends StatelessWidget {
                 final value = spot.y.toInt();
                 return LineTooltipItem(
                   '$month\n$value',
-                  TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                 );
               }).toList();
             },
@@ -583,17 +972,27 @@ class MonthlyLineChart extends StatelessWidget {
   }
 }
 
+Widget buildReferralProgram({
 
+  required BuildContext context,
+  required double bonus,
+  required int currentProgress,
+  required double targetProgress,
+  required String title,
+  required String subtitle,
+  required String pointsEarned,
+  required String totalEarnings,
+  required String earningSubtitle,
+  required String referralCode,
+  required IconData leftIcon,
+  required Color iconColor,
+  required Color iconBackground,
+  required Color card1BorderColor,
+  required Color card1BgColor,
+  required Color card2BorderColor,
+  required Color card2BgColor,
 
-
-
-Widget buildReferralProgram(
-  DashboardController controller,
-  BuildContext context,
-  double bonus,
-  int currentProgress,
-  double targetProgress,
-) {
+}) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -607,6 +1006,7 @@ Widget buildReferralProgram(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Header Section
         Row(
           children: [
             Icon(
@@ -622,28 +1022,26 @@ Widget buildReferralProgram(
                   SizedBox(
                     width: double.infinity,
                     child: Text(
-                      'Referral Program',
+                      title,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: TextStyle(
                         color: ColorRes.purpleColor,
                         fontSize: AppFontSizes.body,
                         fontWeight: AppFontWeights.semiBold,
-                        // color: ColorRes.textPrimary,
                       ),
                     ),
                   ),
                   SizedBox(
                     width: double.infinity,
                     child: Text(
-                      'Get ₹5000 for every new active reseller',
+                      subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: ColorRes.textColor,
                         fontSize: AppFontSizes.caption,
                         fontWeight: AppFontWeights.medium,
-                        // color: ColorRes.textPrimary,
                       ),
                     ),
                   ),
@@ -652,37 +1050,43 @@ Widget buildReferralProgram(
             ),
           ],
         ),
-        SizedBox(height: 20),
+
+        const SizedBox(height: 20),
+
+        // Two cards: points earned and total earnings
         Row(
           children: [
             Expanded(
               child: buildReferralCard(
-                title: 'Points earned',
-                amount: '2400',
-                borderColor: ColorRes.homeAmber.withOpacity(0.3),
-                backgroundColor: ColorRes.homeAmber.withOpacity(0.08),
+                iconBgColor: iconBackground,
+                iconColor: iconColor,
+                icon: Icons.safety_check_outlined,
                 subtitle: 'From referrals',
-                icon: Icons.star_border_sharp,
-                iconColor: ColorRes.white,
-                iconBgColor: ColorRes.homeAmber,
+                title: 'Points earned',
+                amount: 2400.toString(),
+                backgroundColor: card1BgColor,
+                borderColor: card1BorderColor
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: buildReferralCard(
-                title: 'Total earnings',
-                amount: '₹4K',
-                borderColor: ColorRes.green.withOpacity(0.3),
-                backgroundColor: ColorRes.green.withOpacity(0.08),
-                subtitle: '8 x ₹5000 each',
-                icon: Icons.currency_rupee_outlined,
-                iconColor: ColorRes.white,
-                iconBgColor: ColorRes.green,
+                  iconBgColor: iconBackground,
+                  iconColor: iconColor,
+                  icon: Icons.safety_check_outlined,
+                  subtitle: earningSubtitle,
+                  title: 'Total earnings',
+                  amount: totalEarnings.toString(),
+                  backgroundColor: card2BgColor,
+                  borderColor: card2BorderColor
               ),
             ),
           ],
         ),
-        SizedBox(height: 12),
+
+        const SizedBox(height: 12),
+
+        // Referral Code Section
         Row(
           children: [
             Expanded(
@@ -694,88 +1098,85 @@ Widget buildReferralProgram(
                     width: 1,
                   ),
                 ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
-                      children: [
-                        Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: ColorRes.textPrimary.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          leftIcon,
+                          color: iconColor,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Your Referral Code',
+                              style: TextStyle(
+                                color: ColorRes.textSecondary,
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.medium,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              referralCode,
+                              style: TextStyle(
+                                color: ColorRes.textPrimary,
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: referralCode));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('Referral code copied!'),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: ColorRes.textPrimary.withOpacity(0.08),
+                            color: ColorRes.textPrimary,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Icon(
-                            Icons.card_giftcard_rounded,
-                            color: ColorRes.textPrimary,
-                            size: 24,
+                          child: const Icon(
+                            Icons.copy_rounded,
+                            color: ColorRes.white,
+                            size: 20,
                           ),
                         ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Your Referral Code',
-                                style: TextStyle(
-                                  color: ColorRes.textSecondary,
-                                  fontSize: AppFontSizes.caption,
-                                  fontWeight: AppFontWeights.medium,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'REF12345',
-                                style: TextStyle(
-                                  color: ColorRes.textPrimary,
-                                  fontSize: AppFontSizes.medium,
-                                  fontWeight: AppFontWeights.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            // Copy to clipboard functionality
-                            Clipboard.setData(
-                              const ClipboardData(text: 'REF12345'),
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text('Referral code copied!'),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: ColorRes.textPrimary,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.copy_rounded,
-                              color: ColorRes.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ],
         ),
-        SizedBox(height: 12),
+
+        const SizedBox(height: 12),
+
+        // Progress Section
         buildProgressSection(
           bonusAmount: bonus,
           currentProgress: currentProgress,
@@ -786,7 +1187,20 @@ Widget buildReferralProgram(
   );
 }
 
-Widget buildLeaderBoardRanking(DashboardController controller) {
+
+
+
+
+Widget buildLeaderBoardRanking({
+
+  required String title,
+  required String subtitle,
+  required List<String> filters,
+  required List<Map<String, dynamic>> leaderboardData,
+  Color headerIconColor = const Color(0xFFFF9800),
+  Color defaultFilterColor = Colors.grey,
+  Color activeFilterColor = Colors.orange,
+}) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -800,11 +1214,12 @@ Widget buildLeaderBoardRanking(DashboardController controller) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Header Section
         Row(
           children: [
             Icon(
               Icons.emoji_events_outlined,
-              color: ColorRes.orangeColor,
+              color: headerIconColor,
               size: 28,
             ),
             const SizedBox(width: 8),
@@ -813,15 +1228,15 @@ Widget buildLeaderBoardRanking(DashboardController controller) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Leaderboard Rankings',
+                    title,
                     style: TextStyle(
-                      color: ColorRes.orangeColor,
+                      color: headerIconColor,
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
                   Text(
-                    'Top performers across regions',
+                    subtitle,
                     style: TextStyle(
                       color: ColorRes.textColor,
                       fontSize: AppFontSizes.caption,
@@ -833,106 +1248,57 @@ Widget buildLeaderBoardRanking(DashboardController controller) {
             ),
           ],
         ),
+
         const SizedBox(height: 16),
+
+        // Filter Chips Row
         Row(
-          children: [
-            Expanded(
-              child: buildFilterChip('All', ColorRes.purpleColor, false),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: buildFilterChip(
-                'City-wise',
-                ColorRes.leadGreyColor,
-                false,
+          children: List.generate(filters.length, (index) {
+            final bool isActive = index == 0;
+            final Color filterColor =
+            isActive ? activeFilterColor : defaultFilterColor;
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(right: index != filters.length - 1 ? 8 : 0),
+                child: buildFilterChip(
+                  filters[index],
+                  filterColor,
+                  isActive,
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: buildFilterChip('Monthly', ColorRes.orangeColor, false),
-            ),
-          ],
+            );
+          }),
         ),
+
         const SizedBox(height: 16),
+
+        // Dynamic Leader Cards
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: 5,
+          itemCount: leaderboardData.length,
           separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            if (index == 0) {
-              return buildLeaderCard(
-                rank: 1,
-                name: 'Rajesh Kumar',
-                level: 'Platinum Level',
-                city: 'Ahmedabad',
-                sales: '₹35L',
-                deals: '70',
-                color: ColorRes.orangeColor.withOpacity(0.05),
-                borderColor: ColorRes.orangeColor.withOpacity(0.3),
-
-                medalIcon: Icons.emoji_events,
-                isCurrentUser: false,
-              );
-            } else if (index == 1) {
-              return buildLeaderCard(
-                rank: 2,
-                name: 'Priya Sharma',
-                level: 'Platinum Level',
-                city: 'Ahmedabad',
-                sales: '₹32L',
-                deals: '64',
-                color: ColorRes.orangeColor.withOpacity(0.05),
-                borderColor: ColorRes.orangeColor.withOpacity(0.3),
-                medalIcon: Icons.emoji_events,
-                isCurrentUser: false,
-              );
-            } else if (index == 2) {
-              return buildLeaderCard(
-                rank: 3,
-                name: 'You',
-                level: 'Gold Level',
-                city: 'Ahmedabad',
-                sales: '₹29L',
-                deals: '57',
-                color: ColorRes.green.withOpacity(0.05),
-                borderColor: ColorRes.green.withOpacity(0.3),
-                medalIcon: Icons.emoji_events,
-                isCurrentUser: true,
-              );
-            } else if (index == 3) {
-              return buildLeaderCard(
-                rank: 4,
-                name: 'Amit Patel',
-                level: 'Gold Level',
-                city: 'Ahmedabad',
-                sales: '₹24L',
-                deals: '48',
-                color: ColorRes.leadGreyColor.withOpacity(0.05),
-                borderColor: ColorRes.leadGreyColor.withOpacity(0.3),
-                medalIcon: null,
-                isCurrentUser: false,
-              );
-            } else {
-              return buildLeaderCard(
-                rank: 5,
-                name: 'Neha Desai',
-                level: 'Silver Level',
-                city: 'Ahmedabad',
-                sales: '₹21L',
-                deals: '42',
-                color: ColorRes.blueColor.withOpacity(0.05),
-                borderColor: ColorRes.blueColor.withOpacity(0.3),
-                medalIcon: null,
-                isCurrentUser: false,
-              );
-            }
+            final data = leaderboardData[index];
+            return buildLeaderCard(
+              rank: data['rank'],
+              name: data['name'],
+              level: data['level'],
+              city: data['city'],
+              sales: data['sales'],
+              deals: data['deals'],
+              color: data['color'],
+              borderColor: data['borderColor'],
+              medalIcon: data['medalIcon'],
+              isCurrentUser: data['isCurrentUser'] ?? false,
+            );
           },
         ),
       ],
     ),
   );
 }
+
 
 Widget buildFilterChip(String label, Color color, bool isSelected) {
   return Container(
@@ -1156,7 +1522,17 @@ Widget buildLeaderCard({
   );
 }
 
-Widget resellerLeaderBoard(DashboardController controller) {
+Widget resellerLeaderBoard({
+
+  required String title,
+  required String bannerTitle,
+  required String bannerSubtitle,
+  required List<Map<String, dynamic>> leaderboardData,
+  Color headerColor = const Color(0xFF6366F1),
+  Color bannerColor = const Color(0xFFFEF3E2),
+  Color bannerBorderColor = const Color(0xFFFBBF24),
+  Color bannerIconColor = Colors.orange,
+}) {
   return Container(
     decoration: BoxDecoration(
       color: Colors.white,
@@ -1173,16 +1549,16 @@ Widget resellerLeaderBoard(DashboardController controller) {
             children: [
               Icon(
                 Icons.emoji_events_outlined,
-                color: Color(0xFF6366F1),
+                color: headerColor,
                 size: 24,
               ),
               const SizedBox(width: 8),
-              const Text(
-                'Leaderboard',
+              Text(
+                title,
                 style: TextStyle(
                   fontSize: AppFontSizes.body,
                   fontWeight: AppFontWeights.semiBold,
-                  color: Color(0xFF6366F1),
+                  color: headerColor,
                 ),
               ),
             ],
@@ -1194,15 +1570,15 @@ Widget resellerLeaderBoard(DashboardController controller) {
           margin: const EdgeInsets.symmetric(horizontal: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFFFEF3E2),
+            color: bannerColor,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFFBBF24), width: 1.5),
+            border: Border.all(color: bannerBorderColor, width: 1.5),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.emoji_events_outlined,
-                color: ColorRes.orangeColor,
+                color: bannerIconColor,
                 size: 40,
               ),
               const SizedBox(width: 12),
@@ -1210,18 +1586,18 @@ Widget resellerLeaderBoard(DashboardController controller) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Top 10 (Overall)',
+                    bannerTitle,
                     style: TextStyle(
                       fontSize: AppFontSizes.medium,
                       fontWeight: AppFontWeights.medium,
-                      color: ColorRes.orangeColor,
+                      color: bannerIconColor,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Row(
                     children: [
                       Text(
-                        'Gets Extra Rewards',
+                        bannerSubtitle,
                         style: TextStyle(
                           fontSize: AppFontSizes.caption,
                           color: ColorRes.textColor,
@@ -1239,50 +1615,23 @@ Widget resellerLeaderBoard(DashboardController controller) {
 
         const SizedBox(height: 16),
 
-        // Leaderboard Items
-        buildLeaderboardItem(
-          rank: 1,
-          name: 'Rajesh Kumar',
-          tier: 'Platinum',
-          amount: '₹35L',
-          isTopRank: true,
-          emoji: '👨',
-        ),
-        buildLeaderboardItem(
-          rank: 2,
-          name: 'Priya Sharma',
-          tier: 'Platinum',
-          amount: '₹32L',
-          isTopRank: true,
-          emoji: '👩',
-        ),
-        buildLeaderboardItem(
-          rank: 3,
-          name: 'You',
-          tier: 'Gold',
-          amount: '₹29L',
-          isCurrentUser: true,
-          emoji: '⭐',
-        ),
-        buildLeaderboardItem(
-          rank: 4,
-          name: 'Amit Patel',
-          tier: 'Gold',
-          amount: '₹24L',
-          emoji: '👨',
-        ),
-        buildLeaderboardItem(
-          rank: 5,
-          name: 'Neha Desai',
-          tier: 'Silver',
-          amount: '₹21L',
-          emoji: '👩',
-          isLast: true,
-        ),
+        // Dynamic Leaderboard Items
+        for (int i = 0; i < leaderboardData.length; i++)
+          buildLeaderboardItem(
+            rank: leaderboardData[i]['rank'],
+            name: leaderboardData[i]['name'],
+            tier: leaderboardData[i]['tier'],
+            amount: leaderboardData[i]['amount'],
+            emoji: leaderboardData[i]['emoji'],
+            isTopRank: leaderboardData[i]['isTopRank'] ?? false,
+            isCurrentUser: leaderboardData[i]['isCurrentUser'] ?? false,
+            isLast: leaderboardData[i]['isLast'] ?? false,
+          ),
       ],
     ),
   );
 }
+
 
 Widget buildLeaderboardItem({
   required int rank,
@@ -1379,10 +1728,25 @@ Widget buildLeaderboardItem({
   );
 }
 
-Widget buildBestResellerOnTheMonth(DashboardController controller) {
+Widget buildBestResellerOnTheMonth({
+
+  required String month,
+  required String year,
+  required String totalCommission,
+  required String commissionSubtitle,
+  required String level,
+  required String levelSubtitle,
+  required String totalLeads,
+  required String leadsSubtitle,
+  required Color commissionColor,
+  required Color levelColor,
+  required Color leadsColor,
+  String motivationalText =
+  "Keep up the excellent work! You're on track for greatness!",
+}) {
   return Container(
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(16)),
+      borderRadius: const BorderRadius.all(Radius.circular(16)),
       color: ColorRes.white,
       border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
     ),
@@ -1411,11 +1775,11 @@ Widget buildBestResellerOnTheMonth(DashboardController controller) {
                       color: ColorRes.textPrimary,
                     ),
                     children: [
-                      TextSpan(text: 'Best Reseller '),
+                      const TextSpan(text: 'Best Reseller '),
                       TextSpan(
                         text: 'of the Month',
                         style: TextStyle(
-                          color: ColorRes.error, // Pink/red color
+                          color: ColorRes.error,
                         ),
                       ),
                     ],
@@ -1423,7 +1787,7 @@ Widget buildBestResellerOnTheMonth(DashboardController controller) {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'October 2025',
+                  '$month $year',
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     fontWeight: AppFontWeights.medium,
@@ -1436,32 +1800,39 @@ Widget buildBestResellerOnTheMonth(DashboardController controller) {
         ),
 
         const SizedBox(height: 16),
+
+        // Commission Card
         buildCommissionCard(
           title: 'Total Commission',
-          subtitle: '2,85,000 earned this month',
-          amount: '₹2.9L',
-          backgroundColor: ColorRes.success.withOpacity(0.05),
-          borderColor: ColorRes.success,
+          subtitle: commissionSubtitle,
+          amount: totalCommission,
+          backgroundColor: commissionColor.withOpacity(0.05),
+          borderColor: commissionColor,
         ),
-        const SizedBox(height: 12),
-        buildCommissionCard(
-          title: 'Current Level',
-          subtitle: '0% to next level',
-          amount: 'Noob',
-          backgroundColor: ColorRes.purpleColor.shade800.withOpacity(0.05),
-          borderColor: ColorRes.purpleColor.shade800,
-          icon: Icons.emoji_events_outlined,
-          iconBgColor: ColorRes.purpleColor.shade800,
-        ),
+
         const SizedBox(height: 12),
 
+        // Level Card
+        buildCommissionCard(
+          title: 'Current Level',
+          subtitle: levelSubtitle,
+          amount: level,
+          backgroundColor: levelColor.withOpacity(0.05),
+          borderColor: levelColor,
+          icon: Icons.emoji_events_outlined,
+          iconBgColor: levelColor,
+        ),
+
+        const SizedBox(height: 12),
+
+        // Leads Card
         buildCommissionCard(
           title: 'Total Leads',
-          amount: '8',
-          borderColor: ColorRes.blueColor,
-          backgroundColor: ColorRes.blueColor.withOpacity(0.05),
-          subtitle: 'Generated this month',
-          iconBgColor: ColorRes.blueColor,
+          amount: totalLeads,
+          borderColor: leadsColor,
+          backgroundColor: leadsColor.withOpacity(0.05),
+          subtitle: leadsSubtitle,
+          iconBgColor: leadsColor,
           icon: Icons.call_made_outlined,
         ),
 
@@ -1470,9 +1841,9 @@ Widget buildBestResellerOnTheMonth(DashboardController controller) {
         // Motivational Banner
         Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             gradient: LinearGradient(
               colors: [
                 ColorRes.homeAmber.shade800.withOpacity(0.08),
@@ -1495,7 +1866,7 @@ Widget buildBestResellerOnTheMonth(DashboardController controller) {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Keep up the excellent work! You\'re on track for greatness!',
+                  motivationalText,
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     fontWeight: AppFontWeights.medium,
@@ -1510,6 +1881,7 @@ Widget buildBestResellerOnTheMonth(DashboardController controller) {
     ),
   );
 }
+
 
 Widget buildCommissionCard({
   required String title,
@@ -1592,19 +1964,25 @@ Widget buildCommissionCard({
   );
 }
 
-Widget buildDailyGoals(
-  DashboardController controller,
-  int step,
-  BuildContext context,
-) {
-  final completedSteps = step.clamp(0, 5);
-  final double progress = (completedSteps / 5).clamp(0.0, 1.0);
-  final remainingSteps = 5 - completedSteps;
-  final progressPercent = (completedSteps / 5 * 100).toInt();
+Widget buildDailyGoals({
+  required String title,
+  required String goalText,
+  required String date,
+  required int totalSteps,
+  required int currentStep,
+  required int currentStreak,
+  required Color primaryColor,
+  required Color accentColor,
+  required BuildContext context,
+}) {
+  final completedSteps = currentStep.clamp(0, totalSteps);
+  final double progress = (completedSteps / totalSteps).clamp(0.0, 1.0);
+  final remainingSteps = totalSteps - completedSteps;
+  final progressPercent = (completedSteps / totalSteps * 100).toInt();
 
   return Container(
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(16)),
+      borderRadius: const BorderRadius.all(Radius.circular(16)),
       color: ColorRes.white,
       border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
     ),
@@ -1618,15 +1996,15 @@ Widget buildDailyGoals(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                ColorRes.purpleColor.shade800.withOpacity(0.05),
-                ColorRes.homeAmber.shade800.withOpacity(0.05),
+                primaryColor.withOpacity(0.05),
+                accentColor.withOpacity(0.05),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: ColorRes.purpleColor.shade800.withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               width: 1,
             ),
           ),
@@ -1635,12 +2013,12 @@ Widget buildDailyGoals(
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: ColorRes.homeAmber.shade800.withOpacity(0.15),
+                  color: accentColor.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.bolt,
-                  color: ColorRes.homeAmber.shade800,
+                  color: accentColor,
                   size: 24,
                 ),
               ),
@@ -1652,7 +2030,7 @@ Widget buildDailyGoals(
                     Row(
                       children: [
                         Text(
-                          'Daily Goal',
+                          title, // applied title parameter
                           style: TextStyle(
                             fontSize: AppFontSizes.bodyMedium,
                             fontWeight: AppFontWeights.bold,
@@ -1666,15 +2044,15 @@ Widget buildDailyGoals(
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: ColorRes.homeAmber.shade800.withOpacity(0.2),
+                            color: accentColor.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            '14 Oct 2025',
+                            date, // applied date parameter
                             style: TextStyle(
                               fontSize: AppFontSizes.mini,
                               fontWeight: AppFontWeights.medium,
-                              color: ColorRes.homeAmber.shade800,
+                              color: accentColor,
                             ),
                           ),
                         ),
@@ -1682,7 +2060,7 @@ Widget buildDailyGoals(
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Try to Generate 5 leads today',
+                      goalText, // applied goalText parameter
                       style: TextStyle(
                         fontSize: AppFontSizes.extraSmall,
                         fontWeight: AppFontWeights.regular,
@@ -1695,100 +2073,74 @@ Widget buildDailyGoals(
             ],
           ),
         ),
+
         const SizedBox(height: 20),
 
         // Progress Bar with Dots
         LayoutBuilder(
           builder: (context, constraints) {
             final totalWidth = constraints.maxWidth;
-            print(
-              'Total width: $totalWidth   Progress: $progress (${totalWidth / 4})',
-            );
 
             return Stack(
               children: [
                 Container(
                   height: 20,
-
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    color: ColorRes.purpleColor.shade800.withOpacity(0.08),
+                    color: primaryColor.withOpacity(0.08),
                   ),
                 ),
-
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 600),
                   height: 20,
                   width: totalWidth * progress,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    // gradient:
-                    //     completedSteps > 0
-                    //         ? LinearGradient(
-                    //           colors: [
-                    //             ColorRes.purpleColor.shade200,
-                    //             ColorRes.purpleColor.shade300,
-                    //             ColorRes.purpleColor.shade400,
-                    //             ColorRes.purpleColor.shade500,
-                    //           ],
-                    //         )
-                    //         : null,
                     color:
-                        completedSteps > 0
-                            ? ColorRes.purpleColor.shade500
-                            : Colors.transparent,
+                    completedSteps > 0 ? primaryColor : Colors.transparent,
                   ),
                 ),
                 // Dots overlay
                 Positioned.fill(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(6, (index) {
-                      print(
-                        'Total width: $totalWidth   Progress: $progress (${totalWidth / 5})',
-                      );
+                    children: List.generate(totalSteps + 1, (index) {
                       bool isActive = index <= completedSteps;
-                      print('Index: $index, isActive: $isActive');
-
                       bool isFirst = index == 0;
-                      bool isLast = index == 5;
+                      bool isLast = index == totalSteps;
 
                       return Container(
                         margin: EdgeInsets.only(
                           left: isFirst ? 0 : 0,
                           right: isLast ? 0 : 0,
                         ),
-
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 600),
                           curve: Curves.easeInOut,
                           height: 10,
                           width: 10,
                           decoration: BoxDecoration(
-                            color:
-                                isActive
-                                    ? ColorRes.green.shade400
-                                    : ColorRes.white,
+                            color: isActive
+                                ? ColorRes.green.shade400
+                                : ColorRes.white,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color:
-                                  isActive
-                                      ? ColorRes.green.shade400
-                                      : ColorRes.green.shade300,
+                              color: isActive
+                                  ? ColorRes.green.shade400
+                                  : ColorRes.green.shade300,
                               width: 1,
                             ),
-                            boxShadow:
-                                isActive
-                                    ? [
-                                      BoxShadow(
-                                        offset: const Offset(0, 2),
-                                        blurRadius: 8,
-                                        spreadRadius: 0,
-                                        color: ColorRes.green.shade400
-                                            .withOpacity(0.4),
-                                      ),
-                                    ]
-                                    : null,
+                            boxShadow: isActive
+                                ? [
+                              BoxShadow(
+                                offset: const Offset(0, 2),
+                                blurRadius: 8,
+                                spreadRadius: 0,
+                                color: ColorRes.green.shade400
+                                    .withOpacity(0.4),
+                              ),
+                            ]
+                                : null,
                           ),
                         ),
                       );
@@ -1807,17 +2159,16 @@ Widget buildDailyGoals(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(6, (index) {
+            children: List.generate(totalSteps + 1, (index) {
               bool isActive = index <= completedSteps;
               return Text(
                 "$index",
                 style: TextStyle(
                   fontWeight: AppFontWeights.semiBold,
                   fontSize: AppFontSizes.small,
-                  color:
-                      isActive
-                          ? ColorRes.green.shade600
-                          : ColorRes.textPrimary.withOpacity(0.5),
+                  color: isActive
+                      ? ColorRes.green.shade600
+                      : ColorRes.textPrimary.withOpacity(0.5),
                 ),
               );
             }),
@@ -1833,20 +2184,20 @@ Widget buildDailyGoals(
               child: buildStatItem(
                 value: '$completedSteps',
                 label: 'Completed',
-                color: ColorRes.purpleColor,
+                color: primaryColor,
               ),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Expanded(
               child: buildStatItem(
                 value: '$remainingSteps',
                 label: 'Remaining',
-                color: ColorRes.purpleColor,
+                color: primaryColor,
               ),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
@@ -1856,10 +2207,10 @@ Widget buildDailyGoals(
                 color: ColorRes.green.shade400,
               ),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Expanded(
               child: buildStatItem(
-                value: '🔥 0',
+                value: '🔥 $currentStreak',
                 label: 'Current Streak',
                 color: ColorRes.orangeColor,
                 valueColor: ColorRes.orangeColor,
@@ -1990,6 +2341,7 @@ Widget _buildRecentLeads(DashboardController controller) {
           ],
         ),
       ),
+
       // Obx(
       //   () => ListView.separated(
       //     shrinkWrap: true,
@@ -2002,7 +2354,6 @@ Widget _buildRecentLeads(DashboardController controller) {
       //     },
       //   ),
       // ),
-      
     ],
   );
 }
@@ -2591,7 +2942,24 @@ String _formatTime(DateTime dateTime) {
   }
 }
 
-Widget buildMonthlyPerformance(DashboardController controller) {
+Widget buildMonthlyPerformance({ required String title,
+  required String levelName,
+  required IconData levelIcon,
+  required Color levelIconColor,
+  required List<String> benefits,
+  required double progressValue, // between 0.0 to 1.0
+  required String currentAmount,
+  required String targetAmount,
+  required String unlockMessage,
+  required int streakDays,
+  required String commissionCurrent,
+  required String commissionPrevious,
+  required String commissionChange,
+  required bool commissionPositive,
+  required String leadsCurrent,
+  required String leadsPrevious,
+  required String leadsChange,
+  required bool leadsPositive,}) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -2615,7 +2983,7 @@ Widget buildMonthlyPerformance(DashboardController controller) {
             ),
             const SizedBox(width: 8),
             Text(
-              'Monthly Performance',
+              '$title',
               style: TextStyle(
                 fontSize: AppFontSizes.body,
                 fontWeight: AppFontWeights.semiBold,
@@ -2653,14 +3021,14 @@ Widget buildMonthlyPerformance(DashboardController controller) {
                     ),
                     child: Icon(
                       Icons.emoji_events,
-                      color: ColorRes.orangeColor,
+                      color: levelIconColor,
                       size: 32,
                     ),
                   ),
                   const SizedBox(height: 12),
                   // Level Text
                   Text(
-                    'Noob Level',
+                    '$levelName',
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.bold,
@@ -2670,9 +3038,10 @@ Widget buildMonthlyPerformance(DashboardController controller) {
                   ),
                   const SizedBox(height: 12),
                   // Benefits
-                  buildBenefit('✓ Basic support'),
-                  const SizedBox(height: 6),
-                  buildBenefit('✓ Access to properties'),
+                  // buildBenefit('✓ Basic support'),
+                  // const SizedBox(height: 6),
+                  // buildBenefit('✓ Access to properties'),
+                  ...List.generate(benefits.length, (index)=>buildBenefit('✓ ${benefits[index]}'))
                 ],
               ),
             ),
@@ -2697,7 +3066,7 @@ Widget buildMonthlyPerformance(DashboardController controller) {
                     ),
                     const Spacer(),
                     Text(
-                      '₹0 ',
+                      '$currentAmount ',
                       style: TextStyle(
                         fontSize: AppFontSizes.small,
                         fontWeight: AppFontWeights.semiBold,
@@ -2705,7 +3074,7 @@ Widget buildMonthlyPerformance(DashboardController controller) {
                       ),
                     ),
                     Text(
-                      '/ ₹1L',
+                      '/ $targetAmount',
                       style: TextStyle(
                         fontSize: AppFontSizes.caption,
                         fontWeight: AppFontWeights.medium,
@@ -2718,7 +3087,7 @@ Widget buildMonthlyPerformance(DashboardController controller) {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
-                    value: 0.0,
+                    value: progressValue,
                     backgroundColor: ColorRes.leadGreyColor.withOpacity(0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       ColorRes.orangeColor,
@@ -2728,7 +3097,7 @@ Widget buildMonthlyPerformance(DashboardController controller) {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  '0%',
+                  '%${progressValue*100}',
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.leadGreyColor.shade600,
@@ -2760,7 +3129,9 @@ Widget buildMonthlyPerformance(DashboardController controller) {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          '₹1L more to unlock next level!',
+                          '$unlockMessage',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: AppFontSizes.small,
                             color: ColorRes.homeAmber.shade700,
@@ -2797,7 +3168,7 @@ Widget buildMonthlyPerformance(DashboardController controller) {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '1 day streak!',
+                        '$streakDays day streak!',
                         style: TextStyle(
                           fontSize: AppFontSizes.caption,
                           color: ColorRes.error,
@@ -2821,10 +3192,10 @@ Widget buildMonthlyPerformance(DashboardController controller) {
             buildMetricComparisonCard(
               icon: Icons.account_balance_wallet,
               title: 'Comission',
-              currentMonth: '₹2.9L',
-              previousMonth: '₹2.3L',
-              percentage: '25% increase',
-              isPositive: true,
+              currentMonth: '$commissionCurrent',
+              previousMonth: '$commissionPrevious',
+              percentage: '$commissionChange',
+              isPositive: commissionPositive,
             ),
             const SizedBox(height: 12),
             Divider(color: ColorRes.leadGreyColor.withOpacity(0.5)),
@@ -2833,10 +3204,10 @@ Widget buildMonthlyPerformance(DashboardController controller) {
             buildMetricComparisonCard(
               icon: Icons.people,
               title: 'Leads',
-              currentMonth: '3',
-              previousMonth: '0',
-              percentage: '0% increase',
-              isPositive: false,
+              currentMonth: leadsCurrent,
+              previousMonth: leadsPrevious,
+              percentage: leadsChange,
+              isPositive: leadsPositive,
             ),
           ],
         ),
@@ -2847,6 +3218,7 @@ Widget buildMonthlyPerformance(DashboardController controller) {
 
 Widget buildBenefit(String text) {
   return Container(
+    margin: EdgeInsets.only(bottom: 6),
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     decoration: BoxDecoration(
       color: ColorRes.purpleColor.withOpacity(0.08),
@@ -3034,8 +3406,8 @@ class MainNavigationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationController = Get.put(ResellerNavigationController());
-    Get.lazyPut(()=>DashboardController(),tag: "reseller");
-    Get.lazyPut(()=>LeadController(),tag: "reseller");
+    Get.lazyPut(() => DashboardController(), tag: "reseller");
+    Get.lazyPut(() => LeadController(), tag: "reseller");
 
     final screens = [
       const ResellerDashboardScreen(),
