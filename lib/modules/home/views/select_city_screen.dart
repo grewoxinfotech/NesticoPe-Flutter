@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
 import '../../../app/constants/color_res.dart';
@@ -38,6 +39,7 @@ class SelectCityScreen extends StatelessWidget {
                 ),
               ),
               onChanged: (value) {
+
                 if (value.trim().isNotEmpty) {
                   controller.fetchPredictionsCity(value.trim());
                 } else {
@@ -63,23 +65,101 @@ class SelectCityScreen extends StatelessWidget {
                   );
                 }
 
+                // return ListView.separated(
+                //   itemCount: controller.predictions.length,
+                //   separatorBuilder: (_, __) =>  SizedBox(height: 1),
+                //   itemBuilder: (context, index) {
+                //     final Prediction prediction = controller.predictions[index];
+                //     return ListTile(
+                //       title: Text(prediction.description.toString(),style: TextStyle(fontSize: AppFontSizes.small),),
+                //       onTap: () async {
+                //         // Extract city name only (e.g., "Ahmedabad" from "Ahmedabad, Gujarat, India")
+                //         final city =
+                //             prediction.description
+                //                 .toString()
+                //                 .split(',')
+                //                 .first
+                //                 .trim();
+                //         Get.back(result: city);
+                //       },
+                //     );
+                //   },
+                // );
                 return ListView.separated(
                   itemCount: controller.predictions.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (_, __) => Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Colors.grey.shade200,
+                  ),
                   itemBuilder: (context, index) {
                     final Prediction prediction = controller.predictions[index];
-                    return ListTile(
-                      title: Text(prediction.description.toString()),
+                    final description = prediction.description.toString();
+                    final parts = description.split(',').map((e) => e.trim()).toList();
+                    final city = parts.isNotEmpty ? parts[0] : '';
+                    final location = parts.length > 1 ? parts.sublist(1).join(', ') : '';
+                    return InkWell(
                       onTap: () async {
-                        // Extract city name only (e.g., "Ahmedabad" from "Ahmedabad, Gujarat, India")
                         final city =
-                            prediction.description
-                                .toString()
-                                .split(',')
-                                .first
-                                .trim();
+                        prediction.description
+                            .toString()
+                            .split(',')
+                            .first
+                            .trim();
                         Get.back(result: city);
                       },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.location_on_outlined,
+                                size: 20,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    city,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.small + 1,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  if (location.isNotEmpty) ...[
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      location,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.small - 1,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 14,
+                              color: Colors.grey.shade400,
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 );
