@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,7 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
-import 'package:housing_flutter_app/modules/home/views/home_screen.dart';
+import 'package:housing_flutter_app/modules/home/views/home_screen/home_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/property_price_trend/view/property_price_trend.dart';
@@ -30,11 +29,11 @@ class _RatingDetailState extends State<RatingDetail> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarDividerColor:ColorRes.transparentColor,
+        systemNavigationBarDividerColor: ColorRes.transparentColor,
         systemNavigationBarColor: Theme.of(context).secondaryHeaderColor,
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarIconBrightness: Brightness.dark,
-        statusBarColor:ColorRes.transparentColor,
+        statusBarColor: ColorRes.transparentColor,
       ),
       child: Scaffold(
         backgroundColor: ColorRes.white,
@@ -45,14 +44,13 @@ class _RatingDetailState extends State<RatingDetail> {
             mainAxisSize: MainAxisSize.min,
             children: [
               BlurredHeader(
-                    imagePath:
-                        widget.property.propertyMedia?.images?.isNotEmpty ??
-                                false
-                            ? widget.property.propertyMedia!.images![0]
-                            : 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?...',
-                    height: 200,
-                    onBack: () => Navigator.pop(context),
-                  ),
+                imagePath:
+                    widget.property.propertyMedia?.images?.isNotEmpty ?? false
+                        ? widget.property.propertyMedia!.images![0]
+                        : 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?...',
+                height: 200,
+                onBack: () => Navigator.pop(context),
+              ),
 
               const SizedBox(height: 16),
 
@@ -303,8 +301,8 @@ class _RatingDetailState extends State<RatingDetail> {
                     //   );
                     // }),
                     ...List.generate(widget.propertyController.items.length, (
-                        index,
-                        ) {
+                      index,
+                    ) {
                       final property = widget.propertyController.items[index];
                       print("Property: ${property.propertyDetails}");
 
@@ -314,24 +312,24 @@ class _RatingDetailState extends State<RatingDetail> {
                           title: property.title ?? 'Unknown Property',
                           address: property.address ?? "City",
                           imagePath:
-                          property.propertyMedia?.images?.isNotEmpty == true
-                              ? property.propertyMedia!.images!.first
-                              : 'assets/logo/Avant.jpg',
+                              property.propertyMedia?.images?.isNotEmpty == true
+                                  ? property.propertyMedia!.images!.first
+                                  : 'assets/logo/Avant.jpg',
                           rating: 4.2,
                           pricePerSqft:
-                          property
-                              .propertyDetails
-                              ?.financialInfo
-                              ?.pricePerSqft !=
-                              null
-                              ? int.tryParse(
-                            property
-                                .propertyDetails!
-                                .financialInfo!
-                                .pricePerSqft
-                                .toString(),
-                          )
-                              : null,
+                              property
+                                          .propertyDetails
+                                          ?.financialInfo
+                                          ?.pricePerSqft !=
+                                      null
+                                  ? int.tryParse(
+                                    property
+                                        .propertyDetails!
+                                        .financialInfo!
+                                        .pricePerSqft
+                                        .toString(),
+                                  )
+                                  : null,
                           showPercentage: true,
                           onTap: () {
                             print(
@@ -341,7 +339,6 @@ class _RatingDetailState extends State<RatingDetail> {
                         ),
                       );
                     }),
-
 
                     const SizedBox(height: 20),
                   ],

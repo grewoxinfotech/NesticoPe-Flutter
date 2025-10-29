@@ -7,7 +7,7 @@ import '../../../app/constants/color_res.dart';
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../dashboard/views/dashboard_screen.dart';
-import '../../home/views/select_city_screen.dart';
+import '../../home/views/select_city_screen/select_city_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

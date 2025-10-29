@@ -6,6 +6,7 @@ import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_h
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 
@@ -203,6 +204,15 @@ class ProfileScreen extends StatelessWidget {
                 subTitle: "Track your interactions",
                 onTap: () => Get.to(() => SavedPropertyScreen()),
               ),
+              if (!UserHelper.isGuest) ...[
+                SettingsMenuTile(
+                  icon: Icons.card_giftcard,
+                  title: "Referral",
+                  subTitle: "Refer And Earn",
+                  onTap: () => Get.to(() => ReferralProgramScreen()),
+                ),
+              ],
+
               SettingsMenuTile(
                 icon: Icons.diamond_outlined,
                 title: "Zero Brokerage Properties",

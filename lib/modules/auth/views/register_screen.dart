@@ -475,6 +475,60 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  Future<void> _reSellerRegister() async {
+    if (_formKey.currentState!.validate()) {
+      if (!_acceptTerms) {
+        _showErrorDialog('Please accept the terms and conditions');
+        return;
+      }
+
+      if (_selectedSellerType == null) {
+        _showErrorDialog('Please select seller type');
+        return;
+      }
+
+      setState(() => _isLoading = true);
+
+      try {
+        final data = {
+          "password": _passwordController.text.trim(),
+          "email": _emailController.text.trim(),
+          "firstName": _firstNameController.text.trim(),
+          "lastName": _lastNameController.text.trim(),
+          "address": _addressController.text.trim(),
+          "city": _cityController.text.trim(),
+          "state": _stateController.text.trim(),
+          "zip_code": _zipCodeController.text.trim(),
+          "username": _usernameController.text.trim(),
+        };
+        final authController = Get.find<AuthController>();
+        final success = await authController.sellerRegister(
+          context: context,
+          username: _usernameController.text.trim(),
+          phone: _phoneController.text.trim(),
+          referralCode: _referralCodeController.text.trim(),
+          sellerType: _selectedSellerType?.toLowerCase() ?? 'owner',
+          data: data,
+        );
+
+        // if (!success) {
+        //   _showErrorDialog(authController.errorMessage.value);
+        // } else {
+        //   // _showSuccessDialog();
+        //   NesticoPeSnackBar.showAwesomeSnackbar(
+        //     title: "Success",
+        //     message: "OTP sent Successfully",
+        //     contentType: ContentType.success,
+        //   );
+        // }
+      } catch (e) {
+        _showErrorDialog('Registration failed: ${e.toString()}');
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
+    }
+  }
+
   String _roleToString(UserRole role) {
     switch (role) {
       case UserRole.buyer:
@@ -867,7 +921,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: RichText(
                         text: TextSpan(
                           style: TextStyle(
-                            fontSize:  AppFontSizes.medium,
+                            fontSize: AppFontSizes.medium,
                             // fontSize: 14,
                             color: ColorRes.leadGreyColor.shade700,
                           ),
@@ -938,7 +992,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       case UserRole.seller:
         return _sellerRegister;
       case UserRole.reseller:
-        return 'reseller';
+        return _reSellerRegister;
       case UserRole.contractor:
         return 'contractor';
     }

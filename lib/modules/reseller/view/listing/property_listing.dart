@@ -2086,11 +2086,13 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
               if (!propertyController.isLoading.value &&
                   propertyController.items.isEmpty) {
-                return ErrorWidgetCustom(
-                  onPressed: () {
-                    fetchResellerAssignProperty();
-                  },
-                );
+                // return ErrorWidgetCustom(
+                //   onPressed: () {
+                //     fetchResellerAssignProperty();
+                //   },
+                // );
+
+                return Center(child: Text("No Listing Yet."));
               }
 
               // if (propertyController.filteredProducts.isEmpty) {

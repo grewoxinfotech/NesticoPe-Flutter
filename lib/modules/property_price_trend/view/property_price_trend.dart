@@ -1,5 +1,3 @@
-
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -10,7 +8,7 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
 import 'package:housing_flutter_app/app/utils/dummy_data.dart';
-import 'package:housing_flutter_app/modules/home/views/home_screen.dart';
+import 'package:housing_flutter_app/modules/home/views/home_screen/home_screen.dart';
 import 'package:housing_flutter_app/modules/home/widgets/home_header.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
@@ -74,7 +72,7 @@ class _PriceDetailsState extends State<PriceDetails> {
           systemNavigationBarColor: Theme.of(context).secondaryHeaderColor,
           systemNavigationBarIconBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.dark,
-          statusBarColor:ColorRes.transparentColor,
+          statusBarColor: ColorRes.transparentColor,
         ),
         child: Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -218,7 +216,8 @@ class _PriceDetailsState extends State<PriceDetails> {
                               SizedBox(
                                 height: 65,
                                 child: VerticalDivider(
-                                  color: ColorRes.leadGreyColor.shade300.withOpacity(0.8),
+                                  color: ColorRes.leadGreyColor.shade300
+                                      .withOpacity(0.8),
                                   indent: 6,
                                   endIndent: 6,
                                   thickness: 1,
@@ -393,7 +392,12 @@ class _PriceDetailsState extends State<PriceDetails> {
                                                 .first
                                             : 'assets/logo/Avant.jpg',
                                     percentageIncrease: percentage,
-                                    price: property.propertyDetails?.financialInfo?.price??0.0,
+                                    price:
+                                        property
+                                            .propertyDetails
+                                            ?.financialInfo
+                                            ?.price ??
+                                        0.0,
                                     onTap:
                                         () => print(
                                           "Tapped on ${property.title}",
@@ -475,7 +479,9 @@ class BlurredHeader extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: ColorRes.white,
-        border: Border(top: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1)),
+        border: Border(
+          top: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
+        ),
       ),
       child: Stack(
         fit: StackFit.expand,
@@ -486,7 +492,8 @@ class BlurredHeader extends StatelessWidget {
               imagePath,
               fit: BoxFit.cover,
               errorBuilder:
-                  (_, __, ___) => Container(color: ColorRes.leadGreyColor.shade200),
+                  (_, __, ___) =>
+                      Container(color: ColorRes.leadGreyColor.shade200),
             )
           else
             Image.asset(imagePath, fit: BoxFit.cover),

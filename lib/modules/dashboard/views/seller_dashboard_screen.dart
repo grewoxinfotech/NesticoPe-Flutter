@@ -127,7 +127,7 @@ import '../../../app/constants/size_manager.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../widgets/drawer/drawer.dart';
-import '../../home/views/home_screen.dart';
+import '../../home/views/home_screen/home_screen.dart';
 import '../../property/controllers/property_controller.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import '../../seller/module/lead_screen/views/lead_screen.dart';

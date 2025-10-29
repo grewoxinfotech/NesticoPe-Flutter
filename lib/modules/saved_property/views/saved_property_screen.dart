@@ -226,7 +226,12 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
 
   final List<String> tabs = ["Saved", "Seen", "Contacted", "Recent"];
 
-  final List<String> tabsCount = [FavoriteManager().favorites.length.toString(), "10", "05", "12"];
+  final List<String> tabsCount = [
+    FavoriteManager().favorites.length.toString(),
+    "10",
+    "05",
+    "12",
+  ];
 
   final List<IconData> tabsIcon = [
     Icons.favorite_border_rounded,
@@ -283,7 +288,9 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                                   : ColorRes.white,
                           border: Border.all(
                             color:
-                                isSelected ? ColorRes.primary : ColorRes.leadGreyColor[300]!,
+                                isSelected
+                                    ? ColorRes.primary
+                                    : ColorRes.leadGreyColor[300]!,
                             width: 1.5,
                           ),
                         ),
@@ -294,7 +301,9 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                               tabsIcon[index],
                               size: 20,
                               color:
-                                  isSelected ? ColorRes.primary : ColorRes.blackShade54,
+                                  isSelected
+                                      ? ColorRes.primary
+                                      : ColorRes.blackShade54,
                             ),
                             // SizedBox(height: AppSpacing.small),
                             Text(
@@ -359,7 +368,10 @@ class SeenPropertiesTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      child: PropertyDetail(isAppBarShow: false,backgroundColor: ColorRes.leadGreyColor[100]!,),
+      child: PropertyDetail(
+        isAppBarShow: false,
+        backgroundColor: ColorRes.leadGreyColor[100]!,
+      ),
       // child: Container(),
 
       // child: RefreshIndicator(
@@ -439,10 +451,7 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
             itemCount: favoriteProperties.length,
             itemBuilder: (context, index) {
               final data = favoriteProperties[index];
-              return PropertyCardWidget(
-                property: data,
-                role: "",
-              );
+              return PropertyCardWidget(property: data, role: "");
             },
           ),
         );
@@ -450,8 +459,6 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
     );
   }
 }
-
-
 
 class ContactedPropertiesTab extends StatelessWidget {
   const ContactedPropertiesTab({super.key});

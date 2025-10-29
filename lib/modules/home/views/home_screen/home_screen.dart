@@ -35,18 +35,18 @@ import 'package:housing_flutter_app/modules/seller/view/widget/seller_list.dart'
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../app/constants/color_res.dart';
-import '../../../app/utils/file_upload_section/file_upload_section.dart';
-import '../../../data/network/news/news_model.dart';
-import '../../builder/view/builder_form_screen.dart';
-import '../../builder/view/builder_main_screen.dart';
-import '../../dashboard/views/dashboard_screen.dart';
-import '../../news/view/news_detail_screen.dart';
-import '../../other/trending_city/controllers/trending_city_controller.dart';
-import '../../platform_service/views/widgets/platform_service_card.dart';
-import '../../property/views/widgets/city_filter.dart';
-import '../../property/views/widgets/property_card.dart';
-import '../../reseller/view/property_reseller.dart';
+import '../../../../app/constants/color_res.dart';
+import '../../../../app/utils/file_upload_section/file_upload_section.dart';
+import '../../../../data/network/news/news_model.dart';
+import '../../../builder/view/builder_form_screen.dart';
+import '../../../builder/view/builder_main_screen.dart';
+import '../../../dashboard/views/dashboard_screen.dart';
+import '../../../news/view/news_detail_screen.dart';
+import '../../../other/trending_city/controllers/trending_city_controller.dart';
+import '../../../platform_service/views/widgets/platform_service_card.dart';
+import '../../../property/views/widgets/city_filter.dart';
+import '../../../property/views/widgets/property_card.dart';
+import '../../../reseller/view/property_reseller.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Map<String, String>> propertyTypes;

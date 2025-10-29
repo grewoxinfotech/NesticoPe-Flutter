@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
-import 'package:housing_flutter_app/modules/home/views/home_screen.dart';
+import 'package:housing_flutter_app/modules/home/views/home_screen/home_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/seller/controllers/seller_overview_controller.dart';
 import 'package:housing_flutter_app/modules/seller/model/overview_model.dart';
@@ -194,15 +194,9 @@ final List<Map<String, dynamic>> propertiesOverview = [
   },
 ];
 
-
 ///============================================= UnChange Comment =====================================================
 
 ///=========================================== UnChange Comment =======================================================
-
-
-
-
-
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -255,7 +249,10 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       children: [
                         // Top Bar
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,8 +260,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-
-                                   Text(
+                                  Text(
                                     "Welcome, Seller",
                                     style: TextStyle(
                                       color: ColorRes.white,
@@ -273,7 +269,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                     ),
                                   ),
 
-                                   Text(
+                                  Text(
                                     "Sell or rent your property faster",
                                     style: TextStyle(
                                       color: ColorRes.white,
@@ -310,9 +306,9 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                               GestureDetector(
                                 onTap: () {
                                   Get.to(
-                                        () => ProfileScreen(
+                                    () => ProfileScreen(
                                       imageUrl:
-                                      "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
                                     ),
                                   );
                                 },
@@ -363,9 +359,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       child: Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
                             child: Row(
                               children: [
                                 TitleWithViewAll(
@@ -379,16 +373,26 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                 //   title: "Explore",
                                 //   showViewAll: false,
                                 // ),
-                                TextButton(onPressed: () {
-                                  Get.to(() => PropertyOverviewScreen(properties: controller.items));
-                                }, child: Text('Explore',style: TextStyle(fontSize: AppFontSizes.small),))
+                                TextButton(
+                                  onPressed: () {
+                                    Get.to(
+                                      () => PropertyOverviewScreen(
+                                        properties: controller.items,
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'Explore',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.small,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Obx(() {
                               if (controller.isLoading.value &&
                                   controller.items.isEmpty) {
@@ -411,196 +415,226 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                             }),
                           ),
                           const SizedBox(height: 20),
-                        Padding(
-                          padding:  EdgeInsets.symmetric(horizontal: 16,vertical: 12),
-                          child: Column(
-                            children: [
-                              buildMonthlyPerformance(
-                                title: 'Monthly Performance',
-                                levelName: 'Pro Level',
-                                levelIcon: Icons.star,
-                                levelIconColor: ColorRes.orangeColor,
-                                benefits: ['Priority Support', 'Access to Premium Listings'],
-                                progressValue: 0.65,
-                                currentAmount: '₹65K',
-                                targetAmount: '₹1L',
-                                unlockMessage: '₹35K more to unlock next level!',
-                                streakDays: 7,
-                                commissionCurrent: '₹2.9L',
-                                commissionPrevious: '₹2.3L',
-                                commissionChange: '25% increase',
-                                commissionPositive: true,
-                                leadsCurrent: '12',
-                                leadsPrevious: '9',
-                                leadsChange: '33% increase',
-                                leadsPositive: true,
-                              ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: Column(
+                              children: [
+                                buildMonthlyPerformance(
+                                  title: 'Monthly Performance',
+                                  levelName: 'Pro Level',
+                                  levelIcon: Icons.star,
+                                  levelIconColor: ColorRes.orangeColor,
+                                  benefits: [
+                                    'Priority Support',
+                                    'Access to Premium Listings',
+                                  ],
+                                  progressValue: 0.65,
+                                  currentAmount: '₹65K',
+                                  targetAmount: '₹1L',
+                                  unlockMessage:
+                                      '₹35K more to unlock next level!',
+                                  streakDays: 7,
+                                  commissionCurrent: '₹2.9L',
+                                  commissionPrevious: '₹2.3L',
+                                  commissionChange: '25% increase',
+                                  commissionPositive: true,
+                                  leadsCurrent: '12',
+                                  leadsPrevious: '9',
+                                  leadsChange: '33% increase',
+                                  leadsPositive: true,
+                                ),
 
-                              const SizedBox(height: 20),
-                              buildDailyGoals(
-                                title: 'Daily Goal',
-                                goalText: 'Try to generate 5 leads today',
-                                date: '27 Oct 2025',
-                                currentStep: 3,
-                                totalSteps: 5,
-                                currentStreak: 2,
-                                primaryColor: ColorRes.purpleColor.shade500,
-                                accentColor: ColorRes.homeAmber.shade800,
-                                context: context,
-                              ),
-                              const SizedBox(height: 20),
-                              buildBestResellerOnTheMonth(
-                                month: "October",
-                                year: "2025",
-                                totalCommission: "₹2.9L",
-                                commissionSubtitle: "2,85,000 earned this month",
-                                level: "Noob",
-                                levelSubtitle: "0% to next level",
-                                totalLeads: "8",
-                                leadsSubtitle: "Generated this month",
-                                commissionColor: ColorRes.success,
-                                levelColor: ColorRes.purpleColor.shade800,
-                                leadsColor: ColorRes.blueColor,
-                              ),
-                              const SizedBox(height: 20),
-                              resellerLeaderBoard(
-                                title: 'Leaderboard',
-                                bannerTitle: 'Top 10 (Overall)',
-                                bannerSubtitle: 'Gets Extra Rewards',
-                                leaderboardData: [
-                                  {
-                                    'rank': 1,
-                                    'name': 'Rajesh Kumar',
-                                    'tier': 'Platinum',
-                                    'amount': '₹35L',
-                                    'emoji': '👨',
-                                    'isTopRank': true,
-                                  },
-                                  {
-                                    'rank': 2,
-                                    'name': 'Priya Sharma',
-                                    'tier': 'Platinum',
-                                    'amount': '₹32L',
-                                    'emoji': '👩',
-                                    'isTopRank': true,
-                                  },
-                                  {
-                                    'rank': 3,
-                                    'name': 'You',
-                                    'tier': 'Gold',
-                                    'amount': '₹29L',
-                                    'emoji': '⭐',
-                                    'isCurrentUser': true,
-                                  },
-                                  {
-                                    'rank': 4,
-                                    'name': 'Amit Patel',
-                                    'tier': 'Gold',
-                                    'amount': '₹24L',
-                                    'emoji': '👨',
-                                  },
-                                  {
-                                    'rank': 5,
-                                    'name': 'Neha Desai',
-                                    'tier': 'Silver',
-                                    'amount': '₹21L',
-                                    'emoji': '👩',
-                                    'isLast': true,
-                                  },
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              buildLeaderBoardRanking(
-                                title: 'Leaderboard Rankings',
-                                subtitle: 'Top performers across regions',
-                                filters: ['All', 'City-wise', 'Monthly'],
-                                leaderboardData: [
-                                  {
-                                    'rank': 1,
-                                    'name': 'Rajesh Kumar',
-                                    'level': 'Platinum Level',
-                                    'city': 'Ahmedabad',
-                                    'sales': '₹35L',
-                                    'deals': '70',
-                                    'color': ColorRes.orangeColor.withOpacity(0.05),
-                                    'borderColor': ColorRes.orangeColor.withOpacity(0.3),
-                                    'medalIcon': Icons.emoji_events,
-                                  },
-                                  {
-                                    'rank': 2,
-                                    'name': 'Priya Sharma',
-                                    'level': 'Platinum Level',
-                                    'city': 'Ahmedabad',
-                                    'sales': '₹32L',
-                                    'deals': '64',
-                                    'color': ColorRes.orangeColor.withOpacity(0.05),
-                                    'borderColor': ColorRes.orangeColor.withOpacity(0.3),
-                                    'medalIcon': Icons.emoji_events,
-                                  },
-                                  {
-                                    'rank': 3,
-                                    'name': 'You',
-                                    'level': 'Gold Level',
-                                    'city': 'Ahmedabad',
-                                    'sales': '₹29L',
-                                    'deals': '57',
-                                    'color': ColorRes.green.withOpacity(0.05),
-                                    'borderColor': ColorRes.green.withOpacity(0.3),
-                                    'medalIcon': Icons.emoji_events,
-                                    'isCurrentUser': true,
-                                  },
-                                  {
-                                    'rank': 4,
-                                    'name': 'Amit Patel',
-                                    'level': 'Gold Level',
-                                    'city': 'Ahmedabad',
-                                    'sales': '₹24L',
-                                    'deals': '48',
-                                    'color': ColorRes.leadGreyColor.withOpacity(0.05),
-                                    'borderColor': ColorRes.leadGreyColor.withOpacity(0.3),
-                                    'medalIcon': null,
-                                  },
-                                  {
-                                    'rank': 5,
-                                    'name': 'Neha Desai',
-                                    'level': 'Silver Level',
-                                    'city': 'Ahmedabad',
-                                    'sales': '₹21L',
-                                    'deals': '42',
-                                    'color': ColorRes.blueColor.withOpacity(0.05),
-                                    'borderColor': ColorRes.blueColor.withOpacity(0.3),
-                                    'medalIcon': null,
-                                  },
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              buildReferralProgram(
-                                context: context,
-                                bonus: 5000,
-                                currentProgress: 4,
-                                targetProgress: 10,
-                                title: 'Referral Program',
-                                subtitle: 'Get ₹5000 for every new active reseller',
-                                pointsEarned: '2400',
-                                totalEarnings: '₹4K',
-                                earningSubtitle: '8 x ₹5000 each',
-                                referralCode: 'REF12345',
-                                leftIcon: Icons.card_giftcard_rounded,
-                                iconColor: ColorRes.textPrimary,
-                                iconBackground: ColorRes.textPrimary.withOpacity(0.08),
-                                card1BorderColor: ColorRes.homeAmber.withOpacity(0.3),
-                                card1BgColor: ColorRes.homeAmber.withOpacity(0.08),
-                                card2BorderColor: ColorRes.green.withOpacity(0.3),
-                                card2BgColor: ColorRes.green.withOpacity(0.08),
-                              ),
-                              const SizedBox(height: 20),
-                              buildLeadGraph(),
-                              const SizedBox(height: 20),
-                              buildCommissionGraph(),
-                              const SizedBox(height: 20),
-                            ],
+                                const SizedBox(height: 20),
+                                buildDailyGoals(
+                                  title: 'Daily Goal',
+                                  goalText: 'Try to generate 5 leads today',
+                                  date: '27 Oct 2025',
+                                  currentStep: 3,
+                                  totalSteps: 5,
+                                  currentStreak: 2,
+                                  primaryColor: ColorRes.purpleColor.shade500,
+                                  accentColor: ColorRes.homeAmber.shade800,
+                                  context: context,
+                                ),
+                                const SizedBox(height: 20),
+                                buildBestResellerOnTheMonth(
+                                  month: "October",
+                                  year: "2025",
+                                  totalCommission: "₹2.9L",
+                                  commissionSubtitle:
+                                      "2,85,000 earned this month",
+                                  level: "Noob",
+                                  levelSubtitle: "0% to next level",
+                                  totalLeads: "8",
+                                  leadsSubtitle: "Generated this month",
+                                  commissionColor: ColorRes.success,
+                                  levelColor: ColorRes.purpleColor.shade800,
+                                  leadsColor: ColorRes.blueColor,
+                                ),
+                                const SizedBox(height: 20),
+                                resellerLeaderBoard(
+                                  title: 'Leaderboard',
+                                  bannerTitle: 'Top 10 (Overall)',
+                                  bannerSubtitle: 'Gets Extra Rewards',
+                                  leaderboardData: [
+                                    {
+                                      'rank': 1,
+                                      'name': 'Rajesh Kumar',
+                                      'tier': 'Platinum',
+                                      'amount': '₹35L',
+                                      'emoji': '👨',
+                                      'isTopRank': true,
+                                    },
+                                    {
+                                      'rank': 2,
+                                      'name': 'Priya Sharma',
+                                      'tier': 'Platinum',
+                                      'amount': '₹32L',
+                                      'emoji': '👩',
+                                      'isTopRank': true,
+                                    },
+                                    {
+                                      'rank': 3,
+                                      'name': 'You',
+                                      'tier': 'Gold',
+                                      'amount': '₹29L',
+                                      'emoji': '⭐',
+                                      'isCurrentUser': true,
+                                    },
+                                    {
+                                      'rank': 4,
+                                      'name': 'Amit Patel',
+                                      'tier': 'Gold',
+                                      'amount': '₹24L',
+                                      'emoji': '👨',
+                                    },
+                                    {
+                                      'rank': 5,
+                                      'name': 'Neha Desai',
+                                      'tier': 'Silver',
+                                      'amount': '₹21L',
+                                      'emoji': '👩',
+                                      'isLast': true,
+                                    },
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                buildLeaderBoardRanking(
+                                  title: 'Leaderboard Rankings',
+                                  subtitle: 'Top performers across regions',
+                                  filters: ['All', 'City-wise', 'Monthly'],
+                                  leaderboardData: [
+                                    {
+                                      'rank': 1,
+                                      'name': 'Rajesh Kumar',
+                                      'level': 'Platinum Level',
+                                      'city': 'Ahmedabad',
+                                      'sales': '₹35L',
+                                      'deals': '70',
+                                      'color': ColorRes.orangeColor.withOpacity(
+                                        0.05,
+                                      ),
+                                      'borderColor': ColorRes.orangeColor
+                                          .withOpacity(0.3),
+                                      'medalIcon': Icons.emoji_events,
+                                    },
+                                    {
+                                      'rank': 2,
+                                      'name': 'Priya Sharma',
+                                      'level': 'Platinum Level',
+                                      'city': 'Ahmedabad',
+                                      'sales': '₹32L',
+                                      'deals': '64',
+                                      'color': ColorRes.orangeColor.withOpacity(
+                                        0.05,
+                                      ),
+                                      'borderColor': ColorRes.orangeColor
+                                          .withOpacity(0.3),
+                                      'medalIcon': Icons.emoji_events,
+                                    },
+                                    {
+                                      'rank': 3,
+                                      'name': 'You',
+                                      'level': 'Gold Level',
+                                      'city': 'Ahmedabad',
+                                      'sales': '₹29L',
+                                      'deals': '57',
+                                      'color': ColorRes.green.withOpacity(0.05),
+                                      'borderColor': ColorRes.green.withOpacity(
+                                        0.3,
+                                      ),
+                                      'medalIcon': Icons.emoji_events,
+                                      'isCurrentUser': true,
+                                    },
+                                    {
+                                      'rank': 4,
+                                      'name': 'Amit Patel',
+                                      'level': 'Gold Level',
+                                      'city': 'Ahmedabad',
+                                      'sales': '₹24L',
+                                      'deals': '48',
+                                      'color': ColorRes.leadGreyColor
+                                          .withOpacity(0.05),
+                                      'borderColor': ColorRes.leadGreyColor
+                                          .withOpacity(0.3),
+                                      'medalIcon': null,
+                                    },
+                                    {
+                                      'rank': 5,
+                                      'name': 'Neha Desai',
+                                      'level': 'Silver Level',
+                                      'city': 'Ahmedabad',
+                                      'sales': '₹21L',
+                                      'deals': '42',
+                                      'color': ColorRes.blueColor.withOpacity(
+                                        0.05,
+                                      ),
+                                      'borderColor': ColorRes.blueColor
+                                          .withOpacity(0.3),
+                                      'medalIcon': null,
+                                    },
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                buildReferralProgram(
+                                  context: context,
+                                  bonus: 5000,
+                                  currentProgress: 4,
+                                  targetProgress: 10,
+                                  title: 'Referral Program',
+                                  subtitle:
+                                      'Get ₹5000 for every new active reseller',
+                                  pointsEarned: '2400',
+                                  totalEarnings: '₹4K',
+                                  earningSubtitle: '8 x ₹5000 each',
+                                  referralCode: 'REF12345',
+                                  leftIcon: Icons.card_giftcard_rounded,
+                                  iconColor: ColorRes.textPrimary,
+                                  iconBackground: ColorRes.textPrimary
+                                      .withOpacity(0.08),
+                                  card1BorderColor: ColorRes.homeAmber
+                                      .withOpacity(0.3),
+                                  card1BgColor: ColorRes.homeAmber.withOpacity(
+                                    0.08,
+                                  ),
+                                  card2BorderColor: ColorRes.green.withOpacity(
+                                    0.3,
+                                  ),
+                                  card2BgColor: ColorRes.green.withOpacity(
+                                    0.08,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                buildLeadGraph(),
+                                const SizedBox(height: 20),
+                                buildCommissionGraph(),
+                                const SizedBox(height: 20),
+                              ],
+                            ),
                           ),
-                        ),
 
                           // Padding(
                           //   padding: const EdgeInsets.symmetric(
@@ -642,9 +676,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                           // ),
                           // const SizedBox(height: 12),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: const CustomerSupportCard(
                               email: "abc@support.com",
                               phone: "+1 234 567 890",
@@ -665,7 +697,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
   }
 }
 
-
 class OverViewCard extends StatelessWidget {
   final List<Items> property;
   final SellerOverviewModel overview;
@@ -684,9 +715,9 @@ class OverViewCard extends StatelessWidget {
     final totalViews =
         data?.propertyMetrics?.viewsHistory?.fold<int>(
           0,
-              (sum, item) => sum + (item.views ?? 0),
+          (sum, item) => sum + (item.views ?? 0),
         ) ??
-            0;
+        0;
     final totalLeads = data?.leadAnalytics?.totalLeads ?? 0;
     final totalVisits = data?.engagementMetrics?.totalVisits ?? 0;
     final convertedVisits = data?.engagementMetrics?.convertedVisits ?? 0;
@@ -699,25 +730,25 @@ class OverViewCard extends StatelessWidget {
         "title": "Views",
         "value": _formatValue(totalViews),
         "icon": Icons.remove_red_eye_outlined,
-        "color":ColorRes.builderGridPurple
+        "color": ColorRes.builderGridPurple,
       },
       {
         "title": "Visits",
         "value": _formatValue(totalVisits),
         "icon": Icons.travel_explore,
-        "color":ColorRes.builderGridPink
+        "color": ColorRes.builderGridPink,
       },
       {
         "title": "Converted Visits",
         "value": _formatValue(convertedVisits),
         "icon": Icons.check_circle_outline,
-        "color":ColorRes.builderGridPurple
+        "color": ColorRes.builderGridPurple,
       },
       {
         "title": "Leads",
         "value": _formatValue(totalLeads),
         "icon": Icons.people_alt_outlined,
-        "color":ColorRes.builderGridLightYellow
+        "color": ColorRes.builderGridLightYellow,
       },
     ];
 
@@ -725,7 +756,6 @@ class OverViewCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-
         GridView.builder(
           shrinkWrap: true,
           padding: EdgeInsets.zero,
@@ -739,12 +769,12 @@ class OverViewCard extends StatelessWidget {
           itemCount: overviewData.length,
           itemBuilder: (context, index) {
             final item = overviewData[index];
-            final color=item['color'] as Color;
+            final color = item['color'] as Color;
             return buildMetricCard(
               item['title'].toString(),
               item['value'].toString(),
               item['icon'] as IconData,
-               color,
+              color,
             );
           },
         ),
@@ -849,12 +879,18 @@ class AddonCard extends StatelessWidget {
             // const SizedBox(height: 8),
             Text(
               title,
-              style:  TextStyle(fontSize: AppFontSizes.body, fontWeight: AppFontWeights.extraBold),
+              style: TextStyle(
+                fontSize: AppFontSizes.body,
+                fontWeight: AppFontWeights.extraBold,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               description,
-              style: TextStyle(fontSize: AppFontSizes.bodySmall, color: ColorRes.leadGreyColor[700]),
+              style: TextStyle(
+                fontSize: AppFontSizes.bodySmall,
+                color: ColorRes.leadGreyColor[700],
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -864,7 +900,7 @@ class AddonCard extends StatelessWidget {
               children: [
                 Text(
                   '\$${price.toStringAsFixed(2)}',
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: AppFontSizes.bodyMedium,
                     fontWeight: AppFontWeights.extraBold,
                     color: ColorRes.success,
@@ -882,9 +918,12 @@ class AddonCard extends StatelessWidget {
                       horizontal: 12,
                     ),
                   ),
-                  child:  Text(
+                  child: Text(
                     'Add',
-                    style: TextStyle(fontSize: AppFontSizes.bodySmall, fontWeight: AppFontWeights.extraBold),
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      fontWeight: AppFontWeights.extraBold,
+                    ),
                   ),
                 ),
               ],
@@ -1014,9 +1053,9 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
                       fontSize: AppFontSizes.medium,
                       fontWeight: AppFontWeights.semiBold,
                       color:
-                      plan.isPopular
-                          ? widget.primaryColor
-                          : const Color(0xFF4A4A4A),
+                          plan.isPopular
+                              ? widget.primaryColor
+                              : const Color(0xFF4A4A4A),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -1035,9 +1074,9 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
 
     return Column(
       children:
-      allFeatures.map((featureName) {
-        return _buildFeatureRow(featureName);
-      }).toList(),
+          allFeatures.map((featureName) {
+            return _buildFeatureRow(featureName);
+          }).toList(),
     );
   }
 
@@ -1063,7 +1102,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
             flex: 2,
             child: Text(
               featureName,
-              style:  TextStyle(
+              style: TextStyle(
                 fontSize: AppFontSizes.small,
                 fontWeight: AppFontWeights.medium,
                 color: Color(0xFF4A4A4A),
@@ -1081,7 +1120,7 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
 
   Widget _buildFeatureValue(PlanFeature? feature) {
     if (feature == null) {
-      return  Text(
+      return Text(
         "-",
         style: TextStyle(
           fontSize: AppFontSizes.medium,
@@ -1125,7 +1164,10 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
             ),
             Text(
               '${feature.value.toInt()}%',
-              style:  TextStyle(fontSize: AppFontSizes.extraSmall, fontWeight: AppFontWeights.extraBold),
+              style: TextStyle(
+                fontSize: AppFontSizes.extraSmall,
+                fontWeight: AppFontWeights.extraBold,
+              ),
             ),
           ],
         );
@@ -1136,9 +1178,9 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
             fontSize: AppFontSizes.bodySmall,
             fontWeight: AppFontWeights.medium,
             color:
-            feature.isHighlight
-                ? widget.primaryColor
-                : const Color(0xFF4A4A4A),
+                feature.isHighlight
+                    ? widget.primaryColor
+                    : const Color(0xFF4A4A4A),
           ),
           textAlign: TextAlign.center,
         );
@@ -1149,9 +1191,9 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
             fontSize: AppFontSizes.bodySmall,
             fontWeight: AppFontWeights.medium,
             color:
-            feature.isHighlight
-                ? widget.primaryColor
-                : const Color(0xFF4A4A4A),
+                feature.isHighlight
+                    ? widget.primaryColor
+                    : const Color(0xFF4A4A4A),
           ),
           textAlign: TextAlign.center,
         );
@@ -1163,73 +1205,73 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
       child: Row(
         children:
-        widget.plans.map((plan) {
-          int index = widget.plans.indexOf(plan);
-          bool isSelected = selectedPlanIndex == index;
+            widget.plans.map((plan) {
+              int index = widget.plans.indexOf(plan);
+              bool isSelected = selectedPlanIndex == index;
 
-          return Expanded(
-            child: Container(
-              margin: EdgeInsets.only(left: index > 0 ? 8 : 0),
-              child: Column(
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    width: double.infinity,
-                    height: 45,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          selectedPlanIndex = index;
-                        });
-                        widget.onPlanSelected?.call(plan);
-                        _showPlanDetails(plan);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                        plan.isPopular
-                            ? widget.primaryColor
-                            : ColorRes.leadGreyColor[200],
-                        foregroundColor:
-                        plan.isPopular
-                            ? ColorRes.white
-                            : ColorRes.leadGreyColor[700],
-                        elevation: isSelected ? 8 : 2,
-                        // shadowColor: (plan.isPopular
-                        //         ? widget.primaryColor
-                        //         : widget.secondaryColor)
-                        //     .withOpacity(0.3),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+              return Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(left: index > 0 ? 8 : 0),
+                  child: Column(
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        width: double.infinity,
+                        height: 45,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedPlanIndex = index;
+                            });
+                            widget.onPlanSelected?.call(plan);
+                            _showPlanDetails(plan);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                plan.isPopular
+                                    ? widget.primaryColor
+                                    : ColorRes.leadGreyColor[200],
+                            foregroundColor:
+                                plan.isPopular
+                                    ? ColorRes.white
+                                    : ColorRes.leadGreyColor[700],
+                            elevation: isSelected ? 8 : 2,
+                            // shadowColor: (plan.isPopular
+                            //         ? widget.primaryColor
+                            //         : widget.secondaryColor)
+                            //     .withOpacity(0.3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            plan.buttonText,
+                            style: TextStyle(
+                              fontWeight: AppFontWeights.semiBold,
+                              fontSize: AppFontSizes.bodySmall,
+                            ),
+                          ),
                         ),
                       ),
-                      child: Text(
-                        plan.buttonText,
-                        style:  TextStyle(
-                          fontWeight: AppFontWeights.semiBold,
-                          fontSize: AppFontSizes.bodySmall,
-                        ),
-                      ),
-                    ),
+                      // const SizedBox(height: 8),
+                      // TextButton(
+                      //   onPressed: () {
+                      //     _showPlanDetails(plan);
+                      //   },
+                      //   child: Text(
+                      //     'Know More',
+                      //     style: TextStyle(
+                      //       color: widget.primaryColor,
+                      //       fontSize: 12,
+                      //       decoration: TextDecoration.underline,
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
                   ),
-                  // const SizedBox(height: 8),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     _showPlanDetails(plan);
-                  //   },
-                  //   child: Text(
-                  //     'Know More',
-                  //     style: TextStyle(
-                  //       color: widget.primaryColor,
-                  //       fontSize: 12,
-                  //       decoration: TextDecoration.underline,
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
+                ),
+              );
+            }).toList(),
       ),
     );
   }
@@ -1241,72 +1283,72 @@ class _PricingComparisonWidgetState extends State<PricingComparisonWidget>
       backgroundColor: ColorRes.transparentColor,
       builder:
           (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.7,
-        decoration: BoxDecoration(
-          color: widget.backgroundColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: ColorRes.leadGreyColor[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
+            height: MediaQuery.of(context).size.height * 0.7,
+            decoration: BoxDecoration(
+              color: widget.backgroundColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
-              const SizedBox(height: 20),
-              Text(
-                plan.name,
-                style: TextStyle(
-                  fontSize: AppFontSizes.subtitle,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: widget.primaryColor,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView(
-                  children:
-                  plan.features.entries.map((entry) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
                       decoration: BoxDecoration(
-                        color: ColorRes.leadGreyColor[50],
-                        borderRadius: BorderRadius.circular(12),
+                        color: ColorRes.leadGreyColor[300],
+                        borderRadius: BorderRadius.circular(2),
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              entry.key,
-                              style:  TextStyle(
-                                fontSize: AppFontSizes.medium,
-                                fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    plan.name,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.subtitle,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: widget.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: ListView(
+                      children:
+                          plan.features.entries.map((entry) {
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: ColorRes.leadGreyColor[50],
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                            ),
-                          ),
-                          _buildFeatureValue(entry.value),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      entry.key,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight: AppFontWeights.medium,
+                                      ),
+                                    ),
+                                  ),
+                                  _buildFeatureValue(entry.value),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 }
@@ -1447,9 +1489,12 @@ class CustomerSupportCard extends StatelessWidget {
               children: [
                 Icon(Icons.support_agent, color: ColorRes.primary),
                 const SizedBox(width: 8),
-                 Text(
+                Text(
                   "Customer Support",
-                  style: TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.semiBold),
+                  style: TextStyle(
+                    fontSize: AppFontSizes.large,
+                    fontWeight: AppFontWeights.semiBold,
+                  ),
                 ),
               ],
             ),
@@ -1466,7 +1511,10 @@ class CustomerSupportCard extends StatelessWidget {
                   Icon(Icons.email_outlined, color: ColorRes.primary),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(email, style:  TextStyle(fontSize: AppFontSizes.body)),
+                    child: Text(
+                      email,
+                      style: TextStyle(fontSize: AppFontSizes.body),
+                    ),
                   ),
                 ],
               ),
@@ -1483,7 +1531,10 @@ class CustomerSupportCard extends StatelessWidget {
                   Icon(Icons.phone_outlined, color: ColorRes.primary),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(phone, style:  TextStyle(fontSize: AppFontSizes.body)),
+                    child: Text(
+                      phone,
+                      style: TextStyle(fontSize: AppFontSizes.body),
+                    ),
                   ),
                 ],
               ),

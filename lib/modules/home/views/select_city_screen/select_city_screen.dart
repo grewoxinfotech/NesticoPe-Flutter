@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
-import '../../../app/constants/color_res.dart';
-import '../../search_property/controller/search_controller.dart';
+import '../../../../app/constants/color_res.dart';
+import '../../../search_property/controller/search_controller.dart';
 
 class SelectCityScreen extends StatelessWidget {
   SelectCityScreen({super.key});
@@ -39,7 +39,6 @@ class SelectCityScreen extends StatelessWidget {
                 ),
               ),
               onChanged: (value) {
-
                 if (value.trim().isNotEmpty) {
                   controller.fetchPredictionsCity(value.trim());
                 } else {
@@ -87,29 +86,35 @@ class SelectCityScreen extends StatelessWidget {
                 // );
                 return ListView.separated(
                   itemCount: controller.predictions.length,
-                  separatorBuilder: (_, __) => Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Colors.grey.shade200,
-                  ),
+                  separatorBuilder:
+                      (_, __) => Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: Colors.grey.shade200,
+                      ),
                   itemBuilder: (context, index) {
                     final Prediction prediction = controller.predictions[index];
                     final description = prediction.description.toString();
-                    final parts = description.split(',').map((e) => e.trim()).toList();
+                    final parts =
+                        description.split(',').map((e) => e.trim()).toList();
                     final city = parts.isNotEmpty ? parts[0] : '';
-                    final location = parts.length > 1 ? parts.sublist(1).join(', ') : '';
+                    final location =
+                        parts.length > 1 ? parts.sublist(1).join(', ') : '';
                     return InkWell(
                       onTap: () async {
                         final city =
-                        prediction.description
-                            .toString()
-                            .split(',')
-                            .first
-                            .trim();
+                            prediction.description
+                                .toString()
+                                .split(',')
+                                .first
+                                .trim();
                         Get.back(result: city);
                       },
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         child: Row(
                           children: [
                             Container(

@@ -5,7 +5,7 @@ import 'package:housing_flutter_app/app/constants/img_res.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
-import '../../home/views/home_screen.dart';
+import '../../home/views/home_screen/home_screen.dart';
 import '../../property_rating/view/top_rated_property.dart';
 
 class InsightsScreen extends StatelessWidget {
@@ -18,7 +18,10 @@ class InsightsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Insights in Mumbai",
-          style: TextStyle(fontSize: AppFontSizes.bodyMedium, fontWeight: AppFontWeights.medium),
+          style: TextStyle(
+            fontSize: AppFontSizes.bodyMedium,
+            fontWeight: AppFontWeights.medium,
+          ),
         ),
       ),
       body: SafeArea(
@@ -68,7 +71,7 @@ class InsightsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.blackShade54,
-                    fontWeight:AppFontWeights.regular,
+                    fontWeight: AppFontWeights.regular,
                   ),
                 ),
               ),
@@ -589,7 +592,10 @@ class PropertyCard extends StatelessWidget {
                 ),
                 Text(
                   property.location,
-                  style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor.shade600),
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.leadGreyColor.shade600,
+                  ),
                 ),
                 // Rating
                 SizedBox(height: 4),

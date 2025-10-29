@@ -18,7 +18,7 @@ class ReferralProgramScreen extends StatelessWidget {
         backgroundColor: ColorRes.white,
         elevation: 0,
         title: const Text(
-          'Referral Settings',
+          'Referral Program',
           style: TextStyle(
             color: Colors.black87,
             fontSize: AppFontSizes.large,
@@ -772,7 +772,10 @@ Widget _buildStep(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [ColorRes.primary.withOpacity(0.6), ColorRes.primary.withOpacity(0.4)],
+                  colors: [
+                    ColorRes.primary.withOpacity(0.6),
+                    ColorRes.primary.withOpacity(0.4),
+                  ],
                 ),
               ),
               // ↓ removed extra vertical space

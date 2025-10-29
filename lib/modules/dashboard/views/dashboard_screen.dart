@@ -12,7 +12,8 @@ import 'package:get/get.dart';
 
 import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dart';
 import '../../builder/view/builder_main_screen.dart';
-import '../../home/views/home_screen.dart';
+import '../../home/views/compare_screen/comapre_screen.dart';
+import '../../home/views/home_screen/home_screen.dart';
 import '../../insights/views/insights_screen.dart';
 import '../../location_price_matrix/views/location_price_mtrix_screen.dart';
 import '../../referral/view/referral_dashboard.dart';
@@ -483,73 +484,73 @@ class DashboardScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (UserHelper.isSellerOwner) ...[
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.to(
-                        () => SellerDashboardScreen(),
-                        binding: BindingsBuilder(() {
-                          Get.lazyPut<PropertyController>(
-                            () => PropertyController(),
-                          );
-                        }),
-                      );
-                    },
+                // if (UserHelper.isSellerOwner) ...[
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(
+                      () => SellerDashboardScreen(),
+                      binding: BindingsBuilder(() {
+                        Get.lazyPut<PropertyController>(
+                          () => PropertyController(),
+                        );
+                      }),
+                    );
+                  },
 
-                    child: Text("Seller"),
-                  ),
-                  SizedBox(height: 16),
-                ],
-                if (UserHelper.isReseller) ...[
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.to(() => MainNavigationScreen());
-                    },
+                  child: Text("Seller"),
+                ),
+                SizedBox(height: 16),
+                // ],
+                // if (UserHelper.isReseller) ...[
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => MainNavigationScreen());
+                  },
 
-                    child: Text("Reseller"),
-                  ),
-                  SizedBox(height: 16),
-                ],
-                if (UserHelper.isSellerBuilder) ...[
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.to(() => BuilderMainScreen());
-                    },
+                  child: Text("Reseller"),
+                ),
+                SizedBox(height: 16),
+                // ],
+                // if (UserHelper.isSellerBuilder) ...[
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => BuilderMainScreen());
+                  },
 
-                    child: Text("Builder"),
-                  ),
-                  SizedBox(height: 16),
-                ],
+                  child: Text("Builder"),
+                ),
+                SizedBox(height: 16),
+                // ],
 
-                if (UserHelper.isReseller) ...[
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.to(() => ResellerSuccessStoryScreen());
-                    },
+                // if (UserHelper.isReseller) ...[
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => ResellerSuccessStoryScreen());
+                  },
 
-                    child: Text("Reseller Stories"),
-                  ),
-                  SizedBox(height: 16),
-                ],
-                if (UserHelper.isBuyer) ...[
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.to(() => ResellerConversionScreen());
-                    },
+                  child: Text("Reseller Stories"),
+                ),
+                SizedBox(height: 16),
+                // ],
+                // if (UserHelper.isBuyer) ...[
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => ResellerConversionScreen());
+                  },
 
-                    child: Text("Convert Reseller"),
-                  ),
+                  child: Text("Convert Reseller"),
+                ),
 
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.to(() => SellerConversionScreen());
-                    },
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => SellerConversionScreen());
+                  },
 
-                    child: Text("Convert seller"),
-                  ),
-                  SizedBox(height: 16),
-                ],
+                  child: Text("Convert seller"),
+                ),
+                SizedBox(height: 16),
+                // ],
                 ElevatedButton(
                   onPressed: () {
                     Get.to(() => LocationPriceMatrixScreen());
@@ -561,7 +562,7 @@ class DashboardScreen extends StatelessWidget {
             ),
           );
         } else if (navigationController.currentIndex.value == 2) {
-          return ReferralProgramScreen();
+          return CompareScreen();
         } else if (navigationController.currentIndex.value == 3) {
           return InsightsScreen();
         } else if (navigationController.currentIndex.value == 4) {
