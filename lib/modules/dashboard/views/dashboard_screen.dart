@@ -14,6 +14,9 @@ import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dar
 import '../../builder/view/builder_main_screen.dart';
 import '../../home/views/compare_screen/comapre_screen.dart';
 import '../../home/views/home_screen/home_screen.dart';
+import '../../feedback/controller/feedback_controller.dart';
+import '../../feedback/views/buyer_feedback.dart';
+
 import '../../insights/views/insights_screen.dart';
 import '../../location_price_matrix/views/location_price_mtrix_screen.dart';
 import '../../referral/view/referral_dashboard.dart';
@@ -557,6 +560,14 @@ class DashboardScreen extends StatelessWidget {
                   },
 
                   child: Text("Location Price Matrix Screen"),
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => FeedbackForSellerScreen());
+                  },
+
+                  child: Text(" Buyer Feedback"),
                 ),
               ],
             ),

@@ -119,7 +119,7 @@ class BuilderMainScreen extends StatelessWidget {
     final screens = [
       const BuilderDashboard(),
       const BuilderPropertyListing(),
-      const BuilderLeads(),
+      BuilderLeads(),
       const BuilderProfile(),
     ];
 

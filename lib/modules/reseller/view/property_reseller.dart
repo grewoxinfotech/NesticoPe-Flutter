@@ -2587,7 +2587,7 @@ Widget buildLeadCard(
                   icon: Icons.delete,
                   color: ColorRes.error,
                   onPressed:
-                      () => showDeleteConfirmation(context, lead, controller),
+                      () => showDeleteConfirmation(context, lead, controller,),
                   tooltip: 'Delete Lead',
                   isCompact: isCompact,
                 ),

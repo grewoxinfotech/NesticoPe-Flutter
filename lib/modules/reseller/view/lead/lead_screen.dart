@@ -18,6 +18,7 @@ import '../lead_overview/lead_detail.dart';
 
 class ResellerLeadScreen extends StatelessWidget {
   final bool isViewAll;
+
   const ResellerLeadScreen({super.key, this.isViewAll = false});
 
   @override
@@ -31,14 +32,14 @@ class ResellerLeadScreen extends StatelessWidget {
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading:
-            (isViewAll)
-                ? IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.arrow_back),
-                )
-                : null,
+        (isViewAll)
+            ? IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: Icon(Icons.arrow_back),
+        )
+            : null,
         title: Text(
           'Property Buyer Leads',
           style: TextStyle(
@@ -60,7 +61,7 @@ class ResellerLeadScreen extends StatelessWidget {
               FocusScope.of(context).unfocus();
               leadController.resetForm();
               Get.to(
-                () => AddLeadScreen(),
+                    () => AddLeadScreen(),
                 binding: BindingsBuilder(() {
                   Get.lazyPut(() => LeadController(), tag: "reseller");
                 }),
@@ -76,56 +77,7 @@ class ResellerLeadScreen extends StatelessWidget {
           ),
         ],
       ),
-      // body: Obx(() {
-      //   if (leadController.isLoading.value && leadController.items.isEmpty) {
-      //     return const Center(child: CircularProgressIndicator());
-      //   }
-      //
-      //   if (!leadController.isLoading.value && leadController.items.isEmpty) {
-      //     return Center(
-      //       child: Text(
-      //         'No leads available. Tap + to add a new lead.',
-      //         style: TextStyle(
-      //           fontSize: AppFontSizes.medium,
-      //           color: ColorRes.leadGreyColor[600],
-      //           fontWeight: AppFontWeights.medium,
-      //         ),
-      //       ),
-      //     );
-      //   }
-      //
-      //   final filteredLeads = leadController.items.value;
-      //   // final filteredLeads = controller.getFilteredLeads();
-      //
-      //   return Column(
-      //     children: [
-      //       _buildSearchAndFilter(context, controller),
-      //       _buildSelectedFiltersChips(context, controller),
-      //       Expanded(
-      //         child:
-      //             filteredLeads.isEmpty
-      //                 ? _buildEmptyState(context)
-      //                 : RefreshIndicator(
-      //                   onRefresh: leadController.refreshList,
-      //                   child: ListView.separated(
-      //                     padding: EdgeInsets.all(
-      //                       getResponsivePadding(context),
-      //                     ),
-      //                     itemCount: filteredLeads.length,
-      //                     separatorBuilder:
-      //                         (context, index) => SizedBox(
-      //                           height: getResponsiveSpacing(context),
-      //                         ),
-      //                     itemBuilder: (context, index) {
-      //                       final lead = filteredLeads[index];
-      //                       return _buildLeadCard(context, lead, controller);
-      //                     },
-      //                   ),
-      //                 ),
-      //       ),
-      //     ],
-      //   );
-      // }),
+
       body: Obx(() {
         // Loading state
         if (leadController.isLoading.value && leadController.items.isEmpty) {
@@ -137,8 +89,8 @@ class ResellerLeadScreen extends StatelessWidget {
         return Column(
           children: [
             // Search bar and filters always shown
-            _buildSearchAndFilter(context, controller),
-            _buildSelectedFiltersChips(context, controller),
+            buildSearchAndFilter(context, controller),
+            buildSelectedFiltersChips(context, controller),
 
             // Main content
             Expanded(
@@ -158,12 +110,13 @@ class ResellerLeadScreen extends StatelessWidget {
                 child: ListView.separated(
                   padding: EdgeInsets.all(getResponsivePadding(context)),
                   itemCount: filteredLeads.length,
-                  separatorBuilder: (context, index) => SizedBox(
-                    height: getResponsiveSpacing(context),
-                  ),
+                  separatorBuilder: (context, index) =>
+                      SizedBox(
+                        height: getResponsiveSpacing(context),
+                      ),
                   itemBuilder: (context, index) {
                     final lead = filteredLeads[index];
-                    return _buildLeadCard(context, lead, controller);
+                    return buildLeadCard(context, lead, controller);
                   },
                 ),
               ),
@@ -174,8 +127,9 @@ class ResellerLeadScreen extends StatelessWidget {
 
     );
   }
+}
 
-  Widget _buildSearchAndFilter(
+  Widget buildSearchAndFilter(
     BuildContext context,
     DashboardController controller,
   ) {
@@ -201,7 +155,7 @@ class ResellerLeadScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSelectedFiltersChips(
+  Widget buildSelectedFiltersChips(
     BuildContext context,
     DashboardController controller,
   ) {
@@ -359,7 +313,7 @@ class ResellerLeadScreen extends StatelessWidget {
     });
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -395,7 +349,7 @@ class ResellerLeadScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLeadCard(
+  Widget buildLeadCard(
     BuildContext context,
     LeadItem lead,
     DashboardController controller,
@@ -521,7 +475,7 @@ class ResellerLeadScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    _formatTime(lead.createdAt!),
+                    formatTime(lead.createdAt!),
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       color: ColorRes.leadGreyColor[600],
@@ -545,25 +499,25 @@ class ResellerLeadScreen extends StatelessWidget {
                   vertical: isCompact ? 6 : 8,
                 ),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(
+                  color: getStatusColor(
                     getLeadStatusFromString(lead.status!),
                   ).withOpacity(0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: _getStatusColor(
+                    color: getStatusColor(
                       getLeadStatusFromString(lead.status!),
                     ).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
-                  _getStatusText(getLeadStatusFromString(lead.status!)),
+                  getStatusText(getLeadStatusFromString(lead.status!)),
                   style: TextStyle(
                     fontSize:
                         isCompact
                             ? AppFontSizes.extraSmall
                             : AppFontSizes.small,
-                    color: _getStatusColor(
+                    color: getStatusColor(
                       getLeadStatusFromString(lead.status!),
                     ),
                     fontWeight: AppFontWeights.bold,
@@ -579,25 +533,25 @@ class ResellerLeadScreen extends StatelessWidget {
                   vertical: isCompact ? 6 : 8,
                 ),
                 decoration: BoxDecoration(
-                  color: _getStageColor(
+                  color: getStageColor(
                     getLeadStageFromString(lead.stage),
                   ).withOpacity(0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: _getStageColor(
+                    color: getStageColor(
                       getLeadStageFromString(lead.stage),
                     ).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
-                  _getStageText(getLeadStageFromString(lead.stage)),
+                  getStageText(getLeadStageFromString(lead.stage)),
                   style: TextStyle(
                     fontSize:
                         isCompact
                             ? AppFontSizes.extraSmall
                             : AppFontSizes.small,
-                    color: _getStageColor(getLeadStageFromString(lead.stage)),
+                    color: getStageColor(getLeadStageFromString(lead.stage)),
                     fontWeight: AppFontWeights.bold,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -646,7 +600,7 @@ class ResellerLeadScreen extends StatelessWidget {
       ),
     );
   }
-}
+
 
 void showFilterBottomSheet(
   BuildContext context,
@@ -731,7 +685,7 @@ void showFilterBottomSheet(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Stage Section
-                          _buildFilterSection(
+                          buildFilterSection(
                             context: context,
                             title: 'Stage',
                             icon: Icons.stairs,
@@ -750,7 +704,7 @@ void showFilterBottomSheet(
                           const SizedBox(height: 24),
 
                           // Status Section
-                          _buildFilterSection(
+                          buildFilterSection(
                             context: context,
                             title: 'Status',
                             icon: Icons.flag,
@@ -918,7 +872,7 @@ void showFilterBottomSheet(
 //     ],
 //   );
 // }
-Widget _buildFilterSection({
+Widget buildFilterSection({
   required BuildContext context,
   required String title,
   required IconData icon,
@@ -1010,7 +964,7 @@ Widget _buildFilterSection({
 // Keep all other functions (showLeadForm, _buildFormField, showLeadDetails, etc.) unchanged
 
 
-Widget _buildFormField({
+Widget buildFormField({
   required BuildContext context,
   required TextEditingController controller,
   required String label,
@@ -1070,18 +1024,18 @@ void showLeadDetails(BuildContext context, Lead lead) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildDetailRow(context, 'Location', lead.company),
-              _buildDetailRow(context, 'Email', lead.email),
-              _buildDetailRow(context, 'Phone', lead.phone),
-              _buildDetailRow(
+              buildDetailRow(context, 'Location', lead.company),
+              buildDetailRow(context, 'Email', lead.email),
+              buildDetailRow(context, 'Phone', lead.phone),
+              buildDetailRow(
                 context,
                 'Budget',
                 '${Formatter.formatPrice(lead.estimatedValue)}',
               ),
-              _buildDetailRow(context, 'Status', _getStatusText(lead.status)),
-              _buildDetailRow(context, 'Added', _formatTime(lead.createdAt)),
+              buildDetailRow(context, 'Status', getStatusText(lead.status)),
+              buildDetailRow(context, 'Added', formatTime(lead.createdAt)),
               if (lead.notes.isNotEmpty)
-                _buildDetailRow(context, 'Notes', lead.notes),
+                buildDetailRow(context, 'Notes', lead.notes),
             ],
           ),
           actions: [
@@ -1097,7 +1051,7 @@ void showLeadDetails(BuildContext context, Lead lead) {
   );
 }
 
-Widget _buildDetailRow(BuildContext context, String label, String value) {
+Widget buildDetailRow(BuildContext context, String label, String value) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4),
     child: Row(
@@ -1203,7 +1157,7 @@ double getResponsiveFontSize(
 }
 
 // Status color methods
-Color _getStatusColor(LeadStatus status) {
+Color getStatusColor(LeadStatus status) {
   switch (status) {
     case LeadStatus.new_: // 'New'
       return ColorRes.blueColor;
@@ -1244,7 +1198,7 @@ LeadStatus getLeadStatusFromString(String status) {
   }
 }
 
-String _getStatusText(LeadStatus status) {
+String getStatusText(LeadStatus status) {
   switch (status) {
     case LeadStatus.new_:
       return 'New';
@@ -1264,7 +1218,7 @@ String _getStatusText(LeadStatus status) {
   }
 }
 
-Color _getStageColor(LeadStage stage) {
+Color getStageColor(LeadStage stage) {
   switch (stage) {
     case LeadStage.newLead: // 'New Lead'
       return ColorRes.blueColor;
@@ -1305,7 +1259,7 @@ LeadStage getLeadStageFromString(String? stage) {
   }
 }
 
-String _getStageText(LeadStage stage) {
+String getStageText(LeadStage stage) {
   switch (stage) {
     case LeadStage.newLead:
       return 'New Lead';
@@ -1323,7 +1277,7 @@ String _getStageText(LeadStage stage) {
   }
 }
 
-String _formatTime(DateTime dateTime) {
+String formatTime(DateTime dateTime) {
   final now = DateTime.now();
   final difference = now.difference(dateTime);
 
