@@ -29,6 +29,9 @@ class ApiConstants {
   static const String locationPriceMetrics = "$baseURL/locationPriceMetrics";
   static const String review = "$baseURL/review";
   static const String user = "$baseURL/user";
+  static const String interestForm = "$baseURL/interestForm";
+  static const String propertyShare = "$baseURL/propertyShare";
+  static const String multiPropertyShare = "$baseURL/propertyShare/bundles";
 
   //---------------------------------other-----------------------------//
 

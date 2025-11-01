@@ -42,7 +42,6 @@
 // }
 
 import 'package:flutter/material.dart';
-
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/img_res.dart';

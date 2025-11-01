@@ -482,33 +482,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }
 
-      if (_selectedSellerType == null) {
-        _showErrorDialog('Please select seller type');
-        return;
-      }
-
       setState(() => _isLoading = true);
 
       try {
-        final data = {
-          "password": _passwordController.text.trim(),
-          "email": _emailController.text.trim(),
-          "firstName": _firstNameController.text.trim(),
-          "lastName": _lastNameController.text.trim(),
-          "address": _addressController.text.trim(),
-          "city": _cityController.text.trim(),
-          "state": _stateController.text.trim(),
-          "zip_code": _zipCodeController.text.trim(),
-          "username": _usernameController.text.trim(),
-        };
         final authController = Get.find<AuthController>();
-        final success = await authController.sellerRegister(
+        final success = await authController.register(
           context: context,
           username: _usernameController.text.trim(),
+          firstName: _firstNameController.text.trim(),
+          lastName: _lastNameController.text.trim(),
+          address: _addressController.text.trim(),
+          city: _cityController.text.trim(),
+          state: _stateController.text.trim(),
+          zipCode: _zipCodeController.text.trim(),
           phone: _phoneController.text.trim(),
           referralCode: _referralCodeController.text.trim(),
-          sellerType: _selectedSellerType?.toLowerCase() ?? 'owner',
-          data: data,
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          userType: _roleToString(_selectedRole),
         );
 
         // if (!success) {
