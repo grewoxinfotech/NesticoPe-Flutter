@@ -16,7 +16,7 @@ class BuilderProfile extends StatelessWidget {
        automaticallyImplyLeading: false,
         title:  Text(
           'Profile',
-          style: TextStyle(color: ColorRes.black, fontWeight:AppFontWeights .semiBold),
+          style: TextStyle(fontWeight:AppFontWeights.bold),
         ),
         centerTitle: true,
         actions: [
@@ -76,8 +76,8 @@ class BuilderProfile extends StatelessWidget {
                      Text(
                       'Prestige Builders',
                       style: TextStyle(
-                        fontSize: AppFontSizes.body,
-                        fontWeight: AppFontWeights.bold,
+                        fontSize: AppFontSizes.bodyMedium,
+                        fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.textPrimary
                       ),
                     ),
@@ -149,7 +149,7 @@ class BuilderProfile extends StatelessWidget {
           Text(
             'Company Info',
             style: TextStyle(
-              fontSize: AppFontSizes.large,
+              fontSize: AppFontSizes.medium,
               fontWeight: AppFontWeights.semiBold,
               color: ColorRes.textPrimary,
             ),
@@ -298,7 +298,7 @@ class BuilderProfile extends StatelessWidget {
             children: [
               const Text(
                 'Project Portfolio',
-                style: TextStyle( fontSize: AppFontSizes.large,
+                style: TextStyle( fontSize: AppFontSizes.medium,
                   fontWeight: AppFontWeights.semiBold,
                   color: ColorRes.textPrimary,),
               ),
@@ -448,7 +448,7 @@ class BuilderProfile extends StatelessWidget {
         children: [
           const Text(
             'Performance Metrics',
-            style: TextStyle(   fontSize: AppFontSizes.large,
+            style: TextStyle(   fontSize: AppFontSizes.medium,
               fontWeight: AppFontWeights.semiBold,
               color: ColorRes.textPrimary,),
           ),
@@ -558,7 +558,7 @@ class BuilderProfile extends StatelessWidget {
         children: [
           const Text(
             'Team & Partners',
-            style: TextStyle( fontSize: AppFontSizes.large,
+            style: TextStyle( fontSize: AppFontSizes.medium,
               fontWeight: AppFontWeights.semiBold,
               color: ColorRes.textPrimary,),
           ),
@@ -577,14 +577,15 @@ class BuilderProfile extends StatelessWidget {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.add, color: Colors.blue, size: 20),
+              children:  [
+                Icon(Icons.add, color: ColorRes.primary, size: 20),
                 SizedBox(width: 8),
                 Text(
                   'Add Member',
                   style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.w600,
+                    color: ColorRes.primary,
+
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
               ],

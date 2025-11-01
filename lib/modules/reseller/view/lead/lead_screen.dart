@@ -44,11 +44,6 @@ class ResellerLeadScreen extends StatelessWidget {
           'Property Buyer Leads',
           style: TextStyle(
             fontWeight: AppFontWeights.bold,
-            fontSize: getResponsiveFontSize(
-              context,
-              AppFontSizes.large,
-              AppFontSizes.body,
-            ),
           ),
         ),
         automaticallyImplyLeading: (isViewAll),

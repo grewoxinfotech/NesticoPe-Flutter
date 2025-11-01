@@ -106,10 +106,10 @@
 //   }
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -122,27 +122,32 @@ class ProfileController extends GetxController {
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
 
-  final Rx<UserProfile> profile = UserProfile(
-    id: '1',
-    name: 'John Doe',
-    email: 'john.doe@company.com',
-    phone: '+1-555-0123',
-    position: 'Sales Manager',
-    company: 'Tech Solutions Inc.',
-    bio: 'Experienced sales professional with over 10 years in the industry.',
-    avatarUrl: '',
-    totalSales: 2500000.0,
-    leadsCount: 156,
-    rating: 4.9,
-    joinedDate: DateTime.now().subtract(const Duration(days: 365)),
-  ).obs;
+  final Rx<UserProfile> profile =
+      UserProfile(
+        id: '1',
+        name: 'John Doe',
+        email: 'john.doe@company.com',
+        phone: '+1-555-0123',
+        position: 'Sales Manager',
+        company: 'Tech Solutions Inc.',
+        bio:
+            'Experienced sales professional with over 10 years in the industry.',
+        avatarUrl: '',
+        totalSales: 2500000.0,
+        leadsCount: 156,
+        rating: 4.9,
+        joinedDate: DateTime.now().subtract(const Duration(days: 365)),
+      ).obs;
+
+  final Rxn<UserModel> profileData = Rxn<UserModel>();
 
   // Image picker
   final ImagePicker _picker = ImagePicker();
   Rx<File?> selectedImage = Rx<File?>(null);
 
   // Form controllers
-  final nameController = TextEditingController();
+  final nameController = TextEditingController( );
+  final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final positionController = TextEditingController();
@@ -155,6 +160,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     loadProfile();
+    getUserProfileData();
   }
 
   void loadProfile() {
@@ -165,6 +171,12 @@ class ProfileController extends GetxController {
       _populateControllers();
       isLoading.value = false;
     });
+  }
+
+  Future<void> getUserProfileData() async {
+
+    profileData.value = await SecureStorage.getUserData();
+    print("Lok ${profileData.value?.user?.profilePic}");
   }
 
   void _populateControllers() {
@@ -201,6 +213,7 @@ class ProfileController extends GetxController {
 
       if (image != null) {
         selectedImage.value = File(image.path);
+
         Get.snackbar(
           'Success',
           'Image selected successfully',
@@ -289,10 +302,7 @@ class ProfileController extends GetxController {
                 const SizedBox(height: 20),
                 const Text(
                   'Choose Profile Photo',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
                 ListTile(
@@ -331,7 +341,8 @@ class ProfileController extends GetxController {
                     pickImageFromCamera();
                   },
                 ),
-                if (selectedImage.value != null || profile.value.avatarUrl.isNotEmpty)
+                if (selectedImage.value != null ||
+                    profile.value.avatarUrl.isNotEmpty)
                   ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
@@ -373,6 +384,7 @@ class ProfileController extends GetxController {
       duration: const Duration(seconds: 2),
     );
   }
+
   Future<String?> _uploadImage(File imageFile) async {
     try {
       isUploadingImage.value = true;
@@ -393,7 +405,6 @@ class ProfileController extends GetxController {
       // For now, return null to keep the local file
       // When you integrate real API, return the actual URL from server
       return null;
-
     } catch (e) {
       Get.snackbar(
         'Error',

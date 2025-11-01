@@ -21,7 +21,7 @@ class LocationPriceMatrixScreen extends StatelessWidget {
         title: Text(
           'Property Insights',
           style: TextStyle(
-            fontWeight: AppFontWeights.semiBold,
+            fontWeight: AppFontWeights.bold,
             color: ColorRes.textPrimary,
           ),
         ),

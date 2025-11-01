@@ -326,6 +326,7 @@ import '../model/lead_model.dart';
 
 class LeadController extends PaginatedController<LeadItem> {
   final LeadService _service = LeadService();
+
   final PropertyController propertyController = Get.put(
     PropertyController(),
     tag: "reseller",
@@ -436,7 +437,7 @@ class LeadController extends PaginatedController<LeadItem> {
     try {
       isLoading.value = true;
       final success = await _service.createLead(lead);
-      if (success) await loadInitial();
+      if (success){ await loadInitial();}
       return success;
     } catch (e) {
       print("Create lead error: $e");

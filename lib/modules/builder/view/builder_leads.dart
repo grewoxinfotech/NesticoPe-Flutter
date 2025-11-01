@@ -237,11 +237,6 @@ class _BuilderLeadsState extends State<BuilderLeads> {
           'Property Buyer Leads',
           style: TextStyle(
             fontWeight: AppFontWeights.bold,
-            fontSize: getResponsiveFontSize(
-              context,
-              AppFontSizes.large,
-              AppFontSizes.body,
-            ),
           ),
         ),
         automaticallyImplyLeading: (widget.isViewAll),

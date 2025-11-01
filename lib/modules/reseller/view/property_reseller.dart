@@ -4,18 +4,22 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/data/network/reseller_dashboard/model/reseller_dashboard_model.dart';
 import 'package:housing_flutter_app/modules/reseller/view/profile/reseller_profile.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:housing_flutter_app/modules/reseller/widget/graph/linear_graph.dart';
+import 'package:intl/intl.dart';
 
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
 import '../../../app/utils/formater/formater.dart';
+import '../../../app/utils/helper_function/month_switch/month_switch.dart';
+import '../../../data/network/property/models/property_model.dart';
 import '../../../utils/global.dart';
 import '../../dashboard/views/dashboard_screen.dart';
-import '../../profile/views/profile_screen.dart';
-import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
+
+import '../../referral/view/referral_dashboard.dart';
 import '../controller/dashborad_controller/dashboard_controller.dart';
 import '../model/dashboard/dashboard_model.dart';
 import 'lead/lead_screen.dart';
@@ -23,20 +27,26 @@ import 'lead_overview/lead_detail.dart';
 import 'listing/property_listing.dart';
 
 // Dashboard Screen
-class ResellerDashboardScreen extends StatelessWidget {
-  const ResellerDashboardScreen({Key? key}) : super(key: key);
+class ResellerDashboardScreen extends StatefulWidget {
+  ResellerDashboardScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ResellerDashboardScreen> createState() =>
+      _ResellerDashboardScreenState();
+}
+
+class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
+  // @override
+  final controller = Get.put(DashboardController());
 
   @override
   Widget build(BuildContext context) {
-
-    final controller = Get.put(DashboardController());
-
     return Scaffold(
       backgroundColor: ColorRes.bgColor,
       appBar: AppBar(
         title: Text(
           'Dashboard',
-          style: TextStyle(fontWeight: AppFontWeights.extraBold),
+          style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
         backgroundColor: ColorRes.bgColor,
         elevation: 0,
@@ -51,241 +61,480 @@ class ResellerDashboardScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Obx(() {
-        if (controller.isLoading.value && controller.recentLeads.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: FutureBuilder(
+        future: controller.fetchResellerDashboardDataFromApi(),
+        // <-- Your API call here
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('No data found'));
+          }
 
-        return RefreshIndicator(
-          onRefresh: controller.refreshDashboard,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Overview Cards
-                buildOverviewCards(controller),
-                const SizedBox(height: 20),
+          return Obx(() {
+            if (controller.itemData.isEmpty) {
+              controller.getPropertyDetailById(
+                controller
+                        .resellerInsightsModel
+                        .value
+                        ?.data
+                        .leaderboard
+                        .topProperties ??
+                    [],
+              );
+            }
+            controller.resellerInsightsModel = snapshot.data!;
 
-                // Monthly Performance Section (NEW)
-                // buildMonthlyPerformance(controller),
-                buildMonthlyPerformance(
-                  title: 'Monthly Performance',
-                  levelName: 'Pro Level',
-                  levelIcon: Icons.star,
-                  levelIconColor: ColorRes.orangeColor,
-                  benefits: ['Priority Support', 'Access to Premium Listings'],
-                  progressValue: 0.65,
-                  currentAmount: '₹65K',
-                  targetAmount: '₹1L',
-                  unlockMessage: '₹35K more to unlock next level!',
-                  streakDays: 7,
-                  commissionCurrent: '₹2.9L',
-                  commissionPrevious: '₹2.3L',
-                  commissionChange: '25% increase',
-                  commissionPositive: true,
-                  leadsCurrent: '12',
-                  leadsPrevious: '9',
-                  leadsChange: '33% increase',
-                  leadsPositive: true,
-                ),
+            if (controller.isLoading.value && controller.recentLeads.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return RefreshIndicator(
+              onRefresh: controller.refreshDashboard,
+              child:
+                  (controller.resellerInsightsModel != null)
+                      ? SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            buildOverviewCards(controller),
+                            const SizedBox(height: 20),
 
-                const SizedBox(height: 20),
-                // buildDailyGoals(controller, currentStep, context),
-                buildDailyGoals(
-                  title: 'Daily Goal',
-                  goalText: 'Try to generate 5 leads today',
-                  date: '27 Oct 2025',
-                  currentStep: 3,
-                  totalSteps: 5,
-                  currentStreak: 2,
-                  primaryColor: ColorRes.purpleColor.shade500,
-                  accentColor: ColorRes.homeAmber.shade800,
-                  context: context,
-                ),
+                            buildMonthlyPerformance(
+                              title: 'Monthly Performance',
+                              levelName:
+                                  controller
+                                      .resellerInsightsModel
+                                      .value
+                                      ?.data
+                                      .level
+                                      .currentLevel ??
+                                  '',
 
-                const SizedBox(height: 20),
-                // buildBestResellerOnTheMonth(controller),
-              buildBestResellerOnTheMonth(
+                              levelIcon: Icons.star,
+                              levelIconColor: ColorRes.orangeColor,
+                              benefits:
+                                  controller
+                                      .resellerInsightsModel
+                                      .value
+                                      ?.data
+                                      .level
+                                      .benefits ??
+                                  [],
+                              progressValue: calculateProgress(
+                                controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .level
+                                        .totalSalesVolume ??
+                                    0,
+                                controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .level
+                                        .nextLevelThreshold ??
+                                    0,
+                              ),
 
-                month: "October",
-                year: "2025",
-                totalCommission: "₹2.9L",
-                commissionSubtitle: "2,85,000 earned this month",
-                level: "Noob",
-                levelSubtitle: "0% to next level",
-                totalLeads: "8",
-                leadsSubtitle: "Generated this month",
-                commissionColor: ColorRes.success,
-                levelColor: ColorRes.purpleColor.shade800,
-                leadsColor: ColorRes.blueColor,
-              ),
+                              currentAmount: Formatter.formatPrice(
+                                (controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .level
+                                            .totalSalesVolume ??
+                                        0)
+                                    .toDouble(),
+                              ),
+                              targetAmount: Formatter.formatPrice(
+                                (controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .level
+                                            .nextLevelThreshold ??
+                                        0)
+                                    .toDouble(),
+                              ),
 
-                const SizedBox(height: 20),
-                // resellerLeaderBoard(controller),
-              resellerLeaderBoard(
-                title: 'Leaderboard',
-                bannerTitle: 'Top 10 (Overall)',
-                bannerSubtitle: 'Gets Extra Rewards',
-                leaderboardData: [
-                  {
-                    'rank': 1,
-                    'name': 'Rajesh Kumar',
-                    'tier': 'Platinum',
-                    'amount': '₹35L',
-                    'emoji': '👨',
-                    'isTopRank': true,
-                  },
-                  {
-                    'rank': 2,
-                    'name': 'Priya Sharma',
-                    'tier': 'Platinum',
-                    'amount': '₹32L',
-                    'emoji': '👩',
-                    'isTopRank': true,
-                  },
-                  {
-                    'rank': 3,
-                    'name': 'You',
-                    'tier': 'Gold',
-                    'amount': '₹29L',
-                    'emoji': '⭐',
-                    'isCurrentUser': true,
-                  },
-                  {
-                    'rank': 4,
-                    'name': 'Amit Patel',
-                    'tier': 'Gold',
-                    'amount': '₹24L',
-                    'emoji': '👨',
-                  },
-                  {
-                    'rank': 5,
-                    'name': 'Neha Desai',
-                    'tier': 'Silver',
-                    'amount': '₹21L',
-                    'emoji': '👩',
-                    'isLast': true,
-                  },
-                ],
-              ),
-              const SizedBox(height: 20),
-                // buildLeaderBoardRanking(controller),
-              buildLeaderBoardRanking(
+                              unlockMessage:
+                                  '${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.level.amountToNextLevel ?? 0).toDouble())} more to unlock next level!',
+                              streakDays:
+                                  controller
+                                      .resellerInsightsModel
+                                      .value
+                                      ?.data
+                                      .level
+                                      .nextLevelName ??
+                                  '',
+                              commissionCurrent: Formatter.formatPrice(
+                                (controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .earnings
+                                            .currentMonthCommission ??
+                                        0)
+                                    .toDouble(),
+                              ),
+                              commissionPrevious: Formatter.formatPrice(
+                                (controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .earnings
+                                            .previousMonthCommission ??
+                                        0)
+                                    .toDouble(),
+                              ),
+                              commissionChange:
+                                  calculateCommissionPercentage(
+                                    controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .earnings
+                                            .previousMonthCommission ??
+                                        0,
+                                    controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .earnings
+                                            .currentMonthCommission ??
+                                        0,
+                                  ).toString(),
+                              commissionPositive:
+                                  ((controller
+                                                  .resellerInsightsModel
+                                                  .value
+                                                  ?.data
+                                                  ?.earnings
+                                                  .currentMonthCommission ??
+                                              0)
+                                          .toDouble() >
+                                      (controller
+                                                  .resellerInsightsModel
+                                                  .value
+                                                  ?.data
+                                                  ?.earnings
+                                                  .previousMonthCommission ??
+                                              0)
+                                          .toDouble()),
 
-                title: 'Leaderboard Rankings',
-                subtitle: 'Top performers across regions',
-                filters: ['All', 'City-wise', 'Monthly'],
-                leaderboardData: [
-                  {
-                    'rank': 1,
-                    'name': 'Rajesh Kumar',
-                    'level': 'Platinum Level',
-                    'city': 'Ahmedabad',
-                    'sales': '₹35L',
-                    'deals': '70',
-                    'color': ColorRes.orangeColor.withOpacity(0.05),
-                    'borderColor': ColorRes.orangeColor.withOpacity(0.3),
-                    'medalIcon': Icons.emoji_events,
-                  },
-                  {
-                    'rank': 2,
-                    'name': 'Priya Sharma',
-                    'level': 'Platinum Level',
-                    'city': 'Ahmedabad',
-                    'sales': '₹32L',
-                    'deals': '64',
-                    'color': ColorRes.orangeColor.withOpacity(0.05),
-                    'borderColor': ColorRes.orangeColor.withOpacity(0.3),
-                    'medalIcon': Icons.emoji_events,
-                  },
-                  {
-                    'rank': 3,
-                    'name': 'You',
-                    'level': 'Gold Level',
-                    'city': 'Ahmedabad',
-                    'sales': '₹29L',
-                    'deals': '57',
-                    'color': ColorRes.green.withOpacity(0.05),
-                    'borderColor': ColorRes.green.withOpacity(0.3),
-                    'medalIcon': Icons.emoji_events,
-                    'isCurrentUser': true,
-                  },
-                  {
-                    'rank': 4,
-                    'name': 'Amit Patel',
-                    'level': 'Gold Level',
-                    'city': 'Ahmedabad',
-                    'sales': '₹24L',
-                    'deals': '48',
-                    'color': ColorRes.leadGreyColor.withOpacity(0.05),
-                    'borderColor': ColorRes.leadGreyColor.withOpacity(0.3),
-                    'medalIcon': null,
-                  },
-                  {
-                    'rank': 5,
-                    'name': 'Neha Desai',
-                    'level': 'Silver Level',
-                    'city': 'Ahmedabad',
-                    'sales': '₹21L',
-                    'deals': '42',
-                    'color': ColorRes.blueColor.withOpacity(0.05),
-                    'borderColor': ColorRes.blueColor.withOpacity(0.3),
-                    'medalIcon': null,
-                  },
-                ],
-              ),
-              const SizedBox(height: 20),
-                // buildTopPropertyForGoodCommission(controller),
-                buildTopPropertyForGoodCommission(controller, propertyCommissionList),
-                const SizedBox(height: 20),
-              buildReferralProgram(
-                // controller: controller,
-                context: context,
-                bonus: 5000,
-                currentProgress: 4,
-                targetProgress: 10,
-                title: 'Referral Program',
-                subtitle: 'Get ₹5000 for every new active reseller',
-                pointsEarned: '2400',
-                totalEarnings: '₹4K',
-                earningSubtitle: '8 x ₹5000 each',
-                referralCode: 'REF12345',
-                leftIcon: Icons.card_giftcard_rounded,
-                iconColor: ColorRes.textPrimary,
-                iconBackground: ColorRes.textPrimary.withOpacity(0.08),
-                card1BorderColor: ColorRes.homeAmber.withOpacity(0.3),
-                card1BgColor: ColorRes.homeAmber.withOpacity(0.08),
-                card2BorderColor: ColorRes.green.withOpacity(0.3),
-                card2BgColor: ColorRes.green.withOpacity(0.08),
-              ),
-              const SizedBox(height: 20),
-                buildLeadGraph(),
-                const SizedBox(height: 20),
-                buildCommissionGraph(),
-                const SizedBox(height: 20),
+                              leadsCurrent:
+                                  controller
+                                      .resellerInsightsModel
+                                      .value
+                                      ?.data
+                                      .performance
+                                      .currentMonthLeads
+                                      .toString() ??
+                                  '0',
+                              leadsPrevious:
+                                  controller
+                                      .resellerInsightsModel
+                                      .value
+                                      ?.data
+                                      .performance
+                                      .previousMonthLeads
+                                      .toString() ??
+                                  '0',
+                              leadsChange:
+                                  calculateCommissionPercentage(
+                                    controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .performance
+                                            .previousMonthLeads
+                                            .toDouble() ??
+                                        0.0,
+                                    controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .performance
+                                            .currentMonthLeads
+                                            .toDouble() ??
+                                        0.0,
+                                  ).toString(),
+                              leadsPositive:
+                                  ((controller
+                                                  .resellerInsightsModel
+                                                  .value
+                                                  ?.data
+                                                  ?.performance
+                                                  .currentMonthLeads ??
+                                              0)
+                                          .toDouble() >
+                                      (controller
+                                                  .resellerInsightsModel
+                                                  .value
+                                                  ?.data
+                                                  ?.performance
+                                                  .previousMonthLeads ??
+                                              0)
+                                          .toDouble()),
+                            ),
 
-                // Recent Leads
-                _buildRecentLeads(controller),
-                const SizedBox(height: 20),
+                            const SizedBox(height: 20),
 
-                // Top Products
-                buildTopProducts(controller),
-                // const SizedBox(height: 16),
-              ],
-            ),
-          ),
-        );
-      }),
+                            Obx(
+                              () => buildDailyGoals(
+                                title: 'Daily Goal',
+                                goalText:
+                                    'Try to generate ${controller.resellerInsightsModel.value?.data.dailyGoals.minimumLeadsForStreak} leads today',
+                                date: '27 Oct 2025',
+                                currentStep:
+                                    controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .dailyGoals
+                                        .todaysLeads ??
+                                    0,
+                                totalSteps:
+                                    controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .dailyGoals
+                                        .dailyLeadGoal ??
+                                    0,
+                                currentStreak:
+                                    controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .dailyGoals
+                                        .achievementStreak ??
+                                    0,
+                                primaryColor: ColorRes.purpleColor.shade500,
+                                accentColor: ColorRes.homeAmber.shade800,
+                                context: context,
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            buildBestResellerOnTheMonth(
+                              month: "October",
+                              year: "2025",
+                              totalCommission:
+                                  "${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.earnings.totalCommission ?? 0).toDouble())}",
+                              commissionSubtitle:
+                                  "${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.earnings.currentMonthCommission ?? 0).toDouble())} earned this month",
+                              level:
+                                  controller
+                                      .resellerInsightsModel
+                                      .value
+                                      ?.data
+                                      .level
+                                      .currentLevel ??
+                                  '',
+                              levelSubtitle: calculateProgress(
+                                controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .level
+                                        .progressToNextLevel ??
+                                    0,
+                                controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .level
+                                        .amountToNextLevel ??
+                                    0,
+                              ),
+                              totalLeads:
+                                  "${controller.resellerInsightsModel.value?.data.performance.totalLeads}",
+                              leadsSubtitle:
+                                  "${controller.resellerInsightsModel.value?.data.performance.currentMonthLeads} Generated this month",
+                              commissionColor: ColorRes.success,
+                              levelColor: ColorRes.purpleColor.shade800,
+                              leadsColor: ColorRes.blueColor,
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            resellerLeaderBoard(
+                              title: 'Leaderboard',
+                              bannerTitle: 'Top 10 (Overall)',
+                              bannerSubtitle: 'Gets Extra Rewards',
+                              leaderboardData:
+                                  controller
+                                      .resellerInsightsModel
+                                      .value
+                                      ?.data
+                                      .leaderboard
+                                      .topResellers ??
+                                  [],
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            buildLeaderBoardRanking(
+                              title: 'Leaderboard Rankings',
+                              subtitle: 'Top performers across regions',
+                              filters: ['All', 'City-wise', 'Monthly'],
+                              leaderboardData: [
+                                {
+                                  'rank': 1,
+                                  'name': 'Rajesh Kumar',
+                                  'level': 'Platinum Level',
+                                  'city': 'Ahmedabad',
+                                  'sales': '₹35L',
+                                  'deals': '70',
+                                  'color': ColorRes.orangeColor.withOpacity(
+                                    0.05,
+                                  ),
+                                  'borderColor': ColorRes.orangeColor
+                                      .withOpacity(0.3),
+                                  'medalIcon': Icons.emoji_events,
+                                },
+                                {
+                                  'rank': 2,
+                                  'name': 'Priya Sharma',
+                                  'level': 'Platinum Level',
+                                  'city': 'Ahmedabad',
+                                  'sales': '₹32L',
+                                  'deals': '64',
+                                  'color': ColorRes.orangeColor.withOpacity(
+                                    0.05,
+                                  ),
+                                  'borderColor': ColorRes.orangeColor
+                                      .withOpacity(0.3),
+                                  'medalIcon': Icons.emoji_events,
+                                },
+                                {
+                                  'rank': 3,
+                                  'name': 'You',
+                                  'level': 'Gold Level',
+                                  'city': 'Ahmedabad',
+                                  'sales': '₹29L',
+                                  'deals': '57',
+                                  'color': ColorRes.green.withOpacity(0.05),
+                                  'borderColor': ColorRes.green.withOpacity(
+                                    0.3,
+                                  ),
+                                  'medalIcon': Icons.emoji_events,
+                                  'isCurrentUser': true,
+                                },
+                                {
+                                  'rank': 4,
+                                  'name': 'Amit Patel',
+                                  'level': 'Gold Level',
+                                  'city': 'Ahmedabad',
+                                  'sales': '₹24L',
+                                  'deals': '48',
+                                  'color': ColorRes.leadGreyColor.withOpacity(
+                                    0.05,
+                                  ),
+                                  'borderColor': ColorRes.leadGreyColor
+                                      .withOpacity(0.3),
+                                  'medalIcon': null,
+                                },
+                                {
+                                  'rank': 5,
+                                  'name': 'Neha Desai',
+                                  'level': 'Silver Level',
+                                  'city': 'Ahmedabad',
+                                  'sales': '₹21L',
+                                  'deals': '42',
+                                  'color': ColorRes.blueColor.withOpacity(0.05),
+                                  'borderColor': ColorRes.blueColor.withOpacity(
+                                    0.3,
+                                  ),
+                                  'medalIcon': null,
+                                },
+                              ],
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            buildTopPropertyForGoodCommission(
+                              controller,
+                              controller.itemData,
+                            ),
+                            const SizedBox(height: 20),
+
+                            Obx(
+                              () => buildReferralProgram(
+                                controller: controller,
+                                context: context,
+                                bonus: 5000,
+                                currentProgress: 4,
+                                targetProgress: 10,
+                                title: 'Referral Program',
+                                subtitle:
+                                    'Get point for every new active reseller',
+                                pointsEarned:
+                                    controller
+                                        .dummyReferral
+                                        .value
+                                        ?.data
+                                        ?.first
+                                        .totalRewards
+                                        .toString() ??
+                                    '0.0',
+                                totalEarnings:
+                                    '${controller.dummyReferral.value?.data?.first.totalReferrals}' ??
+                                    '0.0',
+                                earningSubtitle:
+                                    'per referral ${controller.dummyReferral.value?.data?.first.referrerReward} points',
+                                referralCode:
+                                    '${controller.dummyReferral.value?.data?.first.referralCode}',
+                                leftIcon: Icons.card_giftcard_rounded,
+                                iconColor: ColorRes.textPrimary,
+                                iconBackground: ColorRes.textPrimary
+                                    .withOpacity(0.08),
+                                card1BorderColor: ColorRes.homeAmber
+                                    .withOpacity(0.3),
+                                card1BgColor: ColorRes.homeAmber.withOpacity(
+                                  0.08,
+                                ),
+                                card2BorderColor: ColorRes.green.withOpacity(
+                                  0.3,
+                                ),
+                                card2BgColor: ColorRes.green.withOpacity(0.08),
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+                            buildLeadGraph(controller),
+                            const SizedBox(height: 20),
+                            buildCommissionGraph(controller),
+                            // const SizedBox(height: 20),
+                            // _buildRecentLeads(controller),
+                            const SizedBox(height: 20),
+                            buildTopProducts(controller),
+                          ],
+                        ),
+                      )
+                      : CircularProgressIndicator(),
+            );
+          });
+        },
+      ),
     );
   }
 }
 
 Widget buildTopPropertyForGoodCommission(
-    DashboardController controller,
-    List<Map<String, dynamic>> propertyList,
-    ) {
+  DashboardController controller,
+  RxList<Items> propertyList,
+) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -318,7 +567,7 @@ Widget buildTopPropertyForGoodCommission(
                     maxLines: 1,
                     style: TextStyle(
                       color: ColorRes.leadIndigoColor,
-                      fontSize: AppFontSizes.body,
+                      fontSize: AppFontSizes.medium,
                       fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
@@ -361,7 +610,9 @@ Widget buildTopPropertyForGoodCommission(
               final property = propertyList[index];
               return Container(
                 width: 280,
-                margin: EdgeInsets.only(right: index == propertyList.length - 1 ? 0 : 12),
+                margin: EdgeInsets.only(
+                  right: index == propertyList.length - 1 ? 0 : 12,
+                ),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: ColorRes.white,
@@ -385,7 +636,7 @@ Widget buildTopPropertyForGoodCommission(
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: NetworkImage(
-                                    property['image'] ??
+                                    property.propertyMedia?.images?.first ??
                                         'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
                                   ),
                                   fit: BoxFit.cover,
@@ -403,7 +654,7 @@ Widget buildTopPropertyForGoodCommission(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                property['title'] ?? 'Luxury Apartment',
+                                property.title ?? 'Luxury Apartment',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
@@ -414,7 +665,7 @@ Widget buildTopPropertyForGoodCommission(
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                property['address'] ?? '123 Main St, City, State',
+                                property.location ?? '123 Main St, City, State',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -425,7 +676,7 @@ Widget buildTopPropertyForGoodCommission(
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                '₹${property['price'] ?? '1,00,000'}',
+                                '${Formatter.formatPrice(property.propertyDetails?.financialInfo?.price ?? 0) ?? '1,00,000'}',
                                 style: TextStyle(
                                   color: ColorRes.textColor,
                                   fontSize: AppFontSizes.small,
@@ -436,7 +687,7 @@ Widget buildTopPropertyForGoodCommission(
                               Row(
                                 children: [
                                   Text(
-                                    '${property['views'] ?? '1.2K'} views',
+                                    '${Formatter.formatNumber(property.totalViews ?? 0)} views',
                                     style: TextStyle(
                                       color: ColorRes.textColor,
                                       fontSize: AppFontSizes.extraSmall,
@@ -445,7 +696,7 @@ Widget buildTopPropertyForGoodCommission(
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Posted ${property['postedAgo'] ?? '2d'} ago',
+                                    'Posted ${property.propertyDetails?.possessionInfo?.propertyAgeInYear ?? '2d'} ago',
                                     style: TextStyle(
                                       color: ColorRes.textColor,
                                       fontSize: AppFontSizes.extraSmall,
@@ -489,7 +740,7 @@ Widget buildTopPropertyForGoodCommission(
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '₹${property['commission'] ?? '5,000'}',
+                                '₹${property.totalCommissions ?? '0'}',
                                 style: TextStyle(
                                   color: ColorRes.leadIndigoColor,
                                   fontSize: AppFontSizes.bodyMedium,
@@ -515,14 +766,14 @@ Widget buildTopPropertyForGoodCommission(
                                   size: 16,
                                 ),
                                 const SizedBox(width: 4),
-                                Text(
-                                  '${property['commissionRate'] ?? '5'}%',
-                                  style: TextStyle(
-                                    color: ColorRes.white,
-                                    fontSize: AppFontSizes.small,
-                                    fontWeight: AppFontWeights.bold,
-                                  ),
-                                ),
+                                // Text(
+                                //   '${property. ?? '5'}%',
+                                //   style: TextStyle(
+                                //     color: ColorRes.white,
+                                //     fontSize: AppFontSizes.small,
+                                //     fontWeight: AppFontWeights.bold,
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
@@ -552,11 +803,7 @@ Widget _buildFeatureItem(IconData icon, String label) {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          icon,
-          size: 14,
-          color: ColorRes.leadGreyColor,
-        ),
+        Icon(icon, size: 14, color: ColorRes.leadGreyColor),
         const SizedBox(width: 4),
         Flexible(
           child: Text(
@@ -574,7 +821,50 @@ Widget _buildFeatureItem(IconData icon, String label) {
   );
 }
 
-Widget buildLeadGraph() {
+Widget buildLeadGraph(DashboardController controller) {
+  final leadsTrend =
+      controller.resellerInsightsModel.value?.data.leadsTrend
+          ?.map<Map<String, dynamic>>(
+            (e) => {"name": e.name ?? '', "leads": e.leads ?? 0},
+          )
+          .toList() ??
+      [];
+
+  // --- Step 1: Extract all years present in data ---
+  final Set<String> yearsInData =
+      leadsTrend.map((e) => e['name'].toString().split('-').first).toSet();
+
+  // --- Step 2: Determine which year to display ---
+  // Prefer latest available year; fallback to current year
+  final String displayYear =
+      yearsInData.isNotEmpty
+          ? (yearsInData.toList()..sort()).last
+          : DateTime.now().year.toString();
+
+  // --- Step 3: Collect month data for that year ---
+  final Map<String, double> monthDataForYear = {};
+  for (var e in leadsTrend) {
+    final parts = e['name'].toString().split('-');
+    if (parts.length == 2 && parts[0] == displayYear) {
+      monthDataForYear[parts[1]] = (e['leads'] as num).toDouble();
+    }
+  }
+
+  // --- Step 4: Fill missing months (1–12) with zero ---
+  final mergedData = List.generate(12, (i) {
+    final month = (i + 1).toString().padLeft(2, '0');
+    return {
+      "name": "$displayYear-$month",
+      "leads": monthDataForYear[month] ?? 0,
+    };
+  });
+
+  // --- Step 5: Extract for chart ---
+  final List<String> months =
+      mergedData.map((e) => e['name'] as String).toList();
+
+  final List<double> monthlyData =
+      mergedData.map((e) => (e['leads'] as num).toDouble()).toList();
 
   return Container(
     padding: const EdgeInsets.all(16),
@@ -587,6 +877,7 @@ Widget buildLeadGraph() {
       ),
     ),
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -598,15 +889,12 @@ Widget buildLeadGraph() {
                 children: [
                   Text(
                     'Leads',
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
                     style: TextStyle(
                       color: ColorRes.green,
-                      fontSize: AppFontSizes.body,
+                      fontSize: AppFontSizes.medium,
                       fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
-
                   Text(
                     'Monthly Overview',
                     style: TextStyle(
@@ -620,7 +908,9 @@ Widget buildLeadGraph() {
             ),
           ],
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
+
+        // --- Chart section ---
         SizedBox(
           height: 200,
           width: double.infinity,
@@ -631,7 +921,50 @@ Widget buildLeadGraph() {
   );
 }
 
-Widget buildCommissionGraph() {
+Widget buildCommissionGraph(DashboardController controller) {
+  final leadsTrend =
+      controller.resellerInsightsModel.value?.data.commissionTrend
+          ?.map<Map<String, dynamic>>(
+            (e) => {"name": e.name ?? '', "commission": e.commission ?? 0},
+          )
+          .toList() ??
+      [];
+
+  // --- Step 1: Extract all years present in data ---
+  final Set<String> yearsInData =
+      leadsTrend.map((e) => e['name'].toString().split('-').first).toSet();
+
+  // --- Step 2: Determine which year to display ---
+  // Prefer latest available year; fallback to current year
+  final String displayYear =
+      yearsInData.isNotEmpty
+          ? (yearsInData.toList()..sort()).last
+          : DateTime.now().year.toString();
+
+  // --- Step 3: Collect month data for that year ---
+  final Map<String, double> monthDataForYear = {};
+  for (var e in leadsTrend) {
+    final parts = e['name'].toString().split('-');
+    if (parts.length == 2 && parts[0] == displayYear) {
+      monthDataForYear[parts[1]] = (e['commission'] as num).toDouble();
+    }
+  }
+
+  // --- Step 4: Fill missing months (1–12) with zero ---
+  final mergedData = List.generate(12, (i) {
+    final month = (i + 1).toString().padLeft(2, '0');
+    return {
+      "name": "$displayYear-$month",
+      "commission": monthDataForYear[month] ?? 0,
+    };
+  });
+
+  // --- Step 5: Extract for chart ---
+  final List<String> months =
+      mergedData.map((e) => e['name'] as String).toList();
+
+  final List<double> monthlyData =
+      mergedData.map((e) => (e['commission'] as num).toDouble()).toList();
 
   return Container(
     padding: const EdgeInsets.all(16),
@@ -663,7 +996,7 @@ Widget buildCommissionGraph() {
                     maxLines: 1,
                     style: TextStyle(
                       color: ColorRes.lightPurpleColor,
-                      fontSize: AppFontSizes.body,
+                      fontSize: AppFontSizes.medium,
                       fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
@@ -835,6 +1168,23 @@ class MonthlyLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final maxValue = monthlyData.reduce((a, b) => a > b ? a : b);
+    // final maxValue = monthlyData.reduce((a, b) => a > b ? a : b);
+    final minValue = 0.0;
+
+// ✅ Ensure minimum graph height (Y-axis at least up to 50)
+    final effectiveMax = maxValue < 50 ? 50 : maxValue;
+    final yRange = effectiveMax - minValue;
+
+// ✅ Make exactly 6 Y-axis steps (0, 1/5, 2/5, ... max)
+    final interval = (yRange / 5).ceilToDouble();
+
+// ✅ Round up to next multiple of interval for clean top
+    final adjustedMaxY = ((effectiveMax / interval).ceil()) * interval;
+
+    print("Y-Axis -> min:$minValue, max:$adjustedMaxY, interval:$interval");
+
+
     final spots = List.generate(
       monthlyData.length,
       (index) => FlSpot(index.toDouble(), monthlyData[index]),
@@ -849,8 +1199,9 @@ class MonthlyLineChart extends StatelessWidget {
 
     return LineChart(
       LineChartData(
-        minY: 0,
-        maxY: 50,
+        minY: double.tryParse(minValue.toString()),
+
+        maxY: adjustedMaxY,
 
         // --- Line style ---
         lineBarsData: [
@@ -898,10 +1249,12 @@ class MonthlyLineChart extends StatelessWidget {
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
                 if (visibleIndexes.contains(index)) {
+                  final monthNum = months[index].split('-')[1];
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      months[index],
+                      '${MonthDate.monthDate.monthChange(monthNum)}',
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -917,10 +1270,10 @@ class MonthlyLineChart extends StatelessWidget {
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval: 10,
+              interval: interval,
               getTitlesWidget:
                   (value, meta) => Text(
-                    value.toInt().toString(),
+                    Formatter.formatNumber(value.toInt()),
                     style: const TextStyle(fontSize: 10),
                   ),
               reservedSize: 28,
@@ -949,8 +1302,6 @@ class MonthlyLineChart extends StatelessWidget {
             left: BorderSide(color: Colors.grey.shade300, width: 1),
           ),
         ),
-
-        // --- Tooltip on tap ---
         lineTouchData: LineTouchData(
           enabled: true,
           touchTooltipData: LineTouchTooltipData(
@@ -973,11 +1324,11 @@ class MonthlyLineChart extends StatelessWidget {
 }
 
 Widget buildReferralProgram({
-
   required BuildContext context,
   required double bonus,
   required int currentProgress,
   required double targetProgress,
+  required DashboardController controller,
   required String title,
   required String subtitle,
   required String pointsEarned,
@@ -991,7 +1342,6 @@ Widget buildReferralProgram({
   required Color card1BgColor,
   required Color card2BorderColor,
   required Color card2BgColor,
-
 }) {
   return Container(
     padding: const EdgeInsets.all(16),
@@ -1027,7 +1377,7 @@ Widget buildReferralProgram({
                       maxLines: 1,
                       style: TextStyle(
                         color: ColorRes.purpleColor,
-                        fontSize: AppFontSizes.body,
+                        fontSize: AppFontSizes.medium,
                         fontWeight: AppFontWeights.semiBold,
                       ),
                     ),
@@ -1054,145 +1404,177 @@ Widget buildReferralProgram({
         const SizedBox(height: 20),
 
         // Two cards: points earned and total earnings
-        Row(
-          children: [
-            Expanded(
-              child: buildReferralCard(
-                iconBgColor: iconBackground,
-                iconColor: iconColor,
-                icon: Icons.safety_check_outlined,
-                subtitle: 'From referrals',
-                title: 'Points earned',
-                amount: 2400.toString(),
-                backgroundColor: card1BgColor,
-                borderColor: card1BorderColor
+        if (controller.dummyReferral.value?.data?.isNotEmpty ?? false) ...[
+          Row(
+            children: [
+              Expanded(
+                child: buildReferralCard(
+                  iconBgColor: iconBackground,
+                  iconColor: iconColor,
+                  icon: Icons.safety_check_outlined,
+                  subtitle: 'From referrals',
+                  title: 'Points earned',
+                  amount: pointsEarned,
+                  backgroundColor: card1BgColor,
+                  borderColor: card1BorderColor,
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: buildReferralCard(
+              const SizedBox(width: 12),
+              Expanded(
+                child: buildReferralCard(
                   iconBgColor: iconBackground,
                   iconColor: iconColor,
                   icon: Icons.safety_check_outlined,
                   subtitle: earningSubtitle,
-                  title: 'Total earnings',
+                  title: 'Total referrals',
                   amount: totalEarnings.toString(),
                   backgroundColor: card2BgColor,
-                  borderColor: card2BorderColor
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 12),
-
-        // Referral Code Section
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: ColorRes.leadGreyColor.withOpacity(0.3),
-                    width: 1,
-                  ),
+                  borderColor: card2BorderColor,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: ColorRes.textPrimary.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          leftIcon,
-                          color: iconColor,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Your Referral Code',
-                              style: TextStyle(
-                                color: ColorRes.textSecondary,
-                                fontSize: AppFontSizes.caption,
-                                fontWeight: AppFontWeights.medium,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              referralCode,
-                              style: TextStyle(
-                                color: ColorRes.textPrimary,
-                                fontSize: AppFontSizes.medium,
-                                fontWeight: AppFontWeights.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Clipboard.setData(ClipboardData(text: referralCode));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('Referral code copied!'),
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
-                        },
-                        child: Container(
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // Referral Code Section
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: ColorRes.leadGreyColor.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: ColorRes.textPrimary,
+                            color: ColorRes.textPrimary.withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
-                            Icons.copy_rounded,
-                            color: ColorRes.white,
-                            size: 20,
+                          child: Icon(leftIcon, color: iconColor, size: 24),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Your Referral Code',
+                                style: TextStyle(
+                                  color: ColorRes.textSecondary,
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                referralCode,
+                                style: TextStyle(
+                                  color: ColorRes.textPrimary,
+                                  fontSize: AppFontSizes.medium,
+                                  fontWeight: AppFontWeights.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        InkWell(
+                          onTap: () {
+                            Clipboard.setData(
+                              ClipboardData(text: referralCode),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text('Referral code copied!'),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: ColorRes.textPrimary,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.copy_rounded,
+                              color: ColorRes.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // Progress Section
+          buildProgressSection(
+            bonusAmount: bonus,
+            currentProgress: currentProgress,
+            targetProgress: targetProgress,
+          ),
+        ] else ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            decoration: BoxDecoration(
+              color: ColorRes.purpleColor.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: ColorRes.purpleColor.withOpacity(0.25)),
             ),
-          ],
-        ),
-
-        const SizedBox(height: 12),
-
-        // Progress Section
-        buildProgressSection(
-          bonusAmount: bonus,
-          currentProgress: currentProgress,
-          targetProgress: targetProgress,
-        ),
+            child: GestureDetector(
+              onTap: () async {
+                controller.fetchReferralService();
+                final bool success = await Get.to(
+                  () => ReferralProgramScreen(),
+                );
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 20,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: ColorRes.leadGreyColor.withOpacity(0.2),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  'Generate Code',
+                  style: TextStyle(fontWeight: AppFontWeights.semiBold),
+                ),
+              ),
+            ),
+          ),
+        ],
       ],
     ),
   );
 }
 
-
-
-
-
 Widget buildLeaderBoardRanking({
-
   required String title,
   required String subtitle,
   required List<String> filters,
@@ -1217,11 +1599,7 @@ Widget buildLeaderBoardRanking({
         // Header Section
         Row(
           children: [
-            Icon(
-              Icons.emoji_events_outlined,
-              color: headerIconColor,
-              size: 28,
-            ),
+            Icon(Icons.emoji_events_outlined, color: headerIconColor, size: 28),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -1231,7 +1609,7 @@ Widget buildLeaderBoardRanking({
                     title,
                     style: TextStyle(
                       color: headerIconColor,
-                      fontSize: AppFontSizes.body,
+                      fontSize: AppFontSizes.medium,
                       fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
@@ -1256,15 +1634,13 @@ Widget buildLeaderBoardRanking({
           children: List.generate(filters.length, (index) {
             final bool isActive = index == 0;
             final Color filterColor =
-            isActive ? activeFilterColor : defaultFilterColor;
+                isActive ? activeFilterColor : defaultFilterColor;
             return Expanded(
               child: Padding(
-                padding: EdgeInsets.only(right: index != filters.length - 1 ? 8 : 0),
-                child: buildFilterChip(
-                  filters[index],
-                  filterColor,
-                  isActive,
+                padding: EdgeInsets.only(
+                  right: index != filters.length - 1 ? 8 : 0,
                 ),
+                child: buildFilterChip(filters[index], filterColor, isActive),
               ),
             );
           }),
@@ -1298,7 +1674,6 @@ Widget buildLeaderBoardRanking({
     ),
   );
 }
-
 
 Widget buildFilterChip(String label, Color color, bool isSelected) {
   return Container(
@@ -1523,11 +1898,10 @@ Widget buildLeaderCard({
 }
 
 Widget resellerLeaderBoard({
-
   required String title,
   required String bannerTitle,
   required String bannerSubtitle,
-  required List<Map<String, dynamic>> leaderboardData,
+  required List<TopReseller> leaderboardData,
   Color headerColor = const Color(0xFF6366F1),
   Color bannerColor = const Color(0xFFFEF3E2),
   Color bannerBorderColor = const Color(0xFFFBBF24),
@@ -1547,16 +1921,12 @@ Widget resellerLeaderBoard({
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              Icon(
-                Icons.emoji_events_outlined,
-                color: headerColor,
-                size: 24,
-              ),
+              Icon(Icons.emoji_events_outlined, color: headerColor, size: 24),
               const SizedBox(width: 8),
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: AppFontSizes.body,
+                  fontSize: AppFontSizes.medium,
                   fontWeight: AppFontWeights.semiBold,
                   color: headerColor,
                 ),
@@ -1618,27 +1988,26 @@ Widget resellerLeaderBoard({
         // Dynamic Leaderboard Items
         for (int i = 0; i < leaderboardData.length; i++)
           buildLeaderboardItem(
-            rank: leaderboardData[i]['rank'],
-            name: leaderboardData[i]['name'],
-            tier: leaderboardData[i]['tier'],
-            amount: leaderboardData[i]['amount'],
-            emoji: leaderboardData[i]['emoji'],
-            isTopRank: leaderboardData[i]['isTopRank'] ?? false,
-            isCurrentUser: leaderboardData[i]['isCurrentUser'] ?? false,
-            isLast: leaderboardData[i]['isLast'] ?? false,
+            rank: leaderboardData[i].rank,
+            name: leaderboardData[i].name,
+            tier: leaderboardData[i].level,
+            amount: Formatter.formatPrice(leaderboardData[i].totalCommission),
+
+            isTopRank: i == 0,
+            isCurrentUser: leaderboardData[i].isCurrentUser,
+            isLast: i == leaderboardData.length - 1,
           ),
       ],
     ),
   );
 }
 
-
 Widget buildLeaderboardItem({
   required int rank,
   required String name,
   required String tier,
   required String amount,
-  required String emoji,
+
   bool isTopRank = false,
   bool isCurrentUser = false,
   bool isLast = false,
@@ -1729,20 +2098,19 @@ Widget buildLeaderboardItem({
 }
 
 Widget buildBestResellerOnTheMonth({
-
   required String month,
   required String year,
   required String totalCommission,
   required String commissionSubtitle,
   required String level,
-  required String levelSubtitle,
+  required double levelSubtitle,
   required String totalLeads,
   required String leadsSubtitle,
   required Color commissionColor,
   required Color levelColor,
   required Color leadsColor,
   String motivationalText =
-  "Keep up the excellent work! You're on track for greatness!",
+      "Keep up the excellent work! You're on track for greatness!",
 }) {
   return Container(
     decoration: BoxDecoration(
@@ -1770,7 +2138,7 @@ Widget buildBestResellerOnTheMonth({
                 RichText(
                   text: TextSpan(
                     style: TextStyle(
-                      fontSize: AppFontSizes.body,
+                      fontSize: AppFontSizes.medium,
                       fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textPrimary,
                     ),
@@ -1778,9 +2146,7 @@ Widget buildBestResellerOnTheMonth({
                       const TextSpan(text: 'Best Reseller '),
                       TextSpan(
                         text: 'of the Month',
-                        style: TextStyle(
-                          color: ColorRes.error,
-                        ),
+                        style: TextStyle(color: ColorRes.error),
                       ),
                     ],
                   ),
@@ -1815,7 +2181,8 @@ Widget buildBestResellerOnTheMonth({
         // Level Card
         buildCommissionCard(
           title: 'Current Level',
-          subtitle: levelSubtitle,
+          subtitle:
+              '${(levelSubtitle * 100).toStringAsFixed(1)}% to next level',
           amount: level,
           backgroundColor: levelColor.withOpacity(0.05),
           borderColor: levelColor,
@@ -1882,7 +2249,6 @@ Widget buildBestResellerOnTheMonth({
   );
 }
 
-
 Widget buildCommissionCard({
   required String title,
   required String subtitle,
@@ -1915,38 +2281,41 @@ Widget buildCommissionCard({
         const SizedBox(width: 12),
 
         // Text Column
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: AppFontSizes.small,
-                // Replace with AppFontSizes.extraSmall
-                fontWeight: AppFontWeights.semiBold,
-                // Replace with AppFontWeights.semiBold
-                color:
-                    ColorRes.textColor, // Replace with ColorRes.textSecondary
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: AppFontSizes.small,
+                  // Replace with AppFontSizes.extraSmall
+                  fontWeight: AppFontWeights.semiBold,
+                  // Replace with AppFontWeights.semiBold
+                  color:
+                      ColorRes.textColor, // Replace with ColorRes.textSecondary
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: AppFontSizes.extraSmall,
-                // Replace with AppFontSizes.extraSmall
-                fontWeight: AppFontWeights.medium,
-                // Replace with AppFontWeights.semiBold
-                color:
-                    ColorRes
-                        .leadGreyColor, // Replace with Cplace with ColorRes.textSecondary
+              const SizedBox(height: 2),
+              Text(
+                '$subtitle',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: AppFontSizes.extraSmall,
+                  // Replace with AppFontSizes.extraSmall
+                  fontWeight: AppFontWeights.medium,
+                  // Replace with AppFontWeights.semiBold
+                  color:
+                      ColorRes
+                          .leadGreyColor, // Replace with Cplace with ColorRes.textSecondary
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(width: 4),
-        const Spacer(),
 
         // Amount Text
         Text(
@@ -1979,6 +2348,11 @@ Widget buildDailyGoals({
   final double progress = (completedSteps / totalSteps).clamp(0.0, 1.0);
   final remainingSteps = totalSteps - completedSteps;
   final progressPercent = (completedSteps / totalSteps * 100).toInt();
+  print("resele $currentStep");
+  print("resele $currentStreak");
+  print("resele $remainingSteps");
+  print("resele $completedSteps");
+  print("resele $progressPercent");
 
   return Container(
     decoration: BoxDecoration(
@@ -2003,10 +2377,7 @@ Widget buildDailyGoals({
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: primaryColor.withOpacity(0.1),
-              width: 1,
-            ),
+            border: Border.all(color: primaryColor.withOpacity(0.1), width: 1),
           ),
           child: Row(
             children: [
@@ -2016,11 +2387,7 @@ Widget buildDailyGoals({
                   color: accentColor.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  Icons.bolt,
-                  color: accentColor,
-                  size: 24,
-                ),
+                child: Icon(Icons.bolt, color: accentColor, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -2032,8 +2399,8 @@ Widget buildDailyGoals({
                         Text(
                           title, // applied title parameter
                           style: TextStyle(
-                            fontSize: AppFontSizes.bodyMedium,
-                            fontWeight: AppFontWeights.bold,
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.textPrimary,
                           ),
                         ),
@@ -2097,7 +2464,7 @@ Widget buildDailyGoals({
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     color:
-                    completedSteps > 0 ? primaryColor : Colors.transparent,
+                        completedSteps > 0 ? primaryColor : Colors.transparent,
                   ),
                 ),
                 // Dots overlay
@@ -2120,27 +2487,30 @@ Widget buildDailyGoals({
                           height: 10,
                           width: 10,
                           decoration: BoxDecoration(
-                            color: isActive
-                                ? ColorRes.green.shade400
-                                : ColorRes.white,
+                            color:
+                                isActive
+                                    ? ColorRes.green.shade400
+                                    : ColorRes.white,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: isActive
-                                  ? ColorRes.green.shade400
-                                  : ColorRes.green.shade300,
+                              color:
+                                  isActive
+                                      ? ColorRes.green.shade400
+                                      : ColorRes.green.shade300,
                               width: 1,
                             ),
-                            boxShadow: isActive
-                                ? [
-                              BoxShadow(
-                                offset: const Offset(0, 2),
-                                blurRadius: 8,
-                                spreadRadius: 0,
-                                color: ColorRes.green.shade400
-                                    .withOpacity(0.4),
-                              ),
-                            ]
-                                : null,
+                            boxShadow:
+                                isActive
+                                    ? [
+                                      BoxShadow(
+                                        offset: const Offset(0, 2),
+                                        blurRadius: 8,
+                                        spreadRadius: 0,
+                                        color: ColorRes.green.shade400
+                                            .withOpacity(0.4),
+                                      ),
+                                    ]
+                                    : null,
                           ),
                         ),
                       );
@@ -2166,9 +2536,10 @@ Widget buildDailyGoals({
                 style: TextStyle(
                   fontWeight: AppFontWeights.semiBold,
                   fontSize: AppFontSizes.small,
-                  color: isActive
-                      ? ColorRes.green.shade600
-                      : ColorRes.textPrimary.withOpacity(0.5),
+                  color:
+                      isActive
+                          ? ColorRes.green.shade600
+                          : ColorRes.textPrimary.withOpacity(0.5),
                 ),
               );
             }),
@@ -2263,6 +2634,7 @@ Widget buildStatItem({
 Widget buildOverviewCards(DashboardController controller) {
   return Obx(() {
     final metrics = controller.metrics.value;
+    final data = controller.resellerInsightsModel.value?.data;
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -2272,27 +2644,27 @@ Widget buildOverviewCards(DashboardController controller) {
       childAspectRatio: 1.5,
       children: [
         buildMetricCard(
-          'Property Sales',
-          '\$${(metrics.totalSales / 1000000).toStringAsFixed(2)}M',
+          'Total Assigned Properties',
+          data?.totalAssignedProperties.toString() ?? '',
           Icons.home_work,
-          ColorRes.success,
-        ),
-        buildMetricCard(
-          'Buyer Leads',
-          '${metrics.totalLeads}',
-          Icons.people,
           ColorRes.blueColor,
         ),
         buildMetricCard(
-          'Listed Properties',
-          '${metrics.totalProducts}',
-          Icons.apartment,
+          'Total Commission',
+          '${Formatter.formatPrice(controller.resellerInsightsModel.value?.data.earnings.totalCommission ?? 0)}',
+          Icons.currency_rupee_outlined,
+          ColorRes.green,
+        ),
+        buildMetricCard(
+          'Total Leads',
+          '${data?.performance.totalLeads}',
+          Icons.person_add_alt_1,
           ColorRes.orangeColor,
         ),
         buildMetricCard(
-          'Sales Growth',
-          '${metrics.growthPercentage.toStringAsFixed(1)}%',
-          Icons.trending_up,
+          'Closed Deals',
+          '${data?.performance.closedDeals}',
+          Icons.add_chart,
           ColorRes.purpleColor,
         ),
       ],
@@ -2587,7 +2959,7 @@ Widget buildLeadCard(
                   icon: Icons.delete,
                   color: ColorRes.error,
                   onPressed:
-                      () => showDeleteConfirmation(context, lead, controller,),
+                      () => showDeleteConfirmation(context, lead, controller),
                   tooltip: 'Delete Lead',
                   isCompact: isCompact,
                 ),
@@ -2942,7 +3314,8 @@ String _formatTime(DateTime dateTime) {
   }
 }
 
-Widget buildMonthlyPerformance({ required String title,
+Widget buildMonthlyPerformance({
+  required String title,
   required String levelName,
   required IconData levelIcon,
   required Color levelIconColor,
@@ -2951,7 +3324,7 @@ Widget buildMonthlyPerformance({ required String title,
   required String currentAmount,
   required String targetAmount,
   required String unlockMessage,
-  required int streakDays,
+  required dynamic streakDays,
   required String commissionCurrent,
   required String commissionPrevious,
   required String commissionChange,
@@ -2959,7 +3332,8 @@ Widget buildMonthlyPerformance({ required String title,
   required String leadsCurrent,
   required String leadsPrevious,
   required String leadsChange,
-  required bool leadsPositive,}) {
+  required bool leadsPositive,
+}) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -2985,7 +3359,7 @@ Widget buildMonthlyPerformance({ required String title,
             Text(
               '$title',
               style: TextStyle(
-                fontSize: AppFontSizes.body,
+                fontSize: AppFontSizes.medium,
                 fontWeight: AppFontWeights.semiBold,
                 color: ColorRes.textPrimary,
               ),
@@ -3041,7 +3415,10 @@ Widget buildMonthlyPerformance({ required String title,
                   // buildBenefit('✓ Basic support'),
                   // const SizedBox(height: 6),
                   // buildBenefit('✓ Access to properties'),
-                  ...List.generate(benefits.length, (index)=>buildBenefit('✓ ${benefits[index]}'))
+                  ...List.generate(
+                    benefits.length,
+                    (index) => buildBenefit('✓ ${benefits[index]}'),
+                  ),
                 ],
               ),
             ),
@@ -3057,7 +3434,7 @@ Widget buildMonthlyPerformance({ required String title,
                     Icon(Icons.bolt, color: ColorRes.orangeColor, size: 20),
                     const SizedBox(width: 6),
                     Text(
-                      'Progress to Next Level',
+                      'Progress to ($streakDays) Level',
                       style: TextStyle(
                         fontSize: AppFontSizes.small,
                         fontWeight: AppFontWeights.semiBold,
@@ -3097,13 +3474,13 @@ Widget buildMonthlyPerformance({ required String title,
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  '%${progressValue*100}',
+                  '${(progressValue * 100).toStringAsFixed(1)}%',
+                  // show clean percentage
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.leadGreyColor.shade600,
                   ),
                 ),
-                const SizedBox(height: 12),
 
                 // Unlock Message
                 Container(
@@ -3137,42 +3514,6 @@ Widget buildMonthlyPerformance({ required String title,
                             color: ColorRes.homeAmber.shade700,
                             fontWeight: AppFontWeights.medium,
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // Streak
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorRes.error.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: ColorRes.error.withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.local_fire_department,
-                        color: ColorRes.error,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '$streakDays day streak!',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.caption,
-                          color: ColorRes.error,
-                          fontWeight: AppFontWeights.medium,
                         ),
                       ),
                     ],
@@ -3377,7 +3718,7 @@ Widget buildMetricComparisonCard({
             ),
             const SizedBox(width: 4),
             Text(
-              percentage,
+              '${percentage} %${isPositive ? 'increase' : 'decrease'} ',
               style: TextStyle(
                 fontSize: AppFontSizes.small,
                 fontWeight: AppFontWeights.semiBold,
@@ -3410,7 +3751,7 @@ class MainNavigationScreen extends StatelessWidget {
     Get.lazyPut(() => LeadController(), tag: "reseller");
 
     final screens = [
-      const ResellerDashboardScreen(),
+      ResellerDashboardScreen(),
       ProductListingScreen(),
       ResellerLeadScreen(),
       ResellerProfileScreen(),
@@ -3607,7 +3948,7 @@ Widget buildProgressSection({
                     ),
                     TextSpan(
                       text:
-                          'BONUS ₹${bonusAmount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}!',
+                          'Exciting BONUS',
                       style: TextStyle(
                         fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.purpleColor,
@@ -3717,7 +4058,18 @@ Widget buildReferralCard({
   );
 }
 
-/// curret=8 target 13 bonus=1000
-/// currentProgress / targetProgress
+double calculateProgress(num current, num total) {
+  if (total == 0) return 0;
+  return (current / total).clamp(0.0, 1.0); // keep within 0–1 range
+}
 
-/// remaining = targetProgress - currentProgress
+double calculateCommissionPercentage(num lastMonth, num currentMonth) {
+  if (lastMonth == 0) {
+    return currentMonth > 0 ? 100.0 : 0.0;
+  }
+
+  final difference = currentMonth - lastMonth;
+  final percentageChange = (difference / lastMonth) * 100;
+
+  return double.parse(percentageChange.toStringAsFixed(2));
+}

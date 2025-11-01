@@ -218,13 +218,16 @@ class DetailedRatings {
 
   /// Convert to Map
   Map<String, dynamic> toMap() {
-    return {
-      'location': location,
-      'cleanliness': cleanliness,
-      'accuracy': accuracy,
-      'value': value,
-      'amenities': amenities,
-    };
+
+    final map = <String, dynamic>{};
+    if(location != 0.0)map['location']=location;
+    if(cleanliness != 0.0)map['cleanliness']= cleanliness;
+    if(accuracy != 0.0)map['accuracy']= accuracy;
+    if(value != 0.0)map['value']= value;
+    if(amenities != 0.0)map['amenities']= amenities;
+
+    return map;
+
   }
 
   /// Optional: copyWith for updates

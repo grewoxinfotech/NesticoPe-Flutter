@@ -17,6 +17,12 @@ class ReferralProgramScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,
+        leading: IconButton(onPressed: () {
+
+          Get.back(
+            result: controller.isGenerated.value
+          );
+        }, icon: Icon(Icons.arrow_back)),
         title: const Text(
           'Referral Program',
           style: TextStyle(

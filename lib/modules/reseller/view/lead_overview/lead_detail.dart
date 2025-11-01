@@ -152,7 +152,6 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           '${(widget.isFromLead) ? 'Lead Details' : 'Property Overview'}',
           style: TextStyle(
             fontWeight: AppFontWeights.bold,
-            fontSize: AppFontSizes.large,
           ),
         ),
         backgroundColor: ColorRes.white,

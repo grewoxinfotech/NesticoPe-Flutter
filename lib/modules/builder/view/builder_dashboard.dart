@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../reseller/view/property_reseller.dart';
@@ -16,7 +17,7 @@ class BuilderDashboard extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Dashboard',
-          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+          style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
@@ -51,8 +52,8 @@ class BuilderDashboard extends StatelessWidget {
                         Text(
                           'Welcome Back!',
                           style: TextStyle(
-                            fontSize: AppFontSizes.subtitle,
-                            fontWeight: AppFontWeights.extraBold,
+                            fontSize: AppFontSizes.large,
+                            fontWeight: AppFontWeights.bold,
                             color: ColorRes.white,
                           ),
                         ),
@@ -127,7 +128,7 @@ class BuilderDashboard extends StatelessWidget {
             Text(
               'Recent Activities',
               style: TextStyle(
-                fontSize: AppFontSizes.body,
+                fontSize: AppFontSizes.medium,
                 fontWeight: AppFontWeights.semiBold,
                 color: ColorRes.textPrimary,
               ),
@@ -178,7 +179,7 @@ class BuilderDashboard extends StatelessWidget {
               title: 'Daily Goal',
               goalText: 'Try to generate 5 leads today',
               date: '27 Oct 2025',
-              currentStep: 3,
+              currentStep: 4,
               totalSteps: 5,
               currentStreak: 2,
               primaryColor: ColorRes.purpleColor.shade500,
@@ -192,7 +193,7 @@ class BuilderDashboard extends StatelessWidget {
               totalCommission: "₹2.9L",
               commissionSubtitle: "2,85,000 earned this month",
               level: "Noob",
-              levelSubtitle: "0% to next level",
+              levelSubtitle: 0.0,
               totalLeads: "8",
               leadsSubtitle: "Generated this month",
               commissionColor: ColorRes.success,
@@ -205,45 +206,7 @@ class BuilderDashboard extends StatelessWidget {
               bannerTitle: 'Top 10 (Overall)',
               bannerSubtitle: 'Gets Extra Rewards',
               leaderboardData: [
-                {
-                  'rank': 1,
-                  'name': 'Rajesh Kumar',
-                  'tier': 'Platinum',
-                  'amount': '₹35L',
-                  'emoji': '👨',
-                  'isTopRank': true,
-                },
-                {
-                  'rank': 2,
-                  'name': 'Priya Sharma',
-                  'tier': 'Platinum',
-                  'amount': '₹32L',
-                  'emoji': '👩',
-                  'isTopRank': true,
-                },
-                {
-                  'rank': 3,
-                  'name': 'You',
-                  'tier': 'Gold',
-                  'amount': '₹29L',
-                  'emoji': '⭐',
-                  'isCurrentUser': true,
-                },
-                {
-                  'rank': 4,
-                  'name': 'Amit Patel',
-                  'tier': 'Gold',
-                  'amount': '₹24L',
-                  'emoji': '👨',
-                },
-                {
-                  'rank': 5,
-                  'name': 'Neha Desai',
-                  'tier': 'Silver',
-                  'amount': '₹21L',
-                  'emoji': '👩',
-                  'isLast': true,
-                },
+
               ],
             ),
             const SizedBox(height: 20),
@@ -312,6 +275,7 @@ class BuilderDashboard extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             buildReferralProgram(
+              controller: DashboardController(),
               context: context,
               bonus: 5000,
               currentProgress: 4,
@@ -331,9 +295,9 @@ class BuilderDashboard extends StatelessWidget {
               card2BgColor: ColorRes.green.withOpacity(0.08),
             ),
             const SizedBox(height: 20),
-            buildLeadGraph(),
+            buildLeadGraph(DashboardController()),
             const SizedBox(height: 20),
-            buildCommissionGraph(),
+            buildCommissionGraph(DashboardController()),
             const SizedBox(height: 20),
 
             // Recent Activities

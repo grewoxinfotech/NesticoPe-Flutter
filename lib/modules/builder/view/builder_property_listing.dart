@@ -23,7 +23,7 @@ class BuilderPropertyListing extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'My Properties',
-          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+          style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,

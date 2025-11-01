@@ -605,18 +605,33 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
+import 'package:housing_flutter_app/data/network/reseller_dashboard/model/reseller_dashboard_model.dart';
+import 'package:housing_flutter_app/data/network/reseller_dashboard/service/reseller_dashboard_service.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/property/models/property_model.dart';
+import '../../../../data/network/referral/model/referrel_model.dart';
+import '../../../../data/network/referral/service/referrel_service.dart';
 import '../../../../utils/global.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 
 class DashboardController extends GetxController {
+  Rxn<ResellerInsightsModel> resellerInsightsModel =
+      Rxn<ResellerInsightsModel>();
+  RxList<Items> itemData = <Items>[].obs;
+  Rxn<Referrel_Model> dummyReferral = Rxn<Referrel_Model>();
+  PropertyService _propertyService = PropertyService();
+  Rxn<UserModel> userModel=Rxn<UserModel>();
+
   final RxBool isLoading = false.obs;
   final RxBool isRefreshing = false.obs;
   final RxBool isResellerDetailExpanded = false.obs;
+  final isGenerated = false.obs;
   final Rx<DashboardMetrics> metrics =
       DashboardMetrics(
         totalSales: 0,
@@ -667,8 +682,13 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    itemData.clear();
     loadProducts();
+    getCurrentUserData();
     fetchDashboardData();
+    fetchReferralService();
+
+    fetchResellerDashboardDataFromApi();
     Get.lazyPut(() => LeadController(), tag: "reseller");
     // Simulate real-time updates every 30 seconds
     _startRealTimeUpdates();
@@ -677,6 +697,59 @@ class DashboardController extends GetxController {
     ever(filterMinPrice, (_) => applyFilters());
     ever(filterMaxPrice, (_) => applyFilters());
     ever(sortOption, (_) => applySorting());
+  }
+
+  Future<Rxn<ResellerInsightsModel>> fetchResellerDashboardDataFromApi() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id;
+    final data = await ResellerDashboardService.resellerDashboardService
+        .fetchResellerDashboard(userId ?? '');
+    resellerInsightsModel.value = ResellerInsightsModel.fromJson(data??{});
+    print("Reseller Dashboard controller${resellerInsightsModel.toJson()}");
+
+    return resellerInsightsModel;
+  }
+  Future<void> fetchReferralService() async {
+    try {
+      isLoading.value = true;
+      final data = await Referral_Service.instance.fetchReferrals();
+      dummyReferral.value = Referrel_Model.fromJson(data);
+      if (dummyReferral.value != null) isGenerated.value = true;
+    } catch (e) {
+      print(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+  Future<void> getPropertyDetailById(List<TopProperty> item) async {
+    // for (int i = 0; i < item.length; i++) {
+    //   final data = await _propertyService.getPropertyById(item[i].id);
+    //   // print("Items Dtaa= $data");
+    //   // itemData.add(data??Items());
+    //   if (data != null) {
+    //     itemData.add(data);
+    //     print("Items Dtaa= ${itemData.value[i].propertyDetails?.financialInfo?.price}");
+    //   }
+    // }
+
+    final results = await Future.wait(
+      item.map((e) => _propertyService.getPropertyById(e.id)),
+    );
+
+    if (results.isNotEmpty) {
+      // Filter out null values
+      final validData = results.whereType<Items>().toList();
+
+      itemData.clear();
+      itemData.assignAll(validData);
+    }
+
+  }
+
+  Future<void> getCurrentUserData() async {
+    userModel.value=await  SecureStorage.getUserData();
   }
 
   void applyFilter(List<Map<String, String>> filterList) {

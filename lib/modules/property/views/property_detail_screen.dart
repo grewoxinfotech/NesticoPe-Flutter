@@ -203,20 +203,23 @@ class PropertyDetailScreen extends StatelessWidget {
                 );
               }),
               const SizedBox(height: 12),
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
 
-              const SizedBox(height: 8),
-              const TitleWithViewAll(title: 'Nearby Landmarks'),
-              const SizedBox(height: 12),
-              if (property?.nearbyLocations != null)
+
+              if (property?.nearbyLocations != null)...[
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
+                ),
+
+                const SizedBox(height: 8),
+                const TitleWithViewAll(title: 'Nearby Landmarks'),
+                const SizedBox(height: 12),
                 NearbyPropertyDetails(
                   nearbyLocations: property?.nearbyLocations ?? [],
                 ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
+              ],
               Divider(
                 indent: 18,
                 endIndent: 18,

@@ -19,8 +19,8 @@ class InsightsScreen extends StatelessWidget {
         title: Text(
           "Insights in Mumbai",
           style: TextStyle(
-            fontSize: AppFontSizes.bodyMedium,
-            fontWeight: AppFontWeights.medium,
+            // fontSize: AppFontSizes.bodyMedium,
+            fontWeight: AppFontWeights.bold,
           ),
         ),
       ),
@@ -34,7 +34,7 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Personalized Insights Just for you",
                   style: TextStyle(
-                    fontSize: AppFontSizes.body,
+                    fontSize: AppFontSizes.medium,
                     fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.blackShade87,
                   ),
@@ -45,7 +45,7 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Discover homes faster with tailored insights based on your prefrences",
                   style: TextStyle(
-                    fontSize: AppFontSizes.medium,
+                    fontSize: AppFontSizes.small,
                     fontWeight: AppFontWeights.regular,
                     color: ColorRes.blackShade54,
                   ),
@@ -58,7 +58,7 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Top Localities",
                   style: TextStyle(
-                    fontSize: AppFontSizes.bodySmall,
+                    fontSize: AppFontSizes.medium,
                     fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.blackShade87,
                   ),
@@ -69,8 +69,8 @@ class InsightsScreen extends StatelessWidget {
                 child: Text(
                   "Rediscover past areas and explore new ones tailored to you",
                   style: TextStyle(
-                    fontSize: AppFontSizes.caption,
                     color: ColorRes.blackShade54,
+                    fontSize: AppFontSizes.caption,
                     fontWeight: AppFontWeights.regular,
                   ),
                 ),
@@ -86,7 +86,7 @@ class InsightsScreen extends StatelessWidget {
                     Text(
                       "Top Rated Projects",
                       style: TextStyle(
-                        fontSize: AppFontSizes.bodySmall,
+                        fontSize: AppFontSizes.medium,
                         fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.blackShade87,
                       ),
@@ -123,7 +123,7 @@ class InsightsScreen extends StatelessWidget {
                     Text(
                       "Top Rated Projects",
                       style: TextStyle(
-                        fontSize: AppFontSizes.bodySmall,
+                        fontSize: AppFontSizes.medium,
                         fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.blackShade87,
                       ),

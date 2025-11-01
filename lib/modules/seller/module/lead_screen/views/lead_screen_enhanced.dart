@@ -2498,7 +2498,7 @@ class LeadScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ColorRes.white,
         appBar: AppBar(
-          title: const Text(
+          title:  Text(
             "Leads",
             style: TextStyle(fontWeight: AppFontWeights.bold),
           ),

@@ -27,7 +27,7 @@ class AddReviewScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorRes.white,
 
-      appBar: AppBar(title: const Text('Add Review')),
+      appBar: AppBar(title: Text('Add Review')),
       body: Form(
         key: controller.formKey,
         child: ListView(
@@ -57,10 +57,10 @@ class AddReviewScreen extends StatelessWidget {
 
                // Content
                NesticoPeTextField(
-                 isRequired: true,
+                 // isRequired: true,
                  autovalidateMode: AutovalidateMode.onUserInteraction,
                  controller: controller.contentController,
-                 title: 'Your Review',
+                 title: 'Your Review (Optional)',
                  hintText: 'Share your detailed experience...',
                  maxLines: 4,
                  validator: (v) {
@@ -95,7 +95,7 @@ class AddReviewScreen extends StatelessWidget {
             Text(
               'Detailed Ratings',
               style: TextStyle(
-                fontSize: AppFontSizes.body,
+                fontSize: AppFontSizes.headingTitle,
                 fontWeight: AppFontWeights.semiBold,
                 color: ColorRes.textPrimary,
               ),
@@ -115,7 +115,7 @@ class AddReviewScreen extends StatelessWidget {
                 Obx(
                       () => _buildRatingSectionWithoutContainer(
                     title: 'Location',
-                        isRequired: true,
+
                     rating: controller.locationRating.value,
                     onRatingChanged: (rating) {
                       controller.locationRating.value = rating;
@@ -129,7 +129,7 @@ class AddReviewScreen extends StatelessWidget {
                 Obx(
                       () => _buildRatingSectionWithoutContainer(
                     title: 'Cleanliness',
-                        isRequired: true,
+
                     rating: controller.cleanlinessRating.value,
                     onRatingChanged: (rating) {
                       controller.cleanlinessRating.value = rating;
@@ -143,7 +143,7 @@ class AddReviewScreen extends StatelessWidget {
                 Obx(
                       () => _buildRatingSectionWithoutContainer(
                     title: 'Accuracy',
-                        isRequired: true,
+
                     rating: controller.accuracyRating.value,
                     onRatingChanged: (rating) {
                       controller.accuracyRating.value = rating;
@@ -157,7 +157,7 @@ class AddReviewScreen extends StatelessWidget {
                 Obx(
                       () => _buildRatingSectionWithoutContainer(
                     title: 'Value',
-                        isRequired: true,
+
                     rating: controller.valueRating.value,
                     onRatingChanged: (rating) {
                       controller.valueRating.value = rating;
@@ -171,7 +171,7 @@ class AddReviewScreen extends StatelessWidget {
                 Obx(
                       () => _buildRatingSectionWithoutContainer(
                     title: 'Amenities',
-                        isRequired: true,
+
                     rating: controller.amenitiesRating.value,
                     onRatingChanged: (rating) {
                       controller.amenitiesRating.value = rating;
@@ -185,33 +185,33 @@ class AddReviewScreen extends StatelessWidget {
             const SizedBox(height: 20),
             //
             // Pros & Cons
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
-            decoration: BoxDecoration(
-                color: ColorRes.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
-            ),
-            child: Column(
-              children: [
-                NesticoPeTextField(
-                  controller: controller.prosController,
-                  title: 'Pros',
-                  hintText: 'What did you like?',
-                  maxLines: 3,
-                  isRequired: true,
-                ),
-                const SizedBox(height: 16),
-                NesticoPeTextField(
-                  controller: controller.consController,
-                  title: 'Cons',
-                  hintText: 'What could be improved?',
-                  maxLines: 3,
-                  isRequired: true,
-                ),
-              ],
-            ),
-          )
+          // Container(
+          //   padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+          //   decoration: BoxDecoration(
+          //       color: ColorRes.white,
+          //       borderRadius: BorderRadius.circular(12),
+          //       border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+          //   ),
+          //   child: Column(
+          //     children: [
+          //       NesticoPeTextField(
+          //         controller: controller.prosController,
+          //         title: 'Pros',
+          //         hintText: 'What did you like?',
+          //         maxLines: 3,
+          //
+          //       ),
+          //       const SizedBox(height: 16),
+          //       NesticoPeTextField(
+          //         controller: controller.consController,
+          //         title: 'Cons',
+          //         hintText: 'What could be improved?',
+          //         maxLines: 3,
+          //
+          //       ),
+          //     ],
+          //   ),
+          // )
           ],
         ),
       ),
@@ -269,7 +269,7 @@ class AddReviewScreen extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: AppFontSizes.medium,
+                      fontSize: AppFontSizes.bodySmall,
                       fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textPrimary,
                     ),
@@ -392,8 +392,8 @@ class AddReviewScreen extends StatelessWidget {
         location: controller.locationRating.value.toDouble(),
         value: controller.valueRating.value.toDouble(),
       ),
-      pros: controller.prosController.text.trim(),
-      cons: controller.consController.text.trim(),
+      pros: controller.prosController.text.trim().isNotEmpty?controller.prosController.text.trim():null,
+      cons: controller.consController.text.trim().isNotEmpty?controller.consController.text.trim():null,
     );
 
     try {
@@ -438,7 +438,7 @@ Widget _buildRatingSectionWithoutContainer({
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: AppFontSizes.medium,
+                  fontSize: AppFontSizes.bodySmall,
                   fontWeight: AppFontWeights.semiBold,
                   color: ColorRes.textPrimary,
                 ),

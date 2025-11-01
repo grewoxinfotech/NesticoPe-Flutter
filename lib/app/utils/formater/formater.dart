@@ -43,7 +43,7 @@ class Formatter {
       suffix = 'K';
     } else {
       // Less than 1k, return with 2 decimal places
-      return '$prefix ${price.toStringAsFixed(2)}';
+      return '$prefix ${price}';
     }
 
     // Remove trailing .0 for larger amounts
@@ -53,6 +53,36 @@ class Formatter {
     }
 
     return '$prefix $formatted$suffix';
+  }
+  static String formatNumber(num price) {
+    String suffix = '';
+    num value = price;
+    String prefix = '₹';
+
+    if (price >= 10000000 || price <= -10000000) {
+      // 1 Crore = 1 Cr = 10,000,000
+      value = price / 10000000;
+      suffix = 'Cr';
+    } else if (price >= 100000 || price <= -100000) {
+      // 1 Lakh = 1 Lac = 100,000
+      value = price / 100000;
+      suffix = 'L';
+    } else if (price >= 1000 || price <= -1000) {
+      // 1 Thousand
+      value = price / 1000;
+      suffix = 'K';
+    } else {
+      // Less than 1k, return with 2 decimal places
+      return '${price}';
+    }
+
+    // Remove trailing .0 for larger amounts
+    String formatted = value.toStringAsFixed(1);
+    if (formatted.endsWith('.0')) {
+      formatted = formatted.substring(0, formatted.length - 2);
+    }
+
+    return '$formatted$suffix';
   }
 
   static String formatPriceInternational(double value) {

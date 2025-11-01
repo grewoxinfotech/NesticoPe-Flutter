@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/home/views/home_screen/home_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/seller/controllers/seller_overview_controller.dart';
 import 'package:housing_flutter_app/modules/seller/model/overview_model.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
@@ -467,7 +468,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   commissionSubtitle:
                                       "2,85,000 earned this month",
                                   level: "Noob",
-                                  levelSubtitle: "0% to next level",
+                                  levelSubtitle: 0.0,
                                   totalLeads: "8",
                                   leadsSubtitle: "Generated this month",
                                   commissionColor: ColorRes.success,
@@ -480,45 +481,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   bannerTitle: 'Top 10 (Overall)',
                                   bannerSubtitle: 'Gets Extra Rewards',
                                   leaderboardData: [
-                                    {
-                                      'rank': 1,
-                                      'name': 'Rajesh Kumar',
-                                      'tier': 'Platinum',
-                                      'amount': '₹35L',
-                                      'emoji': '👨',
-                                      'isTopRank': true,
-                                    },
-                                    {
-                                      'rank': 2,
-                                      'name': 'Priya Sharma',
-                                      'tier': 'Platinum',
-                                      'amount': '₹32L',
-                                      'emoji': '👩',
-                                      'isTopRank': true,
-                                    },
-                                    {
-                                      'rank': 3,
-                                      'name': 'You',
-                                      'tier': 'Gold',
-                                      'amount': '₹29L',
-                                      'emoji': '⭐',
-                                      'isCurrentUser': true,
-                                    },
-                                    {
-                                      'rank': 4,
-                                      'name': 'Amit Patel',
-                                      'tier': 'Gold',
-                                      'amount': '₹24L',
-                                      'emoji': '👨',
-                                    },
-                                    {
-                                      'rank': 5,
-                                      'name': 'Neha Desai',
-                                      'tier': 'Silver',
-                                      'amount': '₹21L',
-                                      'emoji': '👩',
-                                      'isLast': true,
-                                    },
                                   ],
                                 ),
                                 const SizedBox(height: 20),
@@ -600,6 +562,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                 ),
                                 const SizedBox(height: 20),
                                 buildReferralProgram(
+                                  controller: DashboardController(),
                                   context: context,
                                   bonus: 5000,
                                   currentProgress: 4,
@@ -628,9 +591,9 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                buildLeadGraph(),
+                                buildLeadGraph(DashboardController()),
                                 const SizedBox(height: 20),
-                                buildCommissionGraph(),
+                                buildCommissionGraph(DashboardController()),
                                 const SizedBox(height: 20),
                               ],
                             ),
@@ -1492,7 +1455,7 @@ class CustomerSupportCard extends StatelessWidget {
                 Text(
                   "Customer Support",
                   style: TextStyle(
-                    fontSize: AppFontSizes.large,
+                    fontSize: AppFontSizes.medium,
                     fontWeight: AppFontWeights.semiBold,
                   ),
                 ),
@@ -1502,7 +1465,7 @@ class CustomerSupportCard extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: ColorRes.leadGreyColor[200]!),
+                border: Border.all(color: ColorRes.leadGreyColor[300]!),
               ),
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
 
@@ -1513,7 +1476,7 @@ class CustomerSupportCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       email,
-                      style: TextStyle(fontSize: AppFontSizes.body),
+                      style: TextStyle(fontSize: AppFontSizes.bodySmall),
                     ),
                   ),
                 ],
@@ -1523,7 +1486,7 @@ class CustomerSupportCard extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: ColorRes.leadGreyColor[200]!),
+                border: Border.all(color: ColorRes.leadGreyColor[300]!),
               ),
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               child: Row(
@@ -1533,7 +1496,7 @@ class CustomerSupportCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       phone,
-                      style: TextStyle(fontSize: AppFontSizes.body),
+                      style: TextStyle(fontSize: AppFontSizes.bodySmall),
                     ),
                   ),
                 ],

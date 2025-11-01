@@ -4,6 +4,7 @@ class AppFontSizes {
   // Very Small Fonts
   static const double tiny = 8.0;
   static const double mini = 9.0;
+  static const double headingTitle=14.0;
   static const double extraSmall = 10.0;
   static const double caption = 11.0;
 
@@ -15,6 +16,7 @@ class AppFontSizes {
   static const double medium = 14.0;
   static const double bodyMedium = 15.0;
   static const double body = 16.0;
+  static const double extraBody = 16.0;
 
   // Large Fonts
   static const double large = 18.0;

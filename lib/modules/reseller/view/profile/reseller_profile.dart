@@ -410,6 +410,8 @@
 
 
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
@@ -432,8 +434,8 @@ class ResellerProfileScreen extends StatelessWidget {
         title: const Text(
           'Profile',
           style: TextStyle(
-            fontWeight: AppFontWeights.semiBold,
-            fontSize: AppFontSizes.subtitle,
+            fontWeight: AppFontWeights.bold,
+
           ),
         ),
         backgroundColor: ColorRes.white,
@@ -480,7 +482,7 @@ class ResellerProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Profile Information Form
-              _buildProfileForm(profileController),
+              Obx(() =>  _buildProfileForm(profileController)),
               const SizedBox(height: 16),
 
               // Profile Options
@@ -641,10 +643,11 @@ class ResellerProfileScreen extends StatelessWidget {
                 ImageProvider? imageProvider;
 
                 // Priority: selectedImage > avatarUrl > null
-                if (controller.selectedImage.value != null) {
-                  imageProvider = FileImage(controller.selectedImage.value!);
-                } else if (controller.profile.value.avatarUrl.isNotEmpty) {
-                  imageProvider = NetworkImage(controller.profile.value.avatarUrl);
+                if (controller.profileData.value?.user?.profilePic != null) {
+                  imageProvider = FileImage(File(controller.profileData.value?.user?.profilePic??''));
+
+                } else if (controller.profileData.value?.user?.profilePic?.isNotEmpty??false) {
+                  imageProvider = NetworkImage(controller.profileData.value?.user?.profilePic??'');
                 }
 
                 return Container(
@@ -706,7 +709,7 @@ class ResellerProfileScreen extends StatelessWidget {
                 SizedBox(
                   width:150,
                   child: Text(
-                    controller.profile.value.name,
+                    ' ${controller.profileData.value?.user?.username??''}',
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.bold,
@@ -727,7 +730,7 @@ class ResellerProfileScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    controller.profile.value.position,
+                    '${controller.profileData.value?.user?.userType??''}',
                     style: TextStyle(
                       fontSize: AppFontSizes.extraSmall,
                       color: ColorRes.primary,
@@ -744,7 +747,7 @@ class ResellerProfileScreen extends StatelessWidget {
                     SizedBox(
                       width: 150,
                       child: Text(
-                        '${controller.profile.value.company}',
+                        '${controller.profileData.value?.user?.address??''}',
                         style: TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.leadGreyColor[600],
@@ -862,6 +865,14 @@ class ResellerProfileScreen extends StatelessWidget {
 
 
   Widget _buildProfileForm(ProfileController controller) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp)async {
+      controller.nameController.text=controller.profileData.value?.user?.firstName??"";
+      controller.lastNameController.text=controller.profileData.value?.user?.lastName??"";
+      controller.emailController.text =controller.profileData.value?.user?.email??"";
+      controller.phoneController.text =controller.profileData.value?.user?.phone??"";
+      controller.positionController.text =controller.profileData.value?.user?.userType??"";
+      controller.companyController.text =controller.profileData.value?.user?.address??"";
+    },);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
       decoration: BoxDecoration(
@@ -901,7 +912,15 @@ class ResellerProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             _buildFormField(
               controller: controller.nameController,
-              label: 'Full Name',
+              label: 'Fist Name',
+              icon: Icons.person_outline,
+              enabled: controller.isEditing.value,
+              validator: (value) => value?.isEmpty ?? true ? 'Name is required' : null,
+            ),
+            const SizedBox(height: 14),
+            _buildFormField(
+              controller: controller.lastNameController,
+              label: 'Last Name',
               icon: Icons.person_outline,
               enabled: controller.isEditing.value,
               validator: (value) => value?.isEmpty ?? true ? 'Name is required' : null,
@@ -941,14 +960,14 @@ class ResellerProfileScreen extends StatelessWidget {
               icon: Icons.business_outlined,
               enabled: controller.isEditing.value,
             ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.bioController,
-              label: 'Bio',
-              icon: Icons.info_outline,
-              enabled: controller.isEditing.value,
-              maxLines: 3,
-            ),
+            // const SizedBox(height: 14),
+            // _buildFormField(
+            //   controller: controller.bioController,
+            //   label: 'Bio',
+            //   icon: Icons.info_outline,
+            //   enabled: controller.isEditing.value,
+            //   maxLines: 3,
+            // ),
             if (controller.isEditing.value) ...[
               const SizedBox(height: 24),
               Row(

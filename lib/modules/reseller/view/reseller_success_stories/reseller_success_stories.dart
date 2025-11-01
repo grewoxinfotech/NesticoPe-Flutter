@@ -50,7 +50,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                       (context, index) {
                     if (index < controller.items.length) {
-                      final story = controller.items[0];
+                      final story = controller.items[index];
                       return _buildStoryCard(story, index);
                     } else if (controller.isLoading.value) {
                       return const Padding(

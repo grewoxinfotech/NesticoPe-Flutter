@@ -24,8 +24,7 @@ class FeedbackForSellerScreen extends StatelessWidget {
           'Feedback for Seller',
           style: TextStyle(
             color: ColorRes.black,
-            fontSize: AppFontSizes.large,
-            fontWeight: AppFontWeights.semiBold,
+            fontWeight: AppFontWeights.bold,
           ),
         ),
         centerTitle: true,
@@ -225,8 +224,8 @@ Widget feedBackRating(FeedbackController controller) {
         Text(
           'Your Feedback',
           style: TextStyle(
-            fontSize: AppFontSizes.body,
-            fontWeight: AppFontWeights.bold,
+            fontSize: AppFontSizes.medium,
+            fontWeight: AppFontWeights.semiBold,
             color: ColorRes.black,
           ),
         ),
