@@ -4,7 +4,8 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 
-class CommonNesticoPeAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CommonNesticoPeAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   final String title;
   final bool showBackArrow;
   final List<Widget>? actions;
@@ -35,11 +36,9 @@ class CommonNesticoPeAppBar extends StatelessWidget implements PreferredSizeWidg
       ),
     );
 
-    return SafeArea(
-      child: Container(
-        height: preferredSize.height,
-        color: ColorRes.white, // Themed background color
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+    return SizedBox.expand(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 12),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

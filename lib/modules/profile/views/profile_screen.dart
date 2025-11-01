@@ -4,13 +4,16 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/font_res.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
+import '../../auth/views/select_account_type_screen.dart';
 import '../../profile/views/edit_profile_screen.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import 'package:flutter/material.dart';
@@ -193,83 +196,139 @@ class ProfileScreen extends StatelessWidget {
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           padding: const EdgeInsets.all(_defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildProfileCard(),
-              const SizedBox(height: 20),
-              SettingsMenuTile(
-                icon: Icons.monitor_heart_outlined,
-                title: "My Activity",
-                subTitle: "Track your interactions",
-                onTap: () => Get.to(() => SavedPropertyScreen()),
-              ),
-              if (!UserHelper.isGuest) ...[
-                SettingsMenuTile(
-                  icon: Icons.card_giftcard,
-                  title: "Referral",
-                  subTitle: "Refer And Earn",
-                  onTap: () => Get.to(() => ReferralProgramScreen()),
-                ),
-              ],
+          child:
+              UserHelper.isGuest
+                  ? Column(
+                    children: [
+                      _buildProfileCard(),
+                      SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Get.to(() => LoginScreen());
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorRes.success,
+                          ),
+                          child: Text('Login'),
+                        ),
+                      ),
 
-              SettingsMenuTile(
-                icon: Icons.diamond_outlined,
-                title: "Zero Brokerage Properties",
-                subTitle: "Browse properties without brokerage",
-                onTap: () => _navigateToZeroBrokerage(),
-              ),
-              SettingsMenuTile(
-                icon: Icons.save_outlined,
-                title: "Saved Search",
-                subTitle: "Access your saved filters",
-                onTap: () => _navigateToSavedSearch(),
-              ),
-              _buildQuickLinksSection(),
-              _buildHomeSearchSection(),
-              _buildResidentialPackagesSection(),
-              _buildToolsAndAdviceSection(),
-              SettingsMenuTile(
-                icon: Icons.art_track_outlined,
-                title: "Housing News",
-                subTitle: "Latest property updates",
-                onTap: () => _navigateToNews(),
-              ),
-              SettingsMenuTile(
-                icon: Icons.home_repair_service_outlined,
-                title: "Housing Edge Services",
-                subTitle: "Premium home services",
-                onTap: () => _navigateToServices(),
-              ),
-              SettingsMenuTile(
-                icon: Icons.star_border_rounded,
-                title: "Recommended Properties (10)",
-                subTitle: "Curated for you",
-                onTap: () => _navigateToRecommended(),
-              ),
-              SettingsMenuTile(
-                icon: Icons.warning_amber_rounded,
-                title: "Report a fraud",
-                subTitle: "Stay safe from scams",
-                onTap: () => _navigateToReportFraud(),
-              ),
-              // _buildSettingsSection(),
-              const SizedBox(height: 20),
-              _buildHelpCenter(),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () {
-                    Get.lazyPut(() => AuthController());
-                    final controller = Get.find<AuthController>();
-                    controller.logout();
-                  },
-                  child: Text('Logout', style: TextStyle(fontSize: 14)),
-                ),
-              ),
-            ],
-          ),
+                      SizedBox(height: 12),
+
+                      Center(
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account?",
+                                style: TextStyle(
+                                  color: ColorRes.leadGreyColor.shade700,
+                                  fontFamily: FontRes.nuNunitoSans,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed:
+                                    () => Get.to(
+                                      () =>
+                                          RegisterScreen(role: UserRole.buyer),
+                                    ),
+                                child: Text(
+                                  'Sign Up here',
+                                  style: TextStyle(
+                                    color: ColorRes.success,
+                                    // fontWeight: FontWeight.bold,
+                                    fontWeight: AppFontWeights.extraBold,
+                                    fontFamily: FontRes.nuNunitoSans,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                  : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildProfileCard(),
+                      const SizedBox(height: 20),
+                      SettingsMenuTile(
+                        icon: Icons.monitor_heart_outlined,
+                        title: "My Activity",
+                        subTitle: "Track your interactions",
+                        onTap: () => Get.to(() => SavedPropertyScreen()),
+                      ),
+                      if (!UserHelper.isGuest) ...[
+                        SettingsMenuTile(
+                          icon: Icons.card_giftcard,
+                          title: "Referral",
+                          subTitle: "Refer And Earn",
+                          onTap: () => Get.to(() => ReferralProgramScreen()),
+                        ),
+                      ],
+
+                      SettingsMenuTile(
+                        icon: Icons.diamond_outlined,
+                        title: "Zero Brokerage Properties",
+                        subTitle: "Browse properties without brokerage",
+                        onTap: () => _navigateToZeroBrokerage(),
+                      ),
+                      SettingsMenuTile(
+                        icon: Icons.save_outlined,
+                        title: "Saved Search",
+                        subTitle: "Access your saved filters",
+                        onTap: () => _navigateToSavedSearch(),
+                      ),
+                      _buildQuickLinksSection(),
+                      _buildHomeSearchSection(),
+                      _buildResidentialPackagesSection(),
+                      _buildToolsAndAdviceSection(),
+                      SettingsMenuTile(
+                        icon: Icons.art_track_outlined,
+                        title: "Housing News",
+                        subTitle: "Latest property updates",
+                        onTap: () => _navigateToNews(),
+                      ),
+                      SettingsMenuTile(
+                        icon: Icons.home_repair_service_outlined,
+                        title: "Housing Edge Services",
+                        subTitle: "Premium home services",
+                        onTap: () => _navigateToServices(),
+                      ),
+                      SettingsMenuTile(
+                        icon: Icons.star_border_rounded,
+                        title: "Recommended Properties (10)",
+                        subTitle: "Curated for you",
+                        onTap: () => _navigateToRecommended(),
+                      ),
+                      SettingsMenuTile(
+                        icon: Icons.warning_amber_rounded,
+                        title: "Report a fraud",
+                        subTitle: "Stay safe from scams",
+                        onTap: () => _navigateToReportFraud(),
+                      ),
+                      // _buildSettingsSection(),
+                      const SizedBox(height: 20),
+                      _buildHelpCenter(),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton(
+                          onPressed: () {
+                            Get.lazyPut(() => AuthController());
+                            final controller = Get.find<AuthController>();
+                            controller.logout();
+                          },
+                          child: Text('Logout', style: TextStyle(fontSize: 14)),
+                        ),
+                      ),
+                    ],
+                  ),
         ),
       ),
     );
@@ -286,16 +345,6 @@ class ProfileScreen extends StatelessWidget {
           fontWeight: AppFontWeights.extraBold,
         ),
       ),
-      actions: [
-        if (UserHelper.isGuest) ...[
-          TextButton(
-            onPressed: () {
-              Get.to(() => LoginScreen());
-            },
-            child: const Text("Login", style: TextStyle(color: ColorRes.green)),
-          ),
-        ],
-      ],
     );
   }
 

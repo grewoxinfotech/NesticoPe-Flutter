@@ -626,7 +626,7 @@ class DashboardController extends GetxController {
   RxList<Items> itemData = <Items>[].obs;
   Rxn<Referrel_Model> dummyReferral = Rxn<Referrel_Model>();
   PropertyService _propertyService = PropertyService();
-  Rxn<UserModel> userModel=Rxn<UserModel>();
+  Rxn<UserModel> userModel = Rxn<UserModel>();
 
   final RxBool isLoading = false.obs;
   final RxBool isRefreshing = false.obs;
@@ -662,7 +662,7 @@ class DashboardController extends GetxController {
   final RxBool showFilters = false.obs;
   final offerController = TextEditingController();
   final messageController = TextEditingController();
-  final leadController = Get.find<LeadController>(tag: "reseller");
+  final leadController = Get.put(LeadController(), tag: "reseller");
 
   // Categories
   final RxList<String> categories =
@@ -704,11 +704,12 @@ class DashboardController extends GetxController {
     final userId = user?.user?.id;
     final data = await ResellerDashboardService.resellerDashboardService
         .fetchResellerDashboard(userId ?? '');
-    resellerInsightsModel.value = ResellerInsightsModel.fromJson(data??{});
+    resellerInsightsModel.value = ResellerInsightsModel.fromJson(data ?? {});
     print("Reseller Dashboard controller${resellerInsightsModel.toJson()}");
 
     return resellerInsightsModel;
   }
+
   Future<void> fetchReferralService() async {
     try {
       isLoading.value = true;
@@ -721,7 +722,6 @@ class DashboardController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
   Future<void> getPropertyDetailById(List<TopProperty> item) async {
     // for (int i = 0; i < item.length; i++) {
@@ -745,11 +745,10 @@ class DashboardController extends GetxController {
       itemData.clear();
       itemData.assignAll(validData);
     }
-
   }
 
   Future<void> getCurrentUserData() async {
-    userModel.value=await  SecureStorage.getUserData();
+    userModel.value = await SecureStorage.getUserData();
   }
 
   void applyFilter(List<Map<String, String>> filterList) {
@@ -1733,6 +1732,7 @@ class DashboardController extends GetxController {
   Future<void> refreshDashboard() async {
     try {
       isRefreshing.value = true;
+      await fetchResellerDashboardDataFromApi();
       await Future.delayed(const Duration(seconds: 1));
 
       // Update metrics with new values
@@ -1746,13 +1746,6 @@ class DashboardController extends GetxController {
         growthPercentage:
             currentMetrics.growthPercentage +
             ((DateTime.now().millisecond % 100 - 50) / 100),
-      );
-
-      Get.snackbar(
-        'Success',
-        'Dashboard refreshed',
-        backgroundColor: Colors.green,
-        colorText: ColorRes.white,
       );
     } catch (e) {
       Get.snackbar(

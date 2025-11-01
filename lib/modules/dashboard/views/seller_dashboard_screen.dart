@@ -370,7 +370,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
       body: Obx(() {
         switch (navigationController.currentIndex.value) {
           case 0:
-            return const SellerHomeScreen();
+            return SellerHomeScreen();
           case 1:
             return LeadScreen();
           // return Center(

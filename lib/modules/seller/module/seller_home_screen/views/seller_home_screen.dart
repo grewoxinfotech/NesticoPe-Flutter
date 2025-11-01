@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/modules/property/controllers/property_contro
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/seller/controllers/seller_overview_controller.dart';
 import 'package:housing_flutter_app/modules/seller/model/overview_model.dart';
+import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
@@ -224,6 +225,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => LeadController());
+
     Get.lazyPut(() => SellerOverviewController());
     final overviewController = Get.find<SellerOverviewController>();
     return Scaffold(
@@ -480,8 +483,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   title: 'Leaderboard',
                                   bannerTitle: 'Top 10 (Overall)',
                                   bannerSubtitle: 'Gets Extra Rewards',
-                                  leaderboardData: [
-                                  ],
+                                  leaderboardData: [],
                                 ),
                                 const SizedBox(height: 20),
                                 buildLeaderBoardRanking(

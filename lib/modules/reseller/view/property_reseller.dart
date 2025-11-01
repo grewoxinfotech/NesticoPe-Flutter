@@ -1172,18 +1172,17 @@ class MonthlyLineChart extends StatelessWidget {
     // final maxValue = monthlyData.reduce((a, b) => a > b ? a : b);
     final minValue = 0.0;
 
-// ✅ Ensure minimum graph height (Y-axis at least up to 50)
+    // ✅ Ensure minimum graph height (Y-axis at least up to 50)
     final effectiveMax = maxValue < 50 ? 50 : maxValue;
     final yRange = effectiveMax - minValue;
 
-// ✅ Make exactly 6 Y-axis steps (0, 1/5, 2/5, ... max)
+    // ✅ Make exactly 6 Y-axis steps (0, 1/5, 2/5, ... max)
     final interval = (yRange / 5).ceilToDouble();
 
-// ✅ Round up to next multiple of interval for clean top
+    // ✅ Round up to next multiple of interval for clean top
     final adjustedMaxY = ((effectiveMax / interval).ceil()) * interval;
 
     print("Y-Axis -> min:$minValue, max:$adjustedMaxY, interval:$interval");
-
 
     final spots = List.generate(
       monthlyData.length,
@@ -3473,12 +3472,15 @@ Widget buildMonthlyPerformance({
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  '${(progressValue * 100).toStringAsFixed(1)}%',
-                  // show clean percentage
-                  style: TextStyle(
-                    fontSize: AppFontSizes.caption,
-                    color: ColorRes.leadGreyColor.shade600,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '${(progressValue * 100).toStringAsFixed(1)}%',
+                    // show clean percentage
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      color: ColorRes.leadGreyColor.shade600,
+                    ),
                   ),
                 ),
 
@@ -3947,8 +3949,7 @@ Widget buildProgressSection({
                       style: TextStyle(fontWeight: AppFontWeights.regular),
                     ),
                     TextSpan(
-                      text:
-                          'Exciting BONUS',
+                      text: 'Exciting BONUS',
                       style: TextStyle(
                         fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.purpleColor,

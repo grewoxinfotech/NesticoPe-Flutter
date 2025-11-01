@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
@@ -24,13 +26,11 @@ import '../../reseller/view/reseller_success_stories/reseller_success_stories.da
 import '../../saved_property/views/saved_property_screen.dart';
 import '../../seller/seller_listing/view/seller_listing_view.dart';
 
-
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     final navigationController = Get.put(NavigationController());
     return Scaffold(
       extendBody: true,
@@ -92,16 +92,28 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 // ],
-                // if (UserHelper.isBuyer) ...[
-                ElevatedButton(
-                  onPressed: () {
-                    Get.to(() => ResellerConversionScreen());
-                  },
+                if (UserHelper.isBuyer) ...[
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.to(() => ResellerConversionScreen());
+                    },
 
-                  child: Text("Convert Reseller"),
-                ),
+                    child: Text("Convert Reseller"),
+                  ),
+                  SizedBox(height: 16),
+                ],
 
-                SizedBox(height: 16),
+                if (UserHelper.isGuest) ...[
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.to(() => RegisterScreen(role: UserRole.reseller));
+                    },
+
+                    child: Text("Convert Reseller"),
+                  ),
+                  SizedBox(height: 16),
+                ],
+
                 ElevatedButton(
                   onPressed: () {
                     Get.to(() => SellerConversionScreen());

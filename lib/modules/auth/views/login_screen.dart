@@ -5,12 +5,14 @@ import 'package:housing_flutter_app/modules/auth/views/forgot_password_screen.da
 import 'package:housing_flutter_app/modules/auth/views/select_account_type_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/otp_login_screen.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/widgets/bar/app_bar/custom_appbar.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../app/constants/font_res.dart';
 import '../../../app/constants/ic_res.dart';
 import '../../../app/utils/validation.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
+import '../../../widgets/bar/app_bar/common_bar.dart';
 import '../../../widgets/button/button.dart';
 import '../../../widgets/display/ic.dart';
 
@@ -69,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
     authController.fillTestCredentials();
     return Scaffold(
+      appBar: CommonNesticoPeAppBar(title: "Login", showBackArrow: true),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -213,7 +216,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextButton(
                             onPressed:
-                                () => Get.to(() => const SelectAccountTypeScreen()),
+                                () => Get.to(
+                                  () => const SelectAccountTypeScreen(),
+                                ),
                             child: Text(
                               'Sign Up here',
                               style: TextStyle(

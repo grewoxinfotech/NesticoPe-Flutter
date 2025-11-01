@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/modules/add_property/controller/create_prope
     hide SellerType;
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
@@ -209,77 +210,83 @@ class _HomeHeaderState extends State<HomeHeader> {
               //     ),
               //   ),
               // ),
-              GestureDetector(
-                onTap: () async {
-                  print("Mic tapped");
+              if (!UserHelper.isReseller) ...[
+                GestureDetector(
+                  onTap: () async {
+                    print("Mic tapped");
 
-                  try {
-                    // Get cached user type (sync, since you initialized it in splash)
-                    final userType = UserHelper.userType;
+                    try {
+                      // Get cached user type (sync, since you initialized it in splash)
+                      final userType = UserHelper.userType;
 
-                    // If not initialized, fetch directly from secure storage (fallback)
-                    if (userType == null) {
-                      final user = await SecureStorage.getUserData();
-                      final role = user?.user?.userType?.toLowerCase() ?? '';
-                      UserHelper.setUserType(role);
-                    }
+                      // If not initialized, fetch directly from secure storage (fallback)
+                      if (userType == null) {
+                        final user = await SecureStorage.getUserData();
+                        final role = user?.user?.userType?.toLowerCase() ?? '';
+                        UserHelper.setUserType(role);
+                      }
 
-                    print("DEBUG >> Current UserType: ${UserHelper.userType}");
+                      print(
+                        "DEBUG >> Current UserType: ${UserHelper.userType}",
+                      );
 
-                    if (UserHelper.isGuest) {
-                      Get.to(() => const LoginScreen());
-                    }
-
-                    if (UserHelper.isBuyer) {
-                      Get.to(() => const SellerConversionScreen());
-                    }
-
-                    // Handle behavior by role
-                    if (UserHelper.isSeller) {
-                      // ✅ Seller → can create property directly
-                      if (UserHelper.isSellerOwner) {
+                      if (UserHelper.isGuest) {
                         Get.to(
-                          () => CreatePropertyScreen(
-                            sellerType: mapUserRoleToSellerType(
-                              UserRole.seller,
-                            ),
-                            isLogin: true,
-                          ),
+                          () => const RegisterScreen(role: UserRole.seller),
                         );
                       }
 
-                      if (UserHelper.isSellerBuilder) {
-                        Get.lazyPut(() => ProjectWizardController());
-                        Get.to(() => CreateProjectScreen());
+                      if (UserHelper.isBuyer) {
+                        Get.to(() => const SellerConversionScreen());
                       }
+
+                      // Handle behavior by role
+                      if (UserHelper.isSeller) {
+                        // ✅ Seller → can create property directly
+                        if (UserHelper.isSellerOwner) {
+                          Get.to(
+                            () => CreatePropertyScreen(
+                              sellerType: mapUserRoleToSellerType(
+                                UserRole.seller,
+                              ),
+                              isLogin: true,
+                            ),
+                          );
+                        }
+
+                        if (UserHelper.isSellerBuilder) {
+                          Get.lazyPut(() => ProjectWizardController());
+                          Get.to(() => CreateProjectScreen());
+                        }
+                      }
+                    } catch (e) {
+                      print("Error checking user type: $e");
+                      Get.snackbar(
+                        "Error",
+                        "Something went wrong. Please try again.",
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
                     }
-                  } catch (e) {
-                    print("Error checking user type: $e");
-                    Get.snackbar(
-                      "Error",
-                      "Something went wrong. Please try again.",
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                  }
-                },
-                child: Container(
-                  height: 52,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 14,
-                    horizontal: 15,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorRes.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: ColorRes.grey.withOpacity(0.2)),
-                  ),
-                  child: const Icon(
-                    Icons.add,
-                    color: ColorRes.primary,
-                    size: 24,
+                  },
+                  child: Container(
+                    height: 52,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 15,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorRes.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: ColorRes.grey.withOpacity(0.2)),
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      color: ColorRes.primary,
+                      size: 24,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
