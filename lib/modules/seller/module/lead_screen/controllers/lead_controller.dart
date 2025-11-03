@@ -316,6 +316,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 
 import '../../../../../data/database/secure_storage_service.dart';
@@ -326,6 +327,8 @@ import '../model/lead_model.dart';
 
 class LeadController extends PaginatedController<LeadItem> {
   final LeadService _service = LeadService();
+
+  late final bool fromReseller;
 
   final PropertyController propertyController = Get.put(
     PropertyController(),
@@ -390,10 +393,25 @@ class LeadController extends PaginatedController<LeadItem> {
   @override
   void onInit() {
     super.onInit();
-
+    if (UserHelper.isReseller) {
+      fromReseller = true;
+      fetchResellerLead();
+    }
     fetchResellerAssignProperty();
     loadVariables();
-    loadInitial(); // Load first page of leads automatically
+    if (!UserHelper.isReseller) {
+      loadInitial();
+    }
+  }
+
+  Future<void> fetchResellerLead() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id;
+    if (userId != null) {
+      final filter = {"created_by": userId};
+      await applyFilters(filter);
+      loadInitial();
+    }
   }
 
   Future<void> fetchResellerAssignProperty() async {
@@ -423,6 +441,7 @@ class LeadController extends PaginatedController<LeadItem> {
       final response = await _service.fetchLeads(
         page: page,
         filters: filters.value,
+        fromReseller: fromReseller,
       );
       print("Fetched leads: ${response.items.length}");
       return response;
@@ -437,7 +456,9 @@ class LeadController extends PaginatedController<LeadItem> {
     try {
       isLoading.value = true;
       final success = await _service.createLead(lead);
-      if (success){ await loadInitial();}
+      if (success) {
+        await loadInitial();
+      }
       return success;
     } catch (e) {
       print("Create lead error: $e");

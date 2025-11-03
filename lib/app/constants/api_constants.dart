@@ -34,8 +34,8 @@ class ApiConstants {
   static const String propertyShare = "$baseURL/propertyShare";
   static const String multiPropertyShare = "$baseURL/propertyShare/bundles";
 
-  static const String resellerDashboard="$baseURL/insight/reseller";
-
+  static const String resellerDashboard = "$baseURL/insight/reseller";
+  static const String property = "$baseURL/property";
 
   //---------------------------------other-----------------------------//
 

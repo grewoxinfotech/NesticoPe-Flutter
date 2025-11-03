@@ -417,6 +417,7 @@
 //   }
 // }
 
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -428,6 +429,7 @@ import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/property/models/property_model.dart';
+import '../../builder/view/builder_leads.dart' as Formater;
 import '../../property/controllers/property_controller.dart';
 
 class PropertyDetail extends StatefulWidget {
@@ -467,7 +469,6 @@ class _PropertyDetailState extends State<PropertyDetail> {
       }
     });
   }
-
 
   // sample local data for demo purposes (UI role/strings)
   final List<Map<String, dynamic>> properties = [
@@ -541,87 +542,90 @@ class _PropertyDetailState extends State<PropertyDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: widget.backgroundColor,
-      appBar: widget.isAppBarShow
-          ? AppBar(
-        elevation: 0,
-        backgroundColor: ColorRes.white,
-        leading: GestureDetector(
-          onTap: () {
-            // clear filters and reload initial list
-            controller.filters = {};
-            controller.loadInitial();
-            Get.back();
-          },
-          child: const Icon(
-            Icons.arrow_back,
-            color: ColorRes.textColor,
-          ),
-        ),
-        title: const Text(
-          "Property List",
-          style: TextStyle(
-            fontWeight: AppFontWeights.semiBold,
-            color: ColorRes.textColor,
-          ),
-        ),
-        actions: [
-          Obx(
-                () => Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      final result = await Get.to<Map<String, String>>(
-                            () => RealEstateFilterScreen(
-                          // pass a plain Map, not RxMap
-                          initialFilters: Map<String, String>.from(
-                              selectedFilters),
-                        ),
-                        transition: Transition.rightToLeft,
-                      );
-
-                      if (result != null) {
-                        selectedFilters
-                          ..clear()
-                          ..addAll(result);
-                        controller.applyFilters(Map<String, String>.from(
-                            selectedFilters));
-                      }
-                    },
-                    child: const Icon(
-                      Icons.filter_list,
-                      color: ColorRes.textColor,
-                    ),
+      appBar:
+          widget.isAppBarShow
+              ? AppBar(
+                elevation: 0,
+                backgroundColor: ColorRes.white,
+                leading: GestureDetector(
+                  onTap: () {
+                    // clear filters and reload initial list
+                    controller.filters = {};
+                    controller.loadInitial();
+                    Get.back();
+                  },
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: ColorRes.textColor,
                   ),
-                  if (selectedFilters.isNotEmpty)
-                    Positioned(
-                      top: 10,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: ColorRes.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          '${selectedFilters.length}',
-                          style: const TextStyle(
-                            color: ColorRes.white,
-                            fontSize: AppFontSizes.extraSmall,
-                            fontWeight: AppFontWeights.extraBold,
+                ),
+                title: const Text(
+                  "Property List",
+                  style: TextStyle(
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textColor,
+                  ),
+                ),
+                actions: [
+                  Obx(
+                    () => Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              final result = await Get.to<Map<String, String>>(
+                                () => RealEstateFilterScreen(
+                                  // pass a plain Map, not RxMap
+                                  initialFilters: Map<String, String>.from(
+                                    selectedFilters,
+                                  ),
+                                ),
+                                transition: Transition.rightToLeft,
+                              );
+
+                              if (result != null) {
+                                selectedFilters
+                                  ..clear()
+                                  ..addAll(result);
+                                controller.applyFilters(
+                                  Map<String, String>.from(selectedFilters),
+                                );
+                              }
+                            },
+                            child: const Icon(
+                              Icons.filter_list,
+                              color: ColorRes.textColor,
+                            ),
                           ),
-                        ),
+                          if (selectedFilters.isNotEmpty)
+                            Positioned(
+                              top: 10,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: ColorRes.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  '${selectedFilters.length}',
+                                  style: const TextStyle(
+                                    color: ColorRes.white,
+                                    fontSize: AppFontSizes.extraSmall,
+                                    fontWeight: AppFontWeights.extraBold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
+                  ),
                 ],
-              ),
-            ),
-          ),
-        ],
-      )
-          : null,
+              )
+              : null,
       body: Column(
         children: [
           // Fixed filter bar
@@ -686,7 +690,27 @@ class _PropertyDetailState extends State<PropertyDetail> {
                     ...selectedFilters.entries.map((entry) {
                       final key = entry.key;
                       final value = entry.value;
-                      if (value.trim().isEmpty) return const SizedBox.shrink();
+
+                      if (value.toString().trim().isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      String displayValue;
+                      try {
+                        final parsed = jsonDecode(value);
+                        if (parsed is Map &&
+                            parsed.containsKey('min') &&
+                            parsed.containsKey('max')) {
+                          final min = parsed['min'];
+                          final max = parsed['max'];
+                          displayValue = _formatPriceRange(min, max);
+                        } else {
+                          displayValue = value.toString();
+                        }
+                      } catch (e) {
+                        // if not JSON, use as-is
+                        displayValue = value.toString();
+                      }
 
                       return Container(
                         margin: const EdgeInsets.only(right: 8),
@@ -705,7 +729,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "$key: $value",
+                              "$key: $displayValue",
                               style: const TextStyle(
                                 fontSize: AppFontSizes.small,
                                 color: ColorRes.primary,
@@ -717,7 +741,8 @@ class _PropertyDetailState extends State<PropertyDetail> {
                               onTap: () {
                                 selectedFilters.remove(key);
                                 controller.applyFilters(
-                                    Map<String, String>.from(selectedFilters));
+                                  Map<String, String>.from(selectedFilters),
+                                );
                               },
                               child: const Icon(
                                 Icons.close,
@@ -828,7 +853,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                     itemBuilder: (context, index) {
                       // use sample local property for role/visual only; ensure safe modulo
                       final propertySample =
-                      properties[index % properties.length];
+                          properties[index % properties.length];
                       final data = controller.items[index];
                       return PropertyCardWidget(
                         property: data,
@@ -843,5 +868,19 @@ class _PropertyDetailState extends State<PropertyDetail> {
         ],
       ),
     );
+  }
+
+  String _formatPriceRange(dynamic min, dynamic max) {
+    double minVal =
+        (min is num) ? min.toDouble() : double.tryParse(min.toString()) ?? 0;
+    double maxVal =
+        (max is num) ? max.toDouble() : double.tryParse(max.toString()) ?? 0;
+
+    // 🧠 Handle special cases
+    if (minVal == 0 && maxVal == 0) return "₹0";
+    if (minVal == 0) return "Up to ${Formater.formatPrice(maxVal)}";
+    if (maxVal == 0) return "From ${Formater.formatPrice(minVal)}";
+
+    return "${Formater.formatPrice(minVal)} - ${Formater.formatPrice(maxVal)}";
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
@@ -15,7 +16,7 @@ class AddLeadScreen extends StatelessWidget {
   final LeadItem? lead;
   final bool isEditMode;
   final controller = Get.find<LeadController>(tag: "reseller");
-  final resellerDashboard=Get.find<DashboardController>();
+  final resellerDashboard = Get.find<DashboardController>();
   final _formKey = GlobalKey<FormState>();
 
   AddLeadScreen({super.key, this.lead, this.isEditMode = false});
@@ -70,7 +71,7 @@ class AddLeadScreen extends StatelessWidget {
               // Email
               NesticoPeTextField(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-
+                isRequired: true,
                 controller: controller.emailController,
                 title: 'Email',
                 hintText: 'Enter email address',
@@ -95,7 +96,24 @@ class AddLeadScreen extends StatelessWidget {
                         final propertyManager = PropertyNameManager(e);
                         return DropdownMenuItem(
                           value: e,
-                          child: Text(propertyManager.displayName),
+                          child: Row(
+                            children: [
+                              if (e.propertyMedia?.images != null &&
+                                  e.propertyMedia!.images!.isNotEmpty) ...[
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: CustomImage(
+                                    type: CustomImageType.network,
+                                    src: e.propertyMedia!.images!.first,
+                                    height: 30,
+                                    width: 30,
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                              ],
+                              Text(propertyManager.displayName),
+                            ],
+                          ),
                         );
                       }).toList(),
                   onChanged: (val) => controller.selectedProperty.value = val,

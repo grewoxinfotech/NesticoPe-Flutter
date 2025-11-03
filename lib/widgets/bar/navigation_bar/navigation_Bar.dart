@@ -50,12 +50,12 @@ class NesticoPeNavigationBar extends StatelessWidget {
             onTap: (i) => controller.changeIndex(i),
             items: [
               SalomonBottomBarItem(
-                icon: Icon(Icons.home, size: iconSize),
+                icon: Icon(FontAwesomeIcons.home, size: iconSize),
                 title: Text("Home", style: style),
               ),
 
               SalomonBottomBarItem(
-                icon: Icon(Icons.explore, size: iconSize),
+                icon: Icon(FontAwesomeIcons.safari, size: iconSize),
                 title: Text("Explore", style: style),
               ),
 
@@ -84,5 +84,5 @@ class NesticoPeNavigationBar extends StatelessWidget {
 class NavigationController extends GetxController {
   RxInt currentIndex = 0.obs;
 
-  changeIndex(int i) => currentIndex(i);
+  int changeIndex(int i) => currentIndex(i);
 }

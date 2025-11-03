@@ -1,17 +1,22 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
+import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
+import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import '../../../../app/manager/property/proiperty_feature_manager.dart';
+import '../../../../app/manager/property_highlight_manager.dart';
+import '../../../../app/utils/svg_widget.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../property_detail_screen.dart';
 
 class RecommendedCard extends StatefulWidget {
   final Items property;
+
   // final String imageUrl;
   // final String title;
   // final String price;
@@ -37,9 +42,19 @@ class _RecommendedCardState extends State<RecommendedCard> {
 
   @override
   Widget build(BuildContext context) {
+    final title = PropertyNameManager(widget.property);
+    final price = PropertyPriceManager(
+      listingType: widget.property.listingType ?? '',
+      financialInfo:
+          widget.property.propertyDetails?.financialInfo ?? FinancialInfo(),
+    );
     return GestureDetector(
       onTap:
-          () => Get.to(() => PropertyDetailScreen(property: widget.property)),
+          () => Get.to(
+            () => PropertyDetailScreen(property: widget.property),
+            routeName: '/property_${widget.property.id}',
+          ),
+
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
@@ -115,34 +130,57 @@ class _RecommendedCardState extends State<RecommendedCard> {
                   Positioned(
                     top: 10,
                     right: 10,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isFavorite = !isFavorite;
-                        });
-                      },
-                      child: Container(
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                          color: ColorRes.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          isFavorite
-                              ? Icons.favorite_rounded
-                              : Icons.favorite_border_rounded,
-                          color: isFavorite ? ColorRes.error : ColorRes.leadGreyColor,
-                          size: 18,
-                        ),
-                      ),
-                    ),
+                    // child: GestureDetector(
+                    //   onTap: () {
+                    //     setState(() {
+                    //       isFavorite = !isFavorite;
+                    //     });
+                    //   },
+                    //   child: Container(
+                    //     height: 32,
+                    //     width: 32,
+                    //     decoration: BoxDecoration(
+                    //       color: ColorRes.white,
+                    //       shape: BoxShape.circle,
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: Colors.black.withOpacity(0.1),
+                    //           blurRadius: 4,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     child: Icon(
+                    //       isFavorite
+                    //           ? Icons.favorite_rounded
+                    //           : Icons.favorite_border_rounded,
+                    //       color:
+                    //           isFavorite
+                    //               ? ColorRes.error
+                    //               : ColorRes.leadGreyColor,
+                    //       size: 18,
+                    //     ),
+                    //   ),
+                    // ),
+                    child: Obx(() {
+                      final controller = Get.find<PropertyController>();
+                      final isFavorite = controller.favoriteIds.contains(
+                        widget.property.id,
+                      );
+                      return CircularIcon(
+                        icon:
+                            isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border_rounded,
+                        backgroundColor: ColorRes.white,
+                        iconColor:
+                            isFavorite
+                                ? ColorRes.redAccentColor
+                                : ColorRes.black,
+                        onPressed: () {
+                          controller.toggleFavorite(widget.property.id ?? '');
+                        },
+                      );
+                    }),
                   ),
 
                   // Recently Viewed Badge (bottom-left)
@@ -182,8 +220,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                   children: [
                     // Title & Price
                     Text(
-                      '${widget.property.propertyDetails?.propertyCondition} ' ??
-                          '-',
+                      title.displayName,
                       style: TextStyle(
                         fontSize: AppFontSizes.caption,
                         color: ColorRes.leadGreyColor.shade800,
@@ -198,10 +235,10 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       children: [
                         Expanded(
                           child: Text(
-                            widget.property.title ?? '-',
+                            widget.property.location ?? '-',
                             style: const TextStyle(
                               fontWeight: AppFontWeights.semiBold,
-                              fontSize: AppFontSizes.medium,
+                              fontSize: AppFontSizes.caption,
                               color: ColorRes.blackShade87,
                             ),
                             maxLines: 1,
@@ -210,17 +247,11 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          Formatter.formatPrice(
-                            widget
-                                    .property
-                                    .propertyDetails
-                                    ?.financialInfo
-                                    ?.price ??
-                                0,
-                          ),
+                          price.displayPrice.toString() ?? '0',
+
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: AppFontSizes.body,
+                            fontSize: AppFontSizes.bodySmall,
                             color: ColorRes.primary,
                           ),
                         ),
@@ -241,36 +272,37 @@ class _RecommendedCardState extends State<RecommendedCard> {
                     // ],
                     // Inside your property card
                     if (widget.property.propertyDetails != null) ...[
-                      Text(
-                        [
-                          if (widget.property.propertyDetails!.bhk != null)
-                            "${widget.property.propertyDetails!.bhk} BHK",
-                          // if (widget.property.propertyDetails!.area != null)
-                          //   "${widget.property.propertyDetails!.area} sqft",
-                          if (widget
-                                  .property
-                                  .propertyDetails
-                                  ?.furnishInfo
-                                  ?.furnishType !=
-                              null)
-                            widget
-                                .property
-                                .propertyDetails!
-                                .furnishInfo!
-                                .furnishType,
-                          if (widget.property.propertyDetails?.propertyFacing !=
-                              null)
-                            widget.property.propertyDetails!.propertyFacing!,
-                          // if (widget.property.propertyDetails!.bathrooms != null)
-                          //   "${widget.property.propertyDetails!.bathrooms} Bath",
-                        ].join(" · "),
-                        style: TextStyle(
-                          fontSize: AppFontSizes.caption,
-                          color: ColorRes.leadGreyColor.shade800,
-                          fontWeight: AppFontWeights.medium,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      // Text(
+                      //   [
+                      //     if (widget.property.propertyDetails!.bhk != null)
+                      //       "${widget.property.propertyDetails!.bhk} BHK",
+                      //     // if (widget.property.propertyDetails!.area != null)
+                      //     //   "${widget.property.propertyDetails!.area} sqft",
+                      //     if (widget
+                      //             .property
+                      //             .propertyDetails
+                      //             ?.furnishInfo
+                      //             ?.furnishType !=
+                      //         null)
+                      //       widget
+                      //           .property
+                      //           .propertyDetails!
+                      //           .furnishInfo!
+                      //           .furnishType,
+                      //     if (widget.property.propertyDetails?.propertyFacing !=
+                      //         null)
+                      //       widget.property.propertyDetails!.propertyFacing!,
+                      //     // if (widget.property.propertyDetails!.bathrooms != null)
+                      //     //   "${widget.property.propertyDetails!.bathrooms} Bath",
+                      //   ].join(" · "),
+                      //   style: TextStyle(
+                      //     fontSize: AppFontSizes.caption,
+                      //     color: ColorRes.leadGreyColor.shade800,
+                      //     fontWeight: AppFontWeights.medium,
+                      //   ),
+                      //   overflow: TextOverflow.ellipsis,
+                      // ),
+                      Facilities(property: widget.property),
                     ],
 
                     const SizedBox(height: 5),
@@ -336,23 +368,6 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              // ignore: deprecated_member_use
-                              color: ColorRes.primary.withOpacity(0.1),
-                            ),
-                            child: Image.asset(
-                              'assets/logo/whatsapp.png',
-                              height: 20,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
                           Expanded(
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -401,6 +416,63 @@ class _RecommendedCardState extends State<RecommendedCard> {
         color: ColorRes.leadGreyColor.shade800,
         fontWeight: AppFontWeights.medium,
       ),
+    );
+  }
+}
+
+class Facilities extends StatelessWidget {
+  final Items property;
+
+  const Facilities({super.key, required this.property});
+
+  @override
+  Widget build(BuildContext context) {
+    final highlights = PropertyHighlightManager(property).getHighlights();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(highlights.length > 3 ? 3 : highlights.length, (
+          index,
+        ) {
+          final item = highlights[index];
+
+          return Row(
+            children: [
+              if (index != 0) ...[
+                const Text('  •', style: TextStyle(fontSize: 10)),
+                const SizedBox(width: 6),
+              ],
+              _buildChip(item.value, 16, icon: item.icon),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildChip(
+    String text,
+    double size, {
+    String? svgIcon,
+    IconData? icon,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        svgIcon == null
+            ? Icon(icon, size: size, color: ColorRes.primary)
+            : AppSvgIcon(assetName: svgIcon, size: size),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: AppFontSizes.small,
+            fontWeight: AppFontWeights.medium,
+            color: ColorRes.grey,
+          ),
+        ),
+      ],
     );
   }
 }

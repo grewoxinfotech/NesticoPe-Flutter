@@ -381,6 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
+              SizedBox(height: 12),
               HomeHeader(),
 
               Column(
@@ -494,8 +495,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-
-                   const SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Column(
                     children: [
                       Column(

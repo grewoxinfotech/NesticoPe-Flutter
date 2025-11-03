@@ -1532,18 +1532,6 @@ class PropertyOverviewCard extends StatelessWidget {
         "icon": Icons.travel_explore,
         "color": Colors.orange,
       },
-      {
-        "title": "Inquiries",
-        "value": property?.totalInquiries.toString() ?? "245",
-        "icon": Icons.question_answer_outlined,
-        "color": Colors.purple,
-      },
-      {
-        "title": "Saved",
-        "value": property?.totalViews.toString() ?? "1.1K",
-        "icon": Icons.bookmark_border,
-        "color": Colors.teal,
-      },
     ];
 
     return Container(

@@ -47,10 +47,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
   final MicController micController = Get.put(MicController());
 
   final GoogleMapController controller = Get.put(GoogleMapController());
-  String popularArea = 'Mumbai';
-  late stt.SpeechToText _speech;
-  final bool _isListening = false;
-  final String _lastWords = " ";
 
   @override
   void initState() {
@@ -59,7 +55,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
         widget.initialSearchText!.isNotEmpty) {
       micController.searchText.value.text = widget.initialSearchText!;
       print('micro jsdewud ${micController.searchText.value.text}');
-      // Fetch predictions for initial text
       controller.fetchPredictionsCity(widget.initialSearchText!);
     }
     micController.searchText.value.addListener(() {
@@ -80,7 +75,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         title: buildCommonText(
-          'Search in ${propertyController.selectedCity.value}',
+          'Search',
           20,
           AppFontWeights.semiBold,
           ColorRes.black,

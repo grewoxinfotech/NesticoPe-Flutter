@@ -21,10 +21,9 @@ class PropertyFilterControllerForFilter extends GetxController {
   RxList<String> constructionStatus =
       <String>['Ready to move', "Under Construction", "New Launch"].obs;
 
-  RxDouble min = 1000000.0.obs;
-  RxDouble max = 200000000.0.obs;
-  final Rx<RangeValues> _rangeValues =
-      const RangeValues(1000000, 200000000).obs;
+  RxDouble min = 0.0.obs;
+  RxDouble max = 100000000.0.obs;
+  final Rx<RangeValues> _rangeValues = const RangeValues(0.0, 100000000).obs;
 
   RxString bhkType = ''.obs;
   RxString subpropertyType = ''.obs;

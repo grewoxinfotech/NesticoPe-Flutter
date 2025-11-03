@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/svg_res.dart';
+import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
 import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
@@ -11,6 +12,7 @@ import 'package:housing_flutter_app/app/utils/helper_function/contact_helper.dar
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 
+import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../property/views/widgets/property_media_gallery.dart';
@@ -150,9 +152,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
         ),
         title: Text(
           '${(widget.isFromLead) ? 'Lead Details' : 'Property Overview'}',
-          style: TextStyle(
-            fontWeight: AppFontWeights.bold,
-          ),
+          style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
@@ -240,13 +240,12 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             // 6. Financial Information
             _buildFinancialSection(context, isCompact),
 
-            if (widget.isFromLead) ...[
-              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-              // 7. Lead Status & Timeline
-              _buildStatusTimelineSection(context, isCompact),
-            ],
-
+            // if (widget.isFromLead) ...[
+            //   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+            //
+            //   // 7. Lead Status & Timeline
+            //   _buildStatusTimelineSection(context, isCompact),
+            // ],
             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -284,7 +283,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // 9. Action Buttons
-            _buildActionButtons(context, isCompact),
+            // _buildActionButtons(context, isCompact),
           ],
         ),
       ),
@@ -348,7 +347,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.lead!.name!,
+                      DataMasker.maskName(widget.lead!.name!),
                       style: TextStyle(
                         fontSize:
                             isCompact ? AppFontSizes.body : AppFontSizes.large,
@@ -410,7 +409,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           _buildContactRow(
             Icons.email_outlined,
             'Email',
-            widget.lead!.email!,
+            DataMasker.maskEmail(widget.lead!.email!),
             Colors.blue,
             () => _launchEmail(widget.lead!.email!),
           ),
@@ -421,7 +420,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 child: _buildContactRow(
                   Icons.phone_outlined,
                   'Phone',
-                  widget.lead!.phone!,
+                  DataMasker.maskPhone(widget.lead!.phone!),
                   Colors.green,
                   () => _launchPhone(widget.lead!.phone!),
                 ),
@@ -583,10 +582,118 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     );
   }
 
+  // Widget _buildPropertyOverviewSection(BuildContext context, bool isCompact) {
+  //   final details = propertyDetails;
+  //   if (details == null) return SizedBox.shrink();
+  //   final nameManager = PropertyNameManager(propertyData);
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         _buildSectionHeader(
+  //           'Property Overview',
+  //           Icons.home_outlined,
+  //           isCompact,
+  //         ),
+  //         const SizedBox(height: 16),
+  //         Text(
+  //           nameManager.displayName,
+  //           style: TextStyle(
+  //             fontSize: isCompact ? AppFontSizes.medium : AppFontSizes.large,
+  //             fontWeight: AppFontWeights.semiBold,
+  //             color: ColorRes.textColor,
+  //           ),
+  //         ),
+  //         const SizedBox(height: 6),
+  //         SizedBox(
+  //           width: 300,
+  //           child: Text(
+  //             '$propertyAddress, $propertyCity, $propertyState - $propertyZipCode',
+  //             style: TextStyle(
+  //               fontSize:
+  //                   isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+  //               color: ColorRes.leadGreyColor[700],
+  //             ),
+  //           ),
+  //         ),
+  //         const SizedBox(height: 16),
+  //         Wrap(
+  //           spacing: 10,
+  //           runSpacing: 10,
+  //           children: [
+  //             if (details.bhk != null && details.bhk! > 0) ...[
+  //               _buildOverviewChip(
+  //                 '${details.bhk ?? 0} BHK',
+  //                 Icons.bed_outlined,
+  //                 ColorRes.primary,
+  //                 isCompact,
+  //               ),
+  //             ],
+  //             _buildOverviewChip(
+  //               propertyType.toUpperCase(),
+  //               Icons.apartment_outlined,
+  //               ColorRes.purpleColor,
+  //               isCompact,
+  //             ),
+  //             _buildOverviewChip(
+  //               listingType,
+  //               Icons.sell_outlined,
+  //               ColorRes.orangeColor,
+  //               isCompact,
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 20),
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //           children: [
+  //             if (details.propertyCarpetArea != null) ...[
+  //               _buildStatItem(
+  //                 '${details.propertyCarpetArea ?? 0}',
+  //                 'Carpet Area\n(sq.ft)',
+  //                 Icons.straighten,
+  //                 isCompact,
+  //               ),
+  //             ],
+  //             Container(
+  //               width: 1,
+  //               height: 50,
+  //               color: ColorRes.leadGreyColor[300],
+  //             ),
+  //             if (details.bathroom != null && details.bathroom! > 0) ...[
+  //               _buildStatItem(
+  //                 '${details.bathroom ?? 0}',
+  //                 'Bathrooms',
+  //                 Icons.bathtub_outlined,
+  //                 isCompact,
+  //               ),
+  //               Container(
+  //                 width: 1,
+  //                 height: 50,
+  //                 color: ColorRes.leadGreyColor[300],
+  //               ),
+  //             ],
+  //             if (details.bathroom != null && details.bathroom! > 0) ...[
+  //               _buildStatItem(
+  //                 '${details.balcony ?? 0}',
+  //                 'Balconies',
+  //                 Icons.balcony_outlined,
+  //                 isCompact,
+  //               ),
+  //             ],
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _buildPropertyOverviewSection(BuildContext context, bool isCompact) {
     final details = propertyDetails;
     if (details == null) return SizedBox.shrink();
     final nameManager = PropertyNameManager(propertyData);
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -623,12 +730,14 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             spacing: 10,
             runSpacing: 10,
             children: [
-              _buildOverviewChip(
-                '${details.bhk ?? 0} BHK',
-                Icons.bed_outlined,
-                ColorRes.primary,
-                isCompact,
-              ),
+              if (details.bhk != null && details.bhk! > 0) ...[
+                _buildOverviewChip(
+                  '${details.bhk ?? 0} BHK',
+                  Icons.bed_outlined,
+                  ColorRes.primary,
+                  isCompact,
+                ),
+              ],
               _buildOverviewChip(
                 propertyType.toUpperCase(),
                 Icons.apartment_outlined,
@@ -644,41 +753,38 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildStatItem(
-                '${details.propertyCarpetArea ?? 0}',
-                'Carpet Area\n(sq.ft)',
-                Icons.straighten,
-                isCompact,
-              ),
-              Container(
-                width: 1,
-                height: 50,
-                color: ColorRes.leadGreyColor[300],
-              ),
-              _buildStatItem(
-                '${details.bathroom ?? 0}',
-                'Bathrooms',
-                Icons.bathtub_outlined,
-                isCompact,
-              ),
-              Container(
-                width: 1,
-                height: 50,
-                color: ColorRes.leadGreyColor[300],
-              ),
-              _buildStatItem(
-                '${details.balcony ?? 0}',
-                'Balconies',
-                Icons.balcony_outlined,
-                isCompact,
-              ),
-            ],
-          ),
+
+          // ✅ Replaced static Row with dynamic highlights
+          _buildDynamicHighlightsRow(isCompact),
         ],
       ),
+    );
+  }
+
+  Widget _buildDynamicHighlightsRow(bool isCompact) {
+    final highlightManager = PropertyHighlightManager(propertyData);
+    final highlights = highlightManager.getHighlights();
+
+    if (highlights.isEmpty) return const SizedBox.shrink();
+
+    final limitedHighlights = highlights.take(3).toList();
+
+    final items = <Widget>[];
+    for (int i = 0; i < limitedHighlights.length; i++) {
+      final h = limitedHighlights[i];
+
+      items.add(_buildStatItem(h.value, h.title, h.icon!, isCompact));
+
+      if (i < limitedHighlights.length - 1) {
+        items.add(
+          Container(width: 1, height: 50, color: ColorRes.leadGreyColor[300]),
+        );
+      }
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: items,
     );
   }
 
@@ -882,18 +988,6 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             runSpacing: 8,
             children:
                 amenities.map((amenity) {
-                  final matchedItem = IconManager.allAmenities.firstWhere(
-                    (item) => item.title.toLowerCase() == amenity.toLowerCase(),
-                    orElse:
-                        () => IconItem(
-                          key: '',
-                          title: amenity,
-                          icon: Icons.help_outline,
-                        ),
-                  );
-
-                  final hasIcon = matchedItem.key.isNotEmpty;
-
                   return Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
@@ -907,15 +1001,12 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (hasIcon) ...[
-                          AppSvgIcon(
-                            assetName: matchedItem.key,
-                            size: 16,
-                            color: ColorRes.primary,
-                            folder: 'amenities',
-                          ),
-                          SizedBox(width: 6),
-                        ],
+                        Icon(
+                          IconManager.getAmenitiesIcon(amenity),
+                          size: 16,
+                          color: ColorRes.primary,
+                        ),
+                        SizedBox(width: 6),
                         Text(
                           amenity,
                           style: TextStyle(
@@ -934,16 +1025,343 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     );
   }
 
+  // Widget _buildFinancialSection(BuildContext context, bool isCompact) {
+  //   final financialInfo = _resolvedFinancialInfo;
+  //   final priceManager = PropertyPriceManager(
+  //     listingType: widget.lead?.customFields?.listingType ?? '',
+  //     financialInfo: widget.lead?.customFields?.propertyDetails?.financialInfo,
+  //   );
+  //   if (financialInfo == null) return SizedBox.shrink();
+  //
+  //   return Padding(
+  //     padding: EdgeInsets.all(16),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         _buildSectionHeader(
+  //           'Financial Information',
+  //           Icons.currency_rupee_outlined,
+  //           isCompact,
+  //         ),
+  //         SizedBox(height: 16),
+  //         Container(
+  //           padding: EdgeInsets.all(16),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(16),
+  //             border: Border.all(color: ColorRes.success.shade200, width: 1),
+  //           ),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               // Property Price Section
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Expanded(
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Row(
+  //                           children: [
+  //                             Text(
+  //                               'Property Price',
+  //                               style: TextStyle(
+  //                                 fontSize: AppFontSizes.medium,
+  //                                 fontWeight: AppFontWeights.semiBold,
+  //                                 color: ColorRes.leadGreyColor[700],
+  //                                 letterSpacing: 0.3,
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                         SizedBox(height: 8),
+  //                         Text(
+  //                           priceManager.displayPrice,
+  //                           style: TextStyle(
+  //                             fontSize: isCompact ? AppFontSizes.large : 32,
+  //                             fontWeight: AppFontWeights.semiBold,
+  //                             color: ColorRes.success.shade800,
+  //                             height: 1.2,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   if (financialInfo.negotiable)
+  //                     Container(
+  //                       padding: EdgeInsets.symmetric(
+  //                         horizontal: 14,
+  //                         vertical: 8,
+  //                       ),
+  //                       decoration: BoxDecoration(
+  //                         color: (widget.isFromLead
+  //                                 ? _getStatusColor(widget.lead!.status!)
+  //                                 : Colors.green)
+  //                             .withOpacity(0.08),
+  //                         borderRadius: BorderRadius.circular(10),
+  //                         border: Border.all(
+  //                           color: (widget.isFromLead
+  //                                   ? _getStatusColor(widget.lead!.status!)
+  //                                   : Colors.green)
+  //                               .withOpacity(0.3),
+  //                           width: 1,
+  //                         ),
+  //                       ),
+  //                       child: Row(
+  //                         mainAxisSize: MainAxisSize.min,
+  //                         children: [
+  //                           Text(
+  //                             'Negotiable',
+  //                             style: TextStyle(
+  //                               fontSize: AppFontSizes.extraSmall,
+  //                               color:
+  //                                   widget.isFromLead
+  //                                       ? _getStatusColor(widget.lead!.status!)
+  //                                       : Colors.green,
+  //                               fontWeight: AppFontWeights.extraBold,
+  //                               letterSpacing: 0.5,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                 ],
+  //               ),
+  //
+  //               SizedBox(height: 16),
+  //               Divider(thickness: 0.65, color: ColorRes.grey.withOpacity(0.4)),
+  //               SizedBox(height: 16),
+  //
+  //               // Broker Commission Section
+  //               Container(
+  //                 padding: EdgeInsets.all(12),
+  //                 decoration: BoxDecoration(
+  //                   color: ColorRes.white,
+  //                   borderRadius: BorderRadius.circular(12),
+  //                   border: Border.all(
+  //                     color: ColorRes.leadGreyColor.shade300,
+  //                     width: 1,
+  //                   ),
+  //                 ),
+  //                 child: Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   children: [
+  //                     Row(
+  //                       children: [
+  //                         Container(
+  //                           padding: EdgeInsets.all(8),
+  //                           decoration: BoxDecoration(
+  //                             color: ColorRes.primary.withOpacity(0.1),
+  //                             borderRadius: BorderRadius.circular(8),
+  //                           ),
+  //                           child: Icon(
+  //                             Icons.account_balance_wallet_outlined,
+  //                             size: 20,
+  //                             color: ColorRes.primary,
+  //                           ),
+  //                         ),
+  //                         SizedBox(width: 12),
+  //                         Text(
+  //                           'Broker Commission',
+  //                           style: TextStyle(
+  //                             fontSize: AppFontSizes.small,
+  //                             color: ColorRes.leadGreyColor[700],
+  //                             fontWeight: AppFontWeights.semiBold,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     Text(
+  //                       priceManager.brokerCommission ?? '0.00',
+  //                       style: TextStyle(
+  //                         fontSize:
+  //                             isCompact
+  //                                 ? AppFontSizes.medium
+  //                                 : AppFontSizes.large,
+  //                         fontWeight: AppFontWeights.semiBold,
+  //                         color: ColorRes.primary,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //
+  //               // Reactive Section with Obx
+  //               Obx(() {
+  //                 final hasOffer = controller.submittedOfferAmount.value != 0.0;
+  //
+  //                 return Column(
+  //                   children: [
+  //                     // Submitted Offer Section
+  //                     if (hasOffer) ...[
+  //                       SizedBox(height: 16),
+  //                       Container(
+  //                         padding: EdgeInsets.all(14),
+  //                         decoration: BoxDecoration(
+  //                           borderRadius: BorderRadius.circular(12),
+  //                           border: Border.all(
+  //                             color: ColorRes.leadGreyColor.shade300,
+  //                             width: 1,
+  //                           ),
+  //                         ),
+  //                         child: Column(
+  //                           children: [
+  //                             Row(
+  //                               mainAxisAlignment:
+  //                                   MainAxisAlignment.spaceBetween,
+  //                               children: [
+  //                                 Row(
+  //                                   children: [
+  //                                     Container(
+  //                                       padding: EdgeInsets.all(8),
+  //                                       decoration: BoxDecoration(
+  //                                         color: ColorRes.orangeColor.shade50,
+  //                                         borderRadius: BorderRadius.circular(
+  //                                           8,
+  //                                         ),
+  //                                       ),
+  //                                       child: Icon(
+  //                                         Icons.handshake_rounded,
+  //                                         size: 20,
+  //                                         color: ColorRes.orangeColor.shade700,
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(width: 12),
+  //                                     SizedBox(
+  //                                       width: 150,
+  //                                       child: Text(
+  //                                         'Negotiable Price',
+  //                                         style: TextStyle(
+  //                                           fontSize: AppFontSizes.small,
+  //                                           fontWeight: AppFontWeights.semiBold,
+  //                                         ),
+  //                                         maxLines: 1,
+  //                                         overflow: TextOverflow.ellipsis,
+  //                                       ),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                                 Text(
+  //                                   Formatter.formatPrice(
+  //                                     controller.submittedOfferAmount.value,
+  //                                   ),
+  //                                   style: TextStyle(
+  //                                     fontSize:
+  //                                         isCompact
+  //                                             ? AppFontSizes.medium
+  //                                             : AppFontSizes.large,
+  //                                     fontWeight: AppFontWeights.extraBold,
+  //                                     color: ColorRes.orangeColor,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                             SizedBox(height: 10),
+  //                             Container(
+  //                               padding: EdgeInsets.symmetric(
+  //                                 horizontal: 12,
+  //                                 vertical: 6,
+  //                               ),
+  //                               decoration: BoxDecoration(
+  //                                 color: ColorRes.orangeColor.withOpacity(0.08),
+  //                                 borderRadius: BorderRadius.circular(8),
+  //                                 border: Border.all(
+  //                                   color: ColorRes.orangeColor.withOpacity(
+  //                                     0.3,
+  //                                   ),
+  //                                   width: 1,
+  //                                 ),
+  //                               ),
+  //                               child: Row(
+  //                                 mainAxisSize: MainAxisSize.min,
+  //                                 children: [
+  //                                   Icon(
+  //                                     Icons.pending_outlined,
+  //                                     size: 14,
+  //                                     color: ColorRes.orangeColor.shade700,
+  //                                   ),
+  //                                   SizedBox(width: 6),
+  //                                   Text(
+  //                                     'Pending Review',
+  //                                     style: TextStyle(
+  //                                       fontSize: AppFontSizes.extraSmall,
+  //                                       color: ColorRes.orangeColor.shade700,
+  //                                       fontWeight: AppFontWeights.semiBold,
+  //                                     ),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //
+  //                     // Negotiation Button
+  //                     if (financialInfo.negotiable) ...[
+  //                       SizedBox(height: 16),
+  //                       SizedBox(
+  //                         width: double.infinity,
+  //                         child: ElevatedButton.icon(
+  //                           onPressed:
+  //                               !hasOffer
+  //                                   ? () => _handleNegotiation(context)
+  //                                   : null,
+  //                           icon: Icon(
+  //                             !hasOffer
+  //                                 ? Icons.chat_bubble_outline
+  //                                 : Icons.check_circle_outline,
+  //                             size: 18,
+  //                           ),
+  //                           label: Text(
+  //                             !hasOffer
+  //                                 ? 'Start Negotiation'
+  //                                 : 'Offer Submitted',
+  //                             style: TextStyle(
+  //                               fontSize: AppFontSizes.medium,
+  //                               fontWeight: FontWeight.bold,
+  //                               letterSpacing: 0.5,
+  //                             ),
+  //                           ),
+  //                           style: ElevatedButton.styleFrom(
+  //                             backgroundColor:
+  //                                 !hasOffer
+  //                                     ? ColorRes.success.shade600
+  //                                     : ColorRes.leadGreyColor.shade400,
+  //                             foregroundColor: ColorRes.white,
+  //                             padding: EdgeInsets.symmetric(vertical: 14),
+  //                             shape: RoundedRectangleBorder(
+  //                               borderRadius: BorderRadius.circular(12),
+  //                             ),
+  //                             elevation: 0,
+  //                             shadowColor: ColorRes.success.withOpacity(0.3),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ],
+  //                 );
+  //               }),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _buildFinancialSection(BuildContext context, bool isCompact) {
     final financialInfo = _resolvedFinancialInfo;
+    if (financialInfo == null) return const SizedBox.shrink();
+
     final priceManager = PropertyPriceManager(
       listingType: widget.lead?.customFields?.listingType ?? '',
       financialInfo: widget.lead?.customFields?.propertyDetails?.financialInfo,
     );
-    if (financialInfo == null) return SizedBox.shrink();
 
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -952,9 +1370,10 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             Icons.currency_rupee_outlined,
             isCompact,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
+
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: ColorRes.success.shade200, width: 1),
@@ -962,7 +1381,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Property Price Section
+                // 🔹 PROPERTY PRICE
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -971,20 +1390,16 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Property Price',
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.medium,
-                                  fontWeight: AppFontWeights.semiBold,
-                                  color: ColorRes.leadGreyColor[700],
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'Property Price',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.leadGreyColor[700],
+                              letterSpacing: 0.3,
+                            ),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Text(
                             priceManager.displayPrice,
                             style: TextStyle(
@@ -997,9 +1412,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                         ],
                       ),
                     ),
+
+                    // 🔹 Negotiable Chip
                     if (financialInfo.negotiable)
                       Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 14,
                           vertical: 8,
                         ),
@@ -1017,199 +1434,112 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                             width: 1,
                           ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Negotiable',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.extraSmall,
-                                color:
-                                    widget.isFromLead
-                                        ? _getStatusColor(widget.lead!.status!)
-                                        : Colors.green,
-                                fontWeight: AppFontWeights.extraBold,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          'Negotiable',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.extraSmall,
+                            color:
+                                widget.isFromLead
+                                    ? _getStatusColor(widget.lead!.status!)
+                                    : Colors.green,
+                            fontWeight: AppFontWeights.extraBold,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                   ],
                 ),
 
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Divider(thickness: 0.65, color: ColorRes.grey.withOpacity(0.4)),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-                // Broker Commission Section
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: ColorRes.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: ColorRes.leadGreyColor.shade300,
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: ColorRes.primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
+                // 🔹 Additional Financial Info dynamically from PriceManager
+                ...priceManager.priceSummary.entries
+                    .where((e) => e.value != null)
+                    .map(
+                      (e) => Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  _getFinancialIcon(e.key),
+                                  size: 20,
+                                  color: ColorRes.primary,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  e.key,
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.small,
+                                    color: ColorRes.leadGreyColor[700],
+                                    fontWeight: AppFontWeights.semiBold,
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: Icon(
-                              Icons.account_balance_wallet_outlined,
-                              size: 20,
-                              color: ColorRes.primary,
+                            Flexible(
+                              child: Text(
+                                e.value!,
+                                style: TextStyle(
+                                  fontSize:
+                                      isCompact
+                                          ? AppFontSizes.medium
+                                          : AppFontSizes.large,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.primary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 12),
-                          Text(
-                            'Broker Commission',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.small,
-                              color: ColorRes.leadGreyColor[700],
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        priceManager.brokerCommission ?? '0.00',
-                        style: TextStyle(
-                          fontSize:
-                              isCompact
-                                  ? AppFontSizes.medium
-                                  : AppFontSizes.large,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.primary,
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                const SizedBox(height: 10),
+                Divider(thickness: 0.65, color: ColorRes.grey.withOpacity(0.3)),
+                const SizedBox(height: 10),
+
+                // 🔹 Total Price
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Total Value',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.bold,
+                        color: ColorRes.leadGreyColor[800],
+                      ),
+                    ),
+                    Text(
+                      priceManager.totalPriceDisplay,
+                      style: TextStyle(
+                        fontSize: isCompact ? AppFontSizes.large : 22,
+                        fontWeight: AppFontWeights.extraBold,
+                        color: ColorRes.success.shade700,
+                      ),
+                    ),
+                  ],
                 ),
 
-                // Reactive Section with Obx
+                // 🔹 Negotiation + Offer Handling (Reactive)
                 Obx(() {
                   final hasOffer = controller.submittedOfferAmount.value != 0.0;
 
                   return Column(
                     children: [
-                      // Submitted Offer Section
                       if (hasOffer) ...[
-                        SizedBox(height: 16),
-                        Container(
-                          padding: EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: ColorRes.leadGreyColor.shade300,
-                              width: 1,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: ColorRes.orangeColor.shade50,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.handshake_rounded,
-                                          size: 20,
-                                          color: ColorRes.orangeColor.shade700,
-                                        ),
-                                      ),
-                                      SizedBox(width: 12),
-                                      SizedBox(
-                                        width: 150,
-                                        child: Text(
-                                          'Negotiable Price',
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.small,
-                                            fontWeight: AppFontWeights.semiBold,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    Formatter.formatPrice(
-                                      controller.submittedOfferAmount.value,
-                                    ),
-                                    style: TextStyle(
-                                      fontSize:
-                                          isCompact
-                                              ? AppFontSizes.medium
-                                              : AppFontSizes.large,
-                                      fontWeight: AppFontWeights.extraBold,
-                                      color: ColorRes.orangeColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.orangeColor.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: ColorRes.orangeColor.withOpacity(
-                                      0.3,
-                                    ),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.pending_outlined,
-                                      size: 14,
-                                      color: ColorRes.orangeColor.shade700,
-                                    ),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      'Pending Review',
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.extraSmall,
-                                        color: ColorRes.orangeColor.shade700,
-                                        fontWeight: AppFontWeights.semiBold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        const SizedBox(height: 16),
+                        _buildOfferCard(isCompact),
                       ],
 
-                      // Negotiation Button
                       if (financialInfo.negotiable) ...[
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
@@ -1239,12 +1569,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                                       ? ColorRes.success.shade600
                                       : ColorRes.leadGreyColor.shade400,
                               foregroundColor: ColorRes.white,
-                              padding: EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               elevation: 0,
-                              shadowColor: ColorRes.success.withOpacity(0.3),
                             ),
                           ),
                         ),
@@ -1252,6 +1581,99 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     ],
                   );
                 }),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOfferCard(bool isCompact) {
+    final offerAmount = controller.submittedOfferAmount.value;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        color: ColorRes.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🔹 Header Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: ColorRes.orangeColor.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.handshake_rounded,
+                      size: 20,
+                      color: ColorRes.orangeColor.shade700,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Negotiable Price',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.leadGreyColor[800],
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                Formatter.formatPrice(offerAmount),
+                style: TextStyle(
+                  fontSize:
+                      isCompact ? AppFontSizes.medium : AppFontSizes.large,
+                  fontWeight: AppFontWeights.extraBold,
+                  color: ColorRes.orangeColor.shade700,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          // 🔹 Status Chip
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: ColorRes.orangeColor.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: ColorRes.orangeColor.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.pending_outlined,
+                  size: 14,
+                  color: ColorRes.orangeColor.shade700,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'Pending Review',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.extraSmall,
+                    color: ColorRes.orangeColor.shade700,
+                    fontWeight: AppFontWeights.semiBold,
+                    letterSpacing: 0.3,
+                  ),
+                ),
               ],
             ),
           ),
@@ -2029,5 +2451,20 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     if (widget.lead?.customFields?.propertyDetails?.financialInfo != null)
       return widget.lead!.customFields?.propertyDetails!.financialInfo;
     return null;
+  }
+
+  IconData _getFinancialIcon(String key) {
+    switch (key) {
+      case "Price per Sqft":
+        return Icons.square_foot_outlined;
+      case "Maintenance":
+        return Icons.build_outlined;
+      case "Deposit":
+        return Icons.lock_outline;
+      case "Broker Commission":
+        return Icons.account_balance_wallet_outlined;
+      default:
+        return Icons.currency_rupee_outlined;
+    }
   }
 }

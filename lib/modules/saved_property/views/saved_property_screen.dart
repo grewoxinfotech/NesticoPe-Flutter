@@ -212,6 +212,7 @@ import '../../../data/network/property/models/property_model.dart';
 import '../../propert_detail/view/property_details.dart';
 import '../../propert_detail/view/widget/property_card_widget.dart';
 import '../../property/controllers/property_controller.dart';
+import '../controllers/property_view_controller.dart';
 
 //
 class SavedPropertyScreen extends StatefulWidget {
@@ -225,14 +226,6 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   int selectedIndex = 0;
 
   final List<String> tabs = ["Saved", "Seen", "Contacted", "Recent"];
-
-  final List<String> tabsCount = [
-    FavoriteManager().favorites.length.toString(),
-    "10",
-    "05",
-    "12",
-  ];
-
   final List<IconData> tabsIcon = [
     Icons.favorite_border_rounded,
     Icons.visibility_outlined,
@@ -240,14 +233,26 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
     Icons.search_outlined,
   ];
 
+  // Controllers
+  final PropertyViewController viewController = Get.put(
+    PropertyViewController(),
+  );
+  final FavoriteManager favoriteManager = FavoriteManager();
+
+  @override
+  void initState() {
+    super.initState();
+    // Load seen properties once
+    viewController.fetchViewedProperties();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: ColorRes.leadGreyColor[100],
       backgroundColor: ColorRes.white,
       body: Column(
         children: [
-          /// Custom Header
+          /// Header Tabs
           Card(
             elevation: 5,
             child: Container(
@@ -257,89 +262,91 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                 right: 10,
                 bottom: 16,
               ),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: ColorRes.white,
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Colors.black12,
-                //     blurRadius: 4,
-                //     offset: const Offset(0, 2),
-                //   ),
-                // ],
-                borderRadius: const BorderRadius.vertical(
+                borderRadius: BorderRadius.vertical(
                   bottom: Radius.circular(20),
                 ),
               ),
-              child: Row(
-                children: List.generate(tabs.length, (index) {
-                  bool isSelected = selectedIndex == index;
-                  return Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => selectedIndex = index),
-                      child: Container(
-                        // duration: const Duration(milliseconds: 250),
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color:
-                              isSelected
-                                  ? ColorRes.primary.withOpacity(0.15)
-                                  : ColorRes.white,
-                          border: Border.all(
+              child: Obx(() {
+                // Reactive counts from GetX observables
+                final savedCount = favoriteManager.favorites.length;
+                final seenCount = viewController.viewedPropertyIds.length;
+                final contactedCount = 0; // TODO: link with contact controller
+                final recentCount = 0; // TODO: link with recent searches
+
+                final List<int> tabsCount = [
+                  savedCount,
+                  seenCount,
+                  contactedCount,
+                  recentCount,
+                ];
+
+                return Row(
+                  children: List.generate(tabs.length, (index) {
+                    final bool isSelected = selectedIndex == index;
+                    return Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => selectedIndex = index),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
                             color:
                                 isSelected
-                                    ? ColorRes.primary
-                                    : ColorRes.leadGreyColor[300]!,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              tabsIcon[index],
-                              size: 20,
+                                    ? ColorRes.primary.withOpacity(0.15)
+                                    : ColorRes.white,
+                            border: Border.all(
                               color:
                                   isSelected
                                       ? ColorRes.primary
-                                      : ColorRes.blackShade54,
+                                      : ColorRes.leadGreyColor[300]!,
+                              width: 1.5,
                             ),
-                            // SizedBox(height: AppSpacing.small),
-                            Text(
-                              "${tabs[index]}",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                // fontWeight:
-                                //     isSelected
-                                //         ? AppFontWeights.semiBold
-                                //         : FontWeight.normal,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                tabsIcon[index],
+                                size: 20,
                                 color:
                                     isSelected
                                         ? ColorRes.primary
-                                        : ColorRes.blackShade87,
+                                        : ColorRes.blackShade54,
                               ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              "(${tabsCount[index]})",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color:
-                                    isSelected
-                                        ? ColorRes.primary
-                                        : ColorRes.blackShade87,
+                              Text(
+                                tabs[index],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  color:
+                                      isSelected
+                                          ? ColorRes.primary
+                                          : ColorRes.blackShade87,
+                                ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 4),
+                              Text(
+                                "(${tabsCount[index]})",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  color:
+                                      isSelected
+                                          ? ColorRes.primary
+                                          : ColorRes.blackShade87,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }),
-              ),
+                    );
+                  }),
+                );
+              }),
             ),
           ),
 
@@ -347,11 +354,11 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
           Expanded(
             child: IndexedStack(
               index: selectedIndex,
-              children: [
+              children: const [
                 SavedPropertiesTab(),
-                const SeenPropertiesTab(),
-                const ContactedPropertiesTab(),
-                const RecentSearchesTab(),
+                SeenPropertiesTab(),
+                ContactedPropertiesTab(),
+                RecentSearchesTab(),
               ],
             ),
           ),
@@ -361,33 +368,70 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   }
 }
 
-class SeenPropertiesTab extends StatelessWidget {
+class SeenPropertiesTab extends StatefulWidget {
   const SeenPropertiesTab({super.key});
+
+  @override
+  State<SeenPropertiesTab> createState() => _SeenPropertiesTabState();
+}
+
+class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
+  final PropertyViewController controller = Get.put(PropertyViewController());
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      child: PropertyDetail(
-        isAppBarShow: false,
-        backgroundColor: ColorRes.leadGreyColor[100]!,
-      ),
-      // child: Container(),
+      child: Obx(() {
+        if (controller.isLoading.value && controller.properties.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-      // child: RefreshIndicator(
-      //   onRefresh: () async {
-      //     await Future.delayed(const Duration(seconds: 1));
-      //   },
-      //   child: ListView.separated(
-      //     padding: const EdgeInsets.all(12),
-      //     itemCount: dummyItems.length,
-      //     separatorBuilder: (context, index) => const SizedBox(height: 12),
-      //     itemBuilder: (context, index) {
-      //       final property = dummyItems[index];
-      //       return PropertyListScreenCard(items: property);
-      //     },
-      //   ),
-      // ),
+        if (controller.properties.isEmpty) {
+          return const Center(
+            child: Text(
+              "No viewed properties yet",
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          );
+        }
+
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            // detect when user reaches near the bottom
+            if (scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent - 100 &&
+                !controller.isLoadingMore.value &&
+                controller.currentIndex < controller.viewedPropertyIds.length) {
+              controller.loadNextBatch();
+            }
+            return false;
+          },
+          child: RefreshIndicator(
+            onRefresh: controller.fetchViewedProperties,
+            color: ColorRes.primary,
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              itemCount:
+                  controller.properties.length +
+                  (controller.isLoadingMore.value ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index < controller.properties.length) {
+                  final Items property = controller.properties[index];
+                  return PropertyCardWidget(property: property, role: "");
+                } else {
+                  // loader at bottom when loading next batch
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+              },
+            ),
+          ),
+        );
+      }),
     );
   }
 }

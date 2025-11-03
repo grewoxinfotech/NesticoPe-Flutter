@@ -7,6 +7,8 @@ class GoogleMapController extends GetxController {
   var isLoading = false.obs;
   var predictions = <Prediction>[].obs;
 
+  var nearbyLandmarks = <Map<String, dynamic>>[].obs;
+
   /// Fetch predictions from Google API
   Future<void> fetchPredictionsCity(String city) async {
     try {
@@ -95,6 +97,27 @@ class GoogleMapController extends GetxController {
     } catch (e) {
       print("❌ Error fetching predictions: $e");
       predictions.clear();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchNearbyLandmarks(String address) async {
+    try {
+      isLoading.value = true;
+      final landmarks = await GoogleMapApi.instance.getNearbyLandmarks(address);
+
+      if (landmarks.isNotEmpty) {
+        print("✅ Found ${landmarks.length} landmarks near $address");
+        for (final landmark in landmarks) {
+          nearbyLandmarks.value = landmarks;
+          print("📍 ${landmark['name']} — ${landmark['address']}");
+        }
+      } else {
+        print("⚠️ No landmarks found near $address");
+      }
+    } catch (e) {
+      print("❌ Error fetching landmarks: $e");
     } finally {
       isLoading.value = false;
     }

@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   NesticoPeTextField(
                     title: "Email / phone",
                     controller: authController.emailController,
-                    validator: (value) => emailValidation(value ?? ''),
+                    validator: (value) => mixValidation(value ?? ''),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     prefixIcon: Icons.person_outline,
                     hintText: "Enter Email",
@@ -186,16 +186,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 24),
 
                   // Login Button
-                  NesticoPeButton(
-                    title: "Login",
-                    onTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        authController.login(
-                          authController.emailController.text.trim(),
-                          authController.passwordController.text.trim(),
-                        );
-                      }
-                    },
+                  Obx(
+                    () => NesticoPeButton(
+                      title:
+                          authController.isLoading.value
+                              ? "Logging..."
+                              : "Login",
+                      backgroundColor:
+                          authController.isLoading.value
+                              ? ColorRes.primary.withOpacity(0.6)
+                              : ColorRes.primary,
+                      onTap:
+                          authController.isLoading.value
+                              ? null
+                              : () {
+                                if (_formKey.currentState!.validate()) {
+                                  authController.login(
+                                    authController.emailController.text.trim(),
+                                    authController.passwordController.text
+                                        .trim(),
+                                  );
+                                }
+                              },
+                    ),
                   ),
                   const SizedBox(height: 16),
                   const SizedBox(height: 24),

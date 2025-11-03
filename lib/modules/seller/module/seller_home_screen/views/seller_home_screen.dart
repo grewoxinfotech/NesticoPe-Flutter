@@ -362,63 +362,64 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Row(
+                          Obx(() {
+                            if (controller.isLoading.value &&
+                                controller.items.isEmpty) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            if (!controller.isLoading.value &&
+                                controller.items.isEmpty) {
+                              return SizedBox.shrink();
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TitleWithViewAll(
-                                  title: "Overview",
-                                  showViewAll: false,
-                                ),
-                                // TitleWithViewAll(
-                                //   onViewAll: () {
-                                //     Get.to(() => PropertyOverviewScreen(properties: controller.items));
-                                //   },
-                                //   title: "Explore",
-                                //   showViewAll: false,
-                                // ),
-                                TextButton(
-                                  onPressed: () {
-                                    Get.to(
-                                      () => PropertyOverviewScreen(
-                                        properties: controller.items,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      TitleWithViewAll(
+                                        title: "Overview",
+                                        showViewAll: false,
                                       ),
-                                    );
-                                  },
-                                  child: Text(
-                                    'Explore',
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.small,
-                                    ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Get.to(
+                                            () => PropertyOverviewScreen(
+                                              properties: controller.items,
+                                            ),
+                                          );
+                                        },
+                                        child: Text(
+                                          'Explore',
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.small,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: OverViewCard(
+                                    property: controller.items,
+                                    overview: overviewController.overviewModel,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
                               ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Obx(() {
-                              if (controller.isLoading.value &&
-                                  controller.items.isEmpty) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
+                            );
+                          }),
 
-                              if (!controller.isLoading.value &&
-                                  controller.items.isEmpty) {
-                                return const Center(
-                                  child: Text("No Property found."),
-                                );
-                              }
-
-                              return OverViewCard(
-                                property: controller.items,
-                                overview: overviewController.overviewModel,
-                              );
-                            }),
-                          ),
-                          const SizedBox(height: 20),
                           Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: 16,
@@ -644,7 +645,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: const CustomerSupportCard(
                               email: "abc@support.com",
-                              phone: "+1 234 567 890",
+                              phone: "+91 234 567 890",
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -678,14 +679,14 @@ class OverViewCard extends StatelessWidget {
 
     // 📊 Safely extract values with fallback defaults
     final totalViews =
-        data?.propertyMetrics?.viewsHistory?.fold<int>(
+        data?.propertyMetrics?.viewsHistory.fold<int>(
           0,
           (sum, item) => sum + (item.views ?? 0),
         ) ??
         0;
     final totalLeads = data?.leadAnalytics?.totalLeads ?? 0;
     final totalVisits = data?.engagementMetrics?.totalVisits ?? 0;
-    final convertedVisits = data?.engagementMetrics?.convertedVisits ?? 0;
+    final totalProperty = property.length ?? 0;
 
     final double visitConversionRate =
         data?.engagementMetrics?.visitConversionRate.toDouble() ?? 0;
@@ -704,8 +705,8 @@ class OverViewCard extends StatelessWidget {
         "color": ColorRes.builderGridPink,
       },
       {
-        "title": "Converted Visits",
-        "value": _formatValue(convertedVisits),
+        "title": "Total Property",
+        "value": _formatValue(totalProperty),
         "icon": Icons.check_circle_outline,
         "color": ColorRes.builderGridPurple,
       },

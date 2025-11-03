@@ -1102,6 +1102,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
+import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/contact_helper.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
@@ -2498,7 +2499,7 @@ class LeadScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ColorRes.white,
         appBar: AppBar(
-          title:  Text(
+          title: Text(
             "Leads",
             style: TextStyle(fontWeight: AppFontWeights.bold),
           ),
@@ -2887,7 +2888,7 @@ class LeadCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            lead.customFields?.ownerName ?? 'N/A',
+                            DataMasker.maskEmail(lead.email),
                             style: TextStyle(
                               fontSize: AppFontSizes.extraSmall,
                               color: ColorRes.leadGreyColor[600],
@@ -2898,7 +2899,7 @@ class LeadCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            lead.customFields?.ownerEmail ?? 'N/A',
+                            DataMasker.maskPhone(lead.phone),
                             style: TextStyle(
                               fontSize: AppFontSizes.extraSmall,
                               color: ColorRes.leadGreyColor[600],
@@ -2961,6 +2962,10 @@ class LeadCard extends StatelessWidget {
                 Row(
                   children: [
                     _buildChip(lead.status!),
+                    SizedBox(width: 4),
+                    _buildChip(lead.stage!),
+                    SizedBox(width: 4),
+                    _buildChip(lead.source!),
                     const Spacer(),
                     Row(
                       children: [

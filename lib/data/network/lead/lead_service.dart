@@ -25,6 +25,7 @@ class LeadService {
   Future<PaginationResponse<LeadItem>> fetchLeads({
     int page = 1,
     Map<String, String>? filters,
+    bool fromReseller = false,
   }) async {
     final user = await SecureStorage.getUserData();
     try {
@@ -41,10 +42,12 @@ class LeadService {
 
         queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
       }
-      print('$baseUrl/sellerleads/${user?.user?.id ?? ''}');
+      // print('$baseUrl/sellerleads/${user?.user?.id ?? ''}');
+      print('from reseller :${fromReseller}');
       final uri = Uri.parse(
-        "$baseUrl",
-        // "$baseUrl/sellerleads/${user?.user?.id ?? ''}",
+        fromReseller
+            ? "$baseUrl"
+            : "$baseUrl/sellerleads/${user?.user?.id ?? ''}",
       ).replace(queryParameters: queryParameters);
       print("Leads API URL: $uri");
       final response = await http.get(uri, headers: await headers());

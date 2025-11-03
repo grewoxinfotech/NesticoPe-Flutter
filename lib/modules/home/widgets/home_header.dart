@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart'
     hide SellerType;
@@ -65,24 +66,24 @@ class _HomeHeaderState extends State<HomeHeader> {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          width: 45,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            color: ColorRes.white,
-                            border: Border.all(
-                              color: ColorRes.grey.withOpacity(0.2),
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          child: const Icon(
-                            Icons.notes_outlined,
-                            color: ColorRes.black,
-                            size: 22,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
+                        // Container(
+                        //   width: 45,
+                        //   height: 45,
+                        //   decoration: BoxDecoration(
+                        //     color: ColorRes.white,
+                        //     border: Border.all(
+                        //       color: ColorRes.grey.withOpacity(0.2),
+                        //     ),
+                        //     borderRadius: BorderRadius.circular(12),
+                        //   ),
+                        //   padding: const EdgeInsets.all(8),
+                        //   child: const Icon(
+                        //     Icons.notes_outlined,
+                        //     color: ColorRes.black,
+                        //     size: 22,
+                        //   ),
+                        // ),
+                        // const SizedBox(width: 8),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -138,11 +139,21 @@ class _HomeHeaderState extends State<HomeHeader> {
                     border: Border.all(color: ColorRes.grey.withOpacity(0.2)),
                     borderRadius: BorderRadius.circular(12),
                   ),
+
+                  // child: ClipRRect(
+                  //   borderRadius: BorderRadius.circular(10),
+                  //   child: Image.network(
+                  //     "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                  //     fit: BoxFit.cover,
+                  //   ),
+                  // ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                    child: CustomImage(
                       fit: BoxFit.cover,
+                      type: CustomImageType.network,
+                      src:
+                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
                     ),
                   ),
                 ),
@@ -162,7 +173,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                   final filter = await Get.to(
                     () => CommonSearchField(
                       onTap: (city) {
-                        final filters = {"city": city};
+                        final filters = {"city": city.split(",").first};
                         print("Applied Filters: $filters");
                         Get.back(result: filters);
                       },

@@ -315,4 +315,27 @@ class ContactHelper {
       }
     }
   }
+
+  static Future<void> openInGoogleMaps(String location) async {
+    if (location.isEmpty) return;
+
+    // If input looks like coordinates
+    final isCoordinate = RegExp(
+      r'^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$',
+    ).hasMatch(location);
+    final query = Uri.encodeComponent(location);
+
+    final Uri googleMapsUri =
+        isCoordinate
+            ? Uri.parse(
+              "https://www.google.com/maps/search/?api=1&query=$query",
+            )
+            : Uri.parse(
+              "https://www.google.com/maps/search/?api=1&query=$query",
+            );
+
+    // Launch Google Maps or browser fallback
+
+    await launchUrl(googleMapsUri, mode: LaunchMode.platformDefault);
+  }
 }

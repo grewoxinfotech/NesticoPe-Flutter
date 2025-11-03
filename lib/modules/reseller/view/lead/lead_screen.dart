@@ -9,6 +9,7 @@ import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.d
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../app/manager/data_masker.dart';
 import '../../../../utils/global.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../seller/module/lead_screen/controllers/lead_controller.dart';
@@ -25,26 +26,23 @@ class ResellerLeadScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController(), tag: "reseller");
     final leadController = Get.find<LeadController>(tag: "reseller");
-
     final controller = Get.find<DashboardController>();
 
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading:
-        (isViewAll)
-            ? IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: Icon(Icons.arrow_back),
-        )
-            : null,
+            (isViewAll)
+                ? IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.arrow_back),
+                )
+                : null,
         title: Text(
           'Property Buyer Leads',
-          style: TextStyle(
-            fontWeight: AppFontWeights.bold,
-          ),
+          style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
         automaticallyImplyLeading: (isViewAll),
         backgroundColor: ColorRes.white,
@@ -56,7 +54,7 @@ class ResellerLeadScreen extends StatelessWidget {
               FocusScope.of(context).unfocus();
               leadController.resetForm();
               Get.to(
-                    () => AddLeadScreen(),
+                () => AddLeadScreen(),
                 binding: BindingsBuilder(() {
                   Get.lazyPut(() => LeadController(), tag: "reseller");
                 }),
@@ -89,513 +87,508 @@ class ResellerLeadScreen extends StatelessWidget {
 
             // Main content
             Expanded(
-              child: filteredLeads.isEmpty
-                  ? Center(
-                child: Text(
-                  'No leads available. Tap + to add a new lead.',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    color: ColorRes.leadGreyColor[600],
-                    fontWeight: AppFontWeights.medium,
-                  ),
-                ),
-              )
-                  : RefreshIndicator(
-                onRefresh: leadController.refreshList,
-                child: ListView.separated(
-                  padding: EdgeInsets.all(getResponsivePadding(context)),
-                  itemCount: filteredLeads.length,
-                  separatorBuilder: (context, index) =>
-                      SizedBox(
-                        height: getResponsiveSpacing(context),
+              child:
+                  filteredLeads.isEmpty
+                      ? Center(
+                        child: Text(
+                          'No leads available. Tap + to add a new lead.',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            color: ColorRes.leadGreyColor[600],
+                            fontWeight: AppFontWeights.medium,
+                          ),
+                        ),
+                      )
+                      : RefreshIndicator(
+                        onRefresh: leadController.refreshList,
+                        child: ListView.separated(
+                          padding: EdgeInsets.all(
+                            getResponsivePadding(context),
+                          ),
+                          itemCount: filteredLeads.length,
+                          separatorBuilder:
+                              (context, index) => SizedBox(
+                                height: getResponsiveSpacing(context),
+                              ),
+                          itemBuilder: (context, index) {
+                            final lead = filteredLeads[index];
+                            return GestureDetector(
+                              onTap: () {
+                                Get.to(
+                                  () => LeadDetailScreen(
+                                    lead: lead,
+                                    isFromLead: true,
+                                  ),
+                                );
+                              },
+                              child: buildLeadCard(context, lead, controller),
+                            );
+                          },
+                        ),
                       ),
-                  itemBuilder: (context, index) {
-                    final lead = filteredLeads[index];
-                    return buildLeadCard(context, lead, controller);
-                  },
-                ),
-              ),
             ),
           ],
         );
       }),
-
     );
   }
 }
 
-  Widget buildSearchAndFilter(
-    BuildContext context,
-    DashboardController controller,
-  ) {
+Widget buildSearchAndFilter(
+  BuildContext context,
+  DashboardController controller,
+) {
+  return Container(
+    margin: EdgeInsets.all(getResponsivePadding(context)),
+    padding: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+    ),
+    child: TextField(
+      onChanged: controller.updateSearch,
+      style: TextStyle(fontSize: AppFontSizes.medium),
+      decoration: InputDecoration(
+        hintText: 'Search buyer leads...',
+        hintStyle: TextStyle(fontSize: AppFontSizes.medium),
+        prefixIcon: const Icon(Icons.search),
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(vertical: 16),
+      ),
+    ),
+  );
+}
+
+Widget buildSelectedFiltersChips(
+  BuildContext context,
+  DashboardController controller,
+) {
+  return Obx(() {
+    final selectedFilters = controller.selectedLeadFilters.value;
+
+    if (selectedFilters.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    print("Selected Filters: $selectedFilters");
     return Container(
-      margin: EdgeInsets.all(getResponsivePadding(context)),
-      padding: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
-      decoration: BoxDecoration(
-        color: ColorRes.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-      ),
-      child: TextField(
-        onChanged: controller.updateSearch,
-        style: TextStyle(fontSize: AppFontSizes.medium),
-        decoration: InputDecoration(
-          hintText: 'Search buyer leads...',
-          hintStyle: TextStyle(fontSize: AppFontSizes.medium),
-          prefixIcon: const Icon(Icons.search),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16),
-        ),
-      ),
-    );
-  }
-
-  Widget buildSelectedFiltersChips(
-    BuildContext context,
-    DashboardController controller,
-  ) {
-    return Obx(() {
-      final selectedFilters = controller.selectedLeadFilters.value;
-
-      if (selectedFilters.isEmpty) {
-        return const SizedBox.shrink();
-      }
-      print("Selected Filters: $selectedFilters");
-      return Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: getResponsivePadding(context),
-          vertical: 8,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Active Filters:',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.leadGreyColor[700],
-                  ),
-                ),
-                const Spacer(),
-                TextButton.icon(
-                  onPressed: () {
-                    controller.clearLeadFilters();
-                  },
-                  label: Text(
-                    'Clear All',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      color: ColorRes.primary,
-                      fontWeight: AppFontWeights.medium,
-                    ),
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                spacing: 8,
-                // runSpacing: 8,
-                children:
-                    selectedFilters.map((filter) {
-                      // Split filter into type and value
-                      final parts = filter.split(':');
-                      final filterType = parts[0]; // Stage or Status
-                      final filterValue = parts[1]; // New Lead, Contacted, etc.
-
-                      // Get color based on type
-                      final chipColor =
-                          filterType == 'Stage'
-                              ? ColorRes.primary
-                              : ColorRes.green;
-
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: chipColor.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: chipColor.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Filter type badge
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: chipColor,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  filterType,
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.extraSmall,
-                                    color: ColorRes.white,
-                                    fontWeight: AppFontWeights.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              // Filter value
-                              Text(
-                                filterValue,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.small,
-                                  color: chipColor,
-                                  fontWeight: AppFontWeights.semiBold,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              // Remove button
-                              InkWell(
-                                onTap: () {
-                                  controller.removeLeadFilter(filter);
-                                  ever(controller.selectedLeadFilters, (_) {
-                                    controller.filterMaps.value =
-                                        controller.selectedLeadFilters.map((filter) {
-                                          var parts = filter.split(':');
-                                          return {
-                                            parts[0].trim().toLowerCase(): parts[1]
-                                                .trim()
-                                                .toLowerCase()
-                                                .replaceAll(" ", "_"),
-                                          };
-                                        }).toList();
-
-                                    controller.applyFilter(controller.filterMaps.value);
-                                  });
-                                },
-                                borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Icon(
-                                    Icons.close,
-                                    size: 14,
-                                    color: chipColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }).toList(),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
-  Widget buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.real_estate_agent,
-            size: 64,
-            color: ColorRes.leadGreyColor[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No buyer leads found',
-            style: TextStyle(
-              fontSize: AppFontSizes.large,
-              color: ColorRes.leadGreyColor[600],
-              fontWeight: AppFontWeights.medium,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Text(
-              'Add your first property buyer to get started',
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                color: ColorRes.leadGreyColor[500],
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildLeadCard(
-    BuildContext context,
-    LeadItem lead,
-    DashboardController controller,
-  ) {
-    final leadController = Get.find<LeadController>(tag: "reseller");
-    final isCompact = MediaQuery.of(context).size.width < 600;
-    final cardPadding = isCompact ? 12.0 : 16.0;
-    final priceManager = PropertyPriceManager(
-      listingType: lead.customFields?.listingType ?? '',
-      financialInfo: lead.customFields?.propertyDetails?.financialInfo,
-    );
-
-    return Container(
-      padding: EdgeInsets.all(cardPadding),
-      decoration: BoxDecoration(
-        color: ColorRes.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+      padding: EdgeInsets.symmetric(
+        horizontal: getResponsivePadding(context),
+        vertical: 8,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: isCompact ? 18 : 20,
-                backgroundColor: ColorRes.primary.withOpacity(0.2),
-                child: Text(
-                  getInitials(lead.name!),
+              Text(
+                'Active Filters:',
+                style: TextStyle(
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.leadGreyColor[700],
+                ),
+              ),
+              const Spacer(),
+              TextButton.icon(
+                onPressed: () {
+                  controller.clearLeadFilters();
+                },
+                label: Text(
+                  'Clear All',
                   style: TextStyle(
+                    fontSize: AppFontSizes.small,
                     color: ColorRes.primary,
-                    fontWeight: AppFontWeights.bold,
-                    fontSize:
-                        isCompact ? AppFontSizes.small : AppFontSizes.medium,
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
-              ),
-              SizedBox(width: isCompact ? 8 : 12),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 180,
-                      child: Text(
-                        lead.name!,
-                        style: TextStyle(
-                          fontSize:
-                              isCompact
-                                  ? AppFontSizes.medium
-                                  : AppFontSizes.body,
-                          fontWeight: AppFontWeights.bold,
-                          color: ColorRes.textColor,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    SizedBox(
-                      width: 180,
-                      child: Text(
-                        '${lead.name}',
-                        style: TextStyle(
-                          fontSize:
-                              isCompact
-                                  ? AppFontSizes.extraSmall
-                                  : AppFontSizes.small,
-                          color: ColorRes.leadGreyColor[700],
-                          fontWeight: AppFontWeights.regular,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (lead.email != null && lead.email!.isNotEmpty) ...[
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              lead.email!.replaceRange(
-                                lead.email!.length < 4 ? lead.email!.length : 4,
-                                lead.email!.length,
-                                'XXXXXXXXXXX',
-                              ),
-                              style: TextStyle(
-                                fontSize: AppFontSizes.extraSmall,
-                                color: ColorRes.leadGreyColor[600],
-                                fontWeight: AppFontWeights.regular,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'Budget',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.extraSmall,
-                      color: ColorRes.leadGreyColor[800],
-                      fontWeight: AppFontWeights.regular,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '${priceManager.displayPrice}',
-                    style: TextStyle(
-                      fontSize:
-                          isCompact ? AppFontSizes.medium : AppFontSizes.body,
-                      fontWeight: AppFontWeights.semiBold,
-                      color: ColorRes.success,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    formatTime(lead.createdAt!),
-                    style: TextStyle(
-                      fontSize: AppFontSizes.caption,
-                      color: ColorRes.leadGreyColor[600],
-                      fontWeight: AppFontWeights.regular,
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
-          SizedBox(height: isCompact ? 8 : 12),
-          Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
-          SizedBox(height: isCompact ? 8 : 12),
+          const SizedBox(height: 8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              spacing: 8,
+              // runSpacing: 8,
+              children:
+                  selectedFilters.map((filter) {
+                    // Split filter into type and value
+                    final parts = filter.split(':');
+                    final filterType = parts[0]; // Stage or Status
+                    final filterValue = parts[1]; // New Lead, Contacted, etc.
 
-          Row(
-            children: [
-              // Status Badge
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isCompact ? 10 : 14,
-                  vertical: isCompact ? 6 : 8,
-                ),
-                decoration: BoxDecoration(
-                  color: getStatusColor(
-                    getLeadStatusFromString(lead.status!),
-                  ).withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: getStatusColor(
-                      getLeadStatusFromString(lead.status!),
-                    ).withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  getStatusText(getLeadStatusFromString(lead.status!)),
-                  style: TextStyle(
-                    fontSize:
-                        isCompact
-                            ? AppFontSizes.extraSmall
-                            : AppFontSizes.small,
-                    color: getStatusColor(
-                      getLeadStatusFromString(lead.status!),
-                    ),
-                    fontWeight: AppFontWeights.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              SizedBox(width: 8),
-              // Stage Badge
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isCompact ? 10 : 14,
-                  vertical: isCompact ? 6 : 8,
-                ),
-                decoration: BoxDecoration(
-                  color: getStageColor(
-                    getLeadStageFromString(lead.stage),
-                  ).withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: getStageColor(
-                      getLeadStageFromString(lead.stage),
-                    ).withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  getStageText(getLeadStageFromString(lead.stage)),
-                  style: TextStyle(
-                    fontSize:
-                        isCompact
-                            ? AppFontSizes.extraSmall
-                            : AppFontSizes.small,
-                    color: getStageColor(getLeadStageFromString(lead.stage)),
-                    fontWeight: AppFontWeights.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Spacer(),
-              Row(
-                children: [
-                  buildActionButton(
-                    icon: Icons.visibility,
-                    color: ColorRes.blueColor,
-                    onPressed: () {
-                      Get.to(
-                        () => LeadDetailScreen(lead: lead, isFromLead: true),
-                      );
-                    },
-                    tooltip: 'View Details',
-                    isCompact: isCompact,
-                  ),
-                  SizedBox(width: 8),
-                  buildActionButton(
-                    icon: Icons.edit,
-                    color: ColorRes.orangeColor,
-                    onPressed: () {
-                      leadController.resetForm();
-                      Get.to(() => AddLeadScreen(lead: lead, isEditMode: true));
-                    },
+                    // Get color based on type
+                    final chipColor =
+                        filterType == 'Stage'
+                            ? ColorRes.primary
+                            : ColorRes.green;
 
-                    tooltip: 'Edit Lead',
-                    isCompact: isCompact,
-                  ),
-                  SizedBox(width: 8),
-                  buildActionButton(
-                    icon: Icons.delete,
-                    color: ColorRes.error,
-                    onPressed:
-                        () => showDeleteConfirmation(context, lead, controller),
-                    tooltip: 'Delete Lead',
-                    isCompact: isCompact,
-                  ),
-                ],
-              ),
-            ],
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: chipColor.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: chipColor.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Filter type badge
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: chipColor,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                filterType,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.extraSmall,
+                                  color: ColorRes.white,
+                                  fontWeight: AppFontWeights.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            // Filter value
+                            Text(
+                              filterValue,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: chipColor,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            // Remove button
+                            InkWell(
+                              onTap: () {
+                                controller.removeLeadFilter(filter);
+                                ever(controller.selectedLeadFilters, (_) {
+                                  controller.filterMaps.value =
+                                      controller.selectedLeadFilters.map((
+                                        filter,
+                                      ) {
+                                        var parts = filter.split(':');
+                                        return {
+                                          parts[0]
+                                              .trim()
+                                              .toLowerCase(): parts[1]
+                                              .trim()
+                                              .toLowerCase()
+                                              .replaceAll(" ", "_"),
+                                        };
+                                      }).toList();
+
+                                  controller.applyFilter(
+                                    controller.filterMaps.value,
+                                  );
+                                });
+                              },
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                child: Icon(
+                                  Icons.close,
+                                  size: 14,
+                                  color: chipColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+            ),
           ),
         ],
       ),
     );
-  }
+  });
+}
 
+Widget buildEmptyState(BuildContext context) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.real_estate_agent,
+          size: 64,
+          color: ColorRes.leadGreyColor[400],
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'No buyer leads found',
+          style: TextStyle(
+            fontSize: AppFontSizes.large,
+            color: ColorRes.leadGreyColor[600],
+            fontWeight: AppFontWeights.medium,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Text(
+            'Add your first property buyer to get started',
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              color: ColorRes.leadGreyColor[500],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildLeadCard(
+  BuildContext context,
+  LeadItem lead,
+  DashboardController controller,
+) {
+  final leadController = Get.find<LeadController>(tag: "reseller");
+  final isCompact = MediaQuery.of(context).size.width < 600;
+  final cardPadding = isCompact ? 12.0 : 16.0;
+  final priceManager = PropertyPriceManager(
+    listingType: lead.customFields?.listingType ?? '',
+    financialInfo: lead.customFields?.propertyDetails?.financialInfo,
+  );
+
+  return Container(
+    padding: EdgeInsets.all(cardPadding),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            CircleAvatar(
+              radius: isCompact ? 18 : 20,
+              backgroundColor: ColorRes.primary.withOpacity(0.2),
+              child: Text(
+                getInitials(lead.name!),
+                style: TextStyle(
+                  color: ColorRes.primary,
+                  fontWeight: AppFontWeights.bold,
+                  fontSize:
+                      isCompact ? AppFontSizes.small : AppFontSizes.medium,
+                ),
+              ),
+            ),
+            SizedBox(width: isCompact ? 8 : 12),
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 180,
+                    child: Text(
+                      DataMasker.maskName(lead.name!),
+
+                      style: TextStyle(
+                        fontSize:
+                            isCompact ? AppFontSizes.medium : AppFontSizes.body,
+                        fontWeight: AppFontWeights.bold,
+                        color: ColorRes.textColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  SizedBox(
+                    width: 180,
+                    child: Text(
+                      DataMasker.maskPhone(lead.phone!),
+                      style: TextStyle(
+                        fontSize:
+                            isCompact
+                                ? AppFontSizes.extraSmall
+                                : AppFontSizes.small,
+                        color: ColorRes.leadGreyColor[700],
+                        fontWeight: AppFontWeights.regular,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (lead.email != null && lead.email!.isNotEmpty) ...[
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            DataMasker.maskEmail(lead.email!),
+
+                            style: TextStyle(
+                              fontSize: AppFontSizes.extraSmall,
+                              color: ColorRes.leadGreyColor[600],
+                              fontWeight: AppFontWeights.regular,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Budget',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.extraSmall,
+                    color: ColorRes.leadGreyColor[800],
+                    fontWeight: AppFontWeights.regular,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  '${priceManager.displayPrice}',
+                  style: TextStyle(
+                    fontSize:
+                        isCompact ? AppFontSizes.medium : AppFontSizes.body,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.success,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  formatTime(lead.createdAt!),
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.leadGreyColor[600],
+                    fontWeight: AppFontWeights.regular,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        SizedBox(height: isCompact ? 8 : 12),
+        Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
+        SizedBox(height: isCompact ? 8 : 12),
+
+        Row(
+          children: [
+            // Status Badge
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: isCompact ? 10 : 14,
+                vertical: isCompact ? 6 : 8,
+              ),
+              decoration: BoxDecoration(
+                color: getStatusColor(
+                  getLeadStatusFromString(lead.status!),
+                ).withOpacity(0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: getStatusColor(
+                    getLeadStatusFromString(lead.status!),
+                  ).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                getStatusText(getLeadStatusFromString(lead.status!)),
+                style: TextStyle(
+                  fontSize:
+                      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+                  color: getStatusColor(getLeadStatusFromString(lead.status!)),
+                  fontWeight: AppFontWeights.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(width: 8),
+            // Stage Badge
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: isCompact ? 10 : 14,
+                vertical: isCompact ? 6 : 8,
+              ),
+              decoration: BoxDecoration(
+                color: getStageColor(
+                  getLeadStageFromString(lead.stage),
+                ).withOpacity(0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: getStageColor(
+                    getLeadStageFromString(lead.stage),
+                  ).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                getStageText(getLeadStageFromString(lead.stage)),
+                style: TextStyle(
+                  fontSize:
+                      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+                  color: getStageColor(getLeadStageFromString(lead.stage)),
+                  fontWeight: AppFontWeights.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Spacer(),
+            Row(
+              children: [
+                buildActionButton(
+                  icon: Icons.edit,
+                  color: ColorRes.orangeColor,
+                  onPressed: () {
+                    leadController.resetForm();
+                    Get.to(() => AddLeadScreen(lead: lead, isEditMode: true));
+                  },
+
+                  tooltip: 'Edit Lead',
+                  isCompact: isCompact,
+                ),
+                SizedBox(width: 8),
+                buildActionButton(
+                  icon: Icons.delete,
+                  color: ColorRes.error,
+                  onPressed:
+                      () => showDeleteConfirmation(context, lead, controller),
+                  tooltip: 'Delete Lead',
+                  isCompact: isCompact,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
 
 void showFilterBottomSheet(
   BuildContext context,
@@ -907,57 +900,66 @@ Widget buildFilterSection({
       Wrap(
         spacing: 8,
         runSpacing: -4,
-        children: options.map((option) {
-          return Obx(() {
-            final fullFilterKey = '$filterType:$option';
+        children:
+            options.map((option) {
+              return Obx(() {
+                final fullFilterKey = '$filterType:$option';
 
-            // Only one selected per category
-            final isSelected = tempSelectedFilters
-                .any((e) => e.startsWith('$filterType:') && e == fullFilterKey);
+                // Only one selected per category
+                final isSelected = tempSelectedFilters.any(
+                  (e) => e.startsWith('$filterType:') && e == fullFilterKey,
+                );
 
-            return FilterChip(
-              label: Text(option),
-              selected: isSelected,
-              onSelected: (selected) {
-                // Remove any existing filter of this type
-                tempSelectedFilters
-                    .removeWhere((e) => e.startsWith('$filterType:'));
+                return FilterChip(
+                  label: Text(option),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    // Remove any existing filter of this type
+                    tempSelectedFilters.removeWhere(
+                      (e) => e.startsWith('$filterType:'),
+                    );
 
-                // Add new selection if selected
-                if (selected) {
-                  tempSelectedFilters.add(fullFilterKey);
-                }
-                setState(() {});
-              },
-              selectedColor: ColorRes.primary.withOpacity(0.15),
-              checkmarkColor: ColorRes.primary,
-              backgroundColor: ColorRes.leadGreyColor[100],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(
-                  color: isSelected
-                      ? ColorRes.primary
-                      : ColorRes.leadGreyColor[300]!,
-                  width: isSelected ? 1.5 : 1,
-                ),
-              ),
-              labelStyle: TextStyle(
-                color: isSelected ? ColorRes.primary : ColorRes.blackShade87,
-                fontWeight:
-                isSelected ? AppFontWeights.semiBold : AppFontWeights.regular,
-                fontSize: AppFontSizes.small,
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            );
-          });
-        }).toList(),
+                    // Add new selection if selected
+                    if (selected) {
+                      tempSelectedFilters.add(fullFilterKey);
+                    }
+                    setState(() {});
+                  },
+                  selectedColor: ColorRes.primary.withOpacity(0.15),
+                  checkmarkColor: ColorRes.primary,
+                  backgroundColor: ColorRes.leadGreyColor[100],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                      color:
+                          isSelected
+                              ? ColorRes.primary
+                              : ColorRes.leadGreyColor[300]!,
+                      width: isSelected ? 1.5 : 1,
+                    ),
+                  ),
+                  labelStyle: TextStyle(
+                    color:
+                        isSelected ? ColorRes.primary : ColorRes.blackShade87,
+                    fontWeight:
+                        isSelected
+                            ? AppFontWeights.semiBold
+                            : AppFontWeights.regular,
+                    fontSize: AppFontSizes.small,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                );
+              });
+            }).toList(),
       ),
     ],
   );
 }
 
 // Keep all other functions (showLeadForm, _buildFormField, showLeadDetails, etc.) unchanged
-
 
 Widget buildFormField({
   required BuildContext context,

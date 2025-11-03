@@ -469,8 +469,55 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             ),
                             const SizedBox(height: 20),
 
-                            Obx(
-                              () => buildReferralProgram(
+                            // Obx(() {
+                            //   return buildReferralProgram(
+                            //     controller: controller,
+                            //     context: context,
+                            //     bonus: 5000,
+                            //     currentProgress: 4,
+                            //     targetProgress: 10,
+                            //     title: 'Referral Program',
+                            //     subtitle:
+                            //         'Get point for every new active reseller',
+                            //     pointsEarned:
+                            //         controller
+                            //             .dummyReferral
+                            //             .value
+                            //             ?.data
+                            //             ?.first
+                            //             .totalRewards
+                            //             .toString() ??
+                            //         '0.0',
+                            //     totalEarnings:
+                            //         '${controller.dummyReferral.value?.data?.first.totalReferrals}' ??
+                            //         '0.0',
+                            //     earningSubtitle:
+                            //         'per referral ${controller.dummyReferral.value?.data?.first.referrerReward} points',
+                            //     referralCode:
+                            //         '${controller.dummyReferral.value?.data?.first.referralCode}',
+                            //     leftIcon: Icons.card_giftcard_rounded,
+                            //     iconColor: ColorRes.textPrimary,
+                            //     iconBackground: ColorRes.textPrimary
+                            //         .withOpacity(0.08),
+                            //     card1BorderColor: ColorRes.homeAmber
+                            //         .withOpacity(0.3),
+                            //     card1BgColor: ColorRes.homeAmber.withOpacity(
+                            //       0.08,
+                            //     ),
+                            //     card2BorderColor: ColorRes.green.withOpacity(
+                            //       0.3,
+                            //     ),
+                            //     card2BgColor: ColorRes.green.withOpacity(0.08),
+                            //   );
+                            // }),
+                            Obx(() {
+                              final referral = controller.dummyReferral.value;
+                              final data = referral?.data;
+
+                              final hasData = data != null && data.isNotEmpty;
+                              final first = hasData ? data.first : null;
+
+                              return buildReferralProgram(
                                 controller: controller,
                                 context: context,
                                 bonus: 5000,
@@ -478,23 +525,14 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                 targetProgress: 10,
                                 title: 'Referral Program',
                                 subtitle:
-                                    'Get point for every new active reseller',
+                                    'Get points for every new active reseller',
                                 pointsEarned:
-                                    controller
-                                        .dummyReferral
-                                        .value
-                                        ?.data
-                                        ?.first
-                                        .totalRewards
-                                        .toString() ??
-                                    '0.0',
+                                    first?.totalRewards?.toString() ?? '0.0',
                                 totalEarnings:
-                                    '${controller.dummyReferral.value?.data?.first.totalReferrals}' ??
-                                    '0.0',
+                                    first?.totalReferrals?.toString() ?? '0.0',
                                 earningSubtitle:
-                                    'per referral ${controller.dummyReferral.value?.data?.first.referrerReward} points',
-                                referralCode:
-                                    '${controller.dummyReferral.value?.data?.first.referralCode}',
+                                    'per referral ${first?.referrerReward?.toString() ?? '0'} points',
+                                referralCode: first?.referralCode ?? '-',
                                 leftIcon: Icons.card_giftcard_rounded,
                                 iconColor: ColorRes.textPrimary,
                                 iconBackground: ColorRes.textPrimary
@@ -508,8 +546,8 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                   0.3,
                                 ),
                                 card2BgColor: ColorRes.green.withOpacity(0.08),
-                              ),
-                            ),
+                              );
+                            }),
 
                             const SizedBox(height: 20),
                             buildLeadGraph(controller),

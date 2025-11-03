@@ -13,7 +13,7 @@ import 'package:mime/mime.dart';
 import '../../../../modules/add_property/model/photo_model.dart';
 
 class PropertyService {
-  final String baseUrl = "${ApiConstants.baseURL}/property";
+  final String baseUrl = ApiConstants.property;
 
   /// Common headers
   static Future<Map<String, String>> headersWithoutToken() async {

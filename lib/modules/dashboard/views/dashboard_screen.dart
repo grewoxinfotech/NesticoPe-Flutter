@@ -34,7 +34,7 @@ class DashboardScreen extends StatelessWidget {
     final navigationController = Get.put(NavigationController());
     return Scaffold(
       extendBody: true,
-      drawer: NesticoPeDrawer(),
+      // drawer: NesticoPeDrawer(),
       bottomNavigationBar: const SafeArea(child: NesticoPeNavigationBar()),
       body: Obx(() {
         if (navigationController.currentIndex.value == 0) {
@@ -47,6 +47,7 @@ class DashboardScreen extends StatelessWidget {
                 // if (UserHelper.isSellerOwner) ...[
                 ElevatedButton(
                   onPressed: () {
+                    navigationController.currentIndex.value = 0;
                     Get.to(
                       () => SellerDashboardScreen(),
                       binding: BindingsBuilder(() {

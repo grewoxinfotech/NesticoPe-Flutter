@@ -306,6 +306,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/app/utils/validation.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
@@ -326,6 +327,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final authController = Get.find<AuthController>();
   String? _selectedSellerType;
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
@@ -386,7 +388,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _isLoading = true);
 
       try {
-        final authController = Get.find<AuthController>();
         final success = await authController.register(
           context: context,
           username: _usernameController.text.trim(),
@@ -447,7 +448,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "zip_code": _zipCodeController.text.trim(),
           "username": _usernameController.text.trim(),
         };
-        final authController = Get.find<AuthController>();
+
         final success = await authController.sellerRegister(
           context: context,
           username: _usernameController.text.trim(),
@@ -485,7 +486,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _isLoading = true);
 
       try {
-        final authController = Get.find<AuthController>();
         final success = await authController.register(
           context: context,
           username: _usernameController.text.trim(),
@@ -601,57 +601,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Text(
-                //   'Select Account Type',
-                //   style: theme.textTheme.titleLarge?.copyWith(
-                //     fontWeight: AppFontWeights.semiBold,
-                //     color: Colors.black,
-                //     fontSize: 16
-                //   ),
-                // ),
-                //const SizedBox(height: 16),
-                // Container(
-                //   decoration: BoxDecoration(
-                //     color: ColorRes.white,
-                //     borderRadius: BorderRadius.circular(30),
-                //   ),
-                //   child: Row(
-                //     children:
-                //         UserRole.values.map((role) {
-                //           return Expanded(
-                //             child: GestureDetector(
-                //               onTap: () => setState(() => _selectedRole = role),
-                //               child: Container(
-                //                 padding: const EdgeInsets.symmetric(
-                //                   vertical: 12,
-                //                 ),
-                //                 decoration: BoxDecoration(
-                //                   color:
-                //                       _selectedRole == role
-                //                           ? theme.colorScheme.primary
-                //                           : Colors.transparent,
-                //                   borderRadius: BorderRadius.circular(30),
-                //                 ),
-                //                 child: Center(
-                //                   child: Text(
-                //                     _roleToDisplayText(role),
-                //                     style: TextStyle(
-                //                       color:
-                //                           _selectedRole == role
-                //                               ? ColorRes.white
-                //                               : Colors.black87,
-                //                       fontWeight: FontWeight.bold,
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
-                //             ),
-                //           );
-                //         }).toList(),
-                //   ),
-                // ),
-
-                //                const SizedBox(height: 15),
                 if (_selectedRole == UserRole.seller) ...[
                   Text(
                     "Select Seller Type",
@@ -750,30 +699,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   keyboardType: TextInputType.phone,
                   prefixIcon: Icons.phone_outlined,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter phone number';
-                    }
-                    return null;
-                  },
+                  validator: (value) => phoneValidation(value),
                 ),
 
-                // const SizedBox(height: 10),
-                // NesticoPeTextField(
-                //   hintText: 'Enter Address',
-                //   title: "Address",
-                //   controller: _addressController,
-                //   prefixIcon: Icons.home_outlined,
-                //   autovalidateMode: AutovalidateMode.onUserInteraction,
-                //
-                //   validator: (value) {
-                //
-                //     if (value == null || value.isEmpty) {
-                //       return 'Please enter address';
-                //     }
-                //     return null;
-                //   },
-                // ),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -946,6 +874,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 NesticoPeButton(
                   title: 'Create Account',
                   onTap: _isLoading ? null : switchRole(_selectedRole),
+                ),
+                Obx(
+                  () => NesticoPeButton(
+                    title:
+                        authController.isLoading.value
+                            ? "Registering..."
+                            : "Register",
+                    backgroundColor:
+                        authController.isLoading.value
+                            ? ColorRes.primary.withOpacity(0.6)
+                            : ColorRes.primary,
+                    onTap:
+                        authController.isLoading.value
+                            ? null
+                            : switchRole(_selectedRole),
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Row(
