@@ -110,10 +110,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:housing_flutter_app/data/network/getProfile/service/getProfile_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import '../../../../app/constants/color_res.dart';
+import '../../../../data/network/getProfile/model/getProfile_model.dart';
 import '../../model/user/user_model.dart';
 
 class ProfileController extends GetxController {
@@ -121,7 +123,7 @@ class ProfileController extends GetxController {
   final RxBool isEditing = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
-
+final Rxn<ResellerProfile> resellerProfile=Rxn<ResellerProfile>();
   final Rx<UserProfile> profile =
       UserProfile(
         id: '1',
@@ -176,7 +178,12 @@ class ProfileController extends GetxController {
   Future<void> getUserProfileData() async {
 
     profileData.value = await SecureStorage.getUserData();
-    print("Lok ${profileData.value?.user?.profilePic}");
+    final data =await GetProfileService.getProfileService.getUserProfileData(profileData.value?.user?.id??'');
+    resellerProfile.value=ResellerProfile.fromJson(data??{});
+
+
+
+    print("Lok ${resellerProfile.value?.data.totalCommissions}");
   }
 
   void _populateControllers() {

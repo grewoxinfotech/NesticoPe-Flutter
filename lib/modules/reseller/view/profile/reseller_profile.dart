@@ -644,7 +644,7 @@ class ResellerProfileScreen extends StatelessWidget {
 
                 // Priority: selectedImage > avatarUrl > null
                 if (controller.profileData.value?.user?.profilePic != null) {
-                  imageProvider = FileImage(File(controller.profileData.value?.user?.profilePic??''));
+                  // imageProvider = FileImage(File(controller.profileData.value?.user?.profilePic??''));
 
                 } else if (controller.profileData.value?.user?.profilePic?.isNotEmpty??false) {
                   imageProvider = NetworkImage(controller.profileData.value?.user?.profilePic??'');
@@ -662,7 +662,7 @@ class ResellerProfileScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(2.0),
                     child: CircleAvatar(
                       radius: 35,
-                      backgroundColor: ColorRes.primary.withOpacity(0.1),
+                      backgroundColor:imageProvider==null? ColorRes.primary.withOpacity(0.1):null,
                       backgroundImage: imageProvider,
                       child: imageProvider == null
                           ? Icon(
@@ -741,13 +741,11 @@ class ResellerProfileScreen extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    Icon(Icons.business_outlined,
-                        size: 12, color: ColorRes.leadGreyColor[600]),
-                    const SizedBox(width: 4),
+
                     SizedBox(
                       width: 150,
                       child: Text(
-                        '${controller.profileData.value?.user?.address??''}',
+                        '${controller.profileData.value?.user?.address??'Not Define'} ',
                         style: TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.leadGreyColor[600],
@@ -775,8 +773,8 @@ class ResellerProfileScreen extends StatelessWidget {
       children: [
         Expanded(
           child: _buildStatCard(
-            'Total Sales',
-            '${Formatter.formatPrice(controller.profile.value.totalSales)}',
+            'Total Commission',
+            '${Formatter.formatPrice(int.tryParse(controller.resellerProfile.value?.data.totalCommissions??'')??0)??''}',
             Icons.trending_up,
             ColorRes.success,
           ),
@@ -784,8 +782,8 @@ class ResellerProfileScreen extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _buildStatCard(
-            'Leads',
-            '${controller.profile.value.leadsCount}',
+            'Total Sales',
+            '${controller.resellerProfile.value?.data.totalSales??''}',
             Icons.people_alt_outlined,
             ColorRes.blueColor,
           ),
@@ -793,8 +791,8 @@ class ResellerProfileScreen extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _buildStatCard(
-            'Rating',
-            '${controller.profile.value.rating}',
+            'Success Rate',
+            '${controller.resellerProfile.value?.data.successRate}',
             Icons.star_rounded,
             ColorRes.homeAmber,
           ),
@@ -870,8 +868,8 @@ class ResellerProfileScreen extends StatelessWidget {
       controller.lastNameController.text=controller.profileData.value?.user?.lastName??"";
       controller.emailController.text =controller.profileData.value?.user?.email??"";
       controller.phoneController.text =controller.profileData.value?.user?.phone??"";
-      controller.positionController.text =controller.profileData.value?.user?.userType??"";
-      controller.companyController.text =controller.profileData.value?.user?.address??"";
+      controller.positionController.text =controller.profileData.value?.user?.city??"";
+      controller.companyController.text =controller.profileData.value?.user?.state??"";
     },);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
@@ -949,15 +947,15 @@ class ResellerProfileScreen extends StatelessWidget {
             const SizedBox(height: 14),
             _buildFormField(
               controller: controller.positionController,
-              label: 'Position',
-              icon: Icons.work_outline,
+              label: 'City',
+              icon: Icons.location_on_outlined,
               enabled: controller.isEditing.value,
             ),
             const SizedBox(height: 14),
             _buildFormField(
               controller: controller.companyController,
-              label: 'Company',
-              icon: Icons.business_outlined,
+              label: 'State',
+              icon: Icons.location_on_outlined,
               enabled: controller.isEditing.value,
             ),
             // const SizedBox(height: 14),
