@@ -64,6 +64,62 @@ class GoogleMapApi {
   }
 
   /// Get Near By LandMarks of address
+  // Future<List<Map<String, dynamic>>> getNearbyLandmarks(String address) async {
+  //   try {
+  //     // 1️⃣ Step: Convert address → coordinates using Geocoding API
+  //     final geoUri = Uri.parse(
+  //       'https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=${ApiConfig.mapkey}',
+  //     );
+  //     final geoResponse = await http.get(geoUri);
+  //
+  //     if (geoResponse.statusCode != 200) {
+  //       throw Exception('Failed to get coordinates for address');
+  //     }
+  //
+  //     final geoData = json.decode(geoResponse.body);
+  //     if (geoData['status'] != 'OK' || geoData['results'].isEmpty) {
+  //       throw Exception('No coordinates found for address');
+  //     }
+  //
+  //     final location = geoData['results'][0]['geometry']['location'];
+  //     final lat = location['lat'];
+  //     final lng = location['lng'];
+  //
+  //     // 2️⃣ Step: Get nearby landmarks using Places Nearby Search API
+  //     final nearbyUri = Uri.parse(
+  //       'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=1500&key=${ApiConfig.mapkey}',
+  //     );
+  //
+  //     final nearbyResponse = await http.get(nearbyUri);
+  //
+  //     if (nearbyResponse.statusCode != 200) {
+  //       throw Exception('Failed to fetch nearby landmarks');
+  //     }
+  //
+  //     final nearbyData = json.decode(nearbyResponse.body);
+  //     if (nearbyData['status'] != 'OK') {
+  //       throw Exception('Nearby API Error: ${nearbyData['status']}');
+  //     }
+  //
+  //     final List<dynamic> results = nearbyData['results'] ?? [];
+  //
+  //     // Return simplified landmark info
+  //     return results.map<Map<String, dynamic>>((place) {
+  //       return {
+  //         'name': place['name'],
+  //         'address': place['vicinity'],
+  //         'types': place['types'],
+  //         'lat': place['geometry']['location']['lat'],
+  //         'lng': place['geometry']['location']['lng'],
+  //         'rating': place['rating'],
+  //       };
+  //     }).toList();
+  //   } catch (e) {
+  //     print('❌ Error in getNearbyLandmarks: $e');
+  //     return [];
+  //   }
+  // }
+
   Future<List<Map<String, dynamic>>> getNearbyLandmarks(String address) async {
     try {
       // 1️⃣ Step: Convert address → coordinates using Geocoding API
@@ -103,17 +159,20 @@ class GoogleMapApi {
 
       final List<dynamic> results = nearbyData['results'] ?? [];
 
-      // Return simplified landmark info
-      return results.map<Map<String, dynamic>>((place) {
-        return {
-          'name': place['name'],
-          'address': place['vicinity'],
-          'types': place['types'],
-          'lat': place['geometry']['location']['lat'],
-          'lng': place['geometry']['location']['lng'],
-          'rating': place['rating'],
-        };
-      }).toList();
+      // 3️⃣ Return simplified landmark info (limit to first 4)
+      final simplified =
+          results.map<Map<String, dynamic>>((place) {
+            return {
+              'name': place['name'],
+              'address': place['vicinity'],
+              'types': place['types'],
+              'lat': place['geometry']['location']['lat'],
+              'lng': place['geometry']['location']['lng'],
+              'rating': place['rating'],
+            };
+          }).toList();
+
+      return simplified.take(4).toList(); // ✅ Limit to 4 items
     } catch (e) {
       print('❌ Error in getNearbyLandmarks: $e');
       return [];

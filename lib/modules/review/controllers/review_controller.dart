@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
+import 'package:housing_flutter_app/modules/property/controllers/overall_rating_controller.dart';
 
 import '../../../data/network/review/service/review_service.dart';
 
@@ -56,8 +57,6 @@ class ReviewController extends PaginatedController<ReviewItem> {
       print("Fetched items: ${response.items.length}");
       return response; // contains items + meta (page/total)
     } catch (e) {
-      
-
       print("Exception in fetchItems: $e");
       rethrow;
     }
@@ -67,7 +66,11 @@ class ReviewController extends PaginatedController<ReviewItem> {
   Future<bool> createReview(ReviewItem data) async {
     try {
       final success = await _service.createReview(data);
-      if (success) await refreshList();
+      if (success) {
+        final _overallRatingController = Get.find<OverallRatingController>();
+        _overallRatingController.fetchOverallRating(data.entityId ?? '');
+        await refreshList();
+      }
       return success;
     } catch (e) {
       print("❌ Error creating review: $e");

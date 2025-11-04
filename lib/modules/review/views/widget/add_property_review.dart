@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
@@ -8,6 +7,7 @@ import 'package:housing_flutter_app/widgets/New folder/inputs/text_field.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/size_manager.dart';
+import '../../../../data/network/overall_rating/model/overall_rating_model.dart';
 import '../../controllers/review_controller.dart';
 
 class AddReviewScreen extends StatelessWidget {
@@ -34,45 +34,49 @@ class AddReviewScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           children: [
             // Title
-         Container(
-           padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
-           decoration: BoxDecoration(
-             color: ColorRes.white,
-             borderRadius: BorderRadius.circular(12),
-             border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
-           ),
-           child: Column(
-             children: [
-               NesticoPeTextField(
-                 isRequired: true,
-                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                 controller: controller.titleController,
-                 title: 'Review Title',
-                 hintText: 'Summarize your experience',
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                color: ColorRes.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: ColorRes.leadGreyColor.shade300,
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                children: [
+                  NesticoPeTextField(
+                    isRequired: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: controller.titleController,
+                    title: 'Review Title',
+                    hintText: 'Summarize your experience',
 
-                 validator:
-                     (v) => (v == null || v.isEmpty) ? 'Enter a title' : null,
-               ),
-               const SizedBox(height: 13),
+                    validator:
+                        (v) =>
+                            (v == null || v.isEmpty) ? 'Enter a title' : null,
+                  ),
+                  const SizedBox(height: 13),
 
-               // Content
-               NesticoPeTextField(
-                 // isRequired: true,
-                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                 controller: controller.contentController,
-                 title: 'Your Review (Optional)',
-                 hintText: 'Share your detailed experience...',
-                 maxLines: 4,
-                 validator: (v) {
-                   if (v == null || v.isEmpty) return 'Enter your review';
-                   if (v.length < 20)
-                     return 'Review must be at least 20 characters';
-                   return null;
-                 },
-               ),
-             ],
-           ),
-         ),
+                  // Content
+                  NesticoPeTextField(
+                    // isRequired: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: controller.contentController,
+                    title: 'Your Review (Optional)',
+                    hintText: 'Share your detailed experience...',
+                    maxLines: 4,
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Enter your review';
+                      if (v.length < 20)
+                        return 'Review must be at least 20 characters';
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 20),
 
             // Overall Rating
@@ -102,127 +106,130 @@ class AddReviewScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
-            decoration: BoxDecoration(
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+                border: Border.all(
+                  color: ColorRes.leadGreyColor.shade300,
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Location Rating
+                  Obx(
+                    () => _buildRatingSectionWithoutContainer(
+                      title: 'Location',
+
+                      rating: controller.locationRating.value,
+                      onRatingChanged: (rating) {
+                        controller.locationRating.value = rating;
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Cleanliness Rating
+                  Obx(
+                    () => _buildRatingSectionWithoutContainer(
+                      title: 'Cleanliness',
+
+                      rating: controller.cleanlinessRating.value,
+                      onRatingChanged: (rating) {
+                        controller.cleanlinessRating.value = rating;
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Accuracy Rating
+                  Obx(
+                    () => _buildRatingSectionWithoutContainer(
+                      title: 'Accuracy',
+
+                      rating: controller.accuracyRating.value,
+                      onRatingChanged: (rating) {
+                        controller.accuracyRating.value = rating;
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Value Rating
+                  Obx(
+                    () => _buildRatingSectionWithoutContainer(
+                      title: 'Value',
+
+                      rating: controller.valueRating.value,
+                      onRatingChanged: (rating) {
+                        controller.valueRating.value = rating;
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Amenities Rating
+                  Obx(
+                    () => _buildRatingSectionWithoutContainer(
+                      title: 'Amenities',
+
+                      rating: controller.amenitiesRating.value,
+                      onRatingChanged: (rating) {
+                        controller.amenitiesRating.value = rating;
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-            child: Column(
-              children: [
-                // Location Rating
-                Obx(
-                      () => _buildRatingSectionWithoutContainer(
-                    title: 'Location',
-
-                    rating: controller.locationRating.value,
-                    onRatingChanged: (rating) {
-                      controller.locationRating.value = rating;
-                    },
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // Cleanliness Rating
-                Obx(
-                      () => _buildRatingSectionWithoutContainer(
-                    title: 'Cleanliness',
-
-                    rating: controller.cleanlinessRating.value,
-                    onRatingChanged: (rating) {
-                      controller.cleanlinessRating.value = rating;
-                    },
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // Accuracy Rating
-                Obx(
-                      () => _buildRatingSectionWithoutContainer(
-                    title: 'Accuracy',
-
-                    rating: controller.accuracyRating.value,
-                    onRatingChanged: (rating) {
-                      controller.accuracyRating.value = rating;
-                    },
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // Value Rating
-                Obx(
-                      () => _buildRatingSectionWithoutContainer(
-                    title: 'Value',
-
-                    rating: controller.valueRating.value,
-                    onRatingChanged: (rating) {
-                      controller.valueRating.value = rating;
-                    },
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // Amenities Rating
-                Obx(
-                      () => _buildRatingSectionWithoutContainer(
-                    title: 'Amenities',
-
-                    rating: controller.amenitiesRating.value,
-                    onRatingChanged: (rating) {
-                      controller.amenitiesRating.value = rating;
-                    },
-                  ),
-                ),
-
-              ],
-            ),
-          ),
             const SizedBox(height: 20),
             //
             // Pros & Cons
-          // Container(
-          //   padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
-          //   decoration: BoxDecoration(
-          //       color: ColorRes.white,
-          //       borderRadius: BorderRadius.circular(12),
-          //       border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
-          //   ),
-          //   child: Column(
-          //     children: [
-          //       NesticoPeTextField(
-          //         controller: controller.prosController,
-          //         title: 'Pros',
-          //         hintText: 'What did you like?',
-          //         maxLines: 3,
-          //
-          //       ),
-          //       const SizedBox(height: 16),
-          //       NesticoPeTextField(
-          //         controller: controller.consController,
-          //         title: 'Cons',
-          //         hintText: 'What could be improved?',
-          //         maxLines: 3,
-          //
-          //       ),
-          //     ],
-          //   ),
-          // )
+            // Container(
+            //   padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+            //   decoration: BoxDecoration(
+            //       color: ColorRes.white,
+            //       borderRadius: BorderRadius.circular(12),
+            //       border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+            //   ),
+            //   child: Column(
+            //     children: [
+            //       NesticoPeTextField(
+            //         controller: controller.prosController,
+            //         title: 'Pros',
+            //         hintText: 'What did you like?',
+            //         maxLines: 3,
+            //
+            //       ),
+            //       const SizedBox(height: 16),
+            //       NesticoPeTextField(
+            //         controller: controller.consController,
+            //         title: 'Cons',
+            //         hintText: 'What could be improved?',
+            //         maxLines: 3,
+            //
+            //       ),
+            //     ],
+            //   ),
+            // )
           ],
         ),
       ),
       bottomNavigationBar: SafeArea(
-
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Obx(() {
             return NesticoPeButton(
               title:
-                  controller.isLoading.value ? 'Submitting...' : 'Submit Review',
+                  controller.isLoading.value
+                      ? 'Submitting...'
+                      : 'Submit Review',
               onTap: controller.isLoading.value ? null : _submit,
             );
           }),
@@ -264,7 +271,6 @@ class AddReviewScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-
                 children: [
                   Text(
                     title,
@@ -296,18 +302,18 @@ class AddReviewScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: AppFontSizes.small,
                       fontWeight: AppFontWeights.medium,
-                      color: rating == 0
-                          ? ColorRes.leadGreyColor
-                          : rating <= 2
-                          ? Colors.redAccent
-                          : rating <= 3
-                          ? Colors.orange
-                          : rating <= 4
-                          ? Colors.green
-                          : ColorRes.primary.withOpacity(0.9),
+                      color:
+                          rating == 0
+                              ? ColorRes.leadGreyColor
+                              : rating <= 2
+                              ? Colors.redAccent
+                              : rating <= 3
+                              ? Colors.orange
+                              : rating <= 4
+                              ? Colors.green
+                              : ColorRes.primary.withOpacity(0.9),
                     ),
                   ),
-
                 ],
               ),
               const SizedBox(height: 12),
@@ -363,22 +369,6 @@ class AddReviewScreen extends StatelessWidget {
       return;
     }
 
-    // final data = {
-    //   "entity_type": entityType,
-    //   "entity_id": entityId,
-    //   "rating": controller.overallRating.value.toInt(),
-    //   "title": controller.titleController.text.trim(),
-    //   "content": controller.contentController.text.trim(),
-    //   "detailed_ratings": {
-    //     "location": controller.locationRating.value.toInt(),
-    //     "cleanliness": controller.cleanlinessRating.value.toInt(),
-    //     "accuracy": controller.accuracyRating.value.toInt(),
-    //     "value": controller.valueRating.value.toInt(),
-    //     "amenities": controller.amenitiesRating.value.toInt(),
-    //   },
-    //   "pros": controller.prosController.text.trim(),
-    //   "cons": controller.consController.text.trim(),
-    // };
     final data = ReviewItem(
       entityType: entityType,
       entityId: entityId,
@@ -392,8 +382,14 @@ class AddReviewScreen extends StatelessWidget {
         location: controller.locationRating.value.toDouble(),
         value: controller.valueRating.value.toDouble(),
       ),
-      pros: controller.prosController.text.trim().isNotEmpty?controller.prosController.text.trim():null,
-      cons: controller.consController.text.trim().isNotEmpty?controller.consController.text.trim():null,
+      pros:
+          controller.prosController.text.trim().isNotEmpty
+              ? controller.prosController.text.trim()
+              : null,
+      cons:
+          controller.consController.text.trim().isNotEmpty
+              ? controller.consController.text.trim()
+              : null,
     );
 
     try {
@@ -433,7 +429,6 @@ Widget _buildRatingSectionWithoutContainer({
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-
             children: [
               Text(
                 title,
@@ -453,14 +448,11 @@ Widget _buildRatingSectionWithoutContainer({
                 ),
               const Spacer(),
               Text(
-                rating == 0
-                    ? 'Not rated':'${rating.toInt()}/5',
+                rating == 0 ? 'Not rated' : '${rating.toInt()}/5',
                 style: TextStyle(
                   fontSize: AppFontSizes.small,
                   fontWeight: AppFontWeights.medium,
-                  color:
-                      ColorRes.leadGreyColor
-
+                  color: ColorRes.leadGreyColor,
                 ),
               ),
             ],
@@ -481,11 +473,12 @@ Widget _buildRatingSectionWithoutContainer({
                     index < rating.floor()
                         ? Icons.star
                         : (index < rating
-                        ? Icons.star_half
-                        : Icons.star_outline),
-                    color: index < rating
-                        ? ColorRes.homeAmber.withOpacity(0.9)
-                        : ColorRes.leadGreyColor.shade300,
+                            ? Icons.star_half
+                            : Icons.star_outline),
+                    color:
+                        index < rating
+                            ? ColorRes.homeAmber.withOpacity(0.9)
+                            : ColorRes.leadGreyColor.shade300,
                     size: 25,
                   ),
                 ),
@@ -508,4 +501,3 @@ Widget _buildRatingSectionWithoutContainer({
     },
   );
 }
-

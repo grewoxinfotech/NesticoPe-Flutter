@@ -1,3 +1,5 @@
+import '../../overall_rating/model/overall_rating_model.dart';
+
 class ReviewItem {
   final String? id;
   final String? createdBy;
@@ -70,7 +72,7 @@ class ReviewItem {
       content: json['content'] ?? '',
       detailedRatings:
           json['detailed_ratings'] != null
-              ? DetailedRatings.fromMap(json['detailed_ratings'])
+              ? DetailedRatings.fromJson(json['detailed_ratings'])
               : null,
       photos: (json['photos'] as List?)?.map((e) => e.toString()).toList(),
       videos: (json['videos'] as List?)?.map((e) => e.toString()).toList(),
@@ -105,7 +107,7 @@ class ReviewItem {
     if (title != null) map['title'] = title;
     if (content != null) map['content'] = content;
     if (detailedRatings != null)
-      map['detailed_ratings'] = detailedRatings!.toMap();
+      map['detailed_ratings'] = detailedRatings!.toJson();
     if (photos != null && photos!.isNotEmpty) map['photos'] = photos;
     if (videos != null && videos!.isNotEmpty) map['videos'] = videos;
     if (pros != null) map['pros'] = pros;
@@ -190,60 +192,60 @@ extension ReviewItemCopy on ReviewItem {
   }
 }
 
-class DetailedRatings {
-  final double? location;
-  final double? cleanliness;
-  final double? accuracy;
-  final double? value;
-  final double? amenities;
-
-  DetailedRatings({
-    this.location,
-    this.cleanliness,
-    this.accuracy,
-    this.value,
-    this.amenities,
-  });
-
-  /// Create from Map (e.g., from JSON)
-  factory DetailedRatings.fromMap(Map<String, dynamic> map) {
-    return DetailedRatings(
-      location: (map['location'] ?? 0).toDouble(),
-      cleanliness: (map['cleanliness'] ?? 0).toDouble(),
-      accuracy: (map['accuracy'] ?? 0).toDouble(),
-      value: (map['value'] ?? 0).toDouble(),
-      amenities: (map['amenities'] ?? 0).toDouble(),
-    );
-  }
-
-  /// Convert to Map
-  Map<String, dynamic> toMap() {
-
-    final map = <String, dynamic>{};
-    if(location != 0.0)map['location']=location;
-    if(cleanliness != 0.0)map['cleanliness']= cleanliness;
-    if(accuracy != 0.0)map['accuracy']= accuracy;
-    if(value != 0.0)map['value']= value;
-    if(amenities != 0.0)map['amenities']= amenities;
-
-    return map;
-
-  }
-
-  /// Optional: copyWith for updates
-  DetailedRatings copyWith({
-    double? location,
-    double? cleanliness,
-    double? accuracy,
-    double? value,
-    double? amenities,
-  }) {
-    return DetailedRatings(
-      location: location ?? this.location,
-      cleanliness: cleanliness ?? this.cleanliness,
-      accuracy: accuracy ?? this.accuracy,
-      value: value ?? this.value,
-      amenities: amenities ?? this.amenities,
-    );
-  }
-}
+// class DetailedRatings {
+//   final double? location;
+//   final double? cleanliness;
+//   final double? accuracy;
+//   final double? value;
+//   final double? amenities;
+//
+//   DetailedRatings({
+//     this.location,
+//     this.cleanliness,
+//     this.accuracy,
+//     this.value,
+//     this.amenities,
+//   });
+//
+//   /// Create from Map (e.g., from JSON)
+//   factory DetailedRatings.fromMap(Map<String, dynamic> map) {
+//     return DetailedRatings(
+//       location: (map['location'] ?? 0).toDouble(),
+//       cleanliness: (map['cleanliness'] ?? 0).toDouble(),
+//       accuracy: (map['accuracy'] ?? 0).toDouble(),
+//       value: (map['value'] ?? 0).toDouble(),
+//       amenities: (map['amenities'] ?? 0).toDouble(),
+//     );
+//   }
+//
+//   /// Convert to Map
+//   Map<String, dynamic> toMap() {
+//
+//     final map = <String, dynamic>{};
+//     if(location != 0.0)map['location']=location;
+//     if(cleanliness != 0.0)map['cleanliness']= cleanliness;
+//     if(accuracy != 0.0)map['accuracy']= accuracy;
+//     if(value != 0.0)map['value']= value;
+//     if(amenities != 0.0)map['amenities']= amenities;
+//
+//     return map;
+//
+//   }
+//
+//   /// Optional: copyWith for updates
+//   DetailedRatings copyWith({
+//     double? location,
+//     double? cleanliness,
+//     double? accuracy,
+//     double? value,
+//     double? amenities,
+//   }) {
+//     return DetailedRatings(
+//       location: location ?? this.location,
+//       cleanliness: cleanliness ?? this.cleanliness,
+//       accuracy: accuracy ?? this.accuracy,
+//       value: value ?? this.value,
+//       amenities: amenities ?? this.amenities,
+//     );
+//   }
+// }

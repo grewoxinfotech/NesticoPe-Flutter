@@ -15,9 +15,11 @@ import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_h
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/app/widgets/video_player/custom_video_player.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/recommended_property.dart';
+import 'package:housing_flutter_app/modules/property/views/widgets/overall_rating_widget.dart';
 import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
@@ -29,9 +31,11 @@ import '../../../app/manager/property_detail_manager.dart';
 import '../../../app/manager/property_highlight_manager.dart';
 import '../../../app/utils/helper_function/contact_helper.dart';
 import '../../../app/widgets/texts/headline_text.dart';
+import '../../../data/network/overall_rating/model/overall_rating_model.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../../utils/common_widget/rera_widget.dart';
 import '../../search_property/controller/search_controller.dart';
+import '../controllers/overall_rating_controller.dart';
 
 class PropertyDetailScreen extends StatelessWidget {
   final Items? property;
@@ -40,6 +44,9 @@ class PropertyDetailScreen extends StatelessWidget {
 
   final PropertyController controller = Get.put(PropertyController());
   final GoogleMapController mapController = Get.put(GoogleMapController());
+  final OverallRatingController _overallRatingController = Get.put(
+    OverallRatingController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +76,8 @@ class PropertyDetailScreen extends StatelessWidget {
 
       // Track view
       controller.addView(property?.id ?? '');
+
+      _overallRatingController.fetchOverallRating(property?.id ?? '');
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -83,10 +92,7 @@ class PropertyDetailScreen extends StatelessWidget {
       }
     });
     controller.addView(property?.id ?? '');
-    print("[DEBUG]=> Property : ${property?.toJson()}");
-    print(
-      "Proprty Features ${property?.propertyDetails?.amenities}  Property List${property?.propertyDetails}",
-    );
+
     return Scaffold(
       backgroundColor: ColorRes.white,
       extendBody: true,
@@ -223,29 +229,16 @@ class PropertyDetailScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemBuilder: (context, index) {
                         final landmark = mapController.nearbyLandmarks[index];
-                        return Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: ColorRes.primary.withOpacity(0.1),
-                              width: 1,
-                            ),
-                          ),
+                        return GestureDetector(
+                          onTap: () {
+                            ContactHelper.openInGoogleMaps(landmark['address']);
+                          },
                           child: Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Icon(
-                                  Icons.location_on,
-                                  color: ColorRes.primary,
-                                  size: 24,
-                                ),
+                              Icon(
+                                Icons.location_on,
+                                color: ColorRes.primary,
+                                size: 24,
                               ),
                               const SizedBox(width: 12),
                               Expanded(
@@ -406,17 +399,48 @@ class PropertyDetailScreen extends StatelessWidget {
               //   );
               // }),
               const SizedBox(height: 12),
+
               Obx(() {
-                if (reviewController.isLoading.value &&
-                    reviewController.items.isEmpty) {
+                final overallCtrl = _overallRatingController;
+                final reviewCtrl = reviewController;
+
+                final isOverallLoading =
+                    overallCtrl.isLoading.value &&
+                    overallCtrl.ratingData.value == null;
+                final isReviewLoading =
+                    reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
+
+                // 🌀 Show loader if both are still loading
+                if (isOverallLoading && isReviewLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (!reviewController.isLoading.value &&
-                    reviewController.items.isEmpty) {
-                  return SizedBox.shrink();
+                // 🈳 Hide section if both are empty and not loading
+                if (!overallCtrl.isLoading.value &&
+                    !reviewCtrl.isLoading.value &&
+                    (overallCtrl.ratingData.value == null ||
+                        overallCtrl.ratingData.value?.data?.totalReviews ==
+                            0) &&
+                    reviewCtrl.items.isEmpty) {
+                  return const SizedBox.shrink();
                 }
+
+                // 🧩 Extract safe data
+                final overallData = overallCtrl.ratingData.value?.data;
+                final totalReviews = overallData?.totalReviews ?? 0;
+                final overallRating = overallData?.overallRating ?? 0.0;
+                final DetailedRatings detailedRatings =
+                    overallData?.detailedRatings ??
+                    DetailedRatings(
+                      accuracy: 0,
+                      amenities: 0,
+                      cleanliness: 0,
+                      location: 0,
+                      value: 0,
+                    );
+
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Divider(
                       indent: 18,
@@ -428,23 +452,49 @@ class PropertyDetailScreen extends StatelessWidget {
                       title: 'Reviews & Ratings',
                       showViewAll: true,
                     ),
-                    SizedBox(
-                      height: 320,
-                      // must be slightly more than card height (280 + padding)
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: reviewController.items.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 16),
-                        itemBuilder: (context, index) {
-                          final review = reviewController.items[index];
-                          return PropertyReviewCard(reviewItem: review);
-                        },
-                      ),
+                    // 🟡 Overall Rating Section
+                    OverallRatingWidget(
+                      totalReviews: totalReviews,
+                      overallRating: overallRating,
+                      detailedRatings: detailedRatings,
                     ),
+
+                    const SizedBox(height: 12),
+
+                    // 📋 Review List Section
+                    if (reviewCtrl.items.isNotEmpty) ...[
+                      SizedBox(
+                        height: 220,
+                        child: ListView.separated(
+                          // shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: reviewCtrl.items.length,
+                          separatorBuilder:
+                              (_, __) => const SizedBox(width: 16),
+                          itemBuilder: (context, index) {
+                            final review = reviewCtrl.items[index];
+                            return PropertyReviewCard(reviewItem: review);
+                          },
+                        ),
+                      ),
+                    ] else if (!reviewCtrl.isLoading.value &&
+                        totalReviews == 0) ...[
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: Text(
+                          "No reviews yet",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ],
                   ],
                 );
               }),
+
               Obx(() {
                 if (!canAddReview.value) {
                   return SizedBox.shrink();
@@ -457,18 +507,29 @@ class PropertyDetailScreen extends StatelessWidget {
                       child: NesticoPeButton(
                         width: double.infinity,
                         boxShadow: [],
-                        onTap: () {
+                        onTap: () async {
                           if (UserHelper.isGuest) {
                             Get.to(() => LoginScreen());
                           } else {
-                            Get.to(
+                            final result = await Get.to(
                               () => AddReviewScreen(
                                 entityType: 'property',
                                 entityId: property?.id ?? '',
                               ),
                             );
+
+                            // 👇 Hide button immediately if review was successfully added
+                            if (result == true) {
+                              canAddReview.value = false;
+
+                              reviewController.refreshList();
+                              _overallRatingController.fetchOverallRating(
+                                property?.id ?? '',
+                              );
+                            }
                           }
                         },
+
                         title: "Add Review",
                       ),
                     ),
@@ -1244,6 +1305,7 @@ class CircularIcon extends StatelessWidget {
 
 class PropertyBottomBar extends StatelessWidget {
   final Items property;
+
   // final String price;
   final VoidCallback onCallOwner;
   final VoidCallback onScheduleVisit;
