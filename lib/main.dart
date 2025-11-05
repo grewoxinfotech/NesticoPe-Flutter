@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/splash_screen.dart';
 import 'package:housing_flutter_app/app/services/network_status_service.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
@@ -33,6 +34,7 @@ void main() async {
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      initialBinding: CustomBinding(),
       home: const SplashScreen(),
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
@@ -45,4 +47,11 @@ void main() async {
       },
     ),
   );
+}
+
+class CustomBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put(() => AuthController());
+  }
 }

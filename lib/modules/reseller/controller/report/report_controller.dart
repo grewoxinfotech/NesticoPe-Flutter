@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/data/network/report/model/property_report_model.dart';
-import 'package:housing_flutter_app/data/network/report/property_report_service.dart';
+import 'package:housing_flutter_app/data/network/report/service/property_report_service.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 
 import '../../../../app/constants/color_res.dart';
@@ -121,5 +121,3 @@ class ReportPropertyController extends PaginatedController<PropertyReportItem> {
     }
   }
 }
-
-// Report Property Screen

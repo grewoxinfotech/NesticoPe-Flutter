@@ -60,21 +60,11 @@ class AuthController extends GetxController {
   }
 
   void fillTestCredentials() {
-    // emailController.text = "Supercuc@gmail.com";
-    // emailController.text = "Super@gmail.com";
-    // emailController.text = "fffdsdfuu.doe@example.com";
-    emailController.text = "fffdsu.doe@example.com"; // reseller
-    // emailController.text = "fffdsaldlu.doe@example.com"; // builder
-    // emailController.text =
-    //     "asdasdasdas@example.com"; // seller owner "password123"
-
-    // emailController.text = "ggfcccf@gmail.com";
-    // emailController.text = "res12@gmail.com";
-    // emailController.text = "reseller11@example.com";
     // emailController.text = "abc@gmail.com";
-    // emailController.text = "none@example.com";
+    emailController.text = "avesh"; // seller password : 123456
     // passwordController.text = "password123";
-    passwordController.text = "CRM_GrewoxAdmin@123";
+    // passwordController.text = "CRM_GrewoxAdmin@123";
+    passwordController.text = "123456";
   }
 
   void setRole(UserRole role) => selectedRole.value = role;

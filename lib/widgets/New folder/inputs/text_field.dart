@@ -24,6 +24,7 @@ class NesticoPeTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final VoidCallback? onTap;
   final TextCapitalization textCapitalization;
+  final int? maxLength;
 
   const NesticoPeTextField({
     super.key,
@@ -45,6 +46,7 @@ class NesticoPeTextField extends StatelessWidget {
     this.onChanged,
     this.onTap,
     this.textCapitalization = TextCapitalization.none,
+    this.maxLength,
   });
 
   @override
@@ -79,6 +81,7 @@ class NesticoPeTextField extends StatelessWidget {
           validator: validator,
           obscureText: obscureText,
           keyboardType: keyboardType,
+          maxLength: maxLength,
           maxLines: maxLines,
           enabled: enabled,
           readOnly: readOnly,
@@ -104,7 +107,7 @@ class NesticoPeTextField extends StatelessWidget {
             hintStyle: TextStyle(
               color: Get.theme.colorScheme.onSurface.withAlpha(128),
               fontSize: AppFontSizes.bodyMedium,
-              fontWeight:AppFontWeights.regular,
+              fontWeight: AppFontWeights.regular,
             ),
             prefixIcon:
                 prefixIcon != null

@@ -327,7 +327,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final authController = Get.find<AuthController>();
+  final authController = Get.put(AuthController());
 
   String? _selectedSellerType;
   final _formKey = GlobalKey<FormState>();
@@ -872,10 +872,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 10),
 
-                NesticoPeButton(
-                  title: 'Create Account',
-                  onTap: _isLoading ? null : switchRole(_selectedRole),
-                ),
+                // NesticoPeButton(
+                //   title: 'Create Account',
+                //   onTap: _isLoading ? null : switchRole(_selectedRole),
+                // ),
                 Obx(
                   () => NesticoPeButton(
                     title:

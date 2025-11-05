@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 
 import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dart';
 import '../../builder/view/builder_main_screen.dart';
+import '../../feedback/views/feedback_and_report.dart';
 import '../../home/views/compare_screen/comapre_screen.dart';
 import '../../home/views/home_screen/home_screen.dart';
 import '../../feedback/controller/feedback_controller.dart';
@@ -38,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
       bottomNavigationBar: const SafeArea(child: NesticoPeNavigationBar()),
       body: Obx(() {
         if (navigationController.currentIndex.value == 0) {
-          return const HomeScreen();
+          return HomeScreen();
         } else if (navigationController.currentIndex.value == 1) {
           return Center(
             child: Column(
@@ -131,14 +132,15 @@ class DashboardScreen extends StatelessWidget {
 
                   child: Text("Location Price Matrix Screen"),
                 ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Get.to(() => FeedbackForSellerScreen());
-                  },
 
-                  child: Text(" Buyer Feedback"),
-                ),
+                SizedBox(height: 16),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     Get.to(() => FeedBackAndReportScreen());
+                //   },
+                //
+                //   child: Text("feedback & Report"),
+                // ),
               ],
             ),
           );

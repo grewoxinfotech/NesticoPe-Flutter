@@ -1617,6 +1617,8 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     final financialInfo = _resolvedFinancialInfo;
     if (financialInfo == null) return const SizedBox.shrink();
 
+    print("financial Informtion : ${financialInfo.toJson()}");
+
     final priceManager = PropertyPriceManager(
       listingType: propertyType,
       financialInfo: financialInfo,

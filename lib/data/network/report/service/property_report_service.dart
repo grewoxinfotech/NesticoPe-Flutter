@@ -7,8 +7,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 
-import '../../../widgets/messages/snack_bar.dart';
-import 'model/property_report_model.dart';
+import '../../../../widgets/messages/snack_bar.dart';
+import '../model/property_report_model.dart';
 
 class PropertyReportService {
   final String baseUrl = ApiConstants.propertyReport;
@@ -45,35 +45,6 @@ class PropertyReportService {
       return false;
     }
   }
-
-  // Future<PaginationResponse?> getPropertyReports({
-  //   required String propertyId,
-  //   required String createdBy,
-  // }) async {
-  //   try {
-  //     final uri = Uri.parse('$baseUrl/propertyReports').replace(
-  //       queryParameters: {'propertyId': propertyId, 'created_by': createdBy},
-  //     );
-  //
-  //     final response = await http.get(uri);
-  //
-  //     if (response.statusCode == 200) {
-  //       final data = json.decode(response.body);
-  //       return PaginationResponse<PropertyReportItem>.fromJson(
-  //         data,
-  //         (json) => PropertyReportItem.fromJson(json),
-  //       );
-  //     } else {
-  //       print(
-  //         'Failed to fetch reports. Status: ${response.statusCode}, Body: ${response.body}',
-  //       );
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     print('Error fetching property reports: $e');
-  //     return null;
-  //   }
-  // }
 
   Future<PaginationResponse<PropertyReportItem>> fetchPropertyReports({
     int page = 1,

@@ -21,37 +21,19 @@ import '../../../../app/manager/compare_manager.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../widgets/bar/navigation_bar/navigation_Bar.dart';
+import '../../../feedback/views/feedback_and_report.dart';
 import '../../../property/controllers/property_controller.dart';
 
 class PropertyCardWidget extends StatefulWidget {
   final Items property;
-  // final String imageUrl;
-  // final String title;
-  // final String location;
-  // final String price;
-  // final String ownerName;
-  // final List<String> images;
-  // final String ownerAvatar;
   final String role;
-  // final String beds;
-  //
-  // final List<Map<String, dynamic>> apartments;
-  // final List<String> features;
+  final bool isFeedbackEnabled;
 
   const PropertyCardWidget({
     super.key,
     required this.property,
-    // required this.imageUrl,
-    // required this.features,
-    // required this.images,
-    // required this.apartments,
-    // required this.title,
-    // required this.location,
-    // required this.price,
-    // required this.ownerName,
-    // required this.ownerAvatar,
     required this.role,
-    // required this.beds,
+    this.isFeedbackEnabled = false,
   });
 
   @override
@@ -197,26 +179,32 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                             if (after > before) {
                               CustomSnackBar.show(
                                 ctx,
-                                message: after == 2
-                                    ? 'Ready to compare!'
-                                    : 'Added to compare (${after}/2)',
+                                message:
+                                    after == 2
+                                        ? 'Ready to compare!'
+                                        : 'Added to compare (${after}/2)',
                                 type: SnackBarType.success,
                                 actionLabel: after == 2 ? 'Compare Now' : null,
-                                onActionPressed: after == 2
-                                    ? () {
-                                        Get.back(); // Close snackbar first
-                                        if (Get.isRegistered<NavigationController>()) {
-                                          Get.find<NavigationController>().changeIndex(2);
+                                onActionPressed:
+                                    after == 2
+                                        ? () {
+                                          Get.back(); // Close snackbar first
+                                          if (Get.isRegistered<
+                                            NavigationController
+                                          >()) {
+                                            Get.find<NavigationController>()
+                                                .changeIndex(2);
+                                          }
                                         }
-                                      }
-                                    : null,
+                                        : null,
                               );
                             } else if (after < before) {
                               CustomSnackBar.show(
                                 ctx,
-                                message: after == 0
-                                    ? 'Removed from compare'
-                                    : 'Removed from compare (${after}/2)',
+                                message:
+                                    after == 0
+                                        ? 'Removed from compare'
+                                        : 'Removed from compare (${after}/2)',
                                 type: SnackBarType.info,
                               );
                             } else if (after == before && before >= 2) {
@@ -229,14 +217,18 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                           }
                         },
                         child: Obx(() {
-                          final selected = compare.isSelected(widget.property.id);
+                          final selected = compare.isSelected(
+                            widget.property.id,
+                          );
                           return CircleAvatar(
                             radius: 14,
-                            backgroundColor:selected ?ColorRes.primary: ColorRes.white,
+                            backgroundColor:
+                                selected ? ColorRes.primary : ColorRes.white,
 
                             child: Icon(
                               Icons.compare_arrows,
-                              color: selected ? ColorRes.white : ColorRes.primary,
+                              color:
+                                  selected ? ColorRes.white : ColorRes.primary,
                               size: 17,
                             ),
                           );
@@ -256,10 +248,13 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                               widget.property.id,
                             );
                             return Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
-                              color: isFavorite
-                                  ? ColorRes.error
-                                  : ColorRes.leadGreyColor,
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color:
+                                  isFavorite
+                                      ? ColorRes.error
+                                      : ColorRes.leadGreyColor,
                               size: 17,
                             );
                           }),
@@ -532,6 +527,41 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.small),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Get.to(
+                      () => FeedBackAndReportScreen(
+                        propertyId: widget.property.id ?? '',
+                      ),
+                      transition: Transition.cupertino,
+                    );
+                  },
+                  label: const Text(
+                    'Give Feedback or Report',
+                    style: TextStyle(
+                      color: ColorRes.primary,
+                      fontSize: AppFontSizes.bodyMedium,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: ColorRes.primary, width: 1.4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.white,
+                    foregroundColor: ColorRes.primary,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.small),

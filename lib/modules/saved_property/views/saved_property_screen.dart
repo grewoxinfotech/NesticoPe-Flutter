@@ -212,6 +212,7 @@ import '../../../data/network/property/models/property_model.dart';
 import '../../propert_detail/view/property_details.dart';
 import '../../propert_detail/view/widget/property_card_widget.dart';
 import '../../property/controllers/property_controller.dart';
+import '../controllers/property_contacted_controller.dart';
 import '../controllers/property_view_controller.dart';
 
 //
@@ -238,12 +239,16 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
     PropertyViewController(),
   );
   final FavoriteManager favoriteManager = FavoriteManager();
+  final PropertyContactedController contactedController = Get.put(
+    PropertyContactedController(),
+  );
 
   @override
   void initState() {
     super.initState();
     // Load seen properties once
     viewController.fetchViewedProperties();
+    contactedController.fetchContactedProperties();
   }
 
   @override
@@ -272,7 +277,8 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                 // Reactive counts from GetX observables
                 final savedCount = favoriteManager.favorites.length;
                 final seenCount = viewController.viewedPropertyIds.length;
-                final contactedCount = 0; // TODO: link with contact controller
+                final contactedCount =
+                    contactedController.contactedPropertyIds.length;
                 final recentCount = 0; // TODO: link with recent searches
 
                 final List<int> tabsCount = [
@@ -504,12 +510,90 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
   }
 }
 
-class ContactedPropertiesTab extends StatelessWidget {
+// class ContactedPropertiesTab extends StatelessWidget {
+//   const ContactedPropertiesTab({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Center(child: Text("Contacted Properties will appear here"));
+//   }
+// }
+
+class ContactedPropertiesTab extends StatefulWidget {
   const ContactedPropertiesTab({super.key});
 
   @override
+  State<ContactedPropertiesTab> createState() => _ContactedPropertiesTabState();
+}
+
+class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
+  final PropertyContactedController controller = Get.put(
+    PropertyContactedController(),
+  );
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("Contacted Properties will appear here"));
+    return SafeArea(
+      top: false,
+      child: Obx(() {
+        // 🌀 Show loading spinner initially
+        if (controller.isLoading.value && controller.properties.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        // ❌ Empty state
+        if (controller.properties.isEmpty) {
+          return const Center(
+            child: Text(
+              "No contacted properties yet",
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          );
+        }
+
+        // ✅ Property List with lazy loading
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            // Detect scroll near bottom
+            if (scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent - 100 &&
+                !controller.isLoadingMore.value &&
+                controller.currentIndex <
+                    controller.contactedPropertyIds.length) {
+              controller.loadNextBatch();
+            }
+            return false;
+          },
+          child: RefreshIndicator(
+            onRefresh: controller.fetchContactedProperties,
+            color: ColorRes.primary,
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              itemCount:
+                  controller.properties.length +
+                  (controller.isLoadingMore.value ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index < controller.properties.length) {
+                  final Items property = controller.properties[index];
+                  return PropertyCardWidget(
+                    property: property,
+                    role: "",
+                    isFeedbackEnabled: true,
+                  );
+                } else {
+                  // Loader at bottom
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+              },
+            ),
+          ),
+        );
+      }),
+    );
   }
 }
 

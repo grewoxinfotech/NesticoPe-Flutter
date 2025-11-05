@@ -38,6 +38,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/utils/file_upload_section/file_upload_section.dart';
 import '../../../../data/network/news/news_model.dart';
+import '../../../auth/controllers/auth_controller.dart';
 import '../../../builder/view/builder_form_screen.dart';
 import '../../../builder/view/builder_main_screen.dart';
 import '../../../dashboard/views/dashboard_screen.dart';
@@ -49,9 +50,10 @@ import '../../../property/views/widgets/property_card.dart';
 import '../../../reseller/view/property_reseller.dart';
 
 class HomeScreen extends StatefulWidget {
+  final controller = Get.put(() => AuthController());
   final List<Map<String, String>> propertyTypes;
 
-  const HomeScreen({
+  HomeScreen({
     super.key,
     this.propertyTypes = const [
       {
