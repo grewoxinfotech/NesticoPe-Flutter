@@ -515,49 +515,8 @@ class PostProperty extends StatelessWidget {
                         )
                         : SizedBox.shrink(),
               ),
-              SizedBox(height: 24),
-              const Text('Building'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Building / Project / Society',
-                Icons.apartment_outlined,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter building name';
-                  }
-                  return null;
-                },
-                controller.rentBuildingController,
-
-                onTap: () async {
-                  Prediction selectedCity = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => CommonSearchField(
-                            onCitySelected: (city) {
-                              Navigator.pop(context, city);
-                            },
-                            isFromAddProperty: true,
-
-                            initialSearchText:
-                                controller.rentBuildingController.text,
-                            hintText: 'Building / Project / Society',
-                          ),
-                    ),
-                  );
-                  controller.rentBuildingController.text =
-                      selectedCity.structuredFormatting?.mainText ?? '';
-                  if (controller.rentBuildingController.text.isNotEmpty) {
-                    controller.localityController.text =
-                        selectedCity.structuredFormatting?.secondaryText ?? '';
-                  }
-
-                  print("city ${controller.localityController.text}");
-                },
-                isEnable: false,
-              ),
               SizedBox(height: 16),
+
               const Text('Locality'),
               SizedBox(height: 8),
               buildTextField(
@@ -578,6 +537,8 @@ class PostProperty extends StatelessWidget {
                             MaterialPageRoute(
                               builder:
                                   (context) => CommonSearchField(
+selectedCity: controller.cityController.text,
+                                     isLocality: true,
                                     onCitySelected: (city) {
                                       Navigator.pop(context, city);
                                     },
@@ -595,6 +556,21 @@ class PostProperty extends StatelessWidget {
                         }
                         : null,
                 isEnable: false,
+              ),
+              SizedBox(height: 16),
+              const Text('Full Address'),
+              SizedBox(height: 8),
+              buildTextField(
+                'Gayatri nagar',
+                Icons.apartment_outlined,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter complete address';
+                  }
+                  return null;
+                },
+                controller.rentBuildingController,
+
               ),
               SizedBox(height: 16),
               buildSectionTitle('BHK'),

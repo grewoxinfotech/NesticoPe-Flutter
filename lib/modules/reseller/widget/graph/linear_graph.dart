@@ -149,11 +149,16 @@ import '../../../../app/utils/helper_function/month_switch/month_switch.dart';
 class MonthlyBarChart extends StatelessWidget {
   final List<double> monthlyData;
   final List<String> months;
+  final bool isAmount;
+  final Color color;
+
 
   const MonthlyBarChart({
     Key? key,
     required this.monthlyData,
     required this.months,
+    this.isAmount=true,
+    this.color=ColorRes.reportCardTextFiledHint
   }) : super(key: key);
 
   @override
@@ -213,8 +218,15 @@ class MonthlyBarChart extends StatelessWidget {
               interval: interval, // ✅ dynamic interval
               reservedSize: 36,
               getTitlesWidget: (value, meta) {
-                return Text(
+                return isAmount? Text(
                   Formatter.formatPrice(value.toInt()),
+
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey.shade600,
+                  ),
+                ): Text(
+                  Formatter.formatNumber(value.toInt()),
 
                   style: TextStyle(
                     fontSize: 10,
@@ -253,7 +265,7 @@ class MonthlyBarChart extends StatelessWidget {
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               final month = months[group.x.toInt()];
               return BarTooltipItem(
-                '$month\n${Formatter.formatPrice(rod.toY.toInt())}',
+                '$month\n${(isAmount)?Formatter.formatPrice(rod.toY.toInt()):Formatter.formatNumber(rod.toY.toInt())}',
                 const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -280,7 +292,7 @@ class MonthlyBarChart extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   ColorRes.lightPurpleColor.withOpacity(0.9),
-                  ColorRes.reportCardTextFiledHint.withOpacity(0.9),
+                  color.withOpacity(0.9),
                 ],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,

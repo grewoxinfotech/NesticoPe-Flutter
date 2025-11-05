@@ -3,11 +3,69 @@ import 'package:http/http.dart' as http;
 
 import '../helper/api_helper.dart';
 
-class GoogleMapApi {
-  // final String apiKey;
-  //
-  // GoogleMapApi(this.apiKey);
+// class GoogleMapApi {
+//   // final String apiKey;
+//   //
+//   // GoogleMapApi(this.apiKey);
+//
+//   GoogleMapApi._();
+//
+//   static final GoogleMapApi instance = GoogleMapApi._();
+//
+//   static const String baseUrl =
+//       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+//
+//   // Common method to call the API
+//   Future<Map<String, dynamic>> _fetchPredictions(
+//     String input,
+//     String types,
+//   ) async {
+//     print('');
+//     final uri = Uri.parse(
+//       '$baseUrl?input=$input&types=$types&components=country:in&key=${ApiConfig.mapkey}',
+//     );
+//
+//     final response = await http.get(uri);
+//
+//     if (response.statusCode == 200) {
+//       final data = json.decode(response.body);
+//       if (data['status'] == 'OK') {
+//         // return List<String>.from(
+//         //     data['predictions'].map((p) => p['description']));
+//         return json.decode(response.body) as Map<String, dynamic>;
+//       } else {
+//         throw Exception('API Error: ${data['status']}');
+//       }
+//     } else {
+//       throw Exception('Failed to fetch data');
+//     }
+//   }
+//
+//   /// Search cities
+//   Future<Map<String, dynamic>> searchCities(String query) async {
+//     // Google uses '(cities)' type for city-level search
+//     return _fetchPredictions(query, '(cities)');
+//   }
+//
+//   /// Search states
+//   Future<Map<String, dynamic>> searchStates(String query) async {
+//     // Google doesn't have a specific "state" type, but you can use '(regions)'
+//     return _fetchPredictions(query, '(regions)');
+//   }
+//
+//   /// Search areas (localities, neighborhoods)
+//   Future<Map<String, dynamic>> searchAreas(String query) async {
+//     // Google type 'geocode' + component filter gives local areas
+//     return _fetchPredictions(query, 'geocode');
+//   }
+//
+//   Future<Map<String, dynamic>> searchLocalities(String query) async {
+//     // Google type 'geocode' + component filter gives local areas
+//     return _fetchPredictions(query, 'locality');
+//   }
 
+
+class GoogleMapApi {
   GoogleMapApi._();
 
   static final GoogleMapApi instance = GoogleMapApi._();
@@ -15,23 +73,32 @@ class GoogleMapApi {
   static const String baseUrl =
       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 
-  // Common method to call the API
+  /// Common method to call the API
   Future<Map<String, dynamic>> _fetchPredictions(
-    String input,
-    String types,
-  ) async {
+      String input,
+      String types, {
+        String? cityFilter, // optional city name for filtering
+      }) async {
+    // Build components parameter
+    String components = 'country:in';
+    // If cityFilter is provided, append it to restrict to that city
+    if (cityFilter != null && cityFilter.isNotEmpty) {
+      // Google doesn’t support direct “locality” restriction in components,
+      // but we can pass the city name in input context for better filtering.
+      input = '$input, $cityFilter';
+    }
+
     final uri = Uri.parse(
-      '$baseUrl?input=$input&types=$types&components=country:in&key=${ApiConfig.mapkey}',
+      '$baseUrl?input=$input&types=$types&components=$components&key=${ApiConfig.mapkey}',
     );
 
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
+      print('ffur ${response.body}');
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
-        // return List<String>.from(
-        //     data['predictions'].map((p) => p['description']));
-        return json.decode(response.body) as Map<String, dynamic>;
+        return data;
       } else {
         throw Exception('API Error: ${data['status']}');
       }
@@ -42,26 +109,31 @@ class GoogleMapApi {
 
   /// Search cities
   Future<Map<String, dynamic>> searchCities(String query) async {
-    // Google uses '(cities)' type for city-level search
     return _fetchPredictions(query, '(cities)');
   }
 
   /// Search states
   Future<Map<String, dynamic>> searchStates(String query) async {
-    // Google doesn't have a specific "state" type, but you can use '(regions)'
     return _fetchPredictions(query, '(regions)');
   }
 
   /// Search areas (localities, neighborhoods)
   Future<Map<String, dynamic>> searchAreas(String query) async {
-    // Google type 'geocode' + component filter gives local areas
     return _fetchPredictions(query, 'geocode');
   }
 
-  Future<Map<String, dynamic>> searchLocalities(String query) async {
-    // Google type 'geocode' + component filter gives local areas
-    return _fetchPredictions(query, 'locality');
+  /// ✅ Search localities filtered by a specific city
+  Future<Map<String, dynamic>> searchLocalities(
+      String query, {
+        String? cityFilter,
+      }) async {
+    return _fetchPredictions(
+      query,
+      'geocode',
+      cityFilter: cityFilter, // Surat, Mumbai, etc.
+    );
   }
+
 
   /// Get Near By LandMarks of address
   // Future<List<Map<String, dynamic>>> getNearbyLandmarks(String address) async {

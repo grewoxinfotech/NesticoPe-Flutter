@@ -16,7 +16,8 @@ class ApiConstants {
   static const String convertToReseller = "$auth/convert-buyer-to-reseller";
   static const String referralGet = "$baseURL/referral/my-stats";
   static const String generateReferCode = "$baseURL/referral/generate-code";
-  static const String getUserProfile = "$baseURL/user/profile/";
+  static const String getUserProfile="$baseURL/user/profile/";
+  static const String getSellerDashboard="$baseURL/insight/seller";
 
   // Leadhttp://localhost:19725/api/v1/referral/my-stats
   static const String leads = "$baseURL/lead";

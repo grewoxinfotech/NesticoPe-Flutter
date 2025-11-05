@@ -35,7 +35,6 @@ class DashboardScreen extends StatelessWidget {
     final navigationController = Get.put(NavigationController());
     return Scaffold(
       extendBody: true,
-      // drawer: NesticoPeDrawer(),
       bottomNavigationBar: const SafeArea(child: NesticoPeNavigationBar()),
       body: Obx(() {
         if (navigationController.currentIndex.value == 0) {

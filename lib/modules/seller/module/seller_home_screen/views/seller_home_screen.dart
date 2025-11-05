@@ -12,10 +12,13 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/controller
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
+import '../../../../../app/utils/formater/formater.dart';
 import '../../../../../app/widgets/texts/headline_text.dart';
 import '../../../../../data/network/property/models/property_model.dart';
+import '../../../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
 import '../../../../profile/views/profile_screen.dart';
 import '../../../../reseller/view/property_reseller.dart';
+import '../../../../reseller/widget/graph/linear_graph.dart';
 
 final List<Map<String, dynamic>> addonData = [
   {
@@ -374,6 +377,16 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                 controller.items.isEmpty) {
                               return SizedBox.shrink();
                             }
+                            final overview =
+                                overviewController.overviewData.value;
+                            if (overviewController.isLoading.value) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (overview == null) {
+                              return const SizedBox.shrink(); // or a loader/empty state
+                            }
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -412,7 +425,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   ),
                                   child: OverViewCard(
                                     property: controller.items,
-                                    overview: overviewController.overviewModel,
+                                    overview: overview,
                                   ),
                                 ),
                                 const SizedBox(height: 20),
@@ -427,176 +440,175 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                             ),
                             child: Column(
                               children: [
-                                buildMonthlyPerformance(
-                                  title: 'Monthly Performance',
-                                  levelName: 'Pro Level',
-                                  levelIcon: Icons.star,
-                                  levelIconColor: ColorRes.orangeColor,
-                                  benefits: [
-                                    'Priority Support',
-                                    'Access to Premium Listings',
-                                  ],
-                                  progressValue: 0.65,
-                                  currentAmount: '₹65K',
-                                  targetAmount: '₹1L',
-                                  unlockMessage:
-                                      '₹35K more to unlock next level!',
-                                  streakDays: 7,
-                                  commissionCurrent: '₹2.9L',
-                                  commissionPrevious: '₹2.3L',
-                                  commissionChange: '25% increase',
-                                  commissionPositive: true,
-                                  leadsCurrent: '12',
-                                  leadsPrevious: '9',
-                                  leadsChange: '33% increase',
-                                  leadsPositive: true,
-                                ),
+                                // buildMonthlyPerformance(
+                                //   title: 'Monthly Performance',
+                                //   levelName: 'Pro Level',
+                                //   levelIcon: Icons.star,
+                                //   levelIconColor: ColorRes.orangeColor,
+                                //   benefits: [
+                                //     'Priority Support',
+                                //     'Access to Premium Listings',
+                                //   ],
+                                //   progressValue: 0.65,
+                                //   currentAmount: '₹65K',
+                                //   targetAmount: '₹1L',
+                                //   unlockMessage:
+                                //       '₹35K more to unlock next level!',
+                                //   streakDays: 7,
+                                //   commissionCurrent: '₹2.9L',
+                                //   commissionPrevious: '₹2.3L',
+                                //   commissionChange: '25% increase',
+                                //   commissionPositive: true,
+                                //   leadsCurrent: '12',
+                                //   leadsPrevious: '9',
+                                //   leadsChange: '33% increase',
+                                //   leadsPositive: true,
+                                // ),
 
+                                // const SizedBox(height: 20),
+                                // buildDailyGoals(
+                                //   title: 'Daily Goal',
+                                //   goalText: 'Try to generate 5 leads today',
+                                //   date: '27 Oct 2025',
+                                //   currentStep: 3,
+                                //   totalSteps: 5,
+                                //   currentStreak: 2,
+                                //   primaryColor: ColorRes.purpleColor.shade500,
+                                //   accentColor: ColorRes.homeAmber.shade800,
+                                //   context: context,
+                                // ),
+                                // const SizedBox(height: 20),
+                                // buildBestResellerOnTheMonth(
+                                //   month: "October",
+                                //   year: "2025",
+                                //   totalCommission: "₹2.9L",
+                                //   commissionSubtitle:
+                                //       "2,85,000 earned this month",
+                                //   level: "Noob",
+                                //   levelSubtitle: 0.0,
+                                //   totalLeads: "8",
+                                //   leadsSubtitle: "Generated this month",
+                                //   commissionColor: ColorRes.success,
+                                //   levelColor: ColorRes.purpleColor.shade800,
+                                //   leadsColor: ColorRes.blueColor,
+                                // ),
+                                // const SizedBox(height: 20),
+                                // resellerLeaderBoard(
+                                //   title: 'Leaderboard',
+                                //   bannerTitle: 'Top 10 (Overall)',
+                                //   bannerSubtitle: 'Gets Extra Rewards',
+                                //   leaderboardData: [],
+                                // ),
+                                // const SizedBox(height: 20),
+                                // buildLeaderBoardRanking(
+                                //   title: 'Leaderboard Rankings',
+                                //   subtitle: 'Top performers across regions',
+                                //   filters: ['All', 'City-wise', 'Monthly'],
+                                //   leaderboardData: [
+                                //     {
+                                //       'rank': 1,
+                                //       'name': 'Rajesh Kumar',
+                                //       'level': 'Platinum Level',
+                                //       'city': 'Ahmedabad',
+                                //       'sales': '₹35L',
+                                //       'deals': '70',
+                                //       'color': ColorRes.orangeColor.withOpacity(
+                                //         0.05,
+                                //       ),
+                                //       'borderColor': ColorRes.orangeColor
+                                //           .withOpacity(0.3),
+                                //       'medalIcon': Icons.emoji_events,
+                                //     },
+                                //     {
+                                //       'rank': 2,
+                                //       'name': 'Priya Sharma',
+                                //       'level': 'Platinum Level',
+                                //       'city': 'Ahmedabad',
+                                //       'sales': '₹32L',
+                                //       'deals': '64',
+                                //       'color': ColorRes.orangeColor.withOpacity(
+                                //         0.05,
+                                //       ),
+                                //       'borderColor': ColorRes.orangeColor
+                                //           .withOpacity(0.3),
+                                //       'medalIcon': Icons.emoji_events,
+                                //     },
+                                //     {
+                                //       'rank': 3,
+                                //       'name': 'You',
+                                //       'level': 'Gold Level',
+                                //       'city': 'Ahmedabad',
+                                //       'sales': '₹29L',
+                                //       'deals': '57',
+                                //       'color': ColorRes.green.withOpacity(0.05),
+                                //       'borderColor': ColorRes.green.withOpacity(
+                                //         0.3,
+                                //       ),
+                                //       'medalIcon': Icons.emoji_events,
+                                //       'isCurrentUser': true,
+                                //     },
+                                //     {
+                                //       'rank': 4,
+                                //       'name': 'Amit Patel',
+                                //       'level': 'Gold Level',
+                                //       'city': 'Ahmedabad',
+                                //       'sales': '₹24L',
+                                //       'deals': '48',
+                                //       'color': ColorRes.leadGreyColor
+                                //           .withOpacity(0.05),
+                                //       'borderColor': ColorRes.leadGreyColor
+                                //           .withOpacity(0.3),
+                                //       'medalIcon': null,
+                                //     },
+                                //     {
+                                //       'rank': 5,
+                                //       'name': 'Neha Desai',
+                                //       'level': 'Silver Level',
+                                //       'city': 'Ahmedabad',
+                                //       'sales': '₹21L',
+                                //       'deals': '42',
+                                //       'color': ColorRes.blueColor.withOpacity(
+                                //         0.05,
+                                //       ),
+                                //       'borderColor': ColorRes.blueColor
+                                //           .withOpacity(0.3),
+                                //       'medalIcon': null,
+                                //     },
+                                //   ],
+                                // ),
+                                // const SizedBox(height: 20),
+                                // buildReferralProgram(
+                                //   controller: DashboardController(),
+                                //   context: context,
+                                //   bonus: 5000,
+                                //   currentProgress: 4,
+                                //   targetProgress: 10,
+                                //   title: 'Referral Program',
+                                //   subtitle:
+                                //       'Get ₹5000 for every new active reseller',
+                                //   pointsEarned: '2400',
+                                //   totalEarnings: '₹4K',
+                                //   earningSubtitle: '8 x ₹5000 each',
+                                //   referralCode: 'REF12345',
+                                //   leftIcon: Icons.card_giftcard_rounded,
+                                //   iconColor: ColorRes.textPrimary,
+                                //   iconBackground: ColorRes.textPrimary
+                                //       .withOpacity(0.08),
+                                //   card1BorderColor: ColorRes.homeAmber
+                                //       .withOpacity(0.3),
+                                //   card1BgColor: ColorRes.homeAmber.withOpacity(
+                                //     0.08,
+                                //   ),
+                                //   card2BorderColor: ColorRes.green.withOpacity(
+                                //     0.3,
+                                //   ),
+                                //   card2BgColor: ColorRes.green.withOpacity(
+                                //     0.08,
+                                //   ),
+                                // ),
+                                Obx(() =>  buildSellerLeadGraph(overviewController)),
                                 const SizedBox(height: 20),
-                                buildDailyGoals(
-                                  title: 'Daily Goal',
-                                  goalText: 'Try to generate 5 leads today',
-                                  date: '27 Oct 2025',
-                                  currentStep: 3,
-                                  totalSteps: 5,
-                                  currentStreak: 2,
-                                  primaryColor: ColorRes.purpleColor.shade500,
-                                  accentColor: ColorRes.homeAmber.shade800,
-                                  context: context,
-                                ),
-                                const SizedBox(height: 20),
-                                buildBestResellerOnTheMonth(
-                                  month: "October",
-                                  year: "2025",
-                                  totalCommission: "₹2.9L",
-                                  commissionSubtitle:
-                                      "2,85,000 earned this month",
-                                  level: "Noob",
-                                  levelSubtitle: 0.0,
-                                  totalLeads: "8",
-                                  leadsSubtitle: "Generated this month",
-                                  commissionColor: ColorRes.success,
-                                  levelColor: ColorRes.purpleColor.shade800,
-                                  leadsColor: ColorRes.blueColor,
-                                ),
-                                const SizedBox(height: 20),
-                                resellerLeaderBoard(
-                                  title: 'Leaderboard',
-                                  bannerTitle: 'Top 10 (Overall)',
-                                  bannerSubtitle: 'Gets Extra Rewards',
-                                  leaderboardData: [],
-                                ),
-                                const SizedBox(height: 20),
-                                buildLeaderBoardRanking(
-                                  title: 'Leaderboard Rankings',
-                                  subtitle: 'Top performers across regions',
-                                  filters: ['All', 'City-wise', 'Monthly'],
-                                  leaderboardData: [
-                                    {
-                                      'rank': 1,
-                                      'name': 'Rajesh Kumar',
-                                      'level': 'Platinum Level',
-                                      'city': 'Ahmedabad',
-                                      'sales': '₹35L',
-                                      'deals': '70',
-                                      'color': ColorRes.orangeColor.withOpacity(
-                                        0.05,
-                                      ),
-                                      'borderColor': ColorRes.orangeColor
-                                          .withOpacity(0.3),
-                                      'medalIcon': Icons.emoji_events,
-                                    },
-                                    {
-                                      'rank': 2,
-                                      'name': 'Priya Sharma',
-                                      'level': 'Platinum Level',
-                                      'city': 'Ahmedabad',
-                                      'sales': '₹32L',
-                                      'deals': '64',
-                                      'color': ColorRes.orangeColor.withOpacity(
-                                        0.05,
-                                      ),
-                                      'borderColor': ColorRes.orangeColor
-                                          .withOpacity(0.3),
-                                      'medalIcon': Icons.emoji_events,
-                                    },
-                                    {
-                                      'rank': 3,
-                                      'name': 'You',
-                                      'level': 'Gold Level',
-                                      'city': 'Ahmedabad',
-                                      'sales': '₹29L',
-                                      'deals': '57',
-                                      'color': ColorRes.green.withOpacity(0.05),
-                                      'borderColor': ColorRes.green.withOpacity(
-                                        0.3,
-                                      ),
-                                      'medalIcon': Icons.emoji_events,
-                                      'isCurrentUser': true,
-                                    },
-                                    {
-                                      'rank': 4,
-                                      'name': 'Amit Patel',
-                                      'level': 'Gold Level',
-                                      'city': 'Ahmedabad',
-                                      'sales': '₹24L',
-                                      'deals': '48',
-                                      'color': ColorRes.leadGreyColor
-                                          .withOpacity(0.05),
-                                      'borderColor': ColorRes.leadGreyColor
-                                          .withOpacity(0.3),
-                                      'medalIcon': null,
-                                    },
-                                    {
-                                      'rank': 5,
-                                      'name': 'Neha Desai',
-                                      'level': 'Silver Level',
-                                      'city': 'Ahmedabad',
-                                      'sales': '₹21L',
-                                      'deals': '42',
-                                      'color': ColorRes.blueColor.withOpacity(
-                                        0.05,
-                                      ),
-                                      'borderColor': ColorRes.blueColor
-                                          .withOpacity(0.3),
-                                      'medalIcon': null,
-                                    },
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
-                                buildReferralProgram(
-                                  controller: DashboardController(),
-                                  context: context,
-                                  bonus: 5000,
-                                  currentProgress: 4,
-                                  targetProgress: 10,
-                                  title: 'Referral Program',
-                                  subtitle:
-                                      'Get ₹5000 for every new active reseller',
-                                  pointsEarned: '2400',
-                                  totalEarnings: '₹4K',
-                                  earningSubtitle: '8 x ₹5000 each',
-                                  referralCode: 'REF12345',
-                                  leftIcon: Icons.card_giftcard_rounded,
-                                  iconColor: ColorRes.textPrimary,
-                                  iconBackground: ColorRes.textPrimary
-                                      .withOpacity(0.08),
-                                  card1BorderColor: ColorRes.homeAmber
-                                      .withOpacity(0.3),
-                                  card1BgColor: ColorRes.homeAmber.withOpacity(
-                                    0.08,
-                                  ),
-                                  card2BorderColor: ColorRes.green.withOpacity(
-                                    0.3,
-                                  ),
-                                  card2BgColor: ColorRes.green.withOpacity(
-                                    0.08,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                buildLeadGraph(DashboardController()),
-                                const SizedBox(height: 20),
-                                buildCommissionGraph(DashboardController()),
+                                Obx(() =>  buildSellerCommissionGraph(overviewController)),
                                 const SizedBox(height: 20),
                               ],
                             ),
@@ -665,7 +677,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
 class OverViewCard extends StatelessWidget {
   final List<Items> property;
-  final SellerOverviewModel overview;
+  final SellerInsightsModel overview;
 
   const OverViewCard({
     super.key,
@@ -676,73 +688,43 @@ class OverViewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = overview.data;
-
-    // 📊 Safely extract values with fallback defaults
-    final totalViews =
-        data?.propertyMetrics?.viewsHistory.fold<int>(
-          0,
-          (sum, item) => sum + (item.views ?? 0),
-        ) ??
-        0;
-    final totalLeads = data?.leadAnalytics?.totalLeads ?? 0;
-    final totalVisits = data?.engagementMetrics?.totalVisits ?? 0;
-    final totalProperty = property.length ?? 0;
-
-    final double visitConversionRate =
-        data?.engagementMetrics?.visitConversionRate.toDouble() ?? 0;
-
-    final overviewData = [
-      {
-        "title": "Views",
-        "value": _formatValue(totalViews),
-        "icon": Icons.remove_red_eye_outlined,
-        "color": ColorRes.builderGridPurple,
-      },
-      {
-        "title": "Visits",
-        "value": _formatValue(totalVisits),
-        "icon": Icons.travel_explore,
-        "color": ColorRes.builderGridPink,
-      },
-      {
-        "title": "Total Property",
-        "value": _formatValue(totalProperty),
-        "icon": Icons.check_circle_outline,
-        "color": ColorRes.builderGridPurple,
-      },
-      {
-        "title": "Leads",
-        "value": _formatValue(totalLeads),
-        "icon": Icons.people_alt_outlined,
-        "color": ColorRes.builderGridLightYellow,
-      },
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        GridView.builder(
+        GridView.count(
           shrinkWrap: true,
-          padding: EdgeInsets.zero,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 1.5,
-          ),
-          itemCount: overviewData.length,
-          itemBuilder: (context, index) {
-            final item = overviewData[index];
-            final color = item['color'] as Color;
-            return buildMetricCard(
-              item['title'].toString(),
-              item['value'].toString(),
-              item['icon'] as IconData,
-              color,
-            );
-          },
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.5,
+          children: [
+            buildMetricCard(
+              'Total Properties',
+              data.propertyMetrics.totalProperties.toString() ?? '',
+              Icons.home_work,
+              ColorRes.blueColor,
+            ),
+            buildMetricCard(
+              'Total Revenue',
+              '${Formatter.formatPrice(data.financialMetrics.totalRevenue)}',
+              Icons.currency_rupee_outlined,
+              ColorRes.green,
+            ),
+            buildMetricCard(
+              'Total Leads',
+              '${data?.leadAnalytics.totalLeads}',
+              Icons.person_add_alt_1,
+              ColorRes.orangeColor,
+            ),
+            buildMetricCard(
+              'Total Visits',
+              '${data?.engagementMetrics.totalVisits}',
+              Icons.add_chart,
+              ColorRes.purpleColor,
+            ),
+          ],
         ),
       ],
     );
@@ -1510,4 +1492,207 @@ class CustomerSupportCard extends StatelessWidget {
       ),
     );
   }
+}
+Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
+  final leadsTrend =
+      overviewController.overviewData.value?.data.leadAnalytics.leadsTimeline
+          ?.map<Map<String, dynamic>>(
+            (e) => {"month": e.month ?? '', "leads": e.count ?? 0},
+      )
+          .toList() ??
+          [];
+
+  // --- Step 1: Extract all years present in data ---
+  final Set<String> yearsInData =
+  leadsTrend.map((e) => e['month'].toString().split('-').first).toSet();
+
+  // --- Step 2: Determine which year to display ---
+  // Prefer latest available year; fallback to current year
+  final String displayYear =
+  yearsInData.isNotEmpty
+      ? (yearsInData.toList()..sort()).last
+      : DateTime.now().year.toString();
+
+  // --- Step 3: Collect month data for that year ---
+  final Map<String, double> monthDataForYear = {};
+  for (var e in leadsTrend) {
+    final parts = e['month'].toString().split('-');
+    if (parts.length == 2 && parts[0] == displayYear) {
+      monthDataForYear[parts[1]] = (e['leads'] as num).toDouble();
+    }
+  }
+
+  // --- Step 4: Fill missing months (1–12) with zero ---
+  final mergedData = List.generate(12, (i) {
+    final month = (i + 1).toString().padLeft(2, '0');
+    return {
+      "month": "$displayYear-$month",
+      "leads": monthDataForYear[month] ?? 0,
+    };
+  });
+
+  // --- Step 5: Extract for chart ---
+  final List<String> months =
+  mergedData.map((e) => e['month'] as String).toList();
+
+  final List<double> monthlyData =
+  mergedData.map((e) => (e['leads'] as num).toDouble()).toList();
+
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.area_chart_outlined, color: ColorRes.green, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Leads',
+                    style: TextStyle(
+                      color: ColorRes.green,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                  Text(
+                    'Monthly Overview',
+                    style: TextStyle(
+                      color: ColorRes.textColor,
+                      fontSize: AppFontSizes.extraSmall,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // --- Chart section ---
+        SizedBox(
+          height: 200,
+          width: double.infinity,
+          child: MonthlyLineChart(monthlyData: monthlyData, months: months),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildSellerCommissionGraph(SellerOverviewController  overviewController) {
+  final leadsTrend =
+      overviewController.overviewData.value?.data.propertyMetrics.viewsHistory
+          .map<Map<String, dynamic>>(
+            (e) => {"month": e.month ?? '', "views": e.views ?? 0},
+      )
+          .toList() ??
+          [];
+
+  // --- Step 1: Extract all years present in data ---
+  final Set<String> yearsInData =
+  leadsTrend.map((e) => e['month'].toString().split('-').first).toSet();
+
+  // --- Step 2: Determine which year to display ---
+  // Prefer latest available year; fallback to current year
+  final String displayYear =
+  yearsInData.isNotEmpty
+      ? (yearsInData.toList()..sort()).last
+      : DateTime.now().year.toString();
+
+  // --- Step 3: Collect month data for that year ---
+  final Map<String, double> monthDataForYear = {};
+  for (var e in leadsTrend) {
+    final parts = e['month'].toString().split('-');
+    if (parts.length == 2 && parts[0] == displayYear) {
+      monthDataForYear[parts[1]] = (e['views'] as num).toDouble();
+    }
+  }
+
+  // --- Step 4: Fill missing months (1–12) with zero ---
+  final mergedData = List.generate(12, (i) {
+    final month = (i + 1).toString().padLeft(2, '0');
+    return {
+      "month": "$displayYear-$month",
+      "views": monthDataForYear[month] ?? 0,
+    };
+  });
+
+  // --- Step 5: Extract for chart ---
+  final List<String> months =
+  mergedData.map((e) => e['month'] as String).toList();
+
+  final List<double> monthlyData =
+  mergedData.map((e) => (e['views'] as num).toDouble()).toList();
+
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.area_chart_outlined,
+              color: ColorRes.reportCardblue,
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Property Views',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: ColorRes.reportCardblue,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+
+                  Text(
+                    'Monthly Overview',
+                    style: TextStyle(
+                      color: ColorRes.textColor,
+                      fontSize: AppFontSizes.extraSmall,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+          height: 200,
+          width: double.infinity,
+          child: MonthlyBarChart(monthlyData: monthlyData, months: months,color: ColorRes.reportCardblue,isAmount: false,),
+        ),
+      ],
+    ),
+  );
 }

@@ -80,11 +80,11 @@ class GoogleMapController extends GetxController {
     }
   }
 
-  Future<void> fetchPredictionsLocality(String locality) async {
+  Future<void> fetchPredictionsLocality(String locality,String city) async {
     try {
       isLoading.value = true;
 
-      final response = await GoogleMapApi.instance.searchLocalities(locality);
+      final response = await GoogleMapApi.instance.searchLocalities(locality,cityFilter: city);
 
       print("resposne ===== $response");
 
