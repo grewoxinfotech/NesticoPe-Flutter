@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart'
     hide SellerType;
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
+import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
@@ -242,6 +243,9 @@ class _HomeHeaderState extends State<HomeHeader> {
                       );
 
                       if (UserHelper.isGuest) {
+                        if(!Get.isRegistered<AuthController>()){
+                          Get.put(AuthController());
+                        }
                         Get.to(
                           () => const RegisterScreen(role: UserRole.seller),
                         );

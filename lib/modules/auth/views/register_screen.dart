@@ -328,6 +328,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final authController = Get.find<AuthController>();
+
   String? _selectedSellerType;
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
