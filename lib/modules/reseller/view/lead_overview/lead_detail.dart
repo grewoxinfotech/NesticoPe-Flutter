@@ -48,67 +48,68 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   @override
   void initState() {
     if (widget.isFromLead && widget.lead?.propertyId != null) {
-      _initializeProperty();
+      _initializeProperty(widget.lead!.propertyId ?? '');
     }
+    // else {
+    //   _initializeProperty(widget.property!.id ?? '');
+    // }
     super.initState();
   }
 
   // Initialize controller
   final DashboardController controller = Get.put(DashboardController());
 
-  void _initializeProperty() {
+  void _initializeProperty(String propertyId) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!Get.isRegistered<PropertyController>()) {
         Get.put(PropertyController());
       }
       final propertyController = Get.find<PropertyController>();
       isLoadingProperty.value = true;
-      leadProperty.value = await propertyController.getPropertyById(
-        widget.lead!.propertyId ?? '',
-      );
+      print('propertyId: $propertyId');
+      leadProperty.value = await propertyController.getPropertyById(propertyId);
+      print('leadProperty: ${leadProperty.value?.id ?? ''}');
       isLoadingProperty.value = false;
     });
   }
 
   // Helper getters to access data from either lead or property
   Items get propertyData =>
-      widget.isFromLead
-          ? widget.lead!.customFields ?? Items()
-          : widget.property!;
+      widget.isFromLead ? leadProperty.value ?? Items() : widget.property!;
 
   String get propertyTitle =>
       widget.isFromLead
-          ? widget.lead!.customFields?.title ?? ''
+          ? leadProperty.value?.title ?? ''
           : widget.property!.title ?? '';
 
   String get propertyAddress =>
       widget.isFromLead
-          ? widget.lead!.customFields?.address ?? ''
+          ? leadProperty.value?.address ?? ''
           : widget.property!.address ?? '';
 
   String get propertyCity =>
       widget.isFromLead
-          ? widget.lead!.customFields?.city ?? ''
+          ? leadProperty.value?.city ?? ''
           : widget.property!.city ?? '';
 
   String get propertyState =>
       widget.isFromLead
-          ? widget.lead!.customFields?.state ?? ''
+          ? leadProperty.value?.state ?? ''
           : widget.property!.state ?? '';
 
   String get propertyZipCode =>
       widget.isFromLead
-          ? widget.lead!.customFields?.zipCode ?? ''
+          ? leadProperty.value?.zipCode ?? ''
           : widget.property!.zipCode ?? '';
 
   String get propertyType =>
       widget.isFromLead
-          ? widget.lead!.customFields?.propertyType ?? ''
+          ? leadProperty.value?.propertyType ?? ''
           : widget.property!.propertyType ?? '';
 
   String get listingType =>
       widget.isFromLead
-          ? widget.lead!.customFields?.listingType ?? ''
+          ? leadProperty.value?.listingType ?? ''
           : widget.property!.listingType ?? '';
 
   String get builderName =>
@@ -118,7 +119,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
 
   String get projectName =>
       widget.isFromLead
-          ? widget.lead!.customFields?.projectName ?? ''
+          ? leadProperty.value?.projectName ?? ''
           : widget.property!.projectName ?? '';
 
   List<String> get propertyImages =>
@@ -133,7 +134,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
 
   PropertyDetails? get propertyDetails =>
       widget.isFromLead
-          ? widget.lead!.customFields?.propertyDetails
+          ? leadProperty.value?.propertyDetails
           : widget.property!.propertyDetails;
 
   @override
@@ -204,7 +205,18 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // 3. Property Overview (Always Visible)
-            _buildPropertyOverviewSection(context, isCompact),
+            widget.isFromLead
+                ? Obx(() {
+                  if (leadProperty.value == null && isLoadingProperty.value) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!isLoadingProperty.value && leadProperty.value == null) {
+                    return SizedBox.shrink();
+                  }
+                  return _buildPropertyOverviewSection(context, isCompact);
+                })
+                : _buildPropertyOverviewSection(context, isCompact),
 
             // Expand/Collapse Button
 
@@ -238,7 +250,19 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
             // 6. Financial Information
-            _buildFinancialSection(context, isCompact),
+            if (widget.isFromLead)
+              Obx(() {
+                if (leadProperty.value == null && isLoadingProperty.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (!isLoadingProperty.value && leadProperty.value == null) {
+                  return SizedBox.shrink();
+                }
+                return _buildFinancialSection(context, isCompact);
+              })
+            else
+              _buildFinancialSection(context, isCompact),
 
             // if (widget.isFromLead) ...[
             //   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
@@ -1351,13 +1375,251 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //   );
   // }
 
+  // Widget _buildFinancialSection(BuildContext context, bool isCompact) {
+  //   final financialInfo = _resolvedFinancialInfo;
+  //   if (financialInfo == null) return const SizedBox.shrink();
+  //
+  //   final priceManager = PropertyPriceManager(
+  //     listingType: propertyType,
+  //     financialInfo: financialInfo,
+  //   );
+  //
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         _buildSectionHeader(
+  //           'Financial Information',
+  //           Icons.currency_rupee_outlined,
+  //           isCompact,
+  //         ),
+  //         const SizedBox(height: 16),
+  //
+  //         Container(
+  //           padding: const EdgeInsets.all(16),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(16),
+  //             border: Border.all(color: ColorRes.success.shade200, width: 1),
+  //           ),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               // 🔹 PROPERTY PRICE
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Expanded(
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Text(
+  //                           'Property Price',
+  //                           style: TextStyle(
+  //                             fontSize: AppFontSizes.medium,
+  //                             fontWeight: AppFontWeights.semiBold,
+  //                             color: ColorRes.leadGreyColor[700],
+  //                             letterSpacing: 0.3,
+  //                           ),
+  //                         ),
+  //                         const SizedBox(height: 8),
+  //                         Text(
+  //                           priceManager.displayPrice,
+  //                           style: TextStyle(
+  //                             fontSize: isCompact ? AppFontSizes.large : 32,
+  //                             fontWeight: AppFontWeights.semiBold,
+  //                             color: ColorRes.success.shade800,
+  //                             height: 1.2,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //
+  //                   // 🔹 Negotiable Chip
+  //                   if (financialInfo.negotiable)
+  //                     Container(
+  //                       padding: const EdgeInsets.symmetric(
+  //                         horizontal: 14,
+  //                         vertical: 8,
+  //                       ),
+  //                       decoration: BoxDecoration(
+  //                         color: (widget.isFromLead
+  //                                 ? _getStatusColor(widget.lead!.status!)
+  //                                 : Colors.green)
+  //                             .withOpacity(0.08),
+  //                         borderRadius: BorderRadius.circular(10),
+  //                         border: Border.all(
+  //                           color: (widget.isFromLead
+  //                                   ? _getStatusColor(widget.lead!.status!)
+  //                                   : Colors.green)
+  //                               .withOpacity(0.3),
+  //                           width: 1,
+  //                         ),
+  //                       ),
+  //                       child: Text(
+  //                         'Negotiable',
+  //                         style: TextStyle(
+  //                           fontSize: AppFontSizes.extraSmall,
+  //                           color:
+  //                               widget.isFromLead
+  //                                   ? _getStatusColor(widget.lead!.status!)
+  //                                   : Colors.green,
+  //                           fontWeight: AppFontWeights.extraBold,
+  //                           letterSpacing: 0.5,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                 ],
+  //               ),
+  //
+  //               const SizedBox(height: 16),
+  //               Divider(thickness: 0.65, color: ColorRes.grey.withOpacity(0.4)),
+  //               const SizedBox(height: 16),
+  //
+  //               // 🔹 Additional Financial Info dynamically from PriceManager
+  //               ...priceManager.priceSummary.entries
+  //                   .where((e) => e.value != null)
+  //                   .map(
+  //                     (e) => Padding(
+  //                       padding: const EdgeInsets.only(bottom: 10),
+  //                       child: Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                         children: [
+  //                           Row(
+  //                             children: [
+  //                               Icon(
+  //                                 _getFinancialIcon(e.key),
+  //                                 size: 20,
+  //                                 color: ColorRes.primary,
+  //                               ),
+  //                               const SizedBox(width: 10),
+  //                               Text(
+  //                                 e.key,
+  //                                 style: TextStyle(
+  //                                   fontSize: AppFontSizes.small,
+  //                                   color: ColorRes.leadGreyColor[700],
+  //                                   fontWeight: AppFontWeights.semiBold,
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                           Flexible(
+  //                             child: Text(
+  //                               e.value!,
+  //                               style: TextStyle(
+  //                                 fontSize:
+  //                                     isCompact
+  //                                         ? AppFontSizes.medium
+  //                                         : AppFontSizes.large,
+  //                                 fontWeight: AppFontWeights.semiBold,
+  //                                 color: ColorRes.primary,
+  //                               ),
+  //                               overflow: TextOverflow.ellipsis,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //
+  //               const SizedBox(height: 10),
+  //               Divider(thickness: 0.65, color: ColorRes.grey.withOpacity(0.3)),
+  //               const SizedBox(height: 10),
+  //
+  //               // 🔹 Total Price
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Text(
+  //                     'Total Value',
+  //                     style: TextStyle(
+  //                       fontSize: AppFontSizes.medium,
+  //                       fontWeight: AppFontWeights.bold,
+  //                       color: ColorRes.leadGreyColor[800],
+  //                     ),
+  //                   ),
+  //                   Text(
+  //                     priceManager.totalPriceDisplay,
+  //                     style: TextStyle(
+  //                       fontSize: isCompact ? AppFontSizes.large : 22,
+  //                       fontWeight: AppFontWeights.extraBold,
+  //                       color: ColorRes.success.shade700,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //
+  //               // 🔹 Negotiation + Offer Handling (Reactive)
+  //               Obx(() {
+  //                 final hasOffer = controller.submittedOfferAmount.value != 0.0;
+  //
+  //                 return Column(
+  //                   children: [
+  //                     if (hasOffer) ...[
+  //                       const SizedBox(height: 16),
+  //                       _buildOfferCard(isCompact),
+  //                     ],
+  //
+  //                     if (financialInfo.negotiable) ...[
+  //                       const SizedBox(height: 16),
+  //                       SizedBox(
+  //                         width: double.infinity,
+  //                         child: ElevatedButton.icon(
+  //                           onPressed:
+  //                               !hasOffer
+  //                                   ? () => _handleNegotiation(context)
+  //                                   : null,
+  //                           icon: Icon(
+  //                             !hasOffer
+  //                                 ? Icons.chat_bubble_outline
+  //                                 : Icons.check_circle_outline,
+  //                             size: 18,
+  //                           ),
+  //                           label: Text(
+  //                             !hasOffer
+  //                                 ? 'Start Negotiation'
+  //                                 : 'Offer Submitted',
+  //                             style: TextStyle(
+  //                               fontSize: AppFontSizes.medium,
+  //                               fontWeight: FontWeight.bold,
+  //                               letterSpacing: 0.5,
+  //                             ),
+  //                           ),
+  //                           style: ElevatedButton.styleFrom(
+  //                             backgroundColor:
+  //                                 !hasOffer
+  //                                     ? ColorRes.success.shade600
+  //                                     : ColorRes.leadGreyColor.shade400,
+  //                             foregroundColor: ColorRes.white,
+  //                             padding: const EdgeInsets.symmetric(vertical: 14),
+  //                             shape: RoundedRectangleBorder(
+  //                               borderRadius: BorderRadius.circular(12),
+  //                             ),
+  //                             elevation: 0,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ],
+  //                 );
+  //               }),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _buildFinancialSection(BuildContext context, bool isCompact) {
     final financialInfo = _resolvedFinancialInfo;
     if (financialInfo == null) return const SizedBox.shrink();
 
     final priceManager = PropertyPriceManager(
-      listingType: widget.lead?.customFields?.listingType ?? '',
-      financialInfo: widget.lead?.customFields?.propertyDetails?.financialInfo,
+      listingType: propertyType,
+      financialInfo: financialInfo,
     );
 
     return Padding(
@@ -1391,7 +1653,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Property Price',
+                            propertyType.toLowerCase() == "rent"
+                                ? 'Monthly Rent'
+                                : 'Property Price',
                             style: TextStyle(
                               fontSize: AppFontSizes.medium,
                               fontWeight: AppFontWeights.semiBold,
@@ -1414,7 +1678,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     ),
 
                     // 🔹 Negotiable Chip
-                    if (financialInfo.negotiable)
+                    if (financialInfo.negotiable == true)
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 14,
@@ -1455,50 +1719,58 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 const SizedBox(height: 16),
 
                 // 🔹 Additional Financial Info dynamically from PriceManager
-                ...priceManager.priceSummary.entries
-                    .where((e) => e.value != null)
-                    .map(
-                      (e) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ...priceManager.priceSummary.entries.map((e) {
+                  final value = e.value?.trim();
+                  // Skip empty or placeholder values
+                  if (value == null ||
+                      value.isEmpty ||
+                      value.toLowerCase().contains('not available') ||
+                      value == '₹0' ||
+                      value == '₹0.0') {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  _getFinancialIcon(e.key),
-                                  size: 20,
-                                  color: ColorRes.primary,
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  e.key,
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.small,
-                                    color: ColorRes.leadGreyColor[700],
-                                    fontWeight: AppFontWeights.semiBold,
-                                  ),
-                                ),
-                              ],
+                            Icon(
+                              _getFinancialIcon(e.key),
+                              size: 20,
+                              color: ColorRes.primary,
                             ),
-                            Flexible(
-                              child: Text(
-                                e.value!,
-                                style: TextStyle(
-                                  fontSize:
-                                      isCompact
-                                          ? AppFontSizes.medium
-                                          : AppFontSizes.large,
-                                  fontWeight: AppFontWeights.semiBold,
-                                  color: ColorRes.primary,
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                            const SizedBox(width: 10),
+                            Text(
+                              e.key,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor[700],
+                                fontWeight: AppFontWeights.semiBold,
                               ),
                             ),
                           ],
                         ),
-                      ),
+                        Flexible(
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                              fontSize:
+                                  isCompact
+                                      ? AppFontSizes.medium
+                                      : AppFontSizes.large,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.primary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
+                  );
+                }).toList(),
 
                 const SizedBox(height: 10),
                 Divider(thickness: 0.65, color: ColorRes.grey.withOpacity(0.3)),
@@ -1538,7 +1810,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                         _buildOfferCard(isCompact),
                       ],
 
-                      if (financialInfo.negotiable) ...[
+                      if (financialInfo.negotiable == true) ...[
                         const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
@@ -1843,7 +2115,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
       enableDrag: true,
       builder: (context) {
         final priceManager = PropertyPriceManager(
-          listingType: _listingTypeValue,
+          listingType: listingType,
           financialInfo: _resolvedFinancialInfo,
         );
         return Padding(
@@ -2438,18 +2710,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     // url_launcher package: launch('mailto:$email');
   }
 
-  String get _listingTypeValue {
-    if (widget.property != null) return widget.property!.listingType ?? '';
-    if (widget.lead != null)
-      return widget.lead!.customFields?.listingType ?? '';
-    return '';
-  }
-
   FinancialInfo? get _resolvedFinancialInfo {
     if (widget.property?.propertyDetails?.financialInfo != null)
       return widget.property!.propertyDetails!.financialInfo;
     if (widget.lead?.customFields?.propertyDetails?.financialInfo != null)
-      return widget.lead!.customFields?.propertyDetails!.financialInfo;
+      return leadProperty.value?.propertyDetails!.financialInfo;
     return null;
   }
 

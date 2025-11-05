@@ -46,6 +46,7 @@ dependencies:
   persistent_bottom_nav_bar:
   http_parser:
   mime:
+  google_maps_flutter:
   
   file_picker:
   pdfx:

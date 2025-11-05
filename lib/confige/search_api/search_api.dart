@@ -178,4 +178,94 @@ class GoogleMapApi {
       return [];
     }
   }
+
+  /// Get nearby places by category (simple version, returns just the places list)
+  Future<List<Map<String, dynamic>>> getNearbyPlacesByCategory(
+    String address,
+    String type, {
+    int radius = 2000,
+  }) async {
+    final result = await getNearbyPlacesByCategoryWithCoords(address, type, radius: radius);
+    return result['places'] as List<Map<String, dynamic>>;
+  }
+
+  /// Get nearby places by category (Education, Healthcare, Food, Shopping, etc.)
+  /// Returns a map with 'places' list and 'propertyCoords' map
+  Future<Map<String, dynamic>> getNearbyPlacesByCategoryWithCoords(
+    String address,
+    String type, {
+    int radius = 2000,
+  }) async {
+    try {
+      // Step 1: Geocode the address to get lat/lng
+      final geoUri = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=${ApiConfig.mapkey}',
+      );
+
+      final geoResponse = await http.get(geoUri);
+
+      if (geoResponse.statusCode != 200) {
+        throw Exception('Failed to get coordinates for address');
+      }
+
+      final geoData = json.decode(geoResponse.body);
+
+      if (geoData['status'] != 'OK' || geoData['results'].isEmpty) {
+        throw Exception('No coordinates found for address');
+      }
+
+      final location = geoData['results'][0]['geometry']['location'];
+      final lat = location['lat'];
+      final lng = location['lng'];
+
+      print('📍 Fetching $type near ($lat, $lng)');
+
+      // Step 2: Fetch nearby places by type
+      final placesUri = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=$radius&type=$type&key=${ApiConfig.mapkey}',
+      );
+
+      final placesResponse = await http.get(placesUri);
+
+      if (placesResponse.statusCode != 200) {
+        throw Exception('Failed to fetch nearby places');
+      }
+
+      final placesData = json.decode(placesResponse.body);
+
+      if (placesData['status'] != 'OK') {
+        print('⚠️ Places API Status: ${placesData['status']}');
+        return {
+          'propertyCoords': {'lat': lat, 'lng': lng},
+          'places': <Map<String, dynamic>>[],
+        };
+      }
+
+      // Step 3: Parse and return results with property coordinates
+      final results = placesData['results'] as List<dynamic>;
+
+      final places = results.take(10).map((place) {
+        return {
+          'name': place['name'] ?? 'Unknown',
+          'address': place['vicinity'] ?? '',
+          'types': place['types'] ?? [],
+          'lat': place['geometry']['location']['lat'],
+          'lng': place['geometry']['location']['lng'],
+          'rating': place['rating'] ?? 0.0,
+          'distance': '', // Distance can be calculated separately if needed
+        };
+      }).toList();
+
+      return {
+        'propertyCoords': {'lat': lat, 'lng': lng},
+        'places': places,
+      };
+    } catch (e) {
+      print('❌ Error in getNearbyPlacesByCategory: $e');
+      return {
+        'propertyCoords': null,
+        'places': <Map<String, dynamic>>[],
+      };
+    }
+  }
 }

@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
@@ -9,13 +12,10 @@ import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
 import 'package:housing_flutter_app/app/manager/string_manager.dart';
 import 'package:housing_flutter_app/app/utils/bottom_sheet_form.dart';
-import 'package:housing_flutter_app/app/utils/dummy_data.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/app/widgets/video_player/custom_video_player.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/recommended_property.dart';
@@ -23,7 +23,6 @@ import 'package:housing_flutter_app/modules/property/views/widgets/overall_ratin
 import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
-
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:video_player/video_player.dart';
@@ -37,62 +36,95 @@ import '../../../utils/common_widget/rera_widget.dart';
 import '../../search_property/controller/search_controller.dart';
 import '../controllers/overall_rating_controller.dart';
 
-class PropertyDetailScreen extends StatelessWidget {
+class PropertyDetailScreen extends StatefulWidget {
   final Items? property;
 
-  PropertyDetailScreen({super.key, this.property});
+  const PropertyDetailScreen({super.key, this.property});
 
-  final PropertyController controller = Get.put(PropertyController());
-  final GoogleMapController mapController = Get.put(GoogleMapController());
-  final OverallRatingController _overallRatingController = Get.put(
-    OverallRatingController(),
-  );
+  @override
+  State<PropertyDetailScreen> createState() => _PropertyDetailScreenState();
+}
+
+class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
+  late final PropertyController controller;
+  late final GoogleMapController mapController;
+  late final OverallRatingController _overallRatingController;
+  late final ReviewController reviewController;
+  final RxBool canAddReview = true.obs;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize controllers
+    controller = Get.put(
+      PropertyController(),
+      tag: 'property_${widget.property?.id}',
+    );
+    mapController = Get.put(
+      GoogleMapController(),
+      tag: 'map_${widget.property?.id}',
+    );
+    _overallRatingController = Get.put(
+      OverallRatingController(),
+      tag: 'rating_${widget.property?.id}',
+    );
+    reviewController = Get.put(
+      ReviewController(),
+      tag: 'review_${widget.property?.id}',
+    );
+
+    // Load data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  @override
+  void dispose() {
+    // Clean up controllers
+    Get.delete<PropertyController>(tag: 'property_${widget.property?.id}');
+    Get.delete<GoogleMapController>(tag: 'map_${widget.property?.id}');
+    Get.delete<OverallRatingController>(tag: 'rating_${widget.property?.id}');
+    Get.delete<ReviewController>(tag: 'review_${widget.property?.id}');
+
+    // Clean up observables
+    canAddReview.close();
+
+    super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    // Set review filter
+    reviewController.filters.value = {"entity_id": widget.property?.id ?? ""};
+    reviewController.filters.refresh();
+
+    // Fetch nearby landmarks and all categories
+    if (widget.property?.address?.isNotEmpty ?? false) {
+      await mapController.fetchAllCategoriesData(widget.property!.address!);
+    }
+
+    // Check review permission
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? '';
+    if (widget.property?.id != null) {
+      final exists = await reviewController.isReviewExist(
+        entityId: widget.property!.id!,
+        reviewerId: userId,
+      );
+      canAddReview.value = !exists;
+    }
+
+    // Track view
+    controller.addView(widget.property?.id ?? '');
+    _overallRatingController.fetchOverallRating(widget.property?.id ?? '');
+  }
+
+  // Convenience getter
+  Items? get property => widget.property;
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => ReviewController());
-    final reviewController = Get.find<ReviewController>();
-    final RxBool canAddReview = true.obs;
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // Set review filter
-      reviewController.filters.value = {"entity_id": property?.id ?? ""};
-      reviewController.filters.refresh();
-
-      // Fetch nearby landmarks
-      if (property?.address?.isNotEmpty ?? false) {
-        mapController.fetchNearbyLandmarks(property!.address!);
-      }
-
-      // Check review permission
-      final user = await SecureStorage.getUserData();
-      final userId = user?.user?.id ?? '';
-      if (property?.id != null) {
-        final exists = await reviewController.isReviewExist(
-          entityId: property!.id!,
-          reviewerId: userId,
-        );
-        canAddReview.value = !exists;
-      }
-
-      // Track view
-      controller.addView(property?.id ?? '');
-
-      _overallRatingController.fetchOverallRating(property?.id ?? '');
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final user = await SecureStorage.getUserData();
-      final userId = user?.user?.id ?? '';
-      if (property?.id != null) {
-        final exists = await reviewController.isReviewExist(
-          entityId: property!.id!,
-          reviewerId: userId,
-        );
-        canAddReview.value = !exists;
-      }
-    });
-    controller.addView(property?.id ?? '');
-
     return Scaffold(
       backgroundColor: ColorRes.white,
       extendBody: true,
@@ -197,20 +229,25 @@ class PropertyDetailScreen extends StatelessWidget {
               //   ),
               //   const SizedBox(height: 12),
               // ],
+              // Category-based Nearby Places with Google Map Style
               Obx(() {
                 if (mapController.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
                 }
 
-                if (mapController.nearbyLandmarks.isEmpty) {
-                  return const SizedBox.shrink(); // no landmarks
-                }
+                // Check if any category has data
+                final hasData = mapController.allCategoriesData.values.any(
+                  (places) => places.isNotEmpty,
+                );
 
-                final displayCount =
-                    mapController.nearbyLandmarks.length > 4
-                        ? 4
-                        : mapController.nearbyLandmarks.length;
-                final hasMore = mapController.nearbyLandmarks.length > 4;
+                if (!hasData || mapController.propertyLatLng.value == null) {
+                  return const SizedBox.shrink();
+                }
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,108 +257,14 @@ class PropertyDetailScreen extends StatelessWidget {
                       endIndent: 18,
                       color: ColorRes.leadGreyColor.shade300,
                     ),
-                    const SizedBox(height: 8),
-                    const TitleWithViewAll(title: 'Nearby Landmarks'),
                     const SizedBox(height: 12),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemBuilder: (context, index) {
-                        final landmark = mapController.nearbyLandmarks[index];
-                        return GestureDetector(
-                          onTap: () {
-                            ContactHelper.openInGoogleMaps(landmark['address']);
-                          },
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                color: ColorRes.primary,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      landmark['name'] ?? '-',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      landmark['address'] ?? '',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                                color: Colors.grey.shade400,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      separatorBuilder: (_, __) => const SizedBox(height: 10),
-                      itemCount: displayCount,
+
+                    // Embedded Map Preview Section
+                    NearbyLocationMapSection(
+                      address: property?.address ?? '',
+                      mapController: mapController,
                     ),
-                    // if (hasMore) ...[
-                    //   const SizedBox(height: 12),
-                    //   Padding(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    //     child: TextButton(
-                    //       onPressed: () {
-                    //         // Navigate to all landmarks page
-                    //         // Get.to(() => AllLandmarksScreen(landmarks: mapController.nearbyLandmarks));
-                    //       },
-                    //       style: TextButton.styleFrom(
-                    //         backgroundColor: ColorRes.primary.withOpacity(0.05),
-                    //         padding: const EdgeInsets.symmetric(vertical: 12),
-                    //         shape: RoundedRectangleBorder(
-                    //           borderRadius: BorderRadius.circular(10),
-                    //           side: BorderSide(
-                    //             color: ColorRes.primary.withOpacity(0.2),
-                    //             width: 1,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //       child: Row(
-                    //         mainAxisAlignment: MainAxisAlignment.center,
-                    //         children: [
-                    //           Text(
-                    //             'View All (${mapController.nearbyLandmarks.length})',
-                    //             style: TextStyle(
-                    //               color: ColorRes.primary,
-                    //               fontWeight: FontWeight.w600,
-                    //               fontSize: 14,
-                    //             ),
-                    //           ),
-                    //           const SizedBox(width: 6),
-                    //           Icon(
-                    //             Icons.arrow_forward,
-                    //             color: ColorRes.primary,
-                    //             size: 18,
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ],
+
                     const SizedBox(height: 12),
                   ],
                 );
@@ -1182,94 +1125,94 @@ class PropertyDetailScreen extends StatelessWidget {
   //   );
   // }
 
-  Widget _buildPriceAndType() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        children: [
-          const Text(
-            "₹8.9 Cr",
-            style: TextStyle(
-              fontSize: AppFontSizes.large,
-              fontWeight: AppFontWeights.semiBold,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Chip(
-            label: const Text("Sell - apartment"),
-            backgroundColor: ColorRes.orangeColor.shade50,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeatureChips() {
-    return const Padding(
-      padding: EdgeInsets.all(16),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 8,
-        children: [
-          Chip(label: Text("4 BHK")),
-          Chip(label: Text("5 Bath")),
-          Chip(label: Text("2 Balcony")),
-          Chip(label: Text("Floor: 34/34")),
-          Chip(label: Text("Area: 3900 sqft")),
-          Chip(label: Text("Facing: West")),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection(String title, String content) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: AppFontSizes.large,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(content),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAmenitiesSection() {
-    final List<String> amenities = [
-      "Infinity Pool",
-      "Sky Lounge",
-      "24x7 Concierge",
-      "Private Elevator",
-      "Smart Lighting",
-      "Solar Panels",
-    ];
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Amenities",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            children: amenities.map((e) => Chip(label: Text(e))).toList(),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildPriceAndType() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //     child: Row(
+  //       children: [
+  //         const Text(
+  //           "₹8.9 Cr",
+  //           style: TextStyle(
+  //             fontSize: AppFontSizes.large,
+  //             fontWeight: AppFontWeights.semiBold,
+  //           ),
+  //         ),
+  //         const SizedBox(width: 16),
+  //         Chip(
+  //           label: const Text("Sell - apartment"),
+  //           backgroundColor: ColorRes.orangeColor.shade50,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildFeatureChips() {
+  //   return const Padding(
+  //     padding: EdgeInsets.all(16),
+  //     child: Wrap(
+  //       spacing: 12,
+  //       runSpacing: 8,
+  //       children: [
+  //         Chip(label: Text("4 BHK")),
+  //         Chip(label: Text("5 Bath")),
+  //         Chip(label: Text("2 Balcony")),
+  //         Chip(label: Text("Floor: 34/34")),
+  //         Chip(label: Text("Area: 3900 sqft")),
+  //         Chip(label: Text("Facing: West")),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildSection(String title, String content) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16.0),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           title,
+  //           style: const TextStyle(
+  //             fontSize: AppFontSizes.large,
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         Text(content),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildAmenitiesSection() {
+  //   final List<String> amenities = [
+  //     "Infinity Pool",
+  //     "Sky Lounge",
+  //     "24x7 Concierge",
+  //     "Private Elevator",
+  //     "Smart Lighting",
+  //     "Solar Panels",
+  //   ];
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const Text(
+  //           "Amenities",
+  //           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         Wrap(
+  //           spacing: 12,
+  //           runSpacing: 8,
+  //           children: amenities.map((e) => Chip(label: Text(e))).toList(),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class CircularIcon extends StatelessWidget {
@@ -1582,159 +1525,6 @@ class PricingBottomSheet extends StatelessWidget {
   }
 }
 
-// class Facilities extends StatelessWidget {
-//   Facilities({super.key});
-//
-//   final List<String> labels = [
-//     'Fully furnished',
-//     '1650 Sq ft',
-//     'Floor 6/8',
-//     '3 to 5 years old',
-//     'For Male, Family, Female',
-//   ];
-//   final List<IconData> icons = [
-//     Icons.bed,
-//     Icons.zoom_out_map_outlined,
-//     Icons.layers_outlined,
-//     Icons.date_range,
-//     Icons.person,
-//   ];
-//
-//   final Color bgColor = Color(0xFFDBEAFE); // Single background color
-//   final Color txtColor = Color(0xFF2563EB); // Single text/icon color
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//       child: SingleChildScrollView(
-//         scrollDirection: Axis.horizontal,
-//         padding: const EdgeInsets.symmetric(horizontal: 16),
-//         child: Row(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: List.generate(labels.length, (index) {
-//             return Padding(
-//               padding: const EdgeInsets.only(right: 12),
-//               child: FacilitiesCard(
-//                 label: labels[index],
-//                 icon: icons[index],
-//                 bgColor: bgColor,
-//                 foreColor: txtColor,
-//               ),
-//             );
-//           }),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class Facilities extends StatelessWidget {
-//   final Items property;
-//   final Color bgColor;
-//   final Color txtColor;
-//
-//   Facilities({
-//     super.key,
-//     required this.property,
-//     this.bgColor = const Color(0xFFDBEAFE),
-//     this.txtColor = const Color(0xFF2563EB),
-//   });
-//
-//   // Map detail keys to icons
-//   final Map<String, IconData> iconMap = {
-//     "BHK": Icons.bed,
-//     "Furnishing": Icons.chair_alt,
-//     "Built-up Area": Icons.zoom_out_map_outlined,
-//     "Carpet Area": Icons.square_foot,
-//     "Floor": Icons.layers_outlined,
-//     "Age of Property": Icons.date_range,
-//     "Rent": Icons.attach_money,
-//     "Price": Icons.price_change,
-//     "Possession": Icons.home_work,
-//     "Amenities": Icons.checklist_rtl,
-//     "Parking": Icons.local_parking,
-//     "Facing": Icons.explore,
-//     "Condition": Icons.handyman,
-//     // Add more mappings if needed
-//   };
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final highlights = PropertyHighlightManager(property).getHighlights();
-//
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-//       child: Wrap(
-//         spacing: 12,
-//         runSpacing: 12,
-//         children:
-//             highlights.map((item) {
-//               final key = item.keys.first;
-//               final value = item.values.first;
-//               final icon = iconMap[key] ?? Icons.info_outline;
-//
-//               return FacilitiesCard(
-//                 label: value,
-//                 icon: icon,
-//                 bgColor: bgColor,
-//                 foreColor: txtColor,
-//               );
-//             }).toList(),
-//       ),
-//     );
-//   }
-// }
-//
-// class FacilitiesCard extends StatelessWidget {
-//   final String label;
-//   final IconData icon;
-//   final Color bgColor;
-//   final Color foreColor;
-//
-//   const FacilitiesCard({
-//     Key? key,
-//     required this.label,
-//     required this.icon,
-//     required this.bgColor,
-//     required this.foreColor,
-//   }) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       constraints: const BoxConstraints(
-//         minWidth: 80,
-//       ), // 👈 ensures small labels don't shrink too much
-//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-//       decoration: BoxDecoration(
-//         border: Border.all(color: ColorRes.primary, width: 1),
-//         borderRadius: BorderRadius.circular(20), // pill-like
-//         color: ColorRes.white,
-//       ),
-//       child: Row(
-//         mainAxisSize: MainAxisSize.min,
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Icon(icon, size: 16, color: ColorRes.primary),
-//           const SizedBox(width: 6),
-//           Flexible(
-//             child: Text(
-//               label,
-//               textAlign: TextAlign.center,
-//               overflow: TextOverflow.ellipsis, // prevent overflow
-//               style: TextStyle(
-//                 fontSize: 13,
-//                 fontWeight: FontWeight.w500,
-//                 color: Colors.grey.shade800,
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
 class Facilities extends StatelessWidget {
   final Items property;
   final Color bgColor;
@@ -1918,15 +1708,6 @@ class AmenitiesSection extends StatelessWidget {
   final List<String> amenities;
 
   AmenitiesSection({super.key, required this.amenities});
-
-  // final List<Map<String, dynamic>> amenities = [
-  //   {'icon': Icons.pool, 'label': "Infinity Pool"},
-  //   {'icon': Icons.wine_bar, 'label': "Sky Lounge"},
-  //   {'icon': Icons.support_agent, 'label': "24x7 Concierge"},
-  //   {'icon': Icons.elevator, 'label': "Private Elevator"},
-  //   {'icon': Icons.lightbulb, 'label': "Smart Lighting"},
-  //   {'icon': Icons.solar_power, 'label': "Solar Panels"},
-  // ];
 
   Color bgColor = ColorRes.propertyBg; // single background color
   Color txtColor = ColorRes.propertyText; // single text/icon color
@@ -2149,6 +1930,427 @@ class RecommendedInsights extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// Category-based Nearby Location Section with Google Map UI
+class NearbyLocationMapSection extends StatefulWidget {
+  final String address;
+  final GoogleMapController mapController;
+
+  const NearbyLocationMapSection({
+    super.key,
+    required this.address,
+    required this.mapController,
+  });
+
+  @override
+  State<NearbyLocationMapSection> createState() =>
+      _NearbyLocationMapSectionState();
+}
+
+class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
+  gmaps.GoogleMapController? _googleMapController;
+
+  @override
+  void dispose() {
+    _googleMapController?.dispose();
+    super.dispose();
+  }
+
+  // Build markers based on current data (without setState)
+  Set<gmaps.Marker> _buildMarkers() {
+    final latLng = widget.mapController.propertyLatLng.value;
+    if (latLng == null) return {};
+
+    final markers = <gmaps.Marker>{};
+
+    // Add property marker (Blue)
+    markers.add(
+      gmaps.Marker(
+        markerId: const gmaps.MarkerId('property'),
+        position: gmaps.LatLng(latLng['lat']!, latLng['lng']!),
+        infoWindow: gmaps.InfoWindow(
+          title: 'Property Location',
+          snippet: widget.address,
+        ),
+        icon: gmaps.BitmapDescriptor.defaultMarkerWithHue(
+          gmaps.BitmapDescriptor.hueBlue,
+        ),
+      ),
+    );
+
+    // Add nearby places markers (Red)
+    final categoryPlaces = widget.mapController.categoryPlaces;
+    for (var i = 0; i < categoryPlaces.length; i++) {
+      final place = categoryPlaces[i];
+      if (place['lat'] != null && place['lng'] != null) {
+        markers.add(
+          gmaps.Marker(
+            markerId: gmaps.MarkerId('place_$i'),
+            position: gmaps.LatLng(place['lat'], place['lng']),
+            infoWindow: gmaps.InfoWindow(
+              title: place['name'] ?? 'Location',
+              snippet: place['distanceText'] ?? '',
+            ),
+            icon: gmaps.BitmapDescriptor.defaultMarkerWithHue(
+              gmaps.BitmapDescriptor.hueRed,
+            ),
+          ),
+        );
+      }
+    }
+
+    return markers;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Map Preview with Categories
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: ColorRes.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: ColorRes.leadGreyColor.shade300,
+              width: 1,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Google Map with property marker
+              Obx(() {
+                final latLng = widget.mapController.propertyLatLng.value;
+                final categoryPlaces = widget.mapController.categoryPlaces;
+
+                // Build markers based on current data
+                final markers = _buildMarkers();
+
+                if (latLng == null) {
+                  return Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: ColorRes.leadGreyColor.shade200,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(12),
+                      ),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.map,
+                            size: 48,
+                            color: ColorRes.leadGreyColor.shade400,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.address,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.caption,
+                              color: ColorRes.leadGreyColor.shade600,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                final initialPosition = gmaps.LatLng(
+                  latLng['lat']!,
+                  latLng['lng']!,
+                );
+
+                return ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                  child: SizedBox(
+                    height: 200,
+                    child: gmaps.GoogleMap(
+                      initialCameraPosition: gmaps.CameraPosition(
+                        target: initialPosition,
+                        zoom: 14.5,
+                      ),
+                      markers: markers,
+                      // Enable all gestures
+                      scrollGesturesEnabled: true,
+                      zoomGesturesEnabled: true,
+                      tiltGesturesEnabled: true,
+                      rotateGesturesEnabled: true,
+                      // Map controls
+                      zoomControlsEnabled: false,
+                      mapToolbarEnabled: false,
+                      myLocationButtonEnabled: false,
+                      compassEnabled: true,
+                      // Map type
+                      mapType: gmaps.MapType.normal,
+                      // Fix gesture conflicts with parent scroll
+                      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                        Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer(),
+                        ),
+                      },
+                      onMapCreated: (controller) {
+                        _googleMapController = controller;
+                      },
+                    ),
+                  ),
+                );
+              }),
+
+              const SizedBox(height: 12),
+
+              // Category Tabs
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Schools around your location',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildCategoryButton(
+                            'Education',
+                            Icons.school_outlined,
+                            'school',
+                          ),
+                          const SizedBox(width: 8),
+                          _buildCategoryButton(
+                            'Healthcare',
+                            Icons.local_hospital_outlined,
+                            'hospital',
+                          ),
+                          const SizedBox(width: 8),
+                          _buildCategoryButton(
+                            'Food & Dining',
+                            Icons.restaurant_outlined,
+                            'restaurant',
+                          ),
+                          const SizedBox(width: 8),
+                          _buildCategoryButton(
+                            'Shopping',
+                            Icons.shopping_bag_outlined,
+                            'shopping_mall',
+                          ),
+                          const SizedBox(width: 8),
+                          _buildCategoryButton(
+                            'Entertainment',
+                            Icons.movie_outlined,
+                            'movie_theater',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Selected Category Places List
+              Obx(() {
+                if (widget.mapController.isLoading.value) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (widget.mapController.categoryPlaces.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                return Column(
+                  children: [
+                    Divider(height: 1, color: ColorRes.grey.withOpacity(0.3)),
+                    const SizedBox(height: 8),
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      itemCount:
+                          widget.mapController.categoryPlaces.length > 5
+                              ? 5
+                              : widget.mapController.categoryPlaces.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final place =
+                            widget.mapController.categoryPlaces[index];
+                        return GestureDetector(
+                          onTap: () {
+                            ContactHelper.openInGoogleMaps(place['address']);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: ColorRes.background,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.primary.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: ColorRes.primary,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        place['name'] ?? '-',
+                                        style: const TextStyle(
+                                          fontWeight: AppFontWeights.semiBold,
+                                          fontSize: AppFontSizes.small,
+                                          color: ColorRes.textPrimary,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            place['distanceText'] ?? '-',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.caption,
+                                              color:
+                                                  ColorRes
+                                                      .leadGreyColor
+                                                      .shade600,
+                                            ),
+                                          ),
+                                          Text(
+                                            ' • ',
+                                            style: TextStyle(
+                                              color:
+                                                  ColorRes
+                                                      .leadGreyColor
+                                                      .shade600,
+                                            ),
+                                          ),
+                                          Text(
+                                            place['walkTime'] ?? '-',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.caption,
+                                              color:
+                                                  ColorRes
+                                                      .leadGreyColor
+                                                      .shade600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 14,
+                                  color: ColorRes.leadGreyColor.shade400,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                );
+              }),
+
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryButton(String label, IconData icon, String type) {
+    return Obx(() {
+      final isSelected = widget.mapController.selectedCategory.value == type;
+      return GestureDetector(
+        onTap: () {
+          widget.mapController.selectCategory(type);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color:
+                isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color:
+                  isSelected
+                      ? ColorRes.primary
+                      : ColorRes.leadGreyColor.shade300,
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color:
+                    isSelected
+                        ? ColorRes.white
+                        : ColorRes.leadGreyColor.shade700,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  fontWeight:
+                      isSelected
+                          ? AppFontWeights.semiBold
+                          : AppFontWeights.medium,
+                  color:
+                      isSelected
+                          ? ColorRes.white
+                          : ColorRes.leadGreyColor.shade700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }
 
