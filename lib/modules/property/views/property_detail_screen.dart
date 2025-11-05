@@ -23,6 +23,9 @@ import 'package:housing_flutter_app/modules/property/views/widgets/overall_ratin
 import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
+import 'package:housing_flutter_app/app/manager/compare_manager.dart';
+import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
+
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:video_player/video_player.dart';
@@ -40,6 +43,7 @@ class PropertyDetailScreen extends StatefulWidget {
   final Items? property;
 
   const PropertyDetailScreen({super.key, this.property});
+
 
   @override
   State<PropertyDetailScreen> createState() => _PropertyDetailScreenState();
@@ -122,6 +126,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   // Convenience getter
   Items? get property => widget.property;
+
+  final CompareManager compare = Get.put(CompareManager(), permanent: true);
+
 
   @override
   Widget build(BuildContext context) {
@@ -666,30 +673,81 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 ),
               ),
 
-              /// Right side icons
+              /// Right side icons (compare, favorite, share)
               Positioned(
                 top: 16,
                 right: 16,
                 child: Row(
                   children: [
+                    // Compare button
+                    Obx(() {
+                      final selected = compare.isSelected(id);
+                      return CircularIcon(
+                        icon: Icons.compare_arrows,
+                        backgroundColor:selected ?ColorRes.primary: ColorRes.white,
+                        iconColor: selected ? ColorRes.white : ColorRes.primary,
+                        onPressed: () {
+                          final before = compare.count;
+                          compare.toggle(property!, max: 2);
+                          final after = compare.count;
+
+                          final ctx = Get.overlayContext;
+                          if (ctx != null) {
+                            if (after > before) {
+                              CustomSnackBar.show(
+                                ctx,
+                                message: after == 2
+                                    ? 'Ready to compare!'
+                                    : 'Added to compare (${after}/2)',
+                                type: SnackBarType.success,
+                                actionLabel: after == 2 ? 'Compare Now' : null,
+                                onActionPressed: after == 2
+                                    ? () {
+                                        Get.back(); // Close snackbar first
+                                        if (Get.isRegistered<NavigationController>()) {
+                                          Get.find<NavigationController>().changeIndex(2);
+                                        }
+                                      }
+                                    : null,
+                              );
+                            } else if (after < before) {
+                              CustomSnackBar.show(
+                                ctx,
+                                message: after == 0
+                                    ? 'Removed from compare'
+                                    : 'Removed from compare (${after}/2)',
+                                type: SnackBarType.info,
+                              );
+                            } else if (after == before && before >= 2) {
+                              CustomSnackBar.show(
+                                ctx,
+                                message: 'You can only compare 2 properties',
+                                type: SnackBarType.warning,
+                              );
+                            }
+                          }
+                        },
+                      );
+                    }),
+                    const SizedBox(width: 12),
+                    // Favorite button
                     Obx(() {
                       final isFavorite = controller.favoriteIds.contains(id);
                       return CircularIcon(
-                        icon:
-                            isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border_rounded,
+                        icon: isFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border_rounded,
                         backgroundColor: ColorRes.white,
-                        iconColor:
-                            isFavorite
-                                ? ColorRes.redAccentColor
-                                : ColorRes.black,
+                        iconColor: isFavorite
+                            ? ColorRes.redAccentColor
+                            : ColorRes.black,
                         onPressed: () {
                           controller.toggleFavorite(id);
                         },
                       );
                     }),
                     const SizedBox(width: 12),
+                    // Share button
                     CircularIcon(
                       icon: Icons.share_outlined,
                       onPressed: () {},
@@ -1219,14 +1277,19 @@ class CircularIcon extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onPressed;
   final Color? backgroundColor; // add this
-  final Color? iconColor; // add this
+  final Color? iconColor;
+  final double sizeContainer;
+  final double iconSize;// add this
 
   const CircularIcon({
     super.key,
     required this.icon,
     this.onPressed,
     this.backgroundColor, // add this
-    this.iconColor, // add this
+    this.iconColor,
+    this.sizeContainer=40,
+    this.iconSize=24
+    // add this
   });
 
   @override
@@ -1234,13 +1297,13 @@ class CircularIcon extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        height: 40,
-        width: 40,
+        height: sizeContainer,
+        width: sizeContainer,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
           color: backgroundColor ?? ColorRes.leadGreyColor.shade300, // fallback
         ),
-        child: Icon(icon, color: iconColor ?? ColorRes.black),
+        child: Icon(icon, color: iconColor ?? ColorRes.black,size: iconSize,),
       ),
     );
   }

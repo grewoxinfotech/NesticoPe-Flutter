@@ -44,14 +44,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
-import '../../../../app/constants/img_res.dart';
 import '../../../../app/constants/size_manager.dart';
 import '../../../../app/widgets/image/custom_image.dart';
-
-import 'package:flutter/material.dart';
+import '../../../../app/manager/compare_manager.dart';
+import '../../../../data/network/property/models/property_model.dart';
+import '../../../../app/manager/property/property_pricemanager.dart';
+import '../../../propert_detail/view/property_details.dart';
 
 // class PropertyCardForCompare extends StatelessWidget {
 //   final String image;
@@ -159,20 +159,32 @@ import 'package:flutter/material.dart';
 // }
 
 class PropertyCardForCompare extends StatelessWidget {
-  final String image;
-  final String title;
-  final String label;
-  final String address;
-  final String price;
+  final Items item;
+  final VoidCallback? onRemove;
 
-  const PropertyCardForCompare({
-    super.key,
-    required this.title,
-    required this.label,
-    required this.image,
-    required this.address,
-    required this.price,
-  });
+  const PropertyCardForCompare({super.key, required this.item, this.onRemove});
+
+  String _firstImage(Items i) {
+    final imgs = i.propertyMedia?.images;
+    if (imgs != null && imgs.isNotEmpty) return imgs.first;
+    return '';
+  }
+
+  String _title(Items i) {
+    if ((i.type ?? '').toLowerCase() == 'residential') {
+      final bhk = i.propertyDetails?.bhk ?? 0;
+      return '${bhk} BHK ${i.propertyType?.capitalizeFirst ?? ''}';
+    }
+    return i.propertyType?.capitalizeFirst ?? (i.title ?? '');
+  }
+
+  String _price(Items i) {
+    final pm = PropertyPriceManager(
+      listingType: i.listingType ?? '',
+      financialInfo: i.propertyDetails?.financialInfo,
+    );
+    return pm.displayPrice;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,119 +200,148 @@ class PropertyCardForCompare extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
         ),
-        child: Row(
+        child: Stack(
           children: [
-            // Image Section
-            ClipRRect(
-              borderRadius: BorderRadius.horizontal(left: Radius.circular(11)),
-              child: CustomImage(
-                type: CustomImageType.asset,
-                src: image,
-                width: 120,
-                height: 121,
-                fit: BoxFit.cover,
-              ),
-            ),
+            Row(
+              children: [
+                // Image Section
+                ClipRRect(
+                  borderRadius: BorderRadius.horizontal(
+                    left: Radius.circular(11),
+                  ),
+                  child:
+                      (_firstImage(item).isNotEmpty)
+                          ? CustomImage(
+                            type: CustomImageType.network,
+                            src: _firstImage(item),
+                            width: 120,
+                            height: 121,
+                            fit: BoxFit.cover,
+                          )
+                          : Container(
+                            width: 120,
+                            height: 121,
+                            color: ColorRes.leadGreyColor.shade200,
+                            child: const Icon(
+                              Icons.image,
+                              color: ColorRes.grey,
+                            ),
+                          ),
+                ),
 
-            // Content Section
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Title
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: AppFontSizes.bodyMedium,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textColor,
-                        height: 1.2,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-
-
-                    // Address
-                    Text(
-                      address,
-                      style: TextStyle(
-                        fontSize: AppFontSizes.caption,
-                        color: ColorRes.leadGreyColor[600],
-                        height: 1.3,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-
-
-                    // Property Typ
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+                // Content Section
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.bed_outlined, size: 13, color: const Color(0xFF2563EB)),
-                        const SizedBox(width: 4),
+                        // Title
                         Text(
-                          title,
+                          _title(item),
+                          style: TextStyle(
+                            fontSize: AppFontSizes.bodyMedium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textColor,
+                            height: 1.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+
+                        // Address
+                        Text(
+                          item.address ?? '-',
                           style: TextStyle(
                             fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.blackShade54,
+                            color: ColorRes.leadGreyColor[600],
+                            height: 1.3,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+
+                        // Property Typ
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.bed_outlined,
+                              size: 13,
+                              color: const Color(0xFF2563EB),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              (item.propertyDetails?.bhk ?? 0).toString() +
+                                  ' BHK',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.blackShade54,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Price Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _price(item),
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.extraBody,
+                                  fontWeight: AppFontWeights.bold,
+                                  color: ColorRes.textColor,
+                                  height: 1,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.primary,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                'Visit',
+                                style: TextStyle(
+                                  fontWeight: AppFontWeights.semiBold,
+                                  fontSize: AppFontSizes.small,
+                                  color: ColorRes.white,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-
-
-
-                    // Price Row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            price,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.extraBody,
-                              fontWeight: AppFontWeights.bold,
-
-                              color: ColorRes.textColor,
-                              height: 1,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'Visit',
-                            style: TextStyle(
-                              fontWeight: AppFontWeights.semiBold,
-                              fontSize: AppFontSizes.small,
-                              color: ColorRes.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
+                ),
+              ],
+            ),
+            // Remove button
+            if (onRemove != null)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: onRemove,
+                  child: const Icon(
+                    Icons.cancel,
+                    color: ColorRes.error,
+                    size: 16,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -318,10 +359,7 @@ class CompareScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: ColorRes.black, size: 20),
-          onPressed: () => Get.back(),
-        ),
+        automaticallyImplyLeading: false,
         title: Text(
           'Property Comparison',
           style: TextStyle(
@@ -339,230 +377,319 @@ class CompareScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PropertyCardForCompare(
-                  label: "Property A",
-                  title: "3 BHK",
-                  price: '2Cr',
-                  image: IMGRes.home2,
-                  address: 'Angan Residency Gurargon Karnatak India 358212',
-                ),
-                SizedBox(height: AppSpacing.small),
-                PropertyCardForCompare(
-                  label: "Property B",
-                  title: "2 BHK",
-                  price: '4.5Cr',
-                  image: IMGRes.home4,
-                  address: 'Angan Residency Gurargon Karnatak India 358212',
-                ),
-                SizedBox(height: 16),
-                // Detailed Comparison Section
-                Text(
-                  'Detailed Comparison',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.bold,
-                    color: ColorRes.black,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _ComparisonTable(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+          child: Obx(() {
+            final selected = CompareManager.to.selectedList;
 
-class _PropertyCard extends StatelessWidget {
-  final String imagePath;
-  final String propertyName;
-  final String propertyType;
-  final String location;
-  final String price;
-  final String description;
-  final String sellerName;
-  final double sellerRating;
-  final int sellerReviews;
-  final String sellerAvatar;
-  final Color? priceColor;
-
-  const _PropertyCard({
-    required this.imagePath,
-    required this.propertyName,
-    required this.propertyType,
-    required this.location,
-    required this.price,
-    required this.description,
-    required this.sellerName,
-    required this.sellerRating,
-    required this.sellerReviews,
-    required this.sellerAvatar,
-    this.priceColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Property Image
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Container(
-              height: 120,
-              width: double.infinity,
-              color: Colors.grey[300],
-              child: const Icon(Icons.image, size: 50, color: Colors.grey),
-              // Use Image.asset(imagePath) for actual images
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  propertyName,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '$propertyType -',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-                ),
-                Text(
-                  location,
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  price,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: priceColor ?? Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Seller Info
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: Colors.grey[300],
-                      child: const Icon(
-                        Icons.person,
-                        size: 20,
-                        color: Colors.grey,
+            // If no properties selected
+            if (selected.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 40),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.compare_arrows,
+                        size: 64,
+                        color: ColorRes.leadGreyColor[400],
                       ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No properties selected',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.leadGreyColor[700],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Select properties from home to compare',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.leadGreyColor[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            // If only 1 property selected
+            if (selected.length == 1) {
+              final item = selected[0];
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PropertyCardForCompare(
+                      item: item,
+                      onRemove: () {
+                        CompareManager.to.remove(item.id ?? '');
+                      },
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
+                    const SizedBox(height: 24),
+                    Center(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            sellerName,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(PropertyDetail());
+                            },
+                            child: Icon(
+                              Icons.add_circle_outline,
+                              size: 25,
+                              color: ColorRes.primary,
                             ),
                           ),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                size: 14,
-                                color: Colors.amber,
-                              ),
-                              const SizedBox(width: 2),
-                              Text(
-                                '$sellerRating ($sellerReviews',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                              const SizedBox(width: 2),
-                              Text(
-                                'reviews)',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
+                          const SizedBox(height: 12),
+                          Text(
+                            'Select one more property to compare',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.medium,
+                              color: ColorRes.leadGreyColor[700],
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                // Contact Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Contact Seller',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+              );
+            }
+
+            // If 2 or more properties selected, show comparison
+            final a = selected[0];
+            final b = selected[1];
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PropertyCardForCompare(
+                    item: a,
+                    onRemove: () {
+                      CompareManager.to.remove(a.id ?? '');
+                    },
+                  ),
+                  SizedBox(height: AppSpacing.small),
+                  PropertyCardForCompare(
+                    item: b,
+                    onRemove: () {
+                      CompareManager.to.remove(b.id ?? '');
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Detailed Comparison',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.bold,
+                      color: ColorRes.black,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
+                  const SizedBox(height: 12),
+                  _ComparisonTable(a: a, b: b),
+                ],
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
 }
 
+// class _PropertyCard extends StatelessWidget {
+//   final String imagePath;
+//   final String propertyName;
+//   final String propertyType;
+//   final String location;
+//   final String price;
+//   final String description;
+//   final String sellerName;
+//   final double sellerRating;
+//   final int sellerReviews;
+//   final String sellerAvatar;
+//   final Color? priceColor;
+//
+//   const _PropertyCard({
+//     required this.imagePath,
+//     required this.propertyName,
+//     required this.propertyType,
+//     required this.location,
+//     required this.price,
+//     required this.description,
+//     required this.sellerName,
+//     required this.sellerRating,
+//     required this.sellerReviews,
+//     required this.sellerAvatar,
+//     this.priceColor,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(16),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.05),
+//             blurRadius: 10,
+//             offset: const Offset(0, 2),
+//           ),
+//         ],
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           // Property Image
+//           ClipRRect(
+//             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+//             child: Container(
+//               height: 120,
+//               width: double.infinity,
+//               color: Colors.grey[300],
+//               child: const Icon(Icons.image, size: 50, color: Colors.grey),
+//               // Use Image.asset(imagePath) for actual images
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.all(12),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   propertyName,
+//                   style: const TextStyle(
+//                     fontSize: 18,
+//                     fontWeight: FontWeight.w700,
+//                     color: Colors.black,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 4),
+//                 Text(
+//                   '$propertyType -',
+//                   style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+//                 ),
+//                 Text(
+//                   location,
+//                   style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+//                 ),
+//                 const SizedBox(height: 12),
+//                 Text(
+//                   price,
+//                   style: TextStyle(
+//                     fontSize: 20,
+//                     fontWeight: FontWeight.w700,
+//                     color: priceColor ?? Colors.black,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 8),
+//                 Text(
+//                   description,
+//                   style: TextStyle(
+//                     fontSize: 12,
+//                     fontStyle: FontStyle.italic,
+//                     color: Colors.grey[600],
+//                   ),
+//                 ),
+//                 const SizedBox(height: 16),
+//                 // Seller Info
+//                 Row(
+//                   children: [
+//                     CircleAvatar(
+//                       radius: 18,
+//                       backgroundColor: Colors.grey[300],
+//                       child: const Icon(
+//                         Icons.person,
+//                         size: 20,
+//                         color: Colors.grey,
+//                       ),
+//                     ),
+//                     const SizedBox(width: 8),
+//                     Expanded(
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             sellerName,
+//                             style: const TextStyle(
+//                               fontSize: 13,
+//                               fontWeight: FontWeight.w600,
+//                               color: Colors.black,
+//                             ),
+//                           ),
+//                           Row(
+//                             children: [
+//                               const Icon(
+//                                 Icons.star,
+//                                 size: 14,
+//                                 color: Colors.amber,
+//                               ),
+//                               const SizedBox(width: 2),
+//                               Text(
+//                                 '$sellerRating ($sellerReviews',
+//                                 style: TextStyle(
+//                                   fontSize: 11,
+//                                   color: Colors.grey[600],
+//                                 ),
+//                               ),
+//                               const SizedBox(width: 2),
+//                               Text(
+//                                 'reviews)',
+//                                 style: TextStyle(
+//                                   fontSize: 11,
+//                                   color: Colors.grey[600],
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 const SizedBox(height: 12),
+//                 // Contact Button
+//                 SizedBox(
+//                   width: double.infinity,
+//                   child: ElevatedButton(
+//                     onPressed: () {},
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: Colors.blue,
+//                       foregroundColor: Colors.white,
+//                       padding: const EdgeInsets.symmetric(vertical: 12),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(12),
+//                       ),
+//                     ),
+//                     child: const Text(
+//                       'Contact Seller',
+//                       style: TextStyle(
+//                         fontSize: 14,
+//                         fontWeight: FontWeight.w600,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
 class _ComparisonTable extends StatelessWidget {
+  final Items a;
+  final Items b;
+
+  const _ComparisonTable({super.key, required this.a, required this.b});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -600,20 +727,28 @@ class _ComparisonTable extends StatelessWidget {
                     fontWeight: AppFontWeights.medium,
                   ),
                 ),
-                Text(
-                  'Property A',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.medium,
+                Expanded(
+                  child: Text(
+                    _title(a),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.medium,
+                    ),
                   ),
                 ),
-                Text(
-                  'Property B',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.medium,
+                Expanded(
+                  child: Text(
+                    _title(b),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.medium,
+                    ),
                   ),
                 ),
               ],
@@ -623,72 +758,122 @@ class _ComparisonTable extends StatelessWidget {
           _ComparisonRow(
             icon: Icons.home_outlined,
             label: 'Property\nType',
-            valueA: 'Apartment',
-            valueB: 'Villa',
+            valueA: a.propertyType ?? '-',
+            valueB: b.propertyType ?? '-',
           ),
           _ComparisonRow(
             icon: Icons.location_on_outlined,
             label: 'Location',
-            valueA: 'Downtown',
-            valueB: 'Lakeside',
+            valueA: a.address ?? '-',
+            valueB: b.address ?? '-',
           ),
           _ComparisonRow(
             icon: Icons.square_foot,
-            label: 'Area',
-            valueA: '1500 sq ft',
-            valueB: '1650 sq ft',
-            highlightB: true,
+            label: 'Built-up Area',
+            valueA: _area(a),
+            valueB: _area(b),
+            highlightB: _highlightB(
+              a,
+              b,
+              (x) => x.propertyDetails?.propertyBuiltUpArea ?? 0,
+            ),
           ),
           _ComparisonRow(
             icon: Icons.bed_outlined,
             label: 'Bedrooms',
-            valueA: '3',
-            valueB: '2',
+            valueA: (a.propertyDetails?.bhk ?? 0).toString(),
+            valueB: (b.propertyDetails?.bhk ?? 0).toString(),
           ),
           _ComparisonRow(
             icon: Icons.bathtub_outlined,
             label: 'Bathrooms',
-            valueA: '2',
-            valueB: '2',
+            valueA: (a.propertyDetails?.bathroom ?? 0).toString(),
+            valueB: (b.propertyDetails?.bathroom ?? 0).toString(),
           ),
           _ComparisonRow(
             icon: Icons.layers_outlined,
             label: 'Floor',
-            valueA: '8 of 12',
-            valueB: 'G of 1',
+            valueA: _floor(a),
+            valueB: _floor(b),
           ),
           _ComparisonRow(
             icon: Icons.monetization_on_outlined,
             label: 'Price/sq\nft',
-            valueA: '₹ 5,667',
-            valueB: '₹ 4,727',
-            highlightB: true,
+            valueA: _ppsf(a) ?? '-',
+            valueB: _ppsf(b) ?? '-',
+            highlightB: _highlightB(
+              a,
+              b,
+              (x) => x.propertyDetails?.financialInfo?.pricePerSqft ?? 0,
+            ),
           ),
           _ComparisonRow(
-            icon: Icons.fitness_center_outlined,
+            icon: Icons.checklist_rtl,
             label: 'Amenities',
-            valueA: 'Gym, Pool',
-            valueB: 'Gym, Pool,\nParking,\nGarden',
-            highlightB: true,
+            valueA: _amenities(a),
+            valueB: _amenities(b),
+            highlightB:
+                (b.propertyDetails?.amenities?.length ?? 0) >
+                (a.propertyDetails?.amenities?.length ?? 0),
           ),
           _ComparisonRow(
-            icon: Icons.calendar_today_outlined,
-            label: 'Year\nBuilt',
-            valueA: '2020',
-            valueB: '2018',
-          ),
-          _ComparisonRow(
-            icon: Icons.star_outline,
-            label: 'Seller\nRating',
-            valueA: '4.5',
-            valueB: '4.8',
-            highlightB: true,
+            icon: Icons.price_change,
+            label: 'Price',
+            valueA:
+                PropertyPriceManager(
+                  listingType: a.listingType ?? '',
+                  financialInfo: a.propertyDetails?.financialInfo,
+                ).displayPrice,
+            valueB:
+                PropertyPriceManager(
+                  listingType: b.listingType ?? '',
+                  financialInfo: b.propertyDetails?.financialInfo,
+                ).displayPrice,
             isLast: true,
           ),
         ],
       ),
     );
   }
+}
+
+String _title(Items i) {
+  if ((i.type ?? '').toLowerCase() == 'residential') {
+    final bhk = i.propertyDetails?.bhk ?? 0;
+    return '${bhk} BHK ${i.propertyType?.capitalizeFirst ?? ''}';
+  }
+  return i.propertyType?.capitalizeFirst ?? (i.title ?? '');
+}
+
+String _area(Items i) {
+  final v = i.propertyDetails?.propertyBuiltUpArea;
+  if (v == null || v == 0) return '-';
+  final unit = i.propertyDetails?.propertyBuiltUpAreaUnit ?? 'sq.ft';
+  return '${v.toStringAsFixed(0)} $unit';
+}
+
+String? _ppsf(Items i) {
+  final v = i.propertyDetails?.financialInfo?.pricePerSqft ?? 0;
+  return v > 0 ? '₹${v.toStringAsFixed(0)}' : null;
+}
+
+String _floor(Items i) {
+  final f = i.propertyDetails?.floorInfo?.floorNumber;
+  final t = i.propertyDetails?.floorInfo?.totalFloors;
+  if (f == null && t == null) return '-';
+  if (f == null) return 'of ${t}';
+  if (t == null) return '${f}';
+  return '${f} of ${t}';
+}
+
+String _amenities(Items i) {
+  final a = i.propertyDetails?.amenities ?? [];
+  if (a.isEmpty) return '-';
+  return a.take(4).join(', ');
+}
+
+bool _highlightB(Items a, Items b, num Function(Items) pick) {
+  return pick(b) > pick(a);
 }
 
 class _ComparisonRow extends StatelessWidget {

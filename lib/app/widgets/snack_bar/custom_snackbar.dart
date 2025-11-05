@@ -6,26 +6,25 @@ import '../../constants/color_res.dart';
 /// Custom SnackBar widget with different types and animations
 class CustomSnackBar {
   static void show(
-    BuildContext context, {
-    required String message,
-    SnackBarType type = SnackBarType.info,
-    Duration duration = const Duration(seconds: 3),
-    VoidCallback? onActionPressed,
-    String? actionLabel,
-  }) {
+      BuildContext context, {
+        required String message,
+        SnackBarType type = SnackBarType.info,
+        Duration? duration = const Duration(seconds: 3),
+        VoidCallback? onActionPressed,
+        String? actionLabel,
+      }) {
     final overlay = Overlay.of(context, rootOverlay: true);
     late OverlayEntry overlayEntry;
 
     overlayEntry = OverlayEntry(
-      builder:
-          (context) => _CustomSnackBarWidget(
-            message: message,
-            type: type,
-            duration: duration,
-            onDismiss: () => overlayEntry.remove(),
-            onActionPressed: onActionPressed,
-            actionLabel: actionLabel,
-          ),
+      builder: (context) => _CustomSnackBarWidget(
+        message: message,
+        type: type,
+        duration: duration??Duration(),
+        onDismiss: () => overlayEntry.remove(),
+        onActionPressed: onActionPressed,
+        actionLabel: actionLabel,
+      ),
     );
 
     overlay.insert(overlayEntry);

@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/auth/views/splash_screen.dart';
 import 'package:housing_flutter_app/app/services/network_status_service.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:housing_flutter_app/app/manager/compare_manager.dart';
 
 import 'app/services/network_status_service.dart';
 import 'app/theme/themes.dart' as AppTheme;
@@ -27,6 +28,7 @@ void main() async {
 
   await Get.putAsync(() => NetworkStatusService().init());
   await UserHelper.initUserType();
+  Get.put(CompareManager(), permanent: true);
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,

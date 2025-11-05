@@ -10,6 +10,9 @@ import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/favorite.dart';
+import '../../../../app/manager/compare_manager.dart';
+import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
+import '../../../../widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
@@ -17,6 +20,7 @@ import '../property_detail_screen.dart';
 
 class PropertyCard extends StatefulWidget {
   final Items property;
+  
   final bool isRecentlyViewed;
 
   const PropertyCard({
@@ -31,6 +35,7 @@ class PropertyCard extends StatefulWidget {
 
 class _PropertyCardState extends State<PropertyCard> {
   final controller = Get.find<PropertyController>();
+  final CompareManager compare = Get.put(CompareManager(), permanent: true);
   bool isFavorite = false;
 
   @override
@@ -121,30 +126,98 @@ class _PropertyCardState extends State<PropertyCard> {
                     child: _buildTag(widget.property.listingType ?? "-"),
                   ),
 
-                  // 🔹 Favorite Button
+// 🔹 Favorite & Compare Buttons
                   Positioned(
                     top: 12,
                     right: 12,
-                    child: GestureDetector(
-                      onTap: () {
-                        // controller.addFavorite(widget.property.id ?? '');
-                        // setState(() => isFavorite = !isFavorite);
-                        controller.toggleFavorite(widget.property.id ?? '');
-                      },
-                      child: CircleAvatar(
-                        backgroundColor: ColorRes.white,
-                        radius: 18,
-                        child: Obx(() {
-                          isFavorite = controller.favoriteIds.contains(
-                            widget.property.id,
-                          );
-                          return Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? ColorRes.error : ColorRes.leadGreyColor,
-                            size: 20,
-                          );
-                        }),
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Compare toggle
+                        GestureDetector(
+                          onTap: () {
+                            final before = compare.count;
+                            compare.toggle(widget.property, max: 2);
+                            final after = compare.count;
+
+                            // Show feedback
+                            final ctx = Get.overlayContext;
+                            if (ctx != null) {
+                              if (after > before) {
+                                CustomSnackBar.show(
+                                  ctx,
+                                  message: after == 2
+                                      ? 'Ready to compare!'
+                                      : 'Added to compare (${after}/2)',
+                                  type: SnackBarType.success,
+                                  actionLabel: after == 2 ? 'Compare Now' : null,
+                                  onActionPressed: after == 2
+                                      ? () {
+                                          Get.back(); // Close snackbar first
+                                          if (Get.isRegistered<NavigationController>()) {
+                                            Get.find<NavigationController>().changeIndex(2);
+                                          }
+                                        }
+                                      : null,
+                                );
+                              } else if (after < before) {
+                                CustomSnackBar.show(
+                                  ctx,
+                                  message: after == 0
+                                      ? 'Removed from compare'
+                                      : 'Removed from compare (${after}/2)',
+                                  type: SnackBarType.info,
+                                );
+                              } else if (after == before && before >= 2) {
+                                // Max limit reached
+                                CustomSnackBar.show(
+                                  ctx,
+                                  message: 'You can only compare 2 properties',
+                                  type: SnackBarType.warning,
+                                );
+                              }
+                            }
+                          },
+                          child: Obx(() {
+                            final selected = compare.isSelected(widget.property.id);
+                            return CircleAvatar(
+                              backgroundColor:selected ?ColorRes.primary: ColorRes.white,
+
+                              radius: 18,
+                              child: Icon(
+                                Icons.compare_arrows,
+                                color:  selected ? ColorRes.white : ColorRes.primary,
+                                size: 20,
+                              ),
+                            );
+                          }),
+                        ),
+                        const SizedBox(width: 8),
+                        // Favorite toggle
+                        GestureDetector(
+                          onTap: () {
+                            controller.toggleFavorite(widget.property.id ?? '');
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: ColorRes.white,
+                            radius: 18,
+                            child: Obx(() {
+                              isFavorite = controller.favoriteIds.contains(
+                                widget.property.id,
+                              );
+                              return Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: isFavorite
+                                    ? ColorRes.error
+                                    : ColorRes.leadGreyColor,
+                                size: 20,
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 

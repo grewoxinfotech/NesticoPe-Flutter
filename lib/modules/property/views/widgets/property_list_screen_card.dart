@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/modules/home/views/compare_screen/comapre_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/img_res.dart';
 import '../../../../app/constants/size_manager.dart';
+import '../../../../app/manager/compare_manager.dart';
+import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../../widgets/button/button.dart';
 import '../../../../widgets/display/card.dart';
+import '../../../../widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../property_detail_screen.dart';
 
 class PropertyListScreenCard extends StatelessWidget {
-  // final Map<String, dynamic> property;
   final Items? items;
 
   const PropertyListScreenCard({super.key, this.items});
@@ -25,7 +28,7 @@ class PropertyListScreenCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image with Favorite Icon
+            // Image with Compare & Favorite Icons
             Stack(
               children: [
                 SizedBox(
@@ -72,6 +75,77 @@ class PropertyListScreenCard extends StatelessWidget {
                               },
                             )
                             : Image.asset(IMGRes.home1, fit: BoxFit.cover),
+                  ),
+                ),
+                // Compare & Favorite buttons
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Compare button
+                      Builder(
+                        builder: (context) {
+                          final compare = Get.put(CompareManager(), permanent: true);
+                          return GestureDetector(
+                            onTap: () {
+                              final before = compare.count;
+                              compare.toggle(items!, max: 2);
+                              final after = compare.count;
+
+                              final ctx = Get.overlayContext;
+                              if (ctx != null) {
+                                if (after > before) {
+                                  CustomSnackBar.show(
+                                    ctx,
+                                    message: after == 2
+                                        ? 'Ready to compare!'
+                                        : 'Added to compare (${after}/2)',
+                                    type: SnackBarType.success,
+                                    actionLabel: after == 2 ? 'Compare Now' : null,
+                                    onActionPressed: after == 2
+                                        ? () {
+                                            Get.back(); // Close snackbar first
+                                            if (Get.isRegistered<NavigationController>()) {
+                                              Get.find<NavigationController>().changeIndex(2);
+                                            }
+                                          }
+                                        : null,
+                                  );
+                                } else if (after < before) {
+                                  CustomSnackBar.show(
+                                    ctx,
+                                    message: after == 0
+                                        ? 'Removed from compare'
+                                        : 'Removed from compare (${after}/2)',
+                                    type: SnackBarType.info,
+                                  );
+                                } else if (after == before && before >= 2) {
+                                  CustomSnackBar.show(
+                                    ctx,
+                                    message: 'You can only compare 2 properties',
+                                    type: SnackBarType.warning,
+                                  );
+                                }
+                              }
+                            },
+                            child: Obx(() {
+                              final selected = compare.isSelected(items?.id);
+                              return CircleAvatar(
+                                backgroundColor: ColorRes.white,
+                                radius: 18,
+                                child: Icon(
+                                  Icons.compare_arrows,
+                                  color: selected ? ColorRes.primary : ColorRes.leadGreyColor,
+                                  size: 20,
+                                ),
+                              );
+                            }),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
