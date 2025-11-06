@@ -82,7 +82,7 @@ class NetworkStatusService extends GetxService {
   /// Called when internet disconnects
   void _onDisconnected() {
     _wasDisconnected = true;
-    _redirectToNoInternetScreen();
+    // _redirectToNoInternetScreen();
   }
   
   /// Called when internet reconnects

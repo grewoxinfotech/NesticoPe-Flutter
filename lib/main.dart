@@ -41,7 +41,7 @@ void main() async {
       theme: AppTheme.lightTheme,
       initialBinding: CustomBinding(),
       // Show no internet screen if no connection, otherwise splash
-      home: hasInternet ? const SplashScreen() : const NoInternetScreen(),
+      home: const SplashScreen(),
       // Define named routes
       getPages: [
         GetPage(name: '/splash', page: () => const SplashScreen()),

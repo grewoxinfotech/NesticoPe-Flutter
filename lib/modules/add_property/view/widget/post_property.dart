@@ -732,24 +732,24 @@ class PostProperty extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 12),
-              Obx(
-                () => Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Checkbox(
-                      value: controller.isShareWithAgents.value,
-                      onChanged: (val) {
-                        controller.isShareWithAgents.value = val ?? false;
-                      },
-                    ),
-                    Text(
-                      'Share listing information with agents',
-                      style: TextStyle(fontSize: AppFontSizes.bodySmall),
-                    ),
-                  ],
-                ),
-              ),
+              // SizedBox(height: 12),
+              // Obx(
+              //   () => Row(
+              //     mainAxisAlignment: MainAxisAlignment.start,
+              //     children: [
+              //       Checkbox(
+              //         value: controller.isShareWithAgents.value,
+              //         onChanged: (val) {
+              //           controller.isShareWithAgents.value = val ?? false;
+              //         },
+              //       ),
+              //       Text(
+              //         'Share listing information with agents',
+              //         style: TextStyle(fontSize: AppFontSizes.bodySmall),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               // SizedBox(height: 28),
             ],
           ),

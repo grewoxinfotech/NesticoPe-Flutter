@@ -56,7 +56,7 @@ class RentAdvanceDetail extends StatelessWidget {
       "30% discount on security deposit",
     ];
     final rent_Home_Services = ["Free Home Cleaning", "Free Painting Service "];
-    final rent_Preferred_Tenants = ["Family", "Bachelors", "Company"];
+    final rent_Preferred_Tenants = ["Family", "Bachelors", "Company","Any"];
     final rent_Selected_Tenants_for_Bachelors = [
       'Open to Both',
       "Men Only",
@@ -242,186 +242,186 @@ class RentAdvanceDetail extends StatelessWidget {
                   ),
                 );
               }),
-              SizedBox(height: 16),
-              Text("Offers - Increase upto 50% leads"),
-              SizedBox(height: 16),
+              // SizedBox(height: 16),
+              // Text("Offers - Increase upto 50% leads"),
+              // SizedBox(height: 16),
               if (controller.lookingTo.value == 'Rent') ...[
-                buildSizedSectionTitle("Legal"),
-                SizedBox(height: 8),
-                SelectableChipRow(
-                  options: rent_legal,
-                  selectedItems: controller.rent_Legal,
-                  onTap: (option) {
-                    controller.toggleItemInList(controller.rent_Legal, option);
-                  },
-                  // chipWidth: 180,
-                  // fontSize: 12,
-                  fontSize: AppFontSizes.small,
-                  selectedColor: ColorRes.primary,
-                  unselectedColor: ColorRes.white,
-                  selectedTextColor: ColorRes.primary,
-                  unselectedTextColor: ColorRes.textPrimary,
-                ),
-                SizedBox(height: 16),
-                buildSizedSectionTitle("Rentals"),
-                SizedBox(height: 8),
-                SelectableChipRow(
-                  options: rent_Rentals,
-                  selectedItems: controller.rent_Rentals,
-                  onTap: (option) {
-                    controller.toggleItemInList(
-                      controller.rent_Rentals,
-                      option,
-                    );
-                  },
-
-                  fontSize: AppFontSizes.small,
-                  selectedColor: ColorRes.primary,
-                  unselectedColor: ColorRes.white,
-                  selectedTextColor: ColorRes.primary,
-                  unselectedTextColor: ColorRes.textPrimary,
-                ),
-                SizedBox(height: 16),
-                buildSizedSectionTitle("Security Deposit"),
-                SizedBox(height: 8),
-                SelectableChipRow(
-                  options: rent_Security_DepositType,
-                  selectedItems: controller.rent_Security_DepositType,
-                  onTap: (option) {
-                    controller.toggleItemInList(
-                      controller.rent_Security_DepositType,
-                      option,
-                    );
-                  },
-
-                  // fontSize: 12,
-                  fontSize: AppFontSizes.small,
-                  selectedColor: ColorRes.primary,
-                  unselectedColor: ColorRes.white,
-                  selectedTextColor: ColorRes.primary,
-                  unselectedTextColor: ColorRes.textPrimary,
-                ),
-                SizedBox(height: 16),
-                buildSizedSectionTitle("Home Services"),
-                SizedBox(height: 8),
-                SelectableChipRow(
-                  options: rent_Home_Services,
-                  selectedItems: controller.rent_HomeServices,
-                  onTap: (option) {
-                    controller.toggleItemInList(
-                      controller.rent_HomeServices,
-                      option,
-                    );
-                  },
-
-                  // fontSize: 12,
-                  fontSize: AppFontSizes.small,
-                  selectedColor: ColorRes.primary,
-                  unselectedColor: ColorRes.white,
-                  selectedTextColor: ColorRes.primary,
-                  unselectedTextColor: ColorRes.textPrimary,
-                ),
+                // buildSizedSectionTitle("Legal"),
+                // SizedBox(height: 8),
+                // SelectableChipRow(
+                //   options: rent_legal,
+                //   selectedItems: controller.rent_Legal,
+                //   onTap: (option) {
+                //     controller.toggleItemInList(controller.rent_Legal, option);
+                //   },
+                //   // chipWidth: 180,
+                //   // fontSize: 12,
+                //   fontSize: AppFontSizes.small,
+                //   selectedColor: ColorRes.primary,
+                //   unselectedColor: ColorRes.white,
+                //   selectedTextColor: ColorRes.primary,
+                //   unselectedTextColor: ColorRes.textPrimary,
+                // ),
+                // SizedBox(height: 16),
+                // buildSizedSectionTitle("Rentals"),
+                // SizedBox(height: 8),
+                // SelectableChipRow(
+                //   options: rent_Rentals,
+                //   selectedItems: controller.rent_Rentals,
+                //   onTap: (option) {
+                //     controller.toggleItemInList(
+                //       controller.rent_Rentals,
+                //       option,
+                //     );
+                //   },
+                //
+                //   fontSize: AppFontSizes.small,
+                //   selectedColor: ColorRes.primary,
+                //   unselectedColor: ColorRes.white,
+                //   selectedTextColor: ColorRes.primary,
+                //   unselectedTextColor: ColorRes.textPrimary,
+                // ),
+                // SizedBox(height: 16),
+                // buildSizedSectionTitle("Security Deposit"),
+                // SizedBox(height: 8),
+                // SelectableChipRow(
+                //   options: rent_Security_DepositType,
+                //   selectedItems: controller.rent_Security_DepositType,
+                //   onTap: (option) {
+                //     controller.toggleItemInList(
+                //       controller.rent_Security_DepositType,
+                //       option,
+                //     );
+                //   },
+                //
+                //   // fontSize: 12,
+                //   fontSize: AppFontSizes.small,
+                //   selectedColor: ColorRes.primary,
+                //   unselectedColor: ColorRes.white,
+                //   selectedTextColor: ColorRes.primary,
+                //   unselectedTextColor: ColorRes.textPrimary,
+                // ),
+                // SizedBox(height: 16),
+                // buildSizedSectionTitle("Home Services"),
+                // SizedBox(height: 8),
+                // SelectableChipRow(
+                //   options: rent_Home_Services,
+                //   selectedItems: controller.rent_HomeServices,
+                //   onTap: (option) {
+                //     controller.toggleItemInList(
+                //       controller.rent_HomeServices,
+                //       option,
+                //     );
+                //   },
+                //
+                //   // fontSize: 12,
+                //   fontSize: AppFontSizes.small,
+                //   selectedColor: ColorRes.primary,
+                //   unselectedColor: ColorRes.white,
+                //   selectedTextColor: ColorRes.primary,
+                //   unselectedTextColor: ColorRes.textPrimary,
+                // ),
               ] else if (controller.lookingTo.value == 'Sell') ...[
-                buildSizedSectionTitle("Brokerage and loan"),
-                SizedBox(height: 8),
-                SelectableChipRow(
-                  options: sell_Brokerage_and_loan,
-                  selectedItems: controller.sell_Brokerage,
-                  onTap: (option) {
-                    controller.toggleItemInList(
-                      controller.sell_Brokerage,
-                      option,
-                    );
-                  },
-                  // chipWidth: 180,
-                  // fontSize: 12,
-                  fontSize: AppFontSizes.small,
-                  selectedColor: ColorRes.primary,
-                  unselectedColor: ColorRes.white,
-                  selectedTextColor: ColorRes.primary,
-                  unselectedTextColor: ColorRes.textPrimary,
-                ),
-                SizedBox(height: 16),
-                buildSizedSectionTitle("Registration"),
-                SizedBox(height: 8),
-                SelectableChipRow(
-                  options: sell_Registration_and_Possession,
-                  selectedItems: controller.sell_Registration_Charges,
-                  onTap: (option) {
-                    controller.toggleItemInList(
-                      controller.sell_Registration_Charges,
-                      option,
-                    );
-                  },
-                  // chipWidth: 180,
-                  fontSize: 12,
-                  selectedColor: ColorRes.primary,
-                  unselectedColor: ColorRes.white,
-                  selectedTextColor: ColorRes.primary,
-                  unselectedTextColor: ColorRes.textPrimary,
-                ),
-                SizedBox(height: 16),
-                buildSizedSectionTitle("Amenities and Furnishing"),
-                SizedBox(height: 8),
-                SelectableChipRow(
-                  options: sell_Amenities,
-                  selectedItems: controller.sell_Amenities_Furniture,
-                  onTap: (option) {
-                    controller.toggleItemInList(
-                      controller.sell_Amenities_Furniture,
-                      option,
-                    );
-                  },
-                  // chipWidth: 180,
-                  // fontSize: 12,
-                  fontSize: AppFontSizes.small,
-                  selectedColor: ColorRes.primary,
-                  unselectedColor: ColorRes.white,
-                  selectedTextColor: ColorRes.primary,
-                  unselectedTextColor: ColorRes.textPrimary,
-                ),
+                // buildSizedSectionTitle("Brokerage and loan"),
+                // SizedBox(height: 8),
+                // SelectableChipRow(
+                //   options: sell_Brokerage_and_loan,
+                //   selectedItems: controller.sell_Brokerage,
+                //   onTap: (option) {
+                //     controller.toggleItemInList(
+                //       controller.sell_Brokerage,
+                //       option,
+                //     );
+                //   },
+                //   // chipWidth: 180,
+                //   // fontSize: 12,
+                //   fontSize: AppFontSizes.small,
+                //   selectedColor: ColorRes.primary,
+                //   unselectedColor: ColorRes.white,
+                //   selectedTextColor: ColorRes.primary,
+                //   unselectedTextColor: ColorRes.textPrimary,
+                // ),
+                // SizedBox(height: 16),
+                // buildSizedSectionTitle("Registration"),
+                // SizedBox(height: 8),
+                // SelectableChipRow(
+                //   options: sell_Registration_and_Possession,
+                //   selectedItems: controller.sell_Registration_Charges,
+                //   onTap: (option) {
+                //     controller.toggleItemInList(
+                //       controller.sell_Registration_Charges,
+                //       option,
+                //     );
+                //   },
+                //   // chipWidth: 180,
+                //   fontSize: 12,
+                //   selectedColor: ColorRes.primary,
+                //   unselectedColor: ColorRes.white,
+                //   selectedTextColor: ColorRes.primary,
+                //   unselectedTextColor: ColorRes.textPrimary,
+                // ),
+                // SizedBox(height: 16),
+                // buildSizedSectionTitle("Amenities and Furnishing"),
+                // SizedBox(height: 8),
+                // SelectableChipRow(
+                //   options: sell_Amenities,
+                //   selectedItems: controller.sell_Amenities_Furniture,
+                //   onTap: (option) {
+                //     controller.toggleItemInList(
+                //       controller.sell_Amenities_Furniture,
+                //       option,
+                //     );
+                //   },
+                //   // chipWidth: 180,
+                //   // fontSize: 12,
+                //   fontSize: AppFontSizes.small,
+                //   selectedColor: ColorRes.primary,
+                //   unselectedColor: ColorRes.white,
+                //   selectedTextColor: ColorRes.primary,
+                //   unselectedTextColor: ColorRes.textPrimary,
+                // ),
               ],
 
               if (controller.lookingTo.value == 'Rent') ...[
-                SizedBox(height: 24),
-                buildSectionTitle("Prefered Tenants Type"),
-                SizedBox(height: 8),
-                MultiSelectChip(
-                  options: rent_Preferred_Tenants,
-                  selectedItems: controller.rent_Preferred_Tenants,
-                  onTap: (String option) {
-                    controller.toggleItemInList(
-                      controller.rent_Preferred_Tenants,
-                      option,
-                    );
-                  },
-                ),
-                SizedBox(height: 16),
-                buildSectionTitle("Select Your Preferred for Bachelors"),
-                SizedBox(height: 8),
-                Obx(
-                  () => Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children:
-                        rent_Selected_Tenants_for_Bachelors.map((option) {
-                          return buildChoice(
-                            title: option,
-                            selected:
-                                controller
-                                    .rent_Selected_Tenants_for_Bachelors
-                                    .value ==
-                                option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.rent_Selected_Tenants_for_Bachelors,
-                                option,
-                              );
-                            },
-                          );
-                        }).toList(),
-                  ),
-                ),
+                // SizedBox(height: 24),
+                // buildSectionTitle("Prefered Tenants Type"),
+                // SizedBox(height: 8),
+                // MultiSelectChip(
+                //   options: rent_Preferred_Tenants,
+                //   selectedItems: controller.rent_Preferred_Tenants,
+                //   onTap: (String option) {
+                //     controller.toggleItemInList(
+                //       controller.rent_Preferred_Tenants,
+                //       option,
+                //     );
+                //   },
+                // ),
+                // SizedBox(height: 16),
+                // buildSectionTitle("Select Your Preferred for Bachelors"),
+                // SizedBox(height: 8),
+                // Obx(
+                //   () => Wrap(
+                //     spacing: 12,
+                //     runSpacing: 12,
+                //     children:
+                //         rent_Selected_Tenants_for_Bachelors.map((option) {
+                //           return buildChoice(
+                //             title: option,
+                //             selected:
+                //                 controller
+                //                     .rent_Selected_Tenants_for_Bachelors
+                //                     .value ==
+                //                 option,
+                //             onTap: () {
+                //               controller.setValue(
+                //                 controller.rent_Selected_Tenants_for_Bachelors,
+                //                 option,
+                //               );
+                //             },
+                //           );
+                //         }).toList(),
+                //   ),
+                // ),
                 SizedBox(height: 16),
                 buildSectionTitle("Pet Friendly? "),
                 SizedBox(height: 8),
@@ -473,13 +473,14 @@ class RentAdvanceDetail extends StatelessWidget {
                       child: DropdownButton<String>(
                         value: controller.carpetAreaUnit.value,
                         items:
-                            ['sq.ft.', 'sq.yd.', 'sq.mt.']
+                            ['sq.ft.', 'sq.yd.', 'sq.mt.','sq.cm.','sq.in.']
                                 .map(
                                   (unit) => DropdownMenuItem(
                                     value: unit,
                                     child: Text(unit),
                                   ),
                                 )
+
                                 .toList(),
                         onChanged: (value) {
                           if (value != null) {
@@ -498,15 +499,15 @@ class RentAdvanceDetail extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 16),
-              buildSectionTitle("Flat No."),
-              SizedBox(height: 8),
-              buildTextField(
-                "Flat No.",
-                Icons.home_outlined,
-                controller.sell_rent_Flat_No,
-                isPhoneKey: true,
-              ),
+              // SizedBox(height: 16),
+              // buildSectionTitle("Flat No."),
+              // SizedBox(height: 8),
+              // buildTextField(
+              //   "Flat No.",
+              //   Icons.home_outlined,
+              //   controller.sell_rent_Flat_No,
+              //   isPhoneKey: true,
+              // ),
               SizedBox(height: 16),
               buildSectionTitle('Floor No.'),
               SizedBox(height: 8),
@@ -576,74 +577,74 @@ class RentAdvanceDetail extends StatelessWidget {
 
               if (controller.lookingTo.value == 'Rent') ...[
                 SizedBox(height: 16),
-                buildSectionTitle("Lock In Period"),
-                SizedBox(height: 8),
-                Obx(
-                  () => Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children:
-                        rent_lockInPeriod.map((option) {
-                          return buildChoice(
-                            title: option,
-                            selected:
-                                controller.rent_lockInPeriod.value == option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.rent_lockInPeriod,
-                                option,
-                              );
-                            },
-                          );
-                        }).toList(),
-                  ),
-                ),
-                if (controller.rent_lockInPeriod.value == "Custom") ...[
-                  SizedBox(height: 16),
-                  Text("Custom Lock In Period"),
-                  SizedBox(height: 8),
-
-                  buildTextField(
-                    "Enter Lock In Period in Months",
-                    Icons.lock,
-                    controller.rent_Custom_LockIn_Period,
-                    isPhoneKey: true,
-                    isEnable: false,
-                    onTap: () async {
-                      FocusScope.of(context).unfocus();
-                      DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: ColorScheme.light(
-                                primary: ColorRes.primary,
-                                // header background color
-                                onPrimary: ColorRes.white,
-                                // header text color
-                                onSurface: ColorRes.black, // body text color
-                              ),
-                              textButtonTheme: TextButtonThemeData(
-                                style: TextButton.styleFrom(
-                                  foregroundColor: ColorRes.primary,
-                                ),
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked != null) {
-                        controller.rent_Custom_LockIn_Period.text =
-                            "${picked.day}/${picked.month}/${picked.year}";
-                      }
-                    },
-                  ),
-                ],
-                SizedBox(height: 16),
+                // buildSectionTitle("Lock In Period"),
+                // SizedBox(height: 8),
+                // Obx(
+                //   () => Wrap(
+                //     spacing: 12,
+                //     runSpacing: 12,
+                //     children:
+                //         rent_lockInPeriod.map((option) {
+                //           return buildChoice(
+                //             title: option,
+                //             selected:
+                //                 controller.rent_lockInPeriod.value == option,
+                //             onTap: () {
+                //               controller.setValue(
+                //                 controller.rent_lockInPeriod,
+                //                 option,
+                //               );
+                //             },
+                //           );
+                //         }).toList(),
+                //   ),
+                // ),
+                // if (controller.rent_lockInPeriod.value == "Custom") ...[
+                //   SizedBox(height: 16),
+                //   Text("Custom Lock In Period"),
+                //   SizedBox(height: 8),
+                //
+                //   buildTextField(
+                //     "Enter Lock In Period in Months",
+                //     Icons.lock,
+                //     controller.rent_Custom_LockIn_Period,
+                //     isPhoneKey: true,
+                //     isEnable: false,
+                //     onTap: () async {
+                //       FocusScope.of(context).unfocus();
+                //       DateTime? picked = await showDatePicker(
+                //         context: context,
+                //         initialDate: DateTime.now(),
+                //         firstDate: DateTime.now(),
+                //         lastDate: DateTime(2100),
+                //         builder: (context, child) {
+                //           return Theme(
+                //             data: Theme.of(context).copyWith(
+                //               colorScheme: ColorScheme.light(
+                //                 primary: ColorRes.primary,
+                //                 // header background color
+                //                 onPrimary: ColorRes.white,
+                //                 // header text color
+                //                 onSurface: ColorRes.black, // body text color
+                //               ),
+                //               textButtonTheme: TextButtonThemeData(
+                //                 style: TextButton.styleFrom(
+                //                   foregroundColor: ColorRes.primary,
+                //                 ),
+                //               ),
+                //             ),
+                //             child: child!,
+                //           );
+                //         },
+                //       );
+                //       if (picked != null) {
+                //         controller.rent_Custom_LockIn_Period.text =
+                //             "${picked.day}/${picked.month}/${picked.year}";
+                //       }
+                //     },
+                //   ),
+                // ],
+                // SizedBox(height: 16),
                 buildSectionTitle("Parking Charges"),
                 SizedBox(height: 8),
                 Obx(
