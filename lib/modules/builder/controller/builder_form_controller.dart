@@ -24,7 +24,7 @@
 //   RxString uploadBrocherPath = ''.obs;
 //
 //   // form data
-//   final project = ProjectModel(
+//   final project = AddProjectModel(
 //     projectName: '',
 //     projectArea: 0,
 //     projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
@@ -234,7 +234,7 @@
 //         'Path: ${file.path}  ${uploadBrocherName.value} ${uploadBrocherPath.value}',
 //       );
 //       uploadBrocherPath.refresh();
-//       // sync brochure path into ProjectModel so print/export shows it
+//       // sync brochure path into AddProjectModel so print/export shows it
 //       if (file.path != null && file.path!.isNotEmpty) {
 //         project.update((p) {
 //           p!.brochure = file.path;
@@ -254,7 +254,7 @@
 //     uploadBrocherPath.value = '';
 //     uploadBrocherName.value = '';
 //     uploadBrocherPath.refresh();
-//     // also clear from ProjectModel
+//     // also clear from AddProjectModel
 //     project.update((p) {
 //       p!.brochure = null;
 //     });
@@ -475,7 +475,7 @@
 //
 //
 //   void importBuilderData(Map<String, dynamic> jsonData) {
-//     final newProject = ProjectModel.fromBuilderJson(jsonData);
+//     final newProject = AddProjectModel.fromBuilderJson(jsonData);
 //     project.value = newProject;
 //
 //     // Update text controllers with new values
@@ -570,8 +570,9 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../data/network/builder/model/builder_model.dart';
+import '../view/builder_main_screen.dart';
 
-class ProjectWizardController extends PaginatedController {
+class ProjectWizardController extends PaginatedController<ProjectItem> {
   final BuilderService _builderService = BuilderService();
   final currentStep = 0.obs;
   ImagePicker picker = ImagePicker();
@@ -591,8 +592,7 @@ class ProjectWizardController extends PaginatedController {
   Map<String, String>? filters = {};
 
   final project =
-      ProjectModel(
-        mediaGallery: MediaGallery(images: [], videos: []),
+      AddProjectModel(
         projectName: '',
         projectArea: 0,
         projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
@@ -642,11 +642,18 @@ class ProjectWizardController extends PaginatedController {
   late TextEditingController stateController;
   late TextEditingController zipCodeController;
   late TextEditingController locationController;
+  final bool isBuilderView;
+
+  ProjectWizardController({required this.isBuilderView});
 
   @override
   void onInit() {
     super.onInit();
-    setUserIdFilter().then((_) => loadInitial());
+    if (isBuilderView) {
+      setUserIdFilter().then((_) => loadInitial());
+    } else {
+      loadInitial(); // buyer view, no filter
+    }
     assignData();
   }
 
@@ -673,7 +680,7 @@ class ProjectWizardController extends PaginatedController {
   }
 
   @override
-  Future<PaginationResponse> fetchItems(int page) async {
+  Future<PaginationResponse<ProjectItem>> fetchItems(int page) async {
     try {
       final response = await _builderService.fetchProjects(
         page: page,
@@ -1102,13 +1109,14 @@ class ProjectWizardController extends PaginatedController {
       );
 
       if (success) {
+        refreshList();
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Project Updated Successfully",
           message: "",
           contentType: ContentType.success,
         );
         Get.offUntil(
-          MaterialPageRoute(builder: (_) => BuilderDashboard()),
+          MaterialPageRoute(builder: (_) => BuilderMainScreen()),
           (route) => route.isFirst,
         );
       } else {
@@ -1128,12 +1136,11 @@ class ProjectWizardController extends PaginatedController {
     }
   }
 
-  Future<ProjectModel> _buildProjectPayload() async {
-    final ProjectModel p = project.value;
+  Future<AddProjectModel> _buildProjectPayload() async {
+    final AddProjectModel p = project.value;
     print('Building payload ---- > ${p.projectContactInfo?.toJson()}');
     final user = await SecureStorage.getUserData();
-    return ProjectModel(
-      mediaGallery: MediaGallery(images: p.imageList, videos: p.videoList),
+    return AddProjectModel(
       projectName: p.projectName,
       projectArea: p.projectArea,
       projectSize: ProjectSize(
@@ -1163,8 +1170,8 @@ class ProjectWizardController extends PaginatedController {
     );
   }
 
-  // Future<ProjectModel> updateProjectData(ProjectModel updatedData) async {
-  //   final ProjectModel p = project.value;
+  // Future<AddProjectModel> updateProjectData(AddProjectModel updatedData) async {
+  //   final AddProjectModel p = project.value;
   //   final user = await SecureStorage.getUserData();
   //
   //   // Reverse assignment: fill existing project `p` with new `updatedData`
@@ -1199,20 +1206,20 @@ class ProjectWizardController extends PaginatedController {
   //   return p;
   // }
 
-  Future<ProjectModel> updateProjectData(ProjectModel updatedData) async {
+  Future<AddProjectModel> updateProjectData(AddProjectModel updatedData) async {
     final user = await SecureStorage.getUserData();
-    print("Images : ${updatedData.mediaGallery.images!}");
+
     project.update((p) {
       if (p == null) return;
       p.id = updatedData.id;
       p.pdfPath = updatedData.brochure;
       p.imageList =
-          updatedData.mediaGallery.images!.isNotEmpty
-              ? updatedData.mediaGallery.images!
+          updatedData.mediaGallery!.images.isNotEmpty
+              ? updatedData.mediaGallery!.images
               : p.imageList;
       p.videoList =
-          updatedData.mediaGallery.videos!.isNotEmpty
-              ? updatedData.mediaGallery.videos!
+          updatedData.mediaGallery!.videos.isNotEmpty
+              ? updatedData.mediaGallery!.videos
               : p.videoList;
       p.projectName = updatedData.projectName;
       p.projectArea = updatedData.projectArea;
@@ -1252,7 +1259,7 @@ class ProjectWizardController extends PaginatedController {
   }
 
   void printProjectDetails() {
-    final ProjectModel p = project.value;
+    final AddProjectModel p = project.value;
 
     print('===== Project Details =====');
     print('Name: ${p.projectName}');
@@ -1377,8 +1384,7 @@ class ProjectWizardController extends PaginatedController {
     isLoading.value = false;
 
     // Reset Project model
-    project.value = ProjectModel(
-      mediaGallery: MediaGallery(images: [], videos: []),
+    project.value = AddProjectModel(
       projectName: '',
       projectArea: 0,
       projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),

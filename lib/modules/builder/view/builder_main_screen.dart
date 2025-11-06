@@ -132,7 +132,9 @@ class BuilderMainScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          final controller = Get.put(ProjectWizardController());
+          final controller = Get.put(
+            ProjectWizardController(isBuilderView: false),
+          );
           controller.resetForm();
           Get.to(CreateProjectScreen());
           // Get.to(ProjectWizardView(),binding: BindingsBuilder(() {

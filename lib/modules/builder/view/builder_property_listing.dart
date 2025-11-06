@@ -10,6 +10,7 @@ import 'package:housing_flutter_app/modules/builder/view/project_detail/project_
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
 import '../../../app/manager/property_highlight_manager.dart';
+import '../../../data/network/builder/model/builder_projectModel.dart';
 import '../controller/builder_form_controller.dart';
 import 'builder_form_screen.dart';
 
@@ -18,7 +19,7 @@ class BuilderPropertyListing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => ProjectWizardController());
+    Get.lazyPut(() => ProjectWizardController(isBuilderView: true));
     final controller = Get.find<ProjectWizardController>();
     final projectController = Get.put(ProjectController());
     return Scaffold(
@@ -51,24 +52,21 @@ class BuilderPropertyListing extends StatelessWidget {
         return ListView.builder(
           itemCount: controller.items.length,
           itemBuilder: (context, index) {
-            final ProjectModel data = controller.items[index];
+            final ProjectItem data = controller.items[index];
 
             return Padding(
               padding: const EdgeInsets.all(12),
               child: GestureDetector(
                 onTap: () {
-                  Get.to(
-                    () => ProjectDetailsScreen(
-                      projectItem: projectController.project.value!,
-                    ),
-                  );
+                  Get.to(() => ProjectDetailsScreen(projectItem: data));
                 },
                 child: BuilderProjectCard(
                   project: data,
                   developersName: data.projectContactInfo?.name ?? 'Unknown',
                   imageUrl:
-                      data.imageList.isNotEmpty
-                          ? data.imageList.first
+                      data.mediaGallery?.images != null &&
+                              data.mediaGallery!.images.isNotEmpty
+                          ? data.mediaGallery!.images.first
                           : IMGRes.home3,
                   projectName:
                       data.projectName.isNotEmpty ? data.projectName : 'N/A',
@@ -76,7 +74,8 @@ class BuilderPropertyListing extends StatelessWidget {
                       data.address.isNotEmpty ? data.address : 'Not specified',
                   price: '₹500',
                   // You can format dynamic price here
-                  propertySize: data.projectSize.totalBuildings.toString(),
+                  propertySize:
+                      data.projectSize?.totalBuildings.toString() ?? '',
                 ),
               ),
             );
@@ -942,7 +941,8 @@ class BuilderPropertyListing extends StatelessWidget {
 // }
 
 class BuilderProjectCard extends StatelessWidget {
-  final ProjectModel project;
+  final bool forHome;
+  final ProjectItem project;
   final String imageUrl;
   final String projectName;
   final String location;
@@ -963,13 +963,14 @@ class BuilderProjectCard extends StatelessWidget {
     this.height = 410,
     this.width = double.infinity,
     required this.project,
+    this.forHome = false,
   }) : super(key: key);
 
   String _getConfigurationText() {
-    if (project.configurations.isEmpty) return '';
+    if (project.configuration.isEmpty) return '';
 
     final bhkList =
-        project.configurations.map((c) => '${c.bhk} BHK').toSet().toList();
+        project.configuration.map((c) => '${c.bhk} BHK').toSet().toList();
     if (bhkList.length > 2) {
       return '${bhkList.first} - ${bhkList.last}';
     }
@@ -1091,7 +1092,7 @@ class BuilderProjectCard extends StatelessWidget {
                 if (project.reraId.isNotEmpty)
                   Positioned(
                     top: 10,
-                    right: 52,
+                    right: forHome ? 8 : 52,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 7,
@@ -1122,42 +1123,44 @@ class BuilderProjectCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Material(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    elevation: 3,
-                    child: InkWell(
-                      onTap: () async {
-                        final result = await Get.to(
-                          () => CreateProjectScreen(isFromEdit: true),
-                          arguments: project.id,
-                          binding: BindingsBuilder(() async {
-                            final wizardController = Get.put(
-                              ProjectWizardController(),
-                            );
-                            await wizardController.updateProjectData(project);
-                          }),
-                        );
-
-                        if (result == true) {
-                          controller.loadInitial();
-                        }
-                      },
+                if (!forHome) ...[
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Material(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        padding: const EdgeInsets.all(7),
-                        child: Icon(
-                          Icons.edit_outlined,
-                          size: 16,
-                          color: ColorRes.primary,
+                      elevation: 3,
+                      child: InkWell(
+                        onTap: () async {
+                          final result = await Get.to(
+                            () => CreateProjectScreen(isFromEdit: true),
+                            arguments: project.id,
+                            binding: BindingsBuilder(() async {
+                              final wizardController = Get.put(
+                                ProjectWizardController(isBuilderView: true),
+                              );
+                              // await wizardController.updateProjectData(project);
+                            }),
+                          );
+
+                          if (result == true) {
+                            controller.loadInitial();
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: const EdgeInsets.all(7),
+                          child: Icon(
+                            Icons.edit_outlined,
+                            size: 16,
+                            color: ColorRes.primary,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
 
@@ -1191,35 +1194,42 @@ class BuilderProjectCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 7,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: ColorRes.primary.withOpacity(0.12),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.event_available,
-                                    size: 10,
-                                    color: ColorRes.primary,
-                                  ),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    _formatDate(project.possessionDate),
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.extraSmall,
+                            if (project.possessionDate != null &&
+                                project.possessionDate!.isNotEmpty) ...[
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 7,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.primary.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.event_available,
+                                      size: 10,
                                       color: ColorRes.primary,
-                                      fontWeight: AppFontWeights.semiBold,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 3),
+                                    Text(
+                                      _formatDate(
+                                        DateTime.tryParse(
+                                          project.possessionDate!,
+                                        )!,
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.extraSmall,
+                                        color: ColorRes.primary,
+                                        fontWeight: AppFontWeights.semiBold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -1249,112 +1259,156 @@ class BuilderProjectCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
 
                         // Developer Info Card
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary.withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: ColorRes.primary.withOpacity(0.3),
-                              width: 0.5,
+                        if (!forHome) ...[
+                          const SizedBox(height: 10),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: ColorRes.primary.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: ColorRes.primary.withOpacity(0.3),
+                                width: 0.5,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.business,
+                                      size: 14,
+                                      color: ColorRes.primary,
+                                    ),
+                                    const SizedBox(width: 7),
+                                    Expanded(
+                                      child: Text(
+                                        developersName,
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          color: ColorRes.primary,
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 7),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.email_outlined,
+                                      size: 14,
+                                      color: ColorRes.textColor.withOpacity(
+                                        0.6,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: Text(
+                                        project.projectContactInfo?.email ??
+                                            'No Email',
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.extraSmall,
+                                          color: ColorRes.textColor,
+                                          fontWeight: AppFontWeights.medium,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.phone_outlined,
+                                      size: 14,
+                                      color: ColorRes.textColor.withOpacity(
+                                        0.6,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: Text(
+                                        project.projectContactInfo?.phone ??
+                                            'No Phone',
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.extraSmall,
+                                          color: ColorRes.textColor,
+                                          fontWeight: AppFontWeights.medium,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.business,
-                                    size: 14,
-                                    color: ColorRes.primary,
-                                  ),
-                                  const SizedBox(width: 7),
+                          SizedBox(height: 10),
+                          // Configuration and Units
+                          if (project.projectSize?.totalUnits != null &&
+                              (configText.isNotEmpty ||
+                                  project.projectSize!.totalUnits > 0))
+                            Row(
+                              children: [
+                                if (configText.isNotEmpty) ...[
                                   Expanded(
-                                    child: Text(
-                                      developersName,
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.small,
-                                        color: ColorRes.primary,
-                                        fontWeight: AppFontWeights.semiBold,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 7,
+                                        vertical: 8,
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                      decoration: BoxDecoration(
+                                        color: ColorRes.blueColor.withOpacity(
+                                          0.12,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.home_outlined,
+                                            size: 14,
+                                            color: ColorRes.blueColor[700],
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            configText.split(",").first,
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.extraSmall,
+                                              color: ColorRes.blueColor[700],
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
+                                  const SizedBox(width: 6),
                                 ],
-                              ),
-                              const SizedBox(height: 7),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.email_outlined,
-                                    size: 14,
-                                    color: ColorRes.textColor.withOpacity(0.6),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      project.projectContactInfo?.email ??
-                                          'No Email',
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.extraSmall,
-                                        color: ColorRes.textColor,
-                                        fontWeight: AppFontWeights.medium,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.phone_outlined,
-                                    size: 14,
-                                    color: ColorRes.textColor.withOpacity(0.6),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      project.projectContactInfo?.phone ??
-                                          'No Phone',
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.extraSmall,
-                                        color: ColorRes.textColor,
-                                        fontWeight: AppFontWeights.medium,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        // Configuration and Units
-                        if (configText.isNotEmpty ||
-                            project.projectSize.totalUnits > 0)
-                          Row(
-                            children: [
-                              if (configText.isNotEmpty) ...[
                                 Expanded(
                                   child: Container(
+                                    width: 80,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 7,
                                       vertical: 8,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: ColorRes.blueColor.withOpacity(
-                                        0.12,
+                                      color: ColorRes.textSecondary.withOpacity(
+                                        0.08,
                                       ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
@@ -1363,16 +1417,16 @@ class BuilderProjectCard extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Icon(
-                                          Icons.home_outlined,
+                                          Icons.square_foot_outlined,
                                           size: 14,
-                                          color: ColorRes.blueColor[700],
+                                          color: ColorRes.textSecondary,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          configText,
+                                          propertySize,
                                           style: TextStyle(
                                             fontSize: AppFontSizes.extraSmall,
-                                            color: ColorRes.blueColor[700],
+                                            color: ColorRes.textSecondary,
                                             fontWeight: AppFontWeights.semiBold,
                                           ),
                                         ),
@@ -1381,78 +1435,46 @@ class BuilderProjectCard extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 6),
-                              ],
-                              Expanded(
-                                child: Container(
-                                  width: 80,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 7,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.textSecondary.withOpacity(
-                                      0.08,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.square_foot_outlined,
-                                        size: 14,
-                                        color: ColorRes.textSecondary,
+                                if (project.projectSize?.totalUnits != null &&
+                                    project.projectSize!.totalUnits > 0)
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 7,
+                                        vertical: 8,
                                       ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        propertySize,
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.extraSmall,
-                                          color: ColorRes.textSecondary,
-                                          fontWeight: AppFontWeights.semiBold,
-                                        ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.orange.withOpacity(0.12),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              if (project.projectSize.totalUnits > 0)
-                                Expanded(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 7,
-                                      vertical: 8,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.orange.withOpacity(0.12),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.apartment_outlined,
-                                          size: 14,
-                                          color: ColorRes.orangeColor[700],
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '${project.projectSize.totalUnits} Units',
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.extraSmall,
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.apartment_outlined,
+                                            size: 14,
                                             color: ColorRes.orangeColor[700],
-                                            fontWeight: AppFontWeights.semiBold,
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '${project.projectSize?.totalUnits ?? 0} Units',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.extraSmall,
+                                              color: ColorRes.orangeColor[700],
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
+                              ],
+                            ),
+                        ] else ...[
+                          SizedBox.shrink(),
+                        ],
                       ],
                     ),
 

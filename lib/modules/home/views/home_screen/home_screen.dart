@@ -37,10 +37,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/utils/file_upload_section/file_upload_section.dart';
+import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../../data/network/news/news_model.dart';
 import '../../../auth/controllers/auth_controller.dart';
 import '../../../builder/view/builder_form_screen.dart';
 import '../../../builder/view/builder_main_screen.dart';
+import '../../../builder/view/builder_property_listing.dart';
+import '../../../builder/view/project_detail/project_detail.dart';
 import '../../../dashboard/views/dashboard_screen.dart';
 import '../../../news/view/news_detail_screen.dart';
 import '../../../other/trending_city/controllers/trending_city_controller.dart';
@@ -228,6 +231,9 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   final PlatformServicesController platformServicesController = Get.put(
     PlatformServicesController(),
+  );
+  final ProjectWizardController projectController = Get.put(
+    ProjectWizardController(isBuilderView: false),
   );
 
   final List<Map<String, dynamic>> cities = [
@@ -957,6 +963,77 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     return CityFilterList();
                   }),
+                  const SizedBox(height: 20),
+
+                  TitleWithViewAll(
+                    title: "Explore Projects",
+                    showViewAll: true,
+                    onViewAll: () {},
+                  ),
+                  const SizedBox(height: 12),
+                  Obx(() {
+                    if (projectController.isLoading.value &&
+                        projectController.items.isNotEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!projectController.isLoading.value &&
+                        projectController.items.isEmpty) {
+                      return const Center(child: Text("No Cities Found"));
+                    }
+
+                    return SizedBox(
+                      height:
+                          280, // ✅ Increased to accommodate card height (410 + padding)
+                      width: double.infinity,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        separatorBuilder: (_, __) => const SizedBox(width: 12),
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        itemCount: projectController.items.length,
+                        itemBuilder: (context, index) {
+                          final ProjectItem data =
+                              projectController.items[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(
+                                () => ProjectDetailsScreen(projectItem: data),
+                              );
+                            },
+                            child: BuilderProjectCard(
+                              forHome: true,
+                              project: data,
+                              width:
+                                  320, // ✅ Added fixed width for horizontal scroll
+                              height: 210, // ✅ Explicitly set height
+                              developersName:
+                                  data.projectContactInfo?.name ?? 'Unknown',
+                              imageUrl:
+                                  (data.mediaGallery?.images?.isNotEmpty ??
+                                          false)
+                                      ? data.mediaGallery!.images.first
+                                      : IMGRes.home3,
+                              projectName:
+                                  data.projectName.isNotEmpty
+                                      ? data.projectName
+                                      : 'N/A',
+                              location:
+                                  data.address.isNotEmpty
+                                      ? data.address
+                                      : 'Not specified',
+                              price: '₹500',
+                              propertySize:
+                                  data.projectSize?.totalBuildings
+                                      ?.toString() ??
+                                  '—',
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }),
+
                   const SizedBox(height: 20),
 
                   // const TitleWithViewAll(title: "Residential Properties"),

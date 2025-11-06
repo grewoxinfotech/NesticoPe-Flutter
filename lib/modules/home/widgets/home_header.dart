@@ -243,7 +243,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                       );
 
                       if (UserHelper.isGuest) {
-                        if(!Get.isRegistered<AuthController>()){
+                        if (!Get.isRegistered<AuthController>()) {
                           Get.put(AuthController());
                         }
                         Get.to(
@@ -270,7 +270,9 @@ class _HomeHeaderState extends State<HomeHeader> {
                         }
 
                         if (UserHelper.isSellerBuilder) {
-                          Get.lazyPut(() => ProjectWizardController());
+                          Get.lazyPut(
+                            () => ProjectWizardController(isBuilderView: true),
+                          );
                           Get.to(() => CreateProjectScreen());
                         }
                       }

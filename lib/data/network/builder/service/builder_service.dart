@@ -10,6 +10,8 @@ import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:http_parser/http_parser.dart';
 
+import '../model/builder_projectModel.dart';
+
 class BuilderService {
   final String baseUrl = ApiConstants.builderProject; // Adjust endpoint
 
@@ -22,7 +24,7 @@ class BuilderService {
     return await ApiConstants.getHeaders();
   }
 
-  Future<PaginationResponse<ProjectModel>> fetchProjects({
+  Future<PaginationResponse<ProjectItem>> fetchProjects({
     int page = 1,
     Map<String, String>? filters,
   }) async {
@@ -41,9 +43,9 @@ class BuilderService {
         final data = jsonDecode(response.body);
         print("✅ Project API Response: $data");
 
-        return PaginationResponse<ProjectModel>.fromJson(
+        return PaginationResponse<ProjectItem>.fromJson(
           data,
-          (json) => ProjectModel.fromJson(json),
+          (json) => ProjectItem.fromJson(json),
         );
       } else {
         print("❌ Failed to load projects: ${response.statusCode}");
@@ -58,7 +60,7 @@ class BuilderService {
 
   ///==================== Create Project under a Builder ====================
   Future<bool> createProject({
-    required ProjectModel projectData,
+    required AddProjectModel projectData,
     List<File>? images,
     List<File>? videos,
     File? documents,
@@ -66,6 +68,7 @@ class BuilderService {
     try {
       final uri = Uri.parse(baseUrl);
       debugPrint("📤 Creating project at: $uri");
+      print("Project Data: ${projectData.toJson()}");
 
       final headerMap = await headers();
 
@@ -268,7 +271,7 @@ class BuilderService {
 
   Future<bool> updateProject({
     required String projectId,
-    required ProjectModel projectData,
+    required AddProjectModel projectData,
     List<File>? images,
     List<File>? videos,
     File? documents,

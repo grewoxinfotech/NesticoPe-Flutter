@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,14 @@ class NetworkStatusService extends GetxService {
   final RxBool _isConnected = true.obs;
   final Rx<ConnectivityResult> _connectivityResult = ConnectivityResult.none.obs;
   bool _wasDisconnected = false;
+  
+  // Debouncing timers to prevent rapid redirections
+  Timer? _disconnectTimer;
+  Timer? _reconnectTimer;
+  
+  // Stability check - wait before redirecting
+  static const Duration _disconnectDelay = Duration(seconds: 3);
+  static const Duration _reconnectDelay = Duration(seconds: 2);
   
   // Callbacks to execute when internet reconnects
   final List<VoidCallback> _reconnectionCallbacks = [];
@@ -28,25 +37,9 @@ class NetworkStatusService extends GetxService {
       final hasInternet = await InternetConnection().hasInternetAccess;
       _isConnected.value = hasInternet;
       
-      // Listen to connectivity changes
-      Connectivity().onConnectivityChanged.listen((result) {
-        _connectivityResult.value = result.isNotEmpty 
-            ? result.first 
-            : ConnectivityResult.none;
-        _checkInternetAccess();
-      });
-      
-      // Also listen to internet connection changes
+      // Use only InternetConnection listener (more reliable than Connectivity)
       InternetConnection().onStatusChange.listen((status) {
-        final wasConnected = _isConnected.value;
-        _isConnected.value = status == InternetStatus.connected;
-        
-        // Handle connection state changes
-        if (!wasConnected && _isConnected.value) {
-          _onReconnected();
-        } else if (wasConnected && !_isConnected.value) {
-          _onDisconnected();
-        }
+        _handleConnectionChange(status == InternetStatus.connected);
       });
     } catch (e) {
       print('Error initializing network status service: $e');
@@ -55,20 +48,34 @@ class NetworkStatusService extends GetxService {
     return this;
   }
   
-  /// Check actual internet access
-  Future<void> _checkInternetAccess() async {
-    try {
-      final hasInternet = await InternetConnection().hasInternetAccess;
-      final wasConnected = _isConnected.value;
-      _isConnected.value = hasInternet;
+  /// Handle connection state changes with debouncing
+  void _handleConnectionChange(bool isConnected) {
+    if (isConnected) {
+      // Cancel any pending disconnect timer
+      _disconnectTimer?.cancel();
+      _disconnectTimer = null;
       
-      if (!wasConnected && hasInternet) {
-        _onReconnected();
-      } else if (wasConnected && !hasInternet) {
-        _onDisconnected();
-      }
-    } catch (e) {
-      print('Error checking internet: $e');
+      // Wait for connection stability before reconnecting
+      _reconnectTimer?.cancel();
+      _reconnectTimer = Timer(_reconnectDelay, () {
+        if (isConnected && !_isConnected.value) {
+          _isConnected.value = true;
+          _onReconnected();
+        }
+      });
+    } else {
+      // Cancel any pending reconnect timer
+      _reconnectTimer?.cancel();
+      _reconnectTimer = null;
+      
+      // Wait for disconnect stability before showing no internet screen
+      _disconnectTimer?.cancel();
+      _disconnectTimer = Timer(_disconnectDelay, () {
+        if (!isConnected && _isConnected.value) {
+          _isConnected.value = false;
+          _onDisconnected();
+        }
+      });
     }
   }
   
@@ -166,6 +173,8 @@ class NetworkStatusService extends GetxService {
   
   @override
   void onClose() {
+    _disconnectTimer?.cancel();
+    _reconnectTimer?.cancel();
     _reconnectionCallbacks.clear();
     super.onClose();
   }

@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/manager/data_masker.dart';
+import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -17,36 +19,28 @@ class ProjectDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ProjectController>();
+    final controller = Get.put(ProjectController());
 
     return Scaffold(
       backgroundColor: ColorRes.background,
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        final project = projectItem;
-
-        return CustomScrollView(
-          slivers: [
-            _buildAppBar(context, project),
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildProjectDetails(project),
-                  _buildConfigurations(controller, project),
-                  _buildAmenities(project),
-                  _buildDocuments(controller, project),
-                  _buildContactSection(controller, project),
-                  const SizedBox(height: 24),
-                ],
-              ),
+      body: CustomScrollView(
+        slivers: [
+          _buildAppBar(context, projectItem),
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProjectDetails(projectItem),
+                _buildConfigurations(controller, projectItem),
+                _buildAmenities(projectItem),
+                _buildDocuments(controller, projectItem),
+                _buildContactSection(controller, projectItem),
+                const SizedBox(height: 24),
+              ],
             ),
-          ],
-        );
-      }),
+          ),
+        ],
+      ),
     );
   }
 
@@ -873,7 +867,7 @@ class ProjectDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildConfigurationSection(
-    Configuration config,
+    ProjectConfiguration config,
     int configIndex,
     ProjectController controller,
   ) {
@@ -950,7 +944,7 @@ class ProjectDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildVariantCard(
-    Variant variant,
+    ProjectVariant variant,
     int variantIndex,
     ProjectController controller,
   ) {
@@ -1031,7 +1025,6 @@ class ProjectDetailsScreen extends StatelessWidget {
                       // Variant Details Grid
                       Container(
                         decoration: BoxDecoration(
-                          color: ColorRes.leadGreyColor[50],
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Column(
@@ -1049,7 +1042,7 @@ class ProjectDetailsScreen extends StatelessWidget {
                             _buildDetailRow(
                               'Price/sq.ft',
                               controller.formatCurrency(
-                                variant.pricePerSqFt.toDouble(),
+                                variant.pricePerSqFt?.toDouble() ?? 0.0,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -1185,16 +1178,16 @@ class ProjectDetailsScreen extends StatelessWidget {
       'Green Park': Icons.park,
     };
 
-    final Map<String, Color> amenityColors = {
-      'Swimming Pool': Colors.blue,
-      'Gymnasium': Colors.red,
-      'Parking': Colors.indigo,
-      '24/7 Security': Colors.orange,
-      'Club House': Colors.teal,
-      'Spa & Sauna': Colors.pink,
-      'Games Room': Colors.purple,
-      'Green Park': Colors.green,
-    };
+    final List<Color> amenityColors = [
+      ColorRes.blueColor,
+      ColorRes.error,
+      ColorRes.leadIndigoColor,
+      ColorRes.orangeColor,
+      ColorRes.leadTealColor,
+      ColorRes.lightpurple,
+      ColorRes.purpleColor,
+      ColorRes.green,
+    ];
 
     return Column(
       children: [
@@ -1202,14 +1195,16 @@ class ProjectDetailsScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: (amenityColors[amenity] ?? ColorRes.primary).withOpacity(
-              0.1,
-            ),
+            color: (amenityColors[amenity.length % amenityColors.length] ??
+                    ColorRes.primary)
+                .withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
-            amenityIcons[amenity] ?? Icons.check_circle,
-            color: amenityColors[amenity] ?? ColorRes.primary,
+            IconManager.getAmenitiesIcon(amenity),
+            color:
+                amenityColors[amenity.length % amenityColors.length] ??
+                ColorRes.primary,
             size: 25,
           ),
         ),
@@ -1252,7 +1247,7 @@ class ProjectDetailsScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _buildDocumentItem(
                   icon: Icons.description,
-                  title: brochure.name,
+                  title: brochure.name ?? '-',
                   onTap: () => controller.downloadDocument(brochure.url),
                 ),
               );
@@ -1314,7 +1309,7 @@ class ProjectDetailsScreen extends StatelessWidget {
     ProjectController controller,
     ProjectItem project,
   ) {
-    final contact = project.projectContactInfos;
+    final contact = project.projectContactInfo;
     if (contact == null) return const SizedBox.shrink();
 
     return Container(
@@ -1346,7 +1341,7 @@ class ProjectDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      contact.name,
+                      DataMasker.maskName(contact.name) ?? '-',
                       style: TextStyle(
                         fontSize: AppFontSizes.medium,
                         fontWeight: AppFontWeights.semiBold,
@@ -1355,7 +1350,7 @@ class ProjectDetailsScreen extends StatelessWidget {
                     ),
                     // const SizedBox(height: 4),
                     Text(
-                      contact.email,
+                      DataMasker.maskEmail(contact.email) ?? '-',
                       style: TextStyle(
                         fontSize: AppFontSizes.small,
                         color: ColorRes.textSecondary,
@@ -1364,17 +1359,17 @@ class ProjectDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: () => controller.contactSales('phone'),
-                icon: const Icon(Icons.phone, color: ColorRes.white),
-                style: IconButton.styleFrom(backgroundColor: ColorRes.primary),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                onPressed: () => controller.contactSales('email'),
-                icon: const Icon(Icons.email, color: ColorRes.white),
-                style: IconButton.styleFrom(backgroundColor: ColorRes.primary),
-              ),
+              // IconButton(
+              //   onPressed: () => controller.contactSales('phone'),
+              //   icon: const Icon(Icons.phone, color: ColorRes.white),
+              //   style: IconButton.styleFrom(backgroundColor: ColorRes.primary),
+              // ),
+              // const SizedBox(width: 8),
+              // IconButton(
+              //   onPressed: () => controller.contactSales('email'),
+              //   icon: const Icon(Icons.email, color: ColorRes.white),
+              //   style: IconButton.styleFrom(backgroundColor: ColorRes.primary),
+              // ),
             ],
           ),
         ],
