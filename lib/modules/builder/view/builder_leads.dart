@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
+import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
 
 import '../../../data/network/property/models/property_model.dart';
-
-import '../../reseller/view/lead/lead_screen.dart';
 import '../../seller/module/lead_screen/model/lead_model.dart';
 
 
@@ -18,7 +19,7 @@ class BuilderLeads extends StatefulWidget {
 
 class _BuilderLeadsState extends State<BuilderLeads> {
   String searchQuery = '';
-  List<String> selectedFilters = [];
+  final RxList<String> selectedFilters = <String>[].obs;
   bool isLoading = false;
 
   // Dummy leads data
@@ -246,15 +247,47 @@ class _BuilderLeadsState extends State<BuilderLeads> {
           IconButton(
             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
             onPressed: () {
-              showFilterBottomSheet(context);
+              LeadFilterBottomSheet.show(
+                context: context,
+                selectedFilters: selectedFilters,
+                onApplyFilters: () {
+                  setState(() {}); // Refresh UI after filter applied
+                  // TODO: Apply filter to API here
+                  applyFiltersToAPI();
+                },
+              );
             },
           ),
         ],
       ),
       body: Column(
         children: [
-          buildSearchAndFilter(context),
-          buildSelectedFiltersChips(context),
+          LeadSearchBar(
+            onSearchChanged: (value) {
+              setState(() {
+                searchQuery = value;
+              });
+            },
+          ),
+          Obx(
+            () => LeadFilterChips(
+              selectedFilters: selectedFilters.toList(),
+              onRemoveFilter: (filter) {
+                setState(() {
+                  selectedFilters.remove(filter);
+                });
+                // TODO: Apply filter to API here
+                // applyFiltersToAPI();
+              },
+              onClearAll: () {
+                setState(() {
+                  selectedFilters.clear();
+                });
+                // TODO: Clear filters from API here
+                // clearFiltersFromAPI();
+              },
+            ),
+          ),
           Expanded(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -287,631 +320,55 @@ class _BuilderLeadsState extends State<BuilderLeads> {
                 ),
                 itemBuilder: (context, index) {
                   final lead = dummyLeads[index];
-                  return buildLeadCard(context, lead);
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildSearchAndFilter(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(getResponsivePadding(context)),
-      padding: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
-      decoration: BoxDecoration(
-        color: ColorRes.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-      ),
-      child: TextField(
-        onChanged: (value) {
-          setState(() {
-            searchQuery = value;
-          });
-        },
-        style: TextStyle(fontSize: AppFontSizes.medium),
-        decoration: InputDecoration(
-          hintText: 'Search buyer leads...',
-          hintStyle: TextStyle(fontSize: AppFontSizes.medium),
-          prefixIcon: const Icon(Icons.search),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16),
-        ),
-      ),
-    );
-  }
-
-  Widget buildSelectedFiltersChips(BuildContext context) {
-    if (selectedFilters.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: getResponsivePadding(context),
-        vertical: 8,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Active Filters:',
-                style: TextStyle(
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.leadGreyColor[700],
-                ),
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    selectedFilters.clear();
-                  });
-                },
-                child: Text(
-                  'Clear All',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.small,
-                    color: ColorRes.primary,
-                    fontWeight: AppFontWeights.medium,
-                  ),
-                ),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: selectedFilters.map((filter) {
-                final parts = filter.split(':');
-                final filterType = parts[0];
-                final filterValue = parts[1];
-                final chipColor =
-                filterType == 'Stage' ? ColorRes.primary : ColorRes.green;
-
-                return Container(
-                  margin: EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
-                    color: chipColor.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: chipColor.withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: chipColor,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            filterType,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.extraSmall,
-                              color: ColorRes.white,
-                              fontWeight: AppFontWeights.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          filterValue,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            color: chipColor,
-                            fontWeight: AppFontWeights.semiBold,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              selectedFilters.remove(filter);
-                            });
-                          },
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            child: Icon(
-                              Icons.close,
-                              size: 14,
-                              color: chipColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildLeadCard(BuildContext context, LeadItem lead) {
-    final isCompact = MediaQuery.of(context).size.width < 600;
-    final cardPadding = isCompact ? 12.0 : 16.0;
-    final price = lead.customFields?.propertyDetails?.financialInfo?.price ?? 0;
-    final displayPrice = formatPrice(price);
-
-    return Container(
-      padding: EdgeInsets.all(cardPadding),
-      decoration: BoxDecoration(
-        color: ColorRes.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: isCompact ? 18 : 20,
-                backgroundColor: ColorRes.primary.withOpacity(0.2),
-                child: Text(
-                  getInitials(lead.name!),
-                  style: TextStyle(
-                    color: ColorRes.primary,
-                    fontWeight: AppFontWeights.bold,
-                    fontSize:
-                    isCompact ? AppFontSizes.small : AppFontSizes.medium,
-                  ),
-                ),
-              ),
-              SizedBox(width: isCompact ? 8 : 12),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 180,
-                      child: Text(
-                        lead.name!,
-                        style: TextStyle(
-                          fontSize:
-                          isCompact
-                              ? AppFontSizes.medium
-                              : AppFontSizes.body,
-                          fontWeight: AppFontWeights.bold,
-                          color: ColorRes.textColor,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    SizedBox(
-                      width: 180,
-                      child: Text(
-                        '${lead.name}',
-                        style: TextStyle(
-                          fontSize:
-                          isCompact
-                              ? AppFontSizes.extraSmall
-                              : AppFontSizes.small,
-                          color: ColorRes.leadGreyColor[700],
-                          fontWeight: AppFontWeights.regular,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (lead.email != null && lead.email!.isNotEmpty) ...[
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              lead.email!.replaceRange(
-                                lead.email!.length < 4 ? lead.email!.length : 4,
-                                lead.email!.length,
-                                'XXXXXXXXXXX',
-                              ),
-                              style: TextStyle(
-                                fontSize: AppFontSizes.extraSmall,
-                                color: ColorRes.leadGreyColor[600],
-                                fontWeight: AppFontWeights.regular,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'Budget',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.extraSmall,
-                      color: ColorRes.leadGreyColor[800],
-                      fontWeight: AppFontWeights.regular,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    displayPrice,
-                    style: TextStyle(
-                      fontSize:
-                      isCompact ? AppFontSizes.medium : AppFontSizes.body,
-                      fontWeight: AppFontWeights.semiBold,
-                      color: ColorRes.success,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    formatTime(lead.createdAt!),
-                    style: TextStyle(
-                      fontSize: AppFontSizes.caption,
-                      color: ColorRes.leadGreyColor[600],
-                      fontWeight: AppFontWeights.regular,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: isCompact ? 8 : 12),
-          Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
-          SizedBox(height: isCompact ? 8 : 12),
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isCompact ? 10 : 14,
-                  vertical: isCompact ? 6 : 8,
-                ),
-                decoration: BoxDecoration(
-                  color: getStatusColor(
-                    getLeadStatusFromString(lead.status!),
-                  ).withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: getStatusColor(
-                      getLeadStatusFromString(lead.status!),
-                    ).withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  getStatusText(getLeadStatusFromString(lead.status!)),
-                  style: TextStyle(
-                    fontSize:
-                    isCompact
-                        ? AppFontSizes.extraSmall
-                        : AppFontSizes.small,
-                    color: getStatusColor(
-                      getLeadStatusFromString(lead.status!),
-                    ),
-                    fontWeight: AppFontWeights.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              SizedBox(width: 8),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isCompact ? 10 : 14,
-                  vertical: isCompact ? 6 : 8,
-                ),
-                decoration: BoxDecoration(
-                  color: getStageColor(
-                    getLeadStageFromString(lead.stage),
-                  ).withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: getStageColor(
-                      getLeadStageFromString(lead.stage),
-                    ).withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  getStageText(getLeadStageFromString(lead.stage)),
-                  style: TextStyle(
-                    fontSize:
-                    isCompact
-                        ? AppFontSizes.extraSmall
-                        : AppFontSizes.small,
-                    color: getStageColor(getLeadStageFromString(lead.stage)),
-                    fontWeight: AppFontWeights.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Spacer(),
-              Row(
-                children: [
-                  buildActionButton(
-                    icon: Icons.visibility,
-                    color: ColorRes.blueColor,
-                    onPressed: () {
+                  return LeadCardWidget(
+                    lead: lead,
+                    isCompact: MediaQuery.of(context).size.width < 600,
+                    showDataMasking: false,
+                    onView: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('View ${lead.name}')),
                       );
                     },
-                    tooltip: 'View Details',
-                    isCompact: isCompact,
-                  ),
-                  SizedBox(width: 8),
-                  buildActionButton(
-                    icon: Icons.edit,
-                    color: ColorRes.orangeColor,
-                    onPressed: () {
+                    onEdit: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Edit ${lead.name}')),
                       );
                     },
-                    tooltip: 'Edit Lead',
-                    isCompact: isCompact,
-                  ),
-                  SizedBox(width: 8),
-                  buildActionButton(
-                    icon: Icons.delete,
-                    color: ColorRes.error,
-                    onPressed: () => showDeleteConfirmation(context, lead),
-                    tooltip: 'Delete Lead',
-                    isCompact: isCompact,
-                  ),
-                ],
+                    onDelete: () => showDeleteConfirmation(context, lead),
+                  );
+                },
               ),
-            ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  void showFilterBottomSheet(BuildContext context) {
-    List<String> tempSelectedFilters = [...selectedFilters];
+  // Removed: All old widget building methods are now using shared components
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: ColorRes.transparentColor,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.75,
-            decoration: const BoxDecoration(
-              color: ColorRes.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: ColorRes.leadGreyColor[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Filter Leads',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.body,
-                          fontWeight: AppFontWeights.semiBold,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setModalState(() {
-                            tempSelectedFilters.clear();
-                          });
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: ColorRes.error,
-                        ),
-                        child: Text(
-                          'Clear All',
-                          style: TextStyle(
-                            fontWeight: AppFontWeights.medium,
-                            fontSize: AppFontSizes.small,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Divider(height: 1, color: ColorRes.leadGreyColor[300]),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildFilterSection(
-                          context: context,
-                          title: 'Stage',
-                          icon: Icons.stairs,
-                          filterType: 'Stage',
-                          options: [
-                            'New Lead',
-                            'Contacted',
-                            'Interested',
-                            'Site Visit',
-                            'Sell',
-                          ],
-                          tempSelectedFilters: tempSelectedFilters,
-                          setModalState: setModalState,
-                        ),
-                        const SizedBox(height: 24),
-                        buildFilterSection(
-                          context: context,
-                          title: 'Status',
-                          icon: Icons.flag,
-                          filterType: 'Status',
-                          options: [
-                            'New',
-                            'Contacted',
-                            'Qualified',
-                            'Negotiating',
-                            'Lost',
-                            'Converted',
-                          ],
-                          tempSelectedFilters: tempSelectedFilters,
-                          setModalState: setModalState,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          selectedFilters = [...tempSelectedFilters];
-                        });
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorRes.primary,
-                        foregroundColor: ColorRes.white,
-                        padding: const EdgeInsets.all(16.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: Text(
-                        'Apply Filters (${tempSelectedFilters.length})',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.body,
-                          fontWeight: AppFontWeights.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+  /// Apply filters to API
+  /// Convert selectedFilters to API format and call backend
+  void applyFiltersToAPI() {
+    // Convert UI filter format to API format using helper
+    final filterMap = LeadFilterHelper.convertFiltersToAPIFormat(
+      selectedFilters.toList(),
     );
-  }
 
-  Widget buildFilterSection({
-    required BuildContext context,
-    required String title,
-    required IconData icon,
-    required String filterType,
-    required List<String> options,
-    required List<String> tempSelectedFilters,
-    required StateSetter setModalState,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: ColorRes.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, size: 18, color: ColorRes.primary),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: AppFontSizes.bodySmall,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.textColor,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: options.map((option) {
-            final fullFilterKey = '$filterType:$option';
-            final isSelected = tempSelectedFilters
-                .any((e) => e.startsWith('$filterType:') && e == fullFilterKey);
+    if (filterMap.isEmpty) {
+      // No filters, fetch all leads
+      print('No filters applied, fetching all leads');
+      // TODO: Implement builder-specific API call
+      // builderLeadController.refreshList();
+      return;
+    }
 
-            return FilterChip(
-              label: Text(option),
-              selected: isSelected,
-              onSelected: (selected) {
-                setModalState(() {
-                  tempSelectedFilters
-                      .removeWhere((e) => e.startsWith('$filterType:'));
-                  if (selected) {
-                    tempSelectedFilters.add(fullFilterKey);
-                  }
-                });
-              },
-              selectedColor: ColorRes.primary.withOpacity(0.15),
-              checkmarkColor: ColorRes.primary,
-              backgroundColor: ColorRes.leadGreyColor[100],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(
-                  color: isSelected
-                      ? ColorRes.primary
-                      : ColorRes.leadGreyColor[300]!,
-                  width: isSelected ? 1.5 : 1,
-                ),
-              ),
-              labelStyle: TextStyle(
-                color: isSelected ? ColorRes.primary : ColorRes.blackShade87,
-                fontWeight:
-                isSelected ? AppFontWeights.semiBold : AppFontWeights.regular,
-                fontSize: AppFontSizes.small,
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            );
-          }).toList(),
-        ),
-      ],
-    );
+    print('Applying filters to Builder API: $filterMap');
+    // TODO: Call builder lead API with filterMap
+    // Example:
+    // builderLeadController.applyFilters(filterMap);
+    // This will call the service with filters like:
+    // {"stage": "new_lead", "status": "contacted"}
   }
 
   void showDeleteConfirmation(BuildContext context, LeadItem lead) {
@@ -971,16 +428,6 @@ class _BuilderLeadsState extends State<BuilderLeads> {
 }
 
 
-String formatPrice(double price) {
-  if (price >= 10000000) {
-    return '₹${(price / 10000000).toStringAsFixed(2)} Cr';
-  } else if (price >= 100000) {
-    return '₹${(price / 100000).toStringAsFixed(2)} L';
-  } else if (price >= 1000) {
-    return '₹${(price / 1000).toStringAsFixed(2)} K';
-  } else {
-    return '₹${price.toStringAsFixed(0)}';
-  }
-}
+  // Removed: formatPrice is now in lead_helpers.dart
 
 

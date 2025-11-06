@@ -17,9 +17,12 @@ import '../../../app/utils/formater/formater.dart';
 import '../../../app/utils/helper_function/month_switch/month_switch.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../../utils/global.dart';
+import '../../common/lead_components/lead_helpers.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 
 import '../../referral/view/referral_dashboard.dart';
+import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart'
+    hide buildActionButton, getLeadStageFromString, getLeadStatusFromString;
 import '../controller/dashborad_controller/dashboard_controller.dart';
 import '../model/dashboard/dashboard_model.dart';
 import 'lead/lead_screen.dart';

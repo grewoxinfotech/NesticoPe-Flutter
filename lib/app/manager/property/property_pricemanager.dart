@@ -95,7 +95,8 @@
 // }
 
 import '../../../data/network/property/models/property_model.dart';
-import '../../../modules/builder/view/builder_leads.dart' as Formatter;
+import '../../../modules/builder/view/builder_leads.dart';
+import '../../utils/formater/formater.dart';
 
 // class PropertyPriceManager {
 //   final String listingType; // "rent" or "sale"

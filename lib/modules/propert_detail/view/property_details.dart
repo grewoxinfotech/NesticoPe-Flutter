@@ -424,12 +424,13 @@ import 'package:get/get.dart';
 
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
 import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/property/models/property_model.dart';
-import '../../builder/view/builder_leads.dart' as Formater;
+import '../../builder/view/builder_leads.dart';
 import '../../property/controllers/property_controller.dart';
 
 class PropertyDetail extends StatefulWidget {
@@ -878,9 +879,9 @@ class _PropertyDetailState extends State<PropertyDetail> {
 
     // 🧠 Handle special cases
     if (minVal == 0 && maxVal == 0) return "₹0";
-    if (minVal == 0) return "Up to ${Formater.formatPrice(maxVal)}";
-    if (maxVal == 0) return "From ${Formater.formatPrice(minVal)}";
+    if (minVal == 0) return "Up to ${Formatter.formatPrice(maxVal)}";
+    if (maxVal == 0) return "From ${Formatter.formatPrice(minVal)}";
 
-    return "${Formater.formatPrice(minVal)} - ${Formater.formatPrice(maxVal)}";
+    return "${Formatter.formatPrice(minVal)} - ${Formatter.formatPrice(maxVal)}";
   }
 }

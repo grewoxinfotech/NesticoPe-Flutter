@@ -14,6 +14,7 @@ import '../../../../app/manager/property/property_name_manager.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
+import '../../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../lead/lead_screen.dart';
 import '../lead_overview/lead_detail.dart';
