@@ -4,6 +4,8 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
+import 'package:housing_flutter_app/modules/builder/controller/project_controller.dart';
+import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
 
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
@@ -18,11 +20,12 @@ class BuilderPropertyListing extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.lazyPut(() => ProjectWizardController());
     final controller = Get.find<ProjectWizardController>();
+    final projectController = Get.put(ProjectController());
     return Scaffold(
       backgroundColor: ColorRes.leadGreyColor[50],
       appBar: AppBar(
         title: Text(
-          'My Properties',
+          'My Project',
           style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
         backgroundColor: ColorRes.white,
@@ -54,8 +57,11 @@ class BuilderPropertyListing extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               child: GestureDetector(
                 onTap: () {
-                  // 👉 Navigate to project detail screen here
-                  // Get.to(() => ProjectDetailScreen(project: data));
+                  Get.to(
+                    () => ProjectDetailsScreen(
+                      projectItem: projectController.project.value!,
+                    ),
+                  );
                 },
                 child: BuilderProjectCard(
                   project: data,
