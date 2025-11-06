@@ -24,6 +24,7 @@ class LeadService {
   /// Fetch paginated leads
   Future<PaginationResponse<LeadItem>> fetchLeads({
     int page = 1,
+    String? userId,
     Map<String, String>? filters,
     bool fromReseller = false,
   }) async {
@@ -35,6 +36,7 @@ class LeadService {
         // First page: ignore filters
         queryParameters = {
           'page': page.toString(),
+          if (userId != null) 'created_by': userId,
           if (filters != null) ...filters,
         };
       } else {

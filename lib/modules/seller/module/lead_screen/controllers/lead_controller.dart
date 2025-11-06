@@ -395,24 +395,28 @@ class LeadController extends PaginatedController<LeadItem> {
     super.onInit();
     if (UserHelper.isReseller) {
       fromReseller = true;
-      fetchResellerLead();
+      // fetchResellerLead();
+    }
+
+    if (UserHelper.isSeller) {
+      fromReseller = false;
+      // fetchResellerLead();
     }
     fetchResellerAssignProperty();
     loadVariables();
-    if (!UserHelper.isReseller) {
-      loadInitial();
-    }
+
+    loadInitial();
   }
 
-  Future<void> fetchResellerLead() async {
-    final user = await SecureStorage.getUserData();
-    final userId = user?.user?.id;
-    if (userId != null) {
-      final filter = {"created_by": userId};
-      await applyFilters(filter);
-      loadInitial();
-    }
-  }
+  // Future<void> fetchResellerLead() async {
+  //   final user = await SecureStorage.getUserData();
+  //   final userId = user?.user?.id;
+  //   if (userId != null) {
+  //     final filter = {"created_by": userId};
+  //     await applyFilters(filter);
+  //     loadInitial();
+  //   }
+  // }
 
   Future<void> fetchResellerAssignProperty() async {
     final user = await SecureStorage.getUserData();
@@ -421,6 +425,7 @@ class LeadController extends PaginatedController<LeadItem> {
       final filter = {"assignedTo": userId};
       await propertyController.applyFilters(filter);
       propertyList.value = propertyController.items;
+      print("Property List for Lead: ${propertyList.length}");
     }
   }
 
@@ -438,13 +443,24 @@ class LeadController extends PaginatedController<LeadItem> {
   @override
   Future<PaginationResponse<LeadItem>> fetchItems(int page) async {
     try {
-      final response = await _service.fetchLeads(
-        page: page,
-        filters: filters.value,
-        fromReseller: fromReseller,
-      );
-      print("Fetched leads: ${response.items.length}");
-      return response;
+      if (fromReseller) {
+        final user = await SecureStorage.getUserData();
+        final userId = user?.user?.id;
+        final response = await _service.fetchLeads(
+          page: page,
+          userId: userId,
+          filters: filters.value,
+          fromReseller: fromReseller,
+        );
+        return response;
+      } else {
+        final response = await _service.fetchLeads(
+          page: page,
+          filters: filters.value,
+          fromReseller: fromReseller,
+        );
+        return response;
+      }
     } catch (e) {
       print("Exception in fetchItems: $e");
       rethrow;

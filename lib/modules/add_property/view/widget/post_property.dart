@@ -247,6 +247,9 @@ class PostProperty extends StatelessWidget {
                             MaterialPageRoute(
                               builder:
                                   (context) => CommonSearchField(
+                                    selectedCity:
+                                        controller.cityController.text,
+                                    isLocality: true,
                                     onCitySelected: (city) {
                                       Navigator.pop(context, city);
                                     },
@@ -260,6 +263,7 @@ class PostProperty extends StatelessWidget {
                                             : controller
                                                 .localityController
                                                 .text,
+                                    hintText: 'Locality',
                                   ),
                             ),
                           );
@@ -408,7 +412,6 @@ class PostProperty extends StatelessWidget {
 
                         // isEnable: false,
                         // isEnable:      ,
-
                       ),
                       const SizedBox(height: 16),
                       buildTextField(
@@ -510,7 +513,10 @@ class PostProperty extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 6, left: 4),
                           child: Text(
                             'Please select a property type',
-                            style: TextStyle(color: ColorRes.error, fontSize: AppFontSizes.bodySmall),
+                            style: TextStyle(
+                              color: ColorRes.error,
+                              fontSize: AppFontSizes.bodySmall,
+                            ),
                           ),
                         )
                         : SizedBox.shrink(),
@@ -537,8 +543,9 @@ class PostProperty extends StatelessWidget {
                             MaterialPageRoute(
                               builder:
                                   (context) => CommonSearchField(
-selectedCity: controller.cityController.text,
-                                     isLocality: true,
+                                    selectedCity:
+                                        controller.cityController.text,
+                                    isLocality: true,
                                     onCitySelected: (city) {
                                       Navigator.pop(context, city);
                                     },
@@ -552,6 +559,8 @@ selectedCity: controller.cityController.text,
 
                           controller.localityController.text =
                               selectedCity.description ?? '';
+                          controller.sell_rent_Address.text =
+                              selectedCity.description ?? '';
                           print("city ${controller.localityController.text}");
                         }
                         : null,
@@ -561,7 +570,7 @@ selectedCity: controller.cityController.text,
               const Text('Full Address'),
               SizedBox(height: 8),
               buildTextField(
-                'Gayatri nagar',
+                'exact Address',
                 Icons.apartment_outlined,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -569,8 +578,8 @@ selectedCity: controller.cityController.text,
                   }
                   return null;
                 },
-                controller.rentBuildingController,
-
+                controller.sell_rent_Address,
+                maxLines: 3,
               ),
               SizedBox(height: 16),
               buildSectionTitle('BHK'),
@@ -605,7 +614,10 @@ selectedCity: controller.cityController.text,
                           padding: const EdgeInsets.only(top: 6, left: 4),
                           child: Text(
                             'Please select a BHK type',
-                            style: TextStyle(color: ColorRes.error, fontSize:AppFontSizes.bodySmall),
+                            style: TextStyle(
+                              color: ColorRes.error,
+                              fontSize: AppFontSizes.bodySmall,
+                            ),
                           ),
                         )
                         : SizedBox.shrink(),
@@ -659,7 +671,9 @@ selectedCity: controller.cityController.text,
                     decoration: BoxDecoration(
                       color: ColorRes.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: ColorRes.leadGreyColor.shade400),
+                      border: Border.all(
+                        color: ColorRes.leadGreyColor.shade400,
+                      ),
                     ),
                     child: DropdownButton<String>(
                       value: controller.areaUnit.value,
@@ -682,7 +696,10 @@ selectedCity: controller.cityController.text,
                         }
                       },
                       underline: Container(),
-                      style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.black),
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.black,
+                      ),
                       dropdownColor: ColorRes.white,
                     ),
                   ),
@@ -814,6 +831,9 @@ selectedCity: controller.cityController.text,
                             MaterialPageRoute(
                               builder:
                                   (context) => CommonSearchField(
+                                    selectedCity:
+                                        controller.cityController.text,
+                                    isLocality: true,
                                     onCitySelected: (city) {
                                       Navigator.pop(context, city);
                                     },
@@ -899,7 +919,7 @@ selectedCity: controller.cityController.text,
                               style: TextStyle(
                                 color: ColorRes.error.shade700,
                                 // fontSize: 12,
-                                fontSize: AppFontSizes.bodySmall, 
+                                fontSize: AppFontSizes.bodySmall,
                               ),
                             ),
                           )
@@ -1023,7 +1043,7 @@ selectedCity: controller.cityController.text,
                               'Please select Zone type',
                               style: TextStyle(
                                 color: ColorRes.error.shade700,
-                                fontSize: AppFontSizes.bodySmall, 
+                                fontSize: AppFontSizes.bodySmall,
                                 // fontSize: 12,
                               ),
                             ),
@@ -1504,6 +1524,9 @@ selectedCity: controller.cityController.text,
                             MaterialPageRoute(
                               builder:
                                   (context) => CommonSearchField(
+                                    selectedCity:
+                                        controller.cityController.text,
+                                    isLocality: true,
                                     onCitySelected: (city) {
                                       Navigator.pop(context, city);
                                     },
@@ -2173,7 +2196,10 @@ class TextFieldWithDropdown extends StatelessWidget {
                 }
               },
               underline: Container(),
-              style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.black),
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                color: ColorRes.black,
+              ),
               // style: const TextStyle(fontSize: 12, color: ColorRes.black),
               dropdownColor: ColorRes.white,
             ),

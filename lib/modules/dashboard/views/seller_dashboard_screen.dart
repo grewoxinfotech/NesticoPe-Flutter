@@ -246,7 +246,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
           case 0:
             return SellerHomeScreen();
           case 1:
-            return LeadScreen();
+            return SellerLeadScreen();
           // return Center(
           //   child: ElevatedButton(
           //     onPressed: () {

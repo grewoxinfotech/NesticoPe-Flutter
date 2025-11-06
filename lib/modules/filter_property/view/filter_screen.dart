@@ -39,7 +39,10 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
     super.initState();
     controllerForFilter = Get.put(PropertyFilterControllerForFilter());
     if (widget.initialFilters.isNotEmpty) {
-      controllerForFilter.initializeWithFilters(widget.initialFilters);
+      // Initialize filters after widget is built
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await controllerForFilter.initializeWithFilters(widget.initialFilters);
+      });
     }
   }
 

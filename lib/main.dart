@@ -7,8 +7,8 @@ import 'package:housing_flutter_app/modules/auth/views/splash_screen.dart';
 import 'package:housing_flutter_app/app/services/network_status_service.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:housing_flutter_app/app/manager/compare_manager.dart';
+import 'package:housing_flutter_app/modules/no_internet/no_internet_screen.dart';
 
-import 'app/services/network_status_service.dart';
 import 'app/theme/themes.dart' as AppTheme;
 import 'app/utils/helper_function/user_helper/user_helper.dart';
 
@@ -27,15 +27,27 @@ void main() async {
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  await Get.putAsync(() => NetworkStatusService().init());
+  // Initialize network service
+  final networkService = await Get.putAsync(() => NetworkStatusService().init());
   await UserHelper.initUserType();
   Get.put(CompareManager(), permanent: true);
+  
+  // Check initial internet connection
+  final hasInternet = networkService.isConnected;
+  
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       initialBinding: CustomBinding(),
-      home: const SplashScreen(),
+      // Show no internet screen if no connection, otherwise splash
+      home: hasInternet ? const SplashScreen() : const NoInternetScreen(),
+      // Define named routes
+      getPages: [
+        GetPage(name: '/splash', page: () => const SplashScreen()),
+        GetPage(name: '/no-internet', page: () => const NoInternetScreen()),
+        GetPage(name: '/dashboard', page: () => DashboardScreen()),
+      ],
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
         return MediaQuery(

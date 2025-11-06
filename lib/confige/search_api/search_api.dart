@@ -81,12 +81,6 @@ class GoogleMapApi {
       }) async {
     // Build components parameter
     String components = 'country:in';
-    // If cityFilter is provided, append it to restrict to that city
-    if (cityFilter != null && cityFilter.isNotEmpty) {
-      // Google doesn’t support direct “locality” restriction in components,
-      // but we can pass the city name in input context for better filtering.
-      input = '$input, $cityFilter';
-    }
 
     final uri = Uri.parse(
       '$baseUrl?input=$input&types=$types&components=$components&key=${ApiConfig.mapkey}',
@@ -95,7 +89,7 @@ class GoogleMapApi {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      print('ffur ${response.body}');
+      print('Google Maps API Response: ${response.body}');
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
         return data;
@@ -104,6 +98,32 @@ class GoogleMapApi {
       }
     } else {
       throw Exception('Failed to fetch data');
+    }
+  }
+
+  /// Get city coordinates using Geocoding API
+  Future<Map<String, double>?> _getCityCoordinates(String cityName) async {
+    try {
+      final geoUri = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?address=$cityName,India&key=${ApiConfig.mapkey}',
+      );
+
+      final response = await http.get(geoUri);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'OK' && data['results'].isNotEmpty) {
+          final location = data['results'][0]['geometry']['location'];
+          return {
+            'lat': location['lat'],
+            'lng': location['lng'],
+          };
+        }
+      }
+      return null;
+    } catch (e) {
+      print('❌ Error getting city coordinates: $e');
+      return null;
     }
   }
 
@@ -127,11 +147,89 @@ class GoogleMapApi {
       String query, {
         String? cityFilter,
       }) async {
-    return _fetchPredictions(
-      query,
-      'geocode',
-      cityFilter: cityFilter, // Surat, Mumbai, etc.
-    );
+    try {
+      // If city filter is provided, get coordinates and use location bias
+      if (cityFilter != null && cityFilter.isNotEmpty) {
+        final coords = await _getCityCoordinates(cityFilter);
+        
+        if (coords != null) {
+          // Use location bias to prioritize results near the city
+          // Radius: 30km from city center (stricter boundary)
+          final uri = Uri.parse(
+            '$baseUrl?input=$query&types=geocode&components=country:in'
+            '&location=${coords['lat']},${coords['lng']}'
+            '&radius=30000'
+            '&strictbounds=true'
+            '&key=${ApiConfig.mapkey}',
+          );
+
+          final response = await http.get(uri);
+
+          if (response.statusCode == 200) {
+            print('Locality search with location bias: ${response.body}');
+            final data = json.decode(response.body);
+            
+            if (data['status'] == 'OK') {
+              // Additional filtering: only return results that contain city name
+              final predictions = data['predictions'] as List;
+              final cityLower = cityFilter.toLowerCase();
+              
+              final filteredPredictions = predictions.where((pred) {
+                // Check main description
+                final description = pred['description']?.toString().toLowerCase() ?? '';
+                
+                // Check structured formatting for more accurate filtering
+                final secondaryText = pred['structured_formatting']?['secondary_text']?.toString().toLowerCase() ?? '';
+                final mainText = pred['structured_formatting']?['main_text']?.toString().toLowerCase() ?? '';
+                
+                // Result should contain city name in description OR secondary text
+                // This ensures the locality is actually in the selected city
+                bool matchesCity = description.contains(cityLower) || 
+                                   secondaryText.contains(cityLower);
+                
+                // Additional check: if the result is from a different city, reject it
+                // Common other cities to filter out
+                List<String> otherMajorCities = [
+                  'mumbai', 'delhi', 'bangalore', 'bengaluru', 'chennai', 'kolkata', 
+                  'hyderabad', 'pune', 'ahmedabad', 'jaipur', 'lucknow', 'kanpur',
+                  'madurai', 'coimbatore', 'trichy', 'tiruchirappalli', 'trivandrum', 
+                  'thiruvananthapuram', 'kochi', 'cochin', 'mysore', 'mysuru',
+                  'vadodara', 'baroda', 'rajkot', 'nashik', 'nagpur', 'indore',
+                  'thane', 'bhopal', 'visakhapatnam', 'vizag', 'pimpri-chinchwad',
+                  'patna', 'ludhiana', 'agra', 'chandigarh', 'faridabad',
+                  'ghaziabad', 'noida', 'greater noida'
+                ];
+                
+                // Remove the selected city from the exclusion list
+                otherMajorCities.remove(cityLower);
+                
+                // Check if result contains any other major city name
+                bool containsOtherCity = otherMajorCities.any((city) => 
+                  description.contains(city) || secondaryText.contains(city)
+                );
+                
+                return matchesCity && !containsOtherCity;
+              }).toList();
+              
+              return {
+                'status': 'OK',
+                'predictions': filteredPredictions,
+              };
+            } else {
+              return data;
+            }
+          } else {
+            throw Exception('Failed to fetch data');
+          }
+        }
+      }
+      
+      // Fallback: search without city filter
+      return _fetchPredictions(query, 'geocode');
+    } catch (e) {
+      print('❌ Error in searchLocalities: $e');
+      return _fetchPredictions(query, 'geocode');
+    }
   }
 
 

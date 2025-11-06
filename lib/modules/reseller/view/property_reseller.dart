@@ -2384,7 +2384,7 @@ Widget buildDailyGoals({
   final completedSteps = currentStep.clamp(0, totalSteps);
   final double progress = (completedSteps / totalSteps).clamp(0.0, 1.0);
   final remainingSteps = totalSteps - completedSteps;
-  final progressPercent = (completedSteps / totalSteps * 100).toInt();
+  final progressPercent = (completedSteps / totalSteps * 100);
   print("resele $currentStep");
   print("resele $currentStreak");
   print("resele $remainingSteps");

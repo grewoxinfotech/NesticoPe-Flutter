@@ -166,6 +166,7 @@ class PropertyFilterControllerForFilter extends GetxController {
   ///=====================================STATE & CITY=====================
   RxString selectedState = ''.obs;
   RxString selectedCity = ''.obs;
+  RxBool isInitializing = false.obs; // Track if we're in initialization mode
 
   // CityController to fetch states and cities dynamically
   final CityController cityController = Get.put(CityController());
@@ -194,7 +195,10 @@ class PropertyFilterControllerForFilter extends GetxController {
               ?.map((city) => city.city)
               .toList() ??
           [];
-      selectedCity.value = ''; // reset city when state changes
+      // Only reset city if NOT initializing filters
+      if (!isInitializing.value) {
+        selectedCity.value = ''; // reset city when state changes
+      }
     });
   }
 
@@ -1122,8 +1126,10 @@ class PropertyFilterControllerForFilter extends GetxController {
     }
   }
 
-  void initializeWithFilters(Map<String, String> initialFilters) {
+  Future<void> initializeWithFilters(Map<String, String> initialFilters) async {
     try {
+      // Mark that we're initializing to prevent city reset
+      isInitializing.value = true;
       // Handle listing type first to set correct tab
       if (initialFilters['listingType'] != null) {
         String listingType = initialFilters['listingType']!;
@@ -1301,11 +1307,20 @@ class PropertyFilterControllerForFilter extends GetxController {
         }
       }
 
-      // Handle location
+      // Handle location - properly load cities before setting values
       if (initialFilters['state'] != null) {
-        selectedState.value = initialFilters['state']!;
-      }
-      if (initialFilters['city'] != null) {
+        final stateValue = initialFilters['state']!;
+        selectedState.value = stateValue;
+        
+        // Wait for cities to load for this state
+        await Future.delayed(const Duration(milliseconds: 100)); // Give time for listener to update cities
+        
+        // Now set city if provided
+        if (initialFilters['city'] != null) {
+          selectedCity.value = initialFilters['city']!;
+        }
+      } else if (initialFilters['city'] != null) {
+        // City without state - just set it
         selectedCity.value = initialFilters['city']!;
       }
 
@@ -1326,6 +1341,9 @@ class PropertyFilterControllerForFilter extends GetxController {
       }
     } catch (e) {
       debugPrint('Error initializing filters: $e');
+    } finally {
+      // Reset initialization flag
+      isInitializing.value = false;
     }
   }
 

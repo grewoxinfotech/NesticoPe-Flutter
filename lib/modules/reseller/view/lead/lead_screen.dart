@@ -720,7 +720,7 @@ void showFilterBottomSheet(
                       child: ElevatedButton(
                         onPressed: () {
                           // Apply filters to controller
-                          controller.selectedLeadFilters.clear();
+                          // controller.selectedLeadFilters.clear();
                           controller.selectedLeadFilters.addAll(
                             tempSelectedFilters,
                           );
@@ -768,98 +768,6 @@ void showFilterBottomSheet(
   );
 }
 
-// Widget _buildFilterSection({
-//   required BuildContext context,
-//   required String title,
-//   required IconData icon,
-//   required String filterType,
-//   required List<String> options,
-//   required RxList<String> tempSelectedFilters,
-//   required StateSetter setState,
-// }) {
-//   return Column(
-//     crossAxisAlignment: CrossAxisAlignment.start,
-//     children: [
-//       // Section header
-//       Row(
-//         children: [
-//           Container(
-//             padding: const EdgeInsets.all(8),
-//             decoration: BoxDecoration(
-//               color: ColorRes.primary.withOpacity(0.1),
-//               borderRadius: BorderRadius.circular(8),
-//             ),
-//             child: Icon(icon, size: 18, color: ColorRes.primary),
-//           ),
-//           const SizedBox(width: 12),
-//           Text(
-//             title,
-//             style: TextStyle(
-//               fontSize: AppFontSizes.bodySmall,
-//               fontWeight: AppFontWeights.semiBold,
-//               color: ColorRes.textColor,
-//             ),
-//           ),
-//         ],
-//       ),
-//       const SizedBox(height: 16),
-//
-//       // Filter chips
-//       Wrap(
-//         spacing: 8,
-//         runSpacing: -4,
-//         children:
-//             options.map((option) {
-//               return Obx(() {
-//                 final fullFilterKey = '$filterType:$option';
-//                 final isSelected = tempSelectedFilters.contains(fullFilterKey);
-//
-//                 return FilterChip(
-//                   label: Text(option),
-//                   selected: isSelected,
-//                   onSelected: (selected) {
-//                     if (selected) {
-//                       if (!tempSelectedFilters.contains(fullFilterKey)) {
-//                         tempSelectedFilters.add(fullFilterKey);
-//                       }
-//                     } else {
-//                       tempSelectedFilters.remove(fullFilterKey);
-//                     }
-//                     setState(() {});
-//                   },
-//                   selectedColor: ColorRes.primary.withOpacity(0.15),
-//                   checkmarkColor: ColorRes.primary,
-//                   backgroundColor: ColorRes.leadGreyColor[100],
-//                   shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(20),
-//                     side: BorderSide(
-//                       color:
-//                           isSelected
-//                               ? ColorRes.primary
-//                               : ColorRes.leadGreyColor[300]!,
-//                       width: isSelected ? 1.5 : 1,
-//                     ),
-//                   ),
-//                   labelStyle: TextStyle(
-//                     color:
-//                         isSelected ? ColorRes.primary : ColorRes.blackShade87,
-//                     fontWeight:
-//                         isSelected
-//                             ? AppFontWeights.semiBold
-//                             : AppFontWeights.regular,
-//                     fontSize: AppFontSizes.small,
-//                   ),
-//                   padding: const EdgeInsets.symmetric(
-//                     horizontal: 12,
-//                     vertical: 8,
-//                   ),
-//                 );
-//               });
-//             }).toList(),
-//       ),
-//     ],
-//   );
-// }
 Widget buildFilterSection({
   required BuildContext context,
   required String title,

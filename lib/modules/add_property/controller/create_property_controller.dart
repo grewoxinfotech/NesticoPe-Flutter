@@ -2651,8 +2651,8 @@ class CreatePropertyController extends GetxController {
                 : null,
       ),
       location:
-          rentBuildingController.text.trim().isNotEmpty
-              ? rentBuildingController.text.trim()
+          localityController.text.trim().isNotEmpty
+              ? localityController.text.trim()
               : null,
       city:
           cityController.text.trim().isNotEmpty
@@ -2760,8 +2760,8 @@ class CreatePropertyController extends GetxController {
       ),
 
       location:
-          rentBuildingController.text.trim().isNotEmpty
-              ? rentBuildingController.text.trim()
+          localityController.text.trim().isNotEmpty
+              ? localityController.text.trim()
               : null,
       city:
           cityController.text.trim().isNotEmpty
@@ -2822,10 +2822,10 @@ class CreatePropertyController extends GetxController {
         ),
       ),
 
-      // location:
-      //     rentBuildingController.text.trim().isNotEmpty
-      //         ? rentBuildingController.text.trim()
-      //         : null,
+      location:
+          localityController.text.trim().isNotEmpty
+              ? localityController.text.trim()
+              : null,
       city:
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
