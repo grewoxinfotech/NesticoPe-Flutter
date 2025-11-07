@@ -202,8 +202,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/manager/favorite.dart';
+import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/property/views/widgets/property_list_screen_card.dart';
+import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:housing_flutter_app/modules/saved_property/views/widget/saved_property_card.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/img_res.dart';
@@ -238,7 +241,9 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   final PropertyViewController viewController = Get.put(
     PropertyViewController(),
   );
-  final FavoriteManager favoriteManager = FavoriteManager();
+  final PropertyFavoriteController favoriteManager =
+      Get.find<PropertyFavoriteController>();
+  // final FavoriteManager favoriteManager = FavoriteManager();
   final PropertyContactedController contactedController = Get.put(
     PropertyContactedController(),
   );
@@ -276,7 +281,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
               child: Obx(() {
                 // Reactive counts from GetX observables
                 final savedCount = favoriteManager.favorites.length;
-                final seenCount = viewController.viewedPropertyIds.length;
+                final seenCount = viewController.viewedProperties.length;
                 final contactedCount =
                     contactedController.contactedPropertyIds.length;
                 final recentCount = 0; // TODO: link with recent searches
@@ -389,11 +394,11 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
     return SafeArea(
       top: false,
       child: Obx(() {
-        if (controller.isLoading.value && controller.properties.isEmpty) {
+        if (controller.isLoading.value && controller.viewedProperties.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (controller.properties.isEmpty) {
+        if (controller.viewedProperties.isEmpty) {
           return const Center(
             child: Text(
               "No viewed properties yet",
@@ -408,8 +413,8 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
             if (scrollInfo.metrics.pixels >=
                     scrollInfo.metrics.maxScrollExtent - 100 &&
                 !controller.isLoadingMore.value &&
-                controller.currentIndex < controller.viewedPropertyIds.length) {
-              controller.loadNextBatch();
+                controller.currentIndex < controller.viewedProperties.length) {
+              // controller.loadNextBatch();
             }
             return false;
           },
@@ -420,12 +425,45 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               itemCount:
-                  controller.properties.length +
+                  controller.viewedProperties.length +
                   (controller.isLoadingMore.value ? 1 : 0),
               itemBuilder: (context, index) {
-                if (index < controller.properties.length) {
-                  final Items property = controller.properties[index];
-                  return PropertyCardWidget(property: property, role: "");
+                if (index < controller.viewedProperties.length) {
+                  final property = controller.viewedProperties[index];
+                  return GestureDetector(
+                    onTap: () {
+                      if (property.entityType == "property") {
+                        // Property Screen
+                        Get.to(
+                          () => PropertyDetailScreen(
+                            propertyId: property.details.id,
+                          ),
+                        );
+                      } else {
+                        // Project Screen
+                        Get.to(
+                          () => ProjectDetailsScreen(
+                            projectId: property.details.id,
+                          ),
+                        );
+                      }
+                    },
+                    child: Obx(() {
+                      final PropertyFavoriteController favoriteController =
+                          Get.find<PropertyFavoriteController>();
+
+                      final isFavorite = favoriteController.favorites.contains(
+                        property.details.id,
+                      );
+                      return SavedPropertyCard(
+                        imageUrl: property.details.images ?? '',
+                        isForRent: property.details.listingType == 'Rent',
+                        location: property.details.location ?? '',
+                        price: property.displayPrice,
+                        isFavorite: isFavorite,
+                      );
+                    }),
+                  );
                 } else {
                   // loader at bottom when loading next batch
                   return const Padding(
@@ -451,57 +489,89 @@ class SavedPropertiesTab extends StatefulWidget {
 
 class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
   final controller = Get.find<PropertyController>();
-  final manager = FavoriteManager();
+  final manager = Get.find<PropertyFavoriteController>();
 
-  final RxList<Items> favoriteProperties = <Items>[].obs;
+  // final RxList<Items> favoriteProperties = <Items>[].obs;
 
   @override
   void initState() {
     super.initState();
-    loadFavorite();
-
+    // loadFavorite();
+    manager.loadData();
     // Listen to favorite changes globally
-    ever(manager.favorites, (_) => loadFavorite());
+    // ever(manager.favorites, (_) => loadFavorite());
   }
 
-  Future<void> loadFavorite() async {
-    await controller.getFavoriteProperty();
-    favoriteProperties.assignAll(
-      controller.items.where((item) => manager.favorites.contains(item.id)),
-    );
-  }
+  // Future<void> loadFavorite() async {
+  //   favoriteProperties.assignAll(
+  //     manager.items.where((item) => manager.favorites.contains(item.id)),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Obx(() {
-        if (controller.isLoading.value && controller.items.isEmpty) {
+        if (manager.isLoading.value && manager.favorites.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (!controller.isLoading.value && controller.items.isEmpty) {
+        if (!manager.isLoading.value && manager.favorites.isEmpty) {
           return const Center(child: Text("No Property found."));
-        }
-
-        if (!controller.isLoading.value && favoriteProperties.isEmpty) {
-          return const Center(child: Text("No Favorite Property found."));
         }
 
         return RefreshIndicator(
           onRefresh: () async {
             await controller.refreshList();
-            await loadFavorite();
+            await manager.loadData();
           },
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(
               vertical: AppPadding.small,
               horizontal: AppPadding.small,
             ),
-            itemCount: favoriteProperties.length,
+            itemCount: manager.favoriteResponse.value!.data!.favorite.length,
             itemBuilder: (context, index) {
-              final data = favoriteProperties[index];
-              return PropertyCardWidget(property: data, role: "");
+              final property =
+                  manager.favoriteResponse.value!.data!.favorite[index];
+              return GestureDetector(
+                onTap: () {
+                  if (property.entityType == "property") {
+                    // Property Screen
+                    Get.to(
+                      () =>
+                          PropertyDetailScreen(propertyId: property.details.id),
+                    );
+                  } else {
+                    // Project Screen
+                    Get.to(
+                      () =>
+                          ProjectDetailsScreen(projectId: property.details.id),
+                    );
+                  }
+                },
+                child: Obx(() {
+                  final PropertyFavoriteController favoriteController =
+                      Get.find<PropertyFavoriteController>();
+
+                  final isFavorite = favoriteController.favorites.contains(
+                    property.details.id,
+                  );
+                  return SavedPropertyCard(
+                    imageUrl: property.details.images ?? '',
+                    isForRent: property.details.listingType == 'Rent',
+                    location: property.details.location ?? '',
+                    price: property.displayPrice,
+                    isFavorite: isFavorite,
+                    onFavoritePressed: () {
+                      final PropertyFavoriteController favoriteController =
+                          Get.find<PropertyFavoriteController>();
+                      favoriteController.toggleFavorite(property.details.id);
+                    },
+                  );
+                }),
+              );
             },
           ),
         );

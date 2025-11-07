@@ -24,6 +24,7 @@ import 'package:housing_flutter_app/modules/review/controllers/review_controller
 import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
 import 'package:housing_flutter_app/app/manager/compare_manager.dart';
+import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
@@ -41,9 +42,13 @@ import '../controllers/overall_rating_controller.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
   final Items? property;
+  final String? propertyId;
 
-  const PropertyDetailScreen({super.key, this.property});
-
+  const PropertyDetailScreen({super.key, this.property, this.propertyId})
+    : assert(
+        property != null || propertyId != null,
+        'Either property or propertyId must be provided',
+      );
 
   @override
   State<PropertyDetailScreen> createState() => _PropertyDetailScreenState();
@@ -51,32 +56,36 @@ class PropertyDetailScreen extends StatefulWidget {
 
 class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   late final PropertyController controller;
+  late final PropertyFavoriteController favoriteController;
   late final GoogleMapController mapController;
   late final OverallRatingController _overallRatingController;
   late final ReviewController reviewController;
   final RxBool canAddReview = true.obs;
+  final Rxn<Items> _property = Rxn<Items>();
+  final RxBool _isLoading = true.obs;
 
   @override
   void initState() {
     super.initState();
 
+    // Get property ID (from object or direct ID)
+    final propertyId = widget.property?.id ?? widget.propertyId ?? '';
+
     // Initialize controllers
-    controller = Get.put(
-      PropertyController(),
-      tag: 'property_${widget.property?.id}',
-    );
-    mapController = Get.put(
-      GoogleMapController(),
-      tag: 'map_${widget.property?.id}',
-    );
+    controller = Get.put(PropertyController(), tag: 'property_$propertyId');
+    mapController = Get.put(GoogleMapController(), tag: 'map_$propertyId');
     _overallRatingController = Get.put(
       OverallRatingController(),
-      tag: 'rating_${widget.property?.id}',
+      tag: 'rating_$propertyId',
     );
-    reviewController = Get.put(
-      ReviewController(),
-      tag: 'review_${widget.property?.id}',
-    );
+    reviewController = Get.put(ReviewController(), tag: 'review_$propertyId');
+    favoriteController = Get.find<PropertyFavoriteController>();
+
+    // Set property if provided
+    if (widget.property != null) {
+      _property.value = widget.property;
+      _isLoading.value = false;
+    }
 
     // Load data
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -86,535 +95,613 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   @override
   void dispose() {
+    final propertyId = widget.property?.id ?? widget.propertyId ?? '';
+
     // Clean up controllers
-    Get.delete<PropertyController>(tag: 'property_${widget.property?.id}');
-    Get.delete<GoogleMapController>(tag: 'map_${widget.property?.id}');
-    Get.delete<OverallRatingController>(tag: 'rating_${widget.property?.id}');
-    Get.delete<ReviewController>(tag: 'review_${widget.property?.id}');
+    Get.delete<PropertyController>(tag: 'property_$propertyId');
+    Get.delete<GoogleMapController>(tag: 'map_$propertyId');
+    Get.delete<OverallRatingController>(tag: 'rating_$propertyId');
+    Get.delete<ReviewController>(tag: 'review_$propertyId');
 
     // Clean up observables
     canAddReview.close();
+    _property.close();
+    _isLoading.close();
 
     super.dispose();
   }
 
   Future<void> _loadData() async {
-    // Set review filter
-    reviewController.filters.value = {"entity_id": widget.property?.id ?? ""};
-    reviewController.filters.refresh();
+    try {
+      _isLoading.value = true;
 
-    // Fetch nearby landmarks and all categories
-    if (widget.property?.address?.isNotEmpty ?? false) {
-      await mapController.fetchAllCategoriesData(widget.property!.address!);
+      // Fetch property if only ID was provided
+      if (widget.property == null && widget.propertyId != null) {
+        final fetchedProperty = await controller.getPropertyById(
+          widget.propertyId!,
+        );
+        if (fetchedProperty == null) {
+          // Show error and go back
+          if (mounted) {
+            Get.snackbar(
+              'Error',
+              'Property not found',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            Get.back();
+          }
+          return;
+        }
+        _property.value = fetchedProperty;
+      }
+
+      final currentProperty = _property.value;
+      if (currentProperty == null) return;
+
+      // Set review filter
+      reviewController.filters.value = {"entity_id": currentProperty.id ?? ""};
+      reviewController.filters.refresh();
+
+      // Fetch nearby landmarks and all categories
+      if (currentProperty.address?.isNotEmpty ?? false) {
+        await mapController.fetchAllCategoriesData(currentProperty.address!);
+      }
+
+      // Check review permission
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id ?? '';
+      if (currentProperty.id != null) {
+        final exists = await reviewController.isReviewExist(
+          entityId: currentProperty.id!,
+          reviewerId: userId,
+        );
+        canAddReview.value = !exists;
+      }
+
+      // Track view
+      controller.addView(currentProperty.id ?? '');
+      _overallRatingController.fetchOverallRating(currentProperty.id ?? '');
+    } finally {
+      _isLoading.value = false;
     }
-
-    // Check review permission
-    final user = await SecureStorage.getUserData();
-    final userId = user?.user?.id ?? '';
-    if (widget.property?.id != null) {
-      final exists = await reviewController.isReviewExist(
-        entityId: widget.property!.id!,
-        reviewerId: userId,
-      );
-      canAddReview.value = !exists;
-    }
-
-    // Track view
-    controller.addView(widget.property?.id ?? '');
-    _overallRatingController.fetchOverallRating(widget.property?.id ?? '');
   }
 
   // Convenience getter
-  Items? get property => widget.property;
+  Items? get property => _property.value ?? widget.property;
 
   final CompareManager compare = Get.put(CompareManager(), permanent: true);
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorRes.white,
       extendBody: true,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(
-            bottom: kBottomNavigationBarHeight / 2,
-          ),
+      body: Obx(() {
+        // Show loading while fetching property
+        if (_isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          // prevents overlap
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildMediaBanner(
-                property?.propertyMedia ?? PropertyMedia(),
-                property?.id ?? '',
-              ),
-              _buildTitleSection(property ?? Items()),
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
-
-              const SizedBox(height: 12),
-              const TitleWithViewAll(title: 'Facilities'),
-              const SizedBox(height: 0),
-              Facilities(property: property ?? Items()),
-              const SizedBox(height: 0),
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
-
-              const SizedBox(height: 12),
-              const TitleWithViewAll(title: 'Property Details'),
-              const SizedBox(height: 12),
-              Details(property: property!),
-              const SizedBox(height: 12),
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
-
-              if (property?.propertyDetails?.amenities != null) ...[
-                const SizedBox(height: 12),
-                const TitleWithViewAll(title: 'Amenities'),
-                const SizedBox(height: 8),
-                AmenitiesSection(
-                  amenities: property!.propertyDetails!.amenities ?? [],
+        // Show error if property not found
+        if (property == null) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: ColorRes.leadGreyColor,
                 ),
-                const SizedBox(height: 8),
-                Divider(
-                  indent: 18,
-                  endIndent: 18,
-                  color: ColorRes.leadGreyColor.shade300,
-                ),
-              ],
-
-              if (property?.propertyDescription != null) ...[
-                const SizedBox(height: 12),
-                const TitleWithViewAll(title: 'Description'),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    property?.propertyDescription ?? '-',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                    ),
+                const SizedBox(height: 16),
+                Text(
+                  'Property not found',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.body,
+                    color: ColorRes.leadGreyColor,
                   ),
                 ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Get.back(),
+                  child: const Text('Go Back'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(
+              bottom: kBottomNavigationBarHeight / 2,
+            ),
+
+            // prevents overlap
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildMediaBanner(
+                  property?.propertyMedia ?? PropertyMedia(),
+                  property?.id ?? '',
+                ),
+                _buildTitleSection(property ?? Items()),
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
+                ),
+
+                const SizedBox(height: 12),
+                const TitleWithViewAll(title: 'Facilities'),
+                const SizedBox(height: 0),
+                Facilities(property: property ?? Items()),
+                const SizedBox(height: 0),
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
+                ),
+
+                const SizedBox(height: 12),
+                const TitleWithViewAll(title: 'Property Details'),
+                const SizedBox(height: 12),
+                Details(property: property!),
                 const SizedBox(height: 12),
                 Divider(
                   indent: 18,
                   endIndent: 18,
                   color: ColorRes.leadGreyColor.shade300,
                 ),
-              ],
 
-              const SizedBox(height: 12),
-              const TitleWithViewAll(title: 'Location'),
-              const SizedBox(height: 12),
-              AddressAndMapDetails(property: property!),
-              const SizedBox(height: 12),
+                if (property?.propertyDetails?.amenities != null) ...[
+                  const SizedBox(height: 12),
+                  const TitleWithViewAll(title: 'Amenities'),
+                  const SizedBox(height: 8),
+                  AmenitiesSection(
+                    amenities: property!.propertyDetails!.amenities ?? [],
+                  ),
+                  const SizedBox(height: 8),
+                  Divider(
+                    indent: 18,
+                    endIndent: 18,
+                    color: ColorRes.leadGreyColor.shade300,
+                  ),
+                ],
 
-              // if (property?.nearbyLocations != null) ...[
-              //   Divider(
-              //     indent: 18,
-              //     endIndent: 18,
-              //     color: ColorRes.leadGreyColor.shade300,
-              //   ),
-              //
-              //   const SizedBox(height: 8),
-              //   const TitleWithViewAll(title: 'Nearby Landmarks'),
-              //   const SizedBox(height: 12),
-              //   NearbyPropertyDetails(
-              //     nearbyLocations: property?.nearbyLocations ?? [],
-              //   ),
-              //   const SizedBox(height: 12),
-              // ],
-              // Category-based Nearby Places with Google Map Style
-              Obx(() {
-                if (mapController.isLoading.value) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-
-                // Check if any category has data
-                final hasData = mapController.allCategoriesData.values.any(
-                  (places) => places.isNotEmpty,
-                );
-
-                if (!hasData || mapController.propertyLatLng.value == null) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Divider(
-                      indent: 18,
-                      endIndent: 18,
-                      color: ColorRes.leadGreyColor.shade300,
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Embedded Map Preview Section
-                    NearbyLocationMapSection(
-                      address: property?.address ?? '',
-                      mapController: mapController,
-                    ),
-
-                    const SizedBox(height: 12),
-                  ],
-                );
-              }),
-
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
-
-              const SizedBox(height: 12),
-              const TitleWithViewAll(title: 'Owner Details'),
-              const SizedBox(height: 12),
-              OwnerInformation(property: property!, controller: controller),
-              const SizedBox(height: 12),
-              // Divider(
-              //   indent: 18,
-              //   endIndent: 18,
-              //   color: ColorRes.leadGreyColor.shade300,
-              // ),
-              // const SizedBox(height: 12),
-
-              // const TitleWithViewAll(title: 'Check availability of Agent'),
-              // const SizedBox(height: 12),
-              // ContactSellerCard(property: property ?? Items()),
-
-              // const SizedBox(height: 12),
-              // Obx(() {
-              //   if (!controller.isDeveloper.value) {
-              //     return const SizedBox.shrink(); // hide if not developer
-              //   }
-              //
-              //   return Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Divider(
-              //         indent: 18,
-              //         endIndent: 18,
-              //         color: ColorRes.leadGreyColor.shade300,
-              //       ),
-              //       const SizedBox(height: 12),
-              //       const TitleWithViewAll(title: 'Project Brochures'),
-              //       const SizedBox(height: 12),
-              //       const ProjectBrochure(
-              //         brochureImageUrl:
-              //             'https://cdn.dribbble.com/userupload/12289156/file/original-1b5719cd15e5e7e54052ebe7ed9ad2a7.jpg?resize=400x0',
-              //         brochureUrl: "",
-              //         totalPages: 4,
-              //       ),
-              //       const SizedBox(height: 12),
-              //       Divider(
-              //         indent: 18,
-              //         endIndent: 18,
-              //         color: ColorRes.leadGreyColor.shade300,
-              //       ),
-              //       const SizedBox(height: 12),
-              //       const TitleWithViewAll(title: 'Premium projects nearby'),
-              //       const SizedBox(height: 12),
-              //       ProjectDetails(
-              //         launchedDate: property?.lastRenewalDate ?? '',
-              //         maxPrice: 3.5,
-              //         minPrice: 1.8,
-              //         nearbyProjects: property?.nearbyLocations ?? [],
-              //         projectArea: 22,
-              //         projectName: "",
-              //         reraId: '322',
-              //         units: 256,
-              //       ),
-              //       const SizedBox(height: 12),
-              //       RecommendedInsights(
-              //         nearbyLocations: property?.nearbyLocations ?? [],
-              //       ),
-              //     ],
-              //   );
-              // }),
-              const SizedBox(height: 12),
-
-              Obx(() {
-                final overallCtrl = _overallRatingController;
-                final reviewCtrl = reviewController;
-
-                final isOverallLoading =
-                    overallCtrl.isLoading.value &&
-                    overallCtrl.ratingData.value == null;
-                final isReviewLoading =
-                    reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
-
-                // 🌀 Show loader if both are still loading
-                if (isOverallLoading && isReviewLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                // 🈳 Hide section if both are empty and not loading
-                if (!overallCtrl.isLoading.value &&
-                    !reviewCtrl.isLoading.value &&
-                    (overallCtrl.ratingData.value == null ||
-                        overallCtrl.ratingData.value?.data?.totalReviews ==
-                            0) &&
-                    reviewCtrl.items.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-
-                // 🧩 Extract safe data
-                final overallData = overallCtrl.ratingData.value?.data;
-                final totalReviews = overallData?.totalReviews ?? 0;
-                final overallRating = overallData?.overallRating ?? 0.0;
-                final DetailedRatings detailedRatings =
-                    overallData?.detailedRatings ??
-                    DetailedRatings(
-                      accuracy: 0,
-                      amenities: 0,
-                      cleanliness: 0,
-                      location: 0,
-                      value: 0,
-                    );
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Divider(
-                      indent: 18,
-                      endIndent: 18,
-                      color: ColorRes.leadGreyColor.shade300,
-                    ),
-                    const SizedBox(height: 12),
-                    const TitleWithViewAll(
-                      title: 'Reviews & Ratings',
-                      showViewAll: true,
-                    ),
-                    // 🟡 Overall Rating Section
-                    OverallRatingWidget(
-                      totalReviews: totalReviews,
-                      overallRating: overallRating,
-                      detailedRatings: detailedRatings,
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // 📋 Review List Section
-                    if (reviewCtrl.items.isNotEmpty) ...[
-                      SizedBox(
-                        height: 220,
-                        child: ListView.separated(
-                          // shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: reviewCtrl.items.length,
-                          separatorBuilder:
-                              (_, __) => const SizedBox(width: 16),
-                          itemBuilder: (context, index) {
-                            final review = reviewCtrl.items[index];
-                            return PropertyReviewCard(reviewItem: review);
-                          },
-                        ),
+                if (property?.propertyDescription != null) ...[
+                  const SizedBox(height: 12),
+                  const TitleWithViewAll(title: 'Description'),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      property?.propertyDescription ?? '-',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
                       ),
-                    ] else if (!reviewCtrl.isLoading.value &&
-                        totalReviews == 0) ...[
-                      const Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Divider(
+                    indent: 18,
+                    endIndent: 18,
+                    color: ColorRes.leadGreyColor.shade300,
+                  ),
+                ],
+
+                const SizedBox(height: 12),
+                const TitleWithViewAll(title: 'Location'),
+                const SizedBox(height: 12),
+                AddressAndMapDetails(property: property!),
+                const SizedBox(height: 12),
+
+                // if (property?.nearbyLocations != null) ...[
+                //   Divider(
+                //     indent: 18,
+                //     endIndent: 18,
+                //     color: ColorRes.leadGreyColor.shade300,
+                //   ),
+                //
+                //   const SizedBox(height: 8),
+                //   const TitleWithViewAll(title: 'Nearby Landmarks'),
+                //   const SizedBox(height: 12),
+                //   NearbyPropertyDetails(
+                //     nearbyLocations: property?.nearbyLocations ?? [],
+                //   ),
+                //   const SizedBox(height: 12),
+                // ],
+                // Category-based Nearby Places with Google Map Style
+                Obx(() {
+                  if (mapController.isLoading.value) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  // Check if any category has data
+                  final hasData = mapController.allCategoriesData.values.any(
+                    (places) => places.isNotEmpty,
+                  );
+
+                  if (!hasData || mapController.propertyLatLng.value == null) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(
+                        indent: 18,
+                        endIndent: 18,
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Embedded Map Preview Section
+                      NearbyLocationMapSection(
+                        address: property?.address ?? '',
+                        mapController: mapController,
+                      ),
+
+                      const SizedBox(height: 12),
+                    ],
+                  );
+                }),
+
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
+                ),
+
+                const SizedBox(height: 12),
+                const TitleWithViewAll(title: 'Owner Details'),
+                const SizedBox(height: 12),
+                OwnerInformation(property: property!, controller: controller),
+                const SizedBox(height: 12),
+                // Divider(
+                //   indent: 18,
+                //   endIndent: 18,
+                //   color: ColorRes.leadGreyColor.shade300,
+                // ),
+                // const SizedBox(height: 12),
+
+                // const TitleWithViewAll(title: 'Check availability of Agent'),
+                // const SizedBox(height: 12),
+                // ContactSellerCard(property: property ?? Items()),
+
+                // const SizedBox(height: 12),
+                // Obx(() {
+                //   if (!controller.isDeveloper.value) {
+                //     return const SizedBox.shrink(); // hide if not developer
+                //   }
+                //
+                //   return Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       Divider(
+                //         indent: 18,
+                //         endIndent: 18,
+                //         color: ColorRes.leadGreyColor.shade300,
+                //       ),
+                //       const SizedBox(height: 12),
+                //       const TitleWithViewAll(title: 'Project Brochures'),
+                //       const SizedBox(height: 12),
+                //       const ProjectBrochure(
+                //         brochureImageUrl:
+                //             'https://cdn.dribbble.com/userupload/12289156/file/original-1b5719cd15e5e7e54052ebe7ed9ad2a7.jpg?resize=400x0',
+                //         brochureUrl: "",
+                //         totalPages: 4,
+                //       ),
+                //       const SizedBox(height: 12),
+                //       Divider(
+                //         indent: 18,
+                //         endIndent: 18,
+                //         color: ColorRes.leadGreyColor.shade300,
+                //       ),
+                //       const SizedBox(height: 12),
+                //       const TitleWithViewAll(title: 'Premium projects nearby'),
+                //       const SizedBox(height: 12),
+                //       ProjectDetails(
+                //         launchedDate: property?.lastRenewalDate ?? '',
+                //         maxPrice: 3.5,
+                //         minPrice: 1.8,
+                //         nearbyProjects: property?.nearbyLocations ?? [],
+                //         projectArea: 22,
+                //         projectName: "",
+                //         reraId: '322',
+                //         units: 256,
+                //       ),
+                //       const SizedBox(height: 12),
+                //       RecommendedInsights(
+                //         nearbyLocations: property?.nearbyLocations ?? [],
+                //       ),
+                //     ],
+                //   );
+                // }),
+                const SizedBox(height: 12),
+
+                Obx(() {
+                  final overallCtrl = _overallRatingController;
+                  final reviewCtrl = reviewController;
+
+                  final isOverallLoading =
+                      overallCtrl.isLoading.value &&
+                      overallCtrl.ratingData.value == null;
+                  final isReviewLoading =
+                      reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
+
+                  // 🌀 Show loader if both are still loading
+                  if (isOverallLoading && isReviewLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  // 🈳 Hide section if both are empty and not loading
+                  if (!overallCtrl.isLoading.value &&
+                      !reviewCtrl.isLoading.value &&
+                      (overallCtrl.ratingData.value == null ||
+                          overallCtrl.ratingData.value?.data?.totalReviews ==
+                              0) &&
+                      reviewCtrl.items.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  // 🧩 Extract safe data
+                  final overallData = overallCtrl.ratingData.value?.data;
+                  final totalReviews = overallData?.totalReviews ?? 0;
+                  final overallRating = overallData?.overallRating ?? 0.0;
+                  final DetailedRatings detailedRatings =
+                      overallData?.detailedRatings ??
+                      DetailedRatings(
+                        accuracy: 0,
+                        amenities: 0,
+                        cleanliness: 0,
+                        location: 0,
+                        value: 0,
+                      );
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(
+                        indent: 18,
+                        endIndent: 18,
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(
+                        title: 'Reviews & Ratings',
+                        showViewAll: true,
+                      ),
+                      // 🟡 Overall Rating Section
+                      OverallRatingWidget(
+                        totalReviews: totalReviews,
+                        overallRating: overallRating,
+                        detailedRatings: detailedRatings,
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // 📋 Review List Section
+                      if (reviewCtrl.items.isNotEmpty) ...[
+                        SizedBox(
+                          height: 220,
+                          child: ListView.separated(
+                            // shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: reviewCtrl.items.length,
+                            separatorBuilder:
+                                (_, __) => const SizedBox(width: 16),
+                            itemBuilder: (context, index) {
+                              final review = reviewCtrl.items[index];
+                              return PropertyReviewCard(reviewItem: review);
+                            },
+                          ),
                         ),
-                        child: Text(
-                          "No reviews yet",
-                          style: TextStyle(color: Colors.grey),
+                      ] else if (!reviewCtrl.isLoading.value &&
+                          totalReviews == 0) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: Text(
+                            "No reviews yet",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ],
+                  );
+                }),
+
+                Obx(() {
+                  if (!canAddReview.value) {
+                    return SizedBox.shrink();
+                  }
+                  return Column(
+                    children: [
+                      const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: NesticoPeButton(
+                          width: double.infinity,
+                          boxShadow: [],
+                          onTap: () async {
+                            if (UserHelper.isGuest) {
+                              Get.to(() => LoginScreen());
+                            } else {
+                              final result = await Get.to(
+                                () => AddReviewScreen(
+                                  entityType: 'property',
+                                  entityId: property?.id ?? '',
+                                ),
+                              );
+
+                              // 👇 Hide button immediately if review was successfully added
+                              if (result == true) {
+                                canAddReview.value = false;
+
+                                reviewController.refreshList();
+                                _overallRatingController.fetchOverallRating(
+                                  property?.id ?? '',
+                                );
+                              }
+                            }
+                          },
+
+                          title: "Add Review",
                         ),
                       ),
                     ],
-                  ],
-                );
-              }),
+                  );
+                }),
 
-              Obx(() {
-                if (!canAddReview.value) {
-                  return SizedBox.shrink();
-                }
-                return Column(
-                  children: [
-                    const SizedBox(height: 12),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: NesticoPeButton(
-                        width: double.infinity,
-                        boxShadow: [],
-                        onTap: () async {
-                          if (UserHelper.isGuest) {
-                            Get.to(() => LoginScreen());
-                          } else {
-                            final result = await Get.to(
-                              () => AddReviewScreen(
-                                entityType: 'property',
-                                entityId: property?.id ?? '',
-                              ),
-                            );
-
-                            // 👇 Hide button immediately if review was successfully added
-                            if (result == true) {
-                              canAddReview.value = false;
-
-                              reviewController.refreshList();
-                              _overallRatingController.fetchOverallRating(
-                                property?.id ?? '',
-                              );
-                            }
-                          }
-                        },
-
-                        title: "Add Review",
-                      ),
-                    ),
-                  ],
-                );
-              }),
-
-              const SizedBox(height: 12),
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
-              const SizedBox(height: 12),
-              const TitleWithViewAll(
-                title: 'Recommended Properties',
-                showViewAll: true,
-              ),
-              const SizedBox(height: 12),
-              const RecommendedProperty(),
-              const SizedBox(height: 12),
-              // Divider(
-              //   indent: 18,
-              //   endIndent: 18,
-              //   color: ColorRes.leadGreyColor.shade300,
-              // ),
-              // const SizedBox(height: 12),
-              // const TitleWithViewAll(
-              //   title: 'Better Price Property',
-              //   showViewAll: true,
-              // ),
-              // const SizedBox(height: 12),
-              // const RecommendedProperty(),
-
-              //SizedBox(height: 12),
-              //const SizedBox(height: 12), // Extra spacing at bottom
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: PropertyBottomBar(
-          property: property!,
-          // price: '₹ ${property?.propertyDetails?.financialInfo?.price ?? '0'}',
-          onCallOwner: () {
-            if (UserHelper.isGuest) {
-              Get.to(() => LoginScreen());
-            } else {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                const SizedBox(height: 12),
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
                 ),
-                builder:
-                    (context) => DraggableScrollableSheet(
-                      expand: false,
-                      initialChildSize: 0.85,
-                      // start with 85% of screen
-                      minChildSize: 0.5,
-                      maxChildSize: 0.85,
-                      builder:
-                          (context, scrollController) => SingleChildScrollView(
-                            controller: scrollController,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom,
-                                left: 16,
-                                right: 16,
-                                top: 16,
-                              ),
-                              child: ContactOwnerBottom(
-                                property: property ?? Items(),
+                const SizedBox(height: 12),
+                const TitleWithViewAll(
+                  title: 'Recommended Properties',
+                  showViewAll: true,
+                ),
+                const SizedBox(height: 12),
+                const RecommendedProperty(),
+                const SizedBox(height: 12),
+                // Divider(
+                //   indent: 18,
+                //   endIndent: 18,
+                //   color: ColorRes.leadGreyColor.shade300,
+                // ),
+                // const SizedBox(height: 12),
+                // const TitleWithViewAll(
+                //   title: 'Better Price Property',
+                //   showViewAll: true,
+                // ),
+                // const SizedBox(height: 12),
+                // const RecommendedProperty(),
 
-                                // Optional: Customize texts
-                                titleText: "Contact the Owner",
-                                chatButtonText: "Chat via WhatsApp",
-                                formTitle: "Quick Contact Form",
-                                contactButtonText: "Send Request",
+                //SizedBox(height: 12),
+                //const SizedBox(height: 12), // Extra spacing at bottom
+              ],
+            ),
+          ),
+        );
+      }),
+      bottomNavigationBar: Obx(() {
+        if (_isLoading.value || property == null) {
+          return const SizedBox.shrink();
+        }
+        return SafeArea(
+          child: PropertyBottomBar(
+            property: property!,
+            // price: '₹ ${property?.propertyDetails?.financialInfo?.price ?? '0'}',
+            onCallOwner: () {
+              if (UserHelper.isGuest) {
+                Get.to(() => LoginScreen());
+              } else {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  builder:
+                      (context) => DraggableScrollableSheet(
+                        expand: false,
+                        initialChildSize: 0.85,
+                        // start with 85% of screen
+                        minChildSize: 0.5,
+                        maxChildSize: 0.85,
+                        builder:
+                            (
+                              context,
+                              scrollController,
+                            ) => SingleChildScrollView(
+                              controller: scrollController,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom,
+                                  left: 16,
+                                  right: 16,
+                                  top: 16,
+                                ),
+                                child: ContactOwnerBottom(
+                                  property: property ?? Items(),
 
-                                // Optional: Customize icons
-                                nameIcon: Icons.person,
-                                phoneIcon: Icons.phone,
-                                emailIcon: Icons.email,
+                                  // Optional: Customize texts
+                                  titleText: "Contact the Owner",
+                                  chatButtonText: "Chat via WhatsApp",
+                                  formTitle: "Quick Contact Form",
+                                  contactButtonText: "Send Request",
 
-                                // Optional: Checkbox initial states
-                                allowSellerContact: true,
-                                homeLoanInterest: false,
+                                  // Optional: Customize icons
+                                  nameIcon: Icons.person,
+                                  phoneIcon: Icons.phone,
+                                  emailIcon: Icons.email,
 
-                                // Callbacks
-                                onChatPressed: () {
-                                  print("WhatsApp button clicked!");
-                                },
-                                onContactPressed: (name, phone, email) async {
-                                  final inquiry = {
-                                    "name": name,
-                                    "phone": phone,
-                                    "email": email,
-                                  };
-                                  final success = await controller.addInquiry(
-                                    inquiry,
-                                    property?.id ?? '',
-                                  );
-                                  if (success) {
-                                    CustomSnackBar.show(
-                                      Get.overlayContext!,
-                                      message: "Inquiry Added Successfully",
-                                      type: SnackBarType.success,
+                                  // Optional: Checkbox initial states
+                                  allowSellerContact: true,
+                                  homeLoanInterest: false,
+
+                                  // Callbacks
+                                  onChatPressed: () {
+                                    print("WhatsApp button clicked!");
+                                  },
+                                  onContactPressed: (name, phone, email) async {
+                                    final inquiry = {
+                                      "name": name,
+                                      "phone": phone,
+                                      "email": email,
+                                    };
+                                    final success = await controller.addInquiry(
+                                      inquiry,
+                                      property?.id ?? '',
                                     );
-                                    Get.back();
-                                  } else {
-                                    CustomSnackBar.show(
-                                      Get.overlayContext!,
-                                      message: "Failed to Submit Inquiry",
-                                      type: SnackBarType.error,
-                                    );
-                                  }
-                                },
-                                onAllowSellerContactChanged: (value) {
-                                  print("Allow sellers changed: $value");
-                                },
-                                onHomeLoanInterestChanged: (value) {
-                                  print("Home loan interest changed: $value");
-                                },
+                                    if (success) {
+                                      CustomSnackBar.show(
+                                        Get.overlayContext!,
+                                        message: "Inquiry Added Successfully",
+                                        type: SnackBarType.success,
+                                      );
+                                      Get.back();
+                                    } else {
+                                      CustomSnackBar.show(
+                                        Get.overlayContext!,
+                                        message: "Failed to Submit Inquiry",
+                                        type: SnackBarType.error,
+                                      );
+                                    }
+                                  },
+                                  onAllowSellerContactChanged: (value) {
+                                    print("Allow sellers changed: $value");
+                                  },
+                                  onHomeLoanInterestChanged: (value) {
+                                    print("Home loan interest changed: $value");
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                    ),
-              );
-            }
-          },
-          onScheduleVisit: () {},
-        ),
-      ),
+                      ),
+                );
+              }
+            },
+            onScheduleVisit: () {},
+          ),
+        );
+      }),
     );
   }
 
@@ -684,7 +771,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       final selected = compare.isSelected(id);
                       return CircularIcon(
                         icon: Icons.compare_arrows,
-                        backgroundColor:selected ?ColorRes.primary: ColorRes.white,
+                        backgroundColor:
+                            selected ? ColorRes.primary : ColorRes.white,
                         iconColor: selected ? ColorRes.white : ColorRes.primary,
                         onPressed: () {
                           final before = compare.count;
@@ -696,26 +784,32 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             if (after > before) {
                               CustomSnackBar.show(
                                 ctx,
-                                message: after == 2
-                                    ? 'Ready to compare!'
-                                    : 'Added to compare (${after}/2)',
+                                message:
+                                    after == 2
+                                        ? 'Ready to compare!'
+                                        : 'Added to compare (${after}/2)',
                                 type: SnackBarType.success,
                                 actionLabel: after == 2 ? 'Compare Now' : null,
-                                onActionPressed: after == 2
-                                    ? () {
-                                        Get.back(); // Close snackbar first
-                                        if (Get.isRegistered<NavigationController>()) {
-                                          Get.find<NavigationController>().changeIndex(2);
+                                onActionPressed:
+                                    after == 2
+                                        ? () {
+                                          Get.back(); // Close snackbar first
+                                          if (Get.isRegistered<
+                                            NavigationController
+                                          >()) {
+                                            Get.find<NavigationController>()
+                                                .changeIndex(2);
+                                          }
                                         }
-                                      }
-                                    : null,
+                                        : null,
                               );
                             } else if (after < before) {
                               CustomSnackBar.show(
                                 ctx,
-                                message: after == 0
-                                    ? 'Removed from compare'
-                                    : 'Removed from compare (${after}/2)',
+                                message:
+                                    after == 0
+                                        ? 'Removed from compare'
+                                        : 'Removed from compare (${after}/2)',
                                 type: SnackBarType.info,
                               );
                             } else if (after == before && before >= 2) {
@@ -732,17 +826,21 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     const SizedBox(width: 12),
                     // Favorite button
                     Obx(() {
-                      final isFavorite = controller.favoriteIds.contains(id);
+                      final isFavorite = favoriteController.favorites.contains(
+                        id,
+                      );
                       return CircularIcon(
-                        icon: isFavorite
-                            ? Icons.favorite
-                            : Icons.favorite_border_rounded,
+                        icon:
+                            isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border_rounded,
                         backgroundColor: ColorRes.white,
-                        iconColor: isFavorite
-                            ? ColorRes.redAccentColor
-                            : ColorRes.black,
+                        iconColor:
+                            isFavorite
+                                ? ColorRes.redAccentColor
+                                : ColorRes.black,
                         onPressed: () {
-                          controller.toggleFavorite(id);
+                          favoriteController.toggleFavorite(id);
                         },
                       );
                     }),
@@ -1279,7 +1377,7 @@ class CircularIcon extends StatelessWidget {
   final Color? backgroundColor; // add this
   final Color? iconColor;
   final double sizeContainer;
-  final double iconSize;// add this
+  final double iconSize; // add this
 
   const CircularIcon({
     super.key,
@@ -1287,8 +1385,8 @@ class CircularIcon extends StatelessWidget {
     this.onPressed,
     this.backgroundColor, // add this
     this.iconColor,
-    this.sizeContainer=40,
-    this.iconSize=24
+    this.sizeContainer = 40,
+    this.iconSize = 24,
     // add this
   });
 
@@ -1303,7 +1401,7 @@ class CircularIcon extends StatelessWidget {
           borderRadius: BorderRadius.circular(50),
           color: backgroundColor ?? ColorRes.leadGreyColor.shade300, // fallback
         ),
-        child: Icon(icon, color: iconColor ?? ColorRes.black,size: iconSize,),
+        child: Icon(icon, color: iconColor ?? ColorRes.black, size: iconSize),
       ),
     );
   }
@@ -2158,11 +2256,12 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                       // Map type
                       mapType: gmaps.MapType.normal,
                       // Fix gesture conflicts with parent scroll
-                      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                        Factory<OneSequenceGestureRecognizer>(
-                          () => EagerGestureRecognizer(),
-                        ),
-                      },
+                      gestureRecognizers:
+                          <Factory<OneSequenceGestureRecognizer>>{
+                            Factory<OneSequenceGestureRecognizer>(
+                              () => EagerGestureRecognizer(),
+                            ),
+                          },
                       onMapCreated: (controller) {
                         _googleMapController = controller;
                       },

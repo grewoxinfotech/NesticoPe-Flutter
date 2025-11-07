@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/database/secure_storage_service.dart';
@@ -45,69 +46,6 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
-  // void splash() async {
-  //   await Future.delayed(const Duration(seconds: 1));
-  //
-  //   bool isLogin = await SecureStorage.getLoggedIn();
-  //   String? token = await SecureStorage.getToken();
-  //
-  //   print("DEBUG >> isLogin=$isLogin, token=$token");
-  //
-  //   if (isLogin == true && token != null && token.isNotEmpty) {
-  //     if (isLogin == true && token.isNotEmpty) {
-  //       // ✅ Token exists, go to dashboard
-  //       Get.offAll(() => const DashboardScreen());
-  //     } else {
-  //       // ❌ No token, go to login
-  //       // Get.offAll(() => const DashboardScreen());
-  //
-  //       Get.offAll(() => const LoginScreen());
-  //     }
-  //   } else {
-  //     // Get.offAll(() => const DashboardScreen());
-  //     Get.offAll(() => const LoginScreen());
-  //     print("login_new_token $token");
-  //   }
-  // }
-
-  // Future<void> splash() async {
-  //   await Future.delayed(const Duration(seconds: 1));
-  //
-  //   try {
-  //     // Initialize user type once (can be guest if not logged in)
-  //     await UserHelper.initUserType();
-  //
-  //     // Fetch login info from secure storage
-  //     final bool isLogin = await SecureStorage.getLoggedIn();
-  //     final String? token = await SecureStorage.getToken();
-  //
-  //     print(
-  //       "DEBUG >> isLogin=$isLogin, token=$token, role=${UserHelper.userType}",
-  //     );
-  //
-  //     // If user is logged in but token missing/invalid → clear data
-  //     if (isLogin && (token == null || token.isEmpty)) {
-  //       await SecureStorage.clearAll();
-  //       UserHelper.clearUserType();
-  //     }
-  //
-  //     // ⚙️ Your logic: Allow guest mode / show onboarding / etc.
-  //     // Instead of forcing login, navigate to a neutral screen
-  //     // like Home or Explore
-  //     Get.offAll(() => const DashboardScreen());
-  //
-  //     // Optional: if you still want to send logged-in users differently
-  //     // if (isLogin && token != null && token.isNotEmpty) {
-  //     //   Get.offAll(() => const DashboardScreen());
-  //     // } else {
-  //     //   Get.offAll(() => const LoginScreen());
-  //     // }
-  //   } catch (e) {
-  //     print("Error during splash init: $e");
-  //     Get.offAll(() => const LoginScreen());
-  //   }
-  // }
-
   Future<void> splash() async {
     await Future.delayed(const Duration(seconds: 1));
 
@@ -143,6 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
       }
 
       // ✅ Continue to dashboard (guest or logged in)
+      Get.put(PropertyFavoriteController(), permanent: true);
       Get.offAll(() => const DashboardScreen());
     } catch (e) {
       print("❌ Error during splash init: $e");

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/manager/favorite.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 
 import '../../../app/care/pagination/models/pagination_models.dart';

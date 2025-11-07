@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:housing_flutter_app/data/network/property/models/viewed_item_model.dart';
 import 'package:http/http.dart' as http;
 import '../../../../app/constants/api_constants.dart';
 
@@ -10,7 +11,7 @@ class PropertyViewService {
   }
 
   /// Fetch property view data and return a list of property IDs
-  Future<List<String>> fetchViewedPropertyIds(String userId) async {
+  Future<ViewResponseModel?> fetchViewedPropertyIds(String userId) async {
     try {
       final uri = Uri.parse('$baseUrl/$userId/view');
       final response = await http.get(uri, headers: await headers());
@@ -18,14 +19,7 @@ class PropertyViewService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
 
-        if (data['success'] == true && data['data'] != null) {
-          final List<dynamic> properties = data['data']['property'] ?? [];
-          return properties
-              .map<String>((item) => item['propertyId'].toString())
-              .toList();
-        } else {
-          return [];
-        }
+        return ViewResponseModel.fromJson(data);
       } else {
         throw Exception(
           'Failed to fetch property views: ${response.statusCode}',
@@ -33,7 +27,7 @@ class PropertyViewService {
       }
     } catch (e) {
       print('Error fetching viewed properties: $e');
-      return [];
+      return null;
     }
   }
 }

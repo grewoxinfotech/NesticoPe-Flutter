@@ -554,6 +554,7 @@
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -570,10 +571,12 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../data/network/builder/model/builder_model.dart';
+import '../../../data/network/property/services/property_service.dart';
 import '../view/builder_main_screen.dart';
 
 class ProjectWizardController extends PaginatedController<ProjectItem> {
   final BuilderService _builderService = BuilderService();
+  final PropertyService _propertyService = PropertyService();
   final currentStep = 0.obs;
   ImagePicker picker = ImagePicker();
   RxList<String> selectedListOfAmenities = <String>[].obs;
@@ -590,6 +593,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   final Rxn<UserModel> user = Rxn<UserModel>();
 
   Map<String, String>? filters = {};
+  // var favoriteProjectIds = <String>{}.obs;
 
   final project =
       AddProjectModel(
@@ -1001,6 +1005,29 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         p.documentList.removeAt(index);
       }
     });
+  }
+
+  // Get single project by ID (returns cached one if found)
+  Future<ProjectItem?> getProjectById(String id) async {
+    try {
+      // Check cache first
+      final existing = items.firstWhereOrNull((item) => item.id == id);
+      if (existing != null) {
+        return existing;
+      } else {
+        final data = await _builderService.getProjectById(id);
+        print('Fetched item: ${data.toJson()}');
+        items.add(data);
+        return data;
+      }
+
+      // If not in cache, fetch from API
+      // Note: You may need to add this method to BuilderService
+      // For now, return null if not in cach
+    } catch (e) {
+      print('Get project error: $e');
+    }
+    return null;
   }
 
   final formKeys = List.generate(6, (_) => GlobalKey<FormState>());

@@ -14,13 +14,22 @@ import '../../../../app/widgets/media/media_preview.dart';
 import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../../data/network/builder/model/builder_projectModel.dart';
+import '../../controller/builder_form_controller.dart';
 import '../../controller/project_controller.dart';
 import 'package:get/get.dart';
 
 class ProjectDetailsScreen extends StatefulWidget {
-  final ProjectItem projectItem;
+  final ProjectItem? projectItem;
+  final String? projectId;
 
-  const ProjectDetailsScreen({super.key, required this.projectItem});
+  const ProjectDetailsScreen({
+    super.key,
+    this.projectItem,
+    this.projectId,
+  }) : assert(
+          projectItem != null || projectId != null,
+          'Either projectItem or projectId must be provided',
+        );
 
   @override
   State<ProjectDetailsScreen> createState() => _ProjectDetailsScreenState();
@@ -28,22 +37,81 @@ class ProjectDetailsScreen extends StatefulWidget {
 
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   final projectController = Get.put(ProjectController());
+  late final ProjectWizardController wizardController;
+  final Rxn<ProjectItem> _project = Rxn<ProjectItem>();
+  final RxBool _isLoading = true.obs;
+
   @override
   void initState() {
     super.initState();
+
+    // Get project ID (from object or direct ID)
+    final projectId = widget.projectItem?.id ?? widget.projectId ?? '';
+
+    // Initialize wizard controller
+    wizardController = Get.put(
+      ProjectWizardController(isBuilderView: false),
+      tag: 'project_detail_$projectId',
+    );
+
+    // Set project if provided
+    if (widget.projectItem != null) {
+      _project.value = widget.projectItem;
+      _isLoading.value = false;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
   }
 
-  Future<void> _loadData() async {
-    // Check review permission
-    final user = await SecureStorage.getUserData();
-    final userId = user?.user?.id ?? '';
-
-    // Track view
-    projectController.addView(widget.projectItem.id ?? '');
+  @override
+  void dispose() {
+    final projectId = widget.projectItem?.id ?? widget.projectId ?? '';
+    Get.delete<ProjectWizardController>(tag: 'project_detail_$projectId');
+    _project.close();
+    _isLoading.close();
+    super.dispose();
   }
+
+  Future<void> _loadData() async {
+    try {
+      _isLoading.value = true;
+
+      // Fetch project if only ID was provided
+      if (widget.projectItem == null && widget.projectId != null) {
+        final fetchedProject = await wizardController.getProjectById(widget.projectId!);
+        if (fetchedProject == null) {
+          // Show error and go back
+          if (mounted) {
+            Get.snackbar(
+              'Error',
+              'Project not found',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            Get.back();
+          }
+          return;
+        }
+        _project.value = fetchedProject;
+      }
+
+      final currentProject = _project.value;
+      if (currentProject == null) return;
+
+      // Check review permission
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id ?? '';
+
+      // Track view
+      projectController.addView(currentProject.id);
+    } finally {
+      _isLoading.value = false;
+    }
+  }
+
+  // Convenience getter
+  ProjectItem? get project => _project.value ?? widget.projectItem;
 
   @override
   Widget build(BuildContext context) {
@@ -51,25 +119,63 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
     return Scaffold(
       backgroundColor: ColorRes.background,
-      body: CustomScrollView(
-        slivers: [
-          _buildAppBar(context, widget.projectItem),
-          SliverToBoxAdapter(
+      body: Obx(() {
+        // Show loading while fetching project
+        if (_isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        // Show error if project not found
+        if (project == null) {
+          return Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildProjectDetails(widget.projectItem),
-                _buildMediaGallery(widget.projectItem),
-                _buildConfigurations(controller, widget.projectItem),
-                _buildAmenities(widget.projectItem),
-                _buildDocuments(controller, widget.projectItem),
-                _buildContactSection(controller, widget.projectItem),
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: ColorRes.leadGreyColor,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Project not found',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.body,
+                    color: ColorRes.leadGreyColor,
+                  ),
+                ),
                 const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Get.back(),
+                  child: const Text('Go Back'),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
+          );
+        }
+
+        return CustomScrollView(
+          slivers: [
+            _buildAppBar(context, project!),
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildProjectDetails(project!),
+                  _buildMediaGallery(project!),
+                  _buildConfigurations(controller, project!),
+                  _buildAmenities(project!),
+                  _buildDocuments(controller, project!),
+                  _buildContactSection(controller, project!),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 

@@ -97,9 +97,4 @@ class ProjectController extends GetxController {
     final success = await _propertyService.addView(id);
     return success;
   }
-
-  Future<bool> addFavorite(String id) async {
-    final success = await _propertyService.addFavorite(id);
-    return success;
-  }
 }

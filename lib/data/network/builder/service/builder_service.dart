@@ -58,6 +58,29 @@ class BuilderService {
     }
   }
 
+  Future<ProjectItem> getProjectById(String projectId) async {
+    try {
+      final uri = Uri.parse("$baseUrl/$projectId");
+      print("📡 Fetching Projects from: $uri");
+
+      final response = await http.get(uri, headers: await headers());
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("✅ Project API Response: $data");
+
+        return ProjectItem.fromJson(data['data']);
+      } else {
+        print("❌ Failed to load projects: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to load projects");
+      }
+    } catch (e) {
+      print("⚠️ Exception in fetchProjects: $e");
+      rethrow; // Let controller handle error
+    }
+  }
+
   ///==================== Create Project under a Builder ====================
   Future<bool> createProject({
     required AddProjectModel projectData,
@@ -171,117 +194,6 @@ class BuilderService {
       return false;
     }
   }
-
-  // Future<bool> updateProject({
-  //   required String projectId,
-  //   required ProjectModel projectData,
-  //   List<File>? images,
-  //   List<File>? videos,
-  //   File? documents,
-  // }) async {
-  //   try {
-  //     final uri = Uri.parse('$baseUrl/$projectId'); // include project ID
-  //     debugPrint("📤 Updating project at: $uri");
-  //
-  //     final headerMap = await headers();
-  //
-  //     var request = http.MultipartRequest('PUT', uri);
-  //     request.headers.addAll({
-  //       ...headerMap,
-  //       'Content-Type': 'multipart/form-data',
-  //     });
-  //
-  //     // Convert model to Map
-  //     final projectMap = projectData.toJson();
-  //     print("Project Map: $projectMap");
-  //     print("Documents: $documents");
-  //     print("Images: $images");
-  //     print("Videos: $videos");
-  //
-  //     // Attach brochure if provided
-  //     if (documents != null) {
-  //       request.files.add(
-  //         await http.MultipartFile.fromPath(
-  //           'brochure',
-  //           documents.path,
-  //           contentType: MediaType('application', 'pdf'),
-  //         ),
-  //       );
-  //     }
-  //
-  //     // Attach other fields
-  //     projectMap.forEach((key, value) {
-  //       if (value == null) return;
-  //
-  //       if (key == 'brochure') return; // already handled
-  //
-  //       if (value is Map || value is List) {
-  //         request.fields[key] = jsonEncode(value);
-  //       } else {
-  //         request.fields[key] = value.toString();
-  //       }
-  //     });
-  //
-  //     // Attach images
-  //     if (images != null && images.isNotEmpty) {
-  //       for (var image in images) {
-  //         request.files.add(
-  //           await http.MultipartFile.fromPath(
-  //             'project_images',
-  //             image.path,
-  //             contentType: MediaType('image', 'jpeg'),
-  //           ),
-  //         );
-  //       }
-  //     }
-  //
-  //     // Attach videos
-  //     if (videos != null && videos.isNotEmpty) {
-  //       for (var video in videos) {
-  //         request.files.add(
-  //           await http.MultipartFile.fromPath(
-  //             'project_videos',
-  //             video.path,
-  //             contentType: MediaType('video', 'mp4'),
-  //           ),
-  //         );
-  //       }
-  //     }
-  //
-  //     debugPrint("🧾 Multipart fields: ${request.fields}");
-  //     debugPrint("📎 Attached files: ${request.files.length}");
-  //
-  //     final streamedResponse = await request.send();
-  //     final response = await http.Response.fromStream(streamedResponse);
-  //
-  //     debugPrint("📩 Update Project Response: ${response.statusCode}");
-  //     debugPrint("📄 Response Body: ${response.body}");
-  //
-  //     if (response.statusCode == 200) {
-  //       CustomSnackBar.show(
-  //         Get.overlayContext!,
-  //         message: "Project updated successfully",
-  //         type: SnackBarType.success,
-  //       );
-  //       return true;
-  //     }
-  //
-  //     CustomSnackBar.show(
-  //       Get.overlayContext!,
-  //       message: "Failed to update project",
-  //       type: SnackBarType.error,
-  //     );
-  //     return false;
-  //   } catch (e) {
-  //     debugPrint("❌ Update project exception: $e");
-  //     CustomSnackBar.show(
-  //       Get.overlayContext!,
-  //       message: "Error while updating project",
-  //       type: SnackBarType.error,
-  //     );
-  //     return false;
-  //   }
-  // }
 
   Future<bool> updateProject({
     required String projectId,

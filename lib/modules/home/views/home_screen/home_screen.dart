@@ -29,6 +29,7 @@ import 'package:housing_flutter_app/modules/property/views/property_list_screen.
 // import 'package:housing_flutter_app/modules/property/views/recommended.dart';
 
 import 'package:housing_flutter_app/modules/property_rating/view/top_rated_property.dart';
+import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/seller_list.dart';
@@ -224,6 +225,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final PropertyController controller = Get.put(PropertyController());
+  final PropertyFavoriteController favoriteController =
+      Get.find<PropertyFavoriteController>();
   final NewsController newsController = Get.put(NewsController());
   final trendingCityController = Get.put(TrendingCityController());
   final RecommendedPropertyController _recommendedPropertyController = Get.put(
@@ -377,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final user = await SecureStorage.getUserData();
       debugPrint("User Data: ${user?.toJson()}");
-      controller.getFavorite(user?.user?.id ?? '');
+      favoriteController.getFavorite(user?.user?.id ?? '');
     });
 
     // Get.lazyPut(() => PropertyController());

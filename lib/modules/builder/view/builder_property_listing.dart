@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
+import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
+import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 import 'package:housing_flutter_app/modules/builder/controller/project_controller.dart';
 import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
@@ -11,6 +13,7 @@ import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
 import '../../../app/manager/property_highlight_manager.dart';
 import '../../../data/network/builder/model/builder_projectModel.dart';
+import '../../saved_property/controllers/property_favorite_controller.dart';
 import '../controller/builder_form_controller.dart';
 import 'builder_form_screen.dart';
 
@@ -1013,7 +1016,11 @@ class BuilderProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ProjectWizardController>();
+    final PropertyFavoriteController favoriteController =
+        Get.find<PropertyFavoriteController>();
+    final compare = Get.put(ProjectCompareManager());
     final configText = _getConfigurationText();
+    bool isFavorite = false;
 
     return Container(
       height: height,
@@ -1088,41 +1095,135 @@ class BuilderProjectCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // RERA Badge
-                if (project.reraId.isNotEmpty)
+                // Favorite & Compare Buttons (Only for home view, not for builder's own projects)
+                if (forHome)
                   Positioned(
                     top: 10,
-                    right: forHome ? 8 : 52,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorRes.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.verified_outlined,
-                            size: 12,
-                            color: ColorRes.green[700],
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            'RERA',
-                            style: TextStyle(
-                              color: ColorRes.green[700],
-                              fontSize: AppFontSizes.mini,
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
-                          ),
-                        ],
-                      ),
+                    right: 10,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Compare toggle
+                        GestureDetector(
+                          onTap: () {
+                            final before = compare.count;
+                            compare.toggle(project, max: 2);
+                            final after = compare.count;
+
+                            // Show feedback
+                            final ctx = Get.overlayContext;
+                            if (ctx != null) {
+                              if (after > before) {
+                                CustomSnackBar.show(
+                                  ctx,
+                                  message:
+                                      after == 2
+                                          ? 'Ready to compare!'
+                                          : 'Added to compare (${after}/2)',
+                                  type: SnackBarType.success,
+                                );
+                              } else if (after < before) {
+                                CustomSnackBar.show(
+                                  ctx,
+                                  message:
+                                      after == 0
+                                          ? 'Removed from compare'
+                                          : 'Removed from compare (${after}/2)',
+                                  type: SnackBarType.info,
+                                );
+                              } else if (after == before && before >= 2) {
+                                // Max limit reached
+                                CustomSnackBar.show(
+                                  ctx,
+                                  message: 'You can only compare 2 projects',
+                                  type: SnackBarType.warning,
+                                );
+                              }
+                            }
+                          },
+                          child: Obx(() {
+                            final selected = compare.isSelected(project.id);
+                            return CircleAvatar(
+                              backgroundColor:
+                                  selected ? ColorRes.primary : ColorRes.white,
+                              radius: 16,
+                              child: Icon(
+                                Icons.compare_arrows,
+                                color:
+                                    selected
+                                        ? ColorRes.white
+                                        : ColorRes.primary,
+                                size: 18,
+                              ),
+                            );
+                          }),
+                        ),
+                        const SizedBox(width: 8),
+                        // Favorite toggle
+                        GestureDetector(
+                          onTap: () {
+                            favoriteController.toggleFavorite(project.id);
+                          },
+                          child: Obx(() {
+                            isFavorite = favoriteController.favorites.contains(
+                              project.id,
+                            );
+                            return CircleAvatar(
+                              backgroundColor: ColorRes.white,
+                              radius: 16,
+                              child: Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color:
+                                    isFavorite
+                                        ? ColorRes.error
+                                        : ColorRes.leadGreyColor,
+                                size: 18,
+                              ),
+                            );
+                          }),
+                        ),
+                      ],
                     ),
                   ),
+                // RERA Badge
+                if (!forHome) ...[
+                  if (project.reraId.isNotEmpty)
+                    Positioned(
+                      top: 10,
+                      right: forHome ? 8 : 52,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorRes.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.verified_outlined,
+                              size: 12,
+                              color: ColorRes.green[700],
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              'RERA',
+                              style: TextStyle(
+                                color: ColorRes.green[700],
+                                fontSize: AppFontSizes.mini,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
                 if (!forHome) ...[
                   Positioned(
                     top: 8,

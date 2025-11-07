@@ -13,6 +13,7 @@ import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/modules/home/views/compare_screen/comapre_screen.dart';
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
+import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:housing_flutter_app/utils/common_widget/rera_widget.dart';
 
 import '../../../../app/manager/property/proiperty_feature_manager.dart';
@@ -53,6 +54,8 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
     final title = PropertyNameManager(widget.property);
     final features = PropertyFeatureManager.getFeatures(widget.property);
     final controller = Get.find<PropertyController>();
+    final PropertyFavoriteController favoriteController =
+        Get.find<PropertyFavoriteController>();
     // print('Building PropertyCardWidget for ${widget.role}');
     return GestureDetector(
       onTap: () {
@@ -238,15 +241,16 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                       // Favorite button
                       GestureDetector(
                         onTap: () {
-                          controller.toggleFavorite(widget.property.id ?? '');
+                          favoriteController.toggleFavorite(
+                            widget.property.id ?? '',
+                          );
                         },
                         child: CircleAvatar(
                           radius: 14,
                           backgroundColor: ColorRes.white,
                           child: Obx(() {
-                            final isFavorite = controller.favoriteIds.contains(
-                              widget.property.id,
-                            );
+                            final isFavorite = favoriteController.favorites
+                                .contains(widget.property.id);
                             return Icon(
                               isFavorite
                                   ? Icons.favorite

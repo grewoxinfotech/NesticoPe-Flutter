@@ -9,18 +9,18 @@ import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import '../../../../app/constants/app_font_sizes.dart';
-import '../../../../app/manager/favorite.dart';
 import '../../../../app/manager/compare_manager.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
 import '../../../../widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
+import '../../../saved_property/controllers/property_favorite_controller.dart';
 import '../property_detail_screen.dart';
 
 class PropertyCard extends StatefulWidget {
   final Items property;
-  
+
   final bool isRecentlyViewed;
 
   const PropertyCard({
@@ -35,6 +35,9 @@ class PropertyCard extends StatefulWidget {
 
 class _PropertyCardState extends State<PropertyCard> {
   final controller = Get.find<PropertyController>();
+  final PropertyFavoriteController favoriteController =
+      Get.find<PropertyFavoriteController>();
+
   final CompareManager compare = Get.put(CompareManager(), permanent: true);
   bool isFavorite = false;
 
@@ -126,7 +129,7 @@ class _PropertyCardState extends State<PropertyCard> {
                     child: _buildTag(widget.property.listingType ?? "-"),
                   ),
 
-// 🔹 Favorite & Compare Buttons
+                  // 🔹 Favorite & Compare Buttons
                   Positioned(
                     top: 12,
                     right: 12,
@@ -146,26 +149,33 @@ class _PropertyCardState extends State<PropertyCard> {
                               if (after > before) {
                                 CustomSnackBar.show(
                                   ctx,
-                                  message: after == 2
-                                      ? 'Ready to compare!'
-                                      : 'Added to compare (${after}/2)',
+                                  message:
+                                      after == 2
+                                          ? 'Ready to compare!'
+                                          : 'Added to compare (${after}/2)',
                                   type: SnackBarType.success,
-                                  actionLabel: after == 2 ? 'Compare Now' : null,
-                                  onActionPressed: after == 2
-                                      ? () {
-                                          Get.back(); // Close snackbar first
-                                          if (Get.isRegistered<NavigationController>()) {
-                                            Get.find<NavigationController>().changeIndex(2);
+                                  actionLabel:
+                                      after == 2 ? 'Compare Now' : null,
+                                  onActionPressed:
+                                      after == 2
+                                          ? () {
+                                            Get.back(); // Close snackbar first
+                                            if (Get.isRegistered<
+                                              NavigationController
+                                            >()) {
+                                              Get.find<NavigationController>()
+                                                  .changeIndex(2);
+                                            }
                                           }
-                                        }
-                                      : null,
+                                          : null,
                                 );
                               } else if (after < before) {
                                 CustomSnackBar.show(
                                   ctx,
-                                  message: after == 0
-                                      ? 'Removed from compare'
-                                      : 'Removed from compare (${after}/2)',
+                                  message:
+                                      after == 0
+                                          ? 'Removed from compare'
+                                          : 'Removed from compare (${after}/2)',
                                   type: SnackBarType.info,
                                 );
                               } else if (after == before && before >= 2) {
@@ -179,14 +189,20 @@ class _PropertyCardState extends State<PropertyCard> {
                             }
                           },
                           child: Obx(() {
-                            final selected = compare.isSelected(widget.property.id);
+                            final selected = compare.isSelected(
+                              widget.property.id,
+                            );
                             return CircleAvatar(
-                              backgroundColor:selected ?ColorRes.primary: ColorRes.white,
+                              backgroundColor:
+                                  selected ? ColorRes.primary : ColorRes.white,
 
                               radius: 18,
                               child: Icon(
                                 Icons.compare_arrows,
-                                color:  selected ? ColorRes.white : ColorRes.primary,
+                                color:
+                                    selected
+                                        ? ColorRes.white
+                                        : ColorRes.primary,
                                 size: 20,
                               ),
                             );
@@ -196,22 +212,24 @@ class _PropertyCardState extends State<PropertyCard> {
                         // Favorite toggle
                         GestureDetector(
                           onTap: () {
-                            controller.toggleFavorite(widget.property.id ?? '');
+                            favoriteController.toggleFavorite(
+                              widget.property.id ?? '',
+                            );
                           },
                           child: CircleAvatar(
                             backgroundColor: ColorRes.white,
                             radius: 18,
                             child: Obx(() {
-                              isFavorite = controller.favoriteIds.contains(
-                                widget.property.id,
-                              );
+                              isFavorite = favoriteController.favorites
+                                  .contains(widget.property.id);
                               return Icon(
                                 isFavorite
                                     ? Icons.favorite
                                     : Icons.favorite_border,
-                                color: isFavorite
-                                    ? ColorRes.error
-                                    : ColorRes.leadGreyColor,
+                                color:
+                                    isFavorite
+                                        ? ColorRes.error
+                                        : ColorRes.leadGreyColor,
                                 size: 20,
                               );
                             }),
@@ -242,7 +260,7 @@ class _PropertyCardState extends State<PropertyCard> {
                   if (widget.property.type!.toLowerCase() == "residential")
                     Text(
                       "${widget.property.propertyDetails?.bhk ?? 0} BHK ${widget.property.propertyType?.capitalize}",
-                      style:  TextStyle(
+                      style: TextStyle(
                         fontWeight: AppFontWeights.semiBold,
 
                         fontSize: AppFontSizes.body,
@@ -467,7 +485,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.price ?? 0)}",
                           style: TextStyle(
                             fontWeight: AppFontWeights.semiBold,
-                            fontSize:AppFontSizes.body,
+                            fontSize: AppFontSizes.body,
                             color: ColorRes.textColor,
                           ),
                         ),
@@ -518,7 +536,7 @@ class _PropertyCardState extends State<PropertyCard> {
       ),
       child: Text(
         text,
-        style:  TextStyle(
+        style: TextStyle(
           fontSize: AppFontSizes.small,
           fontWeight: AppFontWeights.semiBold,
           color: ColorRes.primary,
@@ -536,7 +554,7 @@ class _PropertyCardState extends State<PropertyCard> {
       ),
       child: Text(
         text,
-        style:  TextStyle(
+        style: TextStyle(
           color: ColorRes.white,
           fontSize: AppFontSizes.extraSmall,
           fontWeight: AppFontWeights.medium,
