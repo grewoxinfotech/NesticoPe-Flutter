@@ -1,21 +1,49 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/size_manager.dart';
+import '../../../../app/widgets/media/media_preview.dart';
+import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../../data/network/builder/model/builder_projectModel.dart';
 import '../../controller/project_controller.dart';
 import 'package:get/get.dart';
 
-class ProjectDetailsScreen extends StatelessWidget {
+class ProjectDetailsScreen extends StatefulWidget {
   final ProjectItem projectItem;
 
   const ProjectDetailsScreen({super.key, required this.projectItem});
+
+  @override
+  State<ProjectDetailsScreen> createState() => _ProjectDetailsScreenState();
+}
+
+class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
+  final projectController = Get.put(ProjectController());
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  Future<void> _loadData() async {
+    // Check review permission
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? '';
+
+    // Track view
+    projectController.addView(widget.projectItem.id ?? '');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +53,17 @@ class ProjectDetailsScreen extends StatelessWidget {
       backgroundColor: ColorRes.background,
       body: CustomScrollView(
         slivers: [
-          _buildAppBar(context, projectItem),
+          _buildAppBar(context, widget.projectItem),
           SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildProjectDetails(projectItem),
-                _buildConfigurations(controller, projectItem),
-                _buildAmenities(projectItem),
-                _buildDocuments(controller, projectItem),
-                _buildContactSection(controller, projectItem),
+                _buildProjectDetails(widget.projectItem),
+                _buildMediaGallery(widget.projectItem),
+                _buildConfigurations(controller, widget.projectItem),
+                _buildAmenities(widget.projectItem),
+                _buildDocuments(controller, widget.projectItem),
+                _buildContactSection(controller, widget.projectItem),
                 const SizedBox(height: 24),
               ],
             ),
@@ -81,16 +110,10 @@ class ProjectDetailsScreen extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                    project.mediaGallery?.images?.first ?? '',
-                  ),
-                  fit: BoxFit.cover,
-                  onError: (_, __) {},
-                ),
-              ),
+            CustomImage(
+              type: CustomImageType.network,
+              src: project.mediaGallery?.images.first ?? '',
+              fit: BoxFit.cover,
             ),
             Container(
               decoration: BoxDecoration(
@@ -151,6 +174,120 @@ class ProjectDetailsScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMediaGallery(ProjectItem projectItem) {
+    if (projectItem.mediaGallery == null) {
+      return const SizedBox.shrink();
+    }
+
+    final gallery = projectItem.mediaGallery!;
+    final allMedia = [
+      ...gallery.images.map((e) => {'type': 'image', 'url': e}),
+      ...gallery.videos.map((e) => {'type': 'video', 'url': e}),
+    ];
+
+    if (allMedia.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: ColorRes.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Gallery',
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          /// ✅ Single Horizontal List for both Images & Videos
+          SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: allMedia.length,
+              itemBuilder: (context, index) {
+                final media = allMedia[index];
+                final isVideo = media['type'] == 'video';
+                final url = media['url'] ?? '';
+
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate to preview screen (image or video)
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MediaPreviewScreen(url: url),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 160,
+                    margin: const EdgeInsets.only(right: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          isVideo
+                              ? buildVideoThumbnail(
+                                url,
+                                height: 120,
+                                width: 160,
+                              )
+                              : Image.network(
+                                url,
+                                fit: BoxFit.cover,
+                                height: 120,
+                                width: 160,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.grey[300],
+                                    child: const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    ),
+                                  );
+                                },
+                              ),
+
+                          /// ✅ Play icon overlay for videos
+                          if (isVideo)
+                            Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.black45,
+                                shape: BoxShape.circle,
+                              ),
+                              padding: const EdgeInsets.all(8),
+                              child: const Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -392,387 +529,6 @@ class ProjectDetailsScreen extends StatelessWidget {
   }
 
   // Widget _buildConfigurations(
-  //     ProjectController controller,
-  //     ProjectItem project,
-  //     ) {
-  //   // Initialize variant indices
-  //   controller.initializeVariantIndices(project.configuration.length);
-  //
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Padding(
-  //         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //         child: const Text(
-  //           'Configurations',
-  //           style: TextStyle(
-  //             fontSize: AppFontSizes.medium,
-  //             fontWeight: AppFontWeights.semiBold,
-  //             color: ColorRes.textPrimary,
-  //           ),
-  //         ),
-  //       ),
-  //       SizedBox(
-  //         height: 420,
-  //         child: PageView.builder(
-  //           controller: controller.configPageController,
-  //           onPageChanged: (index) {
-  //             controller.updateConfigPage(index);
-  //           },
-  //           itemCount: project.configuration.length,
-  //           itemBuilder: (context, index) {
-  //             print('Current index ${project.configuration[index].bhk}');
-  //             return Padding(
-  //               padding: const EdgeInsets.symmetric(horizontal: 16),
-  //               child: _buildConfigurationCard(
-  //                 project.configuration[index],
-  //                 index,
-  //                 controller,
-  //               ),
-  //             );
-  //           },
-  //         ),
-  //       ),
-  //       const SizedBox(height: 12),
-  //       _buildDotIndicators(controller, project.configuration.length),
-  //       const SizedBox(height: 16),
-  //     ],
-  //   );
-  // }
-  //
-  // Widget _buildConfigurationCard(
-  //     Configuration config,
-  //     int configIndex,
-  //     ProjectController controller,
-  //     ) {
-  //   return Obx(() {
-  //     final currentVariantIndex = controller.variantIndexMap[configIndex] ?? 0;
-  //     final variant = config.variants[currentVariantIndex];
-  //     print("Current Length ${config.variants.length}  ${config.variants.length > 1} ${controller.variantIndexMap[configIndex]}");
-  //     final hasMultipleVariants = config.variants.length > 1;
-  //
-  //     return Card(
-  //       elevation: 2,
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(AppRadius.medium),
-  //         side: BorderSide(color: ColorRes.leadGreyColor[300]!, width: 1),
-  //       ),
-  //       child: Padding(
-  //         padding: const EdgeInsets.all(16),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             // Header with BHK title and variant navigation button
-  //             Row(
-  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //               children: [
-  //                 Expanded(
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                         '${config.bhk} BHK Apartments',
-  //                         style: const TextStyle(
-  //                           fontSize: AppFontSizes.large,
-  //                           fontWeight: AppFontWeights.semiBold,
-  //                           color: ColorRes.textPrimary,
-  //                         ),
-  //                       ),
-  //                       const SizedBox(height: 4),
-  //                       Text(
-  //                         'Starting from ${controller.formatCurrency(config.variants.first.price.toDouble())}',
-  //                         style: const TextStyle(
-  //                           fontSize: AppFontSizes.small,
-  //                           color: ColorRes.textSecondary,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //                 if (hasMultipleVariants)
-  //                   Container(
-  //                     decoration: BoxDecoration(
-  //                       color: ColorRes.primary,
-  //                       borderRadius: BorderRadius.circular(8),
-  //                     ),
-  //                     child: Material(
-  //                       color: Colors.transparent,
-  //                       child: InkWell(
-  //                         borderRadius: BorderRadius.circular(8),
-  //                         onTap: () => _showVariantSelector(
-  //                           config,
-  //                           configIndex,
-  //                           controller,
-  //                         ),
-  //                         child: Padding(
-  //                           padding: const EdgeInsets.symmetric(
-  //                             horizontal: 12,
-  //                             vertical: 8,
-  //                           ),
-  //                           child: Row(
-  //                             mainAxisSize: MainAxisSize.min,
-  //                             children: [
-  //                               Text(
-  //                                 'Variant ${currentVariantIndex + 1}/${config.variants.length}',
-  //                                 style: const TextStyle(
-  //                                   fontSize: AppFontSizes.small,
-  //                                   fontWeight: AppFontWeights.medium,
-  //                                   color: ColorRes.white,
-  //                                 ),
-  //                               ),
-  //                               const SizedBox(width: 4),
-  //                               const Icon(
-  //                                 Icons.arrow_drop_down,
-  //                                 color: ColorRes.white,
-  //                                 size: 20,
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //               ],
-  //             ),
-  //             const SizedBox(height: 16),
-  //
-  //             // Variant images
-  //             SizedBox(
-  //               height: 180,
-  //               child: variant.images.isEmpty
-  //                   ? _buildPlaceholderImage()
-  //                   : PageView.builder(
-  //                 itemCount: variant.images.length,
-  //                 itemBuilder: (context, imgIndex) {
-  //                   return Container(
-  //                     margin: const EdgeInsets.symmetric(horizontal: 4),
-  //                     decoration: BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(12),
-  //                       image: DecorationImage(
-  //                         image: NetworkImage(variant.images[imgIndex]),
-  //                         fit: BoxFit.cover,
-  //                         onError: (exception, stackTrace) {},
-  //                       ),
-  //                     ),
-  //                   );
-  //                 },
-  //               ),
-  //             ),
-  //             const SizedBox(height: 16),
-  //
-  //             // Variant details
-  //             Container(
-  //               padding: const EdgeInsets.all(12),
-  //               decoration: BoxDecoration(
-  //                 color: ColorRes.leadGreyColor[50],
-  //                 borderRadius: BorderRadius.circular(8),
-  //               ),
-  //               child: Column(
-  //                 children: [
-  //                   Row(
-  //                     children: [
-  //                       Expanded(
-  //                         child: _buildDetailItem(
-  //                           'Carpet Area',
-  //                           '${variant.carpetArea.toInt()} sq.ft.',
-  //                         ),
-  //                       ),
-  //                       Expanded(
-  //                         child: _buildDetailItem(
-  //                           'Built-up Area',
-  //                           '${variant.builtUpArea.toInt()} sq.ft.',
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   const SizedBox(height: 12),
-  //                   Row(
-  //                     children: [
-  //                       Expanded(
-  //                         child: _buildDetailItem(
-  //                           'Price/sq.ft',
-  //                           controller.formatCurrency(
-  //                             variant.pricePerSqFt.toDouble(),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       Expanded(
-  //                         child: _buildDetailItem(
-  //                           'Available',
-  //                           '${variant.availableUnits}/${variant.totalUnits}',
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     );
-  //   });
-  // }
-  //
-  // Widget _buildDetailItem(String label, String value) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         label,
-  //         style: const TextStyle(
-  //           fontSize: AppFontSizes.caption,
-  //           color: ColorRes.textSecondary,
-  //         ),
-  //       ),
-  //       const SizedBox(height: 4),
-  //       Text(
-  //         value,
-  //         style: const TextStyle(
-  //           fontSize: AppFontSizes.bodyMedium,
-  //           fontWeight: AppFontWeights.medium,
-  //           color: ColorRes.textPrimary,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-  //
-  // Widget _buildPlaceholderImage() {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       color: ColorRes.leadGreyColor[100],
-  //       borderRadius: BorderRadius.circular(12),
-  //     ),
-  //     child: const Center(
-  //       child: Icon(
-  //         Icons.image_outlined,
-  //         size: 48,
-  //         color: ColorRes.textSecondary,
-  //       ),
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildDotIndicators(ProjectController controller, int count) {
-  //   return Obx(() => Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: List.generate(
-  //       count,
-  //           (index) => Container(
-  //         margin: const EdgeInsets.symmetric(horizontal: 4),
-  //         width: controller.currentConfigPage.value == index ? 24 : 8,
-  //         height: 8,
-  //         decoration: BoxDecoration(
-  //           color: controller.currentConfigPage.value == index
-  //               ? ColorRes.primary
-  //               : ColorRes.leadGreyColor[300],
-  //           borderRadius: BorderRadius.circular(4),
-  //         ),
-  //       ),
-  //     ),
-  //   ));
-  // }
-  //
-  // void _showVariantSelector(
-  //     Configuration config,
-  //     int configIndex,
-  //     ProjectController controller,
-  //     ) {
-  //   Get.bottomSheet(
-  //     Container(
-  //       padding: const EdgeInsets.all(16),
-  //       decoration: const BoxDecoration(
-  //         color: ColorRes.white,
-  //         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-  //       ),
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           const Text(
-  //             'Select Variant',
-  //             style: TextStyle(
-  //               fontSize: AppFontSizes.large,
-  //               fontWeight: AppFontWeights.semiBold,
-  //               color: ColorRes.textPrimary,
-  //             ),
-  //           ),
-  //           const SizedBox(height: 16),
-  //           ListView.builder(
-  //             shrinkWrap: true,
-  //             itemCount: config.variants.length,
-  //             itemBuilder: (context, index) {
-  //               final variant = config.variants[index];
-  //
-  //               return Obx(() {
-  //                 final isSelected = controller.variantIndexMap.value[configIndex] == index;
-  //
-  //                 return ListTile(
-  //                   contentPadding: const EdgeInsets.symmetric(
-  //                     horizontal: 8,
-  //                     vertical: 4,
-  //                   ),
-  //                   shape: RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.circular(8),
-  //                     side: BorderSide(
-  //                       color: isSelected
-  //                           ? ColorRes.primary
-  //                           : ColorRes.leadGreyColor[300]!,
-  //                       width: isSelected ? 2 : 1,
-  //                     ),
-  //                   ),
-  //                   selected: isSelected,
-  //                   selectedTileColor: ColorRes.primary.withOpacity(0.1),
-  //                   leading: Container(
-  //                     width: 50,
-  //                     height: 50,
-  //                     decoration: BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(8),
-  //                       image: variant.images.isNotEmpty
-  //                           ? DecorationImage(
-  //                         image: NetworkImage(variant.images.first),
-  //                         fit: BoxFit.cover,
-  //                       )
-  //                           : null,
-  //                       color: ColorRes.leadGreyColor[100],
-  //                     ),
-  //                     child: variant.images.isEmpty
-  //                         ? const Icon(Icons.image_outlined, size: 24)
-  //                         : null,
-  //                   ),
-  //                   title: Text(
-  //                     'Variant ${index + 1}',
-  //                     style: TextStyle(
-  //                       fontWeight: isSelected
-  //                           ? AppFontWeights.semiBold
-  //                           : AppFontWeights.medium,
-  //                     ),
-  //                   ),
-  //                   subtitle: Text(
-  //                     '${variant.carpetArea.toInt()} sq.ft. • ${controller.formatCurrency(variant.price.toDouble())}',
-  //                     style: const TextStyle(fontSize: AppFontSizes.small),
-  //                   ),
-  //                   trailing: isSelected
-  //                       ? const Icon(
-  //                     Icons.check_circle,
-  //                     color: ColorRes.primary,
-  //                   )
-  //                       : null,
-  //                   onTap: () {
-  //                     controller.updateVariantIndex(configIndex, index);
-  //                     Get.back();
-  //                   },
-  //                 );
-  //               });
-  //             },
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildConfigurations(
     ProjectController controller,
     ProjectItem project,
@@ -918,26 +674,28 @@ class ProjectDetailsScreen extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 12),
+          if (config.variants.length > 0) ...[
+            const SizedBox(height: 12),
 
-          // Horizontal Variants List
-          SizedBox(
-            height: 340,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: config.variants.length,
-              itemBuilder: (context, variantIndex) {
-                final variant = config.variants[variantIndex];
-                return Container(
-                  width: 280,
-                  margin: EdgeInsets.only(
-                    right: variantIndex < config.variants.length - 1 ? 12 : 0,
-                  ),
-                  child: _buildVariantCard(variant, variantIndex, controller),
-                );
-              },
+            // Horizontal Variants List
+            SizedBox(
+              height: 340,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: config.variants.length,
+                itemBuilder: (context, variantIndex) {
+                  final variant = config.variants[variantIndex];
+                  return Container(
+                    width: 280,
+                    margin: EdgeInsets.only(
+                      right: variantIndex < config.variants.length - 1 ? 12 : 0,
+                    ),
+                    child: _buildVariantCard(variant, variantIndex, controller),
+                  );
+                },
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -1233,7 +991,7 @@ class ProjectDetailsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Documents',
+            'Brochures',
             style: TextStyle(
               fontSize: AppFontSizes.medium,
               fontWeight: AppFontWeights.semiBold,
@@ -1252,6 +1010,30 @@ class ProjectDetailsScreen extends StatelessWidget {
                 ),
               );
             }).toList(),
+          if (project.mediaGallery?.documents != null &&
+              project.mediaGallery!.documents.isNotEmpty) ...[
+            SizedBox(height: 12),
+            const Text(
+              'Documents',
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            ...project.mediaGallery!.documents.map((document) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildDocumentItem(
+                  icon: Icons.description,
+                  title: "Document" ?? '-',
+                  onTap: () => controller.downloadDocument(document),
+                ),
+              );
+            }).toList(),
+          ],
         ],
       ),
     );
@@ -1400,5 +1182,44 @@ class ProjectDetailsScreen extends StatelessWidget {
     } catch (e) {
       return dateString;
     }
+  }
+
+  Widget buildVideoThumbnail(String videoUrl, {double? width, double? height}) {
+    return FutureBuilder<Uint8List?>(
+      future: VideoThumbnail.thumbnailData(
+        video: videoUrl,
+        imageFormat: ImageFormat.JPEG,
+        maxWidth: 400, // resize for performance
+        quality: 75,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            width: width,
+            height: height,
+            color: Colors.black12,
+            child: const Center(
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        }
+
+        if (snapshot.hasError || snapshot.data == null) {
+          return Container(
+            width: width,
+            height: height,
+            color: Colors.black54,
+            child: const Icon(Icons.videocam, color: Colors.white, size: 36),
+          );
+        }
+
+        return Image.memory(
+          snapshot.data!,
+          width: width,
+          height: height,
+          fit: BoxFit.cover,
+        );
+      },
+    );
   }
 }

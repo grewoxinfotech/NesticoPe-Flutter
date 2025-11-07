@@ -63,7 +63,8 @@ class BuilderService {
     required AddProjectModel projectData,
     List<File>? images,
     List<File>? videos,
-    File? documents,
+    File? brochures,
+    List<File>? documents,
   }) async {
     try {
       final uri = Uri.parse(baseUrl);
@@ -81,14 +82,26 @@ class BuilderService {
       // Convert model to Map
       final projectMap = projectData.toJson();
 
-      if (documents != null) {
+      if (brochures != null) {
         request.files.add(
           await http.MultipartFile.fromPath(
             'brochure',
-            documents.path,
+            brochures.path,
             contentType: MediaType('application', 'pdf'),
           ),
         );
+      }
+
+      if (documents != null) {
+        for (var document in documents) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'project_document',
+              document.path,
+              contentType: MediaType('application', 'pdf'),
+            ),
+          );
+        }
       }
 
       // ====== Add all other fields ======
@@ -96,6 +109,7 @@ class BuilderService {
         if (value == null) return;
 
         if (key == 'brochure') return;
+        if (key == 'documentList') return;
 
         if (value is Map || value is List) {
           request.fields[key] = jsonEncode(value);

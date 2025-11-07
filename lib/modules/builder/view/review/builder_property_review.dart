@@ -125,7 +125,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../app/widgets/media/media_preview.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 import '../../controller/builder_form_controller.dart';
 import '../media/upload_media_screen.dart';
@@ -975,12 +977,349 @@ class StepReview extends GetView<ProjectWizardController> {
   }
 
   // 2. MEDIA GALLERY SECTION
+  // Widget _buildMediaGallerySection(ThemeData theme, AddProjectModel p) {
+  //   final hasImages = p.imageList != null && p.imageList.isNotEmpty;
+  //   final hasVideos = p.videoList != null && p.videoList.isNotEmpty;
+  //   final hasBrochure = p.brochure != null && p.brochure!.isNotEmpty;
+  //
+  //   if (!hasImages && !hasVideos && !hasBrochure) return SizedBox.shrink();
+  //
+  //   return Column(
+  //     children: [
+  //       _buildModernSection(
+  //         theme: theme,
+  //         title: 'Media Gallery',
+  //         icon: Icons.photo_library_rounded,
+  //         child: Column(
+  //           children: [
+  //             // Images Preview
+  //             if (hasImages) ...[
+  //               Row(
+  //                 children: [
+  //                   Icon(
+  //                     Icons.image_rounded,
+  //                     size: 16,
+  //                     color: ColorRes.primary,
+  //                   ),
+  //                   const SizedBox(width: 8),
+  //                   Text(
+  //                     'Project Images',
+  //                     style: TextStyle(
+  //                       fontSize: AppFontSizes.bodySmall,
+  //                       fontWeight: AppFontWeights.semiBold,
+  //                       color: ColorRes.textPrimary,
+  //                     ),
+  //                   ),
+  //                   const Spacer(),
+  //                   Container(
+  //                     padding: const EdgeInsets.symmetric(
+  //                       horizontal: 10,
+  //                       vertical: 4,
+  //                     ),
+  //                     decoration: BoxDecoration(
+  //                       color: ColorRes.primary.withOpacity(0.1),
+  //                       borderRadius: BorderRadius.circular(12),
+  //                     ),
+  //                     child: Text(
+  //                       '${p.imageList.length} Photos',
+  //                       style: TextStyle(
+  //                         fontSize: AppFontSizes.extraSmall,
+  //                         fontWeight: AppFontWeights.semiBold,
+  //                         color: ColorRes.primary,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               const SizedBox(height: 12),
+  //               SizedBox(
+  //                 height: 100,
+  //                 child: ListView.builder(
+  //                   scrollDirection: Axis.horizontal,
+  //                   itemCount: p.imageList.length > 5 ? 5 : p.imageList.length,
+  //                   itemBuilder: (context, index) {
+  //                     final isLast = index == 4 && p.imageList.length > 5;
+  //                     return Container(
+  //                       width: 120,
+  //                       // Fixed width for each item
+  //                       height: 100,
+  //                       // Fixed height for consistency
+  //                       decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(12),
+  //                         border: Border.all(
+  //                           color: ColorRes.grey.withOpacity(0.3),
+  //                           width: 1,
+  //                         ),
+  //                       ),
+  //                       margin: const EdgeInsets.only(right: 10),
+  //                       child: Stack(
+  //                         children: [
+  //                           ClipRRect(
+  //                             borderRadius: BorderRadius.circular(10),
+  //                             child: Image.file(
+  //                               File(p.imageList[index]),
+  //                               width: 140,
+  //                               height: 100,
+  //                               fit: BoxFit.cover,
+  //                               errorBuilder:
+  //                                   (context, error, stackTrace) => Container(
+  //                                     width: 140,
+  //                                     height: 100,
+  //                                     decoration: BoxDecoration(
+  //                                       color: ColorRes.leadGreyColor.shade200,
+  //                                       borderRadius: BorderRadius.circular(12),
+  //                                     ),
+  //                                     child: Icon(
+  //                                       Icons.image,
+  //                                       color: ColorRes.leadGreyColor,
+  //                                     ),
+  //                                   ),
+  //                             ),
+  //                           ),
+  //                           if (isLast)
+  //                             Positioned.fill(
+  //                               child: Container(
+  //                                 decoration: BoxDecoration(
+  //                                   color: ColorRes.blackShade54,
+  //                                   borderRadius: BorderRadius.circular(12),
+  //                                 ),
+  //                                 child: Center(
+  //                                   child: Text(
+  //                                     '+${p.imageList.length - 5}',
+  //                                     style: TextStyle(
+  //                                       color: ColorRes.white,
+  //                                       fontSize: AppFontSizes.medium,
+  //                                       fontWeight: AppFontWeights.extraBold,
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                         ],
+  //                       ),
+  //                     );
+  //                   },
+  //                 ),
+  //               ),
+  //             ],
+  //
+  //             // Videos Preview
+  //             if (hasVideos) ...[
+  //               if (hasImages) const SizedBox(height: 20),
+  //               Row(
+  //                 children: [
+  //                   Icon(
+  //                     Icons.video_library_rounded,
+  //                     size: 16,
+  //                     color: ColorRes.builderGridPink,
+  //                   ),
+  //                   const SizedBox(width: 8),
+  //                   Text(
+  //                     'Project Videos',
+  //                     style: TextStyle(
+  //                       fontSize: AppFontSizes.bodySmall,
+  //                       fontWeight: AppFontWeights.semiBold,
+  //                       color: ColorRes.textPrimary,
+  //                     ),
+  //                   ),
+  //                   const Spacer(),
+  //                   Container(
+  //                     padding: const EdgeInsets.symmetric(
+  //                       horizontal: 10,
+  //                       vertical: 4,
+  //                     ),
+  //                     decoration: BoxDecoration(
+  //                       color: ColorRes.builderGridPink.withOpacity(0.1),
+  //                       borderRadius: BorderRadius.circular(12),
+  //                     ),
+  //                     child: Text(
+  //                       '${p.videoList.length} Videos',
+  //                       style: TextStyle(
+  //                         fontSize: AppFontSizes.extraSmall,
+  //                         fontWeight: AppFontWeights.semiBold,
+  //                         color: ColorRes.builderGridPink,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               const SizedBox(height: 12),
+  //               SizedBox(
+  //                 height: 100,
+  //                 child: ListView.builder(
+  //                   scrollDirection: Axis.horizontal,
+  //                   itemCount: p.videoList.length > 5 ? 5 : p.videoList.length,
+  //                   itemBuilder: (context, index) {
+  //                     final isLast = index == 4 && p.videoList.length > 5;
+  //                     return Container(
+  //                       width: 120,
+  //                       // Fixed width for each item
+  //                       height: 100,
+  //                       // Fixed height for consistency
+  //                       margin: const EdgeInsets.only(right: 10),
+  //                       decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(12),
+  //                         border: Border.all(
+  //                           color: ColorRes.grey.withOpacity(0.3),
+  //                           width: 1,
+  //                         ),
+  //                       ),
+  //                       child: ClipRRect(
+  //                         borderRadius: BorderRadius.circular(10),
+  //                         child: Stack(
+  //                           fit: StackFit.expand,
+  //                           // Now safe because Container has fixed dimensions
+  //                           children: [
+  //                             FutureBuilder<String?>(
+  //                               future: generateVideoThumbnail(
+  //                                 p.videoList[index],
+  //                               ),
+  //                               builder: (context, snapshot) {
+  //                                 if (snapshot.connectionState ==
+  //                                     ConnectionState.waiting) {
+  //                                   return const Center(
+  //                                     child: CircularProgressIndicator(
+  //                                       strokeWidth: 2,
+  //                                     ),
+  //                                   );
+  //                                 }
+  //                                 final thumbPath = snapshot.data;
+  //                                 if (thumbPath == null ||
+  //                                     !File(thumbPath).existsSync()) {
+  //                                   return const Center(
+  //                                     child: Icon(
+  //                                       Icons.videocam,
+  //                                       size: 32,
+  //                                       color: ColorRes.leadGreyColor,
+  //                                     ),
+  //                                   );
+  //                                 }
+  //                                 return Stack(
+  //                                   fit: StackFit.expand,
+  //                                   children: [
+  //                                     Image.file(
+  //                                       File(thumbPath),
+  //                                       fit: BoxFit.cover,
+  //                                     ),
+  //                                     const Center(
+  //                                       child: Icon(
+  //                                         Icons.play_circle_fill,
+  //                                         color: ColorRes.white,
+  //                                         size: 32,
+  //                                       ),
+  //                                     ),
+  //                                   ],
+  //                                 );
+  //                               },
+  //                             ),
+  //                             if (isLast)
+  //                               Positioned.fill(
+  //                                 child: Container(
+  //                                   decoration: BoxDecoration(
+  //                                     color: ColorRes.blackShade54,
+  //                                     borderRadius: BorderRadius.circular(12),
+  //                                   ),
+  //                                   child: Center(
+  //                                     child: Text(
+  //                                       '+${p.videoList.length - 5}',
+  //                                       style: TextStyle(
+  //                                         color: ColorRes.white,
+  //                                         fontSize: AppFontSizes.medium,
+  //                                         fontWeight: AppFontWeights.extraBold,
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     );
+  //                   },
+  //                 ),
+  //               ),
+  //             ],
+  //
+  //             // Brochure
+  //             if (hasBrochure) ...[
+  //               if (hasImages || hasVideos) const SizedBox(height: 20),
+  //               Container(
+  //                 padding: const EdgeInsets.all(14),
+  //                 decoration: BoxDecoration(
+  //                   gradient: LinearGradient(
+  //                     begin: Alignment.topLeft,
+  //                     end: Alignment.bottomRight,
+  //                     colors: [
+  //                       ColorRes.builderGridLightPurple.withOpacity(0.08),
+  //                       ColorRes.builderGridLightPurple.withOpacity(0.03),
+  //                     ],
+  //                   ),
+  //                   borderRadius: BorderRadius.circular(12),
+  //                   border: Border.all(
+  //                     color: ColorRes.builderGridLightPurple.withOpacity(0.3),
+  //                   ),
+  //                 ),
+  //                 child: Row(
+  //                   children: [
+  //                     Container(
+  //                       padding: const EdgeInsets.all(10),
+  //                       decoration: BoxDecoration(
+  //                         color: ColorRes.builderGridLightPurple.withOpacity(
+  //                           0.15,
+  //                         ),
+  //                         borderRadius: BorderRadius.circular(10),
+  //                       ),
+  //                       child: Icon(
+  //                         Icons.picture_as_pdf_rounded,
+  //                         color: ColorRes.builderGridLightPurple,
+  //                         size: 24,
+  //                       ),
+  //                     ),
+  //                     const SizedBox(width: 14),
+  //                     Expanded(
+  //                       child: Column(
+  //                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                         children: [
+  //                           Text(
+  //                             'Project Brochure',
+  //                             style: TextStyle(
+  //                               fontSize: AppFontSizes.bodySmall,
+  //                               fontWeight: AppFontWeights.semiBold,
+  //                               color: ColorRes.textPrimary,
+  //                             ),
+  //                           ),
+  //                           const SizedBox(height: 4),
+  //                           Text(
+  //                             '${p.brochure}',
+  //                             maxLines: 1,
+  //                             overflow: TextOverflow.ellipsis,
+  //                             style: TextStyle(
+  //                               fontSize: AppFontSizes.small,
+  //                               color: ColorRes.textSecondary,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ],
+  //         ),
+  //       ),
+  //       const SizedBox(height: 20),
+  //     ],
+  //   );
+  // }
+
   Widget _buildMediaGallerySection(ThemeData theme, AddProjectModel p) {
     final hasImages = p.imageList != null && p.imageList.isNotEmpty;
     final hasVideos = p.videoList != null && p.videoList.isNotEmpty;
     final hasBrochure = p.brochure != null && p.brochure!.isNotEmpty;
 
-    if (!hasImages && !hasVideos && !hasBrochure) return SizedBox.shrink();
+    if (!hasImages && !hasVideos && !hasBrochure)
+      return const SizedBox.shrink();
 
     return Column(
       children: [
@@ -990,7 +1329,7 @@ class StepReview extends GetView<ProjectWizardController> {
           icon: Icons.photo_library_rounded,
           child: Column(
             children: [
-              // Images Preview
+              // ---------------- IMAGES ----------------
               if (hasImages) ...[
                 Row(
                   children: [
@@ -1037,63 +1376,75 @@ class StepReview extends GetView<ProjectWizardController> {
                     itemCount: p.imageList.length > 5 ? 5 : p.imageList.length,
                     itemBuilder: (context, index) {
                       final isLast = index == 4 && p.imageList.length > 5;
-                      return Container(
-                        width: 120,
-                        // Fixed width for each item
-                        height: 100,
-                        // Fixed height for consistency
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: ColorRes.grey.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        margin: const EdgeInsets.only(right: 10),
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.file(
-                                File(p.imageList[index]),
-                                width: 140,
-                                height: 100,
-                                fit: BoxFit.cover,
-                                errorBuilder:
-                                    (context, error, stackTrace) => Container(
-                                      width: 140,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        color: ColorRes.leadGreyColor.shade200,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Icon(
-                                        Icons.image,
-                                        color: ColorRes.leadGreyColor,
-                                      ),
-                                    ),
-                              ),
+                      final imagePath = p.imageList[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(() => MediaPreviewScreen(url: imagePath));
+                        },
+                        child: Container(
+                          width: 120,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: ColorRes.grey.withOpacity(0.3),
+                              width: 1,
                             ),
-                            if (isLast)
-                              Positioned.fill(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.blackShade54,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '+${p.imageList.length - 5}',
-                                      style: TextStyle(
-                                        color: ColorRes.white,
-                                        fontSize: AppFontSizes.medium,
-                                        fontWeight: AppFontWeights.extraBold,
+                          ),
+                          margin: const EdgeInsets.only(right: 10),
+                          child: Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: CustomImage(
+                                  type: CustomImageType.network,
+                                  src: imagePath,
+                                  width: 140,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                                // Image.file(
+                                //   File(imagePath),
+                                //   width: 140,
+                                //   height: 100,
+                                //   fit: BoxFit.cover,
+                                //   errorBuilder:
+                                //       (context, error, stackTrace) => Container(
+                                //         decoration: BoxDecoration(
+                                //           color:
+                                //               ColorRes.leadGreyColor.shade200,
+                                //           borderRadius: BorderRadius.circular(
+                                //             12,
+                                //           ),
+                                //         ),
+                                //         child: Icon(
+                                //           Icons.image,
+                                //           color: ColorRes.leadGreyColor,
+                                //         ),
+                                //       ),
+                                // ),
+                              ),
+                              if (isLast)
+                                Positioned.fill(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.blackShade54,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '+${p.imageList.length - 5}',
+                                        style: TextStyle(
+                                          color: ColorRes.white,
+                                          fontSize: AppFontSizes.medium,
+                                          fontWeight: AppFontWeights.extraBold,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -1101,7 +1452,7 @@ class StepReview extends GetView<ProjectWizardController> {
                 ),
               ],
 
-              // Videos Preview
+              // ---------------- VIDEOS ----------------
               if (hasVideos) ...[
                 if (hasImages) const SizedBox(height: 20),
                 Row(
@@ -1148,88 +1499,90 @@ class StepReview extends GetView<ProjectWizardController> {
                     scrollDirection: Axis.horizontal,
                     itemCount: p.videoList.length > 5 ? 5 : p.videoList.length,
                     itemBuilder: (context, index) {
+                      final videoPath = p.videoList[index];
                       final isLast = index == 4 && p.videoList.length > 5;
-                      return Container(
-                        width: 120,
-                        // Fixed width for each item
-                        height: 100,
-                        // Fixed height for consistency
-                        margin: const EdgeInsets.only(right: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: ColorRes.grey.withOpacity(0.3),
-                            width: 1,
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(() => MediaPreviewScreen(url: videoPath));
+                        },
+                        child: Container(
+                          width: 120,
+                          height: 100,
+                          margin: const EdgeInsets.only(right: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: ColorRes.grey.withOpacity(0.3),
+                              width: 1,
+                            ),
                           ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Stack(
-                            fit: StackFit.expand,
-                            // Now safe because Container has fixed dimensions
-                            children: [
-                              FutureBuilder<String?>(
-                                future: generateVideoThumbnail(
-                                  p.videoList[index],
-                                ),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    );
-                                  }
-                                  final thumbPath = snapshot.data;
-                                  if (thumbPath == null ||
-                                      !File(thumbPath).existsSync()) {
-                                    return const Center(
-                                      child: Icon(
-                                        Icons.videocam,
-                                        size: 32,
-                                        color: ColorRes.leadGreyColor,
-                                      ),
-                                    );
-                                  }
-                                  return Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      Image.file(
-                                        File(thumbPath),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      const Center(
-                                        child: Icon(
-                                          Icons.play_circle_fill,
-                                          color: ColorRes.white,
-                                          size: 32,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                FutureBuilder<String?>(
+                                  future: generateVideoThumbnail(videoPath),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
                                         ),
+                                      );
+                                    }
+                                    final thumbPath = snapshot.data;
+                                    if (thumbPath == null ||
+                                        !File(thumbPath).existsSync()) {
+                                      return const Center(
+                                        child: Icon(
+                                          Icons.videocam,
+                                          size: 32,
+                                          color: ColorRes.leadGreyColor,
+                                        ),
+                                      );
+                                    }
+                                    return Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        Image.file(
+                                          File(thumbPath),
+                                          fit: BoxFit.cover,
+                                        ),
+                                        const Center(
+                                          child: Icon(
+                                            Icons.play_circle_fill,
+                                            color: ColorRes.white,
+                                            size: 32,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                                if (isLast)
+                                  Positioned.fill(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: ColorRes.blackShade54,
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                    ],
-                                  );
-                                },
-                              ),
-                              if (isLast)
-                                Positioned.fill(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: ColorRes.blackShade54,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        '+${p.videoList.length - 5}',
-                                        style: TextStyle(
-                                          color: ColorRes.white,
-                                          fontSize: AppFontSizes.medium,
-                                          fontWeight: AppFontWeights.extraBold,
+                                      child: Center(
+                                        child: Text(
+                                          '+${p.videoList.length - 5}',
+                                          style: TextStyle(
+                                            color: ColorRes.white,
+                                            fontSize: AppFontSizes.medium,
+                                            fontWeight:
+                                                AppFontWeights.extraBold,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -1238,7 +1591,7 @@ class StepReview extends GetView<ProjectWizardController> {
                 ),
               ],
 
-              // Brochure
+              // ---------------- BROCHURE ----------------
               if (hasBrochure) ...[
                 if (hasImages || hasVideos) const SizedBox(height: 20),
                 Container(

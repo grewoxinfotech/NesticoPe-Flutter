@@ -27,6 +27,8 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
           _buildProjectVideosSection(),
           const SizedBox(height: 16),
           _buildProjectBrochureSection(),
+          const SizedBox(height: 16),
+          _buildProjectDocumentsSection(),
           const SizedBox(height: 80),
         ],
       ),
@@ -691,6 +693,251 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
         ),
       ),
     );
+  }
+
+  Widget _buildProjectDocumentsSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.leadGreyColor.shade200!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.folder_outlined,
+                size: 20,
+                color: ColorRes.success.shade700,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildBuilderDefaultHeaderText('Project Documents'),
+                    Text(
+                      'Optional • Max 2 files • PDF, DOC, DOCX',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.leadGreyColor.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Obx(
+                () => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color:
+                        controller.project.value.documentList.isEmpty
+                            ? ColorRes.leadGreyColor.shade100
+                            : ColorRes.success.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${controller.project.value.documentList.length}/2',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      fontWeight: AppFontWeights.semiBold,
+                      color:
+                          controller.project.value.documentList.isEmpty
+                              ? ColorRes.leadGreyColor.shade700
+                              : ColorRes.success.shade700,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Obx(
+            () =>
+                controller.project.value.documentList.isEmpty
+                    ? _buildUploadBox(
+                      onTap: controller.builderDocumentPicker,
+                      icon: Icons.cloud_upload_outlined,
+                      title: 'Upload your documents here',
+                      subtitle: 'Browse',
+                      color: ColorRes.success,
+                    )
+                    : Column(
+                      children: [
+                        ...controller.project.value.documentList
+                            .asMap()
+                            .entries
+                            .map((entry) {
+                              final index = entry.key;
+                              final filePath = entry.value;
+                              return _buildDocumentTile(
+                                filePath: filePath,
+                                index: index,
+                                onRemove:
+                                    () =>
+                                        controller.removeBuilderDocument(index),
+                                onView: () async {
+                                  await controller.pdfPreviewByDefaultApp(
+                                    filePath,
+                                  );
+                                },
+                              );
+                            }),
+                        if (controller.project.value.documentList.length < 2)
+                          const SizedBox(height: 12),
+                        if (controller.project.value.documentList.length < 2)
+                          InkWell(
+                            onTap: controller.builderDocumentPicker,
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: ColorRes.success.shade50!.withOpacity(
+                                  0.3,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: ColorRes.success.shade300!,
+                                  width: 1.5,
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_circle_outline,
+                                    size: 20,
+                                    color: ColorRes.success.shade700,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Add More Documents',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.medium,
+                                      fontWeight: AppFontWeights.semiBold,
+                                      color: ColorRes.success.shade700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDocumentTile({
+    required String filePath,
+    required int index,
+    required VoidCallback onRemove,
+    required VoidCallback onView,
+  }) {
+    final fileName = filePath.split('/').last;
+    final fileExtension = fileName.split('.').last.toUpperCase();
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: ColorRes.success.shade50!.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.success.shade200!),
+      ),
+      child: Row(
+        children: [
+          // File Icon
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: ColorRes.success.shade100,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              _getDocumentIcon(fileExtension),
+              size: 24,
+              color: ColorRes.success.shade700,
+            ),
+          ),
+          const SizedBox(width: 12),
+          // File Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  fileName,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  fileExtension,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.success.shade600,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // View Button
+          IconButton(
+            onPressed: onView,
+            icon: Icon(
+              Icons.visibility_outlined,
+              size: 20,
+              color: ColorRes.success.shade700,
+            ),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          // Delete Button
+          IconButton(
+            onPressed: onRemove,
+            icon: Icon(
+              Icons.delete_outline_outlined,
+              size: 20,
+              color: ColorRes.error,
+            ),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getDocumentIcon(String extension) {
+    switch (extension) {
+      case 'PDF':
+        return Icons.picture_as_pdf;
+      case 'DOC':
+      case 'DOCX':
+        return Icons.description;
+      case 'TXT':
+        return Icons.text_snippet;
+      default:
+        return Icons.insert_drive_file;
+    }
   }
 }
 

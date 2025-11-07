@@ -529,41 +529,46 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.small),
+            if (widget.isFeedbackEnabled) ...[
+              const SizedBox(height: AppSpacing.small),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    Get.to(
-                      () => FeedBackAndReportScreen(
-                        propertyId: widget.property.id ?? '',
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Get.to(
+                        () => FeedBackAndReportScreen(
+                          propertyId: widget.property.id ?? '',
+                        ),
+                        transition: Transition.cupertino,
+                      );
+                    },
+                    label: const Text(
+                      'Give Feedback or Report',
+                      style: TextStyle(
+                        color: ColorRes.primary,
+                        fontSize: AppFontSizes.bodyMedium,
+                        fontWeight: FontWeight.w600,
                       ),
-                      transition: Transition.cupertino,
-                    );
-                  },
-                  label: const Text(
-                    'Give Feedback or Report',
-                    style: TextStyle(
-                      color: ColorRes.primary,
-                      fontSize: AppFontSizes.bodyMedium,
-                      fontWeight: FontWeight.w600,
                     ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: ColorRes.primary, width: 1.4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(
+                        color: ColorRes.primary,
+                        width: 1.4,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: Colors.white,
+                      foregroundColor: ColorRes.primary,
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    backgroundColor: Colors.white,
-                    foregroundColor: ColorRes.primary,
                   ),
                 ),
               ),
-            ),
+            ],
             const SizedBox(height: AppSpacing.small),
           ],
         ),

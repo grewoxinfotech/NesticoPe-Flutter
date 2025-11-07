@@ -487,6 +487,7 @@ class AddProjectModel {
   MediaGallery? mediaGallery;
   List<String> imageList;
   List<String> videoList;
+  List<String> documentList;
   String? brochure;
   String? pdfPath;
   ProjectContactInfo? projectContactInfo;
@@ -513,6 +514,7 @@ class AddProjectModel {
     this.mediaGallery,
     this.imageList = const [],
     this.videoList = const [],
+    this.documentList = const [],
     this.brochure,
     this.pdfPath,
     this.projectContactInfo,
@@ -539,6 +541,7 @@ class AddProjectModel {
     'mediaGallery': mediaGallery?.toJson(),
     'imageList': imageList,
     'videoList': videoList,
+    'documentList': documentList,
     'brochure': brochure,
     'pdfPath': pdfPath,
     'projectContactInfo': projectContactInfo?.toJson(),

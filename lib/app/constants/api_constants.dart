@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 class ApiConstants {
   // Base URL
   static const String baseURL = "http://housing.grewox.com/api/v1";
+  // static const String baseURL = "http://192.168.1.2:19725/api/v1";
 
   // Auth Endpoints
   static const String auth = "$baseURL/auth";
@@ -16,8 +17,8 @@ class ApiConstants {
   static const String convertToReseller = "$auth/convert-buyer-to-reseller";
   static const String referralGet = "$baseURL/referral/my-stats";
   static const String generateReferCode = "$baseURL/referral/generate-code";
-  static const String getUserProfile="$baseURL/user/profile/";
-  static const String getSellerDashboard="$baseURL/insight/seller";
+  static const String getUserProfile = "$baseURL/user/profile/";
+  static const String getSellerDashboard = "$baseURL/insight/seller";
 
   // Leadhttp://localhost:19725/api/v1/referral/my-stats
   static const String leads = "$baseURL/lead";

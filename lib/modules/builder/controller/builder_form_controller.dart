@@ -627,6 +627,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         amenities: [],
         imageList: [],
         videoList: [],
+        documentList: [],
         brochure: null,
         projectHighlights: [],
         projectContactInfo: ProjectContactInfo(name: "", phone: "", email: ""),
@@ -941,6 +942,67 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     });
   }
 
+  // Document picker - Allow up to 2 documents
+  Future<void> builderDocumentPicker() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowMultiple: false,
+        allowedExtensions: ['pdf', 'doc', 'txt'],
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        // Check total limit
+        if (project.value.documentList.length + result.files.length > 2) {
+          Get.snackbar(
+            'Limit Exceeded',
+            'You can only select up to 2 documents in total',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return;
+        }
+
+        project.update((p) {
+          if (p == null) return;
+
+          // Make sure documentList is modifiable
+          p.documentList = List<String>.from(p.documentList);
+
+          for (var file in result.files) {
+            if (file.path != null) {
+              p.documentList.add(file.path!);
+              print('Document added: ${file.path}');
+            }
+          }
+        });
+
+        project.refresh();
+
+        Get.snackbar(
+          'Success',
+          '${result.files.length} document(s) added',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print('Failed to pick documents: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to pick documents: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  void removeBuilderDocument(int index) {
+    project.update((p) {
+      if (p == null) return;
+      if (index >= 0 && index < p.documentList.length) {
+        p.documentList.removeAt(index);
+      }
+    });
+  }
+
   final formKeys = List.generate(6, (_) => GlobalKey<FormState>());
 
   void next() {
@@ -1063,10 +1125,12 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         projectData: await _buildProjectPayload(),
         images: project.value.imageList.map((path) => File(path)).toList(),
         videos: project.value.videoList.map((path) => File(path)).toList(),
-        documents:
+        brochures:
             project.value.brochure != null
                 ? File(project.value.pdfPath ?? '')
                 : null,
+        documents:
+            project.value.documentList.map((path) => File(path)).toList(),
       );
       if (success) {
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -1074,8 +1138,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
           message: "",
           contentType: ContentType.success,
         );
+        refreshList();
         Get.offUntil(
-          MaterialPageRoute(builder: (_) => BuilderDashboard()),
+          MaterialPageRoute(builder: (_) => BuilderMainScreen()),
           (route) => route.isFirst,
         );
       } else {

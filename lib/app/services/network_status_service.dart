@@ -33,13 +33,22 @@ class NetworkStatusService extends GetxService {
           ? connectivityResult.first 
           : ConnectivityResult.none;
       
-      // Check actual internet access
-      final hasInternet = await InternetConnection().hasInternetAccess;
-      _isConnected.value = hasInternet;
+      // Set initial connection state based on connectivity type
+      _isConnected.value = connectivityResult.isNotEmpty &&
+          connectivityResult.first != ConnectivityResult.none;
       
-      // Use only InternetConnection listener (more reliable than Connectivity)
-      InternetConnection().onStatusChange.listen((status) {
-        _handleConnectionChange(status == InternetStatus.connected);
+      // Listen to connectivity changes only (WiFi/Mobile on/off)
+      // This is more reliable than InternetConnection for detecting true disconnection
+      Connectivity().onConnectivityChanged.listen((result) {
+        final newConnectivityResult = result.isNotEmpty 
+            ? result.first 
+            : ConnectivityResult.none;
+        
+        _connectivityResult.value = newConnectivityResult;
+        
+        // Only trigger when connectivity type changes (WiFi/Mobile/None)
+        final hasConnectivity = newConnectivityResult != ConnectivityResult.none;
+        _handleConnectionChange(hasConnectivity);
       });
     } catch (e) {
       print('Error initializing network status service: $e');
@@ -49,29 +58,30 @@ class NetworkStatusService extends GetxService {
   }
   
   /// Handle connection state changes with debouncing
-  void _handleConnectionChange(bool isConnected) {
-    if (isConnected) {
+  void _handleConnectionChange(bool hasConnectivity) {
+    print('🌐 Connectivity changed: $hasConnectivity');
+    
+    if (hasConnectivity) {
       // Cancel any pending disconnect timer
       _disconnectTimer?.cancel();
       _disconnectTimer = null;
       
-      // Wait for connection stability before reconnecting
-      _reconnectTimer?.cancel();
-      _reconnectTimer = Timer(_reconnectDelay, () {
-        if (isConnected && !_isConnected.value) {
-          _isConnected.value = true;
-          _onReconnected();
-        }
-      });
+      // Immediate reconnection - user has WiFi/Mobile back
+      if (!_isConnected.value) {
+        _isConnected.value = true;
+        _onReconnected();
+      }
     } else {
       // Cancel any pending reconnect timer
       _reconnectTimer?.cancel();
       _reconnectTimer = null;
       
-      // Wait for disconnect stability before showing no internet screen
+      // Wait longer before showing no internet screen
+      // This ensures it's truly disconnected, not just switching networks
       _disconnectTimer?.cancel();
       _disconnectTimer = Timer(_disconnectDelay, () {
-        if (!isConnected && _isConnected.value) {
+        // Double check - still no connectivity?
+        if (!hasConnectivity && _isConnected.value) {
           _isConnected.value = false;
           _onDisconnected();
         }
@@ -82,7 +92,7 @@ class NetworkStatusService extends GetxService {
   /// Called when internet disconnects
   void _onDisconnected() {
     _wasDisconnected = true;
-    // _redirectToNoInternetScreen();
+    _redirectToNoInternetScreen();
   }
   
   /// Called when internet reconnects
