@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../utils/common_widget/validator/area_validator.dart';
 import '../../../search_property/view/search_screen.dart';
+import 'package:flutter/material.dart';
 
 class PostProperty extends StatelessWidget {
   final CreatePropertyController controller;
@@ -76,6 +77,9 @@ class PostProperty extends StatelessWidget {
       'Landlord',
       'Caretaker',
       'Professional'
+    ];
+    final List<String> tenantType=[
+      'Student','Company','Family','Any'
     ];
     final List<String> bhkTypes = [
       "1 RK",
@@ -768,9 +772,14 @@ class PostProperty extends StatelessWidget {
                       ),
 
 
+                      // const SizedBox(height: 16),
                       const SizedBox(height: 16),
+
+                      // PG Details
+                      buildSectionTitle("Notice Period"),
+                      const SizedBox(height: 8),
                       buildTextField(
-                        'Notice Period (Days)',
+                        'Enter notice period (Days)',
                         Icons.calendar_month_outlined,
 
                         controller.noticPeriodController,
@@ -790,8 +799,12 @@ class PostProperty extends StatelessWidget {
                         // isEnable:      ,
                       ),
                       const SizedBox(height: 16),
+
+                      // PG Details
+                      buildSectionTitle("Lock in Period"),
+                      const SizedBox(height: 8),
                       buildTextField(
-                        'Lock in Period (Days)',
+                        'Enter lock in period (Days)',
                         Icons.calendar_month_outlined,
                         controller.lockPeriodController,
                         isPhoneKey: true,
@@ -995,7 +1008,8 @@ class PostProperty extends StatelessWidget {
                   return null;
                 },
                 controller.sell_rent_Address,
-                maxLines: 3,
+                maxLines: 2,
+                minLines: 1
               ),
               SizedBox(height: 16),
               buildSectionTitle('BHK'),
@@ -1037,6 +1051,30 @@ class PostProperty extends StatelessWidget {
                           ),
                         )
                         : SizedBox.shrink(),
+              ),
+              SizedBox(height: 16),
+              buildSectionTitle('Tenant type'),
+              SizedBox(height: 8),
+              Obx(
+                    () => Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                  tenantType.map((option) {
+                    return buildChoice(
+                      title: option,
+                      selected:
+                      controller.tenantType.value ==
+                          option,
+                      onTap: () {
+                        controller.setValue(
+                          controller.tenantType,
+                          option,
+                        );
+                      },
+                    );
+                  }).toList(),
+                ),
               ),
               SizedBox(height: 16),
               const Text('Build Up Area'),
@@ -1120,6 +1158,61 @@ class PostProperty extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              SizedBox(height: 12),
+              const Text('Carpet Area'),
+              // buildSectionTitle("Carpet Area"),
+              SizedBox(height: 8),
+
+              Obx(
+                    () => Row(
+                  children: [
+                    Expanded(
+                      child: buildTextField(
+                        'Carpet Area',
+                        Icons.square_foot_outlined,
+                        controller.carpetAreaController,
+                        isPhoneKey: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: ColorRes.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: ColorRes.leadGreyColor.shade400,
+                        ),
+                      ),
+                      child: DropdownButton<String>(
+                        value: controller.carpetAreaUnit.value,
+                        items:
+                        ['sq.ft.', 'sq.yd.', 'sq.mt.', 'sq.cm.', 'sq.in.']
+                            .map(
+                              (unit) => DropdownMenuItem(
+                            value: unit,
+                            child: Text(unit),
+                          ),
+                        )
+                            .toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            controller.carpetAreaUnit.value = value;
+                          }
+                        },
+                        underline: Container(),
+                        style: const TextStyle(
+                          // fontSize: 12,
+                          color: ColorRes.black,
+                          fontSize: AppFontSizes.small,
+                        ),
+                        dropdownColor: ColorRes.white,
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               SizedBox(height: 16),

@@ -58,8 +58,8 @@ class AppSvgRes {
   static const String bbq_area="bbq-area";
   static const String home_theater='home-theater';
   static const String water_purifier = "water-purifier";
-  static const String gas_pipeline = "gas-pipeline";
-  static const String chimney = "chimney";
+  static const String gas_pipeline = "gas-pipline";
+  static const String chimney = "chimeny";
   static const String modular_kitchen = "modular-kitchen";
 
   // ---------- Number-based (Multi-choice) ----------
@@ -68,6 +68,8 @@ class AppSvgRes {
   static const String ac = "ac";
   static const String wardrobe = "wardrobe";
   static const String geyser = "geyser";
+  static const String wifi = "wifi";
+
 
 
 

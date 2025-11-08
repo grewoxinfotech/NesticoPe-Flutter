@@ -1440,6 +1440,8 @@
 //   );
 // }
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -1653,7 +1655,6 @@ class CreatePropertyScreen extends StatelessWidget {
                                             controller
                                                 .stepperSelectedIndex
                                                 .value;
-
                                         // Get current form key (or create dummy if none exists)
                                         final currentFormKey =
                                             (step < formKeys.length &&
@@ -1667,6 +1668,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                             formKey: currentFormKey,
                                           );
                                         }
+                                        log('jhvfdhvfys $step');
 
                                         if (controller.lookingTo.value ==
                                             'PG/Co-Living') {
@@ -1706,6 +1708,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                             controller.propertyType.value ==
                                                 "Residential") {
                                           switch (step) {
+
                                             case 1:
                                               return PostProperty(
                                                 controller: controller,
@@ -1803,6 +1806,7 @@ class CreatePropertyScreen extends StatelessWidget {
                           ? null
                           : () async {
                             final step = controller.stepperSelectedIndex.value;
+                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
 
                             // Property type validation
                             if (step == 0 &&
@@ -1812,7 +1816,7 @@ class CreatePropertyScreen extends StatelessWidget {
                             } else {
                               controller.showBasicPropertyType.value = false;
                             }
-
+                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
                             if (step == 0 &&
                                 controller.lookingTo.value.isEmpty) {
                               controller.showBasicLookingTo.value = true;
@@ -1820,7 +1824,7 @@ class CreatePropertyScreen extends StatelessWidget {
                             } else {
                               controller.showBasicLookingTo.value = false;
                             }
-
+                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
                             if (step == 0 &&
                                 controller.selectedIndex.value.isEmpty &&
                                 controller.propertyType.value == 'Commercial') {
@@ -1831,7 +1835,7 @@ class CreatePropertyScreen extends StatelessWidget {
                               controller.hasShownCommercialCategory.value =
                                   false;
                             }
-
+                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
                             // Rent property type validation
                             if ((controller.lookingTo.value == 'Rent' ||
                                     controller.lookingTo.value == 'Sell') &&
@@ -1844,18 +1848,8 @@ class CreatePropertyScreen extends StatelessWidget {
                             } else {
                               controller.showPropertyTypeError.value = false;
                             }
-
-                            if (controller.lookingTo.value == 'Rent' &&
-                                controller.propertyType.value ==
-                                    'Residential' &&
-                                step == 2 &&
-                                controller.rent_depositType.value.isEmpty) {
-                              controller.selectedDepositFromPrice.value = true;
-                              return;
-                            } else {
-                              controller.selectedDepositFromPrice.value = false;
-                            }
-
+                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
+                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
                             if (controller.lookingTo.value == 'Sell' &&
                                 controller.propertyType.value ==
                                     'Residential' &&

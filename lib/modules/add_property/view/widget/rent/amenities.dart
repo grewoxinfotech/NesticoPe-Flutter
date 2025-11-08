@@ -96,7 +96,7 @@ class RentAmenities extends StatelessWidget {
                               AppSvgIcon(
                                 assetName: e.key,
                                 size: 25,
-                                folder: 'furnishing',
+                                folder: 'amenities',
                                 color:
                                     isSelected
                                         ? Theme.of(context).primaryColor

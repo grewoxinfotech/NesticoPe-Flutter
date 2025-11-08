@@ -40,7 +40,7 @@ class CreatePropertyController extends GetxController {
   RxList<String> videoList = <String>[].obs;
   RxList<String> documentList = <String>[].obs;
 
-  /// Post Media================================
+  /// Post Media=============PG/Co-Living===================
   var mealCharges = "".obs;
   var mealChargesTextFiled = TextEditingController();
   var electricityCharges = ''.obs;
@@ -56,6 +56,39 @@ class CreatePropertyController extends GetxController {
   var managerStaysAtProperty = "".obs;
   var pgTotalFloor = TextEditingController();
   var pgFloorNumber = TextEditingController();
+  var selectedRoomAmenitiesDataForPG=<String>[].obs;
+  var roomFacilityAvailableOrNot="".obs;
+  var otherFacility=TextEditingController();
+
+  ///=============================Residential Rent apartment===============
+  var doYouWantBrokerage="".obs;
+  var lift_info="".obs;
+  var brokerageChargeNegotiable="".obs;
+  var brokerageCharge=TextEditingController();
+  var tenantType=''.obs;
+
+
+
+  ///============================Main variable=============================
+  var negotiablePriceOrNot="".obs;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -131,6 +164,7 @@ class CreatePropertyController extends GetxController {
   var sell_constructionStatus = "".obs;
   var selectedFurnishing = <String, FurnishingItemModel>{}.obs;
   var selectedRoomAmenities = <String>[].obs;
+
   var selectedCommercialAmenities = <String>[].obs;
   var commercial_isPreLeased = ''.obs;
   var commercial_current_rent_preLeasedTill = TextEditingController();
@@ -632,6 +666,15 @@ class CreatePropertyController extends GetxController {
     selectedRoomAmenities.refresh();
     print("Selected Amenities: $selectedRoomAmenities");
   }
+  void addOrUpdateRoomAmenities(String item) {
+    if (selectedRoomAmenitiesDataForPG.contains(item)) {
+      selectedRoomAmenitiesDataForPG.remove(item);
+    } else {
+      selectedRoomAmenitiesDataForPG.add(item);
+    }
+    selectedRoomAmenitiesDataForPG.refresh();
+    print("Selected selectedRoomAmenitiesDataForPG: $selectedRoomAmenitiesDataForPG");
+  }
 
   void addCommercialAmenities(String items) {
     if (selectedCommercialAmenities.contains(items)) {
@@ -867,7 +910,8 @@ class CreatePropertyController extends GetxController {
       final room = RoomModel(
         roomType: tempRoomType.value,
         monthlyRent: tempMonthlyRent.text,
-        deposit: tempDeposit.text,
+        other: otherFacility.text,
+        deposit: tempDeposit.text, amenities: selectedRoomAmenitiesDataForPG.value,
       );
 
       if (editingIndex.value == -1) {
@@ -888,6 +932,8 @@ class CreatePropertyController extends GetxController {
     tempRoomType.value = '';
     tempMonthlyRent.clear();
     tempDeposit.clear();
+    selectedRoomAmenitiesDataForPG.clear();
+    otherFacility.clear();
     editingIndex.value = -1;
   }
 
@@ -1064,6 +1110,8 @@ class CreatePropertyController extends GetxController {
                   roomType: room.roomType,
                   monthlyRent: room.monthlyRent,
                   deposit: room.deposit,
+                  amenities: room.amenities,
+                    other: room.other
                 ),
               )
               .toList();

@@ -4,6 +4,8 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/add_property/model/room_detail_model.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart' hide Obx;
+import '../../../../app/manager/icon_manager.dart';
+import '../../../../app/utils/svg_widget.dart';
 import '../../controller/create_property_controller.dart';
 
 class RoomDetail extends StatelessWidget {
@@ -13,6 +15,7 @@ class RoomDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Obx(() {
       if (controller.lookingTo.value == "PG/Co-Living") {
         return SingleChildScrollView(
@@ -42,7 +45,7 @@ class RoomDetail extends StatelessWidget {
                         ),
                         child: ListTile(
                           title: Text(
-                            "${room.roomType} ",
+                            "(Room ${index + 1}) - ${room.roomType} ",
                             style: TextStyle(
                               fontWeight: AppFontWeights.semiBold,
                               fontSize: AppFontSizes.bodySmall,
@@ -144,6 +147,11 @@ class RoomDetail extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 8),
+                          const SizedBox(height: 16),
+
+                          // PG Details
+                          buildSectionTitle("Monthly Rent"),
+                          const SizedBox(height: 8),
                           Obx(
                             () => Wrap(
                               spacing: 10,
@@ -198,8 +206,8 @@ class RoomDetail extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           buildTextField(
-                            'Monthly Rent',
-                            Icons.calendar_month_outlined,
+                            'Enter monthly rent',
+                            Icons.currency_rupee_outlined,
                             controller.tempMonthlyRent,
                             isPhoneKey: true,
 
@@ -215,8 +223,10 @@ class RoomDetail extends StatelessWidget {
 
                           ),
                           const SizedBox(height: 16),
+                          buildSectionTitle("Security Deposit"),
+                          const SizedBox(height: 8),
                           buildTextField(
-                            'Deposit',
+                            'Enter security deposit',
                             Icons.currency_rupee_sharp,
                             controller.tempDeposit,
                             isPhoneKey: true,
@@ -232,7 +242,105 @@ class RoomDetail extends StatelessWidget {
                           ),
 
                           const SizedBox(height: 16),
+                          buildSectionTitle("Room Facility Available"),
+                          const SizedBox(height: 8),
+                          Obx(
+                                () => Row(
+                              children: [
+                                Expanded(
+                                  child: buildChoice(
+                                    title: 'Yes',
 
+                                    selected: controller.roomFacilityAvailableOrNot.value == 'Yes',
+                                    onTap:
+                                        () => controller.setValue(
+                                      controller.roomFacilityAvailableOrNot,
+                                      'Yes',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: buildChoice(
+                                    title: 'No',
+
+                                    selected: controller.roomFacilityAvailableOrNot.value == 'No',
+                                    onTap:
+                                        () => controller.setValue(
+                                      controller.roomFacilityAvailableOrNot,
+                                      'No',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (controller.roomFacilityAvailableOrNot == 'Yes') ...[
+                            const SizedBox(height: 16),
+                            buildSectionTitle("Room Facility"),
+                            const SizedBox(height: 12),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: IconManager.roomAmenities.map((e) {
+                                  final isSelected = controller.selectedRoomAmenitiesDataForPG.contains(e.key);
+
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        controller.addOrUpdateRoomAmenities(e.key);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? Theme.of(context).primaryColor.withOpacity(0.1)
+                                              : ColorRes.white,
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? Theme.of(context).primaryColor
+                                                : ColorRes.leadGreyColor.shade300,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                          horizontal: 16,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              e.title,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: isSelected
+                                                    ? Theme.of(context).primaryColor
+                                                    : ColorRes.black,
+                                                fontSize: AppFontSizes.caption,
+                                                fontWeight: AppFontWeights.regular,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            buildSectionTitle("Other Facility"),
+                            const SizedBox(height: 12),
+                            buildTextField(
+                              "Enter other facility",
+                              Icons.currency_rupee_outlined,
+                              controller.otherFacility,
+                            ),
+                          ],
+                          const SizedBox(height: 16),
                           // Save/Update button
                           SizedBox(
                             width: double.infinity,

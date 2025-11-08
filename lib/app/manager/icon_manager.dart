@@ -369,6 +369,14 @@ class IconManager {
     IconItem(key: AppSvgRes.swimming, title: "Swimming Pool", icon: Icons.pool),
     IconItem(key: AppSvgRes.tap, title: "Water Supply", icon: Icons.water_drop),
   ];
+  static final List<IconItem> roomAmenities=[
+    IconItem(key: AppSvgRes.wifi, title: "Wifi", icon: Icons.wifi),
+    IconItem(key: AppSvgRes.tv, title: "TV", icon: Icons.tv),
+    IconItem(key: AppSvgRes.ac, title: "Ac", icon: Icons.ac_unit),
+    IconItem(key: AppSvgRes.geyser, title: "Geyser", icon: Icons.hot_tub_outlined),
+    IconItem(key: AppSvgRes.refrigerate, title: "Fridge", icon: Icons.kitchen),
+    IconItem(key: AppSvgRes.cupboard, title: "Cupboard", icon: Icons.inventory),
+  ];
 
   static final List<IconItem> allAmenities = [
     // Property Amenities
