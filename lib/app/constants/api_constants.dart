@@ -2,49 +2,51 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 
 /// Class containing API related constants
 class ApiConstants {
-  // Base URL
-  static const String baseURL = "http://housing.grewox.com/api/v1";
-  // static const String baseURL = "http://192.168.1.2:19725/api/v1";
+  // Manual override options (comment/uncomment as needed):
+  // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
+  static const String baseURL =
+      "http://192.168.1.2:19725/api/v1"; // Real Device (WiFi)
 
   // Auth Endpoints
-  static const String auth = "$baseURL/auth";
-  static const String loginEndpoint = "$auth/login";
-  static const String registerEndpoint = "$auth/signup";
-  static const String verifyOtpEndpoint = "$auth/verify-otp";
-  static const String resendOtpEndpoint = "$auth/resend-otp";
-  static const String sellerRegister = "$auth/seller-register";
-  static const String covertToSeller = "$auth/convert-buyer-to-seller";
-  static const String convertToReseller = "$auth/convert-buyer-to-reseller";
-  static const String referralGet = "$baseURL/referral/my-stats";
-  static const String generateReferCode = "$baseURL/referral/generate-code";
-  static const String getUserProfile = "$baseURL/user/profile/";
-  static const String getSellerDashboard = "$baseURL/insight/seller";
+  static String get auth => "$baseURL/auth";
+  static String get loginEndpoint => "$auth/login";
+  static String get registerEndpoint => "$auth/signup";
+  static String get verifyOtpEndpoint => "$auth/verify-otp";
+  static String get resendOtpEndpoint => "$auth/resend-otp";
+  static String get sellerRegister => "$auth/seller-register";
+  static String get covertToSeller => "$auth/convert-buyer-to-seller";
+  static String get convertToReseller => "$auth/convert-buyer-to-reseller";
+  static String get referralGet => "$baseURL/referral/my-stats";
+  static String get generateReferCode => "$baseURL/referral/generate-code";
+  static String get getUserProfile => "$baseURL/user/profile/";
+  static String get getSellerDashboard => "$baseURL/insight/seller";
 
-  // Leadhttp://localhost:19725/api/v1/referral/my-stats
-  static const String leads = "$baseURL/lead";
-  static const String news = "$baseURL/newsArticle";
-  static const String platformService = "$baseURL/platformService";
-  static const String propertyRecommend =
+  // Lead
+  static String get leads => "$baseURL/lead";
+  static String get news => "$baseURL/newsArticle";
+  static String get platformService => "$baseURL/platformService";
+  static String get propertyRecommend =>
       "$baseURL/property/personalized-recommendations";
-  static const String builderProject = "$baseURL/builderproject";
-  static const String propertyReport = "$baseURL/propertyReport";
-  static const String resellerSuccessStory = "$baseURL/resellerSuccessStory";
-  static const String locationPriceMetrics = "$baseURL/locationPriceMetrics";
-  static const String review = "$baseURL/review";
-  static const String overAllRating = "$baseURL/review/property";
-  static const String user = "$baseURL/user";
+  static String get builderProject => "$baseURL/builderproject";
+  static String get propertyReport => "$baseURL/propertyReport";
+  static String get resellerSuccessStory => "$baseURL/resellerSuccessStory";
+  static String get locationPriceMetrics => "$baseURL/locationPriceMetrics";
+  static String get review => "$baseURL/review";
+  static String get overAllRating => "$baseURL/review/property";
+  static String get user => "$baseURL/user";
 
-  static const String interestForm = "$baseURL/interestForm";
-  static const String propertyShare = "$baseURL/propertyShare";
-  static const String multiPropertyShare = "$baseURL/propertyShare/bundles";
+  static String get interestForm => "$baseURL/interestForm";
+  static String get propertyShare => "$baseURL/propertyShare";
+  static String get multiPropertyShare => "$baseURL/propertyShare/bundles";
 
-  static const String resellerDashboard = "$baseURL/insight/reseller";
-  static const String property = "$baseURL/property";
+  static String get resellerDashboard => "$baseURL/insight/reseller";
+  static String get property => "$baseURL/property";
+  static String get fackLead => "$baseURL/lead/reseller";
 
   //---------------------------------other-----------------------------//
 
-  static const String cityInsights = "$baseURL/cityInsights/existing/city";
-  static const String trendingCityInsights = "$baseURL/cityInsights/trending";
+  static String get cityInsights => "$baseURL/cityInsights/existing/city";
+  static String get trendingCityInsights => "$baseURL/cityInsights/trending";
 
   static const String logoutEndpoint = "/auth/logout";
   static const String resetPasswordEndpoint = "/auth/reset-password";

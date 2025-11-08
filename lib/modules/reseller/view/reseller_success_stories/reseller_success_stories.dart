@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/data/network/reseller_success_stories/reseller_success_stories_model.dart';
 import 'package:housing_flutter_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
 import '../../../../app/constants/color_res.dart';
+import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import '../../controller/reseller_success_stories_controller/reseller_success_stories_controller.dart';
 
 class ResellerSuccessStoryScreen extends StatelessWidget {
@@ -23,32 +23,25 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
         backgroundColor: ColorRes.bgColor,
         title: Text(
           'Reseller Success Stories',
-          style: TextStyle( fontWeight: FontWeight.bold),
-
-        ),  ),
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: CustomScrollView(
-
         slivers: [
-
           Obx(() {
             if (controller.isLoading.value && controller.items.isEmpty) {
-              return SliverFillRemaining(
-                child: _buildLoadingState(),
-              );
+              return SliverFillRemaining(child: _buildLoadingState());
             }
-            
 
             if (controller.items.isEmpty) {
-              return SliverFillRemaining(
-                child: _buildEmptyState(),
-              );
+              return SliverFillRemaining(child: _buildEmptyState());
             }
 
             return SliverPadding(
               padding: const EdgeInsets.all(12),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
-                      (context, index) {
+                  (context, index) {
                     if (index < controller.items.length) {
                       final story = controller.items[index];
                       return _buildStoryCard(story, index);
@@ -66,7 +59,9 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                     }
                     return null;
                   },
-                  childCount: controller.items.length + (controller.isLoading.value ? 1 : 0),
+                  childCount:
+                      controller.items.length +
+                      (controller.isLoading.value ? 1 : 0),
                 ),
               ),
             );
@@ -76,7 +71,6 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
       floatingActionButton: _buildFAB(),
     );
   }
-
 
   Widget _buildLoadingState() {
     return Center(
@@ -106,7 +100,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-           Text(
+          Text(
             "Loading success stories...",
             style: TextStyle(
               fontSize: AppFontSizes.body,
@@ -130,10 +124,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.blue.shade50,
-                    Colors.purple.shade50,
-                  ],
+                  colors: [Colors.blue.shade50, Colors.purple.shade50],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -203,238 +194,238 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
           width: 1,
         ),
       ),
-        child: Material(
-          color: ColorRes.transparentColor,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              Get.to(
-                () => AddResellerSuccessStoryScreen(
-                  story: story,
-                  isEditMode: true,
-                ),
-              );
-            },
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header with trophy and status
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: ColorRes.primary.withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(8),
-
-                            ),
-                            child: Icon(
-                              Icons.emoji_events,
-                              color: ColorRes.primary,
-                              size: 18,
-                            ),
+      child: Material(
+        color: ColorRes.transparentColor,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () {
+            Get.to(
+              () =>
+                  AddResellerSuccessStoryScreen(story: story, isEditMode: true),
+            );
+          },
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header with trophy and status
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-
-                              children: [
-                                Text(
-                                  '${story.title}' ?? "Untitled Story",
-                                  style:  TextStyle(
-                                    fontSize: AppFontSizes.body,
-                                    fontWeight: AppFontWeights.semiBold,
-                                    color: ColorRes.textPrimary,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 2),
-                                // const SizedBox(width: 3),
-                                Text(
-                                  formattedDate,
-                                  style: TextStyle(
-                                    color: ColorRes.leadGreyColor.shade600,
-                                    fontSize: AppFontSizes.extraSmall,
-                                    fontWeight: AppFontWeights.medium,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(story.status).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  _getStatusIcon(story.status),
-                                  size: 12,
-                                  color: _getStatusColor(story.status),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  _formatStatus(story.status),
-                                  style: TextStyle(
-                                    color: _getStatusColor(story.status),
-                                    fontSize: AppFontSizes.caption,
-                                    fontWeight: AppFontWeights.medium,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-
-                      // Description with Read More
-                      if (story.description != null && story.description!.isNotEmpty)
-                        ReadMoreText(
-                          '${story.description}',
-                          trimLines: 4,
-                          colorClickableText: ColorRes.primary,
-                          trimMode: TrimMode.Line,
-                          trimCollapsedText: ' Read more',
-                          trimExpandedText: ' Read less',
-                          style: TextStyle(
-                            color: ColorRes.leadGreyColor.shade700,
-                            fontSize: AppFontSizes.extraSmall,
-                            height: 1.5,
-                            fontWeight: AppFontWeights.regular,
-                          ),
-                          lessStyle: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.semiBold,
+                          child: Icon(
+                            Icons.emoji_events,
                             color: ColorRes.primary,
-                          ),
-                          moreStyle: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.primary,
+                            size: 18,
                           ),
                         ),
-                      const SizedBox(height: 12),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
 
-                      // Achievement Highlight
-                      if (story.achievement != null && story.achievement!.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: ColorRes.primary.withOpacity(0.2),
-                              width: 1,
-                            ),
-                          ),
-                          child: Row(
                             children: [
-                              Icon(
-                                Icons.star,
-                                color: ColorRes.primary,
-                                size: 16,
+                              Text(
+                                '${story.title}' ?? "Untitled Story",
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.textPrimary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Key Achievement",
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.extraSmall,
-                                        fontWeight: AppFontWeights.semiBold,
-                                        color: ColorRes.primary,
-                                        letterSpacing: 0.3,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      story.achievement!,
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.extraSmall,
-                                        fontWeight: AppFontWeights.medium,
-                                        color: ColorRes.leadGreyColor.shade700,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
+                              const SizedBox(height: 2),
+                              // const SizedBox(width: 3),
+                              Text(
+                                formattedDate,
+                                style: TextStyle(
+                                  color: ColorRes.leadGreyColor.shade600,
+                                  fontSize: AppFontSizes.extraSmall,
+                                  fontWeight: AppFontWeights.medium,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      const SizedBox(height: 12),
+                        SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(
+                              story.status,
+                            ).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                _getStatusIcon(story.status),
+                                size: 12,
+                                color: _getStatusColor(story.status),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                _formatStatus(story.status),
+                                style: TextStyle(
+                                  color: _getStatusColor(story.status),
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
 
-                      // Stats Section
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildMetricCard(
-                              Icons.handshake,
-                              story.totalDeals?.toString() ?? "0",
-                              "Deals",
-                              ColorRes.lightPurpleColor,
-                              ColorRes.leadIndigoColor,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: _buildMetricCard(
-                              Icons.account_balance_wallet,
-                              "₹${_formatCurrency(story.totalValue)}",
-                              "Value",
-                               ColorRes.green,
-                              ColorRes.green,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: _buildMetricCard(
-                              Icons.star_rounded,
-                              story.rating?.toStringAsFixed(1) ?? "0.0",
-                              "Rating",
-                              ColorRes.homeAmber,
-                              ColorRes.homeAmber,
-                            ),
-                          ),
-                        ],
+                    // Description with Read More
+                    if (story.description != null &&
+                        story.description!.isNotEmpty)
+                      ReadMoreText(
+                        '${story.description}',
+                        trimLines: 4,
+                        colorClickableText: ColorRes.primary,
+                        trimMode: TrimMode.Line,
+                        trimCollapsedText: ' Read more',
+                        trimExpandedText: ' Read less',
+                        style: TextStyle(
+                          color: ColorRes.leadGreyColor.shade700,
+                          fontSize: AppFontSizes.extraSmall,
+                          height: 1.5,
+                          fontWeight: AppFontWeights.regular,
+                        ),
+                        lessStyle: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.primary,
+                        ),
+                        moreStyle: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.primary,
+                        ),
                       ),
-                    ],
-                  ),
+                    const SizedBox(height: 12),
+
+                    // Achievement Highlight
+                    if (story.achievement != null &&
+                        story.achievement!.isNotEmpty)
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: ColorRes.primary.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.star, color: ColorRes.primary, size: 16),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Key Achievement",
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.extraSmall,
+                                      fontWeight: AppFontWeights.semiBold,
+                                      color: ColorRes.primary,
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    story.achievement!,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.extraSmall,
+                                      fontWeight: AppFontWeights.medium,
+                                      color: ColorRes.leadGreyColor.shade700,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 12),
+
+                    // Stats Section
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildMetricCard(
+                            Icons.handshake,
+                            story.totalDeals?.toString() ?? "0",
+                            "Deals",
+                            ColorRes.lightPurpleColor,
+                            ColorRes.leadIndigoColor,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildMetricCard(
+                            Icons.account_balance_wallet,
+                            "₹${_formatCurrency(story.totalValue)}",
+                            "Value",
+                            ColorRes.green,
+                            ColorRes.green,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildMetricCard(
+                            Icons.star_rounded,
+                            story.rating?.toStringAsFixed(1) ?? "0.0",
+                            "Rating",
+                            ColorRes.homeAmber,
+                            ColorRes.homeAmber,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildMetricCard(IconData icon, String value, String label, Color color, Color bgColor) {
+  Widget _buildMetricCard(
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+    Color bgColor,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
       decoration: BoxDecoration(
         color: bgColor.withOpacity(0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Column(
         children: [
@@ -519,11 +510,11 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
   Color _getStatusColor(String? status) {
     switch (status?.toLowerCase()) {
       case 'published':
-        return  ColorRes.green;
+        return ColorRes.green;
       case 'draft':
-        return  ColorRes.homeAmber;
+        return ColorRes.homeAmber;
       case 'archived':
-        return  ColorRes.leadGreyColor.shade700;
+        return ColorRes.leadGreyColor.shade700;
       default:
         return ColorRes.builderGridLightPurple;
     }

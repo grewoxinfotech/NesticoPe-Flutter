@@ -398,25 +398,17 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/app/widgets/expandable_tile/expandable_widget.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../controller/fack_lead_controller/fack_lead_controller.dart';
 import '../../controller/profile/profile_controller.dart';
 import 'package:get/get.dart';
 
@@ -426,42 +418,47 @@ class ResellerProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.put(ProfileController());
+    final fackLeadController = Get.put(ResellerFakeLeadController());
 
     return Scaffold(
-      backgroundColor:ColorRes.white,
+      backgroundColor: ColorRes.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
           'Profile',
-          style: TextStyle(
-            fontWeight: AppFontWeights.bold,
-
-          ),
+          style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
         centerTitle: false,
         actions: [
-          Obx(() => Container(
-            margin: const EdgeInsets.only(right: 12),
-            child: IconButton(
-              icon: Icon(
-                profileController.isEditing.value ? Icons.check : Icons.edit_outlined,
-                size: 22,
-              ),
-              onPressed: profileController.isEditing.value
-                  ? () => profileController.saveProfile()
-                  : () => profileController.toggleEdit(),
-              style: IconButton.styleFrom(
-                backgroundColor: profileController.isEditing.value
-                    ? ColorRes.blueColor.withOpacity(0.1)
-                    : ColorRes.leadGreyColor.withOpacity(0.1),
-                foregroundColor: profileController.isEditing.value
-                    ? ColorRes.blueColor
-                    : ColorRes.leadGreyColor[700],
+          Obx(
+            () => Container(
+              margin: const EdgeInsets.only(right: 12),
+              child: IconButton(
+                icon: Icon(
+                  profileController.isEditing.value
+                      ? Icons.check
+                      : Icons.edit_outlined,
+                  size: 22,
+                ),
+                onPressed:
+                    profileController.isEditing.value
+                        ? () => profileController.saveProfile()
+                        : () => profileController.toggleEdit(),
+                style: IconButton.styleFrom(
+                  backgroundColor:
+                      profileController.isEditing.value
+                          ? ColorRes.blueColor.withOpacity(0.1)
+                          : ColorRes.leadGreyColor.withOpacity(0.1),
+                  foregroundColor:
+                      profileController.isEditing.value
+                          ? ColorRes.blueColor
+                          : ColorRes.leadGreyColor[700],
+                ),
               ),
             ),
-          )),
+          ),
         ],
       ),
       body: Obx(() {
@@ -481,8 +478,11 @@ class ResellerProfileScreen extends StatelessWidget {
               _buildStatisticsCards(profileController),
               const SizedBox(height: 16),
 
+              _buildLeadOverView(),
+              const SizedBox(height: 16),
+
               // Profile Information Form
-              Obx(() =>  _buildProfileForm(profileController)),
+              Obx(() => _buildProfileForm(profileController)),
               const SizedBox(height: 16),
 
               // Profile Options
@@ -622,7 +622,6 @@ class ResellerProfileScreen extends StatelessWidget {
   //   );
   // }
 
-
   Widget _buildProfileHeader(ProfileController controller) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -645,32 +644,40 @@ class ResellerProfileScreen extends StatelessWidget {
                 // Priority: selectedImage > avatarUrl > null
                 if (controller.profileData.value?.user?.profilePic != null) {
                   // imageProvider = FileImage(File(controller.profileData.value?.user?.profilePic??''));
-
-                } else if (controller.profileData.value?.user?.profilePic?.isNotEmpty??false) {
-                  imageProvider = NetworkImage(controller.profileData.value?.user?.profilePic??'');
+                } else if (controller
+                        .profileData
+                        .value
+                        ?.user
+                        ?.profilePic
+                        ?.isNotEmpty ??
+                    false) {
+                  imageProvider = NetworkImage(
+                    controller.profileData.value?.user?.profilePic ?? '',
+                  );
                 }
 
                 return Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: ColorRes.primary,
-                      width: 2,
-                    ),
+                    border: Border.all(color: ColorRes.primary, width: 2),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: CircleAvatar(
                       radius: 35,
-                      backgroundColor:imageProvider==null? ColorRes.primary.withOpacity(0.1):null,
+                      backgroundColor:
+                          imageProvider == null
+                              ? ColorRes.primary.withOpacity(0.1)
+                              : null,
                       backgroundImage: imageProvider,
-                      child: imageProvider == null
-                          ? Icon(
-                        Icons.person,
-                        size: 25,
-                        color: ColorRes.primary.withOpacity(0.8),
-                      )
-                          : null,
+                      child:
+                          imageProvider == null
+                              ? Icon(
+                                Icons.person,
+                                size: 25,
+                                color: ColorRes.primary.withOpacity(0.8),
+                              )
+                              : null,
                     ),
                   ),
                 );
@@ -707,9 +714,9 @@ class ResellerProfileScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width:150,
+                  width: 150,
                   child: Text(
-                    ' ${controller.profileData.value?.user?.username??''}',
+                    ' ${controller.profileData.value?.user?.username ?? ''}',
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.bold,
@@ -719,8 +726,10 @@ class ResellerProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: ColorRes.primary.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(6),
@@ -730,7 +739,7 @@ class ResellerProfileScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    '${controller.profileData.value?.user?.userType??''}',
+                    '${controller.profileData.value?.user?.userType ?? ''}',
                     style: TextStyle(
                       fontSize: AppFontSizes.extraSmall,
                       color: ColorRes.primary,
@@ -741,15 +750,14 @@ class ResellerProfileScreen extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-
                     SizedBox(
                       width: 150,
                       child: Text(
-                        '${controller.profileData.value?.user?.address??'Not Define'} ',
+                        '${controller.profileData.value?.user?.address ?? 'Not Define'} ',
                         style: TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.leadGreyColor[600],
-                          fontWeight: AppFontWeights.medium
+                          fontWeight: AppFontWeights.medium,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -765,8 +773,488 @@ class ResellerProfileScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildLeadOverView() {
+    final Rxn<UserModel> user = Rxn<UserModel>();
+    final isLoading = true.obs;
 
+    // Load user data only once after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final storedUser = await SecureStorage.getUserData();
+      user.value = storedUser;
+      isLoading.value = false;
+    });
 
+    return Obx(() {
+      if (isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (user.value == null ||
+          user.value!.user?.id == null ||
+          user.value!.user!.id!.isEmpty) {
+        return const Center(
+          child: Text("User not found", style: TextStyle(color: Colors.grey)),
+        );
+      }
+
+      return ExpandableTile(
+        title: 'Lead Report',
+        leadingIcon: Icons.leaderboard_outlined,
+        trailingIcon: Icons.keyboard_arrow_down_rounded,
+        children: [_buildLeadSection(user.value!.user!.id!)],
+      );
+    });
+  }
+
+  // Widget _buildLeadSection() {
+  //   final fackLeadController = Get.find<ResellerFakeLeadController>();
+  //   return Obx(() {
+  //     return Container(
+  //       margin: const EdgeInsets.symmetric(vertical: 16),
+  //       decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(12),
+  //         border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+  //       ),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           // Header
+  //           Padding(
+  //             padding: const EdgeInsets.all(20),
+  //             child: Text(
+  //               'Lead Quality Stats',
+  //               style: TextStyle(
+  //                 fontSize: AppFontSizes.bodyMedium,
+  //                 fontWeight: AppFontWeights.bold,
+  //                 color: ColorRes.textPrimary,
+  //               ),
+  //             ),
+  //           ),
+  //
+  //           Divider(
+  //             height: 1,
+  //             color: ColorRes.leadGreyColor.withOpacity(0.3),
+  //             indent: 12,
+  //             endIndent: 12,
+  //           ),
+  //
+  //           // Stats Grid
+  //           Padding(
+  //             padding: const EdgeInsets.all(12),
+  //             child: Column(
+  //               children: [
+  //                 Row(
+  //                   children: [
+  //                     Expanded(
+  //                       child: _buildLeadStatCard(
+  //                         label: 'TOTAL FAKE LEADS',
+  //                         value: '2',
+  //                         valueColor: Colors.red,
+  //                       ),
+  //                     ),
+  //                     const SizedBox(width: 16),
+  //                     Expanded(
+  //                       child: _buildLeadStatCard(
+  //                         label: 'RECENT FAKE LEADS',
+  //                         value: '2',
+  //                         valueColor: Colors.orange,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //
+  //                 const SizedBox(height: 16),
+  //                 _buildLeadStatCard(
+  //                   label: 'BLOCK STATUS',
+  //                   value: 'Not Blocked',
+  //                   valueColor: Colors.green,
+  //                 ),
+  //                 const SizedBox(height: 16),
+  //                 _buildAccountHealthCard(),
+  //               ],
+  //             ),
+  //           ),
+  //
+  //           Divider(
+  //             height: 1,
+  //             color: ColorRes.leadGreyColor.withOpacity(0.3),
+  //             indent: 12,
+  //             endIndent: 12,
+  //           ),
+  //           const SizedBox(height: 16),
+  //
+  //           // Recent Reports Section
+  //           Padding(
+  //             padding: const EdgeInsets.all(12),
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   'Recent Fake Lead Reports',
+  //                   style: TextStyle(
+  //                     fontSize: AppFontSizes.bodyMedium,
+  //                     fontWeight: AppFontWeights.bold,
+  //                     color: ColorRes.textPrimary,
+  //                   ),
+  //                 ),
+  //                 const SizedBox(height: 16),
+  //                 _buildReportCard(
+  //                   date: '06 Nov 2025, 18:13',
+  //                   leadId: 'dfbfghfghfghfhfgh',
+  //                 ),
+  //                 const SizedBox(height: 12),
+  //                 _buildReportCard(
+  //                   date: '06 Nov 2025, 15:47',
+  //                   leadId: 'yhtrtyrtrytryrtty',
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   });
+  // }
+
+  Widget _buildLeadSection(String resellerId) {
+    final fakeLeadController = Get.put(
+      ResellerFakeLeadController(),
+    ); // put once
+
+    // Fetch when widget builds (optional safety)
+    if (fakeLeadController.fakeLeadStats.value == null &&
+        !fakeLeadController.isLoading.value) {
+      fakeLeadController.fetchFakeLeadStats(resellerId);
+    }
+
+    return Obx(() {
+      if (fakeLeadController.isLoading.value) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+
+      if (fakeLeadController.errorMessage.isNotEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              fakeLeadController.errorMessage.value,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        );
+      }
+
+      final stats = fakeLeadController.fakeLeadStats.value;
+
+      if (stats == null) {
+        return const SizedBox.shrink();
+      }
+
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'Lead Quality Stats',
+                style: TextStyle(
+                  fontSize: AppFontSizes.bodyMedium,
+                  fontWeight: AppFontWeights.bold,
+                  color: ColorRes.textPrimary,
+                ),
+              ),
+            ),
+
+            Divider(
+              height: 1,
+              color: ColorRes.leadGreyColor.withOpacity(0.3),
+              indent: 12,
+              endIndent: 12,
+            ),
+
+            // Stats Grid
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildLeadStatCard(
+                          label: 'TOTAL FAKE LEADS',
+                          value: stats.totalFakeLeads.toString(),
+                          valueColor: Colors.red,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildLeadStatCard(
+                          label: 'RECENT FAKE LEADS',
+                          value: stats.recentFakeLeads.toString(),
+                          valueColor: Colors.orange,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  _buildLeadStatCard(
+                    label: 'ACCOUNT STATUS',
+                    value: stats.isCurrentlyBlocked ? "Blocked" : "Not Blocked",
+                    valueColor:
+                        stats.isCurrentlyBlocked ? Colors.red : Colors.green,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildAccountHealthCard(
+                    remainingWarnings: stats.remainingBeforeBlock,
+                  ),
+                ],
+              ),
+            ),
+
+            Divider(
+              height: 1,
+              color: ColorRes.leadGreyColor.withOpacity(0.3),
+              indent: 12,
+              endIndent: 12,
+            ),
+            const SizedBox(height: 16),
+
+            // Recent Reports Section
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Recent Fake Lead Reports',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodyMedium,
+                      fontWeight: AppFontWeights.bold,
+                      color: ColorRes.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  if (stats.fakeLeadHistory.isEmpty)
+                    const Text(
+                      'No fake lead reports yet.',
+                      style: TextStyle(color: Colors.grey),
+                    )
+                  else
+                    ...stats.fakeLeadHistory.map(
+                      (report) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildReportCard(
+                          date:
+                              "${report.markedFakeAt.toLocal()}".split('.')[0],
+                          leadId: report.reason,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildLeadStatCard({
+    required String label,
+    required String value,
+    required Color valueColor,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[600],
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: valueColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget _buildAccountHealthCard() {
+  //   return Container(
+  //     padding: const EdgeInsets.all(16),
+  //     decoration: BoxDecoration(
+  //       color: Colors.grey[50],
+  //       borderRadius: BorderRadius.circular(8),
+  //       border: Border.all(color: Colors.grey[200]!),
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           'ACCOUNT HEALTH',
+  //           style: TextStyle(
+  //             fontSize: 11,
+  //             fontWeight: FontWeight.w600,
+  //             color: Colors.grey[600],
+  //             letterSpacing: 0.5,
+  //           ),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         Row(
+  //           children: [
+  //             Container(
+  //               padding: const EdgeInsets.symmetric(
+  //                 horizontal: 10,
+  //                 vertical: 4,
+  //               ),
+  //               decoration: BoxDecoration(
+  //                 color: Colors.orange[50],
+  //                 borderRadius: BorderRadius.circular(4),
+  //                 border: Border.all(color: Colors.orange[300]!),
+  //               ),
+  //               child: Text(
+  //                 'Warning',
+  //                 style: TextStyle(
+  //                   fontSize: 13,
+  //                   fontWeight: FontWeight.w600,
+  //                   color: Colors.orange[700],
+  //                 ),
+  //               ),
+  //             ),
+  //             const SizedBox(width: 8),
+  //             Text(
+  //               '(3 more to block)',
+  //               style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _buildAccountHealthCard({required int remainingWarnings}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'ACCOUNT HEALTH',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[600],
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.orange[50],
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: Colors.orange[300]!),
+                ),
+                child: Text(
+                  'Warning',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.orange[700],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '($remainingWarnings more to block)',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReportCard({required String date, required String leadId}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.red[100]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            date,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            leadId,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[800],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildStatisticsCards(ProfileController controller) {
     return Row(
@@ -774,7 +1262,7 @@ class ResellerProfileScreen extends StatelessWidget {
         Expanded(
           child: _buildStatCard(
             'Total Commission',
-            '${Formatter.formatPrice(int.tryParse(controller.resellerProfile.value?.data.totalCommissions??'')??0)??''}',
+            '${Formatter.formatPrice(int.tryParse(controller.resellerProfile.value?.data.totalCommissions ?? '') ?? 0) ?? ''}',
             Icons.trending_up,
             ColorRes.success,
           ),
@@ -783,7 +1271,7 @@ class ResellerProfileScreen extends StatelessWidget {
         Expanded(
           child: _buildStatCard(
             'Total Sales',
-            '${controller.resellerProfile.value?.data.totalSales??''}',
+            '${controller.resellerProfile.value?.data.totalSales ?? ''}',
             Icons.people_alt_outlined,
             ColorRes.blueColor,
           ),
@@ -801,7 +1289,12 @@ class ResellerProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -822,10 +1315,7 @@ class ResellerProfileScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: color.withOpacity(0.10),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: color.withOpacity(0.2),
-                width: 1,
-              ),
+              border: Border.all(color: color.withOpacity(0.2), width: 1),
             ),
             child: Icon(icon, color: color, size: 20),
           ),
@@ -861,18 +1351,23 @@ class ResellerProfileScreen extends StatelessWidget {
     );
   }
 
-
   Widget _buildProfileForm(ProfileController controller) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp)async {
-      controller.nameController.text=controller.profileData.value?.user?.firstName??"";
-      controller.lastNameController.text=controller.profileData.value?.user?.lastName??"";
-      controller.emailController.text =controller.profileData.value?.user?.email??"";
-      controller.phoneController.text =controller.profileData.value?.user?.phone??"";
-      controller.positionController.text =controller.profileData.value?.user?.city??"";
-      controller.companyController.text =controller.profileData.value?.user?.state??"";
-    },);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      controller.nameController.text =
+          controller.profileData.value?.user?.firstName ?? "";
+      controller.lastNameController.text =
+          controller.profileData.value?.user?.lastName ?? "";
+      controller.emailController.text =
+          controller.profileData.value?.user?.email ?? "";
+      controller.phoneController.text =
+          controller.profileData.value?.user?.phone ?? "";
+      controller.positionController.text =
+          controller.profileData.value?.user?.city ?? "";
+      controller.companyController.text =
+          controller.profileData.value?.user?.state ?? "";
+    });
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
@@ -894,10 +1389,14 @@ class ResellerProfileScreen extends StatelessWidget {
                     color: ColorRes.blueColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.person_outline, color: ColorRes.blueColor[700], size: 20),
+                  child: Icon(
+                    Icons.person_outline,
+                    color: ColorRes.blueColor[700],
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                 Text(
+                Text(
                   'Profile Information',
                   style: TextStyle(
                     fontSize: AppFontSizes.bodyMedium,
@@ -913,7 +1412,8 @@ class ResellerProfileScreen extends StatelessWidget {
               label: 'Fist Name',
               icon: Icons.person_outline,
               enabled: controller.isEditing.value,
-              validator: (value) => value?.isEmpty ?? true ? 'Name is required' : null,
+              validator:
+                  (value) => value?.isEmpty ?? true ? 'Name is required' : null,
             ),
             const SizedBox(height: 14),
             _buildFormField(
@@ -921,7 +1421,8 @@ class ResellerProfileScreen extends StatelessWidget {
               label: 'Last Name',
               icon: Icons.person_outline,
               enabled: controller.isEditing.value,
-              validator: (value) => value?.isEmpty ?? true ? 'Name is required' : null,
+              validator:
+                  (value) => value?.isEmpty ?? true ? 'Name is required' : null,
             ),
             const SizedBox(height: 14),
             _buildFormField(
@@ -982,22 +1483,23 @@ class ResellerProfileScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: controller.isSaving.value
-                          ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: ColorRes.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                          :  Text(
-                        'Save Changes',
-                        style: TextStyle(
-                          fontWeight: AppFontWeights.semiBold,
-                          fontSize: AppFontSizes.bodyMedium,
-                        ),
-                      ),
+                      child:
+                          controller.isSaving.value
+                              ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: ColorRes.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : Text(
+                                'Save Changes',
+                                style: TextStyle(
+                                  fontWeight: AppFontWeights.semiBold,
+                                  fontSize: AppFontSizes.bodyMedium,
+                                ),
+                              ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -1007,7 +1509,9 @@ class ResellerProfileScreen extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: ColorRes.leadGreyColor[700],
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+                        side: BorderSide(
+                          color: ColorRes.leadGreyColor.withOpacity(0.3),
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1042,23 +1546,29 @@ class ResellerProfileScreen extends StatelessWidget {
     return TextFormField(
       controller: controller,
       enabled: enabled,
-minLines: 1,
+      minLines: 1,
       decoration: InputDecoration(
         labelText: label,
 
         labelStyle: TextStyle(
           fontSize: AppFontSizes.small,
-          color: enabled ? ColorRes.leadGreyColor[700] : ColorRes.leadGreyColor[500],
-
+          color:
+              enabled
+                  ? ColorRes.leadGreyColor[700]
+                  : ColorRes.leadGreyColor[500],
         ),
         prefixIcon: Icon(icon, size: 20, color: ColorRes.leadGreyColor[600]),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+          borderSide: BorderSide(
+            color: ColorRes.leadGreyColor.withOpacity(0.3),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+          borderSide: BorderSide(
+            color: ColorRes.leadGreyColor.withOpacity(0.3),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -1066,7 +1576,9 @@ minLines: 1,
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.2)),
+          borderSide: BorderSide(
+            color: ColorRes.leadGreyColor.withOpacity(0.2),
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -1077,13 +1589,20 @@ minLines: 1,
           borderSide: const BorderSide(color: ColorRes.error, width: 1.5),
         ),
         filled: true,
-        fillColor: enabled ? ColorRes.leadGreyColor[50] : ColorRes.leadGreyColor[100],
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        fillColor:
+            enabled ? ColorRes.leadGreyColor[50] : ColorRes.leadGreyColor[100],
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
       keyboardType: keyboardType,
       validator: validator,
       maxLines: maxLines,
-      style: TextStyle(fontSize:AppFontSizes.small, color: ColorRes.homeBlackFade),
+      style: TextStyle(
+        fontSize: AppFontSizes.small,
+        color: ColorRes.homeBlackFade,
+      ),
     );
   }
 
@@ -1099,24 +1618,56 @@ minLines: 1,
       ),
       child: Column(
         children: [
-          _buildProfileOption(Icons.notifications_outlined, 'Notifications', () {}, showDivider: true),
-          _buildProfileOption(Icons.security_outlined, 'Security', () {}, showDivider: true),
-          _buildProfileOption(Icons.help_outline, 'Help & Support', () {}, showDivider: true),
-          _buildProfileOption(Icons.logout, 'Logout', () => _showLogoutDialog(Get.context!), isLogout: true),
+          _buildProfileOption(
+            Icons.notifications_outlined,
+            'Notifications',
+            () {},
+            showDivider: true,
+          ),
+          _buildProfileOption(
+            Icons.security_outlined,
+            'Security',
+            () {},
+            showDivider: true,
+          ),
+          _buildProfileOption(
+            Icons.help_outline,
+            'Help & Support',
+            () {},
+            showDivider: true,
+          ),
+          _buildProfileOption(
+            Icons.logout,
+            'Logout',
+            () => _showLogoutDialog(Get.context!),
+            isLogout: true,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildProfileOption(IconData icon, String title, VoidCallback onTap, {bool isLogout = false, bool showDivider = false}) {
+  Widget _buildProfileOption(
+    IconData icon,
+    String title,
+    VoidCallback onTap, {
+    bool isLogout = false,
+    bool showDivider = false,
+  }) {
     return Column(
       children: [
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 4,
+          ),
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isLogout ? ColorRes.error.withOpacity(0.1) : ColorRes.leadGreyColor.withOpacity(0.1),
+              color:
+                  isLogout
+                      ? ColorRes.error.withOpacity(0.1)
+                      : ColorRes.leadGreyColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -1130,7 +1681,7 @@ minLines: 1,
             style: TextStyle(
               fontSize: AppFontSizes.bodyMedium,
               fontWeight: AppFontWeights.medium,
-              color: isLogout ? ColorRes.error :  ColorRes.homeBlackFade,
+              color: isLogout ? ColorRes.error : ColorRes.homeBlackFade,
             ),
           ),
           trailing: Icon(
@@ -1203,7 +1754,7 @@ minLines: 1,
                   borderRadius: 12,
                 );
               },
-              child:  Text(
+              child: Text(
                 'Logout',
                 style: TextStyle(
                   fontSize: AppFontSizes.bodyMedium,

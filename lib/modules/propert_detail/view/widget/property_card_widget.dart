@@ -50,6 +50,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
       listingType: widget.property.listingType ?? '',
       financialInfo:
           widget.property.propertyDetails?.financialInfo ?? FinancialInfo(),
+      pgInfo: widget.property.propertyDetails?.pgInfo, // Added for PG support
     );
     final title = PropertyNameManager(widget.property);
     final features = PropertyFeatureManager.getFeatures(widget.property);

@@ -6,11 +6,11 @@ import 'package:housing_flutter_app/app/care/pagination/controller/pagination_co
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../data/network/reseller_success_stories/reseller_success_stories_model.dart';
-import '../../../../data/network/reseller_success_stories/reseller_success_stories_service.dart';
+import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
+import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_service.dart';
 
-
-class ResellerSuccessStoryController extends PaginatedController<ResellerSuccessItem> {
+class ResellerSuccessStoryController
+    extends PaginatedController<ResellerSuccessItem> {
   final ResellerSuccessStoryService _service = ResellerSuccessStoryService();
 
   // ---------------- Form Controllers ----------------
@@ -26,12 +26,10 @@ class ResellerSuccessStoryController extends PaginatedController<ResellerSuccess
   final List<String> statusOptions = ['published', 'draft'];
   RxString selectedStatus = 'draft'.obs;
 
-
   // ---------------- Reactive Variables ----------------
   RxInt rating = 0.obs;
   Rxn<DateTime> selectedMonthYear = Rxn<DateTime>();
   RxMap<String, String> filters = <String, String>{}.obs;
-
 
   // ---------------- Image ----------------
   Rxn<File> imagePath = Rxn<File>(); // local path or network URL
@@ -76,7 +74,10 @@ class ResellerSuccessStoryController extends PaginatedController<ResellerSuccess
   // =================== CRUD Methods ===================
   // ====================================================
 
-  Future<bool> createStory(ResellerSuccessItem story, {String? imageFilePath}) async {
+  Future<bool> createStory(
+    ResellerSuccessItem story, {
+    String? imageFilePath,
+  }) async {
     try {
       isLoading.value = true;
       final imageFile = imageFilePath != null ? File(imageFilePath) : null;
@@ -89,13 +90,16 @@ class ResellerSuccessStoryController extends PaginatedController<ResellerSuccess
     } catch (e) {
       debugPrint("❌ Create story error: $e");
       return false;
-    }
-    finally {
+    } finally {
       isLoading.value = false;
     }
   }
 
-  Future<bool> updateStory(String id, ResellerSuccessItem updatedStory, {String? imageFilePath}) async {
+  Future<bool> updateStory(
+    String id,
+    ResellerSuccessItem updatedStory, {
+    String? imageFilePath,
+  }) async {
     try {
       isLoading.value = true;
       final imageFile = imageFilePath != null ? File(imageFilePath) : null;
@@ -116,7 +120,7 @@ class ResellerSuccessStoryController extends PaginatedController<ResellerSuccess
     } catch (e) {
       debugPrint("❌ Update story error: $e");
       return false;
-    }finally {
+    } finally {
       isLoading.value = false;
     }
   }
@@ -191,7 +195,7 @@ class ResellerSuccessStoryController extends PaginatedController<ResellerSuccess
     totalDealsController.text = story.totalDeals.toString();
     totalValueController.text = story.totalValue;
     monthYearController.text =
-    "${story.monthYear.year}-${story.monthYear.month.toString().padLeft(2, '0')}";
+        "${story.monthYear.year}-${story.monthYear.month.toString().padLeft(2, '0')}";
     selectedMonthYear.value = story.monthYear;
     rating.value = story.rating;
     selectedStatus.value = story.status;
@@ -204,11 +208,12 @@ class ResellerSuccessStoryController extends PaginatedController<ResellerSuccess
         imagePath.value = file;
       } else {
         // Treat as network URL
-        imagePath.value =  File(story.image!); // create a separate RxString for network image
+        imagePath.value = File(
+          story.image!,
+        ); // create a separate RxString for network image
       }
     }
   }
-
 
   bool isValidForm() {
     return titleController.text.isNotEmpty &&
@@ -221,7 +226,8 @@ class ResellerSuccessStoryController extends PaginatedController<ResellerSuccess
 
   void setMonthYear(DateTime date) {
     selectedMonthYear.value = date;
-    monthYearController.text = "${date.year}-${date.month.toString().padLeft(2, '0')}";
+    monthYearController.text =
+        "${date.year}-${date.month.toString().padLeft(2, '0')}";
   }
 
   void clearMonthYear() {
@@ -242,7 +248,8 @@ class ResellerSuccessStoryController extends PaginatedController<ResellerSuccess
   ResellerSuccessItem buildStoryModel() {
     return ResellerSuccessItem(
       id: "",
-      resellerId: "tzX2qZP1qmVBS2K8uYt22XO", // You can dynamically assign current user ID here
+      resellerId:
+          "tzX2qZP1qmVBS2K8uYt22XO", // You can dynamically assign current user ID here
       title: titleController.text.trim(),
       description: descriptionController.text.trim(),
       achievement: achievementController.text.trim(),

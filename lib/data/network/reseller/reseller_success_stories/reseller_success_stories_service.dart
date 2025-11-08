@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/reseller_success_stories/reseller_success_stories_model.dart';
+import 'package:housing_flutter_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
@@ -44,7 +45,7 @@ class ResellerSuccessStoryService {
 
         return PaginationResponse<ResellerSuccessItem>.fromJson(
           data,
-              (json) => ResellerSuccessItem.fromJson(json),
+          (json) => ResellerSuccessItem.fromJson(json),
         );
       } else {
         debugPrint("❌ Failed to load success stories: ${response.statusCode}");

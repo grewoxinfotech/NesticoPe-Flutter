@@ -2,11 +2,11 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
-import 'package:housing_flutter_app/data/network/reseller_success_stories/reseller_success_stories_model.dart';
 import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:intl/intl.dart';
 import '../../../../app/constants/color_res.dart';
+import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../controller/reseller_success_stories_controller/reseller_success_stories_controller.dart';
 
@@ -14,7 +14,11 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
   final ResellerSuccessItem? story;
   final bool isEditMode;
 
-  AddResellerSuccessStoryScreen({super.key, this.story,  this.isEditMode=false});
+  AddResellerSuccessStoryScreen({
+    super.key,
+    this.story,
+    this.isEditMode = false,
+  });
   final ResellerSuccessStoryController controller = Get.put(
     ResellerSuccessStoryController(),
   );
@@ -85,7 +89,10 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
 
     final success = await controller.createStory(
       story,
-        imageFilePath: controller.imagePath.value != null ? controller.imagePath.value!.path : null,
+      imageFilePath:
+          controller.imagePath.value != null
+              ? controller.imagePath.value!.path
+              : null,
     ); // you can implement API call in controller
     if (!success) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -99,6 +106,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
 
     controller.resetForm();
   }
+
   Future<void> _update() async {
     if (!controller.formKey.currentState!.validate()) return;
 
@@ -124,7 +132,10 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
     final success = await controller.updateStory(
       story?.id ?? '',
       data,
-        imageFilePath: controller.imagePath.value != null ? controller.imagePath.value!.path : null,
+      imageFilePath:
+          controller.imagePath.value != null
+              ? controller.imagePath.value!.path
+              : null,
     ); // you can implement API call in controller
     if (!success) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -141,11 +152,14 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(isEditMode && story != null){
+    if (isEditMode && story != null) {
       controller.populateForm(story!);
     }
     return Scaffold(
-      appBar: AppBar(title:  Text(isEditMode ? "Update Success Story": "Add Success Story"), centerTitle: true),
+      appBar: AppBar(
+        title: Text(isEditMode ? "Update Success Story" : "Add Success Story"),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -310,7 +324,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               Obx(
-                    () => GestureDetector(
+                () => GestureDetector(
                   onTap: controller.builderImagePicker,
                   child: Container(
                     height: 200,
@@ -325,11 +339,11 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
                 ),
               ),
 
-          const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
               // --- Submit Button ---
               Obx(
-                ()=> SizedBox(
+                () => SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
@@ -339,15 +353,26 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    label:  Text(
-                      isEditMode? controller.isLoading.value ? "Updating..." :"Update Story": controller.isLoading.value ? "Creating..." :"Create Story",
+                    label: Text(
+                      isEditMode
+                          ? controller.isLoading.value
+                              ? "Updating..."
+                              : "Update Story"
+                          : controller.isLoading.value
+                          ? "Creating..."
+                          : "Create Story",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
                     ),
-                    onPressed:controller.isLoading.value ? null : isEditMode ? _update : _submit,
+                    onPressed:
+                        controller.isLoading.value
+                            ? null
+                            : isEditMode
+                            ? _update
+                            : _submit,
                   ),
                 ),
               ),
@@ -363,7 +388,8 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
     final networkImage = story?.image; // URL from API if edit mode
 
     // 🧠 Case 1: No image (neither picked nor from network)
-    if ((file == null || file.path.isEmpty) && (networkImage == null || networkImage.isEmpty)) {
+    if ((file == null || file.path.isEmpty) &&
+        (networkImage == null || networkImage.isEmpty)) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -412,8 +438,4 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
     // Default fallback (shouldn’t reach here)
     return const SizedBox.shrink();
   }
-
-
-
-
 }

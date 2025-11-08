@@ -269,6 +269,45 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   ),
                 ],
 
+                // PG Rules Section (only for PG listing type)
+                if (property?.listingType?.toUpperCase() == "PG" &&
+                    property?.propertyDetails?.pgInfo?.pgRules != null) ...[
+                  const SizedBox(height: 12),
+                  const TitleWithViewAll(title: 'PG Rules'),
+                  const SizedBox(height: 12),
+                  _buildPgRulesSection(
+                    property!.propertyDetails!.pgInfo!.pgRules!,
+                  ),
+                  const SizedBox(height: 12),
+                  Divider(
+                    indent: 18,
+                    endIndent: 18,
+                    color: ColorRes.leadGreyColor.shade300,
+                  ),
+                ],
+
+                // Room Options & Pricing Section (only for PG listing type)
+                if (property?.listingType?.toUpperCase() == "PG" &&
+                    property?.propertyDetails?.pgInfo?.pgRoomInfo != null &&
+                    property!
+                        .propertyDetails!
+                        .pgInfo!
+                        .pgRoomInfo!
+                        .isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  const TitleWithViewAll(title: 'Room Options & Pricing'),
+                  const SizedBox(height: 12),
+                  _buildRoomOptionsSection(
+                    property!.propertyDetails!.pgInfo!.pgRoomInfo!,
+                  ),
+                  const SizedBox(height: 12),
+                  Divider(
+                    indent: 18,
+                    endIndent: 18,
+                    color: ColorRes.leadGreyColor.shade300,
+                  ),
+                ],
+
                 if (property?.propertyDescription != null) ...[
                   const SizedBox(height: 12),
                   const TitleWithViewAll(title: 'Description'),
@@ -1153,6 +1192,273 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     );
   }
 
+  /// PG Rules Section Builder
+  Widget _buildPgRulesSection(PgRules rules) {
+    final rulesList = <Map<String, dynamic>>[];
+
+    if (rules.nonVegAllowed != null) {
+      rulesList.add({
+        'label': 'Non-Veg',
+        'allowed': rules.nonVegAllowed!,
+        'icon': Icons.restaurant,
+      });
+    }
+    if (rules.petsAllowed != null) {
+      rulesList.add({
+        'label': 'Pets',
+        'allowed': rules.petsAllowed!,
+        'icon': Icons.pets,
+      });
+    }
+    if (rules.lateEntryAllowed != null) {
+      rulesList.add({
+        'label': 'Late Entry',
+        'allowed': rules.lateEntryAllowed!,
+        'icon': Icons.access_time,
+      });
+    }
+
+    if (rulesList.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          'No rules specified',
+          style: TextStyle(
+            fontSize: AppFontSizes.bodySmall,
+            color: ColorRes.leadGreyColor,
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 12,
+        children:
+            rulesList.map((rule) {
+              final isAllowed = rule['allowed'] as bool;
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color:
+                      isAllowed
+                          ? ColorRes.green.withOpacity(0.1)
+                          : ColorRes.error.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isAllowed ? ColorRes.green : ColorRes.error,
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      rule['icon'] as IconData,
+                      size: 16,
+                      color: isAllowed ? ColorRes.green : ColorRes.error,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      rule['label'] as String,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.medium,
+                        color: isAllowed ? ColorRes.green : ColorRes.error,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      isAllowed ? Icons.check_circle : Icons.cancel,
+                      size: 14,
+                      color: isAllowed ? ColorRes.green : ColorRes.error,
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+      ),
+    );
+  }
+
+  /// Room Options & Pricing Section Builder
+  Widget _buildRoomOptionsSection(List<PgRoomInfo> rooms) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children:
+            rooms.map((room) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorRes.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Room Type Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          room.roomType?.toUpperCase() ?? 'Room',
+                          style: const TextStyle(
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.bold,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '₹${room.rent ?? 0}/month',
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.bold,
+                              color: ColorRes.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    if (room.securityDeposit != null &&
+                        room.securityDeposit! > 0) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.security,
+                            size: 14,
+                            color: ColorRes.leadGreyColor,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Security Deposit: ₹${room.securityDeposit}',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.bodySmall,
+                              color: ColorRes.leadGreyColor.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+
+                    // Room Facilities
+                    if (room.roomFacilityInfo != null) ...[
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Facilities:',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.blackShade87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _buildFacilityChips(room.roomFacilityInfo!),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            }).toList(),
+      ),
+    );
+  }
+
+  /// Build facility chips for room
+  List<Widget> _buildFacilityChips(RoomFacilityInfo facilities) {
+    final chips = <Widget>[];
+
+    if (facilities.wifi == true) {
+      chips.add(_buildFacilityChip('WiFi', Icons.wifi));
+    }
+    if (facilities.ac == true) {
+      chips.add(_buildFacilityChip('AC', Icons.ac_unit));
+    }
+    if (facilities.tv == true) {
+      chips.add(_buildFacilityChip('TV', Icons.tv));
+    }
+    if (facilities.geyser == true) {
+      chips.add(_buildFacilityChip('Geyser', Icons.hot_tub));
+    }
+    if (facilities.fridge == true) {
+      chips.add(_buildFacilityChip('Fridge', Icons.kitchen));
+    }
+    if (facilities.cupboard == true) {
+      chips.add(_buildFacilityChip('Cupboard', Icons.door_sliding));
+    }
+    if (facilities.other != null && facilities.other!.isNotEmpty) {
+      chips.add(_buildFacilityChip(facilities.other!, Icons.more_horiz));
+    }
+
+    if (chips.isEmpty) {
+      chips.add(
+        const Text(
+          'No facilities specified',
+          style: TextStyle(
+            fontSize: AppFontSizes.caption,
+            color: ColorRes.leadGreyColor,
+          ),
+        ),
+      );
+    }
+
+    return chips;
+  }
+
+  /// Build individual facility chip
+  Widget _buildFacilityChip(String label, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: ColorRes.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: ColorRes.primary),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: AppFontSizes.caption,
+              fontWeight: AppFontWeights.medium,
+              color: ColorRes.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // Widget _buildTitleSection(Items property) {
   //   return Padding(
   //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1427,6 +1733,7 @@ class PropertyBottomBar extends StatelessWidget {
     final price = PropertyPriceManager(
       listingType: property.listingType ?? '',
       financialInfo: property.propertyDetails?.financialInfo ?? FinancialInfo(),
+      pgInfo: property.propertyDetails?.pgInfo, // Added for PG support
     );
     return Container(
       height: 80,
@@ -1790,46 +2097,54 @@ class Details extends StatelessWidget {
       final isExpanded = controller.isExpanded.value;
       final visibleDetails = isExpanded ? details : details.take(4).toList();
 
+      final screenWidth = MediaQuery.of(context).size.width;
+      final itemWidth = (screenWidth / 2) - 26;
+
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // 🔹 Details Grid
-          Wrap(
-            spacing: 20,
-            runSpacing: 12,
-            children:
-                visibleDetails.map((entry) {
-                  final title = entry.keys.first;
-                  final value = entry.values.first;
+          Center(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              spacing: 20,
+              runSpacing: 12,
+              children:
+                  visibleDetails.map((entry) {
+                    final title = entry.keys.first;
+                    final value = entry.values.first;
 
-                  return SizedBox(
-                    width: MediaQuery.of(context).size.width / 2 - 26,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.leadGreyColor[700],
+                    return SizedBox(
+                      width: itemWidth,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.caption,
+                              fontWeight: AppFontWeights.medium,
+                              color: ColorRes.leadGreyColor[700],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          value,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: const TextStyle(
-                            fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.blackShade87,
+                          const SizedBox(height: 6),
+                          Text(
+                            value,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.blackShade87,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+            ),
           ),
 
           if (details.length > 4)

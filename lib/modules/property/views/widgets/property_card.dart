@@ -47,6 +47,7 @@ class _PropertyCardState extends State<PropertyCard> {
       listingType: widget.property.listingType ?? "",
       financialInfo:
           widget.property.propertyDetails?.financialInfo ?? FinancialInfo(),
+      pgInfo: widget.property.propertyDetails?.pgInfo, // Added for PG support
     );
 
     return GestureDetector(

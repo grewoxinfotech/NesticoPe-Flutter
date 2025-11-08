@@ -73,6 +73,8 @@ class PropertyService {
       print("uri: $uri");
       final response = await http.get(uri, headers: await headers());
 
+      print("response: ${response.body}");
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
