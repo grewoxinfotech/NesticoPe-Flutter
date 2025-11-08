@@ -16,9 +16,12 @@ import 'package:housing_flutter_app/modules/add_property/model/photo_model.dart'
 import 'package:housing_flutter_app/modules/add_property/model/review_property_model.dart';
 import 'package:housing_flutter_app/modules/add_property/model/room_detail_model.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../model/commercial_model.dart';
@@ -27,11 +30,41 @@ import '../model/commercial_model.dart';
 
 class CreatePropertyController extends GetxController {
   final _propertyService = PropertyService();
-  late MultiImagePickerController pickerController;
+  ImagePicker picker = ImagePicker();
   RxBool isLoading = false.obs;
 
   ////////////document upload //////////////////
-  RxList<File>? files = <File>[].obs;
+
+  ///======================================================================
+  RxList<String> imageList = <String>[].obs;
+  RxList<String> videoList = <String>[].obs;
+  RxList<String> documentList = <String>[].obs;
+
+  /// Post Media================================
+  var mealCharges = "".obs;
+  var mealChargesTextFiled = TextEditingController();
+  var electricityCharges = ''.obs;
+  var electricityChargesTextFiled = TextEditingController();
+  var pgRulesAvailable = "".obs;
+  var nonVegAllowed = "".obs;
+  var smokingAllowed = "".obs;
+  var drinkingAllowed = "".obs;
+  var letEntryAllowed = "".obs;
+  var visitorsAllowed = "".obs;
+  var petAllowed = "".obs;
+  var propertyManagedBy = "".obs;
+  var managerStaysAtProperty = "".obs;
+  var pgTotalFloor = TextEditingController();
+  var pgFloorNumber = TextEditingController();
+
+
+
+
+
+
+
+
+  ///=============================================New Variable======================
   // Reactive states
   var selectedSellerType = SellerType.owner.obs; // New: selected user type
   var isOwner = true.obs;
@@ -136,6 +169,7 @@ class CreatePropertyController extends GetxController {
         "Basic Detail",
         "Property Details",
         "Room Details",
+        "Amenities",
         "Photos",
         "Review",
       ];
@@ -372,6 +406,197 @@ class CreatePropertyController extends GetxController {
     super.onInit();
   }
 
+  Future<void> builderImagePicker() async {
+    try {
+      List<XFile> files = await picker.pickMultiImage(
+        imageQuality: 80,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        limit: 5,
+      );
+
+      if (files.isNotEmpty) {
+        if (imageList.value.length + files.length > 5) {
+          Get.snackbar(
+            'Limit Exceeded',
+            'You can only select up to 5 images in total',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return;
+        }
+
+        for (var file in files) {
+          imageList.add(file.path);
+          print('Image added: ${file.path}');
+        }
+        imageList.refresh();
+
+        Get.snackbar(
+          'Success',
+          '${files.length} image(s) added',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick images: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  void removeBuilderImage(int index) {
+    if (index >= 0 && index < imageList.length) {
+      imageList.removeAt(index);
+      print('Image removed at index $index');
+    }
+  }
+
+  void removeBuilderVideo(int index) {
+    if (index >= 0 && index < videoList.length) {
+      videoList.removeAt(index);
+      print('video removed at index $index');
+    }
+  }
+
+  Future<void> builderVideoPicker() async {
+    try {
+      List<XFile> videos = await picker.pickMultiVideo(
+        limit: 5,
+        maxDuration: Duration(seconds: 60),
+      );
+
+      if (videos.isNotEmpty) {
+        if (videoList.value.length + videos.length > 5) {
+          Get.snackbar(
+            'Limit Exceeded',
+            'You can only select up to 5 videos in total',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return;
+        }
+
+        // project.update((p) {
+        //   if (p == null) return;
+        //   for (var video in videos) {
+        //     p.videoList.add(video.path);
+        //     print('Video added: ${video.path}');
+        //   }
+        // });
+        for (var video in videos) {
+          videoList.add(video.path);
+          print('video added: ${video.path}');
+        }
+        videoList.refresh();
+
+        Get.snackbar(
+          'Success',
+          '${videos.length} video(s) added',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick videos: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> builderDocumentPicker() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowMultiple: false,
+        allowedExtensions: ['pdf', 'doc', 'txt'],
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        // Check total limit
+        if (documentList.value.length + result.files.length > 2) {
+          Get.snackbar(
+            'Limit Exceeded',
+            'You can only select up to 2 documents in total',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return;
+        }
+
+        for (var file in result.files) {
+          if (file.path != null) {
+            documentList.add(file.path!);
+            print('Document added: ${file.path}');
+          }
+        }
+
+        documentList.refresh();
+
+        Get.snackbar(
+          'Success',
+          '${result.files.length} document(s) added',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print('Failed to pick documents: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to pick documents: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> pdfPreviewByDefaultApp(String pathOrUrl) async {
+    // Show loading dialog
+    showDialog(
+      context: Get.context!,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      String localPath = pathOrUrl;
+
+      // Check if it's a network URL
+      final isNetwork = Uri.tryParse(pathOrUrl)?.isAbsolute ?? false;
+
+      if (isNetwork) {
+        // Download the PDF to temporary directory
+        final response = await http.get(Uri.parse(pathOrUrl));
+        if (response.statusCode != 200) {
+          print('Failed to download PDF');
+          Navigator.of(Get.context!).pop(); // close loader
+          return;
+        }
+
+        final tempDir = await getTemporaryDirectory();
+        final fileName = pathOrUrl.split('/').last;
+        final file = File('${tempDir.path}/$fileName');
+        await file.writeAsBytes(response.bodyBytes);
+        localPath = file.path;
+      }
+
+      // Open the PDF using the default app
+      final result = await OpenFilex.open(localPath);
+      print('Open result: ${result.message}');
+    } catch (e) {
+      print('PDF open error: $e');
+    } finally {
+      // Close loader
+      Navigator.of(Get.context!).pop();
+    }
+  }
+
+  void removeBuilderDocument(int index) {
+    if (index >= 0 && index < documentList.length) {
+      documentList.removeAt(index);
+      print('Removed document at index $index');
+    }
+  }
+
   Future<void> checkSellerAuthentication() async {
     final user = await SecureStorage.getUserData();
     if (user != null) {
@@ -461,44 +686,6 @@ class CreatePropertyController extends GetxController {
         print("Removed Furnishing: ${item.key}");
       }
       selectedFurnishing.refresh();
-    }
-  }
-
-  Future<void> pickFiles() async {
-    // Open the file picker
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      // allowMultiple: true, // uncomment to select multiple files
-      // default: pick any file type
-      type: FileType.custom, // use custom to restrict to extensions
-      allowedExtensions: ['pdf'], // only these extensions
-    );
-
-    if (result != null) {
-      // For single file:
-      // String? filePath = result.files.single.path;
-      // String fileName = result.files.single.name;
-      //
-      // print('Picked file: $fileName at $filePath');
-      //
-      // // If you want a list of files (for multiple selection):
-      // List<PlatformFile> files = result.files;
-
-      try {
-        if (result != null) {
-          files?.value = result.paths.map((path) => File(path!)).toList();
-          for (var file in files ?? []) {
-            print('${file.uri} - ${file.path}');
-          }
-        } else {
-          print("Error picking files: ");
-          // User canceled the picker
-        }
-      } catch (e) {
-        print("Error picking files: $e");
-      }
-    } else {
-      // User canceled the picker
-      print('No file selected');
     }
   }
 
@@ -617,6 +804,7 @@ class CreatePropertyController extends GetxController {
   }
 
   bool isSelected(String item) => selectedItems.contains(item);
+
   void select(String index) {
     selectedIndex.value = index;
     debugPrint("Selected index: $index");
@@ -836,6 +1024,12 @@ class CreatePropertyController extends GetxController {
     // Print collections efficiently
     debugPrint(
       "Rooms (${rooms.length}): ${rooms.map((r) => r.roomType).join(', ')}",
+    );
+    debugPrint(
+      "Images (${selectedImages.length}): ${selectedImages.length} selected",
+    );
+    debugPrint(
+      "Images (${selectedImages.length}): ${selectedImages.length} selected",
     );
     debugPrint(
       "Images (${selectedImages.length}): ${selectedImages.length} selected",
@@ -4401,6 +4595,7 @@ class PgInfo {
   final double? mealChargesPerMonth;
   final double? electricityChargesPerMonth;
   final PgRules? pgRules;
+
   // final PgRoomInfo? pgRoomInfo;
   final List<PgRoomInfo>? pgRoomInfo;
 

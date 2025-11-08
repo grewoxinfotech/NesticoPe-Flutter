@@ -1682,11 +1682,15 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 formKey: currentFormKey,
                                               );
                                             case 3:
+                                              return RentAmenities(
+                                                controller: controller,
+                                              );
+                                            case 4:
                                               return PhotoUpload(
                                                 controller: controller,
                                                 formKey: currentFormKey,
                                               );
-                                            case 4:
+                                            case 5:
                                               return ListingReviewCard(
                                                 controller: controller,
                                               );

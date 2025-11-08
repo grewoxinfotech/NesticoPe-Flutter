@@ -57,6 +57,17 @@ class AppSvgRes {
   static const String water_storage="water-storage";
   static const String bbq_area="bbq-area";
   static const String home_theater='home-theater';
+  static const String water_purifier = "water-purifier";
+  static const String gas_pipeline = "gas-pipeline";
+  static const String chimney = "chimney";
+  static const String modular_kitchen = "modular-kitchen";
+
+  // ---------- Number-based (Multi-choice) ----------
+  static const String fan = "fan";
+  static const String light = "light";
+  static const String ac = "ac";
+  static const String wardrobe = "wardrobe";
+  static const String geyser = "geyser";
 
 
 

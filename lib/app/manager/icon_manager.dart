@@ -168,35 +168,87 @@ class IconManager {
       icon: Icons.water,
     ),
   ];
-
   static final List<IconItem> furnitureItems = [
-    IconItem(key: AppSvgRes.cupboard, title: "Cupboard", icon: Icons.cabin),
-
+    // ---------- Boolean Furnishings ----------
     IconItem(
-      key: AppSvgRes.microwave,
-      title: "Microwave",
-      icon: Icons.microwave_outlined,
+      key: AppSvgRes.table,
+      title: "Dining Table",
+      icon: Icons.table_restaurant,
     ),
-
-    IconItem(key: AppSvgRes.sofa, title: "Sofa", icon: Icons.chair_alt),
-    IconItem(key: AppSvgRes.stove, title: "Stove", icon: Icons.stairs),
-    IconItem(key: AppSvgRes.table, title: "Table", icon: Icons.table_bar),
-
     IconItem(
       key: AppSvgRes.washing,
       title: "Washing Machine",
       icon: Icons.local_laundry_service,
     ),
     IconItem(
+      key: AppSvgRes.cupboard,
+      title: "Cupboard",
+      icon: Icons.cabin,
+    ),
+    IconItem(
+      key: AppSvgRes.sofa,
+      title: "Sofa",
+      icon: Icons.chair_alt,
+    ),
+    IconItem(
+      key: AppSvgRes.microwave,
+      title: "Microwave",
+      icon: Icons.microwave_outlined,
+    ),
+    IconItem(
+      key: AppSvgRes.stove,
+      title: "Stove",
+      icon: Icons.local_fire_department,
+    ),
+    IconItem(
       key: AppSvgRes.refrigerate,
-      title: "Refrigerator",
+      title: "Fridge",
       icon: Icons.kitchen,
+    ),
+    IconItem(
+      key: AppSvgRes.water_purifier,
+      title: "Water Purifier",
+      icon: Icons.water_drop,
+    ),
+    IconItem(
+      key: AppSvgRes.gas_pipeline,
+      title: "Gas Pipeline",
+      icon: Icons.gas_meter,
+    ),
+    IconItem(
+      key: AppSvgRes.chimney,
+      title: "Chimney",
+      icon: Icons.wind_power,
+    ),
+    IconItem(
+      key: AppSvgRes.modular_kitchen,
+      title: "Modular Kitchen",
+      icon: Icons.kitchen_outlined,
+    ),
+
+    // ---------- Number Furnishings (Multi-choice) ----------
+    IconItem(
+      key: AppSvgRes.fan,
+      title: "Fan",
+      icon: Icons.air_rounded,
       isMultiChoice: true,
     ),
     IconItem(
-      key: AppSvgRes.shower,
-      title: "Shower",
-      icon: Icons.shower,
+      key: AppSvgRes.light,
+      title: "Light",
+      icon: Icons.lightbulb_outline,
+      isMultiChoice: true,
+    ),
+    IconItem(
+      key: AppSvgRes.ac,
+      title: "AC",
+      icon: Icons.ac_unit,
+      isMultiChoice: true,
+    ),
+    IconItem(
+      key: AppSvgRes.wardrobe,
+      title: "Wardrobe",
+      icon: Icons.inventory_2,
       isMultiChoice: true,
     ),
     IconItem(
@@ -206,24 +258,73 @@ class IconManager {
       isMultiChoice: true,
     ),
     IconItem(
-      key: AppSvgRes.hot,
-      title: "Hot Water",
-      icon: Icons.hot_tub,
-      isMultiChoice: true,
-    ),
-    IconItem(
       key: AppSvgRes.bed,
       title: "Bed",
       icon: Icons.bed,
       isMultiChoice: true,
     ),
     IconItem(
-      key: AppSvgRes.water,
-      title: "Water Heater",
-      icon: Icons.water,
+      key: AppSvgRes.geyser,
+      title: "Geyser",
+      icon: Icons.hot_tub_outlined,
       isMultiChoice: true,
     ),
   ];
+  // static final List<IconItem> furnitureItems = [
+  //   IconItem(key: AppSvgRes.cupboard, title: "Cupboard", icon: Icons.cabin),
+  //
+  //   IconItem(
+  //     key: AppSvgRes.microwave,
+  //     title: "Microwave",
+  //     icon: Icons.microwave_outlined,
+  //   ),
+  //
+  //   IconItem(key: AppSvgRes.sofa, title: "Sofa", icon: Icons.chair_alt),
+  //   IconItem(key: AppSvgRes.stove, title: "Stove", icon: Icons.stairs),
+  //   IconItem(key: AppSvgRes.table, title: "Table", icon: Icons.table_bar),
+  //
+  //   IconItem(
+  //     key: AppSvgRes.washing,
+  //     title: "Washing Machine",
+  //     icon: Icons.local_laundry_service,
+  //   ),
+  //   IconItem(
+  //     key: AppSvgRes.refrigerate,
+  //     title: "Refrigerator",
+  //     icon: Icons.kitchen,
+  //     isMultiChoice: true,
+  //   ),
+  //   IconItem(
+  //     key: AppSvgRes.shower,
+  //     title: "Shower",
+  //     icon: Icons.shower,
+  //     isMultiChoice: true,
+  //   ),
+  //   IconItem(
+  //     key: AppSvgRes.tv,
+  //     title: "TV",
+  //     icon: Icons.tv,
+  //     isMultiChoice: true,
+  //   ),
+  //   IconItem(
+  //     key: AppSvgRes.hot,
+  //     title: "Hot Water",
+  //     icon: Icons.hot_tub,
+  //     isMultiChoice: true,
+  //   ),
+  //   IconItem(
+  //     key: AppSvgRes.bed,
+  //     title: "Bed",
+  //     icon: Icons.bed,
+  //     isMultiChoice: true,
+  //   ),
+  //   IconItem(
+  //     key: AppSvgRes.water,
+  //     title: "Water Heater",
+  //     icon: Icons.water,
+  //     isMultiChoice: true,
+  //   ),
+  // ];
   static final List<IconItem> amenitiesItems = [
     IconItem(key: AppSvgRes.cctv, title: "CCTV", icon: Icons.videocam),
     IconItem(key: AppSvgRes.club, title: "Club House", icon: Icons.house),

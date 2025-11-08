@@ -17,7 +17,7 @@ class RentAmenities extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if ((controller.lookingTo.value == "Rent" ||
-              controller.lookingTo.value == "Sell") &&
+              controller.lookingTo.value == "Sell"||controller.lookingTo.value=="PG/Co-Living") &&
           controller.propertyType.value == "Residential") {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,6 +35,7 @@ class RentAmenities extends StatelessWidget {
                     final furnishing = controller.selectedFurnishing[e.key];
                     final isSelected = furnishing != null;
                     final quantity = furnishing?.quantity ?? 1;
+
 
                     return Padding(
                       padding: const EdgeInsets.all(4.0),

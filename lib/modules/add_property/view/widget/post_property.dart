@@ -24,7 +24,7 @@ class PostProperty extends StatelessWidget {
     final List<String> pgFor = ["Boys", "Girls", "Co-ed"];
     final List<String> bestSuitedFor = [
       "Students",
-      "Working Professionals",
+      "Professionals",
       "Family",
       "Other",
     ];
@@ -71,6 +71,11 @@ class PostProperty extends StatelessWidget {
       'Dining Hall',
       'Study Room',
       'Breakout Room',
+    ];
+    final List<String> propertyManagedBy=[
+      'Landlord',
+      'Caretaker',
+      'Professional'
     ];
     final List<String> bhkTypes = [
       "1 RK",
@@ -294,21 +299,27 @@ class PostProperty extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16),
+                      buildSectionTitle("Total Bed"),
+                      const SizedBox(height: 8),
                       buildTextField(
-                        "Total Bed",
+                        'Enter total bed',
                         Icons.bed_outlined,
                         controller.totalRoomsController,
                         isPhoneKey: true,
+                        // isEnable: false,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter total bed';
                           }
+                          final onlyDigits = RegExp(r'^\d+$');
+                          if (!onlyDigits.hasMatch(value)) {
+                            return 'Enter digits only';
+                          }
                           return null;
                         },
                       ),
-                      const SizedBox(height: 16),
 
-                      // PG for
+                      const SizedBox(height: 16),
                       buildSectionTitle("PG for"),
                       const SizedBox(height: 8),
                       MultiSelectChip(
@@ -387,11 +398,376 @@ class PostProperty extends StatelessWidget {
                                   );
                                 },
                               ),
+                              const SizedBox(height: 16),
+                              buildSectionTitle("Meal Charges"),
+                              const SizedBox(height: 8),
+                              Obx(
+                                    () => Row(
+                                  children: [
+                                    buildChoice(
+                                      title: 'Included in Rent',
+                                      selected: controller.mealCharges.value == 'Included in Rent',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.mealCharges,
+                                        'Included in Rent',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    buildChoice(
+                                      title: 'Separate',
+                                      selected: controller.mealCharges.value == 'Separate',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.mealCharges ,
+                                        'Separate',
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                              if(controller.mealCharges.value=="Separate")...[
+                                const SizedBox(height: 16),
+                                buildSectionTitle("Meal Charges per Month"),
+                                const SizedBox(height: 12),
+                                buildTextField(
+                                  "Enter meal Charges",
+                                  isPhoneKey: true,
+                                  Icons.currency_rupee_outlined,
+                                  controller.pgNameController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter meal charges';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ]
                             ],
                           );
                         }
                         return const SizedBox.shrink();
                       }),
+
+                      Obx(() {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            buildSectionTitle("Electricity Charges"),
+                            const SizedBox(height: 8),
+                            Obx(
+                                  () => Row(
+                                children: [
+                                  buildChoice(
+                                    title: 'Included in Rent',
+                                    selected: controller.electricityCharges.value == 'Included in Rent',
+                                    onTap:
+                                        () => controller.setValue(
+                                      controller.electricityCharges,
+                                      'Included in Rent',
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  buildChoice(
+                                    title: 'Separate',
+                                    selected: controller.electricityCharges.value == 'Separate',
+                                    onTap:
+                                        () => controller.setValue(
+                                      controller.electricityCharges,
+                                      'Separate',
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                            ),
+                            if(controller.electricityCharges.value=="Separate")...[
+                              const SizedBox(height: 16),
+                              buildSectionTitle("Electricity Charges per Month"),
+                              const SizedBox(height: 12),
+                              buildTextField(
+                                "Enter electricity Charges",
+                                isPhoneKey: true,
+                                Icons.currency_rupee_outlined,
+                                controller.electricityChargesTextFiled,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter electricity charges';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ]
+                          ],
+                        );
+                      },),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            buildSectionTitle("PG Rules Available"),
+                            const SizedBox(height: 8),
+                            Obx(
+                                  () => Row(
+                                children: [
+                                  buildChoice(
+                                    title: 'Yes',
+                                    selected: controller.pgRulesAvailable.value == 'Yes',
+                                    onTap:
+                                        () => controller.setValue(
+                                      controller.pgRulesAvailable,
+                                      'Yes',
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  buildChoice(
+                                    title: 'No',
+                                    selected: controller.pgRulesAvailable.value == 'No',
+                                    onTap:
+                                        () => controller.setValue(
+                                      controller.pgRulesAvailable,
+                                      'No',
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                            ),
+                            if(controller.pgRulesAvailable.value=="Yes")...[
+                              const SizedBox(height: 16),
+                              buildSectionTitle("Non-Veg Allowed"),
+                              const SizedBox(height: 12),
+                              Obx(
+                                    () => Row(
+                                  children: [
+                                    buildChoice(
+                                      title: 'Yes',
+                                      selected: controller.nonVegAllowed.value == 'Yes',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.nonVegAllowed,
+                                        'Yes',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    buildChoice(
+                                      title: 'No',
+                                      selected: controller.nonVegAllowed.value == 'No',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.nonVegAllowed,
+                                        'No',
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              buildSectionTitle("Smoking Allowed"),
+                              const SizedBox(height: 12),
+                              Obx(
+                                    () => Row(
+                                  children: [
+                                    buildChoice(
+                                      title: 'Yes',
+                                      selected: controller.smokingAllowed.value == 'Yes',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.smokingAllowed,
+                                        'Yes',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    buildChoice(
+                                      title: 'No',
+                                      selected: controller.smokingAllowed.value == 'No',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.smokingAllowed,
+                                        'No',
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              buildSectionTitle("Drinking Allowed"),
+                              const SizedBox(height: 12),
+                              Obx(
+                                    () => Row(
+                                  children: [
+                                    buildChoice(
+                                      title: 'Yes',
+                                      selected: controller.drinkingAllowed.value == 'Yes',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.drinkingAllowed,
+                                        'Yes',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    buildChoice(
+                                      title: 'No',
+                                      selected: controller.drinkingAllowed.value == 'No',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.drinkingAllowed,
+                                        'No',
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              buildSectionTitle("Pets Allowed"),
+                              const SizedBox(height: 12),
+                              Obx(
+                                    () => Row(
+                                  children: [
+                                    buildChoice(
+                                      title: 'Yes',
+                                      selected: controller.petAllowed.value == 'Yes',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.petAllowed,
+                                        'Yes',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    buildChoice(
+                                      title: 'No',
+                                      selected: controller.petAllowed.value == 'No',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.petAllowed,
+                                        'No',
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              buildSectionTitle("Late Entry Allowed"),
+                              const SizedBox(height: 12),
+                              Obx(
+                                    () => Row(
+                                  children: [
+                                    buildChoice(
+                                      title: 'Yes',
+                                      selected: controller.letEntryAllowed.value == 'Yes',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.letEntryAllowed,
+                                        'Yes',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    buildChoice(
+                                      title: 'No',
+                                      selected: controller.letEntryAllowed.value == 'No',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.letEntryAllowed,
+                                        'No',
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              buildSectionTitle("Visitors Allowed"),
+                              const SizedBox(height: 12),
+                              Obx(
+                                    () => Row(
+                                  children: [
+                                    buildChoice(
+                                      title: 'Yes',
+                                      selected: controller.visitorsAllowed.value == 'Yes',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.visitorsAllowed,
+                                        'Yes',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    buildChoice(
+                                      title: 'No',
+                                      selected: controller.visitorsAllowed.value == 'No',
+                                      onTap:
+                                          () => controller.setValue(
+                                        controller.visitorsAllowed,
+                                        'No',
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                            ]
+                          ],
+                        ),
+                      SizedBox(height: 16),
+                      buildSectionTitle("Property Managed By"),
+                      SizedBox(height: 8),
+                      Obx(
+                            () => Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children:
+                          propertyManagedBy.map((option) {
+                            return buildChoice(
+                              title: option,
+                              selected:
+                              controller.propertyManagedBy.value ==
+                                  option,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.propertyManagedBy,
+                                  option,
+                                );
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      buildSectionTitle("Property Manager stays at Property"),
+                      const SizedBox(height: 12),
+                      Obx(
+                            () => Row(
+                          children: [
+                            buildChoice(
+                              title: 'Yes',
+                              selected: controller.managerStaysAtProperty.value == 'Yes',
+                              onTap:
+                                  () => controller.setValue(
+                                controller.managerStaysAtProperty,
+                                'Yes',
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            buildChoice(
+                              title: 'No',
+                              selected: controller.managerStaysAtProperty.value == 'No',
+                              onTap:
+                                  () => controller.setValue(
+                                controller.managerStaysAtProperty,
+                                'No',
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+
+
                       const SizedBox(height: 16),
                       buildTextField(
                         'Notice Period (Days)',
@@ -423,6 +799,46 @@ class PostProperty extends StatelessWidget {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter lock in period';
+                          }
+                          final onlyDigits = RegExp(r'^\d+$');
+                          if (!onlyDigits.hasMatch(value)) {
+                            return 'Enter digits only';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      buildSectionTitle("Floor Number"),
+                      const SizedBox(height: 12),
+                      buildTextField(
+                        'Enter floor number',
+                        Icons.do_not_step_outlined,
+                        controller.pgFloorNumber,
+                        isPhoneKey: true,
+                        // isEnable: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter floor number';
+                          }
+                          final onlyDigits = RegExp(r'^\d+$');
+                          if (!onlyDigits.hasMatch(value)) {
+                            return 'Enter digits only';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      buildSectionTitle("Total Floor"),
+                      const SizedBox(height: 12),
+                      buildTextField(
+                        'Enter total floor',
+                        Icons.do_not_step_outlined,
+                        controller.pgTotalFloor,
+                        isPhoneKey: true,
+                        // isEnable: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter total floor';
                           }
                           final onlyDigits = RegExp(r'^\d+$');
                           if (!onlyDigits.hasMatch(value)) {
