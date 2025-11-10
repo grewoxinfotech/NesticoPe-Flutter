@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
@@ -117,10 +118,13 @@ class PropertyService {
   /// Create new property
   Future<bool> createProperty(
     Map<String, dynamic> property,
-    List<PhotoImageModel> images,
+    List<File>? images,
+    List<File>? videos,
+    List<File>? documents,
   ) async {
     try {
       final url = Uri.parse(baseUrl);
+      print("url: $url");
       debugPrint("Property JSON: ${jsonEncode(property)}");
 
       var request = http.MultipartRequest("POST", url);
@@ -139,19 +143,56 @@ class PropertyService {
       });
 
       // Assuming `images` is List<PhotoImageModel>
-      for (var image in images) {
-        final file = File(image.path);
-        if (await file.exists()) {
-          // Detect MIME type dynamically
-          final mimeType =
-              lookupMimeType(file.path)?.split('/') ?? ['image', 'jpeg'];
+      // for (var image in images) {
+      //   final file = File(image.path);
+      //   if (await file.exists()) {
+      //     // Detect MIME type dynamically
+      //     final mimeType =
+      //         lookupMimeType(file.path)?.split('/') ?? ['image', 'jpeg'];
+      //
+      //     request.files.add(
+      //       await http.MultipartFile.fromPath(
+      //         'property_images', // backend field for images
+      //         file.path,
+      //         filename: file.path.split('/').last,
+      //         contentType: MediaType(mimeType[0], mimeType[1]),
+      //       ),
+      //     );
+      //   }
+      // }
 
+      if (images != null && images.isNotEmpty) {
+        for (var image in images) {
           request.files.add(
             await http.MultipartFile.fromPath(
-              'property_images', // backend field for images
-              file.path,
-              filename: file.path.split('/').last,
-              contentType: MediaType(mimeType[0], mimeType[1]),
+              'property_images',
+              image.path,
+              contentType: MediaType('image', 'jpeg'),
+            ),
+          );
+        }
+      }
+
+      // ==== Attach Project Videos ====
+      if (videos != null && videos.isNotEmpty) {
+        for (var video in videos) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'property_videos',
+              video.path,
+              contentType: MediaType('video', 'mp4'),
+            ),
+          );
+        }
+      }
+
+      if (documents != null) {
+        for (var document in documents) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'property_documents',
+              document.path,
+              contentType: MediaType('application', 'pdf'),
             ),
           );
         }

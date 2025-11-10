@@ -5,7 +5,7 @@ class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
   static const String baseURL =
-      "http://192.168.1.2:19725/api/v1"; // Real Device (WiFi)
+      "http://192.168.1.12:19725/api/v1"; // Real Device (WiFi)
 
   // Auth Endpoints
   static String get auth => "$baseURL/auth";

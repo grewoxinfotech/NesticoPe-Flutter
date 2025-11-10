@@ -1135,49 +1135,129 @@ class FloorInfo {
   };
 }
 
+// class FurnishInfo {
+//   String? furnishType;
+//   FurnishDetails? furnishDetails;
+//
+//   FurnishInfo({this.furnishType, this.furnishDetails});
+//
+//   FurnishInfo.fromJson(Map<String, dynamic> json) {
+//     furnishType = json['furnish_type'] as String?;
+//     furnishDetails =
+//         json['furnish_details'] != null
+//             ? FurnishDetails.fromJson(
+//               json['furnish_details'] as Map<String, dynamic>,
+//             )
+//             : null;
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = {};
+//     if (furnishType != null) data['furnish_type'] = furnishType;
+//     if (furnishDetails != null)
+//       data['furnish_details'] = furnishDetails!.toJson();
+//     return data;
+//   }
+// }
+//
+// class FurnishDetails {
+//   bool? modularKitchen;
+//   bool? wardrobes;
+//   bool? acInstalled;
+//
+//   FurnishDetails({this.modularKitchen, this.wardrobes, this.acInstalled});
+//
+//   FurnishDetails.fromJson(Map<String, dynamic> json) {
+//     modularKitchen = json['modular_kitchen'] as bool?;
+//     wardrobes = json['wardrobes'] as bool?;
+//     acInstalled = json['ac_installed'] as bool?;
+//   }
+//
+//   Map<String, dynamic> toJson() => {
+//     'modular_kitchen': modularKitchen,
+//     'wardrobes': wardrobes,
+//     'ac_installed': acInstalled,
+//   };
+// }
+
 class FurnishInfo {
-  String? furnishType;
-  FurnishDetails? furnishDetails;
+  final String? furnishType;
+  final FurnishDetails? furnishDetails;
 
   FurnishInfo({this.furnishType, this.furnishDetails});
 
-  FurnishInfo.fromJson(Map<String, dynamic> json) {
-    furnishType = json['furnish_type'] as String?;
-    furnishDetails =
-        json['furnish_details'] != null
-            ? FurnishDetails.fromJson(
-              json['furnish_details'] as Map<String, dynamic>,
-            )
-            : null;
+  factory FurnishInfo.fromJson(Map<String, dynamic> json) {
+    return FurnishInfo(
+      furnishType: json['furnish_type'],
+      furnishDetails:
+          json['furnish_details'] != null
+              ? FurnishDetails.fromJson(json['furnish_details'])
+              : null,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (furnishType != null) data['furnish_type'] = furnishType;
-    if (furnishDetails != null)
+    final data = <String, dynamic>{};
+    if (furnishType != null) {
+      data['furnish_type'] = furnishType!.toLowerCase().replaceAll(" ", "-");
+    }
+    if (furnishDetails != null) {
       data['furnish_details'] = furnishDetails!.toJson();
+    }
     return data;
   }
 }
 
 class FurnishDetails {
-  bool? modularKitchen;
-  bool? wardrobes;
-  bool? acInstalled;
+  final bool? washingMachine;
+  final bool? cupboard;
+  final bool? stove;
+  final bool? fridge;
+  final bool? waterPurifier;
+  final bool? modularKitchen;
+  final int? ac;
+  final int? bed;
+  final int? geyser;
 
-  FurnishDetails({this.modularKitchen, this.wardrobes, this.acInstalled});
+  FurnishDetails({
+    this.washingMachine,
+    this.cupboard,
+    this.stove,
+    this.fridge,
+    this.waterPurifier,
+    this.modularKitchen,
+    this.ac,
+    this.bed,
+    this.geyser,
+  });
 
-  FurnishDetails.fromJson(Map<String, dynamic> json) {
-    modularKitchen = json['modular_kitchen'] as bool?;
-    wardrobes = json['wardrobes'] as bool?;
-    acInstalled = json['ac_installed'] as bool?;
+  factory FurnishDetails.fromJson(Map<String, dynamic> json) {
+    return FurnishDetails(
+      washingMachine: json['washing_machine'],
+      cupboard: json['cupboard'],
+      stove: json['stove'],
+      fridge: json['fridge'],
+      waterPurifier: json['water_purifier'],
+      modularKitchen: json['modular_kitchen'],
+      ac: json['ac'],
+      bed: json['bed'],
+      geyser: json['geyser'],
+    );
   }
 
-  Map<String, dynamic> toJson() => {
-    'modular_kitchen': modularKitchen,
-    'wardrobes': wardrobes,
-    'ac_installed': acInstalled,
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'washing_machine': washingMachine,
+      'cupboard': cupboard,
+      'stove': stove,
+      'fridge': fridge,
+      'water_purifier': waterPurifier,
+      'modular_kitchen': modularKitchen,
+      'ac': ac,
+      'bed': bed,
+      'geyser': geyser,
+    };
+  }
 }
 
 class FacilitiesInfo {
@@ -1251,8 +1331,8 @@ class FinancialInfo {
   double brokerCommission;
   double propertySecurityDeposit;
   bool negotiable;
-  int? noticePeriod;      // For PG properties
-  int? lockInPeriod;      // For PG properties
+  int? noticePeriod; // For PG properties
+  int? lockInPeriod; // For PG properties
 
   FinancialInfo({
     this.price = 0,
@@ -1510,6 +1590,7 @@ class NearbyLocations {
 class PgInfo {
   final String? pgName;
   final String? pgFor;
+  final int? totalBed;
   final String? pgSuitedFor;
   final String? pgMealOffered;
   final String? pgCommonArea;
@@ -1523,6 +1604,7 @@ class PgInfo {
   PgInfo({
     this.pgName,
     this.pgFor,
+    this.totalBed,
     this.pgSuitedFor,
     this.pgMealOffered,
     this.pgCommonArea,
@@ -1538,6 +1620,7 @@ class PgInfo {
     return PgInfo(
       pgName: json['pg_name'],
       pgFor: json['pg_for'],
+      totalBed: json['total_beds'],
       pgSuitedFor: json['pg_suited_for'],
       pgMealOffered: json['pg_meal_offered'],
       pgCommonArea: json['pg_common_area'],
@@ -1562,6 +1645,7 @@ class PgInfo {
       'pg_for': pgFor,
       'pg_suited_for': pgSuitedFor,
       'pg_meal_offered': pgMealOffered,
+      'total_beds': totalBed,
       'pg_common_area': pgCommonArea,
       'pg_manage_by': pgManageBy,
       'pg_owner_stays_at_pg': pgOwnerStaysAtPg,
@@ -1577,14 +1661,27 @@ class PgRules {
   final bool? nonVegAllowed;
   final bool? petsAllowed;
   final bool? lateEntryAllowed;
+  final bool? smokingAllowed;
+  final bool? drinkingAllowed;
+  final bool? visitorAllowed;
 
-  PgRules({this.nonVegAllowed, this.petsAllowed, this.lateEntryAllowed});
+  PgRules({
+    this.nonVegAllowed,
+    this.petsAllowed,
+    this.lateEntryAllowed,
+    this.smokingAllowed,
+    this.drinkingAllowed,
+    this.visitorAllowed,
+  });
 
   factory PgRules.fromJson(Map<String, dynamic> json) {
     return PgRules(
       nonVegAllowed: json['non_veg_allowed'],
       petsAllowed: json['pets_allowed'],
       lateEntryAllowed: json['late_entry_allowed'],
+      smokingAllowed: json['smoking_allowed'],
+      drinkingAllowed: json['drinking_allowed'],
+      visitorAllowed: json['visitor_allowed'],
     );
   }
 
@@ -1593,6 +1690,9 @@ class PgRules {
       'non_veg_allowed': nonVegAllowed,
       'pets_allowed': petsAllowed,
       'late_entry_allowed': lateEntryAllowed,
+      'smoking_allowed': smokingAllowed,
+      'drinking_allowed': drinkingAllowed,
+      'visitor_allowed': visitorAllowed,
     };
   }
 }

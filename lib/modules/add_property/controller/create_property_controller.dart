@@ -56,46 +56,19 @@ class CreatePropertyController extends GetxController {
   var managerStaysAtProperty = "".obs;
   var pgTotalFloor = TextEditingController();
   var pgFloorNumber = TextEditingController();
-  var selectedRoomAmenitiesDataForPG=<String>[].obs;
-  var roomFacilityAvailableOrNot="".obs;
-  var otherFacility=TextEditingController();
+  var selectedRoomAmenitiesDataForPG = <String>[].obs;
+  var roomFacilityAvailableOrNot = "".obs;
+  var otherFacility = TextEditingController();
 
   ///=============================Residential Rent apartment===============
-  var doYouWantBrokerage="".obs;
-  var lift_info="".obs;
-  var brokerageChargeNegotiable="".obs;
-  var brokerageCharge=TextEditingController();
-  var tenantType=''.obs;
-
-
+  var doYouWantBrokerage = "".obs;
+  var lift_info = "".obs;
+  var brokerageChargeNegotiable = "".obs;
+  var brokerageCharge = TextEditingController();
+  var tenantType = ''.obs;
 
   ///============================Main variable=============================
-  var negotiablePriceOrNot="".obs;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  var negotiablePriceOrNot = "".obs;
 
   ///=============================================New Variable======================
   // Reactive states
@@ -399,7 +372,9 @@ class CreatePropertyController extends GetxController {
 
   RxString selectedIndex = "".obs;
   final int maxImages = 5;
-  var selectedItems = <String>[].obs;
+
+  // var selectedItems = <String>[].obs;
+  RxString pgFor = ''.obs;
   var mealAvailableList = <String>[].obs;
   var editingIndex = (-1).obs;
   var stepperSelectedIndex = 0.obs;
@@ -666,6 +641,7 @@ class CreatePropertyController extends GetxController {
     selectedRoomAmenities.refresh();
     print("Selected Amenities: $selectedRoomAmenities");
   }
+
   void addOrUpdateRoomAmenities(String item) {
     if (selectedRoomAmenitiesDataForPG.contains(item)) {
       selectedRoomAmenitiesDataForPG.remove(item);
@@ -673,7 +649,9 @@ class CreatePropertyController extends GetxController {
       selectedRoomAmenitiesDataForPG.add(item);
     }
     selectedRoomAmenitiesDataForPG.refresh();
-    print("Selected selectedRoomAmenitiesDataForPG: $selectedRoomAmenitiesDataForPG");
+    print(
+      "Selected selectedRoomAmenitiesDataForPG: $selectedRoomAmenitiesDataForPG",
+    );
   }
 
   void addCommercialAmenities(String items) {
@@ -846,7 +824,7 @@ class CreatePropertyController extends GetxController {
     debugPrint("Final form submission");
   }
 
-  bool isSelected(String item) => selectedItems.contains(item);
+  // bool isSelected(String item) => selectedItems.contains(item);
 
   void select(String index) {
     selectedIndex.value = index;
@@ -903,25 +881,58 @@ class CreatePropertyController extends GetxController {
   }
 
   // Modify saveRoom method
+  // void saveRoom() {
+  //   if (tempRoomType.value.isNotEmpty &&
+  //       tempMonthlyRent.text.isNotEmpty &&
+  //       tempDeposit.text.isNotEmpty) {
+  //     final room = RoomModel(
+  //       roomType: tempRoomType.value,
+  //       monthlyRent: tempMonthlyRent.text,
+  //       other: otherFacility.text,
+  //       deposit: tempDeposit.text,
+  //       amenities: selectedRoomAmenitiesDataForPG,
+  //     );
+  //
+  //     if (editingIndex.value == -1) {
+  //       rooms.add(room);
+  //       print("Room: ${rooms.map((element) => element.toMap())}");
+  //     } else {
+  //       print("Room: ${rooms.map((element) => element.toMap())}");
+  //
+  //       rooms[editingIndex.value] = room;
+  //       editingIndex.value = -1;
+  //     }
+  //
+  //     // Clear inputs and hide card
+  //     clearRoomDetail();
+  //     showAddRoomCard.value = false;
+  //   }
+  // }
+
   void saveRoom() {
     if (tempRoomType.value.isNotEmpty &&
         tempMonthlyRent.text.isNotEmpty &&
         tempDeposit.text.isNotEmpty) {
+      // 🔥 Make a fresh copy of the list to avoid shared reference
+      final clonedAmenities = List<String>.from(selectedRoomAmenitiesDataForPG);
+
       final room = RoomModel(
         roomType: tempRoomType.value,
         monthlyRent: tempMonthlyRent.text,
+        deposit: tempDeposit.text,
         other: otherFacility.text,
-        deposit: tempDeposit.text, amenities: selectedRoomAmenitiesDataForPG.value,
+        amenities: clonedAmenities,
       );
 
       if (editingIndex.value == -1) {
         rooms.add(room);
+        print("Room: ${rooms.map((r) => r.toMap()).toList()}");
       } else {
+        print("Room: ${rooms.map((element) => element.toMap())}");
         rooms[editingIndex.value] = room;
         editingIndex.value = -1;
       }
 
-      // Clear inputs and hide card
       clearRoomDetail();
       showAddRoomCard.value = false;
     }
@@ -1111,7 +1122,7 @@ class CreatePropertyController extends GetxController {
                   monthlyRent: room.monthlyRent,
                   deposit: room.deposit,
                   amenities: room.amenities,
-                    other: room.other
+                  other: room.other,
                 ),
               )
               .toList();
@@ -1479,9 +1490,9 @@ class CreatePropertyController extends GetxController {
     debugPrint(
       "selectedRoomAmenities (${selectedRoomAmenities.length}): ${selectedRoomAmenities.join(', ')}",
     );
-    debugPrint(
-      "selectedItems (${selectedItems.length}): ${selectedItems.join(', ')}",
-    );
+    // debugPrint(
+    //   "selectedItems (${selectedItems.length}): ${selectedItems.join(', ')}",
+    // );
     debugPrint(
       "mealAvailableList (${mealAvailableList.length}): ${mealAvailableList.join(', ')}",
     );
@@ -1808,7 +1819,7 @@ class CreatePropertyController extends GetxController {
       selectedImages.clear();
       selectedFurnishing.clear();
       selectedRoomAmenities.clear();
-      selectedItems.clear();
+      // selectedItems.clear();
       mealAvailableList.clear();
       bestSuitedList.clear();
       commonAreasList.clear();
@@ -1887,7 +1898,7 @@ class CreatePropertyController extends GetxController {
       rooms.clear();
       selectedImages.clear();
       // reviewList.clear();
-      selectedItems.clear();
+      // selectedItems.clear();
       mealAvailableList.clear();
       bestSuitedList.clear();
       commonAreasList.clear();
@@ -2062,7 +2073,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2133,7 +2146,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2144,27 +2159,63 @@ class CreatePropertyController extends GetxController {
 
   Future<bool> _addPropertyResidentialPg() async {
     try {
-      // debugPrint("Property Type : ${propertyType.value}");
-      // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("City : ${cityController.text.trim()}");
-      // debugPrint("Locality : ${localityController.text.trim()}");
-      // debugPrint("PG Name : ${pgNameController.text.trim()}");
-      // debugPrint("Total Beds : ${totalRoomsController.text.trim()}");
-      // debugPrint("PG For Gender : ${selectedItems.join(", ")}");
-      // debugPrint("Best Suit For : ${bestSuitedList.join(", ")}");
-      // debugPrint("Meal available : ${mealAvailable.value}");
-      // debugPrint("Meal offering : ${mealAvailableList.join(", ")}");
-      // debugPrint("Notice Period : ${noticPeriodController.text.trim()}");
-      // debugPrint("Lock in period : ${lockPeriodController.value}");
-      // debugPrint("Common Areas : ${commonAreasList.join(", ")}");
-      // debugPrint("Common Areas : ${commonAreasList.join(", ")}");
-      // debugPrint("roomList Areas : ${rooms.map((element) => element.toMap())}");
+      debugPrint("Property Type : ${propertyType.value}");
+      debugPrint("Looking to Type : ${lookingTo.value}");
+      debugPrint("City : ${cityController.text.trim()}");
+      debugPrint("Locality : ${localityController.text.trim()}");
+      debugPrint("PG Name : ${pgNameController.text.trim()}");
+      debugPrint("Total Beds : ${totalRoomsController.text.trim()}");
+      debugPrint("PG For Gender : ${pgFor.value}");
+      debugPrint("Best Suit For : ${bestSuitedList.join(", ")}");
+      debugPrint("Meal available : ${mealAvailable.value}");
+      debugPrint("Meal offering : ${mealAvailableList.join(", ")}");
+      debugPrint("Meal Charge : ${mealCharges.value}");
+      if (mealCharges.value.toLowerCase() == "separate") {
+        debugPrint("Meal Charge : ${mealChargesTextFiled.text.trim()}");
+      }
+      debugPrint("Electricity Charge : ${electricityCharges.value}");
+
+      if (electricityCharges.value.toLowerCase() == "separate") {
+        debugPrint(
+          "Electricity Charge : ${electricityChargesTextFiled.text.trim()}",
+        );
+      }
+
+      debugPrint("PG Rule : ${pgRulesAvailable.value}");
+
+      if (pgRulesAvailable.value.toLowerCase() == "yes") {
+        debugPrint("Non-veg : ${nonVegAllowed.value}");
+        debugPrint("smoking : ${smokingAllowed.value}");
+        debugPrint("drinking : ${drinkingAllowed.value}");
+        debugPrint("pets : ${petAllowed.value}");
+        debugPrint("Late entry : ${letEntryAllowed.value}");
+        debugPrint("visitor : ${visitorsAllowed.value}");
+      }
+      debugPrint("Property Managed By : ${propertyManagedBy.value}");
+      debugPrint(
+        "Property Manager stays at property : ${managerStaysAtProperty.value}",
+      );
+      debugPrint("Notice Period : ${noticPeriodController.text.trim()}");
+      debugPrint("Lock in period : ${lockPeriodController.text.trim()}");
+      debugPrint("Floor Numbers : ${pgFloorNumber.text.trim()}");
+      debugPrint("Total Floor : ${pgTotalFloor.text.trim()}");
+      debugPrint("Common Areas : ${commonAreasList.join(", ")}");
+      debugPrint("roomList Areas : ${rooms.map((element) => element.toMap())}");
+      debugPrint(
+        "amenities Types: ${selectedFurnishing.entries.map((e) => '${e.key}: ${e.value.title} = ${e.value.quantity}').join(', ')}",
+      );
+
+      debugPrint(
+        "Flat Furnishing  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      );
 
       final payload = await buildPropertyPayloadResidentialPG();
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2239,7 +2290,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2282,7 +2335,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2340,7 +2395,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2383,7 +2440,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2426,7 +2485,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2470,7 +2531,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2551,7 +2614,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2604,7 +2669,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2663,7 +2730,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2708,7 +2777,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2753,7 +2824,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -2799,7 +2872,9 @@ class CreatePropertyController extends GetxController {
       debugPrint("Payload : ${payload.toJson()}");
       final success = await _propertyService.createProperty(
         payload.toJson(),
-        selectedImages.value,
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
       );
       return success;
     } catch (e) {
@@ -3025,7 +3100,7 @@ class CreatePropertyController extends GetxController {
   Future<AddPropertyModel> buildPropertyPayloadResidentialPG() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? "";
-    print("PG For: ${selectedItems.value}");
+    // print("PG For: ${selectedItems.value}");
     return AddPropertyModel(
       type:
           propertyType.value.isNotEmpty
@@ -3041,26 +3116,146 @@ class CreatePropertyController extends GetxController {
       propertyDetails: PropertyDetails(
         pgInfo: PgInfo(
           pgName: pgNameController.text.trim(),
-          pgCommonArea: commonAreasList.value.first,
-          // TODO: multiselect
-          pgFor: selectedItems.value.first,
-          pgSuitedFor: bestSuitedList.value.first,
-          pgMealOffered: mealAvailableList.value.first,
+          pgCommonArea: commonAreasList.value.join(", "),
+          totalBed:
+              totalRoomsController.text.trim().isNotEmpty
+                  ? int.tryParse(totalRoomsController.text.trim())
+                  : 0,
+          pgFor: pgFor.value,
+          pgSuitedFor: bestSuitedList.value.join(", "),
+          pgMealOffered:
+              mealAvailable.value.toLowerCase() == 'yes'
+                  ? mealAvailableList.value.join(", ")
+                  : null,
+          mealChargesPerMonth:
+              mealCharges.value.toLowerCase() == 'separate'
+                  ? int.tryParse(mealChargesTextFiled.text.trim())
+                  : null,
+          electricityChargesPerMonth:
+              electricityCharges.value.toLowerCase() == 'separate'
+                  ? int.tryParse(electricityChargesTextFiled.text.trim())
+                  : null,
+          pgRules:
+              pgRulesAvailable.value.toLowerCase() == 'yes'
+                  ? PgRules(
+                    lateEntryAllowed:
+                        letEntryAllowed.value.toLowerCase() == "yes"
+                            ? true
+                            : false,
+                    nonVegAllowed:
+                        nonVegAllowed.value.toLowerCase() == "yes"
+                            ? true
+                            : false,
+                    petsAllowed:
+                        petAllowed.value.toLowerCase() == "yes" ? true : false,
+                    drinkingAllowed:
+                        drinkingAllowed.value.toLowerCase() == "yes"
+                            ? true
+                            : false,
+                    smokingAllowed:
+                        smokingAllowed.value.toLowerCase() == "yes"
+                            ? true
+                            : false,
+                    visitorAllowed:
+                        visitorsAllowed.value.toLowerCase() == "yes"
+                            ? true
+                            : false,
+                  )
+                  : null,
+          pgManageBy:
+              propertyManagedBy.value.isNotEmpty
+                  ? propertyManagedBy.value.toLowerCase() == "professional"
+                      ? "other"
+                      : propertyManagedBy.value.toLowerCase()
+                  : null,
+          pgOwnerStaysAtPg:
+              managerStaysAtProperty.value.toLowerCase() == 'yes'
+                  ? true
+                  : false,
           // TODO: Notice Period and lock in period
-          pgRoomInfo: [
-            PgRoomInfo(
-              // TODO: Correct this
-              roomType: rooms.isNotEmpty ? rooms.first.roomType : null,
-              totalBeds:
-                  totalRoomsController.text.trim().isNotEmpty
-                      ? int.tryParse(totalRoomsController.text.trim())
-                      : null,
-            ),
-          ],
+          pgRoomInfo:
+              rooms.isNotEmpty
+                  ? rooms
+                      .map(
+                        (element) => PgRoomInfo(
+                          rent:
+                              element.monthlyRent.isNotEmpty
+                                  ? int.tryParse(element.monthlyRent)
+                                  : null,
+                          securityDeposit:
+                              element.deposit.isNotEmpty
+                                  ? int.tryParse(element.deposit)
+                                  : null,
+                          roomType:
+                              element.roomType.isNotEmpty
+                                  ? element.roomType.toLowerCase()
+                                  : null,
+                          roomFacilityInfo: RoomFacilityInfo(
+                            wifi: element.amenities.contains('wifi'),
+                            ac: element.amenities.contains('ac'),
+                            tv: element.amenities.contains('tv'),
+                            geyser: element.amenities.contains('geyser'),
+                            fridge: element.amenities.contains('fridge'),
+                            cupboard: element.amenities.contains('cupboard'),
+                            other:
+                                element.other.isNotEmpty ? element.other : null,
+                          ),
+
+                          // add other fields as needed
+                        ),
+                      )
+                      .toList()
+                  : null,
         ),
+        amenities: selectedRoomAmenities.value,
         financialInfo: FinancialInfo(
-          propertyRentPerMonth: double.tryParse(rooms.first.monthlyRent),
-          propertySecurityDeposit: double.tryParse(rooms.first.deposit),
+          lockInPeriod:
+              lockPeriodController.text.isNotEmpty
+                  ? int.tryParse(lockPeriodController.text.trim())
+                  : null,
+          noticePeriod:
+              noticPeriodController.text.isNotEmpty
+                  ? int.tryParse(noticPeriodController.text.trim())
+                  : null,
+        ),
+        furnishInfo: PropertyFurnishInfo(
+          furnishType:
+              furnishingType.value.isNotEmpty
+                  ? furnishingType.value.toLowerCase().replaceAll(" ", "_")
+                  : null,
+          furnishDetails: FurnishDetails(
+            ac: int.tryParse(
+              selectedFurnishing.value['ac']?.quantity.toString() ?? '',
+            ),
+            bed: int.tryParse(
+              selectedFurnishing.value['bed']?.quantity.toString() ?? '',
+            ),
+            geyser: int.tryParse(
+              selectedFurnishing.value['geyser']?.quantity.toString() ?? '',
+            ),
+            washingMachine:
+                selectedFurnishing.value['washing_machine']?.quantity == 1
+                    ? true
+                    : false,
+            cupboard:
+                selectedFurnishing.value['cupboard']?.quantity == 1
+                    ? true
+                    : false,
+            stove:
+                selectedFurnishing.value['stove']?.quantity == 1 ? true : false,
+            fridge:
+                selectedFurnishing.value['fridge']?.quantity == 1
+                    ? true
+                    : false,
+            waterPurifier:
+                selectedFurnishing.value['water_purifier']?.quantity == 1
+                    ? true
+                    : false,
+            modularKitchen:
+                selectedFurnishing.value['modular_kitchen']?.quantity == 1
+                    ? true
+                    : false,
+          ),
         ),
       ),
 
@@ -4566,17 +4761,88 @@ class PossessionInfo {
 
 class PropertyFurnishInfo {
   final String? furnishType;
+  final FurnishDetails? furnishDetails;
 
-  PropertyFurnishInfo({this.furnishType});
+  PropertyFurnishInfo({this.furnishType, this.furnishDetails});
 
   factory PropertyFurnishInfo.fromJson(Map<String, dynamic> json) {
-    return PropertyFurnishInfo(furnishType: json['furnish_type']);
+    return PropertyFurnishInfo(
+      furnishType: json['furnish_type'],
+      furnishDetails:
+          json['furnish_details'] != null
+              ? FurnishDetails.fromJson(json['furnish_details'])
+              : null,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (furnishType != null)
+    final data = <String, dynamic>{};
+
+    if (furnishType != null && furnishType!.isNotEmpty) {
       data['furnish_type'] = furnishType!.toLowerCase().replaceAll(" ", "-");
+    }
+
+    if (furnishDetails != null) {
+      final detailsJson = furnishDetails!.toJson();
+      if (detailsJson.isNotEmpty) {
+        data['furnish_details'] = detailsJson;
+      }
+    }
+
+    return data;
+  }
+}
+
+class FurnishDetails {
+  final bool? washingMachine;
+  final bool? cupboard;
+  final bool? stove;
+  final bool? fridge;
+  final bool? waterPurifier;
+  final bool? modularKitchen;
+  final int? ac;
+  final int? bed;
+  final int? geyser;
+
+  FurnishDetails({
+    this.washingMachine,
+    this.cupboard,
+    this.stove,
+    this.fridge,
+    this.waterPurifier,
+    this.modularKitchen,
+    this.ac,
+    this.bed,
+    this.geyser,
+  });
+
+  factory FurnishDetails.fromJson(Map<String, dynamic> json) {
+    return FurnishDetails(
+      washingMachine: json['washing_machine'],
+      cupboard: json['cupboard'],
+      stove: json['stove'],
+      fridge: json['fridge'],
+      waterPurifier: json['water_purifier'],
+      modularKitchen: json['modular_kitchen'],
+      ac: json['ac'],
+      bed: json['bed'],
+      geyser: json['geyser'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+
+    if (washingMachine != null) data['washing_machine'] = washingMachine;
+    if (cupboard != null) data['cupboard'] = cupboard;
+    if (stove != null) data['stove'] = stove;
+    if (fridge != null) data['fridge'] = fridge;
+    if (waterPurifier != null) data['water_purifier'] = waterPurifier;
+    if (modularKitchen != null) data['modular_kitchen'] = modularKitchen;
+    if (ac != null) data['ac'] = ac;
+    if (bed != null) data['bed'] = bed;
+    if (geyser != null) data['geyser'] = geyser;
+
     return data;
   }
 }
@@ -4605,6 +4871,10 @@ class FinancialInfo {
   final double? propertySecurityDeposit;
   final bool? negotiable;
 
+  // 🆕 New fields
+  final int? noticePeriod;
+  final int? lockInPeriod;
+
   FinancialInfo({
     this.propertyPrice,
     this.maintenance,
@@ -4614,7 +4884,26 @@ class FinancialInfo {
     this.propertySecurityDeposit,
     this.negotiable,
     this.monthlyRent,
+    this.noticePeriod,
+    this.lockInPeriod,
   });
+
+  factory FinancialInfo.fromJson(Map<String, dynamic> json) {
+    return FinancialInfo(
+      propertyPrice: (json['property_price'] as num?)?.toDouble(),
+      propertyRentPerMonth:
+          (json['property_rent_per_month'] as num?)?.toDouble(),
+      maintenance: (json['maintenance'] as num?)?.toDouble(),
+      pricePerSqft: (json['price_per_sqft'] as num?)?.toDouble(),
+      brokerCommission: (json['broker_commission'] as num?)?.toDouble(),
+      propertySecurityDeposit:
+          (json['property_security_deposit'] as num?)?.toDouble(),
+      negotiable: json['negotiable'],
+      monthlyRent: (json['monthlyRent'] as num?)?.toDouble(),
+      noticePeriod: json['notice_period'],
+      lockInPeriod: json['lock_in_period'],
+    );
+  }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
@@ -4628,6 +4917,11 @@ class FinancialInfo {
       data['property_security_deposit'] = propertySecurityDeposit;
     if (negotiable != null) data['negotiable'] = negotiable;
     if (monthlyRent != null) data['monthlyRent'] = monthlyRent;
+
+    // 🆕 Add new fields
+    if (noticePeriod != null) data['notice_period'] = noticePeriod;
+    if (lockInPeriod != null) data['lock_in_period'] = lockInPeriod;
+
     return data;
   }
 }
@@ -4635,21 +4929,21 @@ class FinancialInfo {
 class PgInfo {
   final String? pgName;
   final String? pgFor;
+  final int? totalBed;
   final String? pgSuitedFor;
   final String? pgMealOffered;
   final String? pgCommonArea;
   final String? pgManageBy;
   final bool? pgOwnerStaysAtPg;
-  final double? mealChargesPerMonth;
-  final double? electricityChargesPerMonth;
+  final int? mealChargesPerMonth;
+  final int? electricityChargesPerMonth;
   final PgRules? pgRules;
-
-  // final PgRoomInfo? pgRoomInfo;
   final List<PgRoomInfo>? pgRoomInfo;
 
   PgInfo({
     this.pgName,
     this.pgFor,
+    this.totalBed,
     this.pgSuitedFor,
     this.pgMealOffered,
     this.pgCommonArea,
@@ -4665,14 +4959,14 @@ class PgInfo {
     return PgInfo(
       pgName: json['pg_name'],
       pgFor: json['pg_for'],
+      totalBed: json['total_beds'],
       pgSuitedFor: json['pg_suited_for'],
       pgMealOffered: json['pg_meal_offered'],
       pgCommonArea: json['pg_common_area'],
       pgManageBy: json['pg_manage_by'],
       pgOwnerStaysAtPg: json['pg_owner_stays_at_pg'],
-      mealChargesPerMonth: json['meal_charges_per_month']?.toDouble(),
-      electricityChargesPerMonth:
-          json['electricity_charges_per_month']?.toDouble(),
+      mealChargesPerMonth: json['meal_charges_per_month'],
+      electricityChargesPerMonth: json['electricity_charges_per_month'],
       pgRules:
           json['pg_rules'] != null ? PgRules.fromJson(json['pg_rules']) : null,
       pgRoomInfo:
@@ -4680,92 +4974,89 @@ class PgInfo {
               ? List<PgRoomInfo>.from(
                 json['pg_room_info'].map((x) => PgRoomInfo.fromJson(x)),
               )
-              : null,
+              : [],
     );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (pgName != null) data['pg_name'] = pgName;
-    if (pgFor != null) data['pg_for'] = pgFor;
-    if (pgSuitedFor != null) data['pg_suited_for'] = pgSuitedFor;
-    if (pgMealOffered != null) data['pg_meal_offered'] = pgMealOffered;
-    if (pgCommonArea != null) data['pg_common_area'] = pgCommonArea;
-    if (pgManageBy != null) data['pg_manage_by'] = pgManageBy;
-    if (pgOwnerStaysAtPg != null)
-      data['pg_owner_stays_at_pg'] = pgOwnerStaysAtPg;
-    if (mealChargesPerMonth != null)
-      data['meal_charges_per_month'] = mealChargesPerMonth;
-    if (electricityChargesPerMonth != null)
-      data['electricity_charges_per_month'] = electricityChargesPerMonth;
-    if (pgRules != null) data['pg_rules'] = pgRules!.toJson();
-    if (pgRoomInfo != null) {
-      // ✅ Correct: convert each PgRoomInfo to JSON and return as list
-      data['pg_room_info'] = pgRoomInfo!.map((x) => x.toJson()).toList();
-    }
-    return data;
+    return {
+      if (pgName != null) 'pg_name': pgName,
+      if (pgFor != null) 'pg_for': pgFor,
+      if (pgSuitedFor != null) 'pg_suited_for': pgSuitedFor,
+      if (pgMealOffered != null) 'pg_meal_offered': pgMealOffered,
+      if (totalBed != null) 'total_beds': totalBed,
+      if (pgCommonArea != null) 'pg_common_area': pgCommonArea,
+      if (pgManageBy != null) 'pg_manage_by': pgManageBy,
+      if (pgOwnerStaysAtPg != null) 'pg_owner_stays_at_pg': pgOwnerStaysAtPg,
+      if (mealChargesPerMonth != null)
+        'meal_charges_per_month': mealChargesPerMonth,
+      if (electricityChargesPerMonth != null)
+        'electricity_charges_per_month': electricityChargesPerMonth,
+      if (pgRules != null) 'pg_rules': pgRules!.toJson(),
+      if (pgRoomInfo != null)
+        'pg_room_info': pgRoomInfo!.map((x) => x.toJson()).toList(),
+    };
   }
 }
 
 class PgRules {
   final bool? nonVegAllowed;
-  final bool? smokingAllowed;
-  final bool? drinkingAllowed;
   final bool? petsAllowed;
   final bool? lateEntryAllowed;
-  final String? lateEntryTime;
+  final bool? smokingAllowed;
+  final bool? drinkingAllowed;
   final bool? visitorAllowed;
-  final bool? gurdianAllowed;
 
   PgRules({
     this.nonVegAllowed,
-    this.smokingAllowed,
-    this.drinkingAllowed,
     this.petsAllowed,
     this.lateEntryAllowed,
-    this.lateEntryTime,
+    this.smokingAllowed,
+    this.drinkingAllowed,
     this.visitorAllowed,
-    this.gurdianAllowed,
   });
 
   factory PgRules.fromJson(Map<String, dynamic> json) {
     return PgRules(
       nonVegAllowed: json['non_veg_allowed'],
-      smokingAllowed: json['smoking_allowed'],
-      drinkingAllowed: json['drinking_allowed'],
       petsAllowed: json['pets_allowed'],
       lateEntryAllowed: json['late_entry_allowed'],
-      lateEntryTime: json['late_entry_time'],
+      smokingAllowed: json['smoking_allowed'],
+      drinkingAllowed: json['drinking_allowed'],
       visitorAllowed: json['visitor_allowed'],
-      gurdianAllowed: json['gurdian_allowed'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (nonVegAllowed != null) data['non_veg_allowed'] = nonVegAllowed;
-    if (smokingAllowed != null) data['smoking_allowed'] = smokingAllowed;
-    if (drinkingAllowed != null) data['drinking_allowed'] = drinkingAllowed;
-    if (petsAllowed != null) data['pets_allowed'] = petsAllowed;
-    if (lateEntryAllowed != null) data['late_entry_allowed'] = lateEntryAllowed;
-    if (lateEntryTime != null) data['late_entry_time'] = lateEntryTime;
-    if (visitorAllowed != null) data['visitor_allowed'] = visitorAllowed;
-    if (gurdianAllowed != null) data['gurdian_allowed'] = gurdianAllowed;
-    return data;
+    return {
+      if (nonVegAllowed != null) 'non_veg_allowed': nonVegAllowed,
+      if (petsAllowed != null) 'pets_allowed': petsAllowed,
+      if (lateEntryAllowed != null) 'late_entry_allowed': lateEntryAllowed,
+      if (smokingAllowed != null) 'smoking_allowed': smokingAllowed,
+      if (drinkingAllowed != null) 'drinking_allowed': drinkingAllowed,
+      if (visitorAllowed != null) 'visitor_allowed': visitorAllowed,
+    };
   }
 }
 
 class PgRoomInfo {
   final String? roomType;
-  final int? totalBeds;
+  final int? rent;
+  final int? securityDeposit;
   final RoomFacilityInfo? roomFacilityInfo;
 
-  PgRoomInfo({this.roomType, this.totalBeds, this.roomFacilityInfo});
+  PgRoomInfo({
+    this.roomType,
+    this.rent,
+    this.securityDeposit,
+    this.roomFacilityInfo,
+  });
 
   factory PgRoomInfo.fromJson(Map<String, dynamic> json) {
     return PgRoomInfo(
       roomType: json['room_type'],
-      totalBeds: json['total_beds'],
+      rent: json['rent'],
+      securityDeposit: json['securityDeposit'],
       roomFacilityInfo:
           json['room_facility_info'] != null
               ? RoomFacilityInfo.fromJson(json['room_facility_info'])
@@ -4774,39 +5065,57 @@ class PgRoomInfo {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (roomType != null) data['room_type'] = roomType;
-    if (totalBeds != null) data['total_beds'] = totalBeds;
-    if (roomFacilityInfo != null)
-      data['room_facility_info'] = roomFacilityInfo!.toJson();
-    return data;
+    return {
+      if (roomType != null) 'room_type': roomType,
+      if (rent != null) 'rent': rent,
+      if (securityDeposit != null) 'securityDeposit': securityDeposit,
+      if (roomFacilityInfo != null)
+        'room_facility_info': roomFacilityInfo!.toJson(),
+    };
   }
 }
 
 class RoomFacilityInfo {
   final bool? wifi;
-  final bool? tv;
   final bool? ac;
+  final bool? tv;
+  final bool? geyser;
+  final bool? fridge;
+  final bool? cupboard;
   final String? other;
 
-  RoomFacilityInfo({this.wifi, this.tv, this.ac, this.other});
+  RoomFacilityInfo({
+    this.wifi,
+    this.ac,
+    this.tv,
+    this.geyser,
+    this.fridge,
+    this.cupboard,
+    this.other,
+  });
 
   factory RoomFacilityInfo.fromJson(Map<String, dynamic> json) {
     return RoomFacilityInfo(
       wifi: json['wifi'],
-      tv: json['tv'],
       ac: json['ac'],
+      tv: json['tv'],
+      geyser: json['geyser'],
+      fridge: json['fridge'],
+      cupboard: json['cupboard'],
       other: json['other'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    if (wifi != null) data['wifi'] = wifi;
-    if (tv != null) data['tv'] = tv;
-    if (ac != null) data['ac'] = ac;
-    if (other != null) data['other'] = other;
-    return data;
+    return {
+      if (wifi != null) 'wifi': wifi,
+      if (ac != null) 'ac': ac,
+      if (tv != null) 'tv': tv,
+      if (geyser != null) 'geyser': geyser,
+      if (fridge != null) 'fridge': fridge,
+      if (cupboard != null) 'cupboard': cupboard,
+      if (other != null) 'other': other,
+    };
   }
 }
 

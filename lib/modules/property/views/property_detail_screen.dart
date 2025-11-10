@@ -1217,6 +1217,27 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         'icon': Icons.access_time,
       });
     }
+    if (rules.smokingAllowed != null) {
+      rulesList.add({
+        'label': 'Smoking',
+        'allowed': rules.smokingAllowed!,
+        'icon': Icons.smoke_free,
+      });
+    }
+    if (rules.drinkingAllowed != null) {
+      rulesList.add({
+        'label': 'Drinking',
+        'allowed': rules.drinkingAllowed!,
+        'icon': Icons.no_drinks,
+      });
+    }
+    if (rules.visitorAllowed != null) {
+      rulesList.add({
+        'label': 'Visitor',
+        'allowed': rules.visitorAllowed!,
+        'icon': Icons.people,
+      });
+    }
 
     if (rulesList.isEmpty) {
       return const Padding(

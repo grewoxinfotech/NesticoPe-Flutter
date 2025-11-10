@@ -937,10 +937,12 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               'Furnishing',
               furnishInfo!.furnishType!.toUpperCase(),
             ),
-          if (furnishInfo?.furnishDetails?.acInstalled != null)
+          if (furnishInfo?.furnishDetails?.ac != null)
             _buildDetailRow(
               'AC Installed',
-              furnishInfo!.furnishDetails!.acInstalled! ? 'Yes' : 'No',
+              furnishInfo!.furnishDetails!.ac! > 0
+                  ? furnishInfo!.furnishDetails!.ac!.toString()
+                  : 'No',
             ),
           if (details.parkingInfo != null)
             _buildDetailRow(
