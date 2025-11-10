@@ -1734,7 +1734,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 controller: controller,
                                               );
                                             case 6:
-                                              return VerifySection(
+                                              return ReviewPropertyScreen(
                                                 controller: controller,
                                               );
                                           }
@@ -1806,7 +1806,12 @@ class CreatePropertyScreen extends StatelessWidget {
                           ? null
                           : () async {
                             final step = controller.stepperSelectedIndex.value;
-                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
+                            log('hgd $step ${controller.propertyType.value} ${controller.lookingTo.value} ${controller.rent_propertyType.value}    ${(controller.lookingTo.value == 'Rent' ||
+                                controller.lookingTo.value == 'Sell') &&
+                                controller.propertyType.value ==
+                                    'Residential' &&
+                                step == 1 &&
+                                controller.rent_propertyType.value.isEmpty}');
 
                             // Property type validation
                             if (step == 0 &&
@@ -1860,6 +1865,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                     .isEmpty) {
                               controller.selectedSellFromPriceDetail.value =
                                   true;
+                              log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
                               return;
                             } else {
                               controller.selectedSellFromPriceDetail.value =
@@ -1939,18 +1945,19 @@ class CreatePropertyScreen extends StatelessWidget {
                                   .value = false;
                             }
 
+
                             // BHK validation
-                            if ((controller.lookingTo.value == 'Rent' ||
-                                    controller.lookingTo.value == 'Sell') &&
-                                controller.propertyType.value ==
-                                    'Residential' &&
-                                step == 1 &&
-                                controller.bhkType.value.isEmpty) {
-                              controller.showBHKChooseToError.value = true;
-                              return;
-                            } else {
-                              controller.showBHKChooseToError.value = false;
-                            }
+                            // if ((controller.lookingTo.value == 'Rent' ||
+                            //         controller.lookingTo.value == 'Sell') &&
+                            //     controller.propertyType.value ==
+                            //         'Residential' &&
+                            //     step == 1 &&
+                            //     controller.bhkType.value.isEmpty) {
+                            //   controller.showBHKChooseToError.value = true;
+                            //   return;
+                            // } else {
+                            //   controller.showBHKChooseToError.value = false;
+                            // }
 
                             // Validate current step's form before proceeding (only if form key exists)
                             final hasFormKey =

@@ -68,7 +68,45 @@ class CreatePropertyController extends GetxController {
   var tenantType = ''.obs;
 
   ///============================Main variable=============================
-  var negotiablePriceOrNot = "".obs;
+  var negotiablePriceOrNot="".obs;
+
+
+
+  ///===================================Residential Sell=============================
+
+var transactionType="".obs;
+var plotWidth=TextEditingController();
+var plotLength=TextEditingController();
+
+  final RxBool isEdited = true.obs;
+
+
+///=======================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   ///=============================================New Variable======================
   // Reactive states

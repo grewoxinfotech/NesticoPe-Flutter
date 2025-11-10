@@ -111,6 +111,8 @@ class RentAdvanceDetail extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
+
               SizedBox(height: 16),
               buildSectionTitle("Bathrooms"),
               SizedBox(height: 8),
@@ -487,42 +489,7 @@ class RentAdvanceDetail extends StatelessWidget {
                     SizedBox(height: 16),
                   ],
                 ],
-                SizedBox(height: 16),
-                buildSectionTitle("Painting Charges"),
-                SizedBox(height: 8),
-                Obx(
-                  () => Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children:
-                        rent_Painting_Charges.map((option) {
-                          return buildChoice(
-                            title: option,
-                            selected:
-                                controller.rent_Painting_Charges.value ==
-                                option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.rent_Painting_Charges,
-                                option,
-                              );
-                            },
-                          );
-                        }).toList(),
-                  ),
-                ),
-                if (controller.rent_Painting_Charges.value == "Custom") ...[
-                  SizedBox(height: 16),
-                  Text("Custom Painting Charges"),
-                  SizedBox(height: 8),
 
-                  buildTextField(
-                    "Enter Painting Charges",
-                    Icons.currency_rupee_outlined,
-                    controller.rent_Custom_Painting_Charges,
-                    isPhoneKey: true,
-                  ),
-                ],
               ],
               SizedBox(height: 16),
               buildSectionTitle("Facing"),

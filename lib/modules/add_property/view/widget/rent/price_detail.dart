@@ -56,21 +56,21 @@ class RentPriceDetail extends StatelessWidget {
                 spacing: 12,
                 runSpacing: 12,
                 children:
-                ["Yes", "No"]
-                    .map(
-                      (type) => buildChoice(
-                    title: type,
-                    selected:
-                    controller.negotiablePriceOrNot.value == type,
-                    onTap: () {
-                      controller.setValue(
-                        controller.negotiablePriceOrNot,
-                        type,
-                      );
-                    },
-                  ),
-                )
-                    .toList(),
+                    ["Yes", "No"]
+                        .map(
+                          (type) => buildChoice(
+                            title: type,
+                            selected:
+                                controller.negotiablePriceOrNot.value == type,
+                            onTap: () {
+                              controller.setValue(
+                                controller.negotiablePriceOrNot,
+                                type,
+                              );
+                            },
+                          ),
+                        )
+                        .toList(),
               ),
               SizedBox(height: 16),
               Text("Available From"),
@@ -121,26 +121,25 @@ class RentPriceDetail extends StatelessWidget {
                 },
               ),
 
-
-                SizedBox(height: 16),
-                Text("Security Deposit"),
-                SizedBox(height: 8),
-                buildTextField(
-                  "Enter Security Deposit Amount",
-                  Icons.currency_rupee_outlined,
-                  controller.rent_SecurityDeposit,
-                  isPhoneKey: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter deposit';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Please enter a valid amount';
-                    }
-                    return null;
-                  },
-                ),
-              ],
+              SizedBox(height: 16),
+              Text("Security Deposit"),
+              SizedBox(height: 8),
+              buildTextField(
+                "Enter Security Deposit Amount",
+                Icons.currency_rupee_outlined,
+                controller.rent_SecurityDeposit,
+                isPhoneKey: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter deposit';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Please enter a valid amount';
+                  }
+                  return null;
+                },
+              ),
+            ],
           ),
         );
       } else if (controller.lookingTo.value == "Sell" &&
@@ -179,35 +178,35 @@ class RentPriceDetail extends StatelessWidget {
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
+
                 children:
-                ["Yes", "No"]
-                    .map(
-                      (type) => buildChoice(
-                    title: type,
-                    selected:
-                    controller.negotiablePriceOrNot.value == type,
-                    onTap: () {
-                      controller.setValue(
-                        controller.negotiablePriceOrNot,
-                        type,
-                      );
-                    },
-                  ),
-                )
-                    .toList(),
+                    ["Yes", "No"]
+                        .map(
+                          (type) => buildChoice(
+                            title: type,
+                            selected:
+                                controller.negotiablePriceOrNot.value == type,
+                            onTap: () {
+                              controller.setValue(
+                                controller.negotiablePriceOrNot,
+                                type,
+                              );
+                            },
+                          ),
+                        )
+                        .toList(),
               ),
               SizedBox(height: 16),
-              buildSectionTitle("Construction Status"),
+              buildSectionTitle("Construction status"),
               SizedBox(height: 8),
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
                 children:
-                    ["ready_to_move", "under_construction"]
+                    ["Ready to move", "Under Construction"]
                         .map(
                           (type) => buildChoice(
-                            title:
-                                type.replaceAll("_", " ").capitalize.toString(),
+                            title: type,
                             selected:
                                 controller.sell_constructionStatus.value ==
                                 type,
@@ -221,26 +220,25 @@ class RentPriceDetail extends StatelessWidget {
                         )
                         .toList(),
               ),
-              Obx(
-                () {
-                  print('${controller.sell_constructionStatus.value}');
-                  return  controller.selectedSellFromPriceDetail.value
-                        ? Padding(
-                          padding: const EdgeInsets.only(top: 8, left: 4),
-                          child: Text(
-                            'Please select Status',
-                            style: TextStyle(
-                              color: ColorRes.error.shade700,
-                              fontSize: AppFontSizes.small,
-                              // fontSize: 12,
-                            ),
-                          ),
-                        )
-                        : const SizedBox.shrink();}
-              ),
+              Obx(() {
+                print('${controller.sell_constructionStatus.value}');
+                return controller.selectedSellFromPriceDetail.value
+                    ? Padding(
+                      padding: const EdgeInsets.only(top: 8, left: 4),
+                      child: Text(
+                        'Please select Status',
+                        style: TextStyle(
+                          color: ColorRes.error.shade700,
+                          fontSize: AppFontSizes.small,
+                          // fontSize: 12,
+                        ),
+                      ),
+                    )
+                    : const SizedBox.shrink();
+              }),
 
               if (controller.sell_constructionStatus.value ==
-                  "under construction") ...[
+                  "Under Construction") ...[
                 SizedBox(height: 16),
                 Text("Available From"),
                 SizedBox(height: 8),
@@ -286,6 +284,25 @@ class RentPriceDetail extends StatelessWidget {
                       controller.sell_AvailableFrom.text =
                           "${picked.day}/${picked.month}/${picked.year}";
                     }
+                  },
+                ),
+              ],
+              if (controller.sell_constructionStatus.value ==
+                  "Ready to move") ...[
+                SizedBox(height: 16),
+                Text("Age of property"),
+
+                SizedBox(height: 8),
+                buildTextField(
+                  "Enter property age in year",
+                  Icons.timelapse_outlined,
+                  controller.ageOfPropertyController,
+                  isPhoneKey: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter valid age';
+                    }
+                    return null;
                   },
                 ),
               ],
@@ -342,7 +359,7 @@ class RentPriceDetail extends StatelessWidget {
               SizedBox(height: 24),
               Text("Financial"),
               SizedBox(height: 8),
-              buildSectionTitle('Excepted Rent'),
+              buildSectionTitle('Excepted Cost'),
               SizedBox(height: 8),
               buildTextField(
                 'Enter Cost',
