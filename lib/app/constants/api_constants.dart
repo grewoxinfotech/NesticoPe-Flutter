@@ -42,6 +42,7 @@ class ApiConstants {
   static String get resellerDashboard => "$baseURL/insight/reseller";
   static String get property => "$baseURL/property";
   static String get fackLead => "$baseURL/lead/reseller";
+  static String get topSeller => "$baseURL/user/sellers/top";
 
   //---------------------------------other-----------------------------//
 

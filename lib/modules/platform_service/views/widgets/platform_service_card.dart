@@ -78,7 +78,10 @@ class PlatformServiceHorizontalList extends StatelessWidget {
                     service.description ?? '',
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: AppFontSizes.small, color: ColorRes.blackShade54),
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.small,
+                      color: ColorRes.blackShade54,
+                    ),
                   ),
                   const Spacer(),
                   // Features (optional, show first 2)
@@ -89,6 +92,7 @@ class PlatformServiceHorizontalList extends StatelessWidget {
                               .take(2)
                               .map(
                                 (f) => Container(
+                                  width: 80,
                                   margin: const EdgeInsets.only(right: 6),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
@@ -100,10 +104,12 @@ class PlatformServiceHorizontalList extends StatelessWidget {
                                   ),
                                   child: Text(
                                     f,
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       fontSize: AppFontSizes.extraSmall,
                                       color: ColorRes.blueColor,
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               )

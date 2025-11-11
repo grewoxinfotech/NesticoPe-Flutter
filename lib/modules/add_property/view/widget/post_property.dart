@@ -91,7 +91,6 @@ class PostProperty extends StatelessWidget {
     ];
     final List<String> tenantType = ['Student', 'Company', 'Family', 'Any'];
     final List<String> bhkTypes = [
-      "1 RK",
       "1 BHK",
       "2 BHK",
       "3 BHK",

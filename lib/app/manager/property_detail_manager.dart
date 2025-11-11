@@ -251,7 +251,7 @@ class PropertyDetailManager {
               String managedByText = pg.pgManageBy!;
               if (pg.pgOwnerStaysAtPg != null) {
                 managedByText +=
-                    " (${pg.pgOwnerStaysAtPg! ? "Owner stays at PG" : "Owner does not stay"})";
+                    " (${pg.pgOwnerStaysAtPg! ? "stays" : "not stay"})";
               }
               details.add({"Managed By": managedByText});
             }

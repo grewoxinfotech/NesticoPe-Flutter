@@ -68,45 +68,17 @@ class CreatePropertyController extends GetxController {
   var tenantType = ''.obs;
 
   ///============================Main variable=============================
-  var negotiablePriceOrNot="".obs;
-
-
+  var negotiablePriceOrNot = "".obs;
 
   ///===================================Residential Sell=============================
 
-var transactionType="".obs;
-var plotWidth=TextEditingController();
-var plotLength=TextEditingController();
+  var transactionType = "".obs;
+  var plotWidth = TextEditingController();
+  var plotLength = TextEditingController();
 
   final RxBool isEdited = true.obs;
 
-
-///=======================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  ///=======================================
 
   ///=============================================New Variable======================
   // Reactive states
@@ -2022,73 +1994,46 @@ var plotLength=TextEditingController();
   //
   Future<bool> _addPropertyResidentialRent() async {
     try {
-      print("Adding Residential Property for Rent...");
+      // print("Adding Residential Property for Rent...");
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("Selected Index : ${cityController.text.trim()}");
+      // debugPrint("City Controller : ${cityController.text.trim()}");
       // debugPrint("Sub Property Type : ${rent_propertyType.value}");
       // debugPrint("Building : ${rentBuildingController.text.trim()}");
       // debugPrint("Locality : ${localityController.text.trim()}");
       // debugPrint("BHK : ${bhkType.value}");
       // debugPrint("BuiltUpo area : ${areaController.text.trim()}");
       // debugPrint("BuiltUpo area Size : ${areaUnit.value}");
+      // debugPrint("Notice Period : ${noticPeriodController.text.trim()}");
+      // debugPrint("Locked in period: ${lockPeriodController.text.trim()}");
       // debugPrint("Furnishing  : ${furnishingType.value}");
-      // debugPrint("Agent Share  : ${isShareWithAgents.value}");
       // debugPrint("Monthly Rent  : ${rent_MonthilyRent.text.trim()}");
+      // debugPrint("Rent Negotiation  : ${negotiablePriceOrNot.value}");
       // debugPrint("Available From  : ${rent_AvailableFrom.text.trim()}");
-      // debugPrint("Deposit  : ${rent_depositType.value}");
-      // debugPrint(
-      //   "Photos  : ${selectedImages.map((element) => element.path.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint("Age of Property  : ${ageOfPropertyController.text.trim()}");
+      // debugPrint("Deposit  : ${rent_SecurityDeposit.text.trim()}");
       // debugPrint("Bathroom  : ${rent_Bathroom.value}");
       // debugPrint("Balcony  : ${rent_Balcony.value}");
       // debugPrint("Covered Parking  : ${rent_CoveredParking.value}");
       // debugPrint("Open Parking  : ${rent_OpenParking.value}");
-      // debugPrint(
-      //   "Legals  : ${rent_Legal.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Rentals  : ${rent_Rentals.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Security Deposit  : ${rent_Security_DepositType.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Home Services  : ${rent_HomeServices.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Tenants Types  : ${rent_Preferred_Tenants.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Tenants For Bachelors  : ${rent_Selected_Tenants_for_Bachelors.value}",
-      // );
-      // debugPrint("Pet Friendly  : ${rent_Pet_Friendly.value}");
-      // debugPrint("Carpet Area  : ${carpetAreaController.text.trim()}");
-      // debugPrint("Carpet Area Type : ${carpetAreaUnit.value}");
-      // debugPrint("Flat No : ${sell_rent_Flat_No.text.trim()}");
-      // debugPrint("Floor No : ${sell_rent_Floor_No.text.trim()}");
+      // debugPrint("Lift Info  : ${lift_info.value}");
+      // debugPrint("Pet Friendly : ${lift_info.value}");
+      // debugPrint("Charge Brokerage? : ${doYouWantBrokerage.value}");
+      // if (doYouWantBrokerage.value == "yes") {
+      //   debugPrint("Brokerage Charge : ${brokerageCharge.text.trim()}");
+      //   debugPrint("Brokerage Negotiable : ${brokerageChargeNegotiable.value}");
+      // }
+      // debugPrint("Floor Number : ${sell_rent_Floor_No.text.trim()}");
       // debugPrint("Total Floor : ${sell_rent_Total_Floor.text.trim()}");
       // debugPrint("Maintenance Charge : ${rent_maintenanceChargeType.value}");
-      // if (rent_maintenanceChargeType.value.toLowerCase() == "separate") {
+      // if (rent_maintenanceChargeType.value.toLowerCase() == 'separate') {
       //   debugPrint(
-      //     "Maintenance Charge  : ${sell_rent_Maintenance_Charges.text.trim()}",
+      //     "Maintenance Charge : ${sell_rent_Maintenance_Charges.text.trim()}",
       //   );
-      // }
-      // debugPrint("Lock in period : ${rent_lockInPeriod.value}");
-      // if (rent_lockInPeriod.value.toLowerCase() == "custom") {
-      //   debugPrint("Lock in period : ${rent_Custom_LockIn_Period.text.trim()}");
       // }
       // debugPrint("Parking Charge : ${rent_Parking_Charges.value}");
-      // if (rent_Parking_Charges.value.toLowerCase() == "separate") {
+      // if (rent_Parking_Charges.value.toLowerCase() == 'separate') {
       //   debugPrint(
-      //     "Parking Charge : ${rent_Custom_Parking_Charges.text.trim()}",
-      //   );
-      // }
-      // debugPrint("Painting Charge : ${rent_Painting_Charges.value}");
-      // if (rent_Painting_Charges.value.toLowerCase() == "custom") {
-      //   debugPrint(
-      //     "Painting Charge  : ${rent_Custom_Painting_Charges.text.trim()}",
+      //     "Maintenance Charge : ${rent_Custom_Parking_Charges.text.trim()}",
       //   );
       // }
       // debugPrint("Facing : ${rent_facing.value}");
@@ -2124,61 +2069,52 @@ var plotLength=TextEditingController();
 
   Future<bool> _addPropertyResidentialSell() async {
     try {
-      // print("Adding Residential Property for Sell...");
-      // debugPrint("Property Type : ${propertyType.value}");
-      // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("Selected Index : ${cityController.text.trim()}");
-      // debugPrint("Sub Property Type : ${rent_propertyType.value}");
-      // debugPrint("Building : ${rentBuildingController.text.trim()}");
-      // debugPrint("Locality : ${localityController.text.trim()}");
-      // debugPrint("BHK : ${bhkType.value}");
-      // debugPrint("BuiltUpo area : ${areaController.text.trim()}");
-      // debugPrint("BuiltUpo area Size : ${areaUnit.value}");
-      // debugPrint("Furnishing  : ${furnishingType.value}");
-      // debugPrint("Agent Share  : ${isShareWithAgents.value}");
-      // debugPrint("Expected Price  : ${sell_ExpectedPrice.text.trim()}");
-      // debugPrint("Construction Price  : ${sell_constructionStatus.value}");
-      //
-      // if (sell_constructionStatus.value.toLowerCase() == "under construction") {
-      //   debugPrint("Available from  : ${sell_AvailableFrom.value}");
-      // }
-      //
-      // debugPrint(
-      //   "Photos  : ${selectedImages.map((element) => element.path.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint("Age of Property  : ${ageOfPropertyController.text.trim()}");
-      // debugPrint("Bathroom  : ${rent_Bathroom.value}");
-      // debugPrint("Balcony  : ${rent_Balcony.value}");
-      // debugPrint(
-      //   "Brokerage Icon  : ${sell_Brokerage.map((element) => element.toString().toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Registration  : ${sell_Registration_Charges.map((element) => element.toString().toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "Amenities Furniture  : ${sell_Amenities_Furniture.map((element) => element.toString().toLowerCase()).join(", ")}",
-      // );
-      // debugPrint("Carpet Area  : ${carpetAreaController.text.trim()}");
-      // debugPrint("Carpet Area Type : ${carpetAreaUnit.value}");
-      // debugPrint("Flat No : ${sell_rent_Flat_No.text.trim()}");
-      // debugPrint("Floor No : ${sell_rent_Floor_No.text.trim()}");
-      // debugPrint("Total Floor : ${sell_rent_Total_Floor.text.trim()}");
-      // debugPrint(
-      //   "Maintenance Charge : ${sell_rent_Maintenance_Charges.text.trim()}",
-      // );
-      // debugPrint("Facing : ${rent_facing.value}");
-      // debugPrint("Address : ${sell_rent_Address.text.trim()}");
-      // debugPrint("Servant Room : ${sell_rent_Servent_Room.value}");
-      // debugPrint("Rera Id: ${sell_Rera_Id.text.trim()}");
-      // debugPrint(
-      //   "Property Description : ${sell_rent_propertyDescriptionController.text.trim()}",
-      // );
-      // debugPrint(
-      //   "Flat Furnishing: ${selectedFurnishing.entries.map((e) => "${e.key}: ${e.value.title}").toList()}",
-      // );
-      // debugPrint(
-      //   "amenities Types  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      // );
+      print("Adding Residential Property for Sell...");
+      debugPrint("Property Type : ${propertyType.value}");
+      debugPrint("Looking to Type : ${lookingTo.value}");
+      debugPrint("Selected Index : ${cityController.text.trim()}");
+      debugPrint("Sub Property Type : ${rent_propertyType.value}");
+      debugPrint("Building : ${rentBuildingController.text.trim()}");
+      debugPrint("Locality : ${localityController.text.trim()}");
+      debugPrint("BHK : ${bhkType.value}");
+      debugPrint("Transaction Type : ${transactionType.value}");
+      debugPrint("BuiltUpo area : ${areaController.text.trim()}");
+      debugPrint("BuiltUpo area Size : ${areaUnit.value}");
+      debugPrint("Furnishing  : ${furnishingType.value}");
+      debugPrint("Expected Price  : ${sell_ExpectedPrice.text.trim()}");
+      debugPrint("Price Negotiable : ${negotiablePriceOrNot.value}");
+
+      debugPrint("Construction Status  : ${sell_constructionStatus.value}");
+
+      if (sell_constructionStatus.value.toLowerCase() == "under construction") {
+        debugPrint("Available from  : ${sell_AvailableFrom.value}");
+      } else {
+        debugPrint("Age Of Property : ${ageOfPropertyController.value}");
+      }
+
+      debugPrint("Bathroom  : ${rent_Bathroom.value}");
+      debugPrint("Balcony  : ${rent_Balcony.value}");
+      debugPrint("Covered Parking  : ${rent_CoveredParking.value}");
+      debugPrint("Open Parking  : ${rent_OpenParking.value}");
+      debugPrint("Lift Info  : ${lift_info.value}");
+      debugPrint("Charge Brokerage? : ${doYouWantBrokerage.value}");
+      if (doYouWantBrokerage.value == "yes") {
+        debugPrint("Brokerage Charge : ${brokerageCharge.text.trim()}");
+        debugPrint("Brokerage Negotiable : ${brokerageChargeNegotiable.value}");
+      }
+      debugPrint("Floor Number : ${sell_rent_Floor_No.text.trim()}");
+      debugPrint("Total Floor : ${sell_rent_Total_Floor.text.trim()}");
+      debugPrint("Maintenance Charge : ${rent_maintenanceChargeType.value}");
+      debugPrint("Facing : ${rent_facing.value}");
+      debugPrint("Address : ${sell_rent_Address.text.trim()}");
+      debugPrint("Servant Room : ${sell_rent_Servent_Room.value}");
+      debugPrint("RERA ID : ${sell_Rera_Id.text.trim()}");
+      debugPrint(
+        "Flat Furnishing: ${selectedFurnishing.entries.map((e) => "${e.key}: ${e.value.title}").toList()}",
+      );
+      debugPrint(
+        "amenities Types  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      );
 
       final payload = await buildPropertyPayloadResidentialSell();
       debugPrint("Payload : ${payload.toJson()}");
@@ -2197,55 +2133,55 @@ var plotLength=TextEditingController();
 
   Future<bool> _addPropertyResidentialPg() async {
     try {
-      debugPrint("Property Type : ${propertyType.value}");
-      debugPrint("Looking to Type : ${lookingTo.value}");
-      debugPrint("City : ${cityController.text.trim()}");
-      debugPrint("Locality : ${localityController.text.trim()}");
-      debugPrint("PG Name : ${pgNameController.text.trim()}");
-      debugPrint("Total Beds : ${totalRoomsController.text.trim()}");
-      debugPrint("PG For Gender : ${pgFor.value}");
-      debugPrint("Best Suit For : ${bestSuitedList.join(", ")}");
-      debugPrint("Meal available : ${mealAvailable.value}");
-      debugPrint("Meal offering : ${mealAvailableList.join(", ")}");
-      debugPrint("Meal Charge : ${mealCharges.value}");
-      if (mealCharges.value.toLowerCase() == "separate") {
-        debugPrint("Meal Charge : ${mealChargesTextFiled.text.trim()}");
-      }
-      debugPrint("Electricity Charge : ${electricityCharges.value}");
-
-      if (electricityCharges.value.toLowerCase() == "separate") {
-        debugPrint(
-          "Electricity Charge : ${electricityChargesTextFiled.text.trim()}",
-        );
-      }
-
-      debugPrint("PG Rule : ${pgRulesAvailable.value}");
-
-      if (pgRulesAvailable.value.toLowerCase() == "yes") {
-        debugPrint("Non-veg : ${nonVegAllowed.value}");
-        debugPrint("smoking : ${smokingAllowed.value}");
-        debugPrint("drinking : ${drinkingAllowed.value}");
-        debugPrint("pets : ${petAllowed.value}");
-        debugPrint("Late entry : ${letEntryAllowed.value}");
-        debugPrint("visitor : ${visitorsAllowed.value}");
-      }
-      debugPrint("Property Managed By : ${propertyManagedBy.value}");
-      debugPrint(
-        "Property Manager stays at property : ${managerStaysAtProperty.value}",
-      );
-      debugPrint("Notice Period : ${noticPeriodController.text.trim()}");
-      debugPrint("Lock in period : ${lockPeriodController.text.trim()}");
-      debugPrint("Floor Numbers : ${pgFloorNumber.text.trim()}");
-      debugPrint("Total Floor : ${pgTotalFloor.text.trim()}");
-      debugPrint("Common Areas : ${commonAreasList.join(", ")}");
-      debugPrint("roomList Areas : ${rooms.map((element) => element.toMap())}");
-      debugPrint(
-        "amenities Types: ${selectedFurnishing.entries.map((e) => '${e.key}: ${e.value.title} = ${e.value.quantity}').join(', ')}",
-      );
-
-      debugPrint(
-        "Flat Furnishing  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      );
+      // debugPrint("Property Type : ${propertyType.value}");
+      // debugPrint("Looking to Type : ${lookingTo.value}");
+      // debugPrint("City : ${cityController.text.trim()}");
+      // debugPrint("Locality : ${localityController.text.trim()}");
+      // debugPrint("PG Name : ${pgNameController.text.trim()}");
+      // debugPrint("Total Beds : ${totalRoomsController.text.trim()}");
+      // debugPrint("PG For Gender : ${pgFor.value}");
+      // debugPrint("Best Suit For : ${bestSuitedList.join(", ")}");
+      // debugPrint("Meal available : ${mealAvailable.value}");
+      // debugPrint("Meal offering : ${mealAvailableList.join(", ")}");
+      // debugPrint("Meal Charge : ${mealCharges.value}");
+      // if (mealCharges.value.toLowerCase() == "separate") {
+      //   debugPrint("Meal Charge : ${mealChargesTextFiled.text.trim()}");
+      // }
+      // debugPrint("Electricity Charge : ${electricityCharges.value}");
+      //
+      // if (electricityCharges.value.toLowerCase() == "separate") {
+      //   debugPrint(
+      //     "Electricity Charge : ${electricityChargesTextFiled.text.trim()}",
+      //   );
+      // }
+      //
+      // debugPrint("PG Rule : ${pgRulesAvailable.value}");
+      //
+      // if (pgRulesAvailable.value.toLowerCase() == "yes") {
+      //   debugPrint("Non-veg : ${nonVegAllowed.value}");
+      //   debugPrint("smoking : ${smokingAllowed.value}");
+      //   debugPrint("drinking : ${drinkingAllowed.value}");
+      //   debugPrint("pets : ${petAllowed.value}");
+      //   debugPrint("Late entry : ${letEntryAllowed.value}");
+      //   debugPrint("visitor : ${visitorsAllowed.value}");
+      // }
+      // debugPrint("Property Managed By : ${propertyManagedBy.value}");
+      // debugPrint(
+      //   "Property Manager stays at property : ${managerStaysAtProperty.value}",
+      // );
+      // debugPrint("Notice Period : ${noticPeriodController.text.trim()}");
+      // debugPrint("Lock in period : ${lockPeriodController.text.trim()}");
+      // debugPrint("Floor Numbers : ${pgFloorNumber.text.trim()}");
+      // debugPrint("Total Floor : ${pgTotalFloor.text.trim()}");
+      // debugPrint("Common Areas : ${commonAreasList.join(", ")}");
+      // debugPrint("roomList Areas : ${rooms.map((element) => element.toMap())}");
+      // debugPrint(
+      //   "amenities Types: ${selectedFurnishing.entries.map((e) => '${e.key}: ${e.value.title} = ${e.value.quantity}').join(', ')}",
+      // );
+      //
+      // debugPrint(
+      //   "Flat Furnishing  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
+      // );
 
       final payload = await buildPropertyPayloadResidentialPG();
       debugPrint("Payload : ${payload.toJson()}");
@@ -2924,7 +2860,10 @@ var plotLength=TextEditingController();
   Future<AddPropertyModel> buildPropertyPayloadResidentialRent() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? "";
-
+    final parsedDate = DateFormat(
+      'dd/MM/yyyy',
+    ).parse(rent_AvailableFrom.text.trim());
+    final formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
     return AddPropertyModel(
       type:
           propertyType.value.isNotEmpty
@@ -2933,7 +2872,7 @@ var plotLength=TextEditingController();
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       propertyType:
           rent_propertyType.value.isNotEmpty
-              ? rent_propertyType.value.toLowerCase()
+              ? rent_propertyType.value.toLowerCase().replaceAll(" ", "_")
               : null,
       propertyDescription:
           sell_rent_propertyDescriptionController.text.trim().isNotEmpty
@@ -2943,6 +2882,8 @@ var plotLength=TextEditingController();
         bhk: int.tryParse(bhkType.value.substring(0, 1)),
         bathroom: rent_Bathroom.value,
         balcony: rent_Balcony.value,
+        petFriendly:
+            rent_Pet_Friendly.value.toLowerCase() == 'yes' ? true : false,
         propertyBuiltUpArea:
             areaController.text.trim().isNotEmpty
                 ? double.tryParse(areaController.text.trim())
@@ -2951,6 +2892,7 @@ var plotLength=TextEditingController();
             carpetAreaController.text.trim().isNotEmpty
                 ? double.tryParse(carpetAreaController.text.trim())
                 : null,
+
         propertyBuiltUpAreaUnit:
             areaUnit.value.isNotEmpty ? removeDots(areaUnit.value) : null,
         propertyCarpetAreaUnit:
@@ -2958,15 +2900,22 @@ var plotLength=TextEditingController();
                 ? removeDots(carpetAreaUnit.value)
                 : null,
         propertyFacing: rent_facing.value.isNotEmpty ? rent_facing.value : null,
+        serventRoom:
+            sell_rent_Servent_Room.value.toLowerCase() == 'yes' ? true : false,
         amenities:
             selectedRoomAmenities.value.isNotEmpty
                 ? selectedRoomAmenities.value
                 : null,
         possessionInfo: PossessionInfo(
-          propertyAgeInYear:
-              ageOfPropertyController.text.trim().isNotEmpty
-                  ? ageOfPropertyController.text.trim()
-                  : null,
+          possessionDate:
+              rent_AvailableFrom.text.trim().isNotEmpty ? formattedDate : null,
+        ),
+        lifInfo: LiftInfo(
+          serviceLift:
+              lift_info.value.isNotEmpty &&
+                      lift_info.value.toLowerCase() == 'yes'
+                  ? true
+                  : false,
         ),
         floorInfo:
             (sell_rent_Floor_No.text.trim().isNotEmpty ||
@@ -2998,17 +2947,99 @@ var plotLength=TextEditingController();
                   propertySecurityDeposit: double.tryParse(
                     rent_SecurityDeposit.text.trim(),
                   ),
+                  negotiable:
+                      negotiablePriceOrNot.value.toLowerCase() == 'yes'
+                          ? true
+                          : false,
+                  noticePeriod:
+                      noticPeriodController.text.trim().isNotEmpty
+                          ? int.tryParse(noticPeriodController.text.trim())
+                          : null,
+                  lockInPeriod:
+                      lockPeriodController.text.trim().isNotEmpty
+                          ? int.tryParse(lockPeriodController.text.trim())
+                          : null,
+                  brokerCommission:
+                      doYouWantBrokerage.value.toLowerCase() == 'yes'
+                          ? double.tryParse(brokerageCharge.text.trim())
+                          : null,
+                  maintenanceCharges:
+                      rent_maintenanceChargeType.value.toLowerCase() ==
+                              "separate"
+                          ? double.tryParse(
+                            sell_rent_Maintenance_Charges.text.trim(),
+                          )
+                          : null,
+                  brokerNegotiable:
+                      brokerageChargeNegotiable.value.toLowerCase() == 'yes'
+                          ? true
+                          : false,
+                  parkingCharges:
+                      rent_Parking_Charges.value.toLowerCase() == "separate"
+                          ? rent_Custom_Parking_Charges.text.trim()
+                          : null,
                 )
                 : null,
         furnishInfo:
             furnishingType.value.isNotEmpty
-                ? PropertyFurnishInfo(furnishType: furnishingType.value)
+                ? PropertyFurnishInfo(
+                  furnishType: furnishingType.value,
+                  furnishDetails: FurnishDetails(
+                    ac: int.tryParse(
+                      selectedFurnishing.value['ac']?.quantity.toString() ?? '',
+                    ),
+                    bed: int.tryParse(
+                      selectedFurnishing.value['bed']?.quantity.toString() ??
+                          '',
+                    ),
+                    geyser: int.tryParse(
+                      selectedFurnishing.value['geyser']?.quantity.toString() ??
+                          '',
+                    ),
+                    washingMachine:
+                        selectedFurnishing.value['washing_machine']?.quantity ==
+                                1
+                            ? true
+                            : false,
+                    cupboard:
+                        selectedFurnishing.value['cupboard']?.quantity == 1
+                            ? true
+                            : false,
+                    stove:
+                        selectedFurnishing.value['stove']?.quantity == 1
+                            ? true
+                            : false,
+                    fridge:
+                        selectedFurnishing.value['fridge']?.quantity == 1
+                            ? true
+                            : false,
+                    waterPurifier:
+                        selectedFurnishing.value['water_purifier']?.quantity ==
+                                1
+                            ? true
+                            : false,
+                    modularKitchen:
+                        selectedFurnishing.value['modular_kitchen']?.quantity ==
+                                1
+                            ? true
+                            : false,
+                  ),
+                )
                 : null,
       ),
       location:
           localityController.text.trim().isNotEmpty
               ? localityController.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
+
       city:
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
@@ -3027,7 +3058,10 @@ var plotLength=TextEditingController();
   Future<AddPropertyModel> buildPropertyPayloadResidentialSell() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? "";
-
+    final parsedDate = DateFormat(
+      'dd/MM/yyyy',
+    ).parse(sell_AvailableFrom.text.trim());
+    final formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
     return AddPropertyModel(
       type:
           propertyType.value.isNotEmpty
@@ -3036,7 +3070,7 @@ var plotLength=TextEditingController();
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       propertyType:
           rent_propertyType.value.isNotEmpty
-              ? rent_propertyType.value.toLowerCase()
+              ? rent_propertyType.value.toLowerCase().replaceAll(" ", "_")
               : null,
       propertyDescription:
           sell_rent_propertyDescriptionController.text.trim().isNotEmpty
@@ -3044,8 +3078,13 @@ var plotLength=TextEditingController();
               : null,
       propertyDetails: PropertyDetails(
         bhk: int.tryParse(bhkType.value.substring(0, 1)),
+        transactionType: transactionType.value.toLowerCase().replaceAll(
+          " ",
+          "_",
+        ),
         bathroom: rent_Bathroom.value,
         balcony: rent_Balcony.value,
+        serventRoom: sell_rent_Servent_Room.value.toLowerCase() == 'yes',
 
         propertyBuiltUpArea:
             areaController.text.trim().isNotEmpty
@@ -3077,10 +3116,21 @@ var plotLength=TextEditingController();
                 : null,
         possessionInfo: PossessionInfo(
           propertyAgeInYear:
-              ageOfPropertyController.text.trim().isNotEmpty
-                  ? ageOfPropertyController.text.trim()
+              sell_constructionStatus.value.toLowerCase() == 'ready to move'
+                  ? ageOfPropertyController.text.trim().isNotEmpty
+                      ? ageOfPropertyController.text.trim()
+                      : null
                   : null,
-          possessionStatus: sell_constructionStatus.value,
+          possessionDate:
+              sell_constructionStatus.value.toLowerCase() ==
+                      'under construction'
+                  ? sell_AvailableFrom.text.trim().isNotEmpty
+                      ? formattedDate
+                      : null
+                  : null,
+          possessionStatus: sell_constructionStatus.value
+              .toLowerCase()
+              .replaceAll(" ", "_"),
         ),
         parkingInfo:
             (rent_CoveredParking.value.isNotEmpty ||
@@ -3094,26 +3144,84 @@ var plotLength=TextEditingController();
                       int.tryParse(rent_OpenParking.value)! > 0,
                 )
                 : null,
+        lifInfo: LiftInfo(
+          serviceLift: lift_info.value.toLowerCase() == 'yes' ? true : false,
+        ),
         financialInfo:
             (sell_ExpectedPrice.text.trim().isNotEmpty)
                 ? FinancialInfo(
                   propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
-                  maintenance:
+                  negotiable:
+                      negotiablePriceOrNot.value.toLowerCase() == 'yes'
+                          ? true
+                          : false,
+
+                  maintenanceCharges:
                       sell_rent_Maintenance_Charges.text.trim().isNotEmpty
                           ? double.tryParse(
                             sell_rent_Maintenance_Charges.text.trim(),
                           )
                           : null,
+                  brokerCommission:
+                      doYouWantBrokerage.value.toLowerCase() == 'yes'
+                          ? double.tryParse(brokerageCharge.text.trim())
+                          : null,
+                  brokerNegotiable:
+                      doYouWantBrokerage.value.toLowerCase() == 'yes'
+                          ? brokerageChargeNegotiable.value.toLowerCase() ==
+                              'yes'
+                          : null,
                 )
                 : null,
         furnishInfo:
             furnishingType.value.isNotEmpty
-                ? PropertyFurnishInfo(furnishType: furnishingType.value)
+                ? PropertyFurnishInfo(
+                  furnishType: furnishingType.value,
+                  furnishDetails: FurnishDetails(
+                    ac: int.tryParse(
+                      selectedFurnishing.value['ac']?.quantity.toString() ?? '',
+                    ),
+                    bed: int.tryParse(
+                      selectedFurnishing.value['bed']?.quantity.toString() ??
+                          '',
+                    ),
+                    geyser: int.tryParse(
+                      selectedFurnishing.value['geyser']?.quantity.toString() ??
+                          '',
+                    ),
+                    washingMachine:
+                        selectedFurnishing.value['washing_machine']?.quantity ==
+                                1
+                            ? true
+                            : false,
+                    cupboard:
+                        selectedFurnishing.value['cupboard']?.quantity == 1
+                            ? true
+                            : false,
+                    stove:
+                        selectedFurnishing.value['stove']?.quantity == 1
+                            ? true
+                            : false,
+                    fridge:
+                        selectedFurnishing.value['fridge']?.quantity == 1
+                            ? true
+                            : false,
+                    waterPurifier:
+                        selectedFurnishing.value['water_purifier']?.quantity ==
+                                1
+                            ? true
+                            : false,
+                    modularKitchen:
+                        selectedFurnishing.value['modular_kitchen']?.quantity ==
+                                1
+                            ? true
+                            : false,
+                  ),
+                )
                 : null,
       ),
-
       location:
           localityController.text.trim().isNotEmpty
               ? localityController.text.trim()
@@ -3122,6 +3230,14 @@ var plotLength=TextEditingController();
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
       address:
           sell_rent_Address.text.trim().isNotEmpty
               ? sell_rent_Address.text.trim()
@@ -3305,6 +3421,14 @@ var plotLength=TextEditingController();
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
       address:
           localityController.text.trim().isNotEmpty
               ? localityController.text.trim()
@@ -3385,6 +3509,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -3453,6 +3585,7 @@ var plotLength=TextEditingController();
             commercial_ZoneType.value.isNotEmpty
                 ? commercial_ZoneType.value
                 : null,
+
         financialInfo: FinancialInfo(
           //TODO: Implement Remain
           propertyRentPerMonth:
@@ -3469,6 +3602,14 @@ var plotLength=TextEditingController();
         //   int.tryParse(commercial_total_floor.text.trim()):null,
         // )
       ),
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
 
       city:
           cityController.text.trim().isNotEmpty
@@ -3620,6 +3761,14 @@ var plotLength=TextEditingController();
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
       ownerName:
@@ -3710,7 +3859,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -3802,6 +3958,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -3900,7 +4064,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -3985,6 +4156,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4096,6 +4275,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4249,6 +4436,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4360,6 +4555,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4468,6 +4671,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4582,6 +4793,14 @@ var plotLength=TextEditingController();
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
+      state:
+          localityController.text
+              .trim()
+              .split(',')
+              .map((e) => e.trim())
+              .toList()
+              .reversed
+              .toList()[1],
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4692,7 +4911,11 @@ class PropertyDetails {
   final String? propertyCarpetAreaUnit;
   final String? propertyBuiltUpAreaUnit;
   final PlotInfo? plotInfo;
+  final bool? petFriendly;
   final FacilitiesInfo? facilitiesInfo;
+  final LiftInfo? lifInfo;
+  final bool? serventRoom;
+  final String? transactionType;
 
   PropertyDetails({
     this.pgInfo,
@@ -4714,6 +4937,10 @@ class PropertyDetails {
     this.zoneType,
     this.facilitiesInfo,
     this.propertyCondition,
+    this.petFriendly,
+    this.lifInfo,
+    this.serventRoom,
+    this.transactionType,
   });
 
   Map<String, dynamic> toJson() {
@@ -4746,6 +4973,23 @@ class PropertyDetails {
     if (facilitiesInfo != null) data['facilities_info'] = facilitiesInfo;
     if (propertyCondition != null)
       data['property_condition'] = propertyCondition;
+    if (petFriendly != null) data['"pet_friendly"'] = petFriendly;
+    if (lifInfo != null) data['lift_info'] = lifInfo;
+    if (serventRoom != null) data['servant_room'] = serventRoom;
+    if (transactionType != null) data['transaction_type'] = transactionType;
+
+    return data;
+  }
+}
+
+class LiftInfo {
+  final bool? serviceLift;
+  LiftInfo({this.serviceLift});
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    if (serviceLift != null) data['service_lift'] = serviceLift;
+
     return data;
   }
 }
@@ -4901,29 +5145,31 @@ class ParkingInfo {
 
 class FinancialInfo {
   final double? propertyPrice;
-  double? maintenance;
   final double? propertyRentPerMonth;
-  final double? pricePerSqft;
   final double? monthlyRent;
+  final double? pricePerSqft;
   final double? brokerCommission;
+  final bool? brokerNegotiable;
   final double? propertySecurityDeposit;
-  final bool? negotiable;
-
-  // 🆕 New fields
-  final int? noticePeriod;
   final int? lockInPeriod;
+  final int? noticePeriod;
+  final bool? negotiable;
+  final double? maintenanceCharges;
+  final dynamic parkingCharges; // can be string or number
 
   FinancialInfo({
     this.propertyPrice,
-    this.maintenance,
     this.propertyRentPerMonth,
+    this.monthlyRent,
     this.pricePerSqft,
     this.brokerCommission,
+    this.brokerNegotiable,
     this.propertySecurityDeposit,
-    this.negotiable,
-    this.monthlyRent,
-    this.noticePeriod,
     this.lockInPeriod,
+    this.noticePeriod,
+    this.negotiable,
+    this.maintenanceCharges,
+    this.parkingCharges,
   });
 
   factory FinancialInfo.fromJson(Map<String, dynamic> json) {
@@ -4931,15 +5177,29 @@ class FinancialInfo {
       propertyPrice: (json['property_price'] as num?)?.toDouble(),
       propertyRentPerMonth:
           (json['property_rent_per_month'] as num?)?.toDouble(),
-      maintenance: (json['maintenance'] as num?)?.toDouble(),
+      monthlyRent: (json['monthlyRent'] as num?)?.toDouble(),
       pricePerSqft: (json['price_per_sqft'] as num?)?.toDouble(),
       brokerCommission: (json['broker_commission'] as num?)?.toDouble(),
+      brokerNegotiable:
+          json['broker_negotiable'] is bool
+              ? json['broker_negotiable']
+              : (json['broker_negotiable']?.toString().toLowerCase() == 'true'),
       propertySecurityDeposit:
           (json['property_security_deposit'] as num?)?.toDouble(),
-      negotiable: json['negotiable'],
-      monthlyRent: (json['monthlyRent'] as num?)?.toDouble(),
-      noticePeriod: json['notice_period'],
-      lockInPeriod: json['lock_in_period'],
+      lockInPeriod:
+          json['lock_in_period'] is int
+              ? json['lock_in_period']
+              : int.tryParse(json['lock_in_period']?.toString() ?? ''),
+      noticePeriod:
+          json['notice_period'] is int
+              ? json['notice_period']
+              : int.tryParse(json['notice_period']?.toString() ?? ''),
+      negotiable:
+          json['negotiable'] is bool
+              ? json['negotiable']
+              : (json['negotiable']?.toString().toLowerCase() == 'true'),
+      maintenanceCharges: (json['maintenance_charges'] as num?)?.toDouble(),
+      parkingCharges: json['parking_charges'], // string or number
     );
   }
 
@@ -4948,18 +5208,18 @@ class FinancialInfo {
     if (propertyPrice != null) data['property_price'] = propertyPrice;
     if (propertyRentPerMonth != null)
       data['property_rent_per_month'] = propertyRentPerMonth;
-    if (maintenance != null) data['maintenance'] = maintenance;
+    if (monthlyRent != null) data['monthlyRent'] = monthlyRent;
     if (pricePerSqft != null) data['price_per_sqft'] = pricePerSqft;
     if (brokerCommission != null) data['broker_commission'] = brokerCommission;
+    if (brokerNegotiable != null) data['broker_negotiable'] = brokerNegotiable;
     if (propertySecurityDeposit != null)
       data['property_security_deposit'] = propertySecurityDeposit;
-    if (negotiable != null) data['negotiable'] = negotiable;
-    if (monthlyRent != null) data['monthlyRent'] = monthlyRent;
-
-    // 🆕 Add new fields
-    if (noticePeriod != null) data['notice_period'] = noticePeriod;
     if (lockInPeriod != null) data['lock_in_period'] = lockInPeriod;
-
+    if (noticePeriod != null) data['notice_period'] = noticePeriod;
+    if (negotiable != null) data['negotiable'] = negotiable;
+    if (maintenanceCharges != null)
+      data['maintenance_charges'] = maintenanceCharges;
+    if (parkingCharges != null) data['parking_charges'] = parkingCharges;
     return data;
   }
 }

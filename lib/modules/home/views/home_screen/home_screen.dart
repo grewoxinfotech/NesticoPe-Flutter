@@ -52,6 +52,7 @@ import '../../../platform_service/views/widgets/platform_service_card.dart';
 import '../../../property/views/widgets/city_filter.dart';
 import '../../../property/views/widgets/property_card.dart';
 import '../../../reseller/view/property_reseller.dart';
+import '../../../top_seller/controller/top_seller_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   final controller = Get.put(() => AuthController());
@@ -237,6 +238,9 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   final ProjectWizardController projectController = Get.put(
     ProjectWizardController(isBuilderView: false),
+  );
+  final TopSellerController topSellerController = Get.put(
+    TopSellerController(),
   );
 
   final List<Map<String, dynamic>> cities = [
@@ -665,283 +669,183 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }),
 
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
 
                   // Top Locations
-                  const TitleWithViewAll(
-                    title: "Trending Areas",
-                    showViewAll: true,
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // FutureBuilder(
-                  //   future: controller.loadInitial(),
-                  //   builder: (context, asyncSnapshot) {
-                  //     print('asyncSnapshot: ${asyncSnapshot.connectionState}');
-                  //
-                  //     if (asyncSnapshot.connectionState ==
-                  //         ConnectionState.waiting) {
-                  //       // Show loader while waiting
-                  //       return const Center(child: CircularProgressIndicator());
-                  //     } else if (asyncSnapshot.hasError) {
-                  //       // Show error message if future fails
-                  //       return Center(
-                  //         child: Text(
-                  //           'Error: ${asyncSnapshot.error}',
-                  //           style: const TextStyle(color: Colors.red),
-                  //         ),
-                  //       );
-                  //     } else if (asyncSnapshot.connectionState ==
-                  //         ConnectionState.done) {
-                  //       return Obx(() {
-                  //         if (!controller.isLoading.value &&
-                  //             controller.items.isEmpty) {
-                  //           return const Center(
-                  //             child: Text("No Property found."),
-                  //           );
-                  //         }
-                  //
-                  //         return SizedBox(
-                  //           height: 180,
-                  //           child: ClipRRect(
-                  //             child: ListView.separated(
-                  //               scrollDirection: Axis.horizontal,
-                  //               itemCount: controller.items.length.clamp(0, 10),
-                  //               padding: const EdgeInsets.symmetric(
-                  //                 horizontal: 10,
-                  //               ),
-                  //               separatorBuilder:
-                  //                   (_, __) => const SizedBox(width: 10),
-                  //               itemBuilder: (context, index) {
-                  //                 final property = controller.items[index];
-                  //                 final percentage =
-                  //                     double.tryParse(
-                  //                       propertyPercentage[index],
-                  //                     ) ??
-                  //                     0.0;
-                  //                 final isPositive = percentage >= 10.0;
-                  //                 return TopPropertyByLocation(
-                  //                   property: property,
-                  //                   isPositive: isPositive,
-                  //                   rating: percentage,
-                  //                 );
-                  //               },
-                  //             ),
-                  //           ),
-                  //         );
-                  //       });
-                  //     } else {
-                  //       return const Center(
-                  //         child: Text('No Property Available'),
-                  //       );
-                  //     }
-                  //   },
+                  // const TitleWithViewAll(
+                  //   title: "Trending Areas",
+                  //   showViewAll: true,
                   // ),
-                  Obx(() {
-                    if (controller.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (controller.items.isEmpty) {
-                      return const Center(child: Text("No Property found."));
-                    } else {
-                      return SizedBox(
-                        height: 180,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: controller.items.length.clamp(0, 10),
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          separatorBuilder:
-                              (_, __) => const SizedBox(width: 10),
-                          itemBuilder: (context, index) {
-                            final property = controller.items[index];
-                            final percentage =
-                                double.tryParse(propertyPercentage[index]) ??
-                                0.0;
-                            final isPositive = percentage >= 10.0;
-                            return TopPropertyByLocation(
-                              property: property,
-                              rating: percentage,
-                              isPositive: isPositive,
-                            );
-                          },
-                        ),
-                      );
-                    }
-                  }),
-
-                  const SizedBox(height: 20),
-
-                  const TitleWithViewAll(
-                    title: "Top Rated Localities",
-                    showViewAll: true,
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // FutureBuilder(
-                  //   future: controller.loadInitial(),
-                  //   builder: (context, asyncSnapshot) {
-                  //     print('asyncSnapshot: ${asyncSnapshot.connectionState}');
                   //
-                  //     if (asyncSnapshot.connectionState ==
-                  //         ConnectionState.waiting) {
-                  //       // Show loader while waiting
-                  //       return const Center(child: CircularProgressIndicator());
-                  //     } else if (asyncSnapshot.hasError) {
-                  //       // Show error message if future fails
-                  //       return Center(
-                  //         child: Text(
-                  //           'Error: ${asyncSnapshot.error}',
-                  //           style: const TextStyle(color: ColorRes.error),
-                  //         ),
-                  //       );
-                  //     } else if (asyncSnapshot.connectionState ==
-                  //         ConnectionState.done) {
-                  //       return Obx(() {
-                  //         if (!controller.isLoading.value &&
-                  //             controller.items.isEmpty) {
-                  //           return const Center(
-                  //             child: CircularProgressIndicator(),
+                  // const SizedBox(height: 12),
+                  //
+                  // // FutureBuilder(
+                  // //   future: controller.loadInitial(),
+                  // //   builder: (context, asyncSnapshot) {
+                  // //     print('asyncSnapshot: ${asyncSnapshot.connectionState}');
+                  // //
+                  // //     if (asyncSnapshot.connectionState ==
+                  // //         ConnectionState.waiting) {
+                  // //       // Show loader while waiting
+                  // //       return const Center(child: CircularProgressIndicator());
+                  // //     } else if (asyncSnapshot.hasError) {
+                  // //       // Show error message if future fails
+                  // //       return Center(
+                  // //         child: Text(
+                  // //           'Error: ${asyncSnapshot.error}',
+                  // //           style: const TextStyle(color: Colors.red),
+                  // //         ),
+                  // //       );
+                  // //     } else if (asyncSnapshot.connectionState ==
+                  // //         ConnectionState.done) {
+                  // //       return Obx(() {
+                  // //         if (!controller.isLoading.value &&
+                  // //             controller.items.isEmpty) {
+                  // //           return const Center(
+                  // //             child: Text("No Property found."),
+                  // //           );
+                  // //         }
+                  // //
+                  // //         return SizedBox(
+                  // //           height: 180,
+                  // //           child: ClipRRect(
+                  // //             child: ListView.separated(
+                  // //               scrollDirection: Axis.horizontal,
+                  // //               itemCount: controller.items.length.clamp(0, 10),
+                  // //               padding: const EdgeInsets.symmetric(
+                  // //                 horizontal: 10,
+                  // //               ),
+                  // //               separatorBuilder:
+                  // //                   (_, __) => const SizedBox(width: 10),
+                  // //               itemBuilder: (context, index) {
+                  // //                 final property = controller.items[index];
+                  // //                 final percentage =
+                  // //                     double.tryParse(
+                  // //                       propertyPercentage[index],
+                  // //                     ) ??
+                  // //                     0.0;
+                  // //                 final isPositive = percentage >= 10.0;
+                  // //                 return TopPropertyByLocation(
+                  // //                   property: property,
+                  // //                   isPositive: isPositive,
+                  // //                   rating: percentage,
+                  // //                 );
+                  // //               },
+                  // //             ),
+                  // //           ),
+                  // //         );
+                  // //       });
+                  // //     } else {
+                  // //       return const Center(
+                  // //         child: Text('No Property Available'),
+                  // //       );
+                  // //     }
+                  // //   },
+                  // // ),
+                  // Obx(() {
+                  //   if (controller.isLoading.value) {
+                  //     return const Center(child: CircularProgressIndicator());
+                  //   } else if (controller.items.isEmpty) {
+                  //     return const Center(child: Text("No Property found."));
+                  //   } else {
+                  //     return SizedBox(
+                  //       height: 180,
+                  //       child: ListView.separated(
+                  //         scrollDirection: Axis.horizontal,
+                  //         itemCount: controller.items.length.clamp(0, 10),
+                  //         padding: EdgeInsets.symmetric(horizontal: 12),
+                  //         separatorBuilder:
+                  //             (_, __) => const SizedBox(width: 10),
+                  //         itemBuilder: (context, index) {
+                  //           final property = controller.items[index];
+                  //           final percentage =
+                  //               double.tryParse(propertyPercentage[index]) ??
+                  //               0.0;
+                  //           final isPositive = percentage >= 10.0;
+                  //           return TopPropertyByLocation(
+                  //             property: property,
+                  //             rating: percentage,
+                  //             isPositive: isPositive,
                   //           );
-                  //         }
+                  //         },
+                  //       ),
+                  //     );
+                  //   }
+                  // }),
                   //
-                  //         if (!controller.isLoading.value &&
-                  //             controller.items.isEmpty) {
-                  //           return const Center(
-                  //             child: Text("No Property found."),
-                  //           );
-                  //         }
+                  // const SizedBox(height: 20),
+
+                  // const TitleWithViewAll(
+                  //   title: "Top Rated Localities",
+                  //   showViewAll: true,
+                  // ),
                   //
-                  //         return SizedBox(
-                  //           height: 100,
-                  //           child: ListView.builder(
-                  //             scrollDirection: Axis.horizontal,
-                  //             itemCount: controller.items.length,
-                  //             padding: const EdgeInsets.only(left: 10),
-                  //             itemBuilder: (context, index) {
-                  //               final property = controller.items[index];
-                  //               return Padding(
-                  //                 padding: const EdgeInsets.only(right: 10), //
-                  //                 child: PropertyHorizontalCard(
-                  //                   imageHeight: double.infinity,
-                  //                   titleFontWeight: AppFontWeights.semiBold,
+                  // const SizedBox(height: 12),
                   //
-                  //                   buttonText: 'View More',
-                  //                   locationFontSize: AppFontSizes.caption,
-                  //                   maxLineTitle: 1,
-                  //                   buttonFontWeight: AppFontWeights.semiBold,
-                  //                   buttonFontSize: 10,
-                  //                   buttonTextColor: ColorRes.primary,
-                  //                   borderColor: ColorRes.grey,
-                  //                   maxLine: 1,
-                  //                   title: '${property.title}',
-                  //                   imagePath:
-                  //                       (property.propertyMedia?.images !=
-                  //                                   null &&
-                  //                               property
-                  //                                   .propertyMedia!
-                  //                                   .images!
-                  //                                   .isNotEmpty)
-                  //                           ? property
-                  //                               .propertyMedia!
-                  //                               .images!
-                  //                               .first
-                  //                           : 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg',
+                  // Obx(() {
+                  //   if (!controller.isLoading.value &&
+                  //       controller.items.isEmpty) {
+                  //     return const Center(child: CircularProgressIndicator());
+                  //   }
                   //
-                  //                   location:
-                  //                       'Location : ${property.address ?? 'N/A'}',
-                  //                   rating:
-                  //                       property.totalViews != null
-                  //                           ? property.totalViews?.toDouble()
-                  //                           : 0.0,
-                  //                   price:
-                  //                       '${property.propertyDetails?.financialInfo?.price ?? 'N/A'}',
-                  //                   priceFontSize: AppFontSizes.caption,
-                  //                   priceFontWeight: AppFontWeights.semiBold,
-                  //                   ratingColor: ColorRes.primary,
-                  //                   accentColor: ColorRes.primary,
-                  //                   onTap: () {
-                  //                     Get.to(
-                  //                       () => RatingDetail(property: property),
-                  //                     );
-                  //                   },
-                  //                 ),
-                  //               );
+                  //   if (!controller.isLoading.value &&
+                  //       controller.items.isEmpty) {
+                  //     return const Center(child: Text("No Property found."));
+                  //   }
+                  //
+                  //   return SizedBox(
+                  //     height: 100,
+                  //     child: ListView.builder(
+                  //       scrollDirection: Axis.horizontal,
+                  //       itemCount: controller.items.length,
+                  //       padding: const EdgeInsets.only(left: 10),
+                  //       itemBuilder: (context, index) {
+                  //         final property = controller.items[index];
+                  //         return Padding(
+                  //           padding: const EdgeInsets.only(right: 10), //
+                  //           child: PropertyHorizontalCard(
+                  //             imageHeight: double.infinity,
+                  //             titleFontWeight: AppFontWeights.semiBold,
+                  //
+                  //             buttonText: 'View More',
+                  //             locationFontSize: AppFontSizes.caption,
+                  //             maxLineTitle: 1,
+                  //             buttonFontWeight: AppFontWeights.semiBold,
+                  //             buttonFontSize: 10,
+                  //             buttonTextColor: ColorRes.primary,
+                  //             borderColor: ColorRes.grey,
+                  //             maxLine: 1,
+                  //             title: '${property.title}',
+                  //             imagePath:
+                  //                 (property.propertyMedia?.images != null &&
+                  //                         property
+                  //                             .propertyMedia!
+                  //                             .images!
+                  //                             .isNotEmpty)
+                  //                     ? property.propertyMedia!.images!.first
+                  //                     : 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg',
+                  //
+                  //             location:
+                  //                 'Location : ${property.address ?? 'N/A'}',
+                  //             rating:
+                  //                 property.totalViews != null
+                  //                     ? property.totalViews?.toDouble()
+                  //                     : 0.0,
+                  //             price:
+                  //                 '${property.propertyDetails?.financialInfo?.price ?? 'N/A'}',
+                  //             priceFontSize: AppFontSizes.caption,
+                  //             priceFontWeight: AppFontWeights.semiBold,
+                  //             ratingColor: ColorRes.primary,
+                  //             accentColor: ColorRes.primary,
+                  //             onTap: () {
+                  //               Get.to(() => RatingDetail(property: property));
                   //             },
                   //           ),
                   //         );
-                  //       });
-                  //     } else {
-                  //       return const Center(
-                  //         child: Text('No Property Available'),
-                  //       );
-                  //     }
-                  //   },
-                  // ),
-                  Obx(() {
-                    if (!controller.isLoading.value &&
-                        controller.items.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (!controller.isLoading.value &&
-                        controller.items.isEmpty) {
-                      return const Center(child: Text("No Property found."));
-                    }
-
-                    return SizedBox(
-                      height: 100,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: controller.items.length,
-                        padding: const EdgeInsets.only(left: 10),
-                        itemBuilder: (context, index) {
-                          final property = controller.items[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 10), //
-                            child: PropertyHorizontalCard(
-                              imageHeight: double.infinity,
-                              titleFontWeight: AppFontWeights.semiBold,
-
-                              buttonText: 'View More',
-                              locationFontSize: AppFontSizes.caption,
-                              maxLineTitle: 1,
-                              buttonFontWeight: AppFontWeights.semiBold,
-                              buttonFontSize: 10,
-                              buttonTextColor: ColorRes.primary,
-                              borderColor: ColorRes.grey,
-                              maxLine: 1,
-                              title: '${property.title}',
-                              imagePath:
-                                  (property.propertyMedia?.images != null &&
-                                          property
-                                              .propertyMedia!
-                                              .images!
-                                              .isNotEmpty)
-                                      ? property.propertyMedia!.images!.first
-                                      : 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg',
-
-                              location:
-                                  'Location : ${property.address ?? 'N/A'}',
-                              rating:
-                                  property.totalViews != null
-                                      ? property.totalViews?.toDouble()
-                                      : 0.0,
-                              price:
-                                  '${property.propertyDetails?.financialInfo?.price ?? 'N/A'}',
-                              priceFontSize: AppFontSizes.caption,
-                              priceFontWeight: AppFontWeights.semiBold,
-                              ratingColor: ColorRes.primary,
-                              accentColor: ColorRes.primary,
-                              onTap: () {
-                                Get.to(() => RatingDetail(property: property));
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  }),
+                  //       },
+                  //     ),
+                  //   );
+                  // }),
 
                   /// Filters by cities
                   const SizedBox(height: 20),
@@ -1207,26 +1111,40 @@ class _HomeScreenState extends State<HomeScreen> {
                   //     ),
                   //   ),
                   // ),
-                  const SizedBox(height: 20),
-                  TitleWithViewAll(
-                    title: "Recommended Sellers",
-                    showViewAll: true,
-                  ),
-                  const SizedBox(height: 12),
+                  Obx(() {
+                    if (topSellerController.isLoading.value &&
+                        topSellerController.items.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  SellerListWidget(propertyList: dummySellerList),
+                    if (!topSellerController.isLoading.value &&
+                        topSellerController.items.isEmpty) {
+                      return SizedBox.shrink();
+                    }
+                    return Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        TitleWithViewAll(
+                          title: "Recommended Sellers",
+                          showViewAll: true,
+                        ),
+                        const SizedBox(height: 12),
+                        SellerListWidget(topSeller: topSellerController.items),
+                      ],
+                    );
+                  }),
 
-                  const SizedBox(height: 32),
-                  TitleWithViewAll(
-                    title: "Recommended Insights",
-                    showViewAll: true,
-                    onViewAll: () {
-                      Get.to(() => MainNavigationScreen());
-                    },
-                  ),
-                  SizedBox(height: AppSpacing.medium),
-
-                  RecommendedInsights(),
+                  // const SizedBox(height: 32),
+                  // TitleWithViewAll(
+                  //   title: "Recommended Insights",
+                  //   showViewAll: true,
+                  //   onViewAll: () {
+                  //     Get.to(() => MainNavigationScreen());
+                  //   },
+                  // ),
+                  // SizedBox(height: AppSpacing.medium),
+                  //
+                  // RecommendedInsights(),
                   const SizedBox(height: 32),
                   const TitleWithViewAll(
                     title: "Tending Insights",

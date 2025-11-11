@@ -25,41 +25,6 @@ class PropertyService {
     return await ApiConstants.getHeaders();
   }
 
-  /// Fetch properties with optional pagination & filters
-  // Future<List<Items>> fetchProperties({
-  //   int page = 1,
-  //   Map<String, String>? filters,
-  // }) async {
-  //   try {
-  //     final queryParameters = {
-  //       'page': page.toString(),
-  //       if (filters != null) ...filters,
-  //     };
-  //
-  //     final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-  //     final response = await http.get(uri, headers: await headers());
-  //
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //
-  //       print("data: $data");
-  //       // Extract the list of properties
-  //       final  itemsJson = data["data"]["items"] ?? [];
-  //       print("itemsJson: $itemsJson");
-  //
-  //       return (itemsJson as List).map((json) => Items.fromJson(json)).toList();
-  //     } else {
-  //       print("Failed to load properties: ${response.statusCode}");
-  //       print("Failed to load properties: ${response.body}");
-  //
-  //     }
-  //   } catch (e) {
-  //     print("Exception in fetchProperties: $e");
-  //   }
-  //
-  //   return [];
-  // }
-
   Future<PaginationResponse<Items>> fetchProperties({
     int page = 1,
     Map<String, String>? filters,
@@ -141,25 +106,6 @@ class PropertyService {
           request.fields[key] = value.toString();
         }
       });
-
-      // Assuming `images` is List<PhotoImageModel>
-      // for (var image in images) {
-      //   final file = File(image.path);
-      //   if (await file.exists()) {
-      //     // Detect MIME type dynamically
-      //     final mimeType =
-      //         lookupMimeType(file.path)?.split('/') ?? ['image', 'jpeg'];
-      //
-      //     request.files.add(
-      //       await http.MultipartFile.fromPath(
-      //         'property_images', // backend field for images
-      //         file.path,
-      //         filename: file.path.split('/').last,
-      //         contentType: MediaType(mimeType[0], mimeType[1]),
-      //       ),
-      //     );
-      //   }
-      // }
 
       if (images != null && images.isNotEmpty) {
         for (var image in images) {
