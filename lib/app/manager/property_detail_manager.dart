@@ -193,7 +193,7 @@ class PropertyDetailManager {
       if (pd.floorInfo != null) {
         details.add({
           "Floor":
-              "${pd.floorInfo!.floorNumber} of ${pd.floorInfo!.totalFloors}",
+          "${pd.floorInfo!.floorNumber} of ${pd.floorInfo!.totalFloors}",
         });
       }
       if (pd.furnishInfo?.furnishType != null) {
@@ -230,9 +230,9 @@ class PropertyDetailManager {
               final maxRent = rents.reduce((a, b) => a > b ? a : b);
 
               final rentText =
-                  (minRent == maxRent)
-                      ? "$minRent INR / month"
-                      : "$minRent - $maxRent INR / month";
+              (minRent == maxRent)
+                  ? "$minRent INR / month"
+                  : "$minRent - $maxRent INR / month";
               details.add({"Rent Range": rentText});
             }
 
@@ -307,7 +307,7 @@ class PropertyDetailManager {
       if (pd.floorInfo != null) {
         details.add({
           "Floor":
-              "${pd.floorInfo!.floorNumber} of ${pd.floorInfo!.totalFloors}",
+          "${pd.floorInfo!.floorNumber} of ${pd.floorInfo!.totalFloors}",
         });
       }
       if (pd.propertyBuiltUpArea != null) {
@@ -334,7 +334,7 @@ class PropertyDetailManager {
       if ((parking.covered ?? false) || (parking.open ?? false)) {
         details.add({
           "Parking":
-              "${(parking.covered ?? false) ? "1 Covered" : "0 Covered"}, ${(parking.open ?? false) ? "1 Open" : "0 Open"}",
+          "${(parking.covered ?? false) ? "1 Covered" : "0 Covered"}, ${(parking.open ?? false) ? "1 Open" : "0 Open"}",
         });
       }
     }

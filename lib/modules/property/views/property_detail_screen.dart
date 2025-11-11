@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
 import 'package:housing_flutter_app/app/manager/string_manager.dart';
 import 'package:housing_flutter_app/app/utils/bottom_sheet_form.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/app/widgets/video_player/custom_video_player.dart';
@@ -37,6 +40,7 @@ import '../../../app/widgets/texts/headline_text.dart';
 import '../../../data/network/overall_rating/model/overall_rating_model.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../../utils/common_widget/rera_widget.dart';
+import '../../../widgets/property/furnishing_details.dart';
 import '../../search_property/controller/search_controller.dart';
 import '../controllers/overall_rating_controller.dart';
 
@@ -210,7 +214,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             ),
           );
         }
-
+log("Furnishing detail ${property?.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}");
+log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}");
         return SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.only(
@@ -231,29 +236,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   endIndent: 18,
                   color: ColorRes.leadGreyColor.shade300,
                 ),
-
-                const SizedBox(height: 12),
-                const TitleWithViewAll(title: 'Facilities'),
-                const SizedBox(height: 0),
-                Facilities(property: property ?? Items()),
-                const SizedBox(height: 0),
-                Divider(
-                  indent: 18,
-                  endIndent: 18,
-                  color: ColorRes.leadGreyColor.shade300,
-                ),
-
-                const SizedBox(height: 12),
-                const TitleWithViewAll(title: 'Property Details'),
-                const SizedBox(height: 12),
-                Details(property: property!),
-                const SizedBox(height: 12),
-                Divider(
-                  indent: 18,
-                  endIndent: 18,
-                  color: ColorRes.leadGreyColor.shade300,
-                ),
-
                 if (property?.propertyDetails?.amenities != null) ...[
                   const SizedBox(height: 12),
                   const TitleWithViewAll(title: 'Amenities'),
@@ -268,6 +250,33 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     color: ColorRes.leadGreyColor.shade300,
                   ),
                 ],
+
+
+                const SizedBox(height: 12),
+                const TitleWithViewAll(title: 'Property Details'),
+                const SizedBox(height: 12),
+                Details(property: property!),
+                const SizedBox(height: 12),
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
+                ),
+                const SizedBox(height: 12),
+                const TitleWithViewAll(title: 'Furnishing'),
+                const SizedBox(height: 0),
+                // Facilities(property: property ?? Items()),
+                FurnishingDetails(
+                  property: property??Items(),
+                  bgColor: ColorRes.propertyBg,
+                  txtColor: ColorRes.propertyText,
+                ),
+                const SizedBox(height: 0),
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
+                ),
 
                 // PG Rules Section (only for PG listing type)
                 if (property?.listingType?.toUpperCase() == "PG" &&
@@ -1268,11 +1277,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 decoration: BoxDecoration(
                   color:
                       isAllowed
-                          ? ColorRes.green.withOpacity(0.1)
-                          : ColorRes.error.withOpacity(0.1),
+                          ? ColorRes.green.withOpacity(0.02)
+                          : ColorRes.error.withOpacity(0.02),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isAllowed ? ColorRes.green : ColorRes.error,
+                    color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
                     width: 1,
                   ),
                 ),
@@ -1282,7 +1291,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     Icon(
                       rule['icon'] as IconData,
                       size: 16,
-                      color: isAllowed ? ColorRes.green : ColorRes.error,
+                      color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -1290,14 +1299,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       style: TextStyle(
                         fontSize: AppFontSizes.bodySmall,
                         fontWeight: AppFontWeights.medium,
-                        color: isAllowed ? ColorRes.green : ColorRes.error,
+                        color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
                       ),
                     ),
                     const SizedBox(width: 4),
                     Icon(
                       isAllowed ? Icons.check_circle : Icons.cancel,
                       size: 14,
-                      color: isAllowed ? ColorRes.green : ColorRes.error,
+                      color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
                     ),
                   ],
                 ),
@@ -1332,20 +1341,19 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Room Type Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           room.roomType?.toUpperCase() ?? 'Room',
-                          style: const TextStyle(
+                          style:  TextStyle(
                             fontSize: AppFontSizes.body,
-                            fontWeight: AppFontWeights.bold,
-                            color: ColorRes.primary,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 4,
                           ),
@@ -1354,10 +1362,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            '₹${room.rent ?? 0}/month',
+                            '${Formatter.formatPrice(room.rent??0)} / month',
                             style: const TextStyle(
                               fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.bold,
+                              fontWeight: AppFontWeights.semiBold,
                               color: ColorRes.primary,
                             ),
                           ),
@@ -1377,9 +1385,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            'Security Deposit: ₹${room.securityDeposit}',
+                            'Security Deposit: ${Formatter.formatPrice(room.securityDeposit??0)}',
                             style: TextStyle(
-                              fontSize: AppFontSizes.bodySmall,
+                              fontSize: AppFontSizes.small,
                               color: ColorRes.leadGreyColor.shade700,
                             ),
                           ),
@@ -1812,6 +1820,7 @@ class PropertyBottomBar extends StatelessWidget {
               SizedBox(
                 width: 140,
                 child: NesticoPeButton(
+
                   onTap: onCallOwner,
                   title: "View Contact",
                 ),
@@ -2122,12 +2131,11 @@ class Details extends StatelessWidget {
       final itemWidth = (screenWidth / 2) - 26;
 
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 🔹 Details Grid
           Center(
             child: Wrap(
-              alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.start,
               spacing: 20,
               runSpacing: 12,

@@ -101,7 +101,9 @@ class RentAdvanceDetail extends StatelessWidget {
     ];
     final rent_Parking_Charges = ['Included in rent', 'Separate'];
     return Obx(() {
-      print("Propwerty type${controller.rent_propertyType.value}");
+      print("Propwerty type${controller.rent_propertyType.value}  ${((controller.rent_propertyType.value != 'Independent House' &&
+          controller.rent_propertyType.value != 'Duplex' )&&
+          controller.rent_propertyType.value != 'Farmhouse')}");
       if ((controller.lookingTo.value == "Rent" ||
               controller.lookingTo.value == 'Sell') &&
           controller.propertyType.value == "Residential") {
@@ -186,8 +188,8 @@ class RentAdvanceDetail extends StatelessWidget {
                   ),
                 );
               }),
-              if (controller.rent_propertyType.value != 'Independent House' ||
-                  controller.rent_propertyType.value != 'Duplex' ||
+              if ((controller.rent_propertyType.value != 'Independent House' &&
+                  controller.rent_propertyType.value != 'Duplex' )&&
                   controller.rent_propertyType.value != 'Farmhouse') ...[
                 SizedBox(height: 16),
                 buildSectionTitle("Covered Parking"),
@@ -245,14 +247,18 @@ class RentAdvanceDetail extends StatelessWidget {
                   );
                 }),
               ],
-              SizedBox(height: 16),
-              buildSectionTitle("Lift info"),
-              SizedBox(height: 8),
-              Obx(
-                () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
+              if(((controller.rent_propertyType.value != 'Independent House' &&
+                  controller.rent_propertyType.value != 'Duplex' )&&
+                  controller.rent_propertyType.value != 'Villa'))
+                ...[
+                  SizedBox(height: 16),
+                  buildSectionTitle("Lift info"),
+                  SizedBox(height: 8),
+                  Obx(
+                        () => Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children:
                       lift_info.map((option) {
                         return buildChoice(
                           title: option,
@@ -262,8 +268,10 @@ class RentAdvanceDetail extends StatelessWidget {
                           },
                         );
                       }).toList(),
-                ),
-              ),
+                    ),
+                  ),
+                ],
+
               if (controller.lookingTo.value == 'Rent') ...[
                 SizedBox(height: 16),
                 buildSectionTitle("Pet Friendly? "),
@@ -567,7 +575,7 @@ class RentAdvanceDetail extends StatelessWidget {
               ),
 
               SizedBox(height: 16),
-              if (controller.lookingTo.value == 'Sell') ...[
+
                 buildSectionTitle('RERA ID'),
                 SizedBox(height: 8),
                 buildTextField(
@@ -576,7 +584,7 @@ class RentAdvanceDetail extends StatelessWidget {
                   controller.sell_Rera_Id,
                 ),
                 SizedBox(height: 16),
-              ],
+
               buildSectionTitle('Property Description'),
               SizedBox(height: 8),
               buildTextField(

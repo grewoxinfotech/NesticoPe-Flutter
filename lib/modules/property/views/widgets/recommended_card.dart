@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -278,43 +280,33 @@ class _RecommendedCardState extends State<RecommendedCard> {
                     Text(
                       title.displayName,
                       style: TextStyle(
-                        fontSize: AppFontSizes.caption,
-                        color: ColorRes.leadGreyColor.shade800,
+                        fontSize: AppFontSizes.medium,
+                        color: ColorRes.textPrimary,
                         fontWeight: AppFontWeights.medium,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
                           child: Text(
-                            widget.property.location ?? '-',
-                            style: const TextStyle(
-                              fontWeight: AppFontWeights.semiBold,
-                              fontSize: AppFontSizes.caption,
-                              color: ColorRes.blackShade87,
+                            widget.property.address ?? '-',
+                            style:  TextStyle(
+                              fontWeight: AppFontWeights.medium,
+                              fontSize: AppFontSizes.extraSmall,
+                              color: ColorRes.leadGreyColor.shade600,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        Text(
-                          price.displayPrice.toString() ?? '0',
-
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: AppFontSizes.bodySmall,
-                            color: ColorRes.primary,
-                          ),
-                        ),
                       ],
                     ),
 
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 6),
 
                     // Property Info
                     // if (widget.property.propertyDetails?.bhk != null) ...[
@@ -361,34 +353,34 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       Facilities(property: widget.property),
                     ],
 
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 6),
 
-                    Row(
-                      children: [
-                        Transform.translate(
-                          offset: const Offset(-2, 0), // move left by 2px
-                          child: const Icon(
-                            Icons.location_on_rounded,
-                            size: 10,
-                            color: ColorRes.grey,
-                          ),
-                        ),
-                        const SizedBox(width: 3),
-                        Expanded(
-                          child: Text(
-                            widget.property.address ?? '-',
-
-                            style: TextStyle(
-                              fontSize: AppFontSizes.mini,
-                              color: ColorRes.leadGreyColor.shade600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
+                    // Row(
+                    //   children: [
+                    //     Transform.translate(
+                    //       offset: const Offset(-2, 0), // move left by 2px
+                    //       child: const Icon(
+                    //         Icons.location_on_rounded,
+                    //         size: 10,
+                    //         color: ColorRes.grey,
+                    //       ),
+                    //     ),
+                    //     const SizedBox(width: 3),
+                    //     Expanded(
+                    //       child: Text(
+                    //         widget.property.address ?? '-',
+                    //
+                    //         style: TextStyle(
+                    //           fontSize: AppFontSizes.mini,
+                    //           color: ColorRes.leadGreyColor.shade600,
+                    //         ),
+                    //         maxLines: 1,
+                    //         overflow: TextOverflow.ellipsis,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 5),
                     // Text(
                     //   '${widget.property.propertyDetails?.propertyCondition} ' ??
                     //       '-',
@@ -401,16 +393,15 @@ class _RecommendedCardState extends State<RecommendedCard> {
                     //   overflow: TextOverflow.ellipsis,
                     // ),
                     // SizedBox(height: 5),
+                    const SizedBox(width: 10),
                     Text(
-                      '${widget.property.propertyDetails?.propertyBuiltUpArea} sq.ft' ??
-                          '-',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.mini,
-                        color: ColorRes.leadGreyColor.shade800,
-                        fontWeight: AppFontWeights.medium,
+                      price.displayPrice.toString() ?? '0',
+
+                      style:  TextStyle(
+                        fontWeight:AppFontWeights.semiBold ,
+                        fontSize: AppFontSizes.bodyMedium,
+                        color: ColorRes.primary,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 5),
                     // Divider
@@ -483,8 +474,9 @@ class Facilities extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     final highlights = PropertyHighlightManager(property).getHighlights();
-
+log('Highkiutjhg ${highlights.map((e) => e.title,)}');
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -523,9 +515,9 @@ class Facilities extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            fontSize: AppFontSizes.small,
+            fontSize: AppFontSizes.extraSmall,
             fontWeight: AppFontWeights.medium,
-            color: ColorRes.grey,
+            color: ColorRes.leadGreyColor.shade700,
           ),
         ),
       ],

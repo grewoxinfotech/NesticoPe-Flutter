@@ -5,6 +5,7 @@ import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/seller/seller_overview_service.dart';
 import '../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
 import '../../../data/network/seller_dashboard/service/seller_dashboard_service.dart';
+import '../../../data/network/user/service/user_service.dart';
 import '../model/overview_model.dart';
 
 class SellerOverviewController extends GetxController {
@@ -82,5 +83,13 @@ class SellerOverviewController extends GetxController {
     overviewData.value=SellerInsightsModel.fromJson(data??{});
     log("Seller jdsgfdyuh ${overviewData.value?.data.propertyMetrics.totalProperties}");
     
+  }
+
+  Future<void> getSellerProfileData()
+  async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id;
+    // final data = await UserService.
+
   }
 }

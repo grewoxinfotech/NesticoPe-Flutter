@@ -371,7 +371,7 @@ class ProfileScreen extends StatelessWidget {
           children: [
             _buildProfileAvatar(),
             const SizedBox(width: 16),
-            const Expanded(child: _ProfileWelcomeSection()),
+            Expanded(child: _ProfileWelcomeSection()),
           ],
         ),
       ),
@@ -481,7 +481,7 @@ class ProfileScreen extends StatelessWidget {
 
 // Separate widget for profile welcome section (better for maintainability)
 class _ProfileWelcomeSection extends StatelessWidget {
-  const _ProfileWelcomeSection();
+   _ProfileWelcomeSection();
 
   @override
   Widget build(BuildContext context) {
@@ -502,18 +502,20 @@ class _ProfileWelcomeSection extends StatelessWidget {
         Text(
           "Hello 👋 $displayRole $displaySellerType",
           style: TextStyle(
-            fontSize: AppFontSizes.large,
-            fontWeight: AppFontWeights.extraBold,
+            fontSize: AppFontSizes.medium,
+            fontWeight: AppFontWeights.bold,
+            color: ColorRes.textPrimary
           ),
         ),
         const SizedBox(height: 4),
         Text(
           "✓ Easy contact with sellers",
-          style: TextStyle(color: ColorRes.leadGreyColor),
+
+          style: TextStyle(color: ColorRes.leadGreyColor,fontSize: AppFontSizes.small),
         ),
         Text(
           "✓ Personalized experience",
-          style: TextStyle(color: ColorRes.leadGreyColor),
+          style: TextStyle(color: ColorRes.leadGreyColor,fontSize: AppFontSizes.small),
         ),
       ],
     );

@@ -890,8 +890,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
 
                     return SizedBox(
-                      height:
-                          280, // ✅ Increased to accommodate card height (410 + padding)
+                      height: 256,
                       width: double.infinity,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
@@ -912,8 +911,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               forHome: true,
                               project: data,
                               width:
-                                  320, // ✅ Added fixed width for horizontal scroll
-                              height: 210, // ✅ Explicitly set height
+                                  250, // ✅ Added fixed width for horizontal scroll
+                              height: 150,
+                              // ✅ Explicitly set height
                               developersName:
                                   data.projectContactInfo?.name ?? 'Unknown',
                               imageUrl:
@@ -929,7 +929,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   data.address.isNotEmpty
                                       ? data.address
                                       : 'Not specified',
-                              price: '₹500',
+                              price: data.getPriceRange(),
                               propertySize:
                                   data.projectSize?.totalBuildings
                                       ?.toString() ??
@@ -943,32 +943,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   const SizedBox(height: 20),
 
-                  // const TitleWithViewAll(title: "Residential Properties"),
-                  // // const SizedBox(height: 12),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(12.0),
-                  //   child: GridView.count(
-                  //     shrinkWrap: true,
-                  //     physics: const NeverScrollableScrollPhysics(),
-                  //     // Avoid scrolling conflict if inside scrollable
-                  //     crossAxisCount: 2,
-                  //     // Number of columns in the grid
-                  //     mainAxisSpacing: 12,
-                  //     crossAxisSpacing: 12,
-                  //     childAspectRatio: 170 / 125,
-                  //     // Width / Height
-                  //     // children: List.generate(images.length, (index) {
-                  //     //   return NesticoPeBannerCardWithText(
-                  //     //     height: 125,
-                  //     //     width: 170,
-                  //     //     imageUrl: images[index],
-                  //     //     title: "Apartment",
-                  //     //   );
-                  //     // }),
-                  //   ),
-                  // ),
-                  //
-                  // const SizedBox(height: 20),
                   const TitleWithViewAll(title: "Explore by furnishing type"),
                   // const SizedBox(height: 12),
                   SingleChildScrollView(

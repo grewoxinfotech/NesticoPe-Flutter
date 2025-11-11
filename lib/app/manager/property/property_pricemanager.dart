@@ -94,6 +94,8 @@
 //   }
 // }
 
+import 'package:housing_flutter_app/modules/seller/view/widget/seller_list.dart';
+
 import '../../../data/network/property/models/property_model.dart';
 import '../../utils/formater/formater.dart';
 
@@ -273,14 +275,14 @@ class PropertyPriceManager {
         final minRent = rents.first.toDouble();
         final maxRent = rents.last.toDouble();
         final minFormatted = Formatter.formatPrice(minRent);
-        final maxFormatted = Formatter.formatPrice(maxRent);
+        final maxFormatted = Formatter.formatNumber(maxRent);
 
         if (minRent == maxRent) {
           // All rooms have same price - simple display
-          return "₹$minFormatted /month";
+          return "$minFormatted /month";
         } else {
           // Show range with formatted values
-          return "₹$minFormatted - ₹$maxFormatted /month";
+          return "$minFormatted - $maxFormatted /month";
         }
       }
       return "Price not available"; // PG but no room info

@@ -903,7 +903,7 @@ class ReviewPropertyScreen extends StatelessWidget {
           // Location Details
           _buildSectionTitle('Location Details'),
           const SizedBox(height: 10),
-          _buildDetailRow('Address', controller.sell_rent_Address.text),
+          // _buildDetailRow('Address', controller.sell_rent_Address.text),
           _buildDetailRow('City', controller.cityController.text),
           _buildDetailRow('Locality', controller.localityController.text),
 

@@ -7,6 +7,8 @@ class ApiConstants {
   static const String baseURL =
       "http://192.168.1.12:19725/api/v1"; // Real Device (WiFi)
 
+
+
   // Auth Endpoints
   static String get auth => "$baseURL/auth";
   static String get loginEndpoint => "$auth/login";
@@ -20,6 +22,7 @@ class ApiConstants {
   static String get generateReferCode => "$baseURL/referral/generate-code";
   static String get getUserProfile => "$baseURL/user/profile/";
   static String get getSellerDashboard => "$baseURL/insight/seller";
+  static String get getSellerProfile => "$baseURL/insight/seller";
 
   // Lead
   static String get leads => "$baseURL/lead";

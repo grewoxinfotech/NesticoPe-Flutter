@@ -20,27 +20,10 @@ class RecommendedProperty extends StatelessWidget {
           if (controller.items.isEmpty) {
             return const Center(child: Text("No Property found."));
           }
-
-          // return Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 12),
-          //   child: SizedBox(
-          //     height: 290,
-          //     child: ListView.separated(
-          //       scrollDirection: Axis.horizontal,
-          //       itemCount: controller.items.length,
-          //       separatorBuilder: (_, __) => const SizedBox(width: 12),
-          //       itemBuilder: (context, index) {
-          //         final data = controller.items[index];
-          //         return RecommendedCard(property: data);
-          //       },
-          //     ),
-          //   ),
-          // );
-
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: SizedBox(
-              height: 335,
+              height: 325,
               child: Obx(() {
                 final items = controller.items;
                 if (items.isEmpty) {

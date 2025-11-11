@@ -199,9 +199,12 @@
 //   }
 // }
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/property/views/widgets/property_list_screen_card.dart';
@@ -407,6 +410,8 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
           );
         }
 
+
+
         return NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
             // detect when user reaches near the bottom
@@ -430,40 +435,129 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
               itemBuilder: (context, index) {
                 if (index < controller.viewedProperties.length) {
                   final property = controller.viewedProperties[index];
-                  return GestureDetector(
-                    onTap: () {
-                      if (property.entityType == "property") {
-                        // Property Screen
-                        Get.to(
-                          () => PropertyDetailScreen(
-                            propertyId: property.details.id,
-                          ),
-                        );
-                      } else {
-                        // Project Screen
-                        Get.to(
-                          () => ProjectDetailsScreen(
-                            projectId: property.details.id,
-                          ),
-                        );
-                      }
-                    },
-                    child: Obx(() {
+                  log("Most View ${property.toJson()}");
+                  return Obx(() {
                       final PropertyFavoriteController favoriteController =
                           Get.find<PropertyFavoriteController>();
 
                       final isFavorite = favoriteController.favorites.contains(
                         property.details.id,
                       );
-                      return SavedPropertyCard(
+                      
+                      // Calculate days ago
+                      int? daysAgo;
+                      if (property.viewedAt != null) {
+                        final difference = DateTime.now().difference(property.viewedAt!);
+                        daysAgo = difference.inDays;
+                      }
+                      
+                      // Format price based on entity type
+                      String formattedPrice = '';
+                      if (property.entityType == 'property') {
+                        // For properties - format monthly rent or sale price
+                        final price = property.details.price;
+                        if (price != null) {
+
+                            formattedPrice = Formatter.formatPrice(price);
+                        }
+                      } else {
+                        // For projects - format price range
+                        final range = property.details.priceRange;
+                        if (range != null) {
+                          final minPrice = range.minPrice;
+                          final maxPrice = range.maxPrice;
+
+                          if (minPrice == maxPrice) {
+                            formattedPrice = Formatter.formatPrice(minPrice);
+                          } else {
+                            formattedPrice = '${Formatter.formatPrice(minPrice)} - ${Formatter.formatNumber(maxPrice)}';
+                          }
+                        } else {
+                          formattedPrice = 'Price on Request';
+                        }
+                      }
+                      
+                      // Property type display
+                      String? displayPropertyType;
+                      String? displayBhk;
+                      
+                      if (property.entityType == 'project') {
+                        displayPropertyType = property.details.projectName;
+                        displayBhk = property.details.propertyTypes?.toUpperCase();
+                      } else {
+                        displayPropertyType = property.details.propertyType?.toUpperCase();
+                        displayBhk = property.details.propertyType?.toUpperCase();
+                      }
+                      
+                      // Location formatting
+                      String displayLocation = property.details.location ?? '';
+                      if (property.details.city != null && property.details.city!.isNotEmpty) {
+                        if (displayLocation.isNotEmpty) {
+                          displayLocation = '${property.details.city}';
+                        } else {
+                          displayLocation = property.details.city!;
+                        }
+                      }
+                      
+                      return HorizontalPropertyCard(
+                        // Image
                         imageUrl: property.details.images ?? '',
+                        
+                        // Basic info
                         isForRent: property.details.listingType == 'Rent',
                         location: property.details.location ?? '',
-                        price: property.displayPrice,
+                        price: formattedPrice,
+                        
+                        // Entity type and names
+                        entityType: property.entityType,
+                        projectName: property.details.projectName,
+                        propertyType: displayPropertyType,
+                        
+                        // Listing details
+                        listingType: property.details.listingType,
+                        priceType: property.details.priceType,
+                        status: property.details.status,
+                        city: property.details.city,
+                        
+                        // Verification and timing
+                        isVerified: property.details.status == 'approved',
+                        postedDaysAgo: daysAgo,
+                        
+                        // Actions
                         isFavorite: isFavorite,
+                        onTap: () {
+                          if (property.entityType == "property") {
+                            Get.to(
+                              () => PropertyDetailScreen(
+                                propertyId: property.details.id,
+                              ),
+                            );
+                          } else {
+                            Get.to(
+                              () => ProjectDetailsScreen(
+                                projectId: property.details.id,
+                              ),
+                            );
+                          }
+                        },
+                        onFavoritePressed: () {
+                          favoriteController.toggleFavorite(property.details.id);
+                        },
+                        onContactPressed: () {
+                          final PropertyContactedController contactedCtrl = Get.find<PropertyContactedController>();
+                          // contactedCtrl.addContactedProperty(property.details.id);
+                          // Show snackbar
+                          Get.snackbar(
+                            'Success',
+                            'Property added to contacted list',
+                            snackPosition: SnackPosition.BOTTOM,
+                            duration: const Duration(seconds: 2),
+                            backgroundColor: ColorRes.success,
+                            colorText: ColorRes.white,
+                          );
+                        },
                       );
-                    }),
-                  );
+                    });
                 } else {
                   // loader at bottom when loading next batch
                   return const Padding(
@@ -535,9 +629,11 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
             itemBuilder: (context, index) {
               final property =
                   manager.favoriteResponse.value!.data!.favorite[index];
+
               return GestureDetector(
                 onTap: () {
                   if (property.entityType == "property") {
+
                     // Property Screen
                     Get.to(
                       () =>
@@ -553,21 +649,116 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                 },
                 child: Obx(() {
                   final PropertyFavoriteController favoriteController =
-                      Get.find<PropertyFavoriteController>();
+                  Get.find<PropertyFavoriteController>();
 
                   final isFavorite = favoriteController.favorites.contains(
                     property.details.id,
                   );
-                  return SavedPropertyCard(
+
+                  // Format price based on entity type
+                  String formattedPrice = '';
+                  if (property.entityType == 'property') {
+                    // For properties - format monthly rent or sale price
+                    final price = property.details.price;
+                    if (price != null) {
+
+                        // Crore
+                        formattedPrice = Formatter.formatPrice(price);
+                    }
+                  } else {
+                    // For projects - format price range
+                    final range = property.details.priceRange;
+                    if (range != null) {
+                      final minPrice = range.minPrice;
+                      final maxPrice = range.maxPrice;
+
+                      if (minPrice == maxPrice) {
+                        formattedPrice = Formatter.formatPrice(minPrice);
+                      } else {
+                        formattedPrice = '${Formatter.formatPrice(minPrice)} - ${Formatter.formatNumber(maxPrice)}';
+                      }
+                    } else {
+                      formattedPrice = 'Price on Request';
+                    }
+                  }
+
+                  // Property type display
+                  String? displayPropertyType;
+                  String? displayBhk;
+
+                  if (property.entityType == 'project') {
+                    displayPropertyType = property.details.projectName;
+                    displayBhk = property.details.propertyTypes?.toUpperCase();
+                  } else {
+                    displayPropertyType = property.details.propertyType?.toUpperCase();
+                    displayBhk = property.details.propertyType?.toUpperCase();
+                  }
+
+                  // Location formatting
+                  String displayLocation = property.details.location ?? '';
+                  if (property.details.city != null && property.details.city!.isNotEmpty) {
+                    if (displayLocation.isNotEmpty) {
+                      displayLocation = '${property.details.city}';
+                    } else {
+                      displayLocation = property.details.city!;
+                    }
+                  }
+                  return HorizontalPropertyCard(
+                    // Image
                     imageUrl: property.details.images ?? '',
+
+                    // Basic info
                     isForRent: property.details.listingType == 'Rent',
                     location: property.details.location ?? '',
-                    price: property.displayPrice,
+                    price: formattedPrice,
+
+                    // Entity type and names
+                    entityType: property.entityType,
+                    projectName: property.details.projectName,
+                    propertyType: displayPropertyType,
+
+                    // Listing details
+                    listingType: property.details.listingType,
+                    priceType: property.details.priceType,
+                    status: property.details.status,
+                    city: property.details.city,
+
+                    // Verification and timing
+                    isVerified: property.details.status == 'approved',
+
+
+                    // Actions
                     isFavorite: isFavorite,
+                    onTap: () {
+                      if (property.entityType == "property") {
+                        Get.to(
+                              () => PropertyDetailScreen(
+                            propertyId: property.details.id,
+                          ),
+                        );
+                      } else {
+                        Get.to(
+                              () => ProjectDetailsScreen(
+                            projectId: property.details.id,
+                          ),
+                        );
+                      }
+                    },
                     onFavoritePressed: () {
-                      final PropertyFavoriteController favoriteController =
-                          Get.find<PropertyFavoriteController>();
                       favoriteController.toggleFavorite(property.details.id);
+                    },
+                    onContactPressed: () {
+                      final PropertyContactedController contactedCtrl = Get.find<PropertyContactedController>();
+                      // contactedCtrl.addContactedProperty(property.details.id);
+                      // Show snackbar
+                      Get.snackbar(
+                        'Success',
+                        'Property added to contacted list',
+                        snackPosition: SnackPosition.BOTTOM,
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: ColorRes.success,
+                        colorText: ColorRes.white,
+                      );
                     },
                   );
                 }),

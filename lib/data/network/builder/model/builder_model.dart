@@ -681,4 +681,33 @@ class ProjectItem {
     'createdAt': createdAt,
     'updatedAt': updatedAt,
   };
+
 }
+extension ProjectItemPriceRange on ProjectItem {
+  String getPriceRange() {
+    final prices = configuration
+        .expand((config) => config.variants)
+        .map((variant) => variant.price)
+        .where((p) => p > 0)
+        .toList();
+
+    if (prices.isEmpty) return "Price not available";
+
+    final minPrice = prices.reduce((a, b) => a < b ? a : b);
+    final maxPrice = prices.reduce((a, b) => a > b ? a : b);
+
+    String formatPrice(double price) {
+      if (price >= 10000000) {
+        return "₹${(price / 10000000).toStringAsFixed(1)} Cr";
+      } else if (price >= 100000) {
+        return "₹${(price / 100000).toStringAsFixed(1)} L";
+      }
+      return "₹${price.toStringAsFixed(0)}";
+    }
+
+    return minPrice == maxPrice
+        ? formatPrice(minPrice)
+        : "${formatPrice(minPrice)} - ${formatPrice(maxPrice)}";
+  }
+}
+

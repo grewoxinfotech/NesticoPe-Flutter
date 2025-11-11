@@ -1135,50 +1135,6 @@ class FloorInfo {
   };
 }
 
-// class FurnishInfo {
-//   String? furnishType;
-//   FurnishDetails? furnishDetails;
-//
-//   FurnishInfo({this.furnishType, this.furnishDetails});
-//
-//   FurnishInfo.fromJson(Map<String, dynamic> json) {
-//     furnishType = json['furnish_type'] as String?;
-//     furnishDetails =
-//         json['furnish_details'] != null
-//             ? FurnishDetails.fromJson(
-//               json['furnish_details'] as Map<String, dynamic>,
-//             )
-//             : null;
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = {};
-//     if (furnishType != null) data['furnish_type'] = furnishType;
-//     if (furnishDetails != null)
-//       data['furnish_details'] = furnishDetails!.toJson();
-//     return data;
-//   }
-// }
-//
-// class FurnishDetails {
-//   bool? modularKitchen;
-//   bool? wardrobes;
-//   bool? acInstalled;
-//
-//   FurnishDetails({this.modularKitchen, this.wardrobes, this.acInstalled});
-//
-//   FurnishDetails.fromJson(Map<String, dynamic> json) {
-//     modularKitchen = json['modular_kitchen'] as bool?;
-//     wardrobes = json['wardrobes'] as bool?;
-//     acInstalled = json['ac_installed'] as bool?;
-//   }
-//
-//   Map<String, dynamic> toJson() => {
-//     'modular_kitchen': modularKitchen,
-//     'wardrobes': wardrobes,
-//     'ac_installed': acInstalled,
-//   };
-// }
 
 class FurnishInfo {
   final String? furnishType;

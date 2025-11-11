@@ -156,8 +156,6 @@ class PropertyHighlightManager {
     "Condition": Icons.handyman,
     "Room Type": Icons.meeting_room,
   };
-
-  /// Returns a simplified list of highlights for UI (with icon and text)
   List<PropertyHighlightItem> getHighlights() {
     final highlights = <PropertyHighlightItem>[];
 
@@ -317,6 +315,96 @@ class PropertyHighlightManager {
 
   /// Returns comma-separated highlight values only (no icons)
   String get highlightsString => getHighlights().map((e) => e.value).join(', ');
+
+  /// Returns property furnishing information as a list of items with counts/availability
+  List<FurnishingItem> getFurnishingInfo() {
+    final furnishingItems = <FurnishingItem>[];
+
+    if (property.propertyDetails?.furnishInfo?.furnishDetails == null) {
+      return furnishingItems;
+    }
+
+    final details = property.propertyDetails!.furnishInfo!.furnishDetails!;
+
+    // Add count-based items (integer values)
+    if (details.ac != null && details.ac! > 0) {
+      furnishingItems.add(FurnishingItem(
+        name: "AC",
+        count: details.ac,
+        icon: Icons.ac_unit,
+      ));
+    }
+
+    if (details.bed != null && details.bed! > 0) {
+      furnishingItems.add(FurnishingItem(
+        name: "Bed",
+        count: details.bed,
+        icon: Icons.bed,
+      ));
+    }
+
+    if (details.geyser != null && details.geyser! > 0) {
+      furnishingItems.add(FurnishingItem(
+        name: "Geyser",
+        count: details.geyser,
+        icon: Icons.water_drop,
+      ));
+    }
+
+    // Add boolean-based items (available/not available)
+    if (details.washingMachine == true) {
+      furnishingItems.add(FurnishingItem(
+        name: "Washing Machine",
+        isAvailable: true,
+        icon: Icons.local_laundry_service,
+      ));
+    }
+
+    if (details.cupboard == true) {
+      furnishingItems.add(FurnishingItem(
+        name: "Cupboard",
+        isAvailable: true,
+        icon: Icons.door_sliding,
+      ));
+    }
+
+    if (details.stove == true) {
+      furnishingItems.add(FurnishingItem(
+        name: "Stove",
+        isAvailable: true,
+        icon: Icons.whatshot,
+      ));
+    }
+
+    if (details.fridge == true) {
+      furnishingItems.add(FurnishingItem(
+        name: "Fridge",
+        isAvailable: true,
+        icon: Icons.kitchen,
+      ));
+    }
+
+    if (details.waterPurifier == true) {
+      furnishingItems.add(FurnishingItem(
+        name: "Water Purifier",
+        isAvailable: true,
+        icon: Icons.water,
+      ));
+    }
+
+    if (details.modularKitchen == true) {
+      furnishingItems.add(FurnishingItem(
+        name: "Modular Kitchen",
+        isAvailable: true,
+        icon: Icons.countertops,
+      ));
+    }
+
+    return furnishingItems;
+  }
+
+  /// Returns the furnishing type (e.g., "fully-furnished", "semi-furnished", "unfurnished")
+  String? get furnishingType => property.propertyDetails?.furnishInfo?.furnishType;
 }
 
 /// Model to hold highlight data
@@ -326,4 +414,27 @@ class PropertyHighlightItem {
   final IconData? icon;
 
   PropertyHighlightItem({required this.title, required this.value, this.icon});
+}
+
+/// Model to hold furnishing item data
+class FurnishingItem {
+  final String name;
+  final int? count; // For countable items like AC, Bed, Geyser
+  final bool? isAvailable; // For boolean items like Washing Machine, Fridge
+  final IconData? icon;
+
+  FurnishingItem({
+    required this.name,
+    this.count,
+    this.isAvailable,
+    this.icon,
+  });
+
+  /// Returns display text for the furnishing item
+  String get displayText {
+    if (count != null) {
+      return "$name ($count)";
+    }
+    return name;
+  }
 }
