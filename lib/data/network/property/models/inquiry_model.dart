@@ -109,7 +109,6 @@
 //   };
 // }
 
-
 class InquiryResponse {
   final bool success;
   final String message;
@@ -155,9 +154,10 @@ class InquiryData {
 
   factory InquiryData.fromJson(Map<String, dynamic> json) {
     return InquiryData(
-      items: (json['items'] as List<dynamic>? ?? [])
-          .map((e) => Inquiry.fromJson(e))
-          .toList(),
+      items:
+          (json['items'] as List<dynamic>? ?? [])
+              .map((e) => Inquiry.fromJson(e))
+              .toList(),
       total: json['total'],
       currentPage: json['currentPage'],
       totalPages: json['totalPages'],
@@ -230,9 +230,10 @@ class Inquiry {
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
       entityType: json['entityType'] ?? '',
-      details: json['details'] != null
-          ? InquiryDetails.fromJson(json['details'])
-          : null,
+      details:
+          json['details'] != null
+              ? InquiryDetails.fromJson(json['details'])
+              : null,
     );
   }
 
@@ -261,11 +262,7 @@ class Meta {
   final bool? isNegotiable;
   final String? timePeriod;
 
-  Meta({
-    this.negotiablePrice,
-    this.isNegotiable,
-    this.timePeriod,
-  });
+  Meta({this.negotiablePrice, this.isNegotiable, this.timePeriod});
 
   factory Meta.fromJson(Map<String, dynamic> json) {
     return Meta(
@@ -283,48 +280,87 @@ class Meta {
 }
 
 class InquiryDetails {
+  // Common
   final String id;
-  final String propertyType;
-  final String listingType;
+  final String? projectName;
+  final String? propertyTypes;
+  final String? propertyType;
+  final String? listingType;
   final String? images;
-  final num price;
-  final String priceType;
-  final String location;
-  final String city;
+  final String? location;
+  final String? city;
+  final String? status;
+
+  // For project type
+  final PriceRange? priceRange;
+
+  // For property type
+  final num? price;
+  final String? priceType;
 
   InquiryDetails({
     required this.id,
-    required this.propertyType,
-    required this.listingType,
+    this.projectName,
+    this.propertyTypes,
+    this.propertyType,
+    this.listingType,
     this.images,
-    required this.price,
-    required this.priceType,
-    required this.location,
-    required this.city,
+    this.location,
+    this.city,
+    this.status,
+    this.priceRange,
+    this.price,
+    this.priceType,
   });
 
   factory InquiryDetails.fromJson(Map<String, dynamic> json) {
     return InquiryDetails(
       id: json['id'] ?? '',
-      propertyType: json['propertyType'] ?? '',
-      listingType: json['listingType'] ?? '',
+      projectName: json['projectName'],
+      propertyTypes: json['propertyTypes'],
+      propertyType: json['propertyType'],
+      listingType: json['listingType'],
       images: json['images'],
-      price: json['price'] ?? 0,
-      priceType: json['priceType'] ?? '',
-      location: json['location'] ?? '',
-      city: json['city'] ?? '',
+      location: json['location'],
+      city: json['city'],
+      status: json['status'],
+      priceRange:
+          json['priceRange'] != null
+              ? PriceRange.fromJson(json['priceRange'])
+              : null,
+      price: json['price'],
+      priceType: json['priceType'],
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
+    'projectName': projectName,
+    'propertyTypes': propertyTypes,
     'propertyType': propertyType,
     'listingType': listingType,
     'images': images,
-    'price': price,
-    'priceType': priceType,
     'location': location,
     'city': city,
+    'status': status,
+    'priceRange': priceRange?.toJson(),
+    'price': price,
+    'priceType': priceType,
   };
 }
 
+class PriceRange {
+  final num minPrice;
+  final num maxPrice;
+
+  PriceRange({required this.minPrice, required this.maxPrice});
+
+  factory PriceRange.fromJson(Map<String, dynamic> json) {
+    return PriceRange(
+      minPrice: json['minPrice'] ?? 0,
+      maxPrice: json['maxPrice'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {'minPrice': minPrice, 'maxPrice': maxPrice};
+}

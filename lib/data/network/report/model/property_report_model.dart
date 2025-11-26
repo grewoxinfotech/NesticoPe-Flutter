@@ -12,7 +12,7 @@ class PropertyReportModel {
   /// Convert JSON to Model
   factory PropertyReportModel.fromJson(Map<String, dynamic> json) {
     return PropertyReportModel(
-      propertyId: json['propertyId'] as String,
+      propertyId: json['id'] as String,
       reason: json['reason'] as String,
       description: json['description'] as String,
     );
@@ -20,11 +20,7 @@ class PropertyReportModel {
 
   /// Convert Model to JSON
   Map<String, dynamic> toJson() {
-    return {
-      'propertyId': propertyId,
-      'reason': reason,
-      'description': description,
-    };
+    return {'id': propertyId, 'reason': reason, 'description': description};
   }
 }
 

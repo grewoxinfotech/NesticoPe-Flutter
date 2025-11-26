@@ -12,6 +12,7 @@ import 'package:housing_flutter_app/modules/builder/view/project_detail/project_
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
 import '../../../app/manager/property_highlight_manager.dart';
+
 // import '../../../data/network/builder/model/builder_projectModel.dart';
 import '../../saved_property/controllers/property_favorite_controller.dart';
 import '../controller/builder_form_controller.dart';
@@ -26,7 +27,7 @@ class BuilderPropertyListing extends StatelessWidget {
     final controller = Get.find<ProjectWizardController>();
     final projectController = Get.put(ProjectController());
     return Scaffold(
-      backgroundColor: ColorRes.leadGreyColor[50],
+      backgroundColor: ColorRes.leadGreyColor.shade100,
       appBar: AppBar(
         title: Text(
           'My Project',
@@ -43,48 +44,104 @@ class BuilderPropertyListing extends StatelessWidget {
           ),
         ],
       ),
-      body: Obx(() {
-        if (controller.isLoading.value && controller.items.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      // body: Obx(() {
+      //   if (controller.isLoading.value && controller.items.isEmpty) {
+      //     return const Center(child: CircularProgressIndicator());
+      //   }
+      //
+      //   if (!controller.isLoading.value && controller.items.isEmpty) {
+      //     return const Center(child: Text('No projects found'));
+      //   }
+      //
+      //   return ListView.builder(
+      //     itemCount: controller.items.length,
+      //     itemBuilder: (context, index) {
+      //       final ProjectItem data = controller.items[index];
+      //
+      //       return Padding(
+      //         padding: const EdgeInsets.all(12),
+      //         child: GestureDetector(
+      //           onTap: () {
+      //             Get.to(() => ProjectDetailsScreen(projectItem: data));
+      //           },
+      //           child: BuilderProjectCard(
+      //             project: data,
+      //             developersName: data.projectContactInfo?.name ?? 'Unknown',
+      //             imageUrl:
+      //                 (data.mediaGallery?.images?.isNotEmpty ?? false)
+      //                     ? data.mediaGallery!.images.first
+      //                     : IMGRes.home3,
+      //             projectName:
+      //                 (data.projectName ?? '').isNotEmpty
+      //                     ? data.projectName!
+      //                     : 'N/A',
+      //             location:
+      //                 (data.address ?? '').isNotEmpty
+      //                     ? data.address!
+      //                     : 'Not specified',
+      //             price: '₹500',
+      //             propertySize:
+      //                 data.projectSize?.totalBuildings?.toString() ?? '',
+      //           ),
+      //         ),
+      //       );
+      //     },
+      //   );
+      // }),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value && controller.items.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-        if (controller.items.isEmpty) {
-          return const Center(child: Text('No projects found'));
-        }
+                if (!controller.isLoading.value && controller.items.isEmpty) {
+                  return const Center(child: Text('No projects found'));
+                }
 
-        return ListView.builder(
-          itemCount: controller.items.length,
-          itemBuilder: (context, index) {
-            final ProjectItem data = controller.items[index];
-
-            return Padding(
-              padding: const EdgeInsets.all(12),
-              child: GestureDetector(
-                onTap: () {
-                  Get.to(() => ProjectDetailsScreen(projectItem: data));
-                },
-                child: BuilderProjectCard(
-                  project: data,
-                  developersName: data.projectContactInfo?.name ?? 'Unknown',
-                  imageUrl:
-                      data.mediaGallery?.images != null &&
-                              data.mediaGallery!.images.isNotEmpty
-                          ? data.mediaGallery!.images.first
-                          : IMGRes.home3,
-                  projectName:
-                      data.projectName.isNotEmpty ? data.projectName : 'N/A',
-                  location:
-                      data.address.isNotEmpty ? data.address : 'Not specified',
-                  price: '₹500',
-                  // You can format dynamic price here
-                  propertySize:
-                      data.projectSize?.totalBuildings.toString() ?? '',
-                ),
-              ),
-            );
-          },
-        );
-      }),
+                return ListView.builder(
+                  itemCount: controller.items.length,
+                  itemBuilder: (context, index) {
+                    final data = controller.items[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: GestureDetector(
+                        onTap:
+                            () => Get.to(
+                              () => ProjectDetailsScreen(projectItem: data),
+                            ),
+                        child: BuilderProjectCard(
+                          project: data,
+                          developersName:
+                              data.projectContactInfo?.name ?? 'Unknown',
+                          imageUrl:
+                              (data.mediaGallery?.images?.isNotEmpty ?? false)
+                                  ? data.mediaGallery!.images.first
+                                  : IMGRes.home3,
+                          projectName:
+                              (data.projectName ?? '').isNotEmpty
+                                  ? data.projectName!
+                                  : 'N/A',
+                          location:
+                              (data.address ?? '').isNotEmpty
+                                  ? data.address!
+                                  : 'Not specified',
+                          price: data.getPriceRange(),
+                          propertySize:
+                              data.projectSize?.totalBuildings?.toString() ??
+                              '',
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -251,7 +308,6 @@ class BuilderProjectCard extends StatelessWidget {
                         // Compare toggle
                         GestureDetector(
                           onTap: () {
-
                             compare.toggle(project, max: 2);
                           },
                           child: Obx(() {
@@ -379,246 +435,202 @@ class BuilderProjectCard extends StatelessWidget {
             ),
 
             // Content Section
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Top Section
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Project Name with Possession
-                        Row(
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Top Section
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Project Name with Possession
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              projectName,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.body,
 
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                projectName,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.body,
-
-                                  fontWeight: AppFontWeights.semiBold,
-                                  color: ColorRes.textPrimary,
-                                  height: 1.2,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textPrimary,
+                                height: 1.2,
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            if (project.possessionDate != null &&
-                                project.possessionDate!.isNotEmpty) ...[
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 7,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary.withOpacity(0.12),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.event_available,
-                                      size: 10,
-                                      color: ColorRes.primary,
-                                    ),
-                                    const SizedBox(width: 3),
-                                    Text(
-                                      _formatDate(
-                                        DateTime.tryParse(
-                                          project.possessionDate!,
-                                        )!,
-                                      ),
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.mini,
-                                        color: ColorRes.primary,
-                                        fontWeight: AppFontWeights.medium,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-
-                        // Location
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                location,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.caption,
-                                  color: ColorRes.leadGreyColor.shade700,
-                                  fontWeight: AppFontWeights.regular,
-                                  height: 1.2,
-                                ),
-                                maxLines: 1,
-
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // Developer Info Card
-                        if (!forHome) ...[
-                          const SizedBox(height: 10),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: ColorRes.primary.withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: ColorRes.primary.withOpacity(0.3),
-                                width: 0.5,
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.business,
-                                      size: 14,
-                                      color: ColorRes.primary,
-                                    ),
-                                    const SizedBox(width: 7),
-                                    Expanded(
-                                      child: Text(
-                                        developersName,
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color: ColorRes.primary,
-                                          fontWeight: AppFontWeights.semiBold,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 7),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.email_outlined,
-                                      size: 14,
-                                      color: ColorRes.textColor.withOpacity(
-                                        0.6,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Expanded(
-                                      child: Text(
-                                        project.projectContactInfo?.email ??
-                                            'No Email',
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.extraSmall,
-                                          color: ColorRes.textColor,
-                                          fontWeight: AppFontWeights.medium,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.phone_outlined,
-                                      size: 14,
-                                      color: ColorRes.textColor.withOpacity(
-                                        0.6,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Expanded(
-                                      child: Text(
-                                        project.projectContactInfo?.phone ??
-                                            'No Phone',
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.extraSmall,
-                                          color: ColorRes.textColor,
-                                          fontWeight: AppFontWeights.medium,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          SizedBox(height: 10),
-                          // Configuration and Units
-                          if (project.projectSize?.totalUnits != null &&
-                              (configText.isNotEmpty ||
-                                  project.projectSize!.totalUnits > 0))
-                            Row(
-                              children: [
-                                if (configText.isNotEmpty) ...[
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 7,
-                                        vertical: 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: ColorRes.blueColor.withOpacity(
-                                          0.12,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.home_outlined,
-                                            size: 14,
-                                            color: ColorRes.blueColor[700],
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            configText.split(",").first,
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.extraSmall,
-                                              color: ColorRes.blueColor[700],
-                                              fontWeight:
-                                                  AppFontWeights.semiBold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                          const SizedBox(width: 8),
+                          if (project.possessionDate != null &&
+                              project.possessionDate!.isNotEmpty) ...[
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 7,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.primary.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.event_available,
+                                    size: 10,
+                                    color: ColorRes.primary,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    _formatDate(
+                                      DateTime.tryParse(
+                                        project.possessionDate!,
+                                      )!,
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.mini,
+                                      color: ColorRes.primary,
+                                      fontWeight: AppFontWeights.medium,
                                     ),
                                   ),
-                                  const SizedBox(width: 6),
                                 ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Location
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              location,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                color: ColorRes.leadGreyColor.shade700,
+                                fontWeight: AppFontWeights.regular,
+                                height: 1.2,
+                              ),
+                              maxLines: 1,
+
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Developer Info Card
+                      if (!forHome) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: ColorRes.primary.withOpacity(0.3),
+                              width: 0.5,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.business,
+                                    size: 14,
+                                    color: ColorRes.primary,
+                                  ),
+                                  const SizedBox(width: 7),
+                                  Expanded(
+                                    child: Text(
+                                      developersName,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.small,
+                                        color: ColorRes.primary,
+                                        fontWeight: AppFontWeights.semiBold,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 7),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.email_outlined,
+                                    size: 14,
+                                    color: ColorRes.textColor.withOpacity(0.6),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Expanded(
+                                    child: Text(
+                                      project.projectContactInfo?.email ??
+                                          'No Email',
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.extraSmall,
+                                        color: ColorRes.textColor,
+                                        fontWeight: AppFontWeights.medium,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.phone_outlined,
+                                    size: 14,
+                                    color: ColorRes.textColor.withOpacity(0.6),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Expanded(
+                                    child: Text(
+                                      project.projectContactInfo?.phone ??
+                                          'No Phone',
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.extraSmall,
+                                        color: ColorRes.textColor,
+                                        fontWeight: AppFontWeights.medium,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        // Configuration and Units
+                        if (project.projectSize?.totalUnits != null &&
+                            (configText.isNotEmpty ||
+                                project.projectSize!.totalUnits > 0))
+                          Row(
+                            children: [
+                              if (configText.isNotEmpty) ...[
                                 Expanded(
                                   child: Container(
-                                    width: 80,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 7,
                                       vertical: 8,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: ColorRes.textSecondary.withOpacity(
-                                        0.08,
+                                      color: ColorRes.blueColor.withOpacity(
+                                        0.12,
                                       ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
@@ -627,16 +639,16 @@ class BuilderProjectCard extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Icon(
-                                          Icons.square_foot_outlined,
+                                          Icons.home_outlined,
                                           size: 14,
-                                          color: ColorRes.textSecondary,
+                                          color: ColorRes.blueColor[700],
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          propertySize,
+                                          configText.split(",").first,
                                           style: TextStyle(
                                             fontSize: AppFontSizes.extraSmall,
-                                            color: ColorRes.textSecondary,
+                                            color: ColorRes.blueColor[700],
                                             fontWeight: AppFontWeights.semiBold,
                                           ),
                                         ),
@@ -645,98 +657,133 @@ class BuilderProjectCard extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 6),
-                                if (project.projectSize?.totalUnits != null &&
-                                    project.projectSize!.totalUnits > 0)
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 7,
-                                        vertical: 8,
+                              ],
+                              Expanded(
+                                child: Container(
+                                  width: 80,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 7,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.textSecondary.withOpacity(
+                                      0.08,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.business,
+                                        size: 14,
+                                        color: ColorRes.textSecondary,
                                       ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.orange.withOpacity(0.12),
-                                        borderRadius: BorderRadius.circular(8),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        propertySize,
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.extraSmall,
+                                          color: ColorRes.textSecondary,
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
                                       ),
-                                      alignment: Alignment.center,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.apartment_outlined,
-                                            size: 14,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              if (project.projectSize?.totalUnits != null &&
+                                  project.projectSize!.totalUnits > 0)
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 7,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange.withOpacity(0.12),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.apartment_outlined,
+                                          size: 14,
+                                          color: ColorRes.orangeColor[700],
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '${project.projectSize?.totalUnits ?? 0} Units',
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.extraSmall,
                                             color: ColorRes.orangeColor[700],
+                                            fontWeight: AppFontWeights.semiBold,
                                           ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            '${project.projectSize?.totalUnits ?? 0} Units',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.extraSmall,
-                                              color: ColorRes.orangeColor[700],
-                                              fontWeight:
-                                                  AppFontWeights.semiBold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                              ],
-                            ),
-                        ] else ...[
-                          SizedBox.shrink(),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    // Bottom Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Starting from',
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.extraSmall,
-                                  color: ColorRes.grey,
-                                  fontWeight: FontWeight.w500,
                                 ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                price,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.body,
-                                  fontWeight: AppFontWeights.semiBold,
-                                  color: ColorRes.primary,
-
-                                  height: 1.1,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
                             ],
                           ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(9),
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            Icons.arrow_forward,
-                            size: 15,
-                            color: Colors.white,
-                          ),
-                        ),
+                      ] else ...[
+                        SizedBox.shrink(),
                       ],
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  // Bottom Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Starting from',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.extraSmall,
+                                color: ColorRes.grey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              price,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.body,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.primary,
+
+                                height: 1.1,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(9),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward,
+                          size: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],

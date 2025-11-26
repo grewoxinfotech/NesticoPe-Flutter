@@ -30,7 +30,7 @@ class PropertyController extends PaginatedController<Items> {
 
   // Reactive fields
   Rxn<PropertyMedia> propertyMedia = Rxn<PropertyMedia>();
-  Rxn<PropertyDetails> propertyDetails = Rxn<PropertyDetails>();
+  // Rxn<PropertyDetails> propertyDetails = Rxn<PropertyDetails>();
   Rxn<String> location = Rxn<String>();
   RxList<NearbyLocations> nearbyLocations = <NearbyLocations>[].obs;
   RxString approvalStatus = "pending".obs;
@@ -63,11 +63,13 @@ class PropertyController extends PaginatedController<Items> {
   /// Fetch trending areas for the selected city
   Future<void> fetchTradingArea(String city) async {
     if (city.isEmpty) {
-      print("City is empty, skipping trending areas fetch");return;
+      print("City is empty, skipping trending areas fetch");
+      return;
     }
     try {
       print("Fetching trending areas for city: $city");
-      final data = await CityInsightsService.cityInsightsService.getTrendingAreas(city);
+      final data = await CityInsightsService.cityInsightsService
+          .getTrendingAreas(city);
 
       if (data != null && data.data != null && data.data.isNotEmpty) {
         trendingAreaList.value = data;

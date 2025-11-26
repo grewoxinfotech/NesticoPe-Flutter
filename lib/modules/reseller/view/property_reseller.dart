@@ -536,6 +536,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                 earningSubtitle:
                                     'per referral ${first?.referrerReward?.toString() ?? '0'} points',
                                 referralCode: first?.referralCode ?? '-',
+                                referralLink: first?.referralLink ?? '-',
                                 leftIcon: Icons.card_giftcard_rounded,
                                 iconColor: ColorRes.textPrimary,
                                 iconBackground: ColorRes.textPrimary
@@ -1375,6 +1376,7 @@ Widget buildReferralProgram({
   required String totalEarnings,
   required String earningSubtitle,
   required String referralCode,
+  required String referralLink,
   required IconData leftIcon,
   required Color iconColor,
   required Color iconBackground,
@@ -1563,6 +1565,73 @@ Widget buildReferralProgram({
             ],
           ),
 
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: ColorRes.leadGreyColor.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                referralLink,
+                                style: TextStyle(
+                                  color: ColorRes.textPrimary,
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.regular,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Clipboard.setData(
+                              ClipboardData(text: referralLink),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text('Referral code copied!'),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: ColorRes.textPrimary,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.copy_rounded,
+                              color: ColorRes.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
 
           // Progress Section

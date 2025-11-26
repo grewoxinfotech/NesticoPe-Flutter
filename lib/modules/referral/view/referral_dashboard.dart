@@ -17,12 +17,12 @@ class ReferralProgramScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,
-        leading: IconButton(onPressed: () {
-
-          Get.back(
-            result: controller.isGenerated.value
-          );
-        }, icon: Icon(Icons.arrow_back)),
+        leading: IconButton(
+          onPressed: () {
+            Get.back(result: controller.isGenerated.value);
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         title: const Text(
           'Referral Program',
           style: TextStyle(
@@ -356,17 +356,7 @@ class ReferralProgramScreen extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            FlutterClipboard.copy(
-                              referral?.referralCode ?? '',
-                            ).then((_) {
-                              Get.snackbar(
-                                'Copied!',
-                                'Referral code copied to clipboard',
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: Colors.black87,
-                                colorText: Colors.white,
-                              );
-                            });
+                            FlutterClipboard.copy(referral?.referralCode ?? '');
                           },
                           child: _buildHeaderIcon(Icons.copy),
                         ),
@@ -374,6 +364,52 @@ class ReferralProgramScreen extends StatelessWidget {
                     ),
                   ],
                 );
+              }
+            }),
+          ),
+          SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.white.withOpacity(0.25)),
+            ),
+            child: Obx(() {
+              if (controller.isGenerated.value) {
+                final referral = controller.dummyReferral.value?.data?.first;
+                return Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            referral?.referralLink ?? '',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.regular,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            FlutterClipboard.copy(referral?.referralLink ?? '');
+                          },
+                          child: _buildHeaderIcon(Icons.copy),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              } else {
+                return SizedBox.shrink();
               }
             }),
           ),

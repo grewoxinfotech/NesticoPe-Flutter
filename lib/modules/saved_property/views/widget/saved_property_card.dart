@@ -169,8 +169,6 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 
-
-
 // class HorizontalPropertyCard extends StatelessWidget {
 //   final String imageUrl;
 //   final bool isForRent;
@@ -586,7 +584,6 @@ import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 //   }
 // }
 
-
 class HorizontalPropertyCard extends StatelessWidget {
   final String imageUrl;
   final bool isForRent;
@@ -602,7 +599,9 @@ class HorizontalPropertyCard extends StatelessWidget {
   final bool? isVerified;
   final int? postedDaysAgo;
   final bool isFavorite;
+  final bool ifFeedbackEnable;
   final VoidCallback? onContactPressed;
+  final VoidCallback? onFeedbackPressed;
   final VoidCallback? onFavoritePressed;
   final VoidCallback? onTap;
 
@@ -624,7 +623,9 @@ class HorizontalPropertyCard extends StatelessWidget {
     this.isFavorite = false,
     this.onContactPressed,
     this.onFavoritePressed,
+    this.onFeedbackPressed,
     this.onTap,
+    this.ifFeedbackEnable = false,
   });
 
   @override
@@ -679,7 +680,7 @@ class HorizontalPropertyCard extends StatelessWidget {
                       colors: [
                         Colors.black.withOpacity(0.3),
                         Colors.transparent,
-                        Colors.black.withOpacity(0.6)
+                        Colors.black.withOpacity(0.6),
                       ],
                       stops: const [0.0, 0.4, 1.0],
                     ),
@@ -695,9 +696,10 @@ class HorizontalPropertyCard extends StatelessWidget {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: isForRent
-                          ? const Color(0xFF14B8A6)
-                          : ColorRes.primary,
+                      color:
+                          isForRent
+                              ? const Color(0xFF14B8A6)
+                              : ColorRes.primary,
                       borderRadius: BorderRadius.circular(6),
                       boxShadow: [
                         BoxShadow(
@@ -776,7 +778,7 @@ class HorizontalPropertyCard extends StatelessWidget {
                       ],
                     ),
                     child: Text(
-                      entityType??'',
+                      entityType ?? '',
                       style: const TextStyle(
                         color: ColorRes.textPrimary,
                         fontSize: 10,
@@ -794,37 +796,41 @@ class HorizontalPropertyCard extends StatelessWidget {
             // Content Section
             Expanded(
               child: Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 16,),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 8,),
+                    SizedBox(height: 8),
                     Row(
                       children: [
                         // Entity Type Badge
-
-                        Text(
-                          entityType == 'project'
-                              ? (projectName ?? 'Project')
-                              : (propertyType ?? 'Property'),
-                          style: TextStyle(
-                            color: ColorRes.textPrimary,
-                            fontSize: AppFontSizes.medium,
-                            fontWeight: AppFontWeights.semiBold,
-                            letterSpacing: 0.1,
+                        Expanded(
+                          child: Text(
+                            entityType == 'project'
+                                ? (projectName ?? 'Project')
+                                : (propertyType ?? 'Property'),
+                            style: TextStyle(
+                              color: ColorRes.textPrimary,
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                              letterSpacing: 0.1,
+                            ),
+                            textAlign: TextAlign.left,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
                         // Status Badge
-                        const Spacer(),
+
                         // Favorite Button
                         GestureDetector(
                           onTap: onFavoritePressed,
                           child: Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? ColorRes.error : ColorRes.textSecondary,
+                            color:
+                                isFavorite
+                                    ? ColorRes.error
+                                    : ColorRes.textSecondary,
                             size: 15,
                           ),
                         ),
@@ -882,7 +888,7 @@ class HorizontalPropertyCard extends StatelessWidget {
                       children: [
                         Text(
                           price,
-                          style:  TextStyle(
+                          style: TextStyle(
                             color: ColorRes.textPrimary,
                             fontSize: AppFontSizes.bodyMedium,
                             fontWeight: FontWeight.w700,
@@ -907,38 +913,75 @@ class HorizontalPropertyCard extends StatelessWidget {
                     ),
                     const Spacer(),
                     // Contact Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 36,
-                      child: ElevatedButton(
-                        onPressed: onContactPressed ?? () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorRes.primary,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    if (ifFeedbackEnable) ...[
+                      SizedBox(
+                        width: double.infinity,
+                        height: 36,
+                        child: OutlinedButton(
+                          onPressed: onFeedbackPressed ?? () {},
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: ColorRes.primary,
+                            side: BorderSide(
+                              color: ColorRes.primary,
+                              width: 1.2,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.feedback_outlined, size: 14),
+                              SizedBox(width: 6),
+                              Text(
+                                'Give Feedback',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.1,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.phone_outlined, size: 14),
-                            SizedBox(width: 6),
-                            Text(
-                              'Contact Agent',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.1,
-                              ),
+                      ),
+                      SizedBox(height: 8),
+                    ] else ...[
+                      SizedBox(
+                        width: double.infinity,
+                        height: 36,
+                        child: ElevatedButton(
+                          onPressed: onContactPressed ?? () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorRes.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.phone_outlined, size: 14),
+                              SizedBox(width: 6),
+                              Text(
+                                'Contact Agent',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.1,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 8,),
+                      SizedBox(height: 8),
+                    ],
                   ],
                 ),
               ),

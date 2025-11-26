@@ -3,6 +3,7 @@ import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_h
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
+import 'package:housing_flutter_app/modules/calender/views/calender_screen.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/widget/favourite_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
@@ -134,13 +135,13 @@ class DashboardScreen extends StatelessWidget {
                 ),
 
                 SizedBox(height: 16),
-                // ElevatedButton(
-                //   onPressed: () {
-                //     Get.to(() => FeedBackAndReportScreen());
-                //   },
-                //
-                //   child: Text("feedback & Report"),
-                // ),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => CalendarScreen());
+                  },
+
+                  child: Text("Calender"),
+                ),
               ],
             ),
           );

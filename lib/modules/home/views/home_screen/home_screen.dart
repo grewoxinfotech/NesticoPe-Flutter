@@ -17,6 +17,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/data/network/trending_area/model/trending_area_model.dart';
 import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
+import 'package:housing_flutter_app/modules/builder/view/all_project_list_screen.dart';
 
 //import 'package:housing_flutter_app/modules/home/controllers/home_controller/home_controller.dart';
 import 'package:housing_flutter_app/modules/home/widgets/city_card.dart';
@@ -946,8 +947,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(height: 20),
                             TitleWithViewAll(
                               title: "Explore Projects",
-                              showViewAll: false,
-                              onViewAll: () {},
+                              showViewAll: true,
+                              onViewAll: () {
+                                Get.to(() => AllProjectListScreen());
+                              },
                             ),
                             const SizedBox(height: 12),
                             SizedBox(
@@ -2108,7 +2111,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reviewController = Get.put(PlatformReviewController());
+    final reviewController = Get.put(PlatformReviewController(type: 'site'));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -3480,7 +3483,6 @@ class CompactInsightCard extends StatelessWidget {
   }
 }
 
-
 class WhyChooseUsSection extends StatelessWidget {
   final items = [
     {
@@ -3510,7 +3512,7 @@ class WhyChooseUsSection extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 12,),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2, // number of columns
         crossAxisSpacing: 12,
@@ -3525,20 +3527,19 @@ class WhyChooseUsSection extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+            border: Border.all(
+              color: ColorRes.leadGreyColor.shade300,
+              width: 1,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                item["icon"] as IconData,
-                size: 28,
-                color: ColorRes.primary,
-              ),
+              Icon(item["icon"] as IconData, size: 28, color: ColorRes.primary),
               const SizedBox(height: 4),
               Text(
                 "${item['title']}",
-                style:  TextStyle(
+                style: TextStyle(
                   fontSize: AppFontSizes.medium,
                   fontWeight: AppFontWeights.semiBold,
                   color: ColorRes.primary,
@@ -3564,8 +3565,6 @@ class WhyChooseUsSection extends StatelessWidget {
     );
   }
 }
-
-
 
 class RecommendedInsights extends StatelessWidget {
   const RecommendedInsights({super.key});

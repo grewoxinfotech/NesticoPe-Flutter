@@ -7,8 +7,6 @@ class ApiConstants {
   static const String baseURL =
       "http://192.168.1.5:19725/api/v1"; // Real Device (WiFi)
 
-
-
   // Auth Endpoints
   static String get auth => "$baseURL/auth";
   static String get loginEndpoint => "$auth/login";
@@ -24,8 +22,7 @@ class ApiConstants {
   static String get getSellerDashboard => "$baseURL/insight/seller";
   static String get getSellerProfile => "$baseURL/insight/seller";
 
-  static String get recommmendedPorperties =>
-      "$baseURL/property/recommended";
+  static String get recommmendedPorperties => "$baseURL/property/recommended";
 
   // Lead
   static String get leads => "$baseURL/lead";
@@ -42,10 +39,8 @@ class ApiConstants {
   static String get overAllRating => "$baseURL/review/property";
   static String get user => "$baseURL/user";
 
-
-
-  static String get topProperties=>"$baseURL/property/top/properties";
-  static String get topProject=>"$baseURL/builderproject/top/projects";
+  static String get topProperties => "$baseURL/property/top/properties";
+  static String get topProject => "$baseURL/builderproject/top/projects";
 
   static String get interestForm => "$baseURL/interestForm";
   static String get propertyShare => "$baseURL/propertyShare";
@@ -75,9 +70,9 @@ class ApiConstants {
   static const String recommendedPropertiesEndpoint = "/properties/recommended";
   static const String propertiesByCategoryEndpoint = "/properties/category";
 
-//Trending area
+  //Trending area
 
-  static const String trendingAreaAPi='/cityInsights/trending/areas?city';
+  static const String trendingAreaAPi = '/cityInsights/trending/areas?city';
   // Bookings Endpoints
   static const String bookingsEndpoint = "/bookings";
 

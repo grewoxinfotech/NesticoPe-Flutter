@@ -21,7 +21,7 @@ class PropertyContactedService {
 
         if (data['success'] == true && data['data'] != null) {
           final inquiryResponse = InquiryResponse.fromJson(data);
-          return inquiryResponse.data.items??[];
+          return inquiryResponse.data.items ?? [];
         } else {
           return [];
         }
@@ -44,6 +44,22 @@ class PropertyContactedService {
     } catch (e) {
       print('Error fetching contacted property IDs: $e');
       return [];
+    }
+  }
+
+  Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
+    try {
+      print("baseUrl : ${baseUrl}/${id}");
+      final response = await http.post(
+        Uri.parse("$baseUrl/$id/inquiry"),
+        headers: await headers(),
+        body: jsonEncode(data),
+      );
+      print("response : ${response.body}");
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print("Delete property exception: $e");
+      return false;
     }
   }
 }

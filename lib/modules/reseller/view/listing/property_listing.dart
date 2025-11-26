@@ -20,7 +20,7 @@ import '../lead/lead_screen.dart';
 import '../lead_overview/lead_detail.dart';
 import '../property_share/reseller_property_share.dart';
 
-const String reseller = "ReSeller";
+// const String reseller = "ReSeller";
 
 class ProductListingScreen extends StatefulWidget {
   ProductListingScreen({Key? key}) : super(key: key);
@@ -34,7 +34,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
   final PropertyController propertyController = Get.put(
     PropertyController(),
-    tag: reseller,
+    // tag: reseller,
   );
 
   // Multi-select state
@@ -43,8 +43,8 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchResellerAssignProperty();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await fetchResellerAssignProperty();
     });
     super.initState();
   }
@@ -57,7 +57,9 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
       if (userId != null && userId.isNotEmpty) {
         final filter = {"assignedTo": userId};
         // Apply filters first
+        print("Applying filters: $filter");
         await propertyController.applyFilters(filter);
+
         // Then load initial data
         await propertyController.loadInitial();
       } else {
@@ -523,7 +525,8 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
           // Products Grid
           Expanded(
             child: Obx(() {
-              if (propertyController.isLoading.value) {
+              if (propertyController.isLoading.value &&
+                  propertyController.items.isEmpty) {
                 return Center(
                   child: CircularProgressIndicator(color: ColorRes.primary),
                 );
@@ -937,7 +940,9 @@ class ProductsGrid extends StatelessWidget {
   final Function(String) onPropertyTap;
 
   final DashboardController controller = Get.find();
-  final PropertyController propertyController = Get.find(tag: reseller);
+  final PropertyController propertyController = Get.find(
+    // tag: reseller
+  );
 
   ProductsGrid({
     Key? key,
@@ -1080,16 +1085,16 @@ class ProductCard extends StatelessWidget {
                         left: Radius.circular(11),
                       ),
                       child: CustomImage(
-          type: CustomImageType.network,
-          src: (product.propertyMedia?.images?.isNotEmpty ?? false)
-              ? product.propertyMedia!.images!.first
-              : 'https://via.placeholder.com/150', // fallback placeholder
-          width: 110,
-          height: 121,
-          fit: BoxFit.cover,
-        ),
-
-      ),
+                        type: CustomImageType.network,
+                        src:
+                            (product.propertyMedia?.images?.isNotEmpty ?? false)
+                                ? product.propertyMedia!.images!.first
+                                : 'https://via.placeholder.com/150', // fallback placeholder
+                        width: 110,
+                        height: 121,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     // Selection Checkbox Overlay
                     if (isSelectionMode.value)
                       Positioned(

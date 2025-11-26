@@ -14,7 +14,6 @@ import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_s
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
-
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../builder/controller/builder_form_controller.dart';
@@ -173,36 +172,38 @@ class _HomeHeaderState extends State<HomeHeader> {
             children: [
               Expanded(
                 child: buildPositionedTextField(context, () async {
-
                   final filter = await Get.to(
                     () => CommonSearchField(
                       isNavigate: true,
                       onTap: (city) {
                         final filters = {"city": city.split(",").first};
-                        propertyController.fetchTradingArea(filters['city']??'');
+                        propertyController.fetchTradingArea(
+                          filters['city'] ?? '',
+                        );
                         Get.back(result: filters);
                       },
                     ),
                   );
-                  if (filter != null && filter is Map && filter['city'] != null) {
+                  if (filter != null &&
+                      filter is Map &&
+                      filter['city'] != null) {
                     final String city = filter['city'];
 
-
-                      // Apply city filter to home (Yes case)
-                      await SecureStorage.saveSelectedCity(city);
-                      propertyController.fetchTradingArea(city);
-                      propertyController.applyFilter('city', city);
-                      projectController.applyFilter('city', city);
-                      // Reload top properties for the new city
-                      await propertyController.loadTopProperties();
-                      await projectController.loadTopProject();
-
+                    // Apply city filter to home (Yes case)
+                    await SecureStorage.saveSelectedCity(city);
+                    propertyController.fetchTradingArea(city);
+                    propertyController.applyFilter('city', city);
+                    projectController.applyFilter('city', city);
+                    // Reload top properties for the new city
+                    await propertyController.loadTopProperties();
+                    await projectController.loadTopProject();
 
                     // Navigate to PropertyDetail in both cases (Yes and No)
                   }
                 }),
               ),
               if (!UserHelper.isReseller) ...[
+                SizedBox(width: 8),
                 GestureDetector(
                   onTap: () async {
                     print("Mic tapped");

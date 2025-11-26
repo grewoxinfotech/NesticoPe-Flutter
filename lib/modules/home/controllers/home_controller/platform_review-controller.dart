@@ -176,7 +176,9 @@ import '../../../../data/network/platform_review/service/platform_review_service
 class PlatformReviewController extends GetxController {
   final ReviewService _reviewService = ReviewService();
 
+  PlatformReviewController({required this.type});
   // Observables
+  final String type;
   var isLoading = false.obs;
   var isLoadingMore = false.obs;
 
@@ -198,6 +200,8 @@ class PlatformReviewController extends GetxController {
   var userFetchedAll = false.obs;
   var userTotal = 0.obs;
 
+  Map<String, String> filters = {};
+
   // Scroll controller
   final ScrollController scrollController = ScrollController();
 
@@ -205,6 +209,7 @@ class PlatformReviewController extends GetxController {
   void onInit() {
     super.onInit();
     scrollController.addListener(_scrollListener);
+    filters = {'entity_type': type};
     fetchAllReviews();
   }
 
@@ -236,6 +241,7 @@ class PlatformReviewController extends GetxController {
 
       final response = await _reviewService.fetchReviews(
         page: currentPage.value,
+        filters: filters,
       );
 
       if (response != null && response.success == true) {
@@ -261,9 +267,10 @@ class PlatformReviewController extends GetxController {
 
   /// 🔹 Filter site reviews and attach users
   Future<void> filterSiteReviews() async {
-    siteReviews.value = allReviews.where((review) {
-      return review.entityType?.toLowerCase() == 'site';
-    }).toList();
+    siteReviews.value =
+        allReviews.where((review) {
+          return review.entityType?.toLowerCase() == 'site';
+        }).toList();
 
     // Fetch user data
     await _fetchUsersData();
@@ -272,7 +279,7 @@ class PlatformReviewController extends GetxController {
 
     for (var site in siteReviews) {
       final user = userData.value?.data?.items?.firstWhereOrNull(
-            (u) => u.id == site.entityId,
+        (u) => u.id == site.entityId,
       );
       matched.add(ReviewWithUser(review: site, user: user));
     }
@@ -287,7 +294,9 @@ class PlatformReviewController extends GetxController {
   /// 🔹 Fetch users data with pagination fields handled
   Future<void> _fetchUsersData() async {
     try {
-      userData.value = await _reviewService.fetchReviewsData(page: userCurrentPage.value);
+      userData.value = await _reviewService.fetchReviewsData(
+        page: userCurrentPage.value,
+      );
 
       final response = userData.value;
       if (response == null) return;

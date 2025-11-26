@@ -16,7 +16,7 @@ class PropertyContactedController extends GetxController {
   RxList<Inquiry> inquiries = <Inquiry>[].obs;
 
   /// Loaded property details (lazy-loaded)
-  RxList<Items> properties = <Items>[].obs;
+  // RxList<Items> properties = <Items>[].obs;
 
   /// Loading states
   RxBool isLoading = false.obs;
@@ -49,9 +49,9 @@ class PropertyContactedController extends GetxController {
       contactedPropertyIds.assignAll(ids);
 
       // Reset and load first batch of property details
-      properties.clear();
+      // properties.clear();
       currentIndex = 0;
-      await loadNextBatch();
+      // await loadNextBatch();
     } catch (e) {
       print(
         'Error in PropertyContactedController.fetchContactedProperties: $e',
@@ -62,34 +62,34 @@ class PropertyContactedController extends GetxController {
   }
 
   /// Load next batch of contacted properties (lazy loading)
-  Future<void> loadNextBatch() async {
-    if (isLoadingMore.value) return;
-    if (currentIndex >= contactedPropertyIds.length) return;
-
-    try {
-      isLoadingMore.value = true;
-
-      final endIndex = (currentIndex + batchSize).clamp(
-        0,
-        contactedPropertyIds.length,
-      );
-      final batch = contactedPropertyIds.sublist(currentIndex, endIndex);
-
-      for (final id in batch) {
-        final property = await _propertyController.getPropertyById(id);
-        if (property != null) {
-          properties.add(property);
-        }
-      }
-
-      properties.refresh();
-      currentIndex = endIndex;
-    } catch (e) {
-      print('Error loading next batch in PropertyContactedController: $e');
-    } finally {
-      isLoadingMore.value = false;
-    }
-  }
+  // Future<void> loadNextBatch() async {
+  //   if (isLoadingMore.value) return;
+  //   if (currentIndex >= contactedPropertyIds.length) return;
+  //
+  //   try {
+  //     isLoadingMore.value = true;
+  //
+  //     final endIndex = (currentIndex + batchSize).clamp(
+  //       0,
+  //       contactedPropertyIds.length,
+  //     );
+  //     final batch = contactedPropertyIds.sublist(currentIndex, endIndex);
+  //
+  //     for (final id in batch) {
+  //       final property = await _propertyController.getPropertyById(id);
+  //       if (property != null) {
+  //         // properties.add(property);
+  //       }
+  //     }
+  //
+  //     // properties.refresh();
+  //     currentIndex = endIndex;
+  //   } catch (e) {
+  //     print('Error loading next batch in PropertyContactedController: $e');
+  //   } finally {
+  //     isLoadingMore.value = false;
+  //   }
+  // }
 
   /// Check if a property has been contacted
   bool isPropertyContacted(String propertyId) {
@@ -100,7 +100,12 @@ class PropertyContactedController extends GetxController {
   void clearContactedProperties() {
     contactedPropertyIds.clear();
     inquiries.clear();
-    properties.clear();
+    // properties.clear();
     currentIndex = 0;
+  }
+
+  Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
+    final success = await _service.addInquiry(data, id);
+    return success;
   }
 }

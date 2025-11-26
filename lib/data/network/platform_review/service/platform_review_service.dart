@@ -45,18 +45,8 @@ class ReviewService {
         final data = jsonDecode(response.body);
         debugPrint(" to fetch reviews: ${response.body}");
         return ReviewResponse.fromJson(data);
-      } else {
-        debugPrint("Failed to fetch reviews: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
-
-        CustomSnackBar.show(
-          Get.overlayContext!,
-          message: "Failed to load reviews",
-          type: SnackBarType.error,
-        );
-
-        throw Exception("Failed to load reviews");
       }
+      return null;
     } catch (e) {
       debugPrint("Exception in fetchReviews: $e");
       rethrow;
@@ -74,7 +64,9 @@ class ReviewService {
         if (filters != null) ...filters,
       };
 
-      final uri = Uri.parse('$baseUrlUser').replace(queryParameters: queryParameters);
+      final uri = Uri.parse(
+        '$baseUrlUser',
+      ).replace(queryParameters: queryParameters);
       debugPrint("Fetching Reviews from: $uri");
 
       final response = await http.get(uri, headers: await headers());
@@ -84,25 +76,15 @@ class ReviewService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         debugPrint(" ufhu to fetch reviews: ${response.body}");
-        debugPrint(" hudsfusdhf to fetch reviews: ${UsersResponse.fromJson(data).data?.toMap()}");
-
-        return UsersResponse.fromJson(data);
-      } else {
-        debugPrint("Failed to fetch reviews: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
-
-        CustomSnackBar.show(
-          Get.overlayContext!,
-          message: "Failed to load reviews",
-          type: SnackBarType.error,
+        debugPrint(
+          " hudsfusdhf to fetch reviews: ${UsersResponse.fromJson(data).data?.toMap()}",
         );
 
-        throw Exception("Failed to load reviews");
+        return UsersResponse.fromJson(data);
       }
     } catch (e) {
       debugPrint("Exception in fetchReviews: $e");
       rethrow;
     }
   }
-
 }
