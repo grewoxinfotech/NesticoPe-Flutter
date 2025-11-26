@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/compare_manager.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
@@ -16,7 +17,7 @@ import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../saved_property/controllers/property_favorite_controller.dart';
-import '../property_detail_screen.dart';
+
 
 class PropertyCard extends StatefulWidget {
   final Items property;
@@ -140,54 +141,8 @@ class _PropertyCardState extends State<PropertyCard> {
                         // Compare toggle
                         GestureDetector(
                           onTap: () {
-                            final before = compare.count;
                             compare.toggle(widget.property, max: 2);
-                            final after = compare.count;
 
-                            // Show feedback
-                            final ctx = Get.overlayContext;
-                            if (ctx != null) {
-                              if (after > before) {
-                                CustomSnackBar.show(
-                                  ctx,
-                                  message:
-                                      after == 2
-                                          ? 'Ready to compare!'
-                                          : 'Added to compare (${after}/2)',
-                                  type: SnackBarType.success,
-                                  actionLabel:
-                                      after == 2 ? 'Compare Now' : null,
-                                  onActionPressed:
-                                      after == 2
-                                          ? () {
-                                            Get.back(); // Close snackbar first
-                                            if (Get.isRegistered<
-                                              NavigationController
-                                            >()) {
-                                              Get.find<NavigationController>()
-                                                  .changeIndex(2);
-                                            }
-                                          }
-                                          : null,
-                                );
-                              } else if (after < before) {
-                                CustomSnackBar.show(
-                                  ctx,
-                                  message:
-                                      after == 0
-                                          ? 'Removed from compare'
-                                          : 'Removed from compare (${after}/2)',
-                                  type: SnackBarType.info,
-                                );
-                              } else if (after == before && before >= 2) {
-                                // Max limit reached
-                                CustomSnackBar.show(
-                                  ctx,
-                                  message: 'You can only compare 2 properties',
-                                  type: SnackBarType.warning,
-                                );
-                              }
-                            }
                           },
                           child: Obx(() {
                             final selected = compare.isSelected(

@@ -1,3 +1,115 @@
+// class InquiryResponse {
+//   final bool success;
+//   final String message;
+//   final InquiryData data;
+//
+//   InquiryResponse({
+//     required this.success,
+//     required this.message,
+//     required this.data,
+//   });
+//
+//   factory InquiryResponse.fromJson(Map<String, dynamic> json) {
+//     return InquiryResponse(
+//       success: json['success'] ?? false,
+//       message: json['message'] ?? '',
+//       data: InquiryData.fromJson(json['data'] ?? {}),
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() => {
+//     'success': success,
+//     'message': message,
+//     'data': data.toJson(),
+//   };
+// }
+//
+// class InquiryData {
+//   final List<Inquiry> inquiries;
+//
+//   InquiryData({required this.inquiries});
+//
+//   factory InquiryData.fromJson(Map<String, dynamic> json) {
+//     return InquiryData(
+//       inquiries:
+//           (json['inquiries'] as List<dynamic>? ?? [])
+//               .map((e) => Inquiry.fromJson(e))
+//               .toList(),
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() => {
+//     'inquiries': inquiries.map((e) => e.toJson()).toList(),
+//   };
+// }
+//
+// class Inquiry {
+//   final int id;
+//   final String propertyId;
+//   final String userId;
+//   final String name;
+//   final String email;
+//   final String phone;
+//   final DateTime inquiredAt;
+//   final String? inquiryType;
+//   final String? submittedAt;
+//   final bool isConvertedToLead;
+//   final String? convertedToLeadAt;
+//   final DateTime createdAt;
+//   final DateTime updatedAt;
+//
+//   Inquiry({
+//     required this.id,
+//     required this.propertyId,
+//     required this.userId,
+//     required this.name,
+//     required this.email,
+//     required this.phone,
+//     required this.inquiredAt,
+//     this.inquiryType,
+//     this.submittedAt,
+//     required this.isConvertedToLead,
+//     this.convertedToLeadAt,
+//     required this.createdAt,
+//     required this.updatedAt,
+//   });
+//
+//   factory Inquiry.fromJson(Map<String, dynamic> json) {
+//     return Inquiry(
+//       id: json['id'] ?? 0,
+//       propertyId: json['propertyId'] ?? '',
+//       userId: json['userId'] ?? '',
+//       name: json['name'] ?? '',
+//       email: json['email'] ?? '',
+//       phone: json['phone'] ?? '',
+//       inquiredAt: DateTime.parse(json['inquiredAt']),
+//       inquiryType: json['inquiryType'],
+//       submittedAt: json['submittedAt'],
+//       isConvertedToLead: json['isConvertedToLead'] ?? false,
+//       convertedToLeadAt: json['convertedToLeadAt'],
+//       createdAt: DateTime.parse(json['createdAt']),
+//       updatedAt: DateTime.parse(json['updatedAt']),
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() => {
+//     'id': id,
+//     'propertyId': propertyId,
+//     'userId': userId,
+//     'name': name,
+//     'email': email,
+//     'phone': phone,
+//     'inquiredAt': inquiredAt.toIso8601String(),
+//     'inquiryType': inquiryType,
+//     'submittedAt': submittedAt,
+//     'isConvertedToLead': isConvertedToLead,
+//     'convertedToLeadAt': convertedToLeadAt,
+//     'createdAt': createdAt.toIso8601String(),
+//     'updatedAt': updatedAt.toIso8601String(),
+//   };
+// }
+
+
 class InquiryResponse {
   final bool success;
   final String message;
@@ -25,21 +137,42 @@ class InquiryResponse {
 }
 
 class InquiryData {
-  final List<Inquiry> inquiries;
+  final List<Inquiry> items;
+  final int? total;
+  final int? currentPage;
+  final int? totalPages;
+  final bool? hasMore;
+  final bool? fetchedAll;
 
-  InquiryData({required this.inquiries});
+  InquiryData({
+    required this.items,
+    this.total,
+    this.currentPage,
+    this.totalPages,
+    this.hasMore,
+    this.fetchedAll,
+  });
 
   factory InquiryData.fromJson(Map<String, dynamic> json) {
     return InquiryData(
-      inquiries:
-          (json['inquiries'] as List<dynamic>? ?? [])
-              .map((e) => Inquiry.fromJson(e))
-              .toList(),
+      items: (json['items'] as List<dynamic>? ?? [])
+          .map((e) => Inquiry.fromJson(e))
+          .toList(),
+      total: json['total'],
+      currentPage: json['currentPage'],
+      totalPages: json['totalPages'],
+      hasMore: json['hasMore'],
+      fetchedAll: json['fetchedAll'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'inquiries': inquiries.map((e) => e.toJson()).toList(),
+    'items': items.map((e) => e.toJson()).toList(),
+    'total': total,
+    'currentPage': currentPage,
+    'totalPages': totalPages,
+    'hasMore': hasMore,
+    'fetchedAll': fetchedAll,
   };
 }
 
@@ -51,12 +184,15 @@ class Inquiry {
   final String email;
   final String phone;
   final DateTime inquiredAt;
-  final String? inquiryType;
+  final String status;
   final String? submittedAt;
   final bool isConvertedToLead;
   final String? convertedToLeadAt;
+  final Meta? meta;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String entityType;
+  final InquiryDetails? details;
 
   Inquiry({
     required this.id,
@@ -66,12 +202,15 @@ class Inquiry {
     required this.email,
     required this.phone,
     required this.inquiredAt,
-    this.inquiryType,
+    required this.status,
     this.submittedAt,
     required this.isConvertedToLead,
     this.convertedToLeadAt,
+    this.meta,
     required this.createdAt,
     required this.updatedAt,
+    required this.entityType,
+    this.details,
   });
 
   factory Inquiry.fromJson(Map<String, dynamic> json) {
@@ -82,13 +221,18 @@ class Inquiry {
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
-      inquiredAt: DateTime.parse(json['inquiredAt']),
-      inquiryType: json['inquiryType'],
+      inquiredAt: DateTime.tryParse(json['inquiredAt'] ?? '') ?? DateTime.now(),
+      status: json['status'] ?? '',
       submittedAt: json['submittedAt'],
       isConvertedToLead: json['isConvertedToLead'] ?? false,
       convertedToLeadAt: json['convertedToLeadAt'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      meta: json['meta'] != null ? Meta.fromJson(json['meta']) : null,
+      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
+      entityType: json['entityType'] ?? '',
+      details: json['details'] != null
+          ? InquiryDetails.fromJson(json['details'])
+          : null,
     );
   }
 
@@ -100,11 +244,87 @@ class Inquiry {
     'email': email,
     'phone': phone,
     'inquiredAt': inquiredAt.toIso8601String(),
-    'inquiryType': inquiryType,
+    'status': status,
     'submittedAt': submittedAt,
     'isConvertedToLead': isConvertedToLead,
     'convertedToLeadAt': convertedToLeadAt,
+    'meta': meta?.toJson(),
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
+    'entityType': entityType,
+    'details': details?.toJson(),
   };
 }
+
+class Meta {
+  final String? negotiablePrice;
+  final bool? isNegotiable;
+  final String? timePeriod;
+
+  Meta({
+    this.negotiablePrice,
+    this.isNegotiable,
+    this.timePeriod,
+  });
+
+  factory Meta.fromJson(Map<String, dynamic> json) {
+    return Meta(
+      negotiablePrice: json['negotiablePrice'],
+      isNegotiable: json['isNegotiable'],
+      timePeriod: json['timePeriod'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'negotiablePrice': negotiablePrice,
+    'isNegotiable': isNegotiable,
+    'timePeriod': timePeriod,
+  };
+}
+
+class InquiryDetails {
+  final String id;
+  final String propertyType;
+  final String listingType;
+  final String? images;
+  final num price;
+  final String priceType;
+  final String location;
+  final String city;
+
+  InquiryDetails({
+    required this.id,
+    required this.propertyType,
+    required this.listingType,
+    this.images,
+    required this.price,
+    required this.priceType,
+    required this.location,
+    required this.city,
+  });
+
+  factory InquiryDetails.fromJson(Map<String, dynamic> json) {
+    return InquiryDetails(
+      id: json['id'] ?? '',
+      propertyType: json['propertyType'] ?? '',
+      listingType: json['listingType'] ?? '',
+      images: json['images'],
+      price: json['price'] ?? 0,
+      priceType: json['priceType'] ?? '',
+      location: json['location'] ?? '',
+      city: json['city'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'propertyType': propertyType,
+    'listingType': listingType,
+    'images': images,
+    'price': price,
+    'priceType': priceType,
+    'location': location,
+    'city': city,
+  };
+}
+

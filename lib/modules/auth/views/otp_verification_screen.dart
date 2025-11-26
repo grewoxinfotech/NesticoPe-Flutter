@@ -365,7 +365,7 @@ import '../../dashboard/views/dashboard_screen.dart';
 import 'ResetPasswordScreen.dart';
 
 /// Enum to decide OTP verification flow
-enum VerifyOTPFor { registration, passwordReset, sellerRegister }
+enum VerifyOTPFor { registration, passwordReset, sellerRegister ,}
 
 class OtpVerificationScreen extends StatefulWidget {
   final String phone;

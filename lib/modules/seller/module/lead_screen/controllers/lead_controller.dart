@@ -312,6 +312,8 @@
 //   }
 // }
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
@@ -321,14 +323,18 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
 
 import '../../../../../data/database/secure_storage_service.dart';
 import '../../../../../data/network/lead/lead_service.dart';
+import '../../../../../data/network/property/services/property_service.dart';
 import '../../../../property/controllers/property_controller.dart';
-import '../../../../reseller/controller/dashborad_controller/dashboard_controller.dart';
+
 import '../model/lead_model.dart';
 
 class LeadController extends PaginatedController<LeadItem> {
   final LeadService _service = LeadService();
+  final PropertyService _serviceProperty = PropertyService();
 
   late final bool fromReseller;
+  Items customFields = Items();
+  RxList<Items> leadPropertiesList = <Items>[].obs;  // Store all properties fetched for leads
 
   final PropertyController propertyController = Get.put(
     PropertyController(),
@@ -380,6 +386,7 @@ class LeadController extends PaginatedController<LeadItem> {
 
   // --- Reactive Fields ---
   RxString selectedFilterStatus = 'All Status'.obs;
+
   // RxString selectedStatus = 'New Lead'.obs;
   RxString selectedLeadType = 'All Leads'.obs;
   Rxn<DateTime> selectedDate = Rxn<DateTime>();
@@ -408,15 +415,21 @@ class LeadController extends PaginatedController<LeadItem> {
     loadInitial();
   }
 
-  // Future<void> fetchResellerLead() async {
-  //   final user = await SecureStorage.getUserData();
-  //   final userId = user?.user?.id;
-  //   if (userId != null) {
-  //     final filter = {"created_by": userId};
-  //     await applyFilters(filter);
-  //     loadInitial();
-  //   }
-  // }
+  Future<void> fetchPropertyById(String propertyId) async {
+    try {
+      final property = await _serviceProperty.getPropertyById(propertyId);
+      if (property != null) {
+        customFields = property;
+        // Add to list if not already present
+        if (!leadPropertiesList.any((p) => p.id == property.id)) {
+          leadPropertiesList.add(property);
+        }
+        log("Property fetched: ${property.toJson()}");
+      }
+    } catch (e) {
+      log("Error fetching property: $e");
+    }
+  }
 
   Future<void> fetchResellerAssignProperty() async {
     final user = await SecureStorage.getUserData();
@@ -425,6 +438,7 @@ class LeadController extends PaginatedController<LeadItem> {
       final filter = {"assignedTo": userId};
       await propertyController.applyFilters(filter);
       propertyList.value = propertyController.items;
+
       print("Property List for Lead: ${propertyList.length}");
     }
   }
@@ -451,7 +465,17 @@ class LeadController extends PaginatedController<LeadItem> {
           userId: userId,
           filters: filters.value,
           fromReseller: fromReseller,
+          
         );
+        if (response.items.isNotEmpty) {
+          for (var item in response.items) {
+            if (item.propertyId != null && item.propertyId!.isNotEmpty) {
+              print("Fetching property with ID: ${item.propertyId}");
+              await fetchPropertyById(item.propertyId!);
+            }
+          }
+        }
+
         return response;
       } else {
         final response = await _service.fetchLeads(
@@ -459,6 +483,14 @@ class LeadController extends PaginatedController<LeadItem> {
           filters: filters.value,
           fromReseller: fromReseller,
         );
+        if (response.items.isNotEmpty) {
+          for (var item in response.items) {
+            if (item.propertyId != null && item.propertyId!.isNotEmpty) {
+              print("Fetching Seller property with ID: ${item.propertyId}");
+              await fetchPropertyById(item.propertyId!);
+            }
+          }
+        }
         return response;
       }
     } catch (e) {

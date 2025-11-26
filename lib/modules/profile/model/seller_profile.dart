@@ -4,17 +4,17 @@ class ProfileSellerModel {
   final String? updatedBy;
   final String userId;
   final String sellerType;
-  final String? contactName;
-  final String? contactPhone;
-  final String? companyName;
-  final String? reraNumber;
-  final String? gstNumber;
+  final String contactName;
+  final String contactPhone;
+  final String companyName;
+  final String reraNumber;
+  final String gstNumber;
   final String? idProof;
   final String? propertyAddress;
   final int numberOfProperties;
   final String? whyChooseUs;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   ProfileSellerModel({
     required this.id,
@@ -22,43 +22,45 @@ class ProfileSellerModel {
     this.updatedBy,
     required this.userId,
     required this.sellerType,
-    this.contactName,
-    this.contactPhone,
-    this.companyName,
-    this.reraNumber,
-    this.gstNumber,
+    required this.contactName,
+    required this.contactPhone,
+    required this.companyName,
+    required this.reraNumber,
+    required this.gstNumber,
     this.idProof,
     this.propertyAddress,
     required this.numberOfProperties,
     this.whyChooseUs,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  /// Convert JSON to Model
-  factory ProfileSellerModel.fromJson(Map<String, dynamic> json) {
+  factory ProfileSellerModel.fromJson(Map<String, dynamic> map) {
     return ProfileSellerModel(
-      id: json['id'] ?? '',
-      createdBy: json['created_by'],
-      updatedBy: json['updated_by'],
-      userId: json['userId'] ?? '',
-      sellerType: json['sellerType'] ?? '',
-      contactName: json['contactName'],
-      contactPhone: json['contactPhone'],
-      companyName: json['companyName'],
-      reraNumber: json['reraNumber'],
-      gstNumber: json['gstNumber'],
-      idProof: json['idProof'],
-      propertyAddress: json['propertyAddress'],
-      numberOfProperties: json['numberOfProperties'] ?? 0,
-      whyChooseUs: json['whychooseus'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      id: map['id'] ?? '',
+      createdBy: map['created_by'],
+      updatedBy: map['updated_by'],
+      userId: map['userId'] ?? '',
+      sellerType: map['sellerType'] ?? '',
+      contactName: map['contactName'] ?? '',
+      contactPhone: map['contactPhone'] ?? '',
+      companyName: map['companyName'] ?? '',
+      reraNumber: map['reraNumber'] ?? '',
+      gstNumber: map['gstNumber'] ?? '',
+      idProof: map['idProof'],
+      propertyAddress: map['propertyAddress'],
+      numberOfProperties: map['numberOfProperties'] ?? 0,
+      whyChooseUs: map['whychooseus'],
+      createdAt: map['createdAt'] != null
+          ? DateTime.tryParse(map['createdAt'])
+          : null,
+      updatedAt: map['updatedAt'] != null
+          ? DateTime.tryParse(map['updatedAt'])
+          : null,
     );
   }
 
-  /// Convert Model to Map (for API or DB)
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'created_by': createdBy,
@@ -74,8 +76,96 @@ class ProfileSellerModel {
       'propertyAddress': propertyAddress,
       'numberOfProperties': numberOfProperties,
       'whychooseus': whyChooseUs,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 }
+
+class UserUpdateProfile {
+  final String firstName;
+  final String lastName;
+  final String phone;
+  final String image;
+  final String address;
+  final String email;
+  final String city;
+  final String state;
+  final SellerProfileData profileData;
+
+  UserUpdateProfile({
+    required this.firstName,
+    required this.lastName,
+    required this.phone,
+    required this.address,
+    required this.image,
+    required this.email,
+    required this.city,
+    required this.state,
+    required this.profileData,
+  });
+
+  factory UserUpdateProfile.fromMap(Map<String, dynamic> map) {
+    return UserUpdateProfile(
+      firstName: map['firstName'] ?? '',
+      lastName: map['lastName'] ?? '',
+      phone: map['phone'] ?? '',
+      email: map['email'] ?? '',
+      city: map['city'] ?? '',
+      state: map['state'] ?? '',
+      address: map['address']??'',
+      profileData: SellerProfileData.fromMap(map['profiledata'] ?? {}), image: map['profilePic'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'firstName': firstName,
+      'lastName': lastName,
+      'phone': phone,
+      'email': email,
+      'city': city,
+      'state': state,
+      'address':address,
+      'profilePic':image,
+      'profiledata': profileData.toMap(),
+    };
+  }
+}
+
+class SellerProfileData {
+  final String contactName;
+  final String contactPhone;
+  final String companyName;
+  final String gstNumber;
+  final String reraNumber;
+
+  SellerProfileData({
+    required this.contactName,
+    required this.contactPhone,
+    required this.companyName,
+    required this.gstNumber,
+    required this.reraNumber,
+  });
+
+  factory SellerProfileData.fromMap(Map<String, dynamic> map) {
+    return SellerProfileData(
+      contactName: map['contactName'] ?? '',
+      contactPhone: map['contactPhone'] ?? '',
+      companyName: map['companyName'] ?? '',
+      gstNumber: map['gstNumber'] ?? '',
+      reraNumber: map['reraNumber'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'contactName': contactName,
+      'contactPhone': contactPhone,
+      'companyName': companyName,
+      'gstNumber': gstNumber,
+      'reraNumber': reraNumber,
+    };
+  }
+}
+

@@ -8,15 +8,15 @@ import 'package:housing_flutter_app/modules/add_property/controller/create_prope
     hide SellerType;
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
-import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
+
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
-import '../../auth/views/select_account_type_screen.dart';
 import '../../builder/controller/builder_form_controller.dart';
 import '../../builder/view/builder_form_screen.dart';
 import '../../property/controllers/property_controller.dart';
@@ -48,6 +48,7 @@ class HomeHeader extends StatefulWidget {
 
 class _HomeHeaderState extends State<HomeHeader> {
   final propertyController = Get.find<PropertyController>();
+  final projectController = Get.find<ProjectWizardController>();
   int selectedIndex = 0;
 
   @override
@@ -104,6 +105,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                                   .isEmpty) {
                                 return SizedBox.shrink();
                               }
+
                               return Text(
                                 // widget.cityName,
                                 propertyController.selectedCity.value,
@@ -171,57 +173,35 @@ class _HomeHeaderState extends State<HomeHeader> {
             children: [
               Expanded(
                 child: buildPositionedTextField(context, () async {
+
                   final filter = await Get.to(
                     () => CommonSearchField(
+                      isNavigate: true,
                       onTap: (city) {
                         final filters = {"city": city.split(",").first};
-                        print("Applied Filters: $filters");
+                        propertyController.fetchTradingArea(filters['city']??'');
                         Get.back(result: filters);
                       },
                     ),
                   );
-                  if (filter['city'] != null) {
-                    await SecureStorage.saveSelectedCity(filter['city']);
+                  if (filter != null && filter is Map && filter['city'] != null) {
+                    final String city = filter['city'];
+
+
+                      // Apply city filter to home (Yes case)
+                      await SecureStorage.saveSelectedCity(city);
+                      propertyController.fetchTradingArea(city);
+                      propertyController.applyFilter('city', city);
+                      projectController.applyFilter('city', city);
+                      // Reload top properties for the new city
+                      await propertyController.loadTopProperties();
+                      await projectController.loadTopProject();
+
+
+                    // Navigate to PropertyDetail in both cases (Yes and No)
                   }
-                  propertyController.selectedCity.value =
-                      filter['city'] ?? "Surat";
-                  propertyController.applyFilters(filter);
                 }),
               ),
-              const SizedBox(width: 8),
-
-              // GestureDetector(
-              //   onTap: () async {
-              //     print("Mic tapped");
-              //     final user = await SecureStorage.getUserData();
-              //     final userType = user!.user!.userType ?? "Buyer";
-              //     // Get.to(() => const CommonSearchField());
-              //     Get.to(() {
-              //       return CreatePropertyScreen(
-              //         sellerType: mapUserRoleToSellerType(UserRole.seller),
-              //         isLogin:
-              //             userType.toLowerCase() == "seller" ? true : false,
-              //       );
-              //     });
-              //   },
-              //   child: Container(
-              //     height: 52,
-              //     padding: const EdgeInsets.symmetric(
-              //       vertical: 14,
-              //       horizontal: 15,
-              //     ),
-              //     decoration: BoxDecoration(
-              //       color: ColorRes.white,
-              //       borderRadius: BorderRadius.circular(16),
-              //       border: Border.all(color: ColorRes.grey.withOpacity(0.2)),
-              //     ),
-              //     child: const Icon(
-              //       Icons.add,
-              //       color: ColorRes.primary,
-              //       size: 24,
-              //     ),
-              //   ),
-              // ),
               if (!UserHelper.isReseller) ...[
                 GestureDetector(
                   onTap: () async {

@@ -12,9 +12,16 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
 import '../../../../modules/add_property/model/photo_model.dart';
+import '../../reseller/reseller_dashboard/model/reseller_dashboard_model.dart';
+import '../models/top_property_model.dart';
 
 class PropertyService {
+
+
   final String baseUrl = ApiConstants.property;
+  final String topPropertyUrl=ApiConstants.topProperties;
+  final String recommendedPropertyUrl=ApiConstants.recommmendedPorperties;
+
 
   /// Common headers
   static Future<Map<String, String>> headersWithoutToken() async {
@@ -61,6 +68,47 @@ class PropertyService {
     }
   }
 
+
+
+
+  Future<PaginationResponse<Items>> fetchTopProperties({
+    int page = 1,
+    Map<String, String>? filters,
+  }) async {
+    try {
+      final queryParameters = {
+        'page': page.toString(),
+        if (filters != null) ...filters,
+      };
+
+      final uri = Uri.parse(topPropertyUrl).replace(queryParameters: queryParameters);
+      print("uri: $uri");
+      final response = await http.get(uri, headers: await headers());
+
+      print("response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        print("data: $data");
+
+        return PaginationResponse<Items>.fromJson(
+          data,
+              (json) => Items.fromJson(json),
+        );
+      } else {
+        print("Failed to load properties: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to load properties");
+      }
+    } catch (e) {
+      print("Exception in fetchProperties: $e");
+      rethrow; // Let controller handle error
+    }
+  }
+
+
+
   /// Get single property by ID
   Future<Items?> getPropertyById(String id) async {
     try {
@@ -72,6 +120,8 @@ class PropertyService {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
+        print("hubdshbds ${Items.fromJson(jsonData['data']).toJson()}");
+
         return Items.fromJson(jsonData['data']);
       }
     } catch (e) {
@@ -216,6 +266,9 @@ class PropertyService {
     }
   }
 
+
+
+
   Future<bool> addView(String id) async {
     try {
       print("baseUrl : ${baseUrl}/${id}");
@@ -230,4 +283,45 @@ class PropertyService {
       return false;
     }
   }
+  Future<List<Map<String, dynamic>>> getRecommendedPropertyById(String id) async {
+
+    try {
+      final response = await http.get(
+        Uri.parse("$recommendedPropertyUrl/$id"),
+        headers: await headers(),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        if (jsonData['data'] != null && jsonData['data']['properties'] != null) {
+          return List<Map<String, dynamic>>.from(jsonData['data']['properties']);
+        }
+      }
+    } catch (e) {
+      print("Get property by ID exception: $e");
+    }
+    return [];
+  }
+  //
+  // Future<Map<String,dynamic>> getRecommendedPropertyById(String id) async {
+  //   try {
+  //     print("baseUrl : $baseUrl/$id");
+  //     final response = await http.get(
+  //       Uri.parse("$recommendedPropertyUrl/$id"),
+  //       headers: await headers(),
+  //     );
+  //
+  //     print("Response of Recommended properties: ${response.body}");
+  //
+  //     if (response.statusCode == 200) {
+  //       final jsonData = json.decode(response.body);
+  //       print("hubdshbds Response of Recommended properties ${jsonData['data']}");
+  //       return jsonData['data'];
+  //     }
+  //   } catch (e) {
+  //     print("Get property by ID exception: $e");
+  //   }
+  //   return {};
+  // }
+
 }

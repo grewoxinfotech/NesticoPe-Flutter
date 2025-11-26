@@ -538,6 +538,7 @@ class RentAdvanceDetail extends StatelessWidget {
                               Navigator.pop(context, city);
                             },
                             isFromAddProperty: true,
+
                             initialSearchText:
                                 controller.sell_rent_Address.text,
                           ),

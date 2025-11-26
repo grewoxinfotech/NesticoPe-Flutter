@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 
+import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
+
 class CompareManager extends GetxController {
   static CompareManager get to => Get.find<CompareManager>();
-
-  // Store selected properties by ID for quick lookup and full item for UI
   final RxMap<String, Items> _selected = <String, Items>{}.obs;
 
   RxMap<String, Items> get selected => _selected;
@@ -26,6 +26,16 @@ class CompareManager extends GetxController {
       // Ignore if max reached; UI can show a message
       return;
     }
+    
+
+    if (_selected.isEmpty && Get.isRegistered<ProjectCompareManager>()) {
+      try {
+        ProjectCompareManager.to.clear();
+      } catch (e) {
+        print('Error clearing project comparison: $e');
+      }
+    }
+    
     _selected[id] = item;
     _selected.refresh();
   }

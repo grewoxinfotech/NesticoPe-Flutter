@@ -418,6 +418,7 @@
 // }
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -429,8 +430,12 @@ import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.d
 import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
+import '../../../app/manager/compare_manager.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../builder/view/builder_leads.dart';
+// import '../../home/widgets/comparison_floating_button.dart';
+// import '../../home/widgets/property_comparison_floating_button.dart';
+import '../../home/widgets/unified_comparison_floating_button.dart';
 import '../../property/controllers/property_controller.dart';
 
 class PropertyDetail extends StatefulWidget {
@@ -450,8 +455,9 @@ class PropertyDetail extends StatefulWidget {
 }
 
 class _PropertyDetailState extends State<PropertyDetail> {
-  final PropertyController controller = Get.find<PropertyController>();
+  final PropertyController controller = Get.put(PropertyController());
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+  final CompareManager compare=Get.find<CompareManager>();
 
   @override
   void initState() {
@@ -550,10 +556,15 @@ class _PropertyDetailState extends State<PropertyDetail> {
                 backgroundColor: ColorRes.white,
                 leading: GestureDetector(
                   onTap: () {
-                    // clear filters and reload initial list
-                    controller.filters = {};
-                    controller.loadInitial();
+                    // Clear filters and reload initial list
+                    // controller.filters = {};
+                    // controller.loadInitial();
+                    // Navigate back
+                    log("Selected City foback ${controller.selectedCity.value}");
+                    controller.filters={'city':controller.selectedCity.value};
+
                     Get.back();
+
                   },
                   child: const Icon(
                     Icons.arrow_back,
@@ -567,306 +578,293 @@ class _PropertyDetailState extends State<PropertyDetail> {
                     color: ColorRes.textColor,
                   ),
                 ),
-                actions: [
-                  Obx(
-                    () => Padding(
-                      padding: const EdgeInsets.only(right: 12.0),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              final result = await Get.to<Map<String, String>>(
-                                () => RealEstateFilterScreen(
-                                  // pass a plain Map, not RxMap
-                                  initialFilters: Map<String, String>.from(
-                                    selectedFilters,
-                                  ),
-                                ),
-                                transition: Transition.rightToLeft,
-                              );
-
-                              if (result != null) {
-                                selectedFilters
-                                  ..clear()
-                                  ..addAll(result);
-                                controller.applyFilters(
-                                  Map<String, String>.from(selectedFilters),
-                                );
-                              }
-                            },
-                            child: const Icon(
-                              Icons.filter_list,
-                              color: ColorRes.textColor,
-                            ),
-                          ),
-                          if (selectedFilters.isNotEmpty)
-                            Positioned(
-                              top: 10,
-                              right: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: ColorRes.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Text(
-                                  '${selectedFilters.length}',
-                                  style: const TextStyle(
-                                    color: ColorRes.white,
-                                    fontSize: AppFontSizes.extraSmall,
-                                    fontWeight: AppFontWeights.extraBold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )
-              : null,
-      body: Column(
-        children: [
-          // Fixed filter bar
-          Obx(() {
-            if (selectedFilters.isEmpty) return const SizedBox.shrink();
-
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: ColorRes.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorRes.black.withOpacity(0.05),
-                    blurRadius: 2,
-                  ),
-                ],
-              ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        selectedFilters.clear();
-                        controller.applyFilters(<String, String>{});
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: ColorRes.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: ColorRes.primary.withOpacity(0.3),
+                      onTap: () async {
+                        final result = await Get.to<Map<String, String>>(
+                              () => RealEstateFilterScreen(
+                            initialFilters: Map<String, String>.from(selectedFilters),
                           ),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Clear All",
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.primary,
-                                fontWeight: AppFontWeights.medium,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(
-                              Icons.close,
-                              size: 16,
-                              color: ColorRes.primary,
-                            ),
-                          ],
-                        ),
+                          transition: Transition.rightToLeft,
+                        );
+
+                        if (result != null) {
+                          selectedFilters
+                            ..clear()
+                            ..addAll(result);
+                          controller.applyFilters(
+                            Map<String, String>.from(selectedFilters),
+                          );
+                        }
+                      },
+                      child: const Icon(
+                        Icons.filter_list,
+                        color: ColorRes.textColor,
                       ),
                     ),
-                    ...selectedFilters.entries.map((entry) {
-                      final key = entry.key;
-                      final value = entry.value;
-
-                      if (value.toString().trim().isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-
-                      String displayValue;
-                      try {
-                        final parsed = jsonDecode(value);
-                        if (parsed is Map &&
-                            parsed.containsKey('min') &&
-                            parsed.containsKey('max')) {
-                          final min = parsed['min'];
-                          final max = parsed['max'];
-                          displayValue = _formatPriceRange(min, max);
-                        } else {
-                          displayValue = value.toString();
-                        }
-                      } catch (e) {
-                        // if not JSON, use as-is
-                        displayValue = value.toString();
-                      }
-
-                      return Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: ColorRes.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: ColorRes.primary.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "$key: $displayValue",
-                              style: const TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.primary,
-                                fontWeight: AppFontWeights.medium,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            GestureDetector(
-                              onTap: () {
-                                selectedFilters.remove(key);
-                                controller.applyFilters(
-                                  Map<String, String>.from(selectedFilters),
-                                );
-                              },
-                              child: const Icon(
-                                Icons.close,
-                                size: 16,
-                                color: ColorRes.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
                   ],
                 ),
               ),
-            );
-          }),
+            ],
 
-          // property list
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoading.value && controller.items.isEmpty) {
-                return const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text(
-                        "Loading properties...",
-                        style: TextStyle(
-                          color: ColorRes.textColor,
-                          fontSize: AppFontSizes.medium,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              if (!controller.isLoading.value && controller.items.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.search_off_rounded,
-                        size: 64,
-                        color: ColorRes.primary,
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        "No properties found",
-                        style: TextStyle(
-                          fontSize: AppFontSizes.body,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.textColor,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        selectedFilters.isEmpty
-                            ? "Try adjusting your search criteria"
-                            : "Try removing some filters",
-                        style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          color: ColorRes.textColor.withOpacity(0.7),
-                        ),
-                      ),
-                      if (selectedFilters.isNotEmpty) ...[
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: () {
-                            selectedFilters.clear();
-                            controller.applyFilters(<String, String>{});
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorRes.primary,
-                            foregroundColor: ColorRes.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                          ),
-                          child: const Text("Clear All Filters"),
+          )
+              : null,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                // Fixed filter bar
+                Obx(() {
+                  if (selectedFilters.isEmpty) return const SizedBox.shrink();
+        
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: ColorRes.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorRes.black.withOpacity(0.05),
+                          blurRadius: 2,
                         ),
                       ],
-                    ],
-                  ),
-                );
-              }
-
-              return NotificationListener<ScrollNotification>(
-                onNotification: (scrollEnd) {
-                  final metrics = scrollEnd.metrics;
-                  if (metrics.atEdge && metrics.pixels != 0) {
-                    controller.loadMore();
-                  }
-                  return false;
-                },
-                child: RefreshIndicator(
-                  onRefresh: controller.refreshList,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppPadding.small,
-                      horizontal: AppPadding.small,
                     ),
-                    itemCount: controller.items.length,
-                    itemBuilder: (context, index) {
-                      // use sample local property for role/visual only; ensure safe modulo
-                      final propertySample =
-                          properties[index % properties.length];
-                      final data = controller.items[index];
-                      return PropertyCardWidget(
-                        property: data,
-                        role: propertySample['role'],
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              selectedFilters.clear();
+                              controller.applyFilters(<String, String>{});
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: ColorRes.primary.withOpacity(0.3),
+                                ),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Clear All",
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.small,
+                                      color: ColorRes.primary,
+                                      fontWeight: AppFontWeights.medium,
+                                    ),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Icon(
+                                    Icons.close,
+                                    size: 16,
+                                    color: ColorRes.primary,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          ...selectedFilters.entries.map((entry) {
+                            final key = entry.key;
+                            final value = entry.value;
+        
+                            if (value.toString().trim().isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+        
+                            String displayValue;
+                            try {
+                              final parsed = jsonDecode(value);
+                              if (parsed is Map &&
+                                  parsed.containsKey('min') &&
+                                  parsed.containsKey('max')) {
+                                final min = parsed['min'];
+                                final max = parsed['max'];
+                                displayValue = _formatPriceRange(min, max);
+                              } else {
+                                displayValue = value.toString();
+                              }
+                            } catch (e) {
+                              // if not JSON, use as-is
+                              displayValue = value.toString();
+                            }
+        
+                            return Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: ColorRes.primary.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "$key: $displayValue",
+                                    style: const TextStyle(
+                                      fontSize: AppFontSizes.small,
+                                      color: ColorRes.primary,
+                                      fontWeight: AppFontWeights.medium,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  GestureDetector(
+                                    onTap: () {
+                                      selectedFilters.remove(key);
+                                      controller.applyFilters(
+                                        Map<String, String>.from(selectedFilters),
+                                      );
+                                    },
+                                    child: const Icon(
+                                      Icons.close,
+                                      size: 16,
+                                      color: ColorRes.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+        
+                // property list
+                Expanded(
+                  child: Obx(() {
+                    if (controller.isLoading.value && controller.items.isEmpty) {
+                      return const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(height: 16),
+                            Text(
+                              "Loading properties...",
+                              style: TextStyle(
+                                color: ColorRes.textColor,
+                                fontSize: AppFontSizes.medium,
+                              ),
+                            ),
+                          ],
+                        ),
                       );
-                    },
-                  ),
+                    }
+        
+                    if (!controller.isLoading.value && controller.items.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.search_off_rounded,
+                              size: 64,
+                              color: ColorRes.primary,
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              "No properties found",
+                              style: TextStyle(
+                                fontSize: AppFontSizes.body,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textColor,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              selectedFilters.isEmpty
+                                  ? "Try adjusting your search criteria"
+                                  : "Try removing some filters",
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                color: ColorRes.textColor.withOpacity(0.7),
+                              ),
+                            ),
+                            if (selectedFilters.isNotEmpty) ...[
+                              const SizedBox(height: 24),
+                              ElevatedButton(
+                                onPressed: () {
+                                  selectedFilters.clear();
+                                  controller.applyFilters(<String, String>{});
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorRes.primary,
+                                  foregroundColor: ColorRes.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                ),
+                                child: const Text("Clear All Filters"),
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    }
+        
+                    return NotificationListener<ScrollNotification>(
+                      onNotification: (scrollEnd) {
+                        final metrics = scrollEnd.metrics;
+                        if (metrics.atEdge && metrics.pixels != 0) {
+                          controller.loadMore();
+                        }
+                        return false;
+                      },
+                      child: RefreshIndicator(
+                        onRefresh: controller.refreshList,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppPadding.small,
+                            horizontal: AppPadding.small,
+                          ),
+                          itemCount: controller.items.length,
+                          itemBuilder: (context, index) {
+        
+                            final propertySample =
+                                properties[index % properties.length];
+                            final data = controller.items[index];
+        
+                            return PropertyCardWidget(
+                              property: data,
+                              role: propertySample['role'],
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  }),
                 ),
-              );
-            }),
-          ),
-        ],
+              ],
+            ),
+            UnifiedComparisonFloatingButton(
+              bottom: 16,
+            )
+
+          ],
+        ),
       ),
     );
   }

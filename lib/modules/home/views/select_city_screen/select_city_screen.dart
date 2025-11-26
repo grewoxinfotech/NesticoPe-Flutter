@@ -123,6 +123,7 @@ class SelectCityScreen extends StatelessWidget {
                                   .split(',')
                                   .first
                                   .trim();
+
                           Get.back(result: city);
                         },
                         child: Padding(

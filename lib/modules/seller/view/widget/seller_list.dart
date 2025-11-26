@@ -332,6 +332,7 @@ class SellerCard extends StatelessWidget {
   //                   ],
   //                 ),
   //               ],
+
   //             ),
   //           ),
   //         ],

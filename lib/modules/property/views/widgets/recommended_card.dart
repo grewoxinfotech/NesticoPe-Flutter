@@ -141,52 +141,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         // Compare button
                         GestureDetector(
                           onTap: () {
-                            final before = compare.count;
                             compare.toggle(widget.property, max: 2);
-                            final after = compare.count;
-
-                            final ctx = Get.overlayContext;
-                            if (ctx != null) {
-                              if (after > before) {
-                                CustomSnackBar.show(
-                                  ctx,
-                                  message:
-                                      after == 2
-                                          ? 'Ready to compare!'
-                                          : 'Added to compare (${after}/2)',
-                                  type: SnackBarType.success,
-                                  actionLabel:
-                                      after == 2 ? 'Compare Now' : null,
-                                  onActionPressed:
-                                      after == 2
-                                          ? () {
-                                            Get.back(); // Close snackbar first
-                                            if (Get.isRegistered<
-                                              NavigationController
-                                            >()) {
-                                              Get.find<NavigationController>()
-                                                  .changeIndex(2);
-                                            }
-                                          }
-                                          : null,
-                                );
-                              } else if (after < before) {
-                                CustomSnackBar.show(
-                                  ctx,
-                                  message:
-                                      after == 0
-                                          ? 'Removed from compare'
-                                          : 'Removed from compare (${after}/2)',
-                                  type: SnackBarType.info,
-                                );
-                              } else if (after == before && before >= 2) {
-                                CustomSnackBar.show(
-                                  ctx,
-                                  message: 'You can only compare 2 properties',
-                                  type: SnackBarType.warning,
-                                );
-                              }
-                            }
                           },
                           child: Obx(() {
                             final selected = compare.isSelected(

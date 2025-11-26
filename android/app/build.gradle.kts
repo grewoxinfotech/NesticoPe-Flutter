@@ -7,8 +7,14 @@ plugins {
 
 android {
     namespace = "com.example.housing_flutter_app" // 🔁 Update with your actual package name
+//    adb shell dumpsys package com.example.housing_flutter_app | grep sign
+  //  adb shell "cmd appops query-op --mode allow OP_READ_SMS | grep com.example.housing_flutter_app"
+   // adb shell dumpsys package com.example.housing_flutter_app | Select-String sign
+
+
+
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973" // ✅ FIXED: Set required NDK version
+    ndkVersion = "27.0.12077973" // ✅ FIXED: Set required NDK versiona
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

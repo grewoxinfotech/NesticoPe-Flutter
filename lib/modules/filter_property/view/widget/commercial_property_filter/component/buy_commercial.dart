@@ -118,6 +118,16 @@ class _BuyCommercialState extends State<BuyCommercial> {
             maxQuantityLabel: '%+',
           ),
         ),
+        buildPropertyFilterHeadingPadding('Furnishing Type'),
+        const SizedBox(height: 7),
+        ListedBy(
+          listedByList: widget.controllerForFilter.furnishingType,
+          onTap: (items) {
+            debugPrint('Furnishing $items');
+          },
+          controllerForFilter:widget. controllerForFilter,
+          selectedString:widget. controllerForFilter.rentFurnishing,
+        ),
         buildPropertyFilterHeadingPadding("Leased"),
         SelectableWrap(
           items: widget.controllerForFilter.leaseTypeCommercialProperty,

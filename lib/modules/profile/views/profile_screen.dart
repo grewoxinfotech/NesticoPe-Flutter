@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
+import 'package:housing_flutter_app/modules/profile/views/profile_detail.dart';
 import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
@@ -22,161 +23,161 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/font_res.dart';
 
-class ProfileDetailScreen extends StatelessWidget {
-  const ProfileDetailScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        // showBackArrow: true,
-        // leadingIcon: Icons.arrow_back,
-        actions: [
-          IconButton(
-            onPressed: () => Get.to(const EditProfileScreen()),
-            icon: const Icon(Icons.edit_outlined),
-          ),
-        ],
-      ),
-      body: FutureBuilder(
-        future: SecureStorage.getUserData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (!snapshot.hasData || snapshot.data?.user == null) {
-            return const Center(child: Text("No user data found"));
-          }
-
-          final user = snapshot.data!.user!;
-          final fullName =
-              "${user.firstName ?? ''} ${user.lastName ?? ''}".trim();
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage:
-                      user.profilePic != null
-                          ? NetworkImage(user.profilePic!)
-                          : const AssetImage("assets/icons/app_logo.png")
-                              as ImageProvider,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  fullName.isNotEmpty ? fullName : "Guest User",
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    fontFamily: FontRes.nuNunitoSans,
-                    fontWeight: AppFontWeights.extraBold,
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // User Info Card
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 2,
-                  child: Column(
-                    children: [
-                      _buildTile(
-                        Icons.person_outline,
-                        'Username',
-                        user.username ?? '-',
-                      ),
-                      _buildTile(
-                        Icons.phone_outlined,
-                        'Phone',
-                        user.phone ?? '-',
-                      ),
-                      _buildTile(
-                        Icons.home_outlined,
-                        'Address',
-                        user.address ?? '-',
-                      ),
-                      _buildTile(
-                        Icons.location_city_outlined,
-                        'City',
-                        user.city ?? '-',
-                      ),
-                      _buildTile(
-                        Icons.map_outlined,
-                        'State',
-                        user.state ?? '-',
-                      ),
-                      _buildTile(
-                        Icons.numbers_outlined,
-                        'ZIP Code',
-                        user.zipCode ?? '-',
-                      ),
-                      _buildTile(
-                        Icons.verified_user,
-                        'Verified',
-                        user.isVerified == true ? 'Yes' : 'No',
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 26),
-
-                // Logout Button
-                SizedBox(
-                  width: double.infinity,
-                  child: NesticoPeButton(
-                    onTap: () async {
-                      await SecureStorage.clearAll();
-                      Get.offAll(() => const LoginScreen());
-                    },
-                    title: 'Logout',
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Delete Account Button
-                SizedBox(
-                  width: double.infinity,
-                  child: NesticoPeButton(
-                    onTap: () {
-                      // TODO: Implement account deletion
-                    },
-                    title: 'Delete Account',
-                    backgroundColor: ColorRes.error,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildTile(IconData icon, String title, String value) {
-    return ListTile(
-      leading: Icon(icon, color: ColorRes.primary),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontFamily: FontRes.nuNunitoSans,
-          fontWeight: AppFontWeights.extraBold,
-        ),
-      ),
-      subtitle: Text(
-        value,
-        style: const TextStyle(
-          fontFamily: FontRes.nuNunitoSans,
-          fontWeight: AppFontWeights.semiBold,
-        ),
-      ),
-    );
-  }
-}
+// class ProfileDetailScreen extends StatelessWidget {
+//   const ProfileDetailScreen({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Profile'),
+//         // showBackArrow: true,
+//         // leadingIcon: Icons.arrow_back,
+//         actions: [
+//           IconButton(
+//             onPressed: () => Get.to(const EditProfileScreen()),
+//             icon: const Icon(Icons.edit_outlined),
+//           ),
+//         ],
+//       ),
+//       body: FutureBuilder(
+//         future: SecureStorage.getUserData(),
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return const Center(child: CircularProgressIndicator());
+//           }
+//
+//           if (!snapshot.hasData || snapshot.data?.user == null) {
+//             return const Center(child: Text("No user data found"));
+//           }
+//
+//           final user = snapshot.data!.user!;
+//           final fullName =
+//               "${user.firstName ?? ''} ${user.lastName ?? ''}".trim();
+//
+//           return SingleChildScrollView(
+//             padding: const EdgeInsets.all(16),
+//             child: Column(
+//               children: [
+//                 CircleAvatar(
+//                   radius: 50,
+//                   backgroundImage:
+//                       user.profilePic != null
+//                           ? NetworkImage(user.profilePic!)
+//                           : const AssetImage("assets/icons/app_logo.png")
+//                               as ImageProvider,
+//                 ),
+//                 const SizedBox(height: 16),
+//                 Text(
+//                   fullName.isNotEmpty ? fullName : "Guest User",
+//                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
+//                     fontFamily: FontRes.nuNunitoSans,
+//                     fontWeight: AppFontWeights.extraBold,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 20),
+//
+//                 // User Info Card of Profile screen card
+//                 Card(
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius: BorderRadius.circular(12),
+//                   ),
+//                   elevation: 2,
+//                   child: Column(
+//                     children: [
+//                       _buildTile(
+//                         Icons.person_outline,
+//                         'Username',
+//                         user.username ?? '-',
+//                       ),
+//                       _buildTile(
+//                         Icons.phone_outlined,
+//                         'Phone',
+//                         user.phone ?? '-',
+//                       ),
+//                       _buildTile(
+//                         Icons.home_outlined,
+//                         'Address',
+//                         user.address ?? '-',
+//                       ),
+//                       _buildTile(
+//                         Icons.location_city_outlined,
+//                         'City',
+//                         user.city ?? '-',
+//                       ),
+//                       _buildTile(
+//                         Icons.map_outlined,
+//                         'State',
+//                         user.state ?? '-',
+//                       ),
+//                       _buildTile(
+//                         Icons.numbers_outlined,
+//                         'ZIP Code',
+//                         user.zipCode ?? '-',
+//                       ),
+//                       _buildTile(
+//                         Icons.verified_user,
+//                         'Verified',
+//                         user.isVerified == true ? 'Yes' : 'No',
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//
+//                 const SizedBox(height: 26),
+//
+//                 // Logout Button
+//                 SizedBox(
+//                   width: double.infinity,
+//                   child: NesticoPeButton(
+//                     onTap: () async {
+//                       await SecureStorage.clearAll();
+//                       Get.offAll(() => const LoginScreen());
+//                     },
+//                     title: 'Logout',
+//                   ),
+//                 ),
+//                 const SizedBox(height: 20),
+//
+//                 // Delete Account Button
+//                 SizedBox(
+//                   width: double.infinity,
+//                   child: NesticoPeButton(
+//                     onTap: () {
+//                       // TODO: Implement account deletion
+//                     },
+//                     title: 'Delete Account',
+//                     backgroundColor: ColorRes.error,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+//
+//   Widget _buildTile(IconData icon, String title, String value) {
+//     return ListTile(
+//       leading: Icon(icon, color: ColorRes.primary),
+//       title: Text(
+//         title,
+//         style: const TextStyle(
+//           fontFamily: FontRes.nuNunitoSans,
+//           fontWeight: AppFontWeights.extraBold,
+//         ),
+//       ),
+//       subtitle: Text(
+//         value,
+//         style: const TextStyle(
+//           fontFamily: FontRes.nuNunitoSans,
+//           fontWeight: AppFontWeights.semiBold,
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class ProfileScreen extends StatelessWidget {
   final String imageUrl;
@@ -192,10 +193,9 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorRes.white,
-      appBar: _buildAppBar(),
+      appBar: _buildAppBar(),//
       body: SafeArea(
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
           padding: const EdgeInsets.all(_defaultPadding),
           child:
               UserHelper.isGuest
@@ -352,7 +352,7 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildProfileCard() {
     return GestureDetector(
       onTap: () {
-        Get.to(() => ProfileDetailScreen());
+        Get.to(() => SellerProfileScreen());
       },
       child: Container(
         padding: const EdgeInsets.all(_defaultPadding),

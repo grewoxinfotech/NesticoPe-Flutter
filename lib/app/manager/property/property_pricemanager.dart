@@ -94,7 +94,7 @@
 //   }
 // }
 
-import 'package:housing_flutter_app/modules/seller/view/widget/seller_list.dart';
+// import 'package:housing_flutter_app/modules/seller/view/widget/seller_list.dart';
 
 import '../../../data/network/property/models/property_model.dart';
 import '../../utils/formater/formater.dart';
@@ -296,12 +296,12 @@ class PropertyPriceManager {
       final rent = monthRent;
       if (rent <= 0) return "Rent not available";
       final formatted = Formatter.formatPrice(rent);
-      return "₹$formatted /month";
+      return "$formatted /month";
     } else {
       final price = fi.price;
       if (price <= 0) return "Price not available";
       final formatted = Formatter.formatPrice(price);
-      return (fi.negotiable) ? "₹$formatted (Negotiable)" : "₹$formatted";
+      return (fi.negotiable) ? "$formatted (Negotiable)" : "$formatted";
     }
   }
 

@@ -1,4 +1,6 @@
 // import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -174,51 +176,8 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                       // Compare button
                       GestureDetector(
                         onTap: () {
-                          final before = compare.count;
-                          compare.toggle(widget.property, max: 2);
-                          final after = compare.count;
 
-                          final ctx = Get.overlayContext;
-                          if (ctx != null) {
-                            if (after > before) {
-                              CustomSnackBar.show(
-                                ctx,
-                                message:
-                                    after == 2
-                                        ? 'Ready to compare!'
-                                        : 'Added to compare (${after}/2)',
-                                type: SnackBarType.success,
-                                actionLabel: after == 2 ? 'Compare Now' : null,
-                                onActionPressed:
-                                    after == 2
-                                        ? () {
-                                          Get.back(); // Close snackbar first
-                                          if (Get.isRegistered<
-                                            NavigationController
-                                          >()) {
-                                            Get.find<NavigationController>()
-                                                .changeIndex(2);
-                                          }
-                                        }
-                                        : null,
-                              );
-                            } else if (after < before) {
-                              CustomSnackBar.show(
-                                ctx,
-                                message:
-                                    after == 0
-                                        ? 'Removed from compare'
-                                        : 'Removed from compare (${after}/2)',
-                                type: SnackBarType.info,
-                              );
-                            } else if (after == before && before >= 2) {
-                              CustomSnackBar.show(
-                                ctx,
-                                message: 'You can only compare 2 properties',
-                                type: SnackBarType.warning,
-                              );
-                            }
-                          }
+                          compare.toggle(widget.property, max: 2);
                         },
                         child: Obx(() {
                           final selected = compare.isSelected(
@@ -382,78 +341,31 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                             Text(
                               price.displayPrice,
                               style: TextStyle(
-                                fontSize:
-                                    (widget.role.trim().toLowerCase() ==
-                                            'owner')
-                                        ? AppFontSizes.body
-                                        : AppFontSizes.caption,
-                                fontWeight:
-                                    (widget.role.trim().toLowerCase() ==
-                                            'owner')
-                                        ? AppFontWeights.bold
-                                        : AppFontWeights.semiBold,
+                                // fontSize:
+                                //     (widget.role.trim().toLowerCase() ==
+                                //             'owner')
+                                //         ? AppFontSizes.body
+                                //         : AppFontSizes.caption,
+                                fontSize
+                                    : AppFontSizes.caption,
+                                // fontWeight:
+                                //     (widget.role.trim().toLowerCase() ==
+                                //             'owner')
+                                //         ? AppFontWeights.bold
+                                //         : AppFontWeights.semiBold,
+                                fontWeight
+                                    : AppFontWeights.semiBold,
                                 color: ColorRes.textColor,
                               ),
                             ),
                           ],
                         ),
-                        // if (index != widget.apartments.length - 1) ...[
-                        //   const SizedBox(width: 12),
-                        //   Container(
-                        //     height: 25,
-                        //     width: 1,
-                        //     color: Colors.grey.shade300,
-                        //   ),
-                        //   const SizedBox(width: 12),
-                        // ],
                       ],
                     ),
                   ],
                 ),
               ),
             ),
-
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(
-            //     horizontal: AppPadding.small,
-            //     vertical: 2,
-            //   ),
-            //   child: SizedBox(
-            //     height: 40,
-            //     child: ListView.separated(
-            //       scrollDirection: Axis.horizontal,
-            //       itemCount: features.length,
-            //       itemBuilder: (context, index) {
-            //         final feature = features[index];
-            //         return Container(
-            //           margin: const EdgeInsets.only(top: 8, bottom: 8),
-            //           padding: const EdgeInsets.symmetric(
-            //             horizontal: AppPadding.small,
-            //           ),
-            //           decoration: BoxDecoration(
-            //             color: ColorRes.leadGreyColor.shade100,
-            //             borderRadius: BorderRadius.circular(AppRadius.small),
-            //           ),
-            //           child: Row(
-            //             mainAxisSize: MainAxisSize.min,
-            //             children: [
-            //               Text(
-            //                 feature,
-            //                 style: const TextStyle(
-            //                   fontSize: AppFontSizes.caption,
-            //                   color: ColorRes.grey,
-            //                   fontWeight: AppFontWeights.medium,
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         );
-            //       },
-            //       separatorBuilder:
-            //           (context, index) => const SizedBox(width: 5),
-            //     ),
-            //   ),
-            // ),
             SizedBox(height: 8),
 
             Padding(
@@ -534,7 +446,9 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                 ],
               ),
             ),
+
             if (widget.isFeedbackEnabled) ...[
+
               const SizedBox(height: AppSpacing.small),
 
               Padding(

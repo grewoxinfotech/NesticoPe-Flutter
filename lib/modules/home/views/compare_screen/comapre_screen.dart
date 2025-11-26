@@ -43,6 +43,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -293,7 +294,7 @@ class PropertyCardForCompare extends StatelessWidget {
                               child: Text(
                                 _price(item),
                                 style: TextStyle(
-                                  fontSize: AppFontSizes.extraBody,
+                                  fontSize: AppFontSizes.medium,
                                   fontWeight: AppFontWeights.bold,
                                   color: ColorRes.textColor,
                                   height: 1,
@@ -302,6 +303,7 @@ class PropertyCardForCompare extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            SizedBox(width: 10,),
                             Container(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 14,
@@ -359,7 +361,12 @@ class CompareScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         title: Text(
           'Property Comparison',
           style: TextStyle(
@@ -684,6 +691,276 @@ class CompareScreen extends StatelessWidget {
 //   }
 // }
 
+// class _ComparisonTable extends StatelessWidget {
+//   final Items a;
+//   final Items b;
+//
+//   const _ComparisonTable({super.key, required this.a, required this.b});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(12),
+//         border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 1),
+//         // boxShadow: [
+//         //   BoxShadow(
+//         //     color: Colors.black.withOpacity(0.05),
+//         //     blurRadius: 10,
+//         //     offset: const Offset(0, 2),
+//         //   ),
+//         // ],
+//       ),
+//       child: Column(
+//         children: [
+//           // Header Row
+//           Container(
+//             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//             decoration: BoxDecoration(
+//               border: Border(
+//                 bottom: BorderSide(color: ColorRes.leadGreyColor[200]!),
+//               ),
+//             ),
+//
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Text(
+//                   'Features',
+//                   textAlign: TextAlign.center,
+//                   style: TextStyle(
+//                     fontSize: AppFontSizes.small,
+//                     fontWeight: AppFontWeights.medium,
+//                   ),
+//                 ),
+//                 Expanded(
+//                   child: Text(
+//                     _title(a),
+//                     textAlign: TextAlign.center,
+//                     maxLines: 1,
+//                     overflow: TextOverflow.ellipsis,
+//                     style: TextStyle(
+//                       fontSize: AppFontSizes.small,
+//                       fontWeight: AppFontWeights.medium,
+//                     ),
+//                   ),
+//                 ),
+//                 Expanded(
+//                   child: Text(
+//                     _title(b),
+//                     textAlign: TextAlign.center,
+//                     maxLines: 1,
+//                     overflow: TextOverflow.ellipsis,
+//                     style: const TextStyle(
+//                       fontSize: AppFontSizes.small,
+//                       fontWeight: AppFontWeights.medium,
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           // Comparison Rows
+//           _ComparisonRow(
+//             icon: Icons.home_outlined,
+//             label: 'Property\nType',
+//             valueA: a.propertyType ?? '-',
+//             valueB: b.propertyType ?? '-',
+//           ),
+//           _ComparisonRow(
+//             icon: Icons.location_on_outlined,
+//             label: 'Location',
+//             valueA: a.address ?? '-',
+//             valueB: b.address ?? '-',
+//           ),
+//           _ComparisonRow(
+//             icon: Icons.square_foot,
+//             label: 'Built-up Area',
+//             valueA: _area(a),
+//             valueB: _area(b),
+//             highlightB: _highlightB(
+//               a,
+//               b,
+//               (x) => x.propertyDetails?.propertyBuiltUpArea ?? 0,
+//             ),
+//           ),
+//           _ComparisonRow(
+//             icon: Icons.bed_outlined,
+//             label: 'Bedrooms',
+//             valueA: (a.propertyDetails?.bhk ?? 0).toString(),
+//             valueB: (b.propertyDetails?.bhk ?? 0).toString(),
+//           ),
+//           _ComparisonRow(
+//             icon: Icons.bathtub_outlined,
+//             label: 'Bathrooms',
+//             valueA: (a.propertyDetails?.bathroom ?? 0).toString(),
+//             valueB: (b.propertyDetails?.bathroom ?? 0).toString(),
+//           ),
+//           _ComparisonRow(
+//             icon: Icons.layers_outlined,
+//             label: 'Floor',
+//             valueA: _floor(a),
+//             valueB: _floor(b),
+//           ),
+//           _ComparisonRow(
+//             icon: Icons.monetization_on_outlined,
+//             label: 'Price/sq\nft',
+//             valueA: _ppsf(a) ?? '-',
+//             valueB: _ppsf(b) ?? '-',
+//             highlightB: _highlightB(
+//               a,
+//               b,
+//               (x) => x.propertyDetails?.financialInfo?.pricePerSqft ?? 0,
+//             ),
+//           ),
+//           _ComparisonRow(
+//             icon: Icons.checklist_rtl,
+//             label: 'Amenities',
+//             valueA: _amenities(a),
+//             valueB: _amenities(b),
+//             highlightB:
+//                 (b.propertyDetails?.amenities?.length ?? 0) >
+//                 (a.propertyDetails?.amenities?.length ?? 0),
+//           ),
+//           _ComparisonRow(
+//             icon: Icons.price_change,
+//             label: 'Price',
+//             valueA:
+//                 PropertyPriceManager(
+//                   listingType: a.listingType ?? '',
+//                   financialInfo: a.propertyDetails?.financialInfo,
+//                 ).displayPrice,
+//             valueB:
+//                 PropertyPriceManager(
+//                   listingType: b.listingType ?? '',
+//                   financialInfo: b.propertyDetails?.financialInfo,
+//                 ).displayPrice,
+//             isLast: true,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// String _title(Items i) {
+//   if ((i.type ?? '').toLowerCase() == 'residential') {
+//     final bhk = i.propertyDetails?.bhk ?? 0;
+//     return '${bhk} BHK ${i.propertyType?.capitalizeFirst ?? ''}';
+//   }
+//   return i.propertyType?.capitalizeFirst ?? (i.title ?? '');
+// }
+//
+// String _area(Items i) {
+//   final v = i.propertyDetails?.propertyBuiltUpArea;
+//   if (v == null || v == 0) return '-';
+//   final unit = i.propertyDetails?.propertyBuiltUpAreaUnit ?? 'sq.ft';
+//   return '${v.toStringAsFixed(0)} $unit';
+// }
+//
+// String? _ppsf(Items i) {
+//   final v = i.propertyDetails?.financialInfo?.pricePerSqft ?? 0;
+//   return v > 0 ? '₹${v.toStringAsFixed(0)}' : null;
+// }
+//
+// String _floor(Items i) {
+//   final f = i.propertyDetails?.floorInfo?.floorNumber;
+//   final t = i.propertyDetails?.floorInfo?.totalFloors;
+//   if (f == null && t == null) return '-';
+//   if (f == null) return 'of ${t}';
+//   if (t == null) return '${f}';
+//   return '${f} of ${t}';
+// }
+//
+// String _amenities(Items i) {
+//   final a = i.propertyDetails?.amenities ?? [];
+//   if (a.isEmpty) return '-';
+//   return a.take(4).join(', ');
+// }
+//
+// bool _highlightB(Items a, Items b, num Function(Items) pick) {
+//   return pick(b) > pick(a);
+// }
+//
+class _ComparisonRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String valueA;
+  final String valueB;
+  final bool isAddress;
+  final bool highlightB;
+  final bool isLast;
+
+  const _ComparisonRow({
+    required this.icon,
+    required this.label,
+    required this.valueA,
+    required this.valueB,
+    this.isAddress=false,
+    this.highlightB = false,
+    this.isLast = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      decoration: BoxDecoration(
+        border:
+            isLast
+                ? null
+                : Border(bottom: BorderSide(color: Colors.grey[300]!)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: AppFontSizes.caption,
+                fontWeight: AppFontWeights.medium,
+                color: ColorRes.leadGreyColor[700],
+              ),
+            ),
+          ),
+
+
+          Expanded(
+            child:(isAddress)?ReadMoreClass(description: valueA, trimLines: 3, size: AppFontSizes.small, colorClickableText: ColorRes.primary) :Text(
+              valueA,
+
+
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.medium,
+                color: ColorRes.textColor,
+              ),
+            ),
+          ),
+          SizedBox(width: 12,),
+          Expanded(
+            child: Container(
+              padding:
+                  highlightB ? const EdgeInsets.symmetric(vertical: 6) : null,
+              child:(isAddress)?ReadMoreClass(description: valueB, trimLines: 3, size: AppFontSizes.small, colorClickableText: ColorRes.primary) : Text(
+                valueB,
+
+                style: const TextStyle(
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                  color: ColorRes.textColor,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 class _ComparisonTable extends StatelessWidget {
   final Items a;
   final Items b;
@@ -697,144 +974,185 @@ class _ComparisonTable extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 1),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black.withOpacity(0.05),
-        //     blurRadius: 10,
-        //     offset: const Offset(0, 2),
-        //   ),
-        // ],
       ),
       child: Column(
         children: [
-          // Header Row
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: ColorRes.leadGreyColor[200]!),
+          _header(),
+
+          // ---- Comparison Rows ----
+
+          if (!_shouldHide(a.propertyType, b.propertyType))
+            _ComparisonRow(
+              icon: Icons.home_outlined,
+              label: 'Property\nType',
+              valueA: a.propertyType ?? '-',
+              valueB: b.propertyType ?? '-',
+            ),
+
+          if (!_shouldHide(a.address, b.address))
+            _ComparisonRow(
+              icon: Icons.location_on_outlined,
+              label: 'Location',
+              valueA: a.address ?? '-',
+              isAddress: true,
+              valueB: b.address ?? '-',
+            ),
+
+          if (!_shouldHide(_area(a), _area(b)))
+            _ComparisonRow(
+              icon: Icons.square_foot,
+              label: 'Built-up Area',
+              valueA: _area(a),
+              valueB: _area(b),
+              highlightB: _highlightB(
+                a,
+                b,
+                    (x) => x.propertyDetails?.propertyBuiltUpArea ?? 0,
               ),
             ),
 
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Features',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.medium,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    _title(a),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      fontWeight: AppFontWeights.medium,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    _title(b),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: AppFontSizes.small,
-                      fontWeight: AppFontWeights.medium,
-                    ),
-                  ),
-                ),
-              ],
+          if (!_shouldHide(
+            (a.propertyDetails?.bhk ?? 0).toString(),
+            (b.propertyDetails?.bhk ?? 0).toString(),
+          ))
+            _ComparisonRow(
+              icon: Icons.bed_outlined,
+              label: 'Bedrooms',
+              valueA: (a.propertyDetails?.bhk ?? 0).toString(),
+              valueB: (b.propertyDetails?.bhk ?? 0).toString(),
+            ),
+
+          if (!_shouldHide(
+            (a.propertyDetails?.bathroom ?? 0).toString(),
+            (b.propertyDetails?.bathroom ?? 0).toString(),
+          ))
+            _ComparisonRow(
+              icon: Icons.bathtub_outlined,
+              label: 'Bathrooms',
+              valueA: (a.propertyDetails?.bathroom ?? 0).toString(),
+              valueB: (b.propertyDetails?.bathroom ?? 0).toString(),
+            ),
+
+          if (!_shouldHide(_floor(a), _floor(b)))
+            _ComparisonRow(
+              icon: Icons.layers_outlined,
+              label: 'Floor',
+              valueA: _floor(a),
+              valueB: _floor(b),
+            ),
+
+          if (!_shouldHide(_ppsf(a), _ppsf(b)))
+            _ComparisonRow(
+              icon: Icons.monetization_on_outlined,
+              label: 'Price/sq\nft',
+              valueA: _ppsf(a) ?? '-',
+              valueB: _ppsf(b) ?? '-',
+              highlightB: _highlightB(
+                a,
+                b,
+                    (x) => x.propertyDetails?.financialInfo?.pricePerSqft ?? 0,
+              ),
+            ),
+
+          if (!_shouldHide(_amenities(a), _amenities(b)))
+            _ComparisonRow(
+              icon: Icons.checklist_rtl,
+              label: 'Amenities',
+              valueA: _amenities(a),
+              isAddress: true,
+              valueB: _amenities(b),
+              highlightB:
+              (b.propertyDetails?.amenities?.length ?? 0) >
+
+                  (a.propertyDetails?.amenities?.length ?? 0),
+            ),
+
+          if (!_shouldHide(
+            PropertyPriceManager(
+              listingType: a.listingType ?? '',
+              financialInfo: a.propertyDetails?.financialInfo,
+            ).displayPrice,
+            PropertyPriceManager(
+              listingType: b.listingType ?? '',
+              financialInfo: b.propertyDetails?.financialInfo,
+            ).displayPrice,
+          ))
+            _ComparisonRow(
+              icon: Icons.price_change,
+              label: 'Price',
+              valueA: PropertyPriceManager(
+                listingType: a.listingType ?? '',
+                financialInfo: a.propertyDetails?.financialInfo,
+              ).displayPrice,
+              valueB: PropertyPriceManager(
+                listingType: b.listingType ?? '',
+                financialInfo: b.propertyDetails?.financialInfo,
+              ).displayPrice,
+              isLast: true,
+            ),
+        ],
+      ),
+    );
+  }
+
+  // ---------- Header ----------
+  Widget _header() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: ColorRes.leadGreyColor[200]!),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Features',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: AppFontSizes.small,
+              fontWeight: AppFontWeights.medium,
             ),
           ),
-          // Comparison Rows
-          _ComparisonRow(
-            icon: Icons.home_outlined,
-            label: 'Property\nType',
-            valueA: a.propertyType ?? '-',
-            valueB: b.propertyType ?? '-',
-          ),
-          _ComparisonRow(
-            icon: Icons.location_on_outlined,
-            label: 'Location',
-            valueA: a.address ?? '-',
-            valueB: b.address ?? '-',
-          ),
-          _ComparisonRow(
-            icon: Icons.square_foot,
-            label: 'Built-up Area',
-            valueA: _area(a),
-            valueB: _area(b),
-            highlightB: _highlightB(
-              a,
-              b,
-              (x) => x.propertyDetails?.propertyBuiltUpArea ?? 0,
+          Expanded(
+            child: Text(
+              _title(a),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.medium,
+              ),
             ),
           ),
-          _ComparisonRow(
-            icon: Icons.bed_outlined,
-            label: 'Bedrooms',
-            valueA: (a.propertyDetails?.bhk ?? 0).toString(),
-            valueB: (b.propertyDetails?.bhk ?? 0).toString(),
-          ),
-          _ComparisonRow(
-            icon: Icons.bathtub_outlined,
-            label: 'Bathrooms',
-            valueA: (a.propertyDetails?.bathroom ?? 0).toString(),
-            valueB: (b.propertyDetails?.bathroom ?? 0).toString(),
-          ),
-          _ComparisonRow(
-            icon: Icons.layers_outlined,
-            label: 'Floor',
-            valueA: _floor(a),
-            valueB: _floor(b),
-          ),
-          _ComparisonRow(
-            icon: Icons.monetization_on_outlined,
-            label: 'Price/sq\nft',
-            valueA: _ppsf(a) ?? '-',
-            valueB: _ppsf(b) ?? '-',
-            highlightB: _highlightB(
-              a,
-              b,
-              (x) => x.propertyDetails?.financialInfo?.pricePerSqft ?? 0,
+          Expanded(
+            child: Text(
+              _title(b),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.medium,
+              ),
             ),
-          ),
-          _ComparisonRow(
-            icon: Icons.checklist_rtl,
-            label: 'Amenities',
-            valueA: _amenities(a),
-            valueB: _amenities(b),
-            highlightB:
-                (b.propertyDetails?.amenities?.length ?? 0) >
-                (a.propertyDetails?.amenities?.length ?? 0),
-          ),
-          _ComparisonRow(
-            icon: Icons.price_change,
-            label: 'Price',
-            valueA:
-                PropertyPriceManager(
-                  listingType: a.listingType ?? '',
-                  financialInfo: a.propertyDetails?.financialInfo,
-                ).displayPrice,
-            valueB:
-                PropertyPriceManager(
-                  listingType: b.listingType ?? '',
-                  financialInfo: b.propertyDetails?.financialInfo,
-                ).displayPrice,
-            isLast: true,
           ),
         ],
       ),
     );
   }
+}
+
+// --------------------------------------------------
+// ---------------- Helper Functions ----------------
+// --------------------------------------------------
+
+bool _shouldHide(String? a, String? b) {
+  bool empty(String? v) =>
+      v == null || v.trim().isEmpty || v == '-' || v == '0';
+  return empty(a) && empty(b);
 }
 
 String _title(Items i) {
@@ -861,9 +1179,9 @@ String _floor(Items i) {
   final f = i.propertyDetails?.floorInfo?.floorNumber;
   final t = i.propertyDetails?.floorInfo?.totalFloors;
   if (f == null && t == null) return '-';
-  if (f == null) return 'of ${t}';
-  if (t == null) return '${f}';
-  return '${f} of ${t}';
+  if (f == null) return 'of $t';
+  if (t == null) return '$f';
+  return '$f of $t';
 }
 
 String _amenities(Items i) {
@@ -874,78 +1192,6 @@ String _amenities(Items i) {
 
 bool _highlightB(Items a, Items b, num Function(Items) pick) {
   return pick(b) > pick(a);
-}
-
-class _ComparisonRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String valueA;
-  final String valueB;
-  final bool highlightB;
-  final bool isLast;
-
-  const _ComparisonRow({
-    required this.icon,
-    required this.label,
-    required this.valueA,
-    required this.valueB,
-    this.highlightB = false,
-    this.isLast = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      decoration: BoxDecoration(
-        border:
-            isLast
-                ? null
-                : Border(bottom: BorderSide(color: Colors.grey[300]!)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: AppFontSizes.caption,
-                fontWeight: AppFontWeights.medium,
-                color: ColorRes.leadGreyColor[700],
-              ),
-            ),
-          ),
-
-          Expanded(
-            child: Text(
-              valueA,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.medium,
-                color: ColorRes.textColor,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding:
-                  highlightB ? const EdgeInsets.symmetric(vertical: 6) : null,
-              child: Text(
-                valueB,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.medium,
-                  color: ColorRes.textColor,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 Widget buildWishlistCard() {

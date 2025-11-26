@@ -224,66 +224,66 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 ),
 
                 // Sort Button
-                Container(
-                  height: 35,
-                  margin: EdgeInsets.only(right: 12),
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: ColorRes.leadGreyColor[100],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: ColorRes.leadGreyColor[300]!,
-                      width: 1,
-                    ),
-                  ),
-                  child: PopupMenuButton<SortOption>(
-                    icon: Text(
-                      'Sort',
-                      style: TextStyle(
-                        color: ColorRes.leadGreyColor[700],
-                        fontSize: AppFontSizes.bodySmall,
-                        fontWeight: AppFontWeights.semiBold,
-                      ),
-                    ),
-                    onSelected: controller.updateSortOption,
-                    offset: Offset(0, 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(
-                        color: ColorRes.leadGreyColor.shade300,
-                        width: 0.7,
-                      ),
-                    ),
-                    elevation: 8,
-                    itemBuilder:
-                        (context) => [
-                          _buildSortMenuItem(
-                            Icons.sort_by_alpha_rounded,
-                            'Name',
-                            SortOption.name,
-                            ColorRes.primary,
-                          ),
-                          _buildSortMenuItem(
-                            Icons.arrow_upward_rounded,
-                            'Price: Low to High',
-                            SortOption.priceAsc,
-                            ColorRes.green,
-                          ),
-                          _buildSortMenuItem(
-                            Icons.arrow_downward_rounded,
-                            'Price: High to Low',
-                            SortOption.priceDesc,
-                            ColorRes.error,
-                          ),
-                          _buildSortMenuItem(
-                            Icons.star_rounded,
-                            'Rating',
-                            SortOption.rating,
-                            ColorRes.homeAmber,
-                          ),
-                        ],
-                  ),
-                ),
+                // Container(
+                //   height: 35,
+                //   margin: EdgeInsets.only(right: 12),
+                //   padding: EdgeInsets.symmetric(horizontal: 16),
+                //   decoration: BoxDecoration(
+                //     color: ColorRes.leadGreyColor[100],
+                //     borderRadius: BorderRadius.circular(12),
+                //     border: Border.all(
+                //       color: ColorRes.leadGreyColor[300]!,
+                //       width: 1,
+                //     ),
+                //   ),
+                //   child: PopupMenuButton<SortOption>(
+                //     icon: Text(
+                //       'Sort',
+                //       style: TextStyle(
+                //         color: ColorRes.leadGreyColor[700],
+                //         fontSize: AppFontSizes.bodySmall,
+                //         fontWeight: AppFontWeights.semiBold,
+                //       ),
+                //     ),
+                //     onSelected: controller.updateSortOption,
+                //     offset: Offset(0, 40),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(16),
+                //       side: BorderSide(
+                //         color: ColorRes.leadGreyColor.shade300,
+                //         width: 0.7,
+                //       ),
+                //     ),
+                //     elevation: 8,
+                //     itemBuilder:
+                //         (context) => [
+                //           _buildSortMenuItem(
+                //             Icons.sort_by_alpha_rounded,
+                //             'Name',
+                //             SortOption.name,
+                //             ColorRes.primary,
+                //           ),
+                //           _buildSortMenuItem(
+                //             Icons.arrow_upward_rounded,
+                //             'Price: Low to High',
+                //             SortOption.priceAsc,
+                //             ColorRes.green,
+                //           ),
+                //           _buildSortMenuItem(
+                //             Icons.arrow_downward_rounded,
+                //             'Price: High to Low',
+                //             SortOption.priceDesc,
+                //             ColorRes.error,
+                //           ),
+                //           _buildSortMenuItem(
+                //             Icons.star_rounded,
+                //             'Rating',
+                //             SortOption.rating,
+                //             ColorRes.homeAmber,
+                //           ),
+                //         ],
+                //   ),
+                // ),
                 IconButton(
                   onPressed: toggleSelectionMode,
                   icon: const Icon(Icons.share_outlined),
@@ -1080,13 +1080,16 @@ class ProductCard extends StatelessWidget {
                         left: Radius.circular(11),
                       ),
                       child: CustomImage(
-                        type: CustomImageType.network,
-                        src: product.propertyMedia?.images?.first,
-                        width: 110,
-                        height: 121,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+          type: CustomImageType.network,
+          src: (product.propertyMedia?.images?.isNotEmpty ?? false)
+              ? product.propertyMedia!.images!.first
+              : 'https://via.placeholder.com/150', // fallback placeholder
+          width: 110,
+          height: 121,
+          fit: BoxFit.cover,
+        ),
+
+      ),
                     // Selection Checkbox Overlay
                     if (isSelectionMode.value)
                       Positioned(

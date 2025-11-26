@@ -53,7 +53,9 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
       height: height,
       width: width,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
+
+        borderRadius: BorderRadius.circular(borderRadius,),
+
         child: Stack(
           children: [
             /// Background Image

@@ -36,9 +36,9 @@ class ResellerProfileData {
   final String successRate;
   final int responseTime;
   final int currentAssignments;
-  final List<dynamic> assignmentHistory;
+  final String assignmentHistory;
   final String performanceLevel;
-  final List<dynamic> specializations;
+  final String specializations;
   final String createdAt;
   final String updatedAt;
 
@@ -70,9 +70,9 @@ class ResellerProfileData {
       successRate: json['successRate'] ?? '0.00',
       responseTime: json['responseTime'] ?? 0,
       currentAssignments: json['currentAssignments'] ?? 0,
-      assignmentHistory: List<dynamic>.from(json['assignmentHistory'] ?? []),
+      assignmentHistory: (json['assignmentHistory'] ?? ''),
       performanceLevel: json['performanceLevel'] ?? '',
-      specializations: List<dynamic>.from(json['specializations'] ?? []),
+      specializations: (json['specializations'] ?? ''),
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',
     );

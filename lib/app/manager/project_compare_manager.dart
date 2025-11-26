@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 
+import 'package:housing_flutter_app/app/manager/compare_manager.dart';
+
 class ProjectCompareManager extends GetxController {
   static ProjectCompareManager get to => Get.find<ProjectCompareManager>();
 
@@ -12,6 +14,7 @@ class ProjectCompareManager extends GetxController {
   int get count => _selected.length;
 
   bool isSelected(String? id) => id != null && _selected.containsKey(id);
+
 
   void toggle(ProjectItem item, {int max = 2}) {
     final id = item.id;
@@ -26,6 +29,15 @@ class ProjectCompareManager extends GetxController {
     if (_selected.length >= max) {
       // Ignore if max reached; UI can show a message
       return;
+    }
+    
+
+    if (_selected.isEmpty && Get.isRegistered<CompareManager>()) {
+      try {
+        CompareManager.to.clear();
+      } catch (e) {
+        print('Error clearing property comparison: $e');
+      }
     }
     
     _selected[id] = item;

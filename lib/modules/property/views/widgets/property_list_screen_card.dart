@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/home/views/compare_screen/comapre_screen.dart';
+import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -12,7 +13,7 @@ import '../../../../data/network/property/models/property_model.dart';
 import '../../../../widgets/button/button.dart';
 import '../../../../widgets/display/card.dart';
 import '../../../../widgets/bar/navigation_bar/navigation_Bar.dart';
-import '../property_detail_screen.dart';
+
 
 class PropertyListScreenCard extends StatelessWidget {
   final Items? items;

@@ -12,7 +12,7 @@ import 'package:housing_flutter_app/modules/builder/view/project_detail/project_
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
 import '../../../app/manager/property_highlight_manager.dart';
-import '../../../data/network/builder/model/builder_projectModel.dart';
+// import '../../../data/network/builder/model/builder_projectModel.dart';
 import '../../saved_property/controllers/property_favorite_controller.dart';
 import '../controller/builder_form_controller.dart';
 import 'builder_form_screen.dart';
@@ -251,40 +251,8 @@ class BuilderProjectCard extends StatelessWidget {
                         // Compare toggle
                         GestureDetector(
                           onTap: () {
-                            final before = compare.count;
-                            compare.toggle(project, max: 2);
-                            final after = compare.count;
 
-                            // Show feedback
-                            final ctx = Get.overlayContext;
-                            if (ctx != null) {
-                              if (after > before) {
-                                CustomSnackBar.show(
-                                  ctx,
-                                  message:
-                                      after == 2
-                                          ? 'Ready to compare!'
-                                          : 'Added to compare (${after}/2)',
-                                  type: SnackBarType.success,
-                                );
-                              } else if (after < before) {
-                                CustomSnackBar.show(
-                                  ctx,
-                                  message:
-                                      after == 0
-                                          ? 'Removed from compare'
-                                          : 'Removed from compare (${after}/2)',
-                                  type: SnackBarType.info,
-                                );
-                              } else if (after == before && before >= 2) {
-                                // Max limit reached
-                                CustomSnackBar.show(
-                                  ctx,
-                                  message: 'You can only compare 2 projects',
-                                  type: SnackBarType.warning,
-                                );
-                              }
-                            }
+                            compare.toggle(project, max: 2);
                           },
                           child: Obx(() {
                             final selected = compare.isSelected(project.id);
@@ -736,7 +704,7 @@ class BuilderProjectCard extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 5),
                               Text(
                                 price,
                                 style: TextStyle(

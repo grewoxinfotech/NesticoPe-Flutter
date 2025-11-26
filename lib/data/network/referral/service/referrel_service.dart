@@ -24,17 +24,18 @@ class Referral_Service {
 
       if (response.statusCode == 200) {
         final referrals = json.decode(response.body);
-        print(referrals);
+        print('afsdgsyufgs $referrals');
         return referrals;
       } else {
         final referrals = json.decode(response.body);
 
-        print(referrals);
+        print('ysdgfgytytygy $referrals');
         return referrals;
       }
     } on Exception catch (e) {
       return {'error': e.toString()};
     }
+
   }
 
   Future<bool> generateReferCode() async {
@@ -50,11 +51,11 @@ class Referral_Service {
         return true;
       } else {
         final result = json.decode(response.body);
-        print(result);
+        print('result  $result');
         return false;
       }
     } on Exception catch (e) {
-      print(e);
+      print('dhuchdyuchsuy $e');
       return false;
     }
   }

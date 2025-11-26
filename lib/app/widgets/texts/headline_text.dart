@@ -24,9 +24,10 @@ class TitleWithViewAll extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            width: 250,
+            width: 230,
             child: Text(
               title,
+              maxLines: 1,
               style: TextStyle(
                 fontSize: AppFontSizes.medium,
                 fontWeight: AppFontWeights.semiBold,

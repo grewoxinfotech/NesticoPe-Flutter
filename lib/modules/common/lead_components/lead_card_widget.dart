@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
+import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'lead_helpers.dart';
 
@@ -16,6 +20,8 @@ class LeadCardWidget extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onView;
   final bool showDataMasking;
+  final String? propertyPrice;  // Add property price from matching property
+  final RxList<Items>? leadPropertiesList;  // List of properties to match
 
   const LeadCardWidget({
     Key? key,
@@ -26,15 +32,66 @@ class LeadCardWidget extends StatelessWidget {
     this.onDelete,
     this.onView,
     this.showDataMasking = true,
+    this.propertyPrice,  // Accept property price
+    this.leadPropertiesList,  // Accept properties list
   }) : super(key: key);
+
+  // /// Method to match lead property ID with leadPropertiesList
+  // /// Returns FinancialInfo if match found, otherwise null
+  // FinancialInfo? _getMatchingPropertyFinancialInfo() {
+  //   if (lead.propertyId == null || leadPropertiesList == null) {
+  //     return null;
+  //   }
+  //
+  //   try {
+  //     final matchingProperty = leadPropertiesList!.firstWhereOrNull(
+  //       (property) => property.id == lead.propertyId,
+  //     );
+  //
+  //     return matchingProperty?.propertyDetails?.financialInfo;
+  //   } catch (e) {
+  //     print("Error matching property financial info: $e");
+  //     return null;
+  //   }
+  // }
+  //
+  // /// Method to match lead property ID with leadPropertiesList
+  // /// Returns listing type if match found, otherwise null
+  // String? _getMatchingPropertyListingType() {
+  //   if (lead.propertyId == null || leadPropertiesList == null) {
+  //     return null;
+  //   }
+  //
+  //   try {
+  //     final matchingProperty = leadPropertiesList!.firstWhereOrNull(
+  //       (property) => property.id == lead.propertyId,
+  //     );
+  //
+  //     return matchingProperty?.listingType;
+  //   } catch (e) {
+  //     print("Error matching property listing type: $e");
+  //     return null;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     final cardPadding = isCompact ? 12.0 : 16.0;
-    final priceManager = PropertyPriceManager(
-      listingType: lead.customFields?.listingType ?? '',
-      financialInfo: lead.customFields?.propertyDetails?.financialInfo,
-    );
+    
+    // Get financial info and listing type from matching property
+    // final matchingFinancialInfo = _getMatchingPropertyFinancialInfo();
+    // final matchingListingType = _getMatchingPropertyListingType();
+    //
+    // // Priority order: matching property > customFields
+    // final listingType = matchingListingType ?? lead.customFields?.listingType ?? '';
+    // final financialInfo = matchingFinancialInfo ?? lead.customFields?.propertyDetails?.financialInfo;
+    //
+    // // Use propertyPrice if available, otherwise calculate from financial info
+    // final displayPrice = propertyPrice ??
+    //     PropertyPriceManager(
+    //       listingType: listingType,
+    //       financialInfo: financialInfo,
+    //     ).displayPrice;
 
     return GestureDetector(
       onTap: onTap,
@@ -148,7 +205,7 @@ class LeadCardWidget extends StatelessWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '${priceManager.displayPrice}',
+                      '$propertyPrice',
                       style: TextStyle(
                         fontSize:
                             isCompact ? AppFontSizes.medium : AppFontSizes.body,

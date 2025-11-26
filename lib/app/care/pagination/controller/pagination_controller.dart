@@ -155,6 +155,7 @@
 // }
 
 import 'package:get/get.dart';
+// import '../../../../modules/seller/module/lead_screen/model/lead_model.dart';
 import '../models/pagination_models.dart';
 
 /// Generic Pagination Controller using GetX
@@ -173,7 +174,8 @@ abstract class PaginatedController<T> extends GetxController {
 
   /// Load first page (initial or after refresh)
   Future<void> loadInitial() async {
-    print("Pagination: loadInitial called");
+    print("Pagination: loadInitial called"
+        "3 fjgbfh");
     currentPage.value = 1;
     await _loadPage(page: 1, clear: true);
   }
@@ -216,7 +218,10 @@ abstract class PaginatedController<T> extends GetxController {
 
     try {
       final response = await fetchItems(page);
+
       print("Pagination: Response from fetchItems: ${response.meta.toJson()}");
+
+
 
       if (clear) {
         // ✅ replaces clear+addAll to avoid intermediate empty state

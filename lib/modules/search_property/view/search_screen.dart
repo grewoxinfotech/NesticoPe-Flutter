@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -6,9 +8,12 @@ import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/app/widgets/mic_search/search_mic.dart';
 import 'package:housing_flutter_app/data/network/city/tending_city/trending_city_model.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
+
+//import 'package:housing_flutter_app/modules/home/controllers/home_controller/home_controller.dart';
 import 'package:housing_flutter_app/modules/other/trending_city/controllers/trending_city_controller.dart';
 import 'package:housing_flutter_app/modules/other/trending_city/views/trending_city_card.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/controller/search_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/change_location.dart';
 import 'package:housing_flutter_app/modules/search_property/widget/search_result.dart';
@@ -20,6 +25,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../filter_property/controller/city_insigths_controller.dart';
 import '../../filter_property/model/city_insigths_model.dart';
+import '../../propert_detail/view/property_details.dart';
 import '../../property/controllers/property_controller.dart';
 import '../model/search_model.dart';
 
@@ -487,6 +493,7 @@ class CommonSearchField extends StatefulWidget {
   final String? initialSearchText;
   final String hintText;
   final Function(String city)? onTap;
+  final bool isNavigate;
   final bool isLocality; // Add this parameter
   final String? selectedCity; // Add this for locality filtering
 
@@ -495,6 +502,7 @@ class CommonSearchField extends StatefulWidget {
     this.onCitySelected,
     this.isFromAddProperty = false,
     this.initialSearchText,
+    this.isNavigate=false,
     this.hintText = 'Change City...',
     this.onTap,
     this.isLocality = false, // Default to city search
@@ -509,6 +517,8 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
   final MicController micController = Get.put(MicController());
   final GoogleMapController controller = Get.put(GoogleMapController());
 
+  //final trendingArea=Get.put(HomeFeedController());
+
   @override
   void initState() {
     super.initState();
@@ -521,7 +531,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
       if (widget.isLocality) {
         controller.fetchPredictionsLocality(
           widget.initialSearchText!,
-          widget.selectedCity??'',
+          widget.selectedCity ?? '',
         );
       } else {
         controller.fetchPredictionsCity(widget.initialSearchText!);
@@ -533,7 +543,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
       if (widget.isLocality) {
         controller.fetchPredictionsLocality(
           micController.searchText.value.text,
-         widget.selectedCity??'',
+          widget.selectedCity ?? '',
         );
       } else {
         controller.fetchPredictionsCity(micController.searchText.value.text);
@@ -548,44 +558,46 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
     final cityController = Get.find<CityController>();
     final trendingCityController = Get.find<TrendingCityController>();
     final PropertyController propertyController =
-    Get.find<PropertyController>();
+        Get.find<PropertyController>();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: ColorRes.white,
       appBar: AppBar(
-        title: widget.isLocality && widget.selectedCity != null
-            ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildCommonText(
-              'Search Locality',
-              18,
-              AppFontWeights.semiBold,
-              ColorRes.black,
-              1,
-            ),
-            buildCommonText(
-              'in ${widget.selectedCity}',
-              12,
-              AppFontWeights.regular,
-              ColorRes.grey,
-              1,
-            ),
-          ],
-        )
-            : buildCommonText(
-          'Search',
-          20,
-          AppFontWeights.semiBold,
-          ColorRes.black,
-          1,
-        ),
+        title:
+            widget.isLocality && widget.selectedCity != null
+                ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildCommonText(
+                      'Search Locality',
+                      18,
+                      AppFontWeights.semiBold,
+                      ColorRes.black,
+                      1,
+                    ),
+                    buildCommonText(
+                      'in ${widget.selectedCity}',
+                      12,
+                      AppFontWeights.regular,
+                      ColorRes.grey,
+                      1,
+                    ),
+                  ],
+                )
+                : buildCommonText(
+                  'Search',
+                  20,
+                  AppFontWeights.semiBold,
+                  ColorRes.black,
+                  1,
+                ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: ColorRes.black),
           onPressed: () {
             Navigator.of(context).pop();
             micController.searchText.value.clear();
+            print("Search filter ${widget.selectedCity}");
           },
         ),
       ),
@@ -600,23 +612,64 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                 children: [
                   Expanded(
                     child: Obx(
-                          () => CustomTextField(
+                      () => CustomTextField(
                         enabled: true,
                         fillColor: ColorRes.white,
-                        suffixIcon: const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppPadding.medium,
-                          ),
-                          child: Icon(
-                            Icons.search,
-                            color: ColorRes.primary,
-                            size: 25,
+                        suffixIcon: InkWell(
+                          onTap: () {
+                            final searchText = micController.searchText.value.text.trim();
+                            final upperSearchText = searchText.toUpperCase();
+                            
+
+                            if (upperSearchText.contains('BHK') && searchText.isNotEmpty) {
+
+                              final bhkMatch = RegExp(r'(\d+)').firstMatch(upperSearchText);
+                              final bhkNumber = bhkMatch?.group(1) ?? '';
+
+
+                              Get.to(
+                                () => PropertyDetail(
+                                  filters: [
+                                    {
+                                      'bhk': bhkNumber,
+                                      "city":propertyController.selectedCity.value
+                                    },
+                                  ],
+                                ),
+                              );}
+                            // } else if (searchText.isNotEmpty) {
+                            //
+                            //   Get.to(
+                            //     () => PropertyDetail(
+                            //       filters: [
+                            //         {
+                            //           'city': searchText.split(',').first,
+                            //         },
+                            //       ],
+                            //     ),
+                            //   );
+                            // }
+                            
+                            // Clear search
+                            controller.predictions.clear();
+                            micController.searchText.value.clear();
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppPadding.medium,
+                            ),
+                            child: Icon(
+                              Icons.search,
+                              color: ColorRes.primary,
+                              size: 25,
+                            ),
                           ),
                         ),
                         controller: micController.searchText.value,
-                        hintText: widget.isLocality && widget.selectedCity != null
-                            ? 'Search locality in ${widget.selectedCity}...'
-                            : widget.hintText,
+                        hintText:
+                            widget.isLocality && widget.selectedCity != null
+                                ? 'Search locality in ${widget.selectedCity}...'
+                                : widget.hintText,
                       ),
                     ),
                   ),
@@ -659,7 +712,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Obx(
-                            () => Icon(
+                        () => Icon(
                           micController.isListening.value
                               ? Icons.mic
                               : Icons.mic_none,
@@ -699,42 +752,183 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                   itemCount: controller.predictions.length,
                   separatorBuilder:
                       (context, index) => Divider(
-                    color: ColorRes.leadGreyColor.shade300,
-                    height: 2,
-                    indent: 16,
-                    endIndent: 16,
-                  ),
+                        color: ColorRes.leadGreyColor.shade300,
+                        height: 2,
+                        indent: 16,
+                        endIndent: 16,
+                      ),
                   itemBuilder: (context, index) {
                     final Prediction item = controller.predictions[index];
                     return InkWell(
-                      onTap: () {
-                         if(widget.isLocality)
+                      // onTap:(widget.isNavigate)? () async {
+                      //
+                      //   final result = await showDialog<bool>(
+                      //     context: context,
+                      //     builder:
+                      //         (context) => AlertDialog(
+                      //           backgroundColor: ColorRes.white,
+                      //           title: Text('Change your location'),
+                      //           content: Text(
+                      //             'Do you really want to change the location?',
+                      //           ),
+                      //           actions: [
+                      //             TextButton(
+                      //               onPressed:
+                      //                   () => Navigator.pop(context, false),
+                      //               child: const Text('No'),
+                      //             ),
+                      //             ElevatedButton(
+                      //               onPressed:
+                      //                   () => Navigator.pop(context, true),
+                      //               child: const Text('Yes'),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //   );
+                      //   if (result == false) {
+                      //     // User clicked "No" - Navigate to PropertyDetail WITHOUT changing home screen
+                      //     if (!widget.isLocality) {
+                      //       // Return result with applyToHome: false flag
+                      //       // This tells home_header to NOT apply filter to home screen
+                      //       Get.off(() => PropertyDetail(filters: [{
+                      //         'city':item.description!.split(',').first
+                      //       }]));
+                      //       // Clear search state
+                      //       controller.predictions.clear();
+                      //       micController.searchText.value.clear();
+                      //     }
+                      //
+                      //   } else if (result == true) {
+                      //     // User clicked "Yes" - Change location on home screen AND navigate
+                      //     if (widget.isLocality) {
+                      //       // Handle locality search
+                      //       if (widget.onTap != null) {
+                      //         widget.onTap!(item.description!);
+                      //       } else if (widget.onCitySelected != null) {
+                      //         widget.onCitySelected!(item);
+                      //         controller.predictions.clear();
+                      //         micController.searchText.value.clear();
+                      //       }
+                      //     } else {
+                      //       // NEW CODE: Call onTap to update home screen
+                      //       // onTap will call Get.back(result: filters) which sets applyToHome: true by default
+                      //       if (widget.onTap != null) {
+                      //         widget.onTap!(item.description!); // ✅ Updates home screen
+                      //       }
+                      //
+                      //       if (widget.onCitySelected != null) {
+                      //         widget.onCitySelected!(item);
+                      //       }
+                      //       Get.to(() => PropertyDetail(filters: [{
+                      //         'city':item.description!.split(',').first
+                      //       }]));
+                      //
+                      //       // Clear search state
+                      //       controller.predictions.clear();
+                      //       micController.searchText.value.clear();
+                      //     }
+                      //   }
+                      // }:(){
+                      //   if(widget.isLocality)
+                      //   {
+                      //     if(widget.onTap!=null)
+                      //     {
+                      //       widget.onTap!(item.description!);
+                      //     }
+                      //     else{
+                      //       if (widget.onCitySelected != null) {
+                      //         widget.onCitySelected!(item);
+                      //
+                      //         controller.predictions.clear();
+                      //         micController.searchText.value.clear();
+                      //       }
+                      //     }
+                      //
+                      //   }
+                      //   else {
+                      //     // Fallback if onTap is not provided
+                      //     if (widget.onTap != null) {
+                      //       widget.onTap!(item.description!);
+                      //     }
+                      //     else if(widget.onCitySelected != null) {
+                      //       widget.onCitySelected!(item);
+                      //
+                      //       controller.predictions.clear(); // Clear predictions
+                      //       micController.searchText.value.clear();
+                      //     }
+                      //   }
+                      // },
+                      onTap:(widget.isFromAddProperty)?(){
+
+                        if(widget.isLocality)
+                        {
+                          if(widget.onTap!=null)
                           {
-                            if(widget.onTap!=null)
-                              {
-                                widget.onTap!(item.description!);
-                              }
-                            else{
-                              if (widget.onCitySelected != null) {
-                                widget.onCitySelected!(item);
-
-                                controller.predictions.clear(); // Clear predictions
-                                micController.searchText.value.clear();
-                              }
-                            }
-
+                            widget.onTap!(item.description!);
                           }
+                          else{
+                            if (widget.onCitySelected != null) {
+                              widget.onCitySelected!(item);
+
+                              controller.predictions.clear();
+                              micController.searchText.value.clear();
+                            }
+                          }
+
+                        }
                         else {
                           // Fallback if onTap is not provided
-                           if (widget.onTap != null) {
-                             widget.onTap!(item.description!);
-                           }
+                          if (widget.onTap != null) {
+                            widget.onTap!(item.description!);
+                          }
                           else if(widget.onCitySelected != null) {
                             widget.onCitySelected!(item);
 
                             controller.predictions.clear(); // Clear predictions
                             micController.searchText.value.clear();
                           }
+                        }
+                      }: ()
+                      {
+                        // Check if this is a BHK property search result
+                        if(item.items != null) {
+                          Get.to(() => PropertyDetailScreen(property: item.items!));
+                          controller.predictions.clear();
+                          micController.searchText.value.clear();
+                        }
+                        else if(widget.isLocality)
+                        {
+
+                          if(widget.onTap!=null)
+                          {
+                            widget.onTap!(item.description!);
+                          }
+
+                            if (widget.onCitySelected != null) {
+                              widget.onCitySelected!(item);
+                            }
+
+                          Get.to(() => PropertyDetail(filters: [{
+                                  'city':item.description!.split(',').first
+                                }]));
+                          controller.predictions.clear(); // Clear predictions
+                          micController.searchText.value.clear();
+                        }
+                        else {
+
+                          if (widget.onTap != null) {
+                            widget.onTap!(item.description!);
+                          }
+                           if(widget.onCitySelected != null) {
+                            widget.onCitySelected!(item);
+
+
+                          }
+                          controller.predictions.clear(); // Clear predictions
+                          micController.searchText.value.clear();
+                          Get.to(() => PropertyDetail(filters: [{
+                                  'city':item.description!.split(',').first
+                                }]));
                         }
                       },
                       child: Padding(
@@ -745,9 +939,11 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                         child: Row(
                           children: [
                             Icon(
-                              widget.isLocality
-                                  ? Icons.location_on
-                                  : Icons.apartment,
+                              item.items != null
+                                  ? Icons.home
+                                  : (widget.isLocality
+                                      ? Icons.location_on
+                                      : Icons.apartment),
                               color: ColorRes.primary,
                             ),
                             const SizedBox(width: 12),
@@ -796,42 +992,44 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                 // Show popular locations only for city search, not locality
                 return (widget.isFromAddProperty || widget.isLocality)
                     ? Center(
-                  child: buildCommonText(
-                    widget.isLocality
-                        ? 'Search for localities in ${widget.selectedCity}'
-                        : '',
-                    AppFontSizes.medium,
-                    AppFontWeights.regular,
-                    ColorRes.grey,
-                    2,
-                  ),
-                )
+                      child: buildCommonText(
+                        widget.isLocality
+                            ? 'Search for localities in ${widget.selectedCity}'
+                            : '',
+                        AppFontSizes.medium,
+                        AppFontWeights.regular,
+                        ColorRes.grey,
+                        2,
+                      ),
+                    )
                     : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Obx(() {
-                      if (cityController.allCities.isEmpty) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      return buildSection(
-                        "Popular Locations",
-                        cityController.allCities,
-                      );
-                    }),
-                    Obx(() {
-                      if (trendingCityController
-                          .allTrendingCities
-                          .isEmpty) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      return buildSectionTrending(
-                        "Nearby Places",
-                        trendingCityController.allTrendingCities,
-                      );
-                    }),
-                    AppSpacing.verticalSmall,
-                  ],
-                );
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Obx(() {
+                          if (cityController.allCities.isEmpty) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          return buildSection(
+                            "Popular Locations",
+                            cityController.allCities,
+                          );
+                        }),
+                        Obx(() {
+                          if (trendingCityController
+                              .allTrendingCities
+                              .isEmpty) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          return buildSectionTrending(
+                            "Nearby Places",
+                            trendingCityController.allTrendingCities,
+
+                            //trendingArea
+                          );
+                        }),
+                        AppSpacing.verticalSmall,
+                      ],
+                    );
               }
             }),
             const SizedBox(height: 30),
@@ -870,14 +1068,14 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color:
-                      isListening
-                          ? ColorRes.error.shade100
-                          : ColorRes.leadGreyColor.shade200,
+                          isListening
+                              ? ColorRes.error.shade100
+                              : ColorRes.leadGreyColor.shade200,
                     ),
                     child: Icon(
                       isListening ? Icons.mic : Icons.mic_none,
                       color:
-                      isListening ? ColorRes.error : ColorRes.blackShade54,
+                          isListening ? ColorRes.error : ColorRes.blackShade54,
                       size: 40,
                     ),
                   ),
@@ -886,7 +1084,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
 
               const SizedBox(height: 16),
               Obx(
-                    () => Text(
+                () => Text(
                   micController.isListening.value
                       ? "Listening..."
                       : "Tap mic to start",
@@ -1062,6 +1260,7 @@ Widget buildSectionTrending(String title, List<TrendingCityData> data) {
               city: city,
               onTap: () {
                 final filters = {"city": city.city};
+
                 print("Applied Filters: $filters");
 
                 Get.back(result: filters);

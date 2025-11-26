@@ -710,9 +710,14 @@ class Items {
   String? updatedBy;
   String? title;
   String? type;
+  String? propertyId; // ADD THIS
+  double? calculatedPerformanceScore;
   String? listingType;
   String? propertyType;
+  double? performanceScorePercent;
+
   String? propertyDescription;
+
   List<String>? keywords;
   List<String>? propertyImages;
   PropertyDetails? propertyDetails;
@@ -778,10 +783,13 @@ class Items {
     this.state,
     this.zipCode,
     this.location,
+    this.performanceScorePercent,
     this.nearbyLocations,
     this.reraId,
     this.propertyStatus,
     this.builderName,
+    this.propertyId,
+    this.calculatedPerformanceScore,
     this.projectName,
     this.ownerPhone,
     this.ownerName,
@@ -830,8 +838,12 @@ class Items {
     title = json['title'] as String?;
     type = json['type'] as String?;
     listingType = json['listingType'] as String?;
+    performanceScorePercent = TypeConverter.parseDouble(json['performanceScorePercent']);
+
     propertyType = json['propertyType'] as String?;
     propertyDescription = json['propertyDescription'] as String?;
+    propertyId = json['propertyId'] as String?;
+    calculatedPerformanceScore = TypeConverter.parseDouble(json['calculatedPerformanceScore']);
     keywords = (json['keywords'] as List?)?.map((e) => e as String).toList();
     propertyImages =
         (json['propertyImages'] as List?)?.map((e) => e as String).toList();
@@ -898,6 +910,7 @@ class Items {
     data['updated_by'] = updatedBy;
     data['title'] = title ?? "Default Property Title";
     data['type'] = type ?? "residential";
+    data['performanceScorePercent'] = performanceScorePercent;
     data['listingType'] = listingType ?? "Rent";
     data['propertyType'] = propertyType ?? "apartment";
     data['propertyDescription'] = propertyDescription ?? "No description";
@@ -913,6 +926,8 @@ class Items {
     }
     data['address'] = address ?? "";
     data['city'] = city ?? "";
+    data['propertyId'] = propertyId;
+    data['calculatedPerformanceScore'] = calculatedPerformanceScore;
     data['state'] = state ?? "";
     data['zipCode'] = zipCode ?? "";
     data['location'] = location ?? "";
@@ -993,6 +1008,15 @@ class PropertyDetails {
   FinancialInfo? financialInfo;
   PossessionInfo? possessionInfo;
   String? propertyFacing;
+  bool? servantRoom; // ADD THIS
+  String? locality; // ADD THIS
+  String? subLocality; // ADD THIS
+  LiftInfo? liftInfo; // ADD THIS
+  String? tenantType; // ADD THIS
+  bool? petFriendly; // ADD THIS
+  String? availableFrom; // ADD THIS
+  String? transactionType; // ADD THIS
+  PlotInfo? plotInfo; // ADD THIS FOR PLOT PROPERTIES
   String? propertyCondition;
   double? propertyCarpetArea;
   double? propertyBuiltUpArea;
@@ -1011,6 +1035,15 @@ class PropertyDetails {
     this.furnishInfo,
     this.parkingInfo,
     this.financialInfo,
+    this.servantRoom,
+    this.locality,
+    this.subLocality,
+    this.liftInfo,
+    this.tenantType,
+    this.petFriendly,
+    this.availableFrom,
+    this.transactionType,
+    this.plotInfo,
     this.possessionInfo,
     this.propertyFacing,
     this.propertyCondition,
@@ -1059,6 +1092,15 @@ class PropertyDetails {
     propertyCarpetArea = TypeConverter.parseDouble(
       json['property_carpet_area'],
     );
+    servantRoom = json['servant_room'] as bool?;
+    locality = json['locality'] as String?;
+    subLocality = json['sub_locality'] as String?;
+    liftInfo = json['lift_info'] != null ? LiftInfo.fromJson(json['lift_info']) : null;
+    tenantType = json['tenant_type'] as String?;
+    petFriendly = json['pet_friendly'] as bool?;
+    availableFrom = json['available_from'] as String?;
+    transactionType = json['transaction_type'] as String?;
+    plotInfo = json['plot_info'] != null ? PlotInfo.fromJson(json['plot_info']) : null;
     propertyBuiltUpArea = TypeConverter.parseDouble(
       json['property_built_up_area'],
     );
@@ -1088,6 +1130,15 @@ class PropertyDetails {
       furnish.removeWhere((key, value) => value == null);
       data['property_furnish_info'] = furnish;
     }
+    if (servantRoom != null) data['servant_room'] = servantRoom;
+    if (locality != null) data['locality'] = locality;
+    if (subLocality != null) data['sub_locality'] = subLocality;
+    if (liftInfo != null) data['lift_info'] = liftInfo!.toJson();
+    if (tenantType != null) data['tenant_type'] = tenantType;
+    if (petFriendly != null) data['pet_friendly'] = petFriendly;
+    if (availableFrom != null) data['available_from'] = availableFrom;
+    if (transactionType != null) data['transaction_type'] = transactionType;
+    if (plotInfo != null) data['plot_info'] = plotInfo!.toJson();
     if (parkingInfo != null) {
       final parking = parkingInfo!.toJson();
       parking.removeWhere((key, value) => value == null);
@@ -1117,7 +1168,57 @@ class PropertyDetails {
     return data;
   }
 }
+class LiftInfo {
+  bool? serviceLift;
 
+  LiftInfo({this.serviceLift});
+
+  LiftInfo.fromJson(Map<String, dynamic> json) {
+    serviceLift = json['service_lift'] as bool?;
+  }
+
+  Map<String, dynamic> toJson() => {'service_lift': serviceLift};
+}
+
+class PlotInfo {
+  double? plotArea;
+  String? plotAreaUnit;
+  double? plotLength;
+  double? plotWidth;
+  String? ownership;
+  String? zoneType;
+  String? possessionStatus;
+
+  PlotInfo({
+    this.plotArea,
+    this.plotAreaUnit,
+    this.plotLength,
+    this.plotWidth,
+    this.ownership,
+    this.zoneType,
+    this.possessionStatus,
+  });
+
+  PlotInfo.fromJson(Map<String, dynamic> json) {
+    plotArea = TypeConverter.parseDouble(json['plot_area']);
+    plotAreaUnit = json['plot_area_unit'] as String?;
+    plotLength = TypeConverter.parseDouble(json['plot_length']);
+    plotWidth = TypeConverter.parseDouble(json['plot_width']);
+    ownership = json['ownership'] as String?;
+    zoneType = json['zone_type'] as String?;
+    possessionStatus = json['possession_status'] as String?;
+  }
+
+  Map<String, dynamic> toJson() => {
+    'plot_area': plotArea,
+    'plot_area_unit': plotAreaUnit,
+    'plot_length': plotLength,
+    'plot_width': plotWidth,
+    'ownership': ownership,
+    'zone_type': zoneType,
+    'possession_status': possessionStatus,
+  };
+}
 class FloorInfo {
   int? floorNumber;
   int? totalFloors;
@@ -1139,30 +1240,59 @@ class FloorInfo {
 class FurnishInfo {
   final String? furnishType;
   final FurnishDetails? furnishDetails;
+  bool? brokerNegotiable;
+  String? parkingCharges;
+  String? paintingCharges;
+  double? maintenanceCharges;
 
-  FurnishInfo({this.furnishType, this.furnishDetails});
+  FurnishInfo({
+    this.furnishType,
+    this.furnishDetails,
+    this.brokerNegotiable,
+    this.parkingCharges,
+    this.paintingCharges,
+    this.maintenanceCharges,
+  });
 
   factory FurnishInfo.fromJson(Map<String, dynamic> json) {
     return FurnishInfo(
-      furnishType: json['furnish_type'],
-      furnishDetails:
-          json['furnish_details'] != null
-              ? FurnishDetails.fromJson(json['furnish_details'])
-              : null,
+      furnishType: json['furnish_type'] as String?,
+      brokerNegotiable: json['broker_negotiable'] as bool?,
+      parkingCharges: json['parking_charges'] as String?,
+      paintingCharges: json['painting_charges'] as String?,
+      maintenanceCharges: TypeConverter.parseDouble(json['maintenance_charges']),
+      furnishDetails: json['furnish_details'] != null
+          ? FurnishDetails.fromJson(json['furnish_details'])
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
+
     if (furnishType != null) {
       data['furnish_type'] = furnishType!.toLowerCase().replaceAll(" ", "-");
     }
     if (furnishDetails != null) {
       data['furnish_details'] = furnishDetails!.toJson();
     }
+    if (brokerNegotiable != null) {
+      data['broker_negotiable'] = brokerNegotiable;
+    }
+    if (parkingCharges != null) {
+      data['parking_charges'] = parkingCharges;
+    }
+    if (paintingCharges != null) {
+      data['painting_charges'] = paintingCharges;
+    }
+    if (maintenanceCharges != null) {
+      data['maintenance_charges'] = maintenanceCharges;
+    }
+
     return data;
   }
 }
+
 
 class FurnishDetails {
   final bool? washingMachine;
@@ -1336,17 +1466,20 @@ class FinancialInfo {
 class PossessionInfo {
   String? possessionStatus;
   String? propertyAgeInYear;
+  String? possessionDate;
 
-  PossessionInfo({this.possessionStatus, this.propertyAgeInYear});
+  PossessionInfo({this.possessionStatus, this.propertyAgeInYear, this.possessionDate});
 
   PossessionInfo.fromJson(Map<String, dynamic> json) {
     possessionStatus = json['possession_status'] as String?;
     propertyAgeInYear = json['property_age_in_years'].toString();
+    possessionDate = json['possession_date'] as String?;
   }
 
   Map<String, dynamic> toJson() => {
     'possession_status': possessionStatus,
     'property_age_in_years': propertyAgeInYear,
+    if (possessionDate != null) 'possession_date': possessionDate,
   };
 }
 
@@ -1748,3 +1881,6 @@ class TypeConverter {
     return null;
   }
 }
+
+
+

@@ -1,37 +1,101 @@
+import 'dart:developer';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/confige/search_api/search_api.dart';
+import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
 import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
 
 class GoogleMapController extends GetxController {
   /// Reactive variables
   var isLoading = false.obs;
   var predictions = <Prediction>[].obs;
-
+PropertyService _propertyService = PropertyService();
   var nearbyLandmarks = <Map<String, dynamic>>[].obs;
 
-  /// Fetch predictions from Google API
+  /// Fetch predictions from Google API or Properties for BHK search
   Future<void> fetchPredictionsCity(String city) async {
-    try {
-      isLoading.value = true;
-
-      final response = await GoogleMapApi.instance.searchCities(city);
-
-      print("resposne ===== $response");
-
-      if (response != null) {
-        final model = SearchFilterModel.fromJson(response);
-        print("model ===== ${model.toJson()}");
-        predictions.value = model.predictions ?? [];
-      } else {
-        predictions.clear();
-      }
-    } catch (e) {
-      print("❌ Error fetching predictions: $e");
+    if (city.trim().isEmpty) {
       predictions.clear();
-    } finally {
-      isLoading.value = false;
+      return;
     }
+    
+    final String trimmedCity = city.trim().toUpperCase();
+    print("\n====== SEARCH DEBUG ======");
+    print("Search query: $trimmedCity");
+    print("Contains BHK: ${trimmedCity.contains("BHK")}");
+    print("=========================\n");
+    
+   if(!trimmedCity.contains("BHK"))
+     {
+       try {
+         isLoading.value = true;
+
+         final response = await GoogleMapApi.instance.searchCities(city);
+
+         print("resposne ===== $response");
+
+         if (response != null) {
+           final model = SearchFilterModel.fromJson(response);
+           print("model ===== ${model.toJson()}");
+           predictions.value = model.predictions ?? [];
+         } else {
+           predictions.clear();
+         }
+       } catch (e) {
+         print("❌ Error fetching predictions: $e");
+         predictions.clear();
+       } finally {
+         isLoading.value = false;
+       }
+     }
+   else{
+     try {
+       isLoading.value = true;
+       print("🏘️ BHK Search Started for: $city");
+       
+       // Extract BHK number from search query (e.g., "4bhk" -> "4", "2 bhk" -> "2")
+       final bhkMatch = RegExp(r'(\d+)').firstMatch(trimmedCity);
+       final bhkNumber = bhkMatch?.group(1) ?? city[0];
+       
+       print("🔢 Extracted BHK number: $bhkNumber");
+       
+       final response = await _propertyService.fetchProperties(
+         filters: {
+           'bhk': bhkNumber,
+         },
+       );
+
+       print("✅ BHK Properties Response: ${response.items.length} items found");
+       if (response.items.isEmpty) {
+         print("⚠️ No properties found for $bhkNumber BHK");
+       } else {
+         print("🏠 First property: ${response.items.first.toJson()}");
+       }
+
+       if (response.items.isNotEmpty) {
+
+         predictions.value = response.items.map((property) {
+           return Prediction(
+             description: "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''} in ${property.city ?? ''}",
+             placeId: property.id ?? '',
+             structuredFormatting: StructuredFormatting(
+               mainText: "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''}",
+               secondaryText: "${property.address ?? ''}, ${property.city ?? ''}",
+             ),
+             items: property, // Store the entire property object
+           );
+         }).toList();
+       } else {
+         predictions.clear();
+       }
+     } catch (e, stackTrace) {
+       log("❌ Error fetching BHK properties: $e");
+       log("Stack trace: $stackTrace");
+       predictions.clear();
+     } finally {
+       isLoading.value = false;
+     }
+   }
   }
 
   Future<void> fetchPredictionsState(String state) async {
@@ -128,7 +192,7 @@ class GoogleMapController extends GetxController {
   var categoryPlaces = <Map<String, dynamic>>[].obs;
   var isCategoryLoading = false.obs;
   var selectedCategory = ''.obs;
-  
+
   // Store all categories data
   var allCategoriesData = <String, List<Map<String, dynamic>>>{}.obs;
   var propertyLatLng = Rx<Map<String, double>?>(null);
@@ -182,7 +246,7 @@ class GoogleMapController extends GetxController {
       final geoUri = Uri.parse(
         'https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=${GoogleMapApi.instance}',
       );
-      
+
       // This will be handled in the API call itself
       return null;
     } catch (e) {
@@ -237,7 +301,7 @@ class GoogleMapController extends GetxController {
           }).toList();
 
           // Sort by distance
-          placesWithDistance.sort((a, b) => 
+          placesWithDistance.sort((a, b) =>
             a['distance'].compareTo(b['distance'])
           );
 

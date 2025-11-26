@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/referral/service/referrel_service.dart';
 
@@ -18,7 +20,7 @@ class ReferralController extends GetxController {
   final isGenerate = false.obs;
   final isGenerated = false.obs;
   final isLoading = false.obs;
-  Rxn<Referrel_Model> dummyReferral = Rxn<Referrel_Model>();
+  Rxn<ReferralModel> dummyReferral = Rxn<ReferralModel>();
 
   @override
   void onInit() {
@@ -42,9 +44,10 @@ class ReferralController extends GetxController {
 
   Future<void> fetchReferralService() async {
     try {
+      log("fvhgdhgffdfh ");
       isLoading.value = true;
       final data = await Referral_Service.instance.fetchReferrals();
-      dummyReferral.value = Referrel_Model.fromJson(data);
+      dummyReferral.value = ReferralModel.fromJson(data);
       if (dummyReferral.value != null) isGenerated.value = true;
     } catch (e) {
       print(e);

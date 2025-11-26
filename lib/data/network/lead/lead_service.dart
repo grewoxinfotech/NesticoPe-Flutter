@@ -57,7 +57,10 @@ class LeadService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Leads API data: $data");
+        // LeadItem lead=LeadItem.fromJson(data);
+        // print("Leads API data: ${lead.toJson()}");
+
+
 
         return PaginationResponse<LeadItem>.fromJson(
           data,

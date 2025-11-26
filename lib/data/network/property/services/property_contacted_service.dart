@@ -21,7 +21,7 @@ class PropertyContactedService {
 
         if (data['success'] == true && data['data'] != null) {
           final inquiryResponse = InquiryResponse.fromJson(data);
-          return inquiryResponse.data.inquiries;
+          return inquiryResponse.data.items??[];
         } else {
           return [];
         }

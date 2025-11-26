@@ -625,7 +625,7 @@ class DashboardController extends GetxController {
   Rxn<ResellerInsightsModel> resellerInsightsModel =
       Rxn<ResellerInsightsModel>();
   RxList<Items> itemData = <Items>[].obs;
-  Rxn<Referrel_Model> dummyReferral = Rxn<Referrel_Model>();
+  Rxn<ReferralModel> dummyReferral = Rxn<ReferralModel>();
   PropertyService _propertyService = PropertyService();
   Rxn<UserModel> userModel = Rxn<UserModel>();
 
@@ -715,7 +715,7 @@ class DashboardController extends GetxController {
     try {
       isLoading.value = true;
       final data = await Referral_Service.instance.fetchReferrals();
-      dummyReferral.value = Referrel_Model.fromJson(data);
+      dummyReferral.value = ReferralModel.fromJson(data);
       if (dummyReferral.value != null) isGenerated.value = true;
     } catch (e) {
       print(e);

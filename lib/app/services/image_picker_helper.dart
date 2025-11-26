@@ -1,6 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
-import 'dart:io';
+// import 'dart:io';
 import 'package:path/path.dart' as p;
 
 Future<List<ImageFile>> pickImagesUsingImagePicker(int pickCount) async {

@@ -17,6 +17,8 @@ class PropertyFilterControllerForFilter extends GetxController {
       <String>['Approved', 'Rejected', 'Pending'].obs;
   var searchFilterByID = TextEditingController();
 
+  // RxList<String> furnishingType=<String>['fully-furnished','semi-furnished','un='].obs;
+
   ///=====================================BUY PROPERTIES=====================
   RxList<String> constructionStatus =
       <String>['Ready to move', "Under Construction", "New Launch"].obs;
@@ -973,6 +975,9 @@ class PropertyFilterControllerForFilter extends GetxController {
     String? mapFurnishType() {
       if (rentFurnishing.value.isEmpty) return null;
       final v = hyphenSlug(rentFurnishing.value);
+
+      print("fjhf${v.contains('fully')}");
+
       // normalize common variants
       if (v.contains('semi')) return 'semi-furnished';
       if (v.contains('fully')) return 'fully-furnished';

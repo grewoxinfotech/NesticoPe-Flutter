@@ -79,6 +79,16 @@ class BuyFilters extends StatelessWidget {
           },
           controllerForFilter: controllerForFilter,
         ),
+        buildPropertyFilterHeadingPadding('Furnishing Type'),
+        const SizedBox(height: 7),
+        ListedBy(
+          listedByList: controllerForFilter.furnishingType,
+          onTap: (items) {
+            debugPrint('Furnishing $items');
+          },
+          controllerForFilter: controllerForFilter,
+          selectedString: controllerForFilter.rentFurnishing,
+        ),
       ],
     );
   }

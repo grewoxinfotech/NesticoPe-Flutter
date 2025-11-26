@@ -1,402 +1,4 @@
-// import 'package:flutter/material.dart';
-//
-// import '../../controller/profile/profile_controller.dart';
-// import 'package:get/get.dart';
-//
-// class ResellerProfileScreen extends StatelessWidget {
-//   const ResellerProfileScreen({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final profileController = Get.put(ProfileController());
-//
-//     return Scaffold(
-//       backgroundColor: ColorRes.leadGreyColor[50],
-//       appBar: AppBar(
-//         title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-//         backgroundColor: ColorRes.white,
-//         elevation: 0,
-//         actions: [
-//           Obx(() => IconButton(
-//             icon: Icon(profileController.isEditing.value ? Icons.save : Icons.edit),
-//             onPressed: profileController.isEditing.value
-//                 ? () => profileController.saveProfile()
-//                 : () => profileController.toggleEdit(),
-//           )),
-//         ],
-//       ),
-//       body: Obx(() {
-//         if (profileController.isLoading.value) {
-//           return const Center(child: CircularProgressIndicator());
-//         }
-//
-//         return SingleChildScrollView(
-//           padding: const EdgeInsets.all(16),
-//           child: Column(
-//             children: [
-//               // Profile Header
-//               _buildProfileHeader(profileController),
-//               const SizedBox(height: 24),
-//
-//               // Statistics Cards
-//               _buildStatisticsCards(profileController),
-//               const SizedBox(height: 24),
-//
-//               // Profile Information Form
-//               _buildProfileForm(profileController),
-//               const SizedBox(height: 24),
-//
-//               // Profile Options
-//               if (!profileController.isEditing.value) ...[
-//                 _buildProfileOption(Icons.notifications, 'Notifications', () {}),
-//                 _buildProfileOption(Icons.security, 'Security', () {}),
-//                 _buildProfileOption(Icons.help, 'Help & Support', () {}),
-//                 _buildProfileOption(Icons.logout, 'Logout', () => _showLogoutDialog(), isLogout: true),
-//               ],
-//             ],
-//           ),
-//         );
-//       }),
-//     );
-//   }
-//
-//   Widget _buildProfileHeader(ProfileController controller) {
-//     return Container(
-//       padding: const EdgeInsets.all(24),
-//       decoration: BoxDecoration(
-//         color: ColorRes.white,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: ColorRes.leadGreyColor.withOpacity(0.1),
-//             spreadRadius: 1,
-//             blurRadius: 8,
-//             offset: const Offset(0, 2),
-//           ),
-//         ],
-//       ),
-//       child: Column(
-//         children: [
-//           Stack(
-//             children: [
-//               CircleAvatar(
-//                 radius: 50,
-//                 backgroundColor: ColorRes.blueColor,
-//                 backgroundImage: controller.profile.value.avatarUrl.isNotEmpty
-//                     ? NetworkImage(controller.profile.value.avatarUrl)
-//                     : null,
-//                 child: controller.profile.value.avatarUrl.isEmpty
-//                     ? const Icon(Icons.person, size: 50, color: ColorRes.white)
-//                     : null,
-//               ),
-//               if (controller.isEditing.value)
-//                 Positioned(
-//                   bottom: 0,
-//                   right: 0,
-//                   child: Container(
-//                     padding: const EdgeInsets.all(4),
-//                     decoration: const BoxDecoration(
-//                       color: ColorRes.blueColor,
-//                       shape: BoxShape.circle,
-//                     ),
-//                     child: const Icon(
-//                       Icons.camera_alt,
-//                       color: ColorRes.white,
-//                       size: 16,
-//                     ),
-//                   ),
-//                 ),
-//             ],
-//           ),
-//           const SizedBox(height: 16),
-//           Text(
-//             controller.profile.value.name,
-//             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-//           ),
-//           Text(
-//             controller.profile.value.position,
-//             style: TextStyle(fontSize: 16, color: ColorRes.leadGreyColor[600]),
-//           ),
-//           Text(
-//             controller.profile.value.company,
-//             style: TextStyle(fontSize: 14, color: ColorRes.leadGreyColor[500]),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildStatisticsCards(ProfileController controller) {
-//     return Row(
-//       children: [
-//         Expanded(
-//           child: _buildStatCard(
-//             'Total Sales',
-//             '\$${controller.profile.value.totalSales.toStringAsFixed(0)}',
-//             Icons.attach_money,
-//             ColorRes.success,
-//           ),
-//         ),
-//         const SizedBox(width: 16),
-//         Expanded(
-//           child: _buildStatCard(
-//             'Leads Closed',
-//             '${controller.profile.value.leadsCount}',
-//             Icons.people,
-//             ColorRes.blueColor,
-//           ),
-//         ),
-//         const SizedBox(width: 16),
-//         Expanded(
-//           child: _buildStatCard(
-//             'Rating',
-//             '${controller.profile.value.rating}',
-//             Icons.star,
-//             Colors.orange,
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-//
-//   Widget _buildStatCard(String title, String value, IconData icon, Color color) {
-//     return Container(
-//       padding: const EdgeInsets.all(16),
-//       decoration: BoxDecoration(
-//         color: ColorRes.white,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: ColorRes.leadGreyColor.withOpacity(0.1),
-//             spreadRadius: 1,
-//             blurRadius: 8,
-//             offset: const Offset(0, 2),
-//           ),
-//         ],
-//       ),
-//       child: Column(
-//         children: [
-//           Icon(icon, color: color, size: 24),
-//           const SizedBox(height: 8),
-//           Text(
-//             value,
-//             style: const TextStyle(
-//               fontSize: 20,
-//               fontWeight: FontWeight.bold,
-//             ),
-//           ),
-//           Text(
-//             title,
-//             style: TextStyle(
-//               fontSize: 12,
-//               color: ColorRes.leadGreyColor[600],
-//             ),
-//             textAlign: TextAlign.center,
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildProfileForm(ProfileController controller) {
-//     return Container(
-//       padding: const EdgeInsets.all(16),
-//       decoration: BoxDecoration(
-//         color: ColorRes.white,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: ColorRes.leadGreyColor.withOpacity(0.1),
-//             spreadRadius: 1,
-//             blurRadius: 8,
-//             offset: const Offset(0, 2),
-//           ),
-//         ],
-//       ),
-//       child: Form(
-//         key: controller.formKey,
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             const Text(
-//               'Profile Information',
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//             const SizedBox(height: 16),
-//             _buildFormField(
-//               controller: controller.nameController,
-//               label: 'Full Name',
-//               icon: Icons.person,
-//               enabled: controller.isEditing.value,
-//               validator: (value) => value?.isEmpty ?? true ? 'Name is required' : null,
-//             ),
-//             const SizedBox(height: 16),
-//             _buildFormField(
-//               controller: controller.emailController,
-//               label: 'Email',
-//               icon: Icons.email,
-//               enabled: controller.isEditing.value,
-//               keyboardType: TextInputType.emailAddress,
-//               validator: (value) {
-//                 if (value?.isEmpty ?? true) return 'Email is required';
-//                 if (!GetUtils.isEmail(value!)) return 'Enter a valid email';
-//                 return null;
-//               },
-//             ),
-//             const SizedBox(height: 16),
-//             _buildFormField(
-//               controller: controller.phoneController,
-//               label: 'Phone',
-//               icon: Icons.phone,
-//               enabled: controller.isEditing.value,
-//               keyboardType: TextInputType.phone,
-//             ),
-//             const SizedBox(height: 16),
-//             _buildFormField(
-//               controller: controller.positionController,
-//               label: 'Position',
-//               icon: Icons.work,
-//               enabled: controller.isEditing.value,
-//             ),
-//             const SizedBox(height: 16),
-//             _buildFormField(
-//               controller: controller.companyController,
-//               label: 'Company',
-//               icon: Icons.business,
-//               enabled: controller.isEditing.value,
-//             ),
-//             const SizedBox(height: 16),
-//             _buildFormField(
-//               controller: controller.bioController,
-//               label: 'Bio',
-//               icon: Icons.info,
-//               enabled: controller.isEditing.value,
-//               maxLines: 3,
-//             ),
-//             if (controller.isEditing.value) ...[
-//               const SizedBox(height: 24),
-//               Row(
-//                 children: [
-//                   Expanded(
-//                     child: ElevatedButton(
-//                       onPressed: controller.saveProfile,
-//                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: ColorRes.success,
-//                         foregroundColor: ColorRes.white,
-//                         padding: const EdgeInsets.symmetric(vertical: 16),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(12),
-//                         ),
-//                       ),
-//                       child: controller.isSaving.value
-//                           ? const SizedBox(
-//                         height: 20,
-//                         width: 20,
-//                         child: CircularProgressIndicator(
-//                           color: ColorRes.white,
-//                           strokeWidth: 2,
-//                         ),
-//                       )
-//                           : const Text('Save Changes'),
-//                     ),
-//                   ),
-//                   const SizedBox(width: 16),
-//                   Expanded(
-//                     child: ElevatedButton(
-//                       onPressed: controller.cancelEdit,
-//                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: ColorRes.leadGreyColor,
-//                         foregroundColor: ColorRes.white,
-//                         padding: const EdgeInsets.symmetric(vertical: 16),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(12),
-//                         ),
-//                       ),
-//                       child: const Text('Cancel'),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ],
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _buildFormField({
-//     required TextEditingController controller,
-//     required String label,
-//     required IconData icon,
-//     bool enabled = true,
-//     TextInputType? keyboardType,
-//     String? Function(String?)? validator,
-//     int maxLines = 1,
-//   }) {
-//     return TextFormField(
-//       controller: controller,
-//       enabled: enabled,
-//       decoration: InputDecoration(
-//         labelText: label,
-//         prefixIcon: Icon(icon),
-//         border: OutlineInputBorder(
-//           borderRadius: BorderRadius.circular(12),
-//         ),
-//         filled: !enabled,
-//         fillColor: enabled ? null : ColorRes.leadGreyColor[100],
-//       ),
-//       keyboardType: keyboardType,
-//       validator: validator,
-//       maxLines: maxLines,
-//     );
-//   }
-//
-//   Widget _buildProfileOption(IconData icon, String title, VoidCallback onTap, {bool isLogout = false}) {
-//     return Container(
-//       margin: const EdgeInsets.only(bottom: 8),
-//       decoration: BoxDecoration(
-//         color: ColorRes.white,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: ColorRes.leadGreyColor.withOpacity(0.1),
-//             spreadRadius: 1,
-//             blurRadius: 8,
-//             offset: const Offset(0, 2),
-//           ),
-//         ],
-//       ),
-//       child: ListTile(
-//         leading: Icon(icon, color: isLogout ? ColorRes.error : ColorRes.leadGreyColor[700]),
-//         title: Text(
-//           title,
-//           style: TextStyle(
-//             fontWeight: AppFontWeights.medium,
-//             color: isLogout ? ColorRes.error : ColorRes.blackShade87,
-//           ),
-//         ),
-//         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-//         onTap: onTap,
-//       ),
-//     );
-//   }
-//
-//   void _showLogoutDialog() {
-//     Get.defaultDialog(
-//       title: 'Logout',
-//       content: const Text('Are you sure you want to logout?'),
-//       textConfirm: 'Yes',
-//       textCancel: 'No',
-//       confirmTextColor: ColorRes.white,
-//       buttonColor: ColorRes.error,
-//       onConfirm: () {
-//         Get.back();
-//         Get.snackbar('Success', 'Logged out successfully',
-//             backgroundColor: ColorRes.success, colorText: ColorRes.white);
-//       },
-//     );
-//   }
-// }
+
 
 import 'dart:io';
 
@@ -418,7 +20,7 @@ class ResellerProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.put(ProfileController());
-    final fackLeadController = Get.put(ResellerFakeLeadController());
+
 
     return Scaffold(
       backgroundColor: ColorRes.white,
@@ -466,7 +68,9 @@ class ResellerProfileScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return SingleChildScrollView(
+        return(profileController.profileData.value?.user?.userType=="reseller")? SingleChildScrollView(
+
+
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
@@ -492,7 +96,7 @@ class ResellerProfileScreen extends StatelessWidget {
               ],
             ],
           ),
-        );
+        ):SizedBox.shrink();
       }),
     );
   }
@@ -642,17 +246,19 @@ class ResellerProfileScreen extends StatelessWidget {
                 ImageProvider? imageProvider;
 
                 // Priority: selectedImage > avatarUrl > null
-                if (controller.profileData.value?.user?.profilePic != null) {
-                  // imageProvider = FileImage(File(controller.profileData.value?.user?.profilePic??''));
+                if (controller.selectedImage.value != null) {
+                  // If user selected a new image from gallery/camera
+                  imageProvider = FileImage(controller.selectedImage.value!);
                 } else if (controller
-                        .profileData
-                        .value
-                        ?.user
-                        ?.profilePic
-                        ?.isNotEmpty ??
+                    .profileData
+                    .value
+                    ?.user
+                    ?.profilePic
+                    ?.isNotEmpty ??
                     false) {
-                  imageProvider = NetworkImage(
-                    controller.profileData.value?.user?.profilePic ?? '',
+                  // If profile pic URL exists from API
+                  imageProvider = FileImage(
+                    File(controller.profileData.value!.user!.profilePic!),
                   );
                 }
 
@@ -1352,20 +958,7 @@ class ResellerProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileForm(ProfileController controller) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      controller.nameController.text =
-          controller.profileData.value?.user?.firstName ?? "";
-      controller.lastNameController.text =
-          controller.profileData.value?.user?.lastName ?? "";
-      controller.emailController.text =
-          controller.profileData.value?.user?.email ?? "";
-      controller.phoneController.text =
-          controller.profileData.value?.user?.phone ?? "";
-      controller.positionController.text =
-          controller.profileData.value?.user?.city ?? "";
-      controller.companyController.text =
-          controller.profileData.value?.user?.state ?? "";
-    });
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -1450,6 +1043,13 @@ class ResellerProfileScreen extends StatelessWidget {
               controller: controller.positionController,
               label: 'City',
               icon: Icons.location_on_outlined,
+              enabled: controller.isEditing.value,
+            ),
+            const SizedBox(height: 14),
+            _buildFormField(
+              controller: controller.addressController,
+              label: 'Address',
+              icon: Icons.apartment_outlined,
               enabled: controller.isEditing.value,
             ),
             const SizedBox(height: 14),

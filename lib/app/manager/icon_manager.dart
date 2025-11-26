@@ -168,6 +168,11 @@ class IconManager {
       icon: Icons.water,
     ),
   ];
+
+
+
+
+
   static final List<IconItem> furnitureItems = [
     // ---------- Boolean Furnishings ----------
     IconItem(
@@ -379,25 +384,10 @@ class IconManager {
   ];
 
   static final List<IconItem> allAmenities = [
-    // Property Amenities
-    IconItem(
-      key: AppSvgRes.cafeterai,
-      title: "Cafeteria",
-      icon: Icons.local_cafe,
-    ),
-    IconItem(
-      key: AppSvgRes.centralair,
-      title: "Central Air Conditioning",
-      icon: Icons.ac_unit,
-    ),
-    IconItem(
-      key: AppSvgRes.aminentfurniture,
-      title: "Furnishing",
-      icon: Icons.chair_alt,
-    ),
+
     IconItem(
       key: AppSvgRes.dg,
-      title: "DG Availability",
+      title: "Ev Charging",
       icon: Icons.electrical_services,
     ),
     IconItem(
@@ -406,95 +396,96 @@ class IconManager {
       icon: Icons.battery_charging_full,
     ),
     IconItem(key: AppSvgRes.cctv, title: "CCTV", icon: Icons.videocam),
-    IconItem(key: AppSvgRes.duct, title: "Oxygen Duct", icon: Icons.wind_power),
-    IconItem(
-      key: AppSvgRes.fire_alarm,
-      title: "Fire Sensor",
-      icon: Icons.notification_important,
-    ),
-    IconItem(
-      key: AppSvgRes.fire_extinguisher,
-      title: "Fire Extinguisher",
-      icon: Icons.fire_extinguisher,
-    ),
-    IconItem(
-      key: AppSvgRes.fire_noc_certified,
-      title: "Fire NOC Certified",
-      icon: Icons.verified,
-    ),
+
     IconItem(
       key: AppSvgRes.internet_connectivity,
-      title: "Internet Connectivity",
+      title: "Wifi Connectivity",
       icon: Icons.wifi,
     ),
     IconItem(
-      key: AppSvgRes.occupery_certificate,
-      title: "Occupancy Certificate",
-      icon: Icons.assignment_turned_in,
-    ),
-    IconItem(key: AppSvgRes.pantry, title: "Pantry", icon: Icons.kitchen),
-    IconItem(
-      key: AppSvgRes.reception,
-      title: "Reception Area",
-      icon: Icons.support_agent,
-    ),
-    IconItem(key: AppSvgRes.security, title: "Security", icon: Icons.security),
-    IconItem(key: AppSvgRes.ups, title: "UPS", icon: Icons.power),
-    IconItem(
-      key: AppSvgRes.vastu,
-      title: "Vastu Compliant",
-      icon: Icons.temple_hindu,
+      key: AppSvgRes.covered_parking,
+      title: "Covered Parking",
+      icon: Icons.wifi,
     ),
     IconItem(
-      key: AppSvgRes.water_storage,
-      title: "Water Storage",
+      key: AppSvgRes.visitor_parking,
+      title: "Visitor Parking",
+      icon: Icons.wifi,
+    ),
+    IconItem(
+      key: AppSvgRes.maintenanace_staff,
+      title: "Maintenance Staff",
+      icon: Icons.wifi,
+    ),
+    IconItem(
+      key: AppSvgRes.meditation_area,
+      title: "Meditation Area",
+      icon: Icons.wifi,
+    ),
+    IconItem(
+      key: AppSvgRes.multi_purpose_hall,
+      title: "MultiPurpose Hall",
+      icon: Icons.wifi,
+    ),
+    IconItem(
+      key: AppSvgRes.solar_panel,
+      title: "Solar Panel",
+      icon: Icons.wifi,
+    ),
+    IconItem(
+      key: AppSvgRes.waste_disposal,
+      title: "Waste Disposal",
+      icon: Icons.wifi,
+    ),
+
+    IconItem(key: AppSvgRes.security, title: "24x7 Security", icon: Icons.security),
+
+    IconItem(
+      key: AppSvgRes.washing,
+      title: "Laundry Service",
       icon: Icons.water_drop,
     ),
 
     // Residential Amenities
     IconItem(key: AppSvgRes.club, title: "Club House", icon: Icons.house),
-    IconItem(
-      key: AppSvgRes.gate,
-      title: "Gated Community",
-      icon: Icons.door_front_door,
-    ),
-    IconItem(key: AppSvgRes.gym, title: "Gym", icon: Icons.fitness_center),
+
+    IconItem(key: AppSvgRes.gym, title: "Gymnasium", icon: Icons.fitness_center),
     IconItem(
       key: AppSvgRes.elevator,
       title: "Lift",
       icon: Icons.elevator_outlined,
     ),
+    IconItem(
+      key: AppSvgRes.elevator,
+      title: "Service Lift",
+      icon: Icons.elevator_outlined,
+    ),
     IconItem(key: AppSvgRes.garden, title: "Garden", icon: Icons.park),
     IconItem(
       key: AppSvgRes.hall,
-      title: "Community Hall",
+      title: "Temple",
       icon: Icons.holiday_village,
     ),
     IconItem(
-      key: AppSvgRes.intercom,
-      title: "Intercom",
-      icon: Icons.phone_in_talk,
-    ),
-    IconItem(
       key: AppSvgRes.playground,
-      title: "Playground",
+      title: "Children Play Area",
       icon: Icons.sports_soccer,
     ),
     IconItem(
       key: AppSvgRes.sports,
-      title: "Sports Facility",
+      title: "Jogging Track",
       icon: Icons.sports_basketball,
     ),
     IconItem(key: AppSvgRes.swimming, title: "Swimming Pool", icon: Icons.pool),
-    IconItem(key: AppSvgRes.tap, title: "Water Supply", icon: Icons.water_drop),
-    IconItem(
-      key: AppSvgRes.bbq_area,
-      title: 'BBQ Area',
-      icon: Icons.area_chart,
-    ),
+    IconItem(key: AppSvgRes.fire_extinguisher, title: "Fire Safety", icon: Icons.water_drop),
+    // IconItem(
+    //   key: AppSvgRes.bbq_area,
+    //   title: 'BBQ Area',
+    //   icon: Icons.area_chart,
+    // ),
     IconItem(
       key: AppSvgRes.home_theater,
-      title: 'Home Theater',
+      title: 'Amphitheatre Theater',
       icon: Icons.video_call_outlined,
     ),
   ];

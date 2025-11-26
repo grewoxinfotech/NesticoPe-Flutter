@@ -3732,6 +3732,8 @@
 //   }
 // }
 
+import 'dart:developer';
+
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -3832,6 +3834,19 @@ class SellerLeadScreen extends StatelessWidget {
                               ),
                           itemBuilder: (context, index) {
                             final lead = filteredLeads[index];
+                            String? propertyPrice;
+                            if (lead.propertyId != null) {
+                              log("dhuhsfhdfhu ${leadController.leadPropertiesList.map((element) => element.toJson(),)}");
+                              final matchingProperty = leadController.leadPropertiesList
+                                  .firstWhereOrNull((p) => p.id == lead.propertyId);
+                              if (matchingProperty != null &&
+                                  matchingProperty.propertyDetails?.financialInfo?.price != null) {
+                                propertyPrice = PropertyPriceManager(
+                                  listingType: matchingProperty.listingType ?? '',
+                                  financialInfo: matchingProperty.propertyDetails?.financialInfo,
+                                ).displayPrice;
+                              }
+                            }
                             return GestureDetector(
                               onTap: () {
                                 Get.to(
@@ -3841,7 +3856,7 @@ class SellerLeadScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              child: buildLeadCard(context, lead),
+                              child: buildLeadCard(context, lead,propertyPrice??''),
                             );
                           },
                         ),
@@ -4080,15 +4095,13 @@ Widget buildEmptyState(BuildContext context) {
 Widget buildLeadCard(
   BuildContext context,
   LeadItem lead,
+  String displayPrice
   // SellerDashboardScreen controller,
 ) {
   final leadController = Get.find<LeadController>(tag: "seller");
   final isCompact = MediaQuery.of(context).size.width < 600;
   final cardPadding = isCompact ? 12.0 : 16.0;
-  final priceManager = PropertyPriceManager(
-    listingType: lead.customFields?.listingType ?? '',
-    financialInfo: lead.customFields?.propertyDetails?.financialInfo,
-  );
+
 
   return Container(
     padding: EdgeInsets.all(cardPadding),
@@ -4189,7 +4202,7 @@ Widget buildLeadCard(
                 ),
                 SizedBox(height: 4),
                 Text(
-                  '${priceManager.displayPrice}',
+                  '${displayPrice}',
                   style: TextStyle(
                     fontSize:
                         isCompact ? AppFontSizes.medium : AppFontSizes.body,

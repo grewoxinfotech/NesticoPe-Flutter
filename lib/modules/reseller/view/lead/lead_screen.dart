@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
 import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
 import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
 import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
@@ -10,12 +11,20 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/controller
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/view/lead_overview/lead_detail.dart';
 
-class ResellerLeadScreen extends StatelessWidget {
+import '../../../../data/network/property/models/property_model.dart';
+
+class ResellerLeadScreen extends StatefulWidget {
   final bool isViewAll;
 
   const ResellerLeadScreen({super.key, this.isViewAll = false});
 
   @override
+  State<ResellerLeadScreen> createState() => _ResellerLeadScreenState();
+}
+
+class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
+  @override
+
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController(), tag: "reseller");
     final leadController = Get.find<LeadController>(tag: "reseller");
@@ -25,7 +34,7 @@ class ResellerLeadScreen extends StatelessWidget {
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading:
-            (isViewAll)
+            (widget.isViewAll)
                 ? IconButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -37,7 +46,7 @@ class ResellerLeadScreen extends StatelessWidget {
           'Property Buyer Leads',
           style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
-        automaticallyImplyLeading: (isViewAll),
+        automaticallyImplyLeading: (widget.isViewAll),
         backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
@@ -81,13 +90,14 @@ class ResellerLeadScreen extends StatelessWidget {
 
         final filteredLeads = leadController.items.value;
 
+
         return Column(
           children: [
             // Search bar
             LeadSearchBar(
               onSearchChanged: controller.updateSearch,
             ),
-            
+
             // Filter chips
             Obx(
               () => LeadFilterChips(
@@ -134,11 +144,28 @@ class ResellerLeadScreen extends StatelessWidget {
                                 height: getResponsiveSpacing(context),
                               ),
                           itemBuilder: (context, index) {
-                            final lead = filteredLeads[index];
+                            LeadItem lead = filteredLeads[index];
+                            
+                            // Find matching property price
+                            String? propertyPrice;
+                            if (lead.propertyId != null) {
+                              final matchingProperty = leadController.leadPropertiesList
+                                  .firstWhereOrNull((p) => p.id == lead.propertyId);
+                              if (matchingProperty != null && 
+                                  matchingProperty.propertyDetails?.financialInfo?.price != null) {
+                                propertyPrice = PropertyPriceManager(
+                                  listingType: matchingProperty.listingType ?? '',
+                                  financialInfo: matchingProperty.propertyDetails?.financialInfo,
+                                ).displayPrice;
+                              }
+                            }
+
                             return LeadCardWidget(
                               lead: lead,
                               isCompact: MediaQuery.of(context).size.width < 600,
                               showDataMasking: true, // Reseller needs masking
+                              propertyPrice: propertyPrice,
+                              leadPropertiesList: leadController.leadPropertiesList,
                               onTap: () {
                                 Get.to(
                                   () => LeadDetailScreen(
@@ -171,7 +198,7 @@ class ResellerLeadScreen extends StatelessWidget {
       }),
     );
   }
-  
+
   void _showDeleteConfirmation(
     BuildContext context,
     LeadItem lead,

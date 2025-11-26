@@ -44,9 +44,9 @@ class TitleWithDescription extends StatelessWidget {
                   child: Text(
                     "See All",
                     style: TextStyle(
-                      fontSize: AppFontSizes.medium,
-                      fontWeight: AppFontWeights.medium,
-                      color: ColorRes.blueColor,
+                        fontWeight: AppFontWeights.medium,
+                        color: ColorRes.primary,
+                        fontSize: AppFontSizes.small
                     ),
                   ),
                 ),

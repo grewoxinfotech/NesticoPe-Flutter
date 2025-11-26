@@ -13,6 +13,7 @@ class SecureStorage {
   static const String _keyUserData = 'user';
   static const String _keyClientId = 'clientId';
   static const _selectedCityKey = 'selected_city';
+  static const String _keyUpdatePhoneToken = 'updatePhoneToken';
 
   // Token
   static Future<void> saveToken(String token) async {
@@ -92,6 +93,19 @@ class SecureStorage {
   static Future<void> clearSelectedCity() async {
     final storage = FlutterSecureStorage();
     await storage.delete(key: _selectedCityKey);
+  }
+
+  // Update Phone Token (for OTP verification)
+  static Future<void> saveUpdatePhoneToken(String token) async {
+    await _storage.write(key: _keyUpdatePhoneToken, value: token);
+  }
+
+  static Future<String?> getUpdatePhoneToken() async {
+    return _storage.read(key: _keyUpdatePhoneToken);
+  }
+
+  static Future<void> deleteUpdatePhoneToken() async {
+    await _storage.delete(key: _keyUpdatePhoneToken);
   }
 
   // Clear everything

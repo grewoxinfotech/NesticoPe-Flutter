@@ -5,7 +5,7 @@ class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
   static const String baseURL =
-      "http://192.168.1.12:19725/api/v1"; // Real Device (WiFi)
+      "http://192.168.1.5:19725/api/v1"; // Real Device (WiFi)
 
 
 
@@ -20,14 +20,18 @@ class ApiConstants {
   static String get convertToReseller => "$auth/convert-buyer-to-reseller";
   static String get referralGet => "$baseURL/referral/my-stats";
   static String get generateReferCode => "$baseURL/referral/generate-code";
-  static String get getUserProfile => "$baseURL/user/profile/";
+  static String get getUserProfile => "$baseURL/user/profile";
   static String get getSellerDashboard => "$baseURL/insight/seller";
   static String get getSellerProfile => "$baseURL/insight/seller";
+
+  static String get recommmendedPorperties =>
+      "$baseURL/property/recommended";
 
   // Lead
   static String get leads => "$baseURL/lead";
   static String get news => "$baseURL/newsArticle";
   static String get platformService => "$baseURL/platformService";
+
   static String get propertyRecommend =>
       "$baseURL/property/personalized-recommendations";
   static String get builderProject => "$baseURL/builderproject";
@@ -37,6 +41,11 @@ class ApiConstants {
   static String get review => "$baseURL/review";
   static String get overAllRating => "$baseURL/review/property";
   static String get user => "$baseURL/user";
+
+
+
+  static String get topProperties=>"$baseURL/property/top/properties";
+  static String get topProject=>"$baseURL/builderproject/top/projects";
 
   static String get interestForm => "$baseURL/interestForm";
   static String get propertyShare => "$baseURL/propertyShare";
@@ -51,6 +60,7 @@ class ApiConstants {
 
   static String get cityInsights => "$baseURL/cityInsights/existing/city";
   static String get trendingCityInsights => "$baseURL/cityInsights/trending";
+  static String get platformReview => "$baseURL/review";
 
   static const String logoutEndpoint = "/auth/logout";
   static const String resetPasswordEndpoint = "/auth/reset-password";
@@ -65,6 +75,9 @@ class ApiConstants {
   static const String recommendedPropertiesEndpoint = "/properties/recommended";
   static const String propertiesByCategoryEndpoint = "/properties/category";
 
+//Trending area
+
+  static const String trendingAreaAPi='/cityInsights/trending/areas?city';
   // Bookings Endpoints
   static const String bookingsEndpoint = "/bookings";
 

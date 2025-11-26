@@ -551,6 +551,7 @@
 //
 // }
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -578,7 +579,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   final BuilderService _builderService = BuilderService();
   final PropertyService _propertyService = PropertyService();
   final currentStep = 0.obs;
+  final RxString selectedCity = ''.obs;
   ImagePicker picker = ImagePicker();
+  RxList<ProjectItem> topProjects = <ProjectItem>[].obs;
   RxList<String> selectedListOfAmenities = <String>[].obs;
   final showAllAmenities = false.obs;
   RxString builderPropertyType = ''.obs;
@@ -654,10 +657,14 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   @override
   void onInit() {
     super.onInit();
+    getCity();
     if (isBuilderView) {
       setUserIdFilter().then((_) => loadInitial());
+      loadTopProject();
     } else {
-      loadInitial(); // buyer view, no filter
+
+      loadInitial();
+      loadTopProject();// buyer view, no filter
     }
     assignData();
   }
@@ -685,8 +692,34 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   }
 
   @override
+
+
+
+
+  Future<void> getCity() async {
+    try {
+      final city = await SecureStorage.getSelectedCity();
+      if (city != null && city.isNotEmpty) {
+        print("🏙️ City retrieved: $city");
+        selectedCity.value = city;
+
+        // Fetch
+      } else {
+        print("⚠️ No city selected");
+      }
+
+      // Apply city filter and load properties
+      final filter = {'city': selectedCity.value};
+      await applyFilters(filter);
+      await loadInitial();
+      await loadTopProject();
+    } catch (e) {
+      print("❌ Error getting city: $e");
+    }
+  }
   Future<PaginationResponse<ProjectItem>> fetchItems(int page) async {
     try {
+      log("hguthtuhlkjhojvgcdvf $filters");
       final response = await _builderService.fetchProjects(
         page: page,
         filters: filters,
@@ -699,11 +732,135 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       rethrow;
     }
   }
+  void cityAssign(String city){
+    selectedCity.value = city;
+    log("dhgfyfg ${selectedCity.value}");
+    //refresh();
+  }
+
+  void applyFilter(String key, String val) {
+    filters ??= {};
+    print('jfgig $key');
+    if (key == 'propertyTypes') {
+      // Add/replace property type while keeping city
+      final cityValue = filters!['city'];
+      filters = {
+        if (cityValue != null) 'city': cityValue,
+        'propertyTypes': val,
+      };
+      print("🔍 Top Applied: propertyTypes=$val, city=${cityValue ?? '-'}");
+    }
+
+    else if (key == 'city') {
+      // When changing city, REMOVE propertyType & listingType
+      filters = {'city': val};
+      selectedCity.value = val;
+      print("🏙️ City changed → Reset filters. city=$val");
+      // Reload top properties when city changes
+      loadTopProject();
+    }
+
+    else if (key == 'listingType') {
+      // Add/replace listingType while keeping city
+      final cityValue = filters!['city'];
+      filters = {
+        if (cityValue != null) 'city': cityValue,
+        'listingType': val.toUpperCase(),
+      };
+      print("🔍Top Applied: listingType=$val, city=${cityValue ?? '-' }");
+    }
+
+    else {
+      // Generic filter
+      filters![key] = val;
+      print("🔧 Top Applied filter: $key=$val");
+    }
+
+    print("📊 Current filters: $filters");
+
+    // Reset pagination
+    currentPage.value = 1;
+    totalPages.value = 1;
+    hasMore.value = true;
+    items.clear();
+
+    refreshList();
+  }
+  Future<void> loadTopProject({int page = 1}) async {
+    try {
+      print("🏗️ Loading top properties, page $page...");
+      final response = await fetchTopItems(page);
+      if (page == 1) {
+        topProjects.assignAll(response.items);
+      } else {
+        topProjects.addAll(response.items);
+      }
+      print("✅ Loaded ${response.items.length} top properties ${topProjects.value.map((e) => e.toJson(),)}");
+    } catch (e) {
+      print("❌ Error loading top properties: $e");
+    }
+  }
+
+
+  /// Apply filters and refresh (expects a plain Map)
+  Future<void> applyFilters(Map<String, String> newFilters) async {
+    try {
+      isLoading.value = true;
+      filters = Map<String, String>.from(newFilters);
+      currentPage.value = 1;
+      items.clear();
+      await refreshList();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Clear a specific filter while maintaining other filters
+  void clearFilter(String key) {
+    filters ??= {};
+    filters!.remove(key);
+
+    print("🗑️ Cleared filter - $key");
+    print("📊 Current filters: $filters");
+
+    // reset pagination state
+    currentPage.value = 1;
+    totalPages.value = 1;
+    hasMore.value = true;
+    items.clear();
+
+    refreshList();
+  }
+
+  /// Clear all filters except city (to show all property types for selected city)
+  void clearPropertyTypeFilter() {
+    clearFilter('propertyType');
+  }
+
+
+
+  Future<PaginationResponse<ProjectItem>> fetchTopItems(int page) async {
+
+    try {
+      final response = await _builderService.fetchProjects(
+        page: page,
+        filters: filters,
+      );
+
+      print("Fetched ydyfgyfdgyfd items: ${response.items.length}  ${filters}");
+      return response; // ✅ full response with items + meta
+    } catch (e) {
+      print("Exception in fetchItems: $e");
+      rethrow;
+    }
+  }
 
   Future<void> setUserIdFilter() async {
     final userData = await SecureStorage.getUserData();
     final userId = userData?.user?.id ?? '';
+
     filters = {'created_by': userId};
+    await loadTopProject();
   }
 
   Future<void> fetchUserData() async {
@@ -1016,7 +1173,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         return existing;
       } else {
         final data = await _builderService.getProjectById(id);
-        print('Fetched item: ${data.toJson()}');
+        print('Fetched item: ${data}');
         items.add(data);
         return data;
       }

@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/network/builder/model/builder_model.dart'
     hide ProjectContactInfo, ProjectSize, MediaGallery, Brochure;
-import '../../../data/network/builder/model/builder_projectModel.dart';
+// import '../../../data/network/builder/model/builder_projectModel.dart';
 import '../../../data/network/property/services/property_service.dart';
 
 class ProjectController extends GetxController {
@@ -78,8 +78,8 @@ class ProjectController extends GetxController {
     if (path != null) {
       await launchUrl(Uri.parse(path), mode: LaunchMode.platformDefault);
       NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Download',
-        message: 'Downloading document...',
+        title: 'Document',
+        message: 'Loading...',
         contentType: ContentType.success,
       );
     }

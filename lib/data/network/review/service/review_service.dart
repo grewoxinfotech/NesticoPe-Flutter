@@ -135,4 +135,6 @@ class ReviewService {
       return false;
     }
   }
+
+  /// 👤 Fetch reviewer user details by user ID
 }

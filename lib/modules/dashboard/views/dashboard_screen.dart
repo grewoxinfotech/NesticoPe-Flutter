@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
+import 'package:housing_flutter_app/modules/dashboard/views/widget/favourite_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/view/property_reseller.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
@@ -144,7 +145,7 @@ class DashboardScreen extends StatelessWidget {
             ),
           );
         } else if (navigationController.currentIndex.value == 2) {
-          return CompareScreen();
+          return FavouriteScreen();
         } else if (navigationController.currentIndex.value == 3) {
           return InsightsScreen();
         } else if (navigationController.currentIndex.value == 4) {

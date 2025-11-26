@@ -58,7 +58,7 @@ class DataMasker {
     return "${text.substring(0, start)}$masked${text.substring(text.length - end)}";
   }
 
-  // 🔹 NEW: Mask Name (e.g., "John Doe" → "J*** D**")
+
   static String maskName(String? fullName) {
     if (fullName == null || fullName.trim().isEmpty) return "";
     final parts = fullName.trim().split(RegExp(r'\s+'));

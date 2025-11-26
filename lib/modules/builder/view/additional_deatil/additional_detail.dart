@@ -1175,6 +1175,7 @@ Widget builderPropertyType(ProjectWizardController controller) {
                     assetName: item.key,
                     size: 24,
                     color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade600,
+                    folder: 'amenities',
                   ),
                   const SizedBox(height: 8),
                   Text(

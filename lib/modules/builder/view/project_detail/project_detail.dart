@@ -10,10 +10,13 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/size_manager.dart';
+import '../../../../app/constants/svg_res.dart';
+import '../../../../app/utils/svg_widget.dart';
 import '../../../../app/widgets/media/media_preview.dart';
 import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
-import '../../../../data/network/builder/model/builder_projectModel.dart';
+
+// import '../../../../data/network/builder/model/builder_projectModel.dart';
 import '../../controller/builder_form_controller.dart';
 import '../../controller/project_controller.dart';
 import 'package:get/get.dart';
@@ -22,14 +25,11 @@ class ProjectDetailsScreen extends StatefulWidget {
   final ProjectItem? projectItem;
   final String? projectId;
 
-  const ProjectDetailsScreen({
-    super.key,
-    this.projectItem,
-    this.projectId,
-  }) : assert(
-          projectItem != null || projectId != null,
-          'Either projectItem or projectId must be provided',
-        );
+  const ProjectDetailsScreen({super.key, this.projectItem, this.projectId})
+    : assert(
+        projectItem != null || projectId != null,
+        'Either projectItem or projectId must be provided',
+      );
 
   @override
   State<ProjectDetailsScreen> createState() => _ProjectDetailsScreenState();
@@ -80,7 +80,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
       // Fetch project if only ID was provided
       if (widget.projectItem == null && widget.projectId != null) {
-        final fetchedProject = await wizardController.getProjectById(widget.projectId!);
+        final fetchedProject = await wizardController.getProjectById(
+          widget.projectId!,
+        );
         if (fetchedProject == null) {
           // Show error and go back
           if (mounted) {
@@ -118,13 +120,11 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     final controller = Get.put(ProjectController());
 
     return Scaffold(
-      backgroundColor: ColorRes.background,
+      backgroundColor: ColorRes.white.withOpacity(0.95),
       body: Obx(() {
         // Show loading while fetching project
         if (_isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         // Show error if project not found
@@ -167,7 +167,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   _buildMediaGallery(project!),
                   _buildConfigurations(controller, project!),
                   _buildAmenities(project!),
-                  _buildDocuments(controller, project!),
+                  if(project?.brochures.isNotEmpty??false )...[
+                    _buildDocuments(controller, project!),
+                  ],
                   _buildContactSection(controller, project!),
                   const SizedBox(height: 24),
                 ],
@@ -216,11 +218,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            CustomImage(
-              type: CustomImageType.network,
-              src: project.mediaGallery?.images.first ?? '',
-              fit: BoxFit.cover,
-            ),
+            (project.mediaGallery?.images.first.isNotEmpty ?? false)
+                ? CustomImage(
+                  type: CustomImageType.network,
+                  src: project.mediaGallery?.images.first ?? '',
+                  fit: BoxFit.cover,
+                )
+                : CustomImage(
+                  type: CustomImageType.network,
+                  src:
+                      'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg',
+                  fit: BoxFit.cover,
+                ),
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -785,7 +794,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
             // Horizontal Variants List
             SizedBox(
-              height: 340,
+              height: 285,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: config.variants.length,
@@ -919,31 +928,31 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: ColorRes.primary.withOpacity(0.05),
-                          border: Border.all(
-                            color: ColorRes.primary.withOpacity(0.3),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Contact',
-                          style: const TextStyle(
-                            fontSize: AppFontSizes.body,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.primary,
-                          ),
-                        ),
-                      ),
+                      // const SizedBox(height: 8),
+                      // Container(
+                      //   padding: EdgeInsets.symmetric(
+                      //     horizontal: 12,
+                      //     vertical: 8,
+                      //   ),
+                      //   width: double.infinity,
+                      //   decoration: BoxDecoration(
+                      //     color: ColorRes.primary.withOpacity(0.05),
+                      //     border: Border.all(
+                      //       color: ColorRes.primary.withOpacity(0.3),
+                      //       width: 1,
+                      //     ),
+                      //     borderRadius: BorderRadius.circular(8),
+                      //   ),
+                      //   alignment: Alignment.center,
+                      //   child: Text(
+                      //     'Contact',
+                      //     style: const TextStyle(
+                      //       fontSize: AppFontSizes.body,
+                      //       fontWeight: AppFontWeights.semiBold,
+                      //       color: ColorRes.primary,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -1022,7 +1031,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             ),
             itemCount: project.amenities.length,
             itemBuilder: (context, index) {
-              return _buildAmenityItem(project.amenities[index]);
+              print("Project deatils ${project.amenities.map((e) => e,)}");
+
+              return _buildAmenityItem(project.amenities[index],index);
             },
           ),
         ],
@@ -1030,16 +1041,32 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
-  Widget _buildAmenityItem(String amenity) {
-    final Map<String, IconData> amenityIcons = {
-      'Swimming Pool': Icons.pool,
-      'Gymnasium': Icons.fitness_center,
-      'Parking': Icons.local_parking,
-      '24/7 Security': Icons.security,
-      'Club House': Icons.house,
-      'Spa & Sauna': Icons.spa,
-      'Games Room': Icons.sports_esports,
-      'Green Park': Icons.park,
+  Widget _buildAmenityItem(String amenity, int index) {
+    final Map<String, String> amenityIcons = {
+      'Swimming Pool': AppSvgRes.swimming,
+      "Fire Safety": AppSvgRes.fire_extinguisher,
+      "CCTV": AppSvgRes.cctv,
+      "Club House": AppSvgRes.club,
+      "Gymnasium": AppSvgRes.gym,
+      "Children Play Area": AppSvgRes.playground,
+      "Power Backup": AppSvgRes.battery,
+      "Lift": AppSvgRes.elevator,
+      "Service Lift": AppSvgRes.elevator,
+      "Garden": AppSvgRes.garden,
+      "Ev Charging": AppSvgRes.dg,
+      "Wifi Connectivity": AppSvgRes.internet_connectivity,
+      "Covered Parking": AppSvgRes.covered_parking,
+      "Visitor Parking": AppSvgRes.visitor_parking,
+      "Maintenance Staff": AppSvgRes.maintenanace_staff,
+      "Meditation Area": AppSvgRes.meditation_area,
+      "MultiPurpose Hall": AppSvgRes.multi_purpose_hall,
+      "Solar Panel": AppSvgRes.solar_panel,
+      "Waste Disposal": AppSvgRes.waste_disposal,
+      "24x7 Security": AppSvgRes.security,
+      "Laundry Service": AppSvgRes.washing,
+      "Temple": AppSvgRes.hall,
+      "Jogging Track": AppSvgRes.sports,
+      "Amphitheatre Theater": AppSvgRes.home_theater,
     };
 
     final List<Color> amenityColors = [
@@ -1053,23 +1080,24 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ColorRes.green,
     ];
 
+    // Use a color in sequence or wrap around using modulo
+    final color = amenityColors[index % amenityColors.length];
+    final icon = amenityIcons[amenity] ?? AppSvgRes.sports;
+
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: (amenityColors[amenity.length % amenityColors.length] ??
-                    ColorRes.primary)
-                .withOpacity(0.1),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            IconManager.getAmenitiesIcon(amenity),
-            color:
-                amenityColors[amenity.length % amenityColors.length] ??
-                ColorRes.primary,
-            size: 25,
+          child: AppSvgIcon(
+            assetName: icon,
+            color: color,
+            folder: 'amenities',
           ),
         ),
         const SizedBox(height: 8),
@@ -1087,6 +1115,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ],
     );
   }
+
+
 
   Widget _buildDocuments(ProjectController controller, ProjectItem project) {
     return Container(
@@ -1180,7 +1210,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               ),
             ),
             const Text(
-              'Download',
+              'View',
               style: TextStyle(
                 fontSize: AppFontSizes.small,
                 color: ColorRes.primary,
@@ -1208,7 +1238,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Contact Sales Team',
+            'Contact Team',
             style: TextStyle(
               fontSize: AppFontSizes.medium,
               fontWeight: AppFontWeights.semiBold,

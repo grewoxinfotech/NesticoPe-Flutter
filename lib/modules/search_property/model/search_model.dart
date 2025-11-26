@@ -1,3 +1,5 @@
+import '../../../data/network/property/models/property_model.dart';
+
 class SearchFilterModel {
   final List<Prediction>? predictions;
   final String? status;
@@ -24,6 +26,7 @@ class SearchFilterModel {
 }
 
 class Prediction {
+  final Items? items;
   final String? description;
   final List<MatchedSubstring>? matchedSubstrings;
   final String? placeId;
@@ -39,6 +42,7 @@ class Prediction {
     this.reference,
     this.structuredFormatting,
     this.terms,
+    this.items,
     this.types,
   });
 
@@ -51,6 +55,7 @@ class Prediction {
           .toList()
           : [],
       placeId: json['place_id'],
+      items: json['items'] != null ? Items.fromJson(json['items']) : null,
       reference: json['reference'],
       structuredFormatting: json['structured_formatting'] != null
           ? StructuredFormatting.fromJson(json['structured_formatting'])
@@ -67,6 +72,7 @@ class Prediction {
       'description': description,
       'matched_substrings':
       matchedSubstrings?.map((v) => v.toJson()).toList(),
+      'items': items?.toJson(),
       'place_id': placeId,
       'reference': reference,
       'structured_formatting': structuredFormatting?.toJson(),

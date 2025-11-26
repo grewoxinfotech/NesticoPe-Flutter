@@ -10,10 +10,11 @@ import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:http_parser/http_parser.dart';
 
-import '../model/builder_projectModel.dart';
+// import '../model/builder_projectModel.dart';
 
 class BuilderService {
   final String baseUrl = ApiConstants.builderProject; // Adjust endpoint
+  final String topProjectUrl = ApiConstants.topProject;
 
   ///==================== Common Headers ====================
   static Future<Map<String, String>> headersWithoutToken() async {
@@ -41,11 +42,45 @@ class BuilderService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("✅ Project API Response: $data");
+        print("✅ Top Project API Response: $data");
 
         return PaginationResponse<ProjectItem>.fromJson(
           data,
           (json) => ProjectItem.fromJson(json),
+        );
+      } else {
+        print("❌ Failed to load Top projects: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to load Top projects");
+      }
+    } catch (e) {
+      print("⚠️ Exception in fetchProjects: $e");
+      rethrow; // Let controller handle error
+    }
+  }
+
+  Future<PaginationResponse<ProjectItem>> fetchTopProject({
+    int page = 1,
+    Map<String, String>? filters,
+  }) async {
+    try {
+      final queryParameters = {
+        'page': page.toString(),
+        if (filters != null) ...filters,
+      };
+
+      final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+      print("📡 Fetching Projects from: $uri");
+
+      final response = await http.get(uri, headers: await headers());
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("✅ Project API Response: $data");
+
+        return PaginationResponse<ProjectItem>.fromJson(
+          data,
+              (json) => ProjectItem.fromJson(json),
         );
       } else {
         print("❌ Failed to load projects: ${response.statusCode}");

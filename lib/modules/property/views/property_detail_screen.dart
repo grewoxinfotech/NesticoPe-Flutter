@@ -29,10 +29,12 @@ import 'package:housing_flutter_app/modules/review/views/widget/property_review_
 import 'package:housing_flutter_app/app/manager/compare_manager.dart';
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
+// import 'package:housing_flutter_app/modules/home/widgets/comparison_floating_button.dart';
 
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:video_player/video_player.dart';
+
 import '../../../app/manager/property_detail_manager.dart';
 import '../../../app/manager/property_highlight_manager.dart';
 import '../../../app/utils/helper_function/contact_helper.dart';
@@ -41,18 +43,21 @@ import '../../../data/network/overall_rating/model/overall_rating_model.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../../utils/common_widget/rera_widget.dart';
 import '../../../widgets/property/furnishing_details.dart';
+// import '../../home/widgets/property_comparison_floating_button.dart';
+import '../../home/widgets/unified_comparison_floating_button.dart';
 import '../../search_property/controller/search_controller.dart';
 import '../controllers/overall_rating_controller.dart';
+
 
 class PropertyDetailScreen extends StatefulWidget {
   final Items? property;
   final String? propertyId;
 
   const PropertyDetailScreen({super.key, this.property, this.propertyId})
-    : assert(
-        property != null || propertyId != null,
-        'Either property or propertyId must be provided',
-      );
+      : assert(
+  property != null || propertyId != null,
+  'Either property or propertyId must be provided',
+  );
 
   @override
   State<PropertyDetailScreen> createState() => _PropertyDetailScreenState();
@@ -66,6 +71,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   late final ReviewController reviewController;
   final RxBool canAddReview = true.obs;
   final Rxn<Items> _property = Rxn<Items>();
+
   final RxBool _isLoading = true.obs;
 
   @override
@@ -118,6 +124,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   Future<void> _loadData() async {
     try {
       _isLoading.value = true;
+      await controller.getAllInQuireData(widget.property?.propertyId??'');
 
       // Fetch property if only ID was provided
       if (widget.property == null && widget.propertyId != null) {
@@ -173,7 +180,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   // Convenience getter
   Items? get property => _property.value ?? widget.property;
 
-  final CompareManager compare = Get.put(CompareManager(), permanent: true);
+  final CompareManager compare = Get.find<CompareManager>();
 
   @override
   Widget build(BuildContext context) {
@@ -214,437 +221,572 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             ),
           );
         }
-log("Furnishing detail ${property?.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}");
-log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}");
+        log("Furnishing detail ${property?.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}");
+        log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}");
         return SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(
-              bottom: kBottomNavigationBarHeight / 2,
-            ),
-
-            // prevents overlap
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildMediaBanner(
-                  property?.propertyMedia ?? PropertyMedia(),
-                  property?.id ?? '',
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.only(
+                  bottom: kBottomNavigationBarHeight / 2,
                 ),
-                _buildTitleSection(property ?? Items()),
-                Divider(
-                  indent: 18,
-                  endIndent: 18,
-                  color: ColorRes.leadGreyColor.shade300,
-                ),
-                if (property?.propertyDetails?.amenities != null) ...[
-                  const SizedBox(height: 12),
-                  const TitleWithViewAll(title: 'Amenities'),
-                  const SizedBox(height: 8),
-                  AmenitiesSection(
-                    amenities: property!.propertyDetails!.amenities ?? [],
-                  ),
-                  const SizedBox(height: 8),
-                  Divider(
-                    indent: 18,
-                    endIndent: 18,
-                    color: ColorRes.leadGreyColor.shade300,
-                  ),
-                ],
-
-
-                const SizedBox(height: 12),
-                const TitleWithViewAll(title: 'Property Details'),
-                const SizedBox(height: 12),
-                Details(property: property!),
-                const SizedBox(height: 12),
-                Divider(
-                  indent: 18,
-                  endIndent: 18,
-                  color: ColorRes.leadGreyColor.shade300,
-                ),
-                const SizedBox(height: 12),
-                const TitleWithViewAll(title: 'Furnishing'),
-                const SizedBox(height: 0),
-                // Facilities(property: property ?? Items()),
-                FurnishingDetails(
-                  property: property??Items(),
-                  bgColor: ColorRes.propertyBg,
-                  txtColor: ColorRes.propertyText,
-                ),
-                const SizedBox(height: 0),
-                Divider(
-                  indent: 18,
-                  endIndent: 18,
-                  color: ColorRes.leadGreyColor.shade300,
-                ),
-
-                // PG Rules Section (only for PG listing type)
-                if (property?.listingType?.toUpperCase() == "PG" &&
-                    property?.propertyDetails?.pgInfo?.pgRules != null) ...[
-                  const SizedBox(height: 12),
-                  const TitleWithViewAll(title: 'PG Rules'),
-                  const SizedBox(height: 12),
-                  _buildPgRulesSection(
-                    property!.propertyDetails!.pgInfo!.pgRules!,
-                  ),
-                  const SizedBox(height: 12),
-                  Divider(
-                    indent: 18,
-                    endIndent: 18,
-                    color: ColorRes.leadGreyColor.shade300,
-                  ),
-                ],
-
-                // Room Options & Pricing Section (only for PG listing type)
-                if (property?.listingType?.toUpperCase() == "PG" &&
-                    property?.propertyDetails?.pgInfo?.pgRoomInfo != null &&
-                    property!
-                        .propertyDetails!
-                        .pgInfo!
-                        .pgRoomInfo!
-                        .isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  const TitleWithViewAll(title: 'Room Options & Pricing'),
-                  const SizedBox(height: 12),
-                  _buildRoomOptionsSection(
-                    property!.propertyDetails!.pgInfo!.pgRoomInfo!,
-                  ),
-                  const SizedBox(height: 12),
-                  Divider(
-                    indent: 18,
-                    endIndent: 18,
-                    color: ColorRes.leadGreyColor.shade300,
-                  ),
-                ],
-
-                if (property?.propertyDescription != null) ...[
-                  const SizedBox(height: 12),
-                  const TitleWithViewAll(title: 'Description'),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      property?.propertyDescription ?? '-',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                      ),
+                // prevents overlap
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildMediaBanner(
+                      property?.propertyMedia ?? PropertyMedia(),
+                      property?.id ?? '',
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Divider(
-                    indent: 18,
-                    endIndent: 18,
-                    color: ColorRes.leadGreyColor.shade300,
-                  ),
-                ],
-
-                const SizedBox(height: 12),
-                const TitleWithViewAll(title: 'Location'),
-                const SizedBox(height: 12),
-                AddressAndMapDetails(property: property!),
-                const SizedBox(height: 12),
-
-                // if (property?.nearbyLocations != null) ...[
-                //   Divider(
-                //     indent: 18,
-                //     endIndent: 18,
-                //     color: ColorRes.leadGreyColor.shade300,
-                //   ),
-                //
-                //   const SizedBox(height: 8),
-                //   const TitleWithViewAll(title: 'Nearby Landmarks'),
-                //   const SizedBox(height: 12),
-                //   NearbyPropertyDetails(
-                //     nearbyLocations: property?.nearbyLocations ?? [],
-                //   ),
-                //   const SizedBox(height: 12),
-                // ],
-                // Category-based Nearby Places with Google Map Style
-                Obx(() {
-                  if (mapController.isLoading.value) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: CircularProgressIndicator(),
+                    _buildTitleSection(property ?? Items()),
+                    Divider(
+                      indent: 18,
+                      endIndent: 18,
+                      color: ColorRes.leadGreyColor.shade300,
+                    ),
+                    if (property?.propertyDetails?.amenities != null) ...[
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'Amenities'),
+                      // const SizedBox(height: 8),
+                      AmenitiesSection(
+                        amenities: property!.propertyDetails!.amenities ?? [],
                       ),
-                    );
-                  }
-
-                  // Check if any category has data
-                  final hasData = mapController.allCategoriesData.values.any(
-                    (places) => places.isNotEmpty,
-                  );
-
-                  if (!hasData || mapController.propertyLatLng.value == null) {
-                    return const SizedBox.shrink();
-                  }
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                      const SizedBox(height: 8),
                       Divider(
                         indent: 18,
                         endIndent: 18,
                         color: ColorRes.leadGreyColor.shade300,
                       ),
-                      const SizedBox(height: 12),
+                    ],
 
-                      // Embedded Map Preview Section
-                      NearbyLocationMapSection(
-                        address: property?.address ?? '',
-                        mapController: mapController,
+                    if(property?.propertyDetails!=null)...[
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'Property Details'),
+                      const SizedBox(height: 8),
+                      Details(property: property!),
+                      const SizedBox(height: 12),
+                      Divider(
+                        indent: 18,
+                        endIndent: 18,
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                    ],
+
+
+
+                    if(property?.propertyDetails?.furnishInfo?.furnishDetails!=null)...[
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'Furnishing'),
+                      // const SizedBox(height: 8),
+                      // Facilities(property: property ?? Items()),
+                      FurnishingDetails(
+                        property: property??Items(),
+                        bgColor: ColorRes.propertyBg,
+                        txtColor: ColorRes.propertyText,
+                      ),
+                      Divider(
+                        indent: 18,
+                        endIndent: 18,
+                        color: ColorRes.leadGreyColor.shade300,
                       ),
 
+                    ],
+                    // PG Rules Section (only for PG listing type)
+                    if (property?.listingType?.toUpperCase() == "PG" &&
+                        property?.propertyDetails?.pgInfo?.pgRules != null) ...[
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'PG Rules'),
+                      const SizedBox(height: 8),
+                      _buildPgRulesSection(
+                        property!.propertyDetails!.pgInfo!.pgRules!,
+                      ),
+                      const SizedBox(height: 12),
+                      Divider(
+                        indent: 18,
+                        endIndent: 18,
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                    ],
+
+                    // Room Options & Pricing Section (only for PG listing type)
+                    if (property?.listingType?.toUpperCase() == "PG" &&
+                        property?.propertyDetails?.pgInfo?.pgRoomInfo != null &&
+                        property!
+                            .propertyDetails!
+                            .pgInfo!
+                            .pgRoomInfo!
+                            .isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'Room Options & Pricing'),
+                      const SizedBox(height: 8),
+                      _buildRoomOptionsSection(
+                        property!.propertyDetails!.pgInfo!.pgRoomInfo!,
+                      ),
+                      const SizedBox(height: 12),
+                      Divider(
+                        indent: 18,
+                        endIndent: 18,
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                    ],
+
+                    if (property?.propertyDescription != null) ...[
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'Description'),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          property?.propertyDescription ?? '-',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Divider(
+                        indent: 18,
+                        endIndent: 18,
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                    ],
+
+                    if(property?.location?.isNotEmpty??false)...[
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'Location'),
+                      const SizedBox(height: 8),
+                      AddressAndMapDetails(property: property!),
                       const SizedBox(height: 12),
                     ],
-                  );
-                }),
 
-                Divider(
-                  indent: 18,
-                  endIndent: 18,
-                  color: ColorRes.leadGreyColor.shade300,
-                ),
+                    // if (property?.nearbyLocations != null) ...[
+                    //   Divider(
+                    //     indent: 18,
+                    //     endIndent: 18,
+                    //     color: ColorRes.leadGreyColor.shade300,
+                    //   ),
+                    //
+                    //   const SizedBox(height: 8),
+                    //   const TitleWithViewAll(title: 'Nearby Landmarks'),
+                    //   const SizedBox(height: 12),
+                    //   NearbyPropertyDetails(
+                    //     nearbyLocations: property?.nearbyLocations ?? [],
+                    //   ),
+                    //   const SizedBox(height: 12),
+                    // ],
+                    // Category-based Nearby Places with Google Map Style
+                    Obx(() {
+                      if (mapController.isLoading.value) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
 
-                const SizedBox(height: 12),
-                const TitleWithViewAll(title: 'Owner Details'),
-                const SizedBox(height: 12),
-                OwnerInformation(property: property!, controller: controller),
-                const SizedBox(height: 12),
-                // Divider(
-                //   indent: 18,
-                //   endIndent: 18,
-                //   color: ColorRes.leadGreyColor.shade300,
-                // ),
-                // const SizedBox(height: 12),
-
-                // const TitleWithViewAll(title: 'Check availability of Agent'),
-                // const SizedBox(height: 12),
-                // ContactSellerCard(property: property ?? Items()),
-
-                // const SizedBox(height: 12),
-                // Obx(() {
-                //   if (!controller.isDeveloper.value) {
-                //     return const SizedBox.shrink(); // hide if not developer
-                //   }
-                //
-                //   return Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       Divider(
-                //         indent: 18,
-                //         endIndent: 18,
-                //         color: ColorRes.leadGreyColor.shade300,
-                //       ),
-                //       const SizedBox(height: 12),
-                //       const TitleWithViewAll(title: 'Project Brochures'),
-                //       const SizedBox(height: 12),
-                //       const ProjectBrochure(
-                //         brochureImageUrl:
-                //             'https://cdn.dribbble.com/userupload/12289156/file/original-1b5719cd15e5e7e54052ebe7ed9ad2a7.jpg?resize=400x0',
-                //         brochureUrl: "",
-                //         totalPages: 4,
-                //       ),
-                //       const SizedBox(height: 12),
-                //       Divider(
-                //         indent: 18,
-                //         endIndent: 18,
-                //         color: ColorRes.leadGreyColor.shade300,
-                //       ),
-                //       const SizedBox(height: 12),
-                //       const TitleWithViewAll(title: 'Premium projects nearby'),
-                //       const SizedBox(height: 12),
-                //       ProjectDetails(
-                //         launchedDate: property?.lastRenewalDate ?? '',
-                //         maxPrice: 3.5,
-                //         minPrice: 1.8,
-                //         nearbyProjects: property?.nearbyLocations ?? [],
-                //         projectArea: 22,
-                //         projectName: "",
-                //         reraId: '322',
-                //         units: 256,
-                //       ),
-                //       const SizedBox(height: 12),
-                //       RecommendedInsights(
-                //         nearbyLocations: property?.nearbyLocations ?? [],
-                //       ),
-                //     ],
-                //   );
-                // }),
-                const SizedBox(height: 12),
-
-                Obx(() {
-                  final overallCtrl = _overallRatingController;
-                  final reviewCtrl = reviewController;
-
-                  final isOverallLoading =
-                      overallCtrl.isLoading.value &&
-                      overallCtrl.ratingData.value == null;
-                  final isReviewLoading =
-                      reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
-
-                  // 🌀 Show loader if both are still loading
-                  if (isOverallLoading && isReviewLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  // 🈳 Hide section if both are empty and not loading
-                  if (!overallCtrl.isLoading.value &&
-                      !reviewCtrl.isLoading.value &&
-                      (overallCtrl.ratingData.value == null ||
-                          overallCtrl.ratingData.value?.data?.totalReviews ==
-                              0) &&
-                      reviewCtrl.items.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
-
-                  // 🧩 Extract safe data
-                  final overallData = overallCtrl.ratingData.value?.data;
-                  final totalReviews = overallData?.totalReviews ?? 0;
-                  final overallRating = overallData?.overallRating ?? 0.0;
-                  final DetailedRatings detailedRatings =
-                      overallData?.detailedRatings ??
-                      DetailedRatings(
-                        accuracy: 0,
-                        amenities: 0,
-                        cleanliness: 0,
-                        location: 0,
-                        value: 0,
+                      // Check if any category has data
+                      final hasData = mapController.allCategoriesData.values.any(
+                            (places) => places.isNotEmpty,
                       );
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                      if (!hasData || mapController.propertyLatLng.value == null) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Divider(
+                            indent: 18,
+                            endIndent: 18,
+                            color: ColorRes.leadGreyColor.shade300,
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Embedded Map Preview Section
+                          NearbyLocationMapSection(
+                            address: property?.address ?? '',
+                            mapController: mapController,
+                          ),
+
+                          const SizedBox(height: 12),
+                        ],
+                      );
+                    }),
+
+                    if(property?.ownerName?.isNotEmpty??false)...[
                       Divider(
                         indent: 18,
                         endIndent: 18,
                         color: ColorRes.leadGreyColor.shade300,
                       ),
-                      const SizedBox(height: 12),
-                      const TitleWithViewAll(
-                        title: 'Reviews & Ratings',
-                        showViewAll: true,
-                      ),
-                      // 🟡 Overall Rating Section
-                      OverallRatingWidget(
-                        totalReviews: totalReviews,
-                        overallRating: overallRating,
-                        detailedRatings: detailedRatings,
-                      ),
 
                       const SizedBox(height: 12),
-
-                      // 📋 Review List Section
-                      if (reviewCtrl.items.isNotEmpty) ...[
-                        SizedBox(
-                          height: 220,
-                          child: ListView.separated(
-                            // shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            itemCount: reviewCtrl.items.length,
-                            separatorBuilder:
-                                (_, __) => const SizedBox(width: 16),
-                            itemBuilder: (context, index) {
-                              final review = reviewCtrl.items[index];
-                              return PropertyReviewCard(reviewItem: review);
-                            },
-                          ),
-                        ),
-                      ] else if (!reviewCtrl.isLoading.value &&
-                          totalReviews == 0) ...[
-                        const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: Text(
-                            "No reviews yet",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                      ],
+                      const TitleWithViewAll(title: 'Owner Details'),
+                      const SizedBox(height: 8),
+                      OwnerInformation(property: property!, controller: controller),
+                      const SizedBox(height: 12),
                     ],
-                  );
-                }),
+                    // Divider(
+                    //   indent: 18,
+                    //   endIndent: 18,
+                    //   color: ColorRes.leadGreyColor.shade300,
+                    // ),
+                    // const SizedBox(height: 12),
 
-                Obx(() {
-                  if (!canAddReview.value) {
-                    return SizedBox.shrink();
-                  }
-                  return Column(
-                    children: [
-                      const SizedBox(height: 12),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: NesticoPeButton(
-                          width: double.infinity,
-                          boxShadow: [],
-                          onTap: () async {
-                            if (UserHelper.isGuest) {
-                              Get.to(() => LoginScreen());
-                            } else {
-                              final result = await Get.to(
-                                () => AddReviewScreen(
-                                  entityType: 'property',
-                                  entityId: property?.id ?? '',
-                                ),
+                    // const TitleWithViewAll(title: 'Check availability of Agent'),
+                    // const SizedBox(height: 12),
+                    // ContactSellerCard(property: property ?? Items()),
+
+                    // const SizedBox(height: 12),
+                    // Obx(() {
+                    //   if (!controller.isDeveloper.value) {
+                    //     return const SizedBox.shrink(); // hide if not developer
+                    //   }
+                    //
+                    //   return Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Divider(
+                    //         indent: 18,
+                    //         endIndent: 18,
+                    //         color: ColorRes.leadGreyColor.shade300,
+                    //       ),
+                    //       const SizedBox(height: 12),
+                    //       const TitleWithViewAll(title: 'Project Brochures'),
+                    //       const SizedBox(height: 12),
+                    //       const ProjectBrochure(
+                    //         brochureImageUrl:
+                    //             'https://cdn.dribbble.com/userupload/12289156/file/original-1b5719cd15e5e7e54052ebe7ed9ad2a7.jpg?resize=400x0',
+                    //         brochureUrl: "",
+                    //         totalPages: 4,
+                    //       ),
+                    //       const SizedBox(height: 12),
+                    //       Divider(
+                    //         indent: 18,
+                    //         endIndent: 18,
+                    //         color: ColorRes.leadGreyColor.shade300,
+                    //       ),
+                    //       const SizedBox(height: 12),
+                    //       const TitleWithViewAll(title: 'Premium projects nearby'),
+                    //       const SizedBox(height: 12),
+                    //       ProjectDetails(
+                    //         launchedDate: property?.lastRenewalDate ?? '',
+                    //         maxPrice: 3.5,
+                    //         minPrice: 1.8,
+                    //         nearbyProjects: property?.nearbyLocations ?? [],
+                    //         projectArea: 22,
+                    //         projectName: "",
+                    //         reraId: '322',
+                    //         units: 256,
+                    //       ),
+                    //       const SizedBox(height: 12),
+                    //       RecommendedInsights(
+                    //         nearbyLocations: property?.nearbyLocations ?? [],
+                    //       ),
+                    //     ],
+                    //   );
+                    // }),
+                    // const SizedBox(height: 12),
+
+                    Obx(() {
+                      final overallCtrl = _overallRatingController;
+                      final reviewCtrl = reviewController;
+
+                      final isOverallLoading =
+                          overallCtrl.isLoading.value &&
+                              overallCtrl.ratingData.value == null;
+                      final isReviewLoading =
+                          reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
+
+                      // 🌀 Show loader if both are still loading
+                      if (isOverallLoading && isReviewLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      // 🈳 Hide section if both are empty and not loading
+                      if (!overallCtrl.isLoading.value &&
+                          !reviewCtrl.isLoading.value &&
+                          (overallCtrl.ratingData.value == null ||
+                              overallCtrl.ratingData.value?.data?.totalReviews ==
+                                  0) &&
+                          reviewCtrl.items.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      // 🧩 Extract safe data
+                      final overallData = overallCtrl.ratingData.value?.data;
+                      final totalReviews = overallData?.totalReviews ?? 0;
+                      final overallRating = overallData?.overallRating ?? 0.0;
+                      final DetailedRatings detailedRatings =
+                          overallData?.detailedRatings ??
+                              DetailedRatings(
+                                accuracy: 0,
+                                amenities: 0,
+                                cleanliness: 0,
+                                location: 0,
+                                value: 0,
                               );
 
-                              // 👇 Hide button immediately if review was successfully added
-                              if (result == true) {
-                                canAddReview.value = false;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Divider(
+                            indent: 18,
+                            endIndent: 18,
+                            color: ColorRes.leadGreyColor.shade300,
+                          ),
+                          const SizedBox(height: 12),
+                          const TitleWithViewAll(
+                            title: 'Reviews & Ratings',
+                            showViewAll: true,
+                          ),
+                          // 🟡 Overall Rating Section
+                          OverallRatingWidget(
+                            totalReviews: totalReviews,
+                            overallRating: overallRating,
+                            detailedRatings: detailedRatings,
+                          ),
 
-                                reviewController.refreshList();
-                                _overallRatingController.fetchOverallRating(
-                                  property?.id ?? '',
-                                );
-                              }
-                            }
-                          },
+                          const SizedBox(height: 12),
 
-                          title: "Add Review",
-                        ),
-                      ),
-                    ],
-                  );
-                }),
+                          // 📋 Review List Section
+                          if (reviewCtrl.items.isNotEmpty) ...[
+                            SizedBox(
+                              height: 220,
+                              child: ListView.separated(
+                                // shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                itemCount: reviewCtrl.items.length,
+                                separatorBuilder:
+                                    (_, __) => const SizedBox(width: 16),
+                                itemBuilder: (context, index) {
+                                  final review = reviewCtrl.items[index];
+                                  return PropertyReviewCard(reviewItem: review);
+                                },
+                              ),
+                            ),
+                          ] else if (!reviewCtrl.isLoading.value &&
+                              totalReviews == 0) ...[
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              child: Text(
+                                "No reviews yet",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          ],
+                        ],
+                      );
+                    }),
 
-                const SizedBox(height: 12),
-                Divider(
-                  indent: 18,
-                  endIndent: 18,
-                  color: ColorRes.leadGreyColor.shade300,
+                    Obx(() {
+                      if (!canAddReview.value) {
+                        return SizedBox.shrink();
+                      }
+                      return Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: NesticoPeButton(
+                              width: double.infinity,
+                              boxShadow: [],
+                              onTap: () async {
+                                if (UserHelper.isGuest) {
+                                  Get.to(() => LoginScreen());
+                                } else {
+                                  final result = await Get.to(
+                                        () => AddReviewScreen(
+                                      entityType: 'property',
+                                      entityId: property?.id ?? '',
+                                    ),
+                                  );
+
+                                  // 👇 Hide button immediately if review was successfully added
+                                  if (result == true) {
+                                    canAddReview.value = false;
+
+                                    reviewController.refreshList();
+                                    _overallRatingController.fetchOverallRating(
+                                      property?.id ?? '',
+                                    );
+                                  }
+                                }
+                              },
+
+                              title: "Add Review",
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+
+                    const SizedBox(height: 12),
+                    Divider(
+                      indent: 18,
+                      endIndent: 18,
+                      color: ColorRes.leadGreyColor.shade300,
+                    ),
+                    const SizedBox(height: 12),
+                    const TitleWithViewAll(
+                      title: 'Recommended Properties',
+                      showViewAll: true,
+                    ),
+                    const SizedBox(height: 12),
+                    const RecommendedProperty(),
+                    const SizedBox(height: 12),
+                    // Divider(
+                    //   indent: 18,
+                    //   endIndent: 18,
+                    //   color: ColorRes.leadGreyColor.shade300,
+                    // ),
+                    // const SizedBox(height: 12),
+                    // const TitleWithViewAll(
+                    //   title: 'Better Price Property',
+                    //   showViewAll: true,
+                    // ),
+                    // const SizedBox(height: 12),
+                    // const RecommendedProperty(),
+
+                    //SizedBox(height: 12),
+                    //const SizedBox(height: 12), // Extra spacing at bottom
+                  ],
                 ),
-                const SizedBox(height: 12),
-                const TitleWithViewAll(
-                  title: 'Recommended Properties',
-                  showViewAll: true,
-                ),
-                const SizedBox(height: 12),
-                const RecommendedProperty(),
-                const SizedBox(height: 12),
-                // Divider(
-                //   indent: 18,
-                //   endIndent: 18,
-                //   color: ColorRes.leadGreyColor.shade300,
-                // ),
-                // const SizedBox(height: 12),
-                // const TitleWithViewAll(
-                //   title: 'Better Price Property',
-                //   showViewAll: true,
-                // ),
-                // const SizedBox(height: 12),
-                // const RecommendedProperty(),
+              ),
+              // Comparison floating button
+              UnifiedComparisonFloatingButton(
+                bottom: 16,
+              )
 
-                //SizedBox(height: 12),
-                //const SizedBox(height: 12), // Extra spacing at bottom
-              ],
-            ),
+            ],
           ),
         );
       }),
+      // bottomNavigationBar: Obx(() {
+      //   if (_isLoading.value || property == null) {
+      //     return const SizedBox.shrink();
+      //   }
+      //   return SafeArea(
+      //     child: PropertyBottomBar(
+      //       property: property!,
+      //
+      //       // price: '₹ ${property?.propertyDetails?.financialInfo?.price ?? '0'}',
+      //       onCallOwner: () {
+      //         if (UserHelper.isGuest) {
+      //           Get.to(() => LoginScreen());
+      //         } else {
+      //           showModalBottomSheet(
+      //             context: context,
+      //             isScrollControlled: true,
+      //             shape: const RoundedRectangleBorder(
+      //               borderRadius: BorderRadius.vertical(
+      //                 top: Radius.circular(20),
+      //               ),
+      //             ),
+      //             builder:
+      //                 (context) => DraggableScrollableSheet(
+      //               expand: false,
+      //               initialChildSize: 0.85,
+      //               // start with 85% of screen
+      //               minChildSize: 0.5,
+      //               maxChildSize: 0.85,
+      //
+      //               builder:
+      //                   (
+      //                   context,
+      //                   scrollController,
+      //                   ) => SingleChildScrollView(
+      //                 controller: scrollController,
+      //                 child: Padding(
+      //                   padding: EdgeInsets.only(
+      //                     bottom:
+      //                     MediaQuery.of(context).viewInsets.bottom,
+      //                     left: 16,
+      //                     right: 16,
+      //                     top: 16,
+      //                   ),
+      //                   child: ContactOwnerBottom(
+      //                     property: property ?? Items(),
+      //
+      //                     // Optional: Customize texts
+      //                     titleText: "Contact the Owner",
+      //                     chatButtonText: "Chat via WhatsApp",
+      //                     formTitle: "Quick Contact Form",
+      //                     contactButtonText: "Send Request",
+      //
+      //                     // Optional: Customize icons
+      //                     nameIcon: Icons.person,
+      //                     phoneIcon: Icons.phone,
+      //                     emailIcon: Icons.email,
+      //
+      //                     // Optional: Checkbox initial states
+      //                     allowSellerContact: false,
+      //                     negotiable: false,
+      //
+      //                     // Callbacks
+      //                     onChatPressed: () {
+      //                       print("WhatsApp button clicked!");
+      //                     },
+      //                     onContactPressed: (name, phone, email,price,isNegotiable,isAllowAllCondition,planningToBuy) async {
+      //                       final inquiry = {
+      //                         "name": name ?? "",
+      //                         "phone": phone ?? "",
+      //                         "email": email ?? "",
+      //                         "agreeToContact": isAllowAllCondition ?? false,
+      //                         "meta": {
+      //                           if (price != null) "negotiablePrice": price,
+      //                           if (isNegotiable != null) "isNegotiable": isNegotiable,
+      //                           if (planningToBuy != null) "timePeriod": planningToBuy,
+      //                         }
+      //                       };
+      //                       log(" Inquiry  ${inquiry['meta']} ");
+      //
+      //                       final success = await controller.addInquiry(
+      //                         inquiry,
+      //                         property?.id ?? '',
+      //                       );
+      //                       if (success) {
+      //                         CustomSnackBar.show(
+      //                           Get.overlayContext!,
+      //                           message: "Inquiry Added Successfully",
+      //                           type: SnackBarType.success,
+      //                         );
+      //                         Get.back();
+      //                       } else {
+      //                         CustomSnackBar.show(
+      //                           Get.overlayContext!,
+      //                           message: "Failed to Submit Inquiry",
+      //                           type: SnackBarType.error,
+      //                         );
+      //                       }
+      //                     },
+      //                     onAllowSellerContactChanged: (value) {
+      //                       print("Allow sellers changed: $value");
+      //                     },
+      //                     onHomeLoanInterestChanged: (value) {
+      //                       print("Home loan interest changed: $value");
+      //                     },
+      //                   ),
+      //                 ),
+      //               ),
+      //             ),
+      //           );
+      //         }
+      //       },
+      //       onScheduleVisit: () {},
+      //     ),
+      //   );
+      // }),
+
+      // Update in your first document (bottomNavigationBar)
+
       bottomNavigationBar: Obx(() {
         if (_isLoading.value || property == null) {
           return const SizedBox.shrink();
@@ -652,7 +794,6 @@ log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}")
         return SafeArea(
           child: PropertyBottomBar(
             property: property!,
-            // price: '₹ ${property?.propertyDetails?.financialInfo?.price ?? '0'}',
             onCallOwner: () {
               if (UserHelper.isGuest) {
                 Get.to(() => LoginScreen());
@@ -665,84 +806,86 @@ log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}")
                       top: Radius.circular(20),
                     ),
                   ),
-                  builder:
-                      (context) => DraggableScrollableSheet(
-                        expand: false,
-                        initialChildSize: 0.85,
-                        // start with 85% of screen
-                        minChildSize: 0.5,
-                        maxChildSize: 0.85,
-                        builder:
-                            (
-                              context,
-                              scrollController,
-                            ) => SingleChildScrollView(
-                              controller: scrollController,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom,
-                                  left: 16,
-                                  right: 16,
-                                  top: 16,
-                                ),
-                                child: ContactOwnerBottom(
-                                  property: property ?? Items(),
+                  builder: (context) => DraggableScrollableSheet(
+                    expand: false,
+                    initialChildSize: 0.85,
+                    minChildSize: 0.5,
+                    maxChildSize: 0.85,
+                    builder: (context, scrollController) => SingleChildScrollView(
+                      controller: scrollController,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                          left: 16,
+                          right: 16,
+                          top: 16,
+                        ),
+                        child: ContactOwnerBottom(
+                          property: property ?? Items(),
+                          // Check if inquiry already submitted
+                          inQuireSubmitted: controller.hasSubmittedInquiry.value,
+                          titleText: "Contact the Owner",
+                          chatButtonText: "Chat via WhatsApp",
+                          formTitle: "Quick Contact Form",
+                          contactButtonText: "Send Request",
+                          nameIcon: Icons.person,
+                          phoneIcon: Icons.phone,
+                          emailIcon: Icons.email,
+                          allowSellerContact: false,
+                          negotiable: false,
+                          onChatPressed: () {
+                            print("WhatsApp button clicked!");
+                          },
+                          onContactPressed: (name, phone, email, price, isNegotiable, isAllowAllCondition, planningToBuy) async {
+                            final inquiry = {
+                              "name": name ?? "",
+                              "phone": phone ?? "",
+                              "email": email ?? "",
+                              "agreeToContact": isAllowAllCondition ?? false,
+                              "meta": {
+                                if (price != null) "negotiablePrice": price,
+                                if (isNegotiable != null) "isNegotiable": isNegotiable,
+                                if (planningToBuy != null) "timePeriod": planningToBuy,
+                              }
+                            };
+                            log("Inquiry ${inquiry['meta']}");
 
-                                  // Optional: Customize texts
-                                  titleText: "Contact the Owner",
-                                  chatButtonText: "Chat via WhatsApp",
-                                  formTitle: "Quick Contact Form",
-                                  contactButtonText: "Send Request",
+                            final success = await controller.addInquiry(
+                              inquiry,
+                              property?.id ?? '',
+                            );
 
-                                  // Optional: Customize icons
-                                  nameIcon: Icons.person,
-                                  phoneIcon: Icons.phone,
-                                  emailIcon: Icons.email,
+                            if (success) {
+                              // Mark inquiry as submitted
 
-                                  // Optional: Checkbox initial states
-                                  allowSellerContact: true,
-                                  homeLoanInterest: false,
+                              controller.hasSubmittedInquiry.value = true;
 
-                                  // Callbacks
-                                  onChatPressed: () {
-                                    print("WhatsApp button clicked!");
-                                  },
-                                  onContactPressed: (name, phone, email) async {
-                                    final inquiry = {
-                                      "name": name,
-                                      "phone": phone,
-                                      "email": email,
-                                    };
-                                    final success = await controller.addInquiry(
-                                      inquiry,
-                                      property?.id ?? '',
-                                    );
-                                    if (success) {
-                                      CustomSnackBar.show(
-                                        Get.overlayContext!,
-                                        message: "Inquiry Added Successfully",
-                                        type: SnackBarType.success,
-                                      );
-                                      Get.back();
-                                    } else {
-                                      CustomSnackBar.show(
-                                        Get.overlayContext!,
-                                        message: "Failed to Submit Inquiry",
-                                        type: SnackBarType.error,
-                                      );
-                                    }
-                                  },
-                                  onAllowSellerContactChanged: (value) {
-                                    print("Allow sellers changed: $value");
-                                  },
-                                  onHomeLoanInterestChanged: (value) {
-                                    print("Home loan interest changed: $value");
-                                  },
-                                ),
-                              ),
-                            ),
+                              CustomSnackBar.show(
+                                Get.overlayContext!,
+                                message: "Inquiry Added Successfully",
+                                type: SnackBarType.success,
+                              );
+
+                              Get.back();
+                              await controller.getAllInQuireData(widget.property?.propertyId??'');
+                            } else {
+                              CustomSnackBar.show(
+                                Get.overlayContext!,
+                                message: "Failed to Submit Inquiry",
+                                type: SnackBarType.error,
+                              );
+                            }
+                          },
+                          onAllowSellerContactChanged: (value) {
+                            print("Allow sellers changed: $value");
+                          },
+                          onHomeLoanInterestChanged: (value) {
+                            print("Home loan interest changed: $value");
+                          },
+                        ),
                       ),
+                    ),
+                  ),
                 );
               }
             },
@@ -820,7 +963,7 @@ log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}")
                       return CircularIcon(
                         icon: Icons.compare_arrows,
                         backgroundColor:
-                            selected ? ColorRes.primary : ColorRes.white,
+                        selected ? ColorRes.primary : ColorRes.white,
                         iconColor: selected ? ColorRes.white : ColorRes.primary,
                         onPressed: () {
                           final before = compare.count;
@@ -833,31 +976,31 @@ log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}")
                               CustomSnackBar.show(
                                 ctx,
                                 message:
-                                    after == 2
-                                        ? 'Ready to compare!'
-                                        : 'Added to compare (${after}/2)',
+                                after == 2
+                                    ? 'Ready to compare!'
+                                    : 'Added to compare (${after}/2)',
                                 type: SnackBarType.success,
                                 actionLabel: after == 2 ? 'Compare Now' : null,
                                 onActionPressed:
-                                    after == 2
-                                        ? () {
-                                          Get.back(); // Close snackbar first
-                                          if (Get.isRegistered<
-                                            NavigationController
-                                          >()) {
-                                            Get.find<NavigationController>()
-                                                .changeIndex(2);
-                                          }
-                                        }
-                                        : null,
+                                after == 2
+                                    ? () {
+                                  Get.back(); // Close snackbar first
+                                  if (Get.isRegistered<
+                                      NavigationController
+                                  >()) {
+                                    Get.find<NavigationController>()
+                                        .changeIndex(2);
+                                  }
+                                }
+                                    : null,
                               );
                             } else if (after < before) {
                               CustomSnackBar.show(
                                 ctx,
                                 message:
-                                    after == 0
-                                        ? 'Removed from compare'
-                                        : 'Removed from compare (${after}/2)',
+                                after == 0
+                                    ? 'Removed from compare'
+                                    : 'Removed from compare (${after}/2)',
                                 type: SnackBarType.info,
                               );
                             } else if (after == before && before >= 2) {
@@ -879,14 +1022,14 @@ log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}")
                       );
                       return CircularIcon(
                         icon:
-                            isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border_rounded,
+                        isFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border_rounded,
                         backgroundColor: ColorRes.white,
                         iconColor:
-                            isFavorite
-                                ? ColorRes.redAccentColor
-                                : ColorRes.black,
+                        isFavorite
+                            ? ColorRes.redAccentColor
+                            : ColorRes.black,
                         onPressed: () {
                           favoriteController.toggleFavorite(id);
                         },
@@ -1267,51 +1410,51 @@ log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}")
         spacing: 12,
         runSpacing: 12,
         children:
-            rulesList.map((rule) {
-              final isAllowed = rule['allowed'] as bool;
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
+        rulesList.map((rule) {
+          final isAllowed = rule['allowed'] as bool;
+          return Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              color:
+              isAllowed
+                  ? ColorRes.green.withOpacity(0.02)
+                  : ColorRes.error.withOpacity(0.02),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  rule['icon'] as IconData,
+                  size: 16,
+                  color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
                 ),
-                decoration: BoxDecoration(
-                  color:
-                      isAllowed
-                          ? ColorRes.green.withOpacity(0.02)
-                          : ColorRes.error.withOpacity(0.02),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
+                const SizedBox(width: 6),
+                Text(
+                  rule['label'] as String,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.bodySmall,
+                    fontWeight: AppFontWeights.medium,
                     color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
-                    width: 1,
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      rule['icon'] as IconData,
-                      size: 16,
-                      color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      rule['label'] as String,
-                      style: TextStyle(
-                        fontSize: AppFontSizes.bodySmall,
-                        fontWeight: AppFontWeights.medium,
-                        color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      isAllowed ? Icons.check_circle : Icons.cancel,
-                      size: 14,
-                      color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
-                    ),
-                  ],
+                const SizedBox(width: 4),
+                Icon(
+                  isAllowed ? Icons.check_circle : Icons.cancel,
+                  size: 14,
+                  color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
                 ),
-              );
-            }).toList(),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -1322,101 +1465,101 @@ log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}")
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children:
-            rooms.map((room) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: ColorRes.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: ColorRes.leadGreyColor.shade300),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorRes.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+        rooms.map((room) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: ColorRes.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: ColorRes.leadGreyColor.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: ColorRes.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          room.roomType?.toUpperCase() ?? 'Room',
-                          style:  TextStyle(
-                            fontSize: AppFontSizes.body,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textPrimary,
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '${Formatter.formatPrice(room.rent??0)} / month',
-                            style: const TextStyle(
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.primary,
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      room.roomType?.toUpperCase() ?? 'Room',
+                      style:  TextStyle(
+                        fontSize: AppFontSizes.body,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textPrimary,
+                      ),
                     ),
-
-                    if (room.securityDeposit != null &&
-                        room.securityDeposit! > 0) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.security,
-                            size: 14,
-                            color: ColorRes.leadGreyColor,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Security Deposit: ${Formatter.formatPrice(room.securityDeposit??0)}',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.small,
-                              color: ColorRes.leadGreyColor.shade700,
-                            ),
-                          ),
-                        ],
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
                       ),
-                    ],
-
-                    // Room Facilities
-                    if (room.roomFacilityInfo != null) ...[
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Facilities:',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.bodySmall,
+                      decoration: BoxDecoration(
+                        color: ColorRes.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${Formatter.formatPrice(room.rent??0)} / month',
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.small,
                           fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.blackShade87,
+                          color: ColorRes.primary,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: _buildFacilityChips(room.roomFacilityInfo!),
-                      ),
-                    ],
+                    ),
                   ],
                 ),
-              );
-            }).toList(),
+
+                if (room.securityDeposit != null &&
+                    room.securityDeposit! > 0) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.security,
+                        size: 14,
+                        color: ColorRes.leadGreyColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Security Deposit: ${Formatter.formatPrice(room.securityDeposit??0)}',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.leadGreyColor.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+
+                // Room Facilities
+                if (room.roomFacilityInfo != null) ...[
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Facilities:',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.blackShade87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _buildFacilityChips(room.roomFacilityInfo!),
+                  ),
+                ],
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -1488,222 +1631,222 @@ log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}")
     );
   }
 
-  // Widget _buildTitleSection(Items property) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Row(
-  //           crossAxisAlignment: CrossAxisAlignment.baseline,
-  //           textBaseline: TextBaseline.alphabetic,
-  //           children: [
-  //             // Title
-  //             Expanded(
-  //               child: Text(
-  //                 property.title ?? "-",
-  //                 style: TextStyle(
-  //                   fontSize: 17,
-  //                   fontWeight: AppFontWeights.semiBold,
-  //                   color: ColorRes.textPrimary,
-  //                 ),
-  //                 maxLines: 2,
-  //                 overflow: TextOverflow.ellipsis,
-  //               ),
-  //             ),
+// Widget _buildTitleSection(Items property) {
+//   return Padding(
+//     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.baseline,
+//           textBaseline: TextBaseline.alphabetic,
+//           children: [
+//             // Title
+//             Expanded(
+//               child: Text(
+//                 property.title ?? "-",
+//                 style: TextStyle(
+//                   fontSize: 17,
+//                   fontWeight: AppFontWeights.semiBold,
+//                   color: ColorRes.textPrimary,
+//                 ),
+//                 maxLines: 2,
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//             ),
 
-  //             const SizedBox(width: 8),
-  //             Row(
-  //               children: [
-  //                 Icon(Icons.star, size: 16, color: Colors.amber),
-  //                 const SizedBox(width: 4),
-  //                 Text(
-  //                   "4.5",
-  //                   style: TextStyle(
-  //                     fontSize: 15,
-  //                     fontWeight: AppFontWeights.semiBold,
-  //                     color: Colors.black,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
+//             const SizedBox(width: 8),
+//             Row(
+//               children: [
+//                 Icon(Icons.star, size: 16, color: Colors.amber),
+//                 const SizedBox(width: 4),
+//                 Text(
+//                   "4.5",
+//                   style: TextStyle(
+//                     fontSize: 15,
+//                     fontWeight: AppFontWeights.semiBold,
+//                     color: Colors.black,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
 
-  //         const SizedBox(height: 4),
-  //         Row(
-  //           crossAxisAlignment: CrossAxisAlignment.center,
-  //           children: [
-  //             // Icon(Icons.location_on_rounded, size: 16, color: ColorRes.leadGreyColor[600]),
-  //             // const SizedBox(width: 4),
-  //             Expanded(
-  //               child: Text(
-  //                 '${property.city ?? '-'}, ${property.state ?? "-"}',
-  //                 style: TextStyle(fontSize: 13, color: ColorRes.leadGreyColor[600]),
-  //                 overflow: TextOverflow.ellipsis,
-  //               ),
-  //             ),
-  //           ],
-  //         ),
+//         const SizedBox(height: 4),
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             // Icon(Icons.location_on_rounded, size: 16, color: ColorRes.leadGreyColor[600]),
+//             // const SizedBox(width: 4),
+//             Expanded(
+//               child: Text(
+//                 '${property.city ?? '-'}, ${property.state ?? "-"}',
+//                 style: TextStyle(fontSize: 13, color: ColorRes.leadGreyColor[600]),
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//             ),
+//           ],
+//         ),
 
-  //         const SizedBox(height: 4),
+//         const SizedBox(height: 4),
 
-  //         // Type + See on Map Row
-  //         Row(
-  //           children: [
-  //             // Type Chip
-  //             if (property.listingType != null)
-  //               Container(
-  //                 padding: const EdgeInsets.symmetric(
-  //                   horizontal: 10,
-  //                   vertical: 4,
-  //                 ),
-  //                 decoration: BoxDecoration(
-  //                   color: ColorRes.primary.withOpacity(0.15),
-  //                   borderRadius: BorderRadius.circular(AppRadius.small),
-  //                 ),
-  //                 child: Text(
-  //                   property.listingType!.toUpperCase(),
-  //                   style: TextStyle(
-  //                     fontSize: 12,
-  //                     fontWeight: AppFontWeights.semiBold,
-  //                     color: ColorRes.primary,
-  //                   ),
-  //                 ),
-  //               ),
+//         // Type + See on Map Row
+//         Row(
+//           children: [
+//             // Type Chip
+//             if (property.listingType != null)
+//               Container(
+//                 padding: const EdgeInsets.symmetric(
+//                   horizontal: 10,
+//                   vertical: 4,
+//                 ),
+//                 decoration: BoxDecoration(
+//                   color: ColorRes.primary.withOpacity(0.15),
+//                   borderRadius: BorderRadius.circular(AppRadius.small),
+//                 ),
+//                 child: Text(
+//                   property.listingType!.toUpperCase(),
+//                   style: TextStyle(
+//                     fontSize: 12,
+//                     fontWeight: AppFontWeights.semiBold,
+//                     color: ColorRes.primary,
+//                   ),
+//                 ),
+//               ),
 
-  //             const Spacer(),
+//             const Spacer(),
 
-  //             // See on Map Button
-  //             GestureDetector(
-  //               onTap: () {
-  //                 // TODO: Add map navigation logic
-  //               },
-  //               child: Container(
-  //                 padding: const EdgeInsets.symmetric(
-  //                   horizontal: 10,
-  //                   vertical: 4,
-  //                 ),
-  //                 decoration: BoxDecoration(
-  //                   color: ColorRes.primary.withOpacity(0.1),
-  //                   borderRadius: BorderRadius.circular(AppRadius.small),
-  //                 ),
-  //                 child: Row(
-  //                   mainAxisSize: MainAxisSize.min,
-  //                   children: [
-  //                     Icon(
-  //                       Icons.location_pin,
-  //                       size: 16,
-  //                       color: ColorRes.primary,
-  //                     ),
-  //                     const SizedBox(width: 4),
-  //                     Text(
-  //                       "See on Map",
-  //                       style: TextStyle(
-  //                         fontSize: 12,
-  //                         fontWeight: AppFontWeights.semiBold,
-  //                         color: ColorRes.primary,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+//             // See on Map Button
+//             GestureDetector(
+//               onTap: () {
+//                 // TODO: Add map navigation logic
+//               },
+//               child: Container(
+//                 padding: const EdgeInsets.symmetric(
+//                   horizontal: 10,
+//                   vertical: 4,
+//                 ),
+//                 decoration: BoxDecoration(
+//                   color: ColorRes.primary.withOpacity(0.1),
+//                   borderRadius: BorderRadius.circular(AppRadius.small),
+//                 ),
+//                 child: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Icon(
+//                       Icons.location_pin,
+//                       size: 16,
+//                       color: ColorRes.primary,
+//                     ),
+//                     const SizedBox(width: 4),
+//                     Text(
+//                       "See on Map",
+//                       style: TextStyle(
+//                         fontSize: 12,
+//                         fontWeight: AppFontWeights.semiBold,
+//                         color: ColorRes.primary,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
-  // Widget _buildPriceAndType() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //     child: Row(
-  //       children: [
-  //         const Text(
-  //           "₹8.9 Cr",
-  //           style: TextStyle(
-  //             fontSize: AppFontSizes.large,
-  //             fontWeight: AppFontWeights.semiBold,
-  //           ),
-  //         ),
-  //         const SizedBox(width: 16),
-  //         Chip(
-  //           label: const Text("Sell - apartment"),
-  //           backgroundColor: ColorRes.orangeColor.shade50,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildFeatureChips() {
-  //   return const Padding(
-  //     padding: EdgeInsets.all(16),
-  //     child: Wrap(
-  //       spacing: 12,
-  //       runSpacing: 8,
-  //       children: [
-  //         Chip(label: Text("4 BHK")),
-  //         Chip(label: Text("5 Bath")),
-  //         Chip(label: Text("2 Balcony")),
-  //         Chip(label: Text("Floor: 34/34")),
-  //         Chip(label: Text("Area: 3900 sqft")),
-  //         Chip(label: Text("Facing: West")),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildSection(String title, String content) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(16.0),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           title,
-  //           style: const TextStyle(
-  //             fontSize: AppFontSizes.large,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //         const SizedBox(height: 8),
-  //         Text(content),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildAmenitiesSection() {
-  //   final List<String> amenities = [
-  //     "Infinity Pool",
-  //     "Sky Lounge",
-  //     "24x7 Concierge",
-  //     "Private Elevator",
-  //     "Smart Lighting",
-  //     "Solar Panels",
-  //   ];
-  //   return Padding(
-  //     padding: const EdgeInsets.all(16),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         const Text(
-  //           "Amenities",
-  //           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //         ),
-  //         const SizedBox(height: 8),
-  //         Wrap(
-  //           spacing: 12,
-  //           runSpacing: 8,
-  //           children: amenities.map((e) => Chip(label: Text(e))).toList(),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+// Widget _buildPriceAndType() {
+//   return Padding(
+//     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//     child: Row(
+//       children: [
+//         const Text(
+//           "₹8.9 Cr",
+//           style: TextStyle(
+//             fontSize: AppFontSizes.large,
+//             fontWeight: AppFontWeights.semiBold,
+//           ),
+//         ),
+//         const SizedBox(width: 16),
+//         Chip(
+//           label: const Text("Sell - apartment"),
+//           backgroundColor: ColorRes.orangeColor.shade50,
+//         ),
+//       ],
+//     ),
+//   );
+// }
+//
+// Widget _buildFeatureChips() {
+//   return const Padding(
+//     padding: EdgeInsets.all(16),
+//     child: Wrap(
+//       spacing: 12,
+//       runSpacing: 8,
+//       children: [
+//         Chip(label: Text("4 BHK")),
+//         Chip(label: Text("5 Bath")),
+//         Chip(label: Text("2 Balcony")),
+//         Chip(label: Text("Floor: 34/34")),
+//         Chip(label: Text("Area: 3900 sqft")),
+//         Chip(label: Text("Facing: West")),
+//       ],
+//     ),
+//   );
+// }
+//
+// Widget _buildSection(String title, String content) {
+//   return Padding(
+//     padding: const EdgeInsets.all(16.0),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           title,
+//           style: const TextStyle(
+//             fontSize: AppFontSizes.large,
+//             fontWeight: FontWeight.bold,
+//           ),
+//         ),
+//         const SizedBox(height: 8),
+//         Text(content),
+//       ],
+//     ),
+//   );
+// }
+//
+// Widget _buildAmenitiesSection() {
+//   final List<String> amenities = [
+//     "Infinity Pool",
+//     "Sky Lounge",
+//     "24x7 Concierge",
+//     "Private Elevator",
+//     "Smart Lighting",
+//     "Solar Panels",
+//   ];
+//   return Padding(
+//     padding: const EdgeInsets.all(16),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         const Text(
+//           "Amenities",
+//           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//         ),
+//         const SizedBox(height: 8),
+//         Wrap(
+//           spacing: 12,
+//           runSpacing: 8,
+//           children: amenities.map((e) => Chip(label: Text(e))).toList(),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 }
 
 class CircularIcon extends StatelessWidget {
@@ -1798,7 +1941,7 @@ class PropertyBottomBar extends StatelessWidget {
                   Get.bottomSheet(
                     PricingBottomSheet(
                       financialInfo:
-                          property.propertyDetails?.financialInfo ??
+                      property.propertyDetails?.financialInfo ??
                           FinancialInfo(),
                     ),
                   );
@@ -1977,13 +2120,13 @@ class PricingBottomSheet extends StatelessWidget {
             style: TextStyle(
               fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
               fontWeight:
-                  isHighlight
-                      ? AppFontWeights.semiBold
-                      : AppFontWeights.regular,
+              isHighlight
+                  ? AppFontWeights.semiBold
+                  : AppFontWeights.regular,
               color:
-                  isHighlight
-                      ? ColorRes.black
-                      : ColorRes.leadGreyColor.shade700,
+              isHighlight
+                  ? ColorRes.black
+                  : ColorRes.leadGreyColor.shade700,
             ),
           ),
           Text(
@@ -1991,9 +2134,9 @@ class PricingBottomSheet extends StatelessWidget {
             style: TextStyle(
               fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
               fontWeight:
-                  isHighlight
-                      ? AppFontWeights.extraBold
-                      : AppFontWeights.medium,
+              isHighlight
+                  ? AppFontWeights.extraBold
+                  : AppFontWeights.medium,
               color: isHighlight ? ColorRes.green : ColorRes.black,
             ),
           ),
@@ -2009,8 +2152,8 @@ class PricingBottomSheet extends StatelessWidget {
   int _totalPrice(FinancialInfo info) {
     try {
       return (info.price +
-              (info.brokerCommission) +
-              (info.propertySecurityDeposit))
+          (info.brokerCommission) +
+          (info.propertySecurityDeposit))
           .toInt();
     } catch (_) {
       return 0;
@@ -2045,18 +2188,18 @@ class Facilities extends StatelessWidget {
         spacing: 12,
         runSpacing: 12,
         children:
-            highlights.map((item) {
-              // final key = item.keys.first;
-              // final value = item.values.first;
-              // final icon = iconMap[key] ?? Icons.info_outline;
+        highlights.map((item) {
+          // final key = item.keys.first;
+          // final value = item.values.first;
+          // final icon = iconMap[key] ?? Icons.info_outline;
 
-              return FacilitiesCard(
-                label: item.value,
-                icon: item.icon ?? Icons.info_outline,
-                bgColor: bgColor,
-                foreColor: txtColor,
-              );
-            }).toList(),
+          return FacilitiesCard(
+            label: item.value,
+            icon: item.icon ?? Icons.info_outline,
+            bgColor: bgColor,
+            foreColor: txtColor,
+          );
+        }).toList(),
       ),
     );
   }
@@ -2125,7 +2268,8 @@ class Details extends StatelessWidget {
 
     return Obx(() {
       final isExpanded = controller.isExpanded.value;
-      final visibleDetails = isExpanded ? details : details.take(4).toList();
+      final visibleDetails = details ;
+      // final visibleDetails = isExpanded ? details : details.take(4).toList();
 
       final screenWidth = MediaQuery.of(context).size.width;
       final itemWidth = (screenWidth / 2) - 26;
@@ -2140,69 +2284,69 @@ class Details extends StatelessWidget {
               spacing: 20,
               runSpacing: 12,
               children:
-                  visibleDetails.map((entry) {
-                    final title = entry.keys.first;
-                    final value = entry.values.first;
+              visibleDetails.map((entry) {
+                final title = entry.keys.first;
+                final value = entry.values.first;
 
-                    return SizedBox(
-                      width: itemWidth,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.caption,
-                              fontWeight: AppFontWeights.medium,
-                              color: ColorRes.leadGreyColor[700],
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            value,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.blackShade87,
-                            ),
-                          ),
-                        ],
+                return SizedBox(
+                  width: itemWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          fontWeight: AppFontWeights.medium,
+                          color: ColorRes.leadGreyColor[700],
+                        ),
                       ),
-                    );
-                  }).toList(),
+                      const SizedBox(height: 6),
+                      Text(
+                        value,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.blackShade87,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ),
 
-          if (details.length > 4)
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: GestureDetector(
-                onTap: controller.lessOrReadMore,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      isExpanded ? "Read Less" : "Read More",
-                      style: TextStyle(
-                        fontSize: AppFontSizes.bodySmall,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.blueColor.shade600,
-                      ),
-                    ),
-                    Icon(
-                      isExpanded
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      color: ColorRes.blueColor.shade600,
-                      size: 18,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          // if (details.length > 4)
+          //   Padding(
+          //     padding: const EdgeInsets.only(top: 16),
+          //     child: GestureDetector(
+          //       onTap: controller.lessOrReadMore,
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           Text(
+          //             isExpanded ? "Read Less" : "Read More",
+          //             style: TextStyle(
+          //               fontSize: AppFontSizes.bodySmall,
+          //               fontWeight: AppFontWeights.semiBold,
+          //               color: ColorRes.blueColor.shade600,
+          //             ),
+          //           ),
+          //           Icon(
+          //             isExpanded
+          //                 ? Icons.keyboard_arrow_up
+          //                 : Icons.keyboard_arrow_down,
+          //             color: ColorRes.blueColor.shade600,
+          //             size: 18,
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
         ],
       );
     });
@@ -2225,40 +2369,40 @@ class AmenitiesSection extends StatelessWidget {
         spacing: 12,
         runSpacing: 12,
         children:
-            amenities.map((item) {
-              print("Items: $item");
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
+        amenities.map((item) {
+          print("Items: $item");
+          return Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              // color: bgColor,
+              color: ColorRes.overlay.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  IconManager.getAmenitiesIcon(item),
+                  size: 16,
+                  color: txtColor,
                 ),
-                decoration: BoxDecoration(
-                  // color: bgColor,
-                  color: ColorRes.overlay.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(24),
+                const SizedBox(width: 8),
+                Text(
+                  StringManager.formatLabel(item) ?? ' -',
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.medium,
+                    // color: txtColor,
+                    color: ColorRes.textColor,
+                  ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      IconManager.getAmenitiesIcon(item),
-                      size: 16,
-                      color: txtColor,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      StringManager.formatLabel(item) ?? ' -',
-                      style: const TextStyle(
-                        fontSize: AppFontSizes.small,
-                        fontWeight: AppFontWeights.medium,
-                        // color: txtColor,
-                        color: ColorRes.textColor,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -2601,11 +2745,11 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                       mapType: gmaps.MapType.normal,
                       // Fix gesture conflicts with parent scroll
                       gestureRecognizers:
-                          <Factory<OneSequenceGestureRecognizer>>{
-                            Factory<OneSequenceGestureRecognizer>(
+                      <Factory<OneSequenceGestureRecognizer>>{
+                        Factory<OneSequenceGestureRecognizer>(
                               () => EagerGestureRecognizer(),
-                            ),
-                          },
+                        ),
+                      },
                       onMapCreated: (controller) {
                         _googleMapController = controller;
                       },
@@ -2698,13 +2842,13 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                         vertical: 8,
                       ),
                       itemCount:
-                          widget.mapController.categoryPlaces.length > 5
-                              ? 5
-                              : widget.mapController.categoryPlaces.length,
+                      widget.mapController.categoryPlaces.length > 5
+                          ? 5
+                          : widget.mapController.categoryPlaces.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, index) {
                         final place =
-                            widget.mapController.categoryPlaces[index];
+                        widget.mapController.categoryPlaces[index];
                         return GestureDetector(
                           onTap: () {
                             ContactHelper.openInGoogleMaps(place['address']);
@@ -2733,7 +2877,7 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         place['name'] ?? '-',
@@ -2753,18 +2897,18 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                                             style: TextStyle(
                                               fontSize: AppFontSizes.caption,
                                               color:
-                                                  ColorRes
-                                                      .leadGreyColor
-                                                      .shade600,
+                                              ColorRes
+                                                  .leadGreyColor
+                                                  .shade600,
                                             ),
                                           ),
                                           Text(
                                             ' • ',
                                             style: TextStyle(
                                               color:
-                                                  ColorRes
-                                                      .leadGreyColor
-                                                      .shade600,
+                                              ColorRes
+                                                  .leadGreyColor
+                                                  .shade600,
                                             ),
                                           ),
                                           Text(
@@ -2772,9 +2916,9 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                                             style: TextStyle(
                                               fontSize: AppFontSizes.caption,
                                               color:
-                                                  ColorRes
-                                                      .leadGreyColor
-                                                      .shade600,
+                                              ColorRes
+                                                  .leadGreyColor
+                                                  .shade600,
                                             ),
                                           ),
                                         ],
@@ -2816,13 +2960,13 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color:
-                isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
+            isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color:
-                  isSelected
-                      ? ColorRes.primary
-                      : ColorRes.leadGreyColor.shade300,
+              isSelected
+                  ? ColorRes.primary
+                  : ColorRes.leadGreyColor.shade300,
               width: 1,
             ),
           ),
@@ -2833,9 +2977,9 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                 icon,
                 size: 18,
                 color:
-                    isSelected
-                        ? ColorRes.white
-                        : ColorRes.leadGreyColor.shade700,
+                isSelected
+                    ? ColorRes.white
+                    : ColorRes.leadGreyColor.shade700,
               ),
               const SizedBox(width: 6),
               Text(
@@ -2843,13 +2987,13 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                 style: TextStyle(
                   fontSize: AppFontSizes.caption,
                   fontWeight:
-                      isSelected
-                          ? AppFontWeights.semiBold
-                          : AppFontWeights.medium,
+                  isSelected
+                      ? AppFontWeights.semiBold
+                      : AppFontWeights.medium,
                   color:
-                      isSelected
-                          ? ColorRes.white
-                          : ColorRes.leadGreyColor.shade700,
+                  isSelected
+                      ? ColorRes.white
+                      : ColorRes.leadGreyColor.shade700,
                 ),
               ),
             ],
@@ -3221,7 +3365,7 @@ class ContactSellerCard extends StatelessWidget {
 
           // Checkboxes using Obx
           Obx(
-            () => Row(
+                () => Row(
               children: [
                 Checkbox(
                   value: controller.allowContact.value,
@@ -3243,13 +3387,13 @@ class ContactSellerCard extends StatelessWidget {
             ),
           ),
           Obx(
-            () => Row(
+                () => Row(
               children: [
                 Checkbox(
                   value: controller.interestedInHomeLoan.value,
                   onChanged:
                       (val) =>
-                          controller.interestedInHomeLoan.value = val ?? false,
+                  controller.interestedInHomeLoan.value = val ?? false,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -3360,10 +3504,10 @@ class ProjectBrochure extends StatelessWidget {
                         width: double.infinity,
                         errorBuilder:
                             (context, error, stackTrace) => const Icon(
-                              Icons.broken_image,
-                              size: 50,
-                              color: ColorRes.leadGreyColor,
-                            ),
+                          Icons.broken_image,
+                          size: 50,
+                          color: ColorRes.leadGreyColor,
+                        ),
                       ),
                     ),
                     Positioned(
@@ -3524,9 +3668,9 @@ class ProjectDetails extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color:
-                          project.name == projectName
-                              ? ColorRes.deepPurpleColor
-                              : ColorRes.leadGreyColor.shade300,
+                      project.name == projectName
+                          ? ColorRes.deepPurpleColor
+                          : ColorRes.leadGreyColor.shade300,
                     ),
                   ),
                   child: Column(
@@ -3795,9 +3939,9 @@ class _PropertyFeedbackComponentState extends State<PropertyFeedbackComponent> {
                     Icons.star,
                     size: 32,
                     color:
-                        index < _rating
-                            ? ColorRes.primary
-                            : ColorRes.leadGreyColor.shade400,
+                    index < _rating
+                        ? ColorRes.primary
+                        : ColorRes.leadGreyColor.shade400,
                   ),
                 );
               }),

@@ -113,11 +113,16 @@ class _RentCommercialPropertyState extends State<RentCommercialProperty> {
             ),
           ),
         ),
-        // const SizedBox(height: 7),
-        // buildFilterHeadingPadding("Listed By"),
-        //
-        // const SizedBox(height: 7),
-        // ListedBy(listedByList: listedByList),
+        buildPropertyFilterHeadingPadding('Furnishing Type'),
+        const SizedBox(height: 7),
+        ListedBy(
+          listedByList:widget. controllerForFilter.furnishingType,
+          onTap: (items) {
+            debugPrint('Furnishing $items');
+          },
+          controllerForFilter:widget. controllerForFilter,
+          selectedString:widget. controllerForFilter.rentFurnishing,
+        ),
         const SizedBox(height: 7),
       ],
     );

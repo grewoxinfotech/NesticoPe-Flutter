@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -13,7 +15,10 @@ import 'package:housing_flutter_app/app/widgets/texts/headline_text.dart';
 import 'package:housing_flutter_app/app/widgets/texts/title_with_disc.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:housing_flutter_app/data/network/trending_area/model/trending_area_model.dart';
 import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
+
+//import 'package:housing_flutter_app/modules/home/controllers/home_controller/home_controller.dart';
 import 'package:housing_flutter_app/modules/home/widgets/city_card.dart';
 import 'package:housing_flutter_app/modules/home/widgets/home_header.dart';
 import 'package:housing_flutter_app/modules/home/widgets/top_locations.dart';
@@ -33,29 +38,44 @@ import 'package:housing_flutter_app/modules/saved_property/controllers/property_
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/seller_list.dart';
+import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/constants/color_res.dart';
+import '../../../../app/manager/compare_manager.dart' show CompareManager;
+import '../../../../app/manager/project_compare_manager.dart';
 import '../../../../app/utils/file_upload_section/file_upload_section.dart';
+
+import '../../../add_property/view/create_property.dart';
+import '../../../search_property/model/search_model.dart';
+import '../../widgets/unified_comparison_floating_button.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../../data/network/news/news_model.dart';
+import '../../../../data/network/platform_review/model/platform_review_model.dart';
+import '../../../../widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../auth/controllers/auth_controller.dart';
 import '../../../builder/view/builder_form_screen.dart';
 import '../../../builder/view/builder_main_screen.dart';
 import '../../../builder/view/builder_property_listing.dart';
 import '../../../builder/view/project_detail/project_detail.dart';
 import '../../../dashboard/views/dashboard_screen.dart';
+import '../../../filter_property/controller/property_filter_controller.dart';
 import '../../../news/view/news_detail_screen.dart';
 import '../../../other/trending_city/controllers/trending_city_controller.dart';
 import '../../../platform_service/views/widgets/platform_service_card.dart';
 import '../../../property/views/widgets/city_filter.dart';
+import '../../../property/views/widgets/top_property_card.dart';
 import '../../../property/views/widgets/property_card.dart';
 import '../../../reseller/view/property_reseller.dart';
+import '../../../review/controllers/review_controller.dart';
 import '../../../top_seller/controller/top_seller_controller.dart';
+import '../../controllers/home_controller/platform_review-controller.dart';
+// import '../../widgets/property_comparison_floating_button.dart';
 
 class HomeScreen extends StatefulWidget {
   final controller = Get.put(() => AuthController());
+
   final List<Map<String, String>> propertyTypes;
 
   HomeScreen({
@@ -195,7 +215,7 @@ class HomeScreen extends StatefulWidget {
   ];
 
   static final List<Map<String, dynamic>> furnishedType = [
-    {"image": IMGRes.furnished, "name": "Furnished"},
+    {"image": IMGRes.furnished, "name": "Fully Furnished"},
     {"image": IMGRes.semiFurnished, "name": "Semi Furnished"},
     {"image": IMGRes.unFurnished, "name": "Unfurnished"},
   ];
@@ -233,15 +253,20 @@ class _HomeScreenState extends State<HomeScreen> {
   final RecommendedPropertyController _recommendedPropertyController = Get.put(
     RecommendedPropertyController(),
   );
+  PropertyFilterControllerForFilter propertyFilterControllerForFilter = Get.put(
+    PropertyFilterControllerForFilter(),
+  );
   final PlatformServicesController platformServicesController = Get.put(
     PlatformServicesController(),
   );
   final ProjectWizardController projectController = Get.put(
     ProjectWizardController(isBuilderView: false),
   );
+
   final TopSellerController topSellerController = Get.put(
     TopSellerController(),
   );
+  final CompareManager compare = Get.put(CompareManager(), permanent: true);
 
   final List<Map<String, dynamic>> cities = [
     {
@@ -380,11 +405,31 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = -1;
 
   @override
+  void initState() {
+    super.initState();
+
+    ever(controller.selectedCity, (_) {
+      // When city changes, reset the selected property type index
+      if (mounted) {
+        setState(() {
+          selectedIndex = -1;
+        });
+        print("🔄 City changed, property type selection reset");
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final user = await SecureStorage.getUserData();
       debugPrint("User Data: ${user?.toJson()}");
       favoriteController.getFavorite(user?.user?.id ?? '');
+      await controller.getRecommendedPropertyById(user?.user?.id ?? '');
+
+      log("home city ${controller.selectedCity.value}");
+      controller.fetchTradingArea(controller.selectedCity.value);
+      projectController.cityAssign(controller.selectedCity.value);
     });
 
     // Get.lazyPut(() => PropertyController());
@@ -392,87 +437,105 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: ColorRes.bgColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: [
-              SizedBox(height: 12),
-              HomeHeader(),
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
                 children: [
-                  // SizedBox(height: 15),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(
-                      // horizontal: 12,
-                      vertical: 4,
-                    ),
-                    child: Row(
-                      children: List.generate(widget.propertyTypes.length, (
-                        index,
-                      ) {
-                        final type = widget.propertyTypes[index];
-                        final isSelected = selectedIndex == index;
+                  SizedBox(height: 12),
+                  HomeHeader(),
 
-                        return GestureDetector(
-                          onTap: () {
-                            final filterValue = type['title']!
-                                .toLowerCase()
-                                .replaceAll(" ", "_");
-                            controller.applyFilter("propertyType", filterValue);
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // SizedBox(height: 15),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(
+                          // horizontal: 12,
+                          vertical: 4,
+                        ),
+                        child: Row(
+                          children: List.generate(widget.propertyTypes.length, (
+                            index,
+                          ) {
+                            final type = widget.propertyTypes[index];
+                            final isSelected = selectedIndex == index;
 
-                            setState(() {
-                              selectedIndex = index;
-                            });
-                            // controller.refreshList();
-                            print("Selected: ${type['title']}");
-                          },
-                          child: IntrinsicWidth(
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                left: index == 0 ? 8 : 2,
-                                right:
-                                    index == widget.propertyTypes.length - 1
-                                        ? 8
-                                        : 0,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color:
-                                            isSelected
-                                                ? ColorRes.primary
-                                                : ColorRes
-                                                    .leadGreyColor
-                                                    .shade300,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(2),
-                                      child: ClipOval(
-                                        child: FadeInImage.assetNetwork(
-                                          placeholder: 'assets/logo/Avant.jpg',
-                                          image: type['image'] ?? '',
-                                          fit: BoxFit.cover,
-                                          imageErrorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  Icon(
+                            return GestureDetector(
+                              onTap: () {
+                                final filterValue = type['title']!
+                                    .toLowerCase()
+                                    .replaceAll(" ", "_");
+
+                                print("hdfbhsd $filterValue");
+                                controller.applyFilter(
+                                  (filterValue == "pg")
+                                      ? "listingType"
+                                      : "propertyType",
+                                  filterValue,
+                                );
+                                projectController.applyFilter(
+                                  (filterValue == "pg")
+                                      ? "listingType"
+                                      : "propertyType",
+                                  filterValue,
+                                );
+
+                                setState(() {
+                                  selectedIndex = index;
+                                });
+                                // controller.refreshList();
+                                print("Selected: ${type['title']}");
+                              },
+                              child: IntrinsicWidth(
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                    left: index == 0 ? 8 : 2,
+                                    right:
+                                        index == widget.propertyTypes.length - 1
+                                            ? 8
+                                            : 0,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color:
+                                                isSelected
+                                                    ? ColorRes.primary
+                                                    : ColorRes
+                                                        .leadGreyColor
+                                                        .shade300,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(2),
+                                          child: ClipOval(
+                                            child: FadeInImage.assetNetwork(
+                                              placeholder:
+                                                  'assets/logo/Avant.jpg',
+                                              image: type['image'] ?? '',
+                                              fit: BoxFit.cover,
+                                              imageErrorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => Icon(
                                                     Icons.home_work_rounded,
                                                     color:
                                                         ColorRes
@@ -480,49 +543,44 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             .shade400,
                                                     size: 32,
                                                   ),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      const SizedBox(height: 8),
+                                      SizedBox(
+                                        width: 65,
+                                        child: Text(
+                                          type['title'] ?? '',
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.caption,
+                                            fontWeight:
+                                                isSelected
+                                                    ? AppFontWeights.semiBold
+                                                    : AppFontWeights.medium,
+                                            color:
+                                                isSelected
+                                                    ? ColorRes.primary
+                                                    : ColorRes.black,
+                                            letterSpacing: 0.4,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    type['title'] ?? '',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.caption,
-                                      fontWeight:
-                                          isSelected
-                                              ? AppFontWeights.semiBold
-                                              : AppFontWeights.medium,
-                                      color:
-                                          isSelected
-                                              ? ColorRes.primary
-                                              : ColorRes.black,
-                                      letterSpacing: 0.4,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-                  Column(
-                    children: [
-                      Column(
-                        children: [
-                          TitleWithViewAll(
-                            title: "Newly added properties",
-                            showViewAll: true,
-                            onViewAll: () => Get.to(PropertyDetail()),
-                          ),
-                        ],
+                            );
+                          }),
+                        ),
                       ),
-                      const SizedBox(height: 12),
+
+                      const SizedBox(height: 10),
+
+                      // NEWLY ADDED PROPERTIES SECTION
                       Obx(() {
                         if (controller.isLoading.value &&
                             controller.items.isEmpty) {
@@ -530,689 +588,1461 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: CircularProgressIndicator(),
                           );
                         }
+                        final activeTopProperties =
+                            controller.items
+                                .where(
+                                  (element) =>
+                                      element.approvalStatus == "approved",
+                                )
+                                .toList();
 
                         if (!controller.isLoading.value &&
-                            controller.items.isEmpty) {
+                            activeTopProperties.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+
+                        return Column(
+                          children: [
+                            TitleWithViewAll(
+                              title: "Newly added properties",
+                              showViewAll: true,
+                              onViewAll: () => Get.to(PropertyDetail()),
+                            ),
+                            const SizedBox(height: 12),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              child: NotificationListener<ScrollNotification>(
+                                onNotification: (scrollEnd) {
+                                  final metrics = scrollEnd.metrics;
+                                  if (metrics.atEdge && metrics.pixels != 0) {
+                                    controller.loadMore();
+                                  }
+                                  return false;
+                                },
+                                child: SizedBox(
+                                  height: 310,
+                                  child: ClipRRect(
+                                    child: ListView.separated(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: activeTopProperties.length,
+                                      separatorBuilder:
+                                          (_, __) => const SizedBox(width: 12),
+                                      itemBuilder: (context, index) {
+                                        if (index >=
+                                            activeTopProperties.length) {
+                                          return const SizedBox();
+                                        }
+                                        final data = activeTopProperties[index];
+                                        print("Newly ${data.city}");
+                                        return MediaQuery(
+                                          data: MediaQuery.of(context).copyWith(
+                                            textScaler: const TextScaler.linear(
+                                              1.0,
+                                            ),
+                                          ),
+                                          child: PropertyCard(property: data),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+
+                      Obx(() {
+                        if (controller.apiLoading.value &&
+                            controller.recommendedProperties.isEmpty) {
                           return const Center(
-                            child: Text("No Property found."),
+                            child: CircularProgressIndicator(),
                           );
                         }
 
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: NotificationListener<ScrollNotification>(
-                            onNotification: (scrollEnd) {
-                              final metrics = scrollEnd.metrics;
-                              if (metrics.atEdge && metrics.pixels != 0) {
-                                controller.loadMore();
-                              }
-                              return false;
-                            },
-                            child: SizedBox(
-                              height: 325,
-                              child: ClipRRect(
-                                child: ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: controller.items.length,
-                                  separatorBuilder:
-                                      (_, __) => const SizedBox(width: 12),
-                                  itemBuilder: (context, index) {
-                                    if (index >= controller.items.length) {
-                                      return const SizedBox();
-                                    }
-                                    final data = controller.items[index];
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0,
-                                      ),
-                                      child: MediaQuery(
+                        if (!controller.apiLoading.value &&
+                            controller.recommendedProperties.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 12),
+                            TitleWithViewAll(
+                              title: "Recommended Properties",
+                              showViewAll: true,
+
+                              onViewAll: () => Get.to(BuilderMainScreen()),
+                            ),
+                            SizedBox(height: 4),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 12),
+                              child: SizedBox(
+                                height: 310,
+                                child: ClipRRect(
+                                  child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount:
+                                        controller.recommendedProperties.length,
+                                    separatorBuilder:
+                                        (_, __) => const SizedBox(width: 12),
+                                    itemBuilder: (context, index) {
+                                      if (index >=
+                                          controller
+                                              .recommendedProperties
+                                              .length) {
+                                        return const SizedBox();
+                                      }
+                                      final data =
+                                          controller
+                                              .recommendedProperties[index];
+                                      print("Newly ${data.city}");
+                                      return MediaQuery(
                                         data: MediaQuery.of(context).copyWith(
                                           textScaler: const TextScaler.linear(
                                             1.0,
                                           ),
                                         ),
                                         child: PropertyCard(property: data),
-                                      ),
-                                    );
-                                  },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         );
                       }),
-                    ],
-                  ),
+                      // Top Locations
+                      // const TitleWithViewAll(
+                      //   title: "Trending Areas",
+                      //   showViewAll: true,
+                      // ),
+                      //
+                      // const SizedBox(height: 12),
+                      //
+                      // // FutureBuilder(
+                      // //   future: controller.loadInitial(),
+                      // //   builder: (context, asyncSnapshot) {
+                      // //     print('asyncSnapshot: ${asyncSnapshot.connectionState}');
+                      // //
+                      // //     if (asyncSnapshot.connectionState ==
+                      // //         ConnectionState.waiting) {
+                      // //       // Show loader while waiting
+                      // //       return const Center(child: CircularProgressIndicator());
+                      // //     } else if (asyncSnapshot.hasError) {
+                      // //       // Show error message if future fails
+                      // //       return Center(
+                      // //         child: Text(
+                      // //           'Error: ${asyncSnapshot.error}',
+                      // //           style: const TextStyle(color: Colors.red),
+                      // //         ),
+                      // //       );
+                      // //     } else if (asyncSnapshot.connectionState ==
+                      // //         ConnectionState.done) {
+                      // //       return Obx(() {
+                      // //         if (!controller.isLoading.value &&
+                      // //             controller.items.isEmpty) {
+                      // //           return const Center(
+                      // //             child: Text("No Property found."),
+                      // //           );
+                      // //         }
+                      // //
+                      // //         return SizedBox(
+                      // //           height: 180,
+                      // //           child: ClipRRect(
+                      // //             child: ListView.separated(
+                      // //               scrollDirection: Axis.horizontal,
+                      // //               itemCount: controller.items.length.clamp(0, 10),
+                      // //               padding: const EdgeInsets.symmetric(
+                      // //                 horizontal: 10,
+                      // //               ),
+                      // //               separatorBuilder:
+                      // //                   (_, __) => const SizedBox(width: 10),
+                      // //               itemBuilder: (context, index) {
+                      // //                 final property = controller.items[index];
+                      // //                 final percentage =
+                      // //                     double.tryParse(
+                      // //                       propertyPercentage[index],
+                      // //                     ) ??
+                      // //                     0.0;
+                      // //                 final isPositive = percentage >= 10.0;
+                      // //                 return TopPropertyByLocation(
+                      // //                   property: property,
+                      // //                   isPositive: isPositive,
+                      // //                   rating: percentage,
+                      // //                 );
+                      // //               },
+                      // //             ),
+                      // //           ),
+                      // //         );
+                      // //       });
+                      // //     } else {
+                      // //       return const Center(
+                      // //         child: Text('No Property Available'),
+                      // //       );
+                      // //     }
+                      // //   },
+                      // // ),
+                      // Obx(() {
+                      //   if (controller.isLoading.value) {
+                      //     return const Center(child: CircularProgressIndicator());
+                      //   } else if (controller.items.isEmpty) {
+                      //     return const Center(child: Text("No Property found."));
+                      //   } else {
+                      //     return SizedBox(
+                      //       height: 180,
+                      //       child: ListView.separated(
+                      //         scrollDirection: Axis.horizontal,
+                      //         itemCount: controller.items.length.clamp(0, 10),
+                      //         padding: EdgeInsets.symmetric(horizontal: 12),
+                      //         separatorBuilder:
+                      //             (_, __) => const SizedBox(width: 10),
+                      //         itemBuilder: (context, index) {
+                      //           final property = controller.items[index];
+                      //           final percentage =
+                      //               double.tryParse(propertyPercentage[index]) ??
+                      //               0.0;
+                      //           final isPositive = percentage >= 10.0;
+                      //           return TopPropertyByLocation(
+                      //             property: property,
+                      //             rating: percentage,
+                      //             isPositive: isPositive,
+                      //           );
+                      //         },
+                      //       ),
+                      //     );
+                      //   }
+                      // }),
+                      //
+                      // const SizedBox(height: 20),
 
-                  Obx(() {
-                    if (_recommendedPropertyController.isLoading.value &&
-                        _recommendedPropertyController.items.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                      // const TitleWithViewAll(
+                      //   title: "Top Rated Localities",
+                      //   showViewAll: true,
+                      // ),
+                      //
+                      // const SizedBox(height: 12),
+                      //
+                      // Obx(() {
+                      //   if (!controller.isLoading.value &&
+                      //       controller.items.isEmpty) {
+                      //     return const Center(child: CircularProgressIndicator());
+                      //   }
+                      //
+                      //   if (!controller.isLoading.value &&
+                      //       controller.items.isEmpty) {
+                      //     return const Center(child: Text("No Property found."));
+                      //   }
+                      //
+                      //   return SizedBox(
+                      //     height: 100,
+                      //     child: ListView.builder(
+                      //       scrollDirection: Axis.horizontal,
+                      //       itemCount: controller.items.length,
+                      //       padding: const EdgeInsets.only(left: 10),
+                      //       itemBuilder: (context, index) {
+                      //         final property = controller.items[index];
+                      //         return Padding(
+                      //           padding: const EdgeInsets.only(right: 10), //
+                      //           child: PropertyHorizontalCard(
+                      //             imageHeight: double.infinity,
+                      //             titleFontWeight: AppFontWeights.semiBold,
+                      //
+                      //             buttonText: 'View More',
+                      //             locationFontSize: AppFontSizes.caption,
+                      //             maxLineTitle: 1,
+                      //             buttonFontWeight: AppFontWeights.semiBold,
+                      //             buttonFontSize: 10,
+                      //             buttonTextColor: ColorRes.primary,
+                      //             borderColor: ColorRes.grey,
+                      //             maxLine: 1,
+                      //             title: '${property.title}',
+                      //             imagePath:
+                      //                 (property.propertyMedia?.images != null &&
+                      //                         property
+                      //                             .propertyMedia!
+                      //                             .images!
+                      //                             .isNotEmpty)
+                      //                     ? property.propertyMedia!.images!.first
+                      //                     : 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg',
+                      //
+                      //             location:
+                      //                 'Location : ${property.address ?? 'N/A'}',
+                      //             rating:
+                      //                 property.totalViews != null
+                      //                     ? property.totalViews?.toDouble()
+                      //                     : 0.0,
+                      //             price:
+                      //                 '${property.propertyDetails?.financialInfo?.price ?? 'N/A'}',
+                      //             priceFontSize: AppFontSizes.caption,
+                      //             priceFontWeight: AppFontWeights.semiBold,
+                      //             ratingColor: ColorRes.primary,
+                      //             accentColor: ColorRes.primary,
+                      //             onTap: () {
+                      //               Get.to(() => RatingDetail(property: property));
+                      //             },
+                      //           ),
+                      //         );
+                      //       },
+                      //     ),
+                      //   );
+                      // }),
+                      Obx(() {
+                        if (trendingCityController.isLoading.value &&
+                            trendingCityController
+                                .allTrendingCities
+                                .isNotEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                    if (!_recommendedPropertyController.isLoading.value &&
-                        _recommendedPropertyController.items.isEmpty) {
-                      return SizedBox.shrink();
-                    }
+                        if (!trendingCityController.isLoading.value &&
+                            trendingCityController.allTrendingCities.isEmpty) {
+                          return SizedBox.shrink();
+                        }
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 12),
-                        TitleWithDescription(
-                          title: "Recommended Properties",
-                          showViewAll: true,
-                          description: "Best properties for you",
-                          // onViewAll: () => Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
-                          //   Get.put(ProjectWizardController());
-                          // },)),
-                          onViewAll: () => Get.to(BuilderMainScreen()),
-                        ),
-                        SizedBox(height: 4),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12),
-                            child: Row(
-                              children: List.generate(
-                                _recommendedPropertyController.items.length,
-                                (index) {
-                                  final data =
-                                      _recommendedPropertyController
-                                          .items[index];
-                                  final propertyPrice = PropertyPriceManager(
-                                    listingType: data.listingType ?? "",
-                                    financialInfo:
-                                        data.propertyDetails?.financialInfo,
-                                  );
-                                  final propertyHighlight =
-                                      PropertyHighlightManager(data);
+                        return Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            TitleWithViewAll(
+                              title: "City",
+                              showViewAll: true,
+                              onViewAll: () {
+                                Get.to(() => const MumbaiProjectsScreen());
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            CityFilterList(),
+                          ],
+                        );
+                      }),
+
+                      Obx(() {
+                        if (projectController.isLoading.value &&
+                            projectController.items.isNotEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        final activeTopProperties =
+                            projectController.items
+                                .where(
+                                  (element) =>
+                                      element.approvalStatus == "approved",
+                                )
+                                .toList();
+                        if (!projectController.isLoading.value &&
+                            activeTopProperties.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+
+                        return Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            TitleWithViewAll(
+                              title: "Explore Projects",
+                              showViewAll: false,
+                              onViewAll: () {},
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              height: 256,
+                              width: double.infinity,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                separatorBuilder:
+                                    (_, __) => const SizedBox(width: 12),
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                                itemCount: activeTopProperties.length,
+                                itemBuilder: (context, index) {
+                                  final ProjectItem data =
+                                      activeTopProperties[index];
+                                  log("Project Message ${data.toJson()}");
                                   return GestureDetector(
-                                    onTap: () {},
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 12),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Get.to(
-                                            PropertyDetailScreen(
-                                              property: data,
-                                            ),
-                                          );
-                                        },
-                                        child: NesticoPeBannerCardWithText(
-                                          height: 260,
-                                          width: 240,
-                                          imageUrl:
-                                              data
-                                                  .propertyMedia
-                                                  ?.images
-                                                  ?.first ??
-                                              IMGRes.home3,
-                                          price: propertyPrice.displayPrice,
-                                          developersName: data.ownerName ?? '',
-                                          location:
-                                              data.address ??
-                                              "Location not specified",
-                                          propertySize:
-                                              propertyHighlight
-                                                  .highlightsString,
+                                    onTap: () {
+                                      Get.to(
+                                        () => ProjectDetailsScreen(
+                                          projectItem: data,
                                         ),
-                                      ),
+                                      );
+                                    },
+                                    child: BuilderProjectCard(
+                                      forHome: true,
+                                      project: data,
+                                      width: 250,
+                                      height: 150,
+                                      // ✅ Explicitly set height
+                                      developersName:
+                                          data.projectContactInfo?.name ??
+                                          'Unknown',
+                                      imageUrl:
+                                          (data
+                                                      .mediaGallery
+                                                      ?.images
+                                                      ?.isNotEmpty ??
+                                                  false)
+                                              ? data.mediaGallery!.images.first
+                                              : IMGRes.home3,
+                                      projectName:
+                                          data.projectName.isNotEmpty
+                                              ? data.projectName
+                                              : 'N/A',
+                                      location:
+                                          data.address.isNotEmpty
+                                              ? data.address
+                                              : 'Not specified',
+                                      price: data.getPriceRange(),
+                                      propertySize:
+                                          data.projectSize?.totalBuildings
+                                              ?.toString() ??
+                                          '—',
                                     ),
                                   );
                                 },
                               ),
                             ),
+                          ],
+                        );
+                      }),
+
+                      const SizedBox(height: 20),
+
+                      const TitleWithViewAll(
+                        title: "Explore by furnishing type",
+                      ),
+                      // const SizedBox(height: 12),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            children: List.generate(HomeScreen.furnishedType.length, (
+                              index,
+                            ) {
+                              final furnished = HomeScreen.furnishedType[index];
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if (furnished['name'] ==
+                                          'Fully Furnished') {
+                                        propertyFilterControllerForFilter
+                                            .rentFurnishing
+                                            .value = 'fully-furnished';
+                                      } else if (furnished['name'] ==
+                                          'Semi Furnished') {
+                                        propertyFilterControllerForFilter
+                                            .rentFurnishing
+                                            .value = 'semi-furnished';
+                                      } else if (furnished['name'] ==
+                                          "Unfurnished") {
+                                        propertyFilterControllerForFilter
+                                            .rentFurnishing
+                                            .value = 'unfurnished';
+                                      }
+                                      print(
+                                        "Furnishing iut ${propertyFilterControllerForFilter.rentFurnishing.value}",
+                                      );
+                                      Get.to(
+                                        () => PropertyDetail(
+                                          filters: [
+                                            {
+                                              'furnish_type':
+                                                  propertyFilterControllerForFilter
+                                                      .rentFurnishing
+                                                      .value,
+                                            },
+                                          ],
+                                        ),
+                                      );
+                                    });
+                                  },
+                                  child: NesticoPeCardWithText(
+                                    height: 120,
+                                    width: 200,
+                                    imageUrl: furnished["image"]!,
+                                    // ✅ image
+                                    title: furnished["name"]!,
+
+                                    // opacity:
+                                    //     HomeScreen.softColors[(index + 4) %
+                                    //         HomeScreen.softColors.length], // ✅ name
+                                    opacity: ColorRes.black,
+                                  ),
+                                ),
+                              );
+                            }),
                           ),
                         ),
-                      ],
-                    );
-                  }),
-
-                  // const SizedBox(height: 20),
-
-                  // Top Locations
-                  // const TitleWithViewAll(
-                  //   title: "Trending Areas",
-                  //   showViewAll: true,
-                  // ),
-                  //
-                  // const SizedBox(height: 12),
-                  //
-                  // // FutureBuilder(
-                  // //   future: controller.loadInitial(),
-                  // //   builder: (context, asyncSnapshot) {
-                  // //     print('asyncSnapshot: ${asyncSnapshot.connectionState}');
-                  // //
-                  // //     if (asyncSnapshot.connectionState ==
-                  // //         ConnectionState.waiting) {
-                  // //       // Show loader while waiting
-                  // //       return const Center(child: CircularProgressIndicator());
-                  // //     } else if (asyncSnapshot.hasError) {
-                  // //       // Show error message if future fails
-                  // //       return Center(
-                  // //         child: Text(
-                  // //           'Error: ${asyncSnapshot.error}',
-                  // //           style: const TextStyle(color: Colors.red),
-                  // //         ),
-                  // //       );
-                  // //     } else if (asyncSnapshot.connectionState ==
-                  // //         ConnectionState.done) {
-                  // //       return Obx(() {
-                  // //         if (!controller.isLoading.value &&
-                  // //             controller.items.isEmpty) {
-                  // //           return const Center(
-                  // //             child: Text("No Property found."),
-                  // //           );
-                  // //         }
-                  // //
-                  // //         return SizedBox(
-                  // //           height: 180,
-                  // //           child: ClipRRect(
-                  // //             child: ListView.separated(
-                  // //               scrollDirection: Axis.horizontal,
-                  // //               itemCount: controller.items.length.clamp(0, 10),
-                  // //               padding: const EdgeInsets.symmetric(
-                  // //                 horizontal: 10,
-                  // //               ),
-                  // //               separatorBuilder:
-                  // //                   (_, __) => const SizedBox(width: 10),
-                  // //               itemBuilder: (context, index) {
-                  // //                 final property = controller.items[index];
-                  // //                 final percentage =
-                  // //                     double.tryParse(
-                  // //                       propertyPercentage[index],
-                  // //                     ) ??
-                  // //                     0.0;
-                  // //                 final isPositive = percentage >= 10.0;
-                  // //                 return TopPropertyByLocation(
-                  // //                   property: property,
-                  // //                   isPositive: isPositive,
-                  // //                   rating: percentage,
-                  // //                 );
-                  // //               },
-                  // //             ),
-                  // //           ),
-                  // //         );
-                  // //       });
-                  // //     } else {
-                  // //       return const Center(
-                  // //         child: Text('No Property Available'),
-                  // //       );
-                  // //     }
-                  // //   },
-                  // // ),
-                  // Obx(() {
-                  //   if (controller.isLoading.value) {
-                  //     return const Center(child: CircularProgressIndicator());
-                  //   } else if (controller.items.isEmpty) {
-                  //     return const Center(child: Text("No Property found."));
-                  //   } else {
-                  //     return SizedBox(
-                  //       height: 180,
-                  //       child: ListView.separated(
-                  //         scrollDirection: Axis.horizontal,
-                  //         itemCount: controller.items.length.clamp(0, 10),
-                  //         padding: EdgeInsets.symmetric(horizontal: 12),
-                  //         separatorBuilder:
-                  //             (_, __) => const SizedBox(width: 10),
-                  //         itemBuilder: (context, index) {
-                  //           final property = controller.items[index];
-                  //           final percentage =
-                  //               double.tryParse(propertyPercentage[index]) ??
-                  //               0.0;
-                  //           final isPositive = percentage >= 10.0;
-                  //           return TopPropertyByLocation(
-                  //             property: property,
-                  //             rating: percentage,
-                  //             isPositive: isPositive,
-                  //           );
-                  //         },
-                  //       ),
-                  //     );
-                  //   }
-                  // }),
-                  //
-                  // const SizedBox(height: 20),
-
-                  // const TitleWithViewAll(
-                  //   title: "Top Rated Localities",
-                  //   showViewAll: true,
-                  // ),
-                  //
-                  // const SizedBox(height: 12),
-                  //
-                  // Obx(() {
-                  //   if (!controller.isLoading.value &&
-                  //       controller.items.isEmpty) {
-                  //     return const Center(child: CircularProgressIndicator());
-                  //   }
-                  //
-                  //   if (!controller.isLoading.value &&
-                  //       controller.items.isEmpty) {
-                  //     return const Center(child: Text("No Property found."));
-                  //   }
-                  //
-                  //   return SizedBox(
-                  //     height: 100,
-                  //     child: ListView.builder(
-                  //       scrollDirection: Axis.horizontal,
-                  //       itemCount: controller.items.length,
-                  //       padding: const EdgeInsets.only(left: 10),
-                  //       itemBuilder: (context, index) {
-                  //         final property = controller.items[index];
-                  //         return Padding(
-                  //           padding: const EdgeInsets.only(right: 10), //
-                  //           child: PropertyHorizontalCard(
-                  //             imageHeight: double.infinity,
-                  //             titleFontWeight: AppFontWeights.semiBold,
-                  //
-                  //             buttonText: 'View More',
-                  //             locationFontSize: AppFontSizes.caption,
-                  //             maxLineTitle: 1,
-                  //             buttonFontWeight: AppFontWeights.semiBold,
-                  //             buttonFontSize: 10,
-                  //             buttonTextColor: ColorRes.primary,
-                  //             borderColor: ColorRes.grey,
-                  //             maxLine: 1,
-                  //             title: '${property.title}',
-                  //             imagePath:
-                  //                 (property.propertyMedia?.images != null &&
-                  //                         property
-                  //                             .propertyMedia!
-                  //                             .images!
-                  //                             .isNotEmpty)
-                  //                     ? property.propertyMedia!.images!.first
-                  //                     : 'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg',
-                  //
-                  //             location:
-                  //                 'Location : ${property.address ?? 'N/A'}',
-                  //             rating:
-                  //                 property.totalViews != null
-                  //                     ? property.totalViews?.toDouble()
-                  //                     : 0.0,
-                  //             price:
-                  //                 '${property.propertyDetails?.financialInfo?.price ?? 'N/A'}',
-                  //             priceFontSize: AppFontSizes.caption,
-                  //             priceFontWeight: AppFontWeights.semiBold,
-                  //             ratingColor: ColorRes.primary,
-                  //             accentColor: ColorRes.primary,
-                  //             onTap: () {
-                  //               Get.to(() => RatingDetail(property: property));
-                  //             },
-                  //           ),
-                  //         );
-                  //       },
-                  //     ),
-                  //   );
-                  // }),
-
-                  /// Filters by cities
-                  const SizedBox(height: 20),
-                  TitleWithViewAll(
-                    title: "City",
-                    showViewAll: true,
-                    onViewAll: () {
-                      Get.to(() => const MumbaiProjectsScreen());
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  Obx(() {
-                    if (trendingCityController.isLoading.value &&
-                        trendingCityController.allTrendingCities.isNotEmpty) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (!trendingCityController.isLoading.value &&
-                        trendingCityController.allTrendingCities.isEmpty) {
-                      return const Center(child: Text("No Cities Found"));
-                    }
-
-                    return CityFilterList();
-                  }),
-                  const SizedBox(height: 20),
-
-                  TitleWithViewAll(
-                    title: "Explore Projects",
-                    showViewAll: true,
-                    onViewAll: () {},
-                  ),
-                  const SizedBox(height: 12),
-                  Obx(() {
-                    if (projectController.isLoading.value &&
-                        projectController.items.isNotEmpty) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (!projectController.isLoading.value &&
-                        projectController.items.isEmpty) {
-                      return const Center(child: Text("No Cities Found"));
-                    }
-
-                    return SizedBox(
-                      height: 256,
-                      width: double.infinity,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        separatorBuilder: (_, __) => const SizedBox(width: 12),
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        itemCount: projectController.items.length,
-                        itemBuilder: (context, index) {
-                          final ProjectItem data =
-                              projectController.items[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Get.to(
-                                () => ProjectDetailsScreen(projectItem: data),
-                              );
-                            },
-                            child: BuilderProjectCard(
-                              forHome: true,
-                              project: data,
-                              width:
-                                  250, // ✅ Added fixed width for horizontal scroll
-                              height: 150,
-                              // ✅ Explicitly set height
-                              developersName:
-                                  data.projectContactInfo?.name ?? 'Unknown',
-                              imageUrl:
-                                  (data.mediaGallery?.images?.isNotEmpty ??
-                                          false)
-                                      ? data.mediaGallery!.images.first
-                                      : IMGRes.home3,
-                              projectName:
-                                  data.projectName.isNotEmpty
-                                      ? data.projectName
-                                      : 'N/A',
-                              location:
-                                  data.address.isNotEmpty
-                                      ? data.address
-                                      : 'Not specified',
-                              price: data.getPriceRange(),
-                              propertySize:
-                                  data.projectSize?.totalBuildings
-                                      ?.toString() ??
-                                  '—',
-                            ),
-                          );
-                        },
                       ),
-                    );
-                  }),
 
-                  const SizedBox(height: 20),
+                      Obx(() {
+                        // ✅ Loading state
+                        if (controller.isLoading.value &&
+                            controller.topProperties.isEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                  const TitleWithViewAll(title: "Explore by furnishing type"),
-                  // const SizedBox(height: 12),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        children: List.generate(HomeScreen.furnishedType.length, (
-                          index,
-                        ) {
-                          final furnished = HomeScreen.furnishedType[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: NesticoPeCardWithText(
-                              height: 120,
-                              width: 200,
-                              imageUrl: furnished["image"]!,
-                              // ✅ image
-                              title: furnished["name"]!,
-                              // opacity:
-                              //     HomeScreen.softColors[(index + 4) %
-                              //         HomeScreen.softColors.length], // ✅ name
-                              opacity: ColorRes.black,
+                        // ✅ Filter properties where state == true
+                        final activeTopProperties =
+                            controller.topProperties
+                                .where(
+                                  (element) =>
+                                      element.approvalStatus == "approved",
+                                )
+                                .toList();
+
+                        // ✅ No properties after filtering
+                        if (!controller.isLoading.value &&
+                            activeTopProperties.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+
+                        return Column(
+                          children: [
+                            const SizedBox(height: 8),
+
+                            TitleWithViewAll(
+                              title:
+                                  "Top properties in ${controller.selectedCity.value}",
+                              showViewAll: true,
+                              onViewAll: () => Get.to(PropertyDetail()),
                             ),
+                            SizedBox(height: 12),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              child: SizedBox(
+                                height: 310,
+                                child: ClipRRect(
+                                  child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: activeTopProperties.length,
+                                    separatorBuilder:
+                                        (_, __) => const SizedBox(width: 12),
+                                    itemBuilder: (context, index) {
+                                      final data = activeTopProperties[index];
+                                      print("Top Property: ${data.city}");
+                                      return MediaQuery(
+                                        data: MediaQuery.of(context).copyWith(
+                                          textScaler: const TextScaler.linear(
+                                            1.0,
+                                          ),
+                                        ),
+                                        child: TopPropertyCard(property: data),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                      Obx(() {
+                        if (projectController.isLoading.value &&
+                            projectController.topProjects.isEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        final activeTopProperties =
+                            projectController.topProjects
+                                .where(
+                                  (element) =>
+                                      element.approvalStatus == "approved",
+                                )
+                                .toList();
+                        if (!projectController.isLoading.value &&
+                            activeTopProperties.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+
+                        return Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            // const SizedBox(height: 20),
+
+                            // TitleWithViewAll(title: "Commercial offerings"),
+                            // const SizedBox(height: 12),
+                            // SingleChildScrollView(
+                            //   scrollDirection: Axis.horizontal,
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.all(12.0),
+                            //     child: Row(
+                            //       children: List.generate(HomeScreen.shops.length, (
+                            //         index,
+                            //       ) {
+                            //         final shop = HomeScreen.shops[index];
+                            //         return Padding(
+                            //           padding: const EdgeInsets.only(right: 12),
+                            //           child: NesticoPeCardWithText(
+                            //             height: 170,
+                            //             width: 150,
+                            //             imageUrl: shop["image"]!,
+                            //             // ✅ image
+                            //             title: shop["name"]!,
+                            //             opacity:
+                            //                 HomeScreen.softColors[index % 5], // ✅ name
+                            //           ),
+                            //         );
+                            //       }),
+                            //     ),
+                            //   ),
+                            // ),
+                            //
+                            // const SizedBox(height: 20),
+
+                            // const TitleWithViewAll(title: "Find BHK?"),
+                            // const SizedBox(height: 12),
+                            //
+                            // // SingleChildScrollView(
+                            // //   scrollDirection: Axis.horizontal,
+                            // //   child: Padding(
+                            // //     padding: const EdgeInsets.all(12.0),
+                            // //     child: Row(
+                            // //       children: List.generate(HomeScreen.plots.length * 2, (
+                            // //         index,
+                            // //       ) {
+                            // //         return const Padding(
+                            // //           padding: EdgeInsets.only(right: 12),
+                            // //           child: NesticoPeBannerCardWithText(
+                            // //             height: 100,
+                            // //             width: 100,
+                            // //             imageUrl: bhk[index % 3],
+                            // //             title: "1BHK",
+                            // //             isCenterText: true,
+                            // //           ),
+                            // //
+                            // //
+                            // //         );
+                            // //       }),
+                            // //     ),
+                            // //   ),
+                            // // ),
+                            // SingleChildScrollView(
+                            //   scrollDirection: Axis.horizontal,
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.all(12.0),
+                            //     child: Row(
+                            //       children: List.generate(HomeScreen.bhk.length, (index) {
+                            //         // final shop = HomeScreen.shops[index];
+                            //         return Padding(
+                            //           padding: const EdgeInsets.only(right: 12),
+                            //           child: NesticoPeCardWithText(
+                            //             height: 100,
+                            //             width: 100,
+                            //             // imageUrl:
+                            //             //     HomeScreen.bhk[index %
+                            //             //         HomeScreen.bhk.length]['image']!,
+                            //             // ✅ image
+                            //             title:
+                            //                 HomeScreen.bhk[index %
+                            //                     HomeScreen.bhk.length]['title']!,
+                            //             opacity:
+                            //                 HomeScreen.softColors[(index + 2) %
+                            //                     HomeScreen.softColors.length],
+                            //           ),
+                            //         );
+                            //       }),
+                            //     ),
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 20),
+
+                            // const TitleWithViewAll(title: "Plots In Surat"),
+                            // const SizedBox(height: 12),
+                            // SingleChildScrollView(
+                            //   scrollDirection: Axis.horizontal,
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.all(12.0),
+                            //     child: Row(
+                            //       children: List.generate(HomeScreen.plots.length, (
+                            //         index,
+                            //       ) {
+                            //         return const Padding(
+                            //           padding: EdgeInsets.only(right: 12),
+                            //           // child: NesticoPeBannerCardWithText(
+                            //           //   height: 125,
+                            //           //   width: 200,
+                            //           //   imageUrl: plots[index],
+                            //           //   title: "Residential Plot",
+                            //           // ),
+                            //         );
+                            //       }),
+                            //     ),
+                            //   ),
+                            // ),
+                            TitleWithViewAll(
+                              title:
+                                  "Top Project in ${projectController.selectedCity.value}",
+                              showViewAll: true,
+                              onViewAll: () => Get.to(PropertyDetail()),
+                            ),
+                            SizedBox(height: 12),
+                            SizedBox(
+                              height: 256,
+                              width: double.infinity,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                separatorBuilder:
+                                    (_, __) => const SizedBox(width: 12),
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                                itemCount: activeTopProperties.length,
+                                itemBuilder: (context, index) {
+                                  final ProjectItem data =
+                                      activeTopProperties[index];
+                                  log("Project Message ${data.toJson()}");
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Get.to(
+                                        () => ProjectDetailsScreen(
+                                          projectItem: data,
+                                        ),
+                                      );
+                                    },
+                                    child: BuilderProjectCard(
+                                      forHome: true,
+                                      project: data,
+                                      width: 250,
+                                      height: 150,
+                                      // ✅ Explicitly set height
+                                      developersName:
+                                          data.projectContactInfo?.name ??
+                                          'Unknown',
+                                      imageUrl:
+                                          (data
+                                                      .mediaGallery
+                                                      ?.images
+                                                      ?.isNotEmpty ??
+                                                  false)
+                                              ? data.mediaGallery!.images.first
+                                              : IMGRes.home3,
+                                      projectName:
+                                          data.projectName.isNotEmpty
+                                              ? data.projectName
+                                              : 'N/A',
+                                      location:
+                                          data.address.isNotEmpty
+                                              ? data.address
+                                              : 'Not specified',
+                                      price: data.getPriceRange(),
+                                      propertySize:
+                                          data.projectSize?.totalBuildings
+                                              ?.toString() ??
+                                          '—',
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                      Obx(() {
+                        if (topSellerController.isLoading.value &&
+                            topSellerController.items.isEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (!topSellerController.isLoading.value &&
+                            topSellerController.items.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+                        return Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            TitleWithViewAll(
+                              title: "Recommended Sellers",
+                              showViewAll: true,
+                            ),
+                            const SizedBox(height: 15),
+                            SellerListWidget(
+                              topSeller: topSellerController.items,
+                            ),
+                          ],
+                        );
+                      }),
+
+                      // Obx(() {
+                      //   final trendingData =
+                      //       controller.trendingAreaList.value?.data;
+                      //
+                      //   if (trendingData == null || trendingData.isEmpty) {
+                      //     // If no data, return an empty widget (to avoid build errors)
+                      //     return const SizedBox.shrink();
+                      //   }
+                      //
+                      //   // Otherwise show your widgets
+                      //   return Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       TitleWithViewAll(
+                      //         title:
+                      //             "Trending Area (${controller.selectedCity.value})",
+                      //         showViewAll: false,
+                      //       ),
+                      //       SizedBox(height: 12),
+                      //       ExploreLocalities(trendingArea: trendingData),
+                      //       const SizedBox(height: 32),
+                      //     ],
+                      //   );
+                      // }),
+                      Obx(() {
+                        if (platformServicesController.isLoading.value &&
+                            platformServicesController.items.isEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (!platformServicesController.isLoading.value &&
+                            platformServicesController.items.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+                        return Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            const TitleWithViewAll(
+                              title: "Platform Services",
+                              showViewAll: false,
+                            ),
+                            SizedBox(height: 12),
+
+                            PlatformServiceHorizontalList(
+                              services: platformServicesController.items,
+                            ),
+                          ],
+                        );
+                      }),
+                      const SizedBox(height: 20),
+                      if (newsController.items.isNotEmpty) ...[
+                        const TitleWithViewAll(
+                          title: "News & Articles",
+                          showViewAll: false,
+                        ),
+                        SizedBox(height: 12),
+
+                        Obx(() {
+                          if (newsController.isLoading.value &&
+                              newsController.items.isEmpty) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (!newsController.isLoading.value &&
+                              newsController.items.isEmpty) {
+                            return SizedBox.shrink();
+                          }
+                          return NewsAndArticles(
+                            articles: newsController.items,
                           );
                         }),
+                        const SizedBox(height: 20),
+                      ],
+
+                      const TitleWithViewAll(
+                        title: "Why Choose Us",
+                        showViewAll: false,
                       ),
+                      SizedBox(height: 12),
+                      WhyChooseUsSection(),
+                      const SizedBox(height: 20),
+                      const TitleWithViewAll(
+                        title: "Reviews & Testimonials",
+                        showViewAll: false,
+                      ),
+                      SizedBox(height: 12),
+                      ReviewsAndTestimonials(),
+                      SizedBox(height: AppSpacing.medium),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showFindPropertyDialog(controller, context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text("Find Your Property"),
                     ),
                   ),
-
-                  // const SizedBox(height: 20),
-
-                  // TitleWithViewAll(title: "Commercial offerings"),
-                  // const SizedBox(height: 12),
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.all(12.0),
-                  //     child: Row(
-                  //       children: List.generate(HomeScreen.shops.length, (
-                  //         index,
-                  //       ) {
-                  //         final shop = HomeScreen.shops[index];
-                  //         return Padding(
-                  //           padding: const EdgeInsets.only(right: 12),
-                  //           child: NesticoPeCardWithText(
-                  //             height: 170,
-                  //             width: 150,
-                  //             imageUrl: shop["image"]!,
-                  //             // ✅ image
-                  //             title: shop["name"]!,
-                  //             opacity:
-                  //                 HomeScreen.softColors[index % 5], // ✅ name
-                  //           ),
-                  //         );
-                  //       }),
-                  //     ),
-                  //   ),
-                  // ),
-                  //
-                  // const SizedBox(height: 20),
-
-                  // const TitleWithViewAll(title: "Find BHK?"),
-                  // const SizedBox(height: 12),
-                  //
-                  // // SingleChildScrollView(
-                  // //   scrollDirection: Axis.horizontal,
-                  // //   child: Padding(
-                  // //     padding: const EdgeInsets.all(12.0),
-                  // //     child: Row(
-                  // //       children: List.generate(HomeScreen.plots.length * 2, (
-                  // //         index,
-                  // //       ) {
-                  // //         return const Padding(
-                  // //           padding: EdgeInsets.only(right: 12),
-                  // //           child: NesticoPeBannerCardWithText(
-                  // //             height: 100,
-                  // //             width: 100,
-                  // //             imageUrl: bhk[index % 3],
-                  // //             title: "1BHK",
-                  // //             isCenterText: true,
-                  // //           ),
-                  // //
-                  // //
-                  // //         );
-                  // //       }),
-                  // //     ),
-                  // //   ),
-                  // // ),
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.all(12.0),
-                  //     child: Row(
-                  //       children: List.generate(HomeScreen.bhk.length, (index) {
-                  //         // final shop = HomeScreen.shops[index];
-                  //         return Padding(
-                  //           padding: const EdgeInsets.only(right: 12),
-                  //           child: NesticoPeCardWithText(
-                  //             height: 100,
-                  //             width: 100,
-                  //             // imageUrl:
-                  //             //     HomeScreen.bhk[index %
-                  //             //         HomeScreen.bhk.length]['image']!,
-                  //             // ✅ image
-                  //             title:
-                  //                 HomeScreen.bhk[index %
-                  //                     HomeScreen.bhk.length]['title']!,
-                  //             opacity:
-                  //                 HomeScreen.softColors[(index + 2) %
-                  //                     HomeScreen.softColors.length],
-                  //           ),
-                  //         );
-                  //       }),
-                  //     ),
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 20),
-
-                  // const TitleWithViewAll(title: "Plots In Surat"),
-                  // const SizedBox(height: 12),
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.all(12.0),
-                  //     child: Row(
-                  //       children: List.generate(HomeScreen.plots.length, (
-                  //         index,
-                  //       ) {
-                  //         return const Padding(
-                  //           padding: EdgeInsets.only(right: 12),
-                  //           // child: NesticoPeBannerCardWithText(
-                  //           //   height: 125,
-                  //           //   width: 200,
-                  //           //   imageUrl: plots[index],
-                  //           //   title: "Residential Plot",
-                  //           // ),
-                  //         );
-                  //       }),
-                  //     ),
-                  //   ),
-                  // ),
-                  Obx(() {
-                    if (topSellerController.isLoading.value &&
-                        topSellerController.items.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (!topSellerController.isLoading.value &&
-                        topSellerController.items.isEmpty) {
-                      return SizedBox.shrink();
-                    }
-                    return Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        TitleWithViewAll(
-                          title: "Recommended Sellers",
-                          showViewAll: true,
-                        ),
-                        const SizedBox(height: 12),
-                        SellerListWidget(topSeller: topSellerController.items),
-                      ],
-                    );
-                  }),
-
-                  // const SizedBox(height: 32),
-                  // TitleWithViewAll(
-                  //   title: "Recommended Insights",
-                  //   showViewAll: true,
-                  //   onViewAll: () {
-                  //     Get.to(() => MainNavigationScreen());
-                  //   },
-                  // ),
-                  // SizedBox(height: AppSpacing.medium),
-                  //
-                  // RecommendedInsights(),
-                  const SizedBox(height: 32),
-                  const TitleWithViewAll(
-                    title: "Tending Insights",
-                    showViewAll: true,
-                  ),
-                  SizedBox(height: AppSpacing.medium),
-
-                  TrendingInsights(),
-                  const SizedBox(height: 32),
-
-                  const TitleWithViewAll(
-                    title: "Explore Localities",
-                    showViewAll: true,
-                  ),
-                  SizedBox(height: AppSpacing.medium),
-
-                  ExploreLocalities(),
-                  const SizedBox(height: 32),
-
-                  const TitleWithViewAll(
-                    title: "Platform Services",
-                    showViewAll: true,
-                  ),
-                  SizedBox(height: AppSpacing.medium),
-
-                  Obx(() {
-                    if (platformServicesController.isLoading.value &&
-                        platformServicesController.items.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (!platformServicesController.isLoading.value &&
-                        platformServicesController.items.isEmpty) {
-                      return const Center(child: Text("No Record found."));
-                    }
-                    return PlatformServiceHorizontalList(
-                      services: platformServicesController.items,
-                    );
-                  }),
-                  const SizedBox(height: 32),
-                  const TitleWithViewAll(
-                    title: "News & Articles",
-                    showViewAll: true,
-                  ),
-                  SizedBox(height: AppSpacing.medium),
-
-                  Obx(() {
-                    if (newsController.isLoading.value &&
-                        newsController.items.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (!newsController.isLoading.value &&
-                        newsController.items.isEmpty) {
-                      return const Center(child: Text("No News found."));
-                    }
-                    return NewsAndArticles(articles: newsController.items);
-                  }),
-                  const SizedBox(height: 32),
-
-                  const TitleWithViewAll(
-                    title: "Reviews & Testimonials",
-                    showViewAll: true,
-                  ),
-                  SizedBox(height: AppSpacing.medium),
-
-                  ReviewsAndTestimonials(),
-                  SizedBox(height: AppSpacing.medium),
                 ],
               ),
-
-              // const SizedBox(height: 12),
-              // const Padding(
-              //   padding: EdgeInsets.symmetric(horizontal: 10.0),
-              //   child: ReferralCard(referralCode: "089548"),
-              // ),
-              // const SizedBox(height: 8),
-              // const Padding(
-              //   padding: EdgeInsets.symmetric(horizontal: 10.0),
-              //   child: CustomerSupport(phoneNumber: "+912345654323"),
-              // ),
-              // const SizedBox(height: 8),
-              // AgentCardGrid(),
-              // FeedbackComponent(
-              //   onSubmit: (rating, feedback) {
-              //     print("Rating: $rating, Feedback: $feedback");
-              //   },
-              // ),
-            ],
-          ),
+            ),
+            UnifiedComparisonFloatingButton(bottom: 16),
+          ],
         ),
       ),
     );
   }
+}
+
+Future<void> showFindPropertyDialog(
+  PropertyController controller,
+  BuildContext context,
+) async {
+  Get.dialog(
+    Dialog(
+      backgroundColor: ColorRes.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500, maxHeight: 700),
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: ColorRes.primary.withOpacity(0.05),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.search,
+                      color: ColorRes.primary,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      "Find Your Dream Property",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.large,
+                        fontWeight: AppFontWeights.bold,
+                        color: ColorRes.textPrimary,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Get.back(),
+                    icon: const Icon(
+                      Icons.close,
+                      color: ColorRes.textSecondary,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+            ),
+
+            // Form Content
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // City Field
+                    _buildFieldLabel('City *'),
+                    const SizedBox(height: 8),
+                    buildTextField(
+                      "Select City",
+                      Icons.location_city_outlined,
+                      controller.selectedCityZ,
+                      maxLines: 1,
+                      minLines: 1,
+                      isEnable: false,
+                      onTap: () async {
+                        Prediction selectedCity = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => CommonSearchField(
+                                  onCitySelected: (city) {
+                                    Navigator.pop(context, city);
+                                  },
+                                  isFromAddProperty: true,
+                                  initialSearchText:
+                                      controller.selectedCityZ.text,
+                                ),
+                          ),
+                        );
+                        controller.selectedCityZ.text =
+                            selectedCity.structuredFormatting?.mainText ?? '';
+                        print(
+                          "city fgrjigj${controller.selectedCityZ.text}    ${selectedCity.structuredFormatting?.mainText}",
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Locality Field
+                    // _buildFieldLabel('Locality (Optional)'),
+                    // const SizedBox(height: 8),
+                    // TextFormField(
+                    //   controller: controller.selectedLocalityController,
+                    //   style: const TextStyle(
+                    //     fontSize: AppFontSizes.small,
+                    //   ),
+                    //   decoration: InputDecoration(
+                    //     hintText: 'Enter Locality',
+                    //     hintStyle: TextStyle(
+                    //       fontSize: AppFontSizes.small,
+                    //       color: ColorRes.leadGreyColor.shade500,
+                    //     ),
+                    //     prefixIcon: const Icon(
+                    //       Icons.place_outlined,
+                    //       color: ColorRes.primary,
+                    //       size: 18,
+                    //     ),
+                    //     contentPadding: const EdgeInsets.symmetric(
+                    //       vertical: 12,
+                    //       horizontal: 10,
+                    //     ),
+                    //     enabledBorder: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(12),
+                    //       borderSide: BorderSide(
+                    //         width: 0.8,
+                    //         color: ColorRes.grey.withOpacity(0.3),
+                    //       ),
+                    //     ),
+                    //     focusedBorder: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(12),
+                    //       borderSide: const BorderSide(
+                    //         width: 1.2,
+                    //         color: ColorRes.primary,
+                    //       ),
+                    //     ),
+                    //     filled: true,
+                    //     fillColor: Colors.grey.shade50,
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 16),
+
+                    // Listing Type & BHK Row
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFieldLabel('Listing Type'),
+                        const SizedBox(height: 8),
+                        Obx(
+                          () => DropdownButtonFormField<String>(
+                            value:
+                                controller.listingTypes.contains(
+                                      controller.selectedListingType.value,
+                                    )
+                                    ? controller.selectedListingType.value
+                                    : null,
+                            isDense: true,
+                            decoration: InputDecoration(
+                              hintText: 'Select',
+                              hintStyle: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor.shade500,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.category_outlined,
+                                color: ColorRes.primary,
+                                size: 18,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 8,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 0.8,
+                                  color: ColorRes.grey.withOpacity(0.3),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  width: 1.2,
+                                  color: ColorRes.primary,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey.shade50,
+                            ),
+                            items:
+                                controller.listingTypes
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(
+                                          e,
+                                          style: const TextStyle(
+                                            fontSize: AppFontSizes.small,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                            onChanged:
+                                (val) =>
+                                    controller.selectedListingType.value = val,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFieldLabel('BHK'),
+                        const SizedBox(height: 8),
+                        Obx(
+                          () => DropdownButtonFormField<String>(
+                            value:
+                                controller.bhkList.contains(
+                                      controller.selectedBhk.value,
+                                    )
+                                    ? controller.selectedBhk.value
+                                    : null,
+                            isDense: true,
+                            decoration: InputDecoration(
+                              hintText: 'Select',
+                              hintStyle: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor.shade500,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.home_outlined,
+                                color: ColorRes.primary,
+                                size: 18,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 8,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 0.8,
+                                  color: ColorRes.grey.withOpacity(0.3),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  width: 1.2,
+                                  color: ColorRes.primary,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey.shade50,
+                            ),
+                            items:
+                                controller.bhkList
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(
+                                          e,
+                                          style: const TextStyle(
+                                            fontSize: AppFontSizes.small,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                            onChanged:
+                                (val) => controller.selectedBhk.value = val,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFieldLabel('Property Type'),
+                        const SizedBox(height: 8),
+                        Obx(
+                          () => DropdownButtonFormField<String>(
+                            value:
+                                controller.propertyFilterTypes.contains(
+                                      controller.selectedPropertyType.value,
+                                    )
+                                    ? controller.selectedPropertyType.value
+                                    : null,
+                            isDense: true,
+                            decoration: InputDecoration(
+                              hintText: 'Select',
+                              hintStyle: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor.shade500,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.apartment_outlined,
+                                color: ColorRes.primary,
+                                size: 18,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 8,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 0.8,
+                                  color: ColorRes.grey.withOpacity(0.3),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  width: 1.2,
+                                  color: ColorRes.primary,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey.shade50,
+                            ),
+                            items:
+                                controller.propertyFilterTypes
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(
+                                          e,
+                                          style: const TextStyle(
+                                            fontSize: AppFontSizes.small,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                            onChanged:
+                                (val) =>
+                                    controller.selectedPropertyType.value = val,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Budget Range
+                    _buildFieldLabel('Budget Range (Optional)'),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: controller.minBudget,
+                            keyboardType: TextInputType.number,
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.small,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'Min ₹',
+                              hintStyle: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor.shade500,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.currency_rupee,
+                                color: ColorRes.primary,
+                                size: 18,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 10,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 0.8,
+                                  color: ColorRes.grey.withOpacity(0.3),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  width: 1.2,
+                                  color: ColorRes.primary,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey.shade50,
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            'to',
+                            style: TextStyle(
+                              color: ColorRes.textSecondary,
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            controller: controller.maxBudget,
+                            keyboardType: TextInputType.number,
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.small,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'Max ₹',
+                              hintStyle: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor.shade500,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.currency_rupee,
+                                color: ColorRes.primary,
+                                size: 18,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 10,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 0.8,
+                                  color: ColorRes.grey.withOpacity(0.3),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  width: 1.2,
+                                  color: ColorRes.primary,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey.shade50,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Footer Buttons
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: ColorRes.white,
+                border: Border(
+                  top: BorderSide(
+                    color: ColorRes.grey.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        side: const BorderSide(color: ColorRes.primary),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: controller.findProperties,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorRes.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.search, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Find Properties',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+    barrierDismissible: true,
+  );
+}
+
+// Helper widget for field labels
+Widget _buildFieldLabel(String label) {
+  return Text(
+    label,
+    style: const TextStyle(
+      fontSize: AppFontSizes.medium,
+      fontWeight: AppFontWeights.semiBold,
+      color: ColorRes.textPrimary,
+    ),
+  );
 }
 
 class CityDropdown extends StatefulWidget {
@@ -1269,23 +2099,6 @@ class _CityDropdownState extends State<CityDropdown> {
           },
         ),
       ),
-
-      // child: DropdownButtonFormField<String>(
-      //   decoration: InputDecoration(
-      //     labelText: 'Select City',
-      //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      //   ),
-      //   value: selectedCity,
-      //   items:
-      //       cities.map((String city) {
-      //         return DropdownMenuItem<String>(value: city, child: Text(city));
-      //       }).toList(),
-      //   onChanged: (String? newValue) {
-      //     setState(() {
-      //       selectedCity = newValue!;
-      //     });
-      //   },
-      // ),
     );
   }
 }
@@ -1295,207 +2108,190 @@ class ReviewsAndTestimonials extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final testimonials = [
-      {
-        "name": "Priya Sharma",
-        "location": "Varachha, Surat",
-        "rating": 5.0,
-        "review":
-            "Amazing service! Found my dream home in just 2 weeks. The team was very professional and guided me through every step of the process.",
-        "propertyType": "3 BHK Apartment",
-        "avatar": IMGRes.user_1,
-        "verified": true,
-        "date": "2 weeks ago",
-      },
-      {
-        "name": "Rajesh Patel",
-        "location": "Adajan, Surat",
-        "rating": 4.5,
-        "review":
-            "Excellent experience buying my first property. The documentation process was smooth and the legal team was very helpful.",
-        "propertyType": "2 BHK Villa",
-        "avatar": IMGRes.user_2,
-
-        "verified": true,
-        "date": "1 month ago",
-      },
-      {
-        "name": "Meera Joshi",
-        "location": "Pal, Surat",
-        "rating": 5.0,
-        "review":
-            "Outstanding support from start to finish. Got the best deal in the market and couldn't be happier with my investment.",
-        "propertyType": "Commercial Space",
-        "avatar": IMGRes.user_3,
-
-        "verified": false,
-        "date": "3 weeks ago",
-      },
-      {
-        "name": "Amit Desai",
-        "location": "Katargam, Surat",
-        "rating": 4.8,
-        "review":
-            "Professional team with deep market knowledge. They helped me find the perfect location for my business. Highly recommended!",
-        "propertyType": "Office Space",
-        "avatar": IMGRes.user_4,
-
-        "verified": true,
-        "date": "1 week ago",
-      },
-    ];
+    final reviewController = Get.put(PlatformReviewController());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 280,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: testimonials.length,
-            clipBehavior: Clip.none,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            separatorBuilder:
-                (_, __) => const SizedBox(width: AppSpacing.medium),
-            itemBuilder: (context, index) {
-              final testimonial = testimonials[index];
-              final rating = testimonial["rating"] as double;
-              final isVerified = testimonial["verified"] as bool;
+        Obx(() {
+          // Show loading indicator
+          if (reviewController.isLoading.value &&
+              reviewController.siteReviewWithUsers.isEmpty) {
+            return SizedBox(
+              height: 280,
+              child: Center(
+                child: CircularProgressIndicator(color: ColorRes.homeGreenFade),
+              ),
+            );
+          }
 
-              return GestureDetector(
-                onTap: () {
-                  // Handle testimonial tap
-                },
-                child: Container(
-                  width: 300,
-                  decoration: BoxDecoration(
-                    color: ColorRes.white,
-                    borderRadius: BorderRadius.circular(20),
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: Colors.black.withOpacity(0.06),
-                    //     blurRadius: 15,
-                    //     offset: const Offset(0, 5),
-                    //     spreadRadius: 0,
-                    //   ),
-                    //   BoxShadow(
-                    //     color: Colors.black.withOpacity(0.03),
-                    //     blurRadius: 5,
-                    //     offset: const Offset(0, 2),
-                    //     spreadRadius: 0,
-                    //   ),
-                    // ],
-                    border: Border.all(
-                      color: ColorRes.leadGreyColor.shade200,
-                      width: 1,
+          // Show empty state
+          if (reviewController.siteReviewWithUsers.isEmpty) {
+            return SizedBox(
+              height: 280,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.rate_review_outlined,
+                      size: 48,
+                      color: ColorRes.leadGreyColor.shade400,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No reviews available',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.body,
+                        color: ColorRes.leadGreyColor.shade600,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // Show reviews list
+          return SizedBox(
+            height: 215,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: reviewController.siteReviewWithUsers.length,
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              separatorBuilder:
+                  (_, __) => const SizedBox(width: AppSpacing.medium),
+              itemBuilder: (context, index) {
+                // UserItem userData=reviewController.listOfUser.map((element) => element.toMap(),).toString();
+                return _buildReviewCard(
+                  context,
+                  reviewController.siteReviewWithUsers[index],
+                );
+              },
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildReviewCard(BuildContext context, ReviewWithUser review) {
+    final rating = review.review.rating ?? 0.0;
+    final isVerified = review.review.isVerified ?? false;
+
+    return GestureDetector(
+      onTap: () {
+        print("gydfgyg    fghdg ${review.user?.toMap()}");
+      },
+      child: Container(
+        width: 280,
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Header with avatar and rating
+              Row(
+                children: [
+                  /// Avatar (placeholder since we don't have reviewer details)
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          ColorRes.homeGreenFade.withOpacity(0.08),
+                          ColorRes.homeGreenDarkFade.withOpacity(0.1),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border.all(
+                        color: Color(0xFF2E7D63).withOpacity(0.25),
+                        width: 1.5,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      (review.user?.username?.isNotEmpty ?? false)
+                          ? review.user!.username![1]
+                              .toUpperCase() // ensure uppercase letter
+                          : '?', // fallback if username is null/empty
+                      style: TextStyle(
+                        fontSize: AppFontSizes.large,
+                        fontWeight: AppFontWeights.semiBold,
+                        color:
+                            ColorRes.homeGreenDarkFade, // contrast text color
+                      ),
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
+
+                  const SizedBox(width: 12),
+
+                  /// Reviewer ID and status
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        /// Header with avatar and rating
                         Row(
                           children: [
-                            /// Avatar
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                border: Border.all(
-                                  color: const Color(
-                                    0xFF2E7D63,
-                                  ).withOpacity(0.2),
-                                  width: 2,
-                                ),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    ColorRes.homeGreenFade.withOpacity(0.1),
-                                    ColorRes.homeGreenDarkFade.withOpacity(0.1),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(23),
-                                child: Image.asset(
-                                  testimonial["avatar"]!.toString(),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Icon(
-                                      Icons.person,
-                                      color: ColorRes.homeGreenFade.withOpacity(
-                                        0.1,
-                                      ),
-                                      size: 24,
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(width: 12),
-
-                            /// Name and location
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          testimonial["name"]!.toString(),
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.body,
-                                            fontWeight:
-                                                AppFontWeights.extraBold,
-                                            color: ColorRes.homeBlackFade,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                  Expanded(
+                                    child: Text(
+                                      '${review.user?.username}',
+                                      maxLines: 1,
+
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.homeBlackFade,
                                       ),
-                                      if (isVerified) ...[
-                                        const SizedBox(width: 4),
-                                        Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            color: ColorRes.homeGreenDarkFade,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: const Icon(
-                                            Icons.check,
-                                            color: ColorRes.white,
-                                            size: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    testimonial["location"]!.toString(),
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.small,
-                                      color: ColorRes.leadGreyColor.shade600,
-                                      fontWeight: AppFontWeights.regular,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
+                                  ),
+                                  Text(
+                                    _formatDate(review.review.createdAt),
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.extraSmall,
+                                      fontWeight: AppFontWeights.medium,
+                                      color: ColorRes.leadGreyColor.shade600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
                             ),
+                            if (isVerified) ...[
+                              const SizedBox(width: 4),
+                              Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.homeGreenDarkFade,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Icons.check,
+                                  color: ColorRes.white,
+                                  size: 12,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
+                        const SizedBox(height: 2),
 
-                        const SizedBox(height: 16),
-
-                        /// Rating stars
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             ...List.generate(5, (starIndex) {
                               if (starIndex < rating.floor()) {
@@ -1520,63 +2316,11 @@ class ReviewsAndTestimonials extends StatelessWidget {
                             }),
                             const SizedBox(width: 8),
                             Text(
-                              rating.toString(),
+                              rating.toStringAsFixed(1),
                               style: TextStyle(
-                                fontSize: AppFontSizes.medium,
+                                fontSize: AppFontSizes.small,
                                 fontWeight: AppFontWeights.semiBold,
                                 color: ColorRes.homeBlackFade,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        /// Review text
-                        Expanded(
-                          child: Text(
-                            '"${testimonial["review"]!}"',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              color: ColorRes.leadGreyColor.shade700,
-                              height: 1.5,
-                              fontStyle: FontStyle.italic,
-                            ),
-                            maxLines: 4,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        /// Footer with property type and date
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: ColorRes.homeGreenFade.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                testimonial["propertyType"]!.toString(),
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.caption,
-                                  fontWeight: AppFontWeights.semiBold,
-                                  color: ColorRes.homeGreenFade,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              testimonial["date"]!.toString(),
-                              style: TextStyle(
-                                fontSize: AppFontSizes.caption,
-                                color: Colors.grey.shade500,
-                                fontWeight: AppFontWeights.regular,
                               ),
                             ),
                           ],
@@ -1584,608 +2328,126 @@ class ReviewsAndTestimonials extends StatelessWidget {
                       ],
                     ),
                   ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              if (review.review.title != null &&
+                  review.review.title!.isNotEmpty) ...[
+                SizedBox(
+                  width: 280,
+                  child: Text(
+                    review.review.title!,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.homeBlackFade,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              );
-            },
+              ],
+              const SizedBox(height: 8),
+              SizedBox(
+                width: 280,
+                child: Text(
+                  '"${review.review.content ?? 'No review content'}"',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.leadGreyColor.shade700,
+                    height: 1.5,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+              Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  if (review.review.helpfulCount != null) ...[
+                    Icon(
+                      Icons.thumb_up_outlined,
+                      size: 14,
+                      color: ColorRes.leadGreyColor.shade700,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      review.review.helpfulCount != null &&
+                              review.review.helpfulCount! > 0
+                          ? 'Helpful ${review.review.helpfulCount}'
+                          : 'Helpful',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.extraSmall,
+                        color: ColorRes.leadGreyColor.shade700,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                  ],
+                  Spacer(),
+                  Icon(
+                    Icons.flag_outlined,
+                    size: 14,
+                    color: ColorRes.leadGreyColor.shade700,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Report',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.extraSmall,
+                      color: ColorRes.leadGreyColor.shade700,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildStatItem(String value, String label, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, color: ColorRes.homeGreenFade, size: 20),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: AppFontSizes.body,
-            fontWeight: AppFontWeights.extraBold,
-            color: ColorRes.homeBlackFade,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: AppFontSizes.extraSmall,
-            color: ColorRes.leadGreyColor.shade600,
-            fontWeight: AppFontWeights.medium,
-          ),
-        ),
-      ],
-    );
+  /// Helper method to get status color
+
+  /// Helper method to get status icon
+
+  /// Helper method to format date
+  String _formatDate(String? dateString) {
+    if (dateString == null) return 'Recently';
+
+    try {
+      final date = DateTime.parse(dateString);
+      final now = DateTime.now();
+      final difference = now.difference(date);
+
+      if (difference.inDays == 0) {
+        return 'Today';
+      } else if (difference.inDays == 1) {
+        return 'Yesterday';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays} days ago';
+      } else if (difference.inDays < 30) {
+        final weeks = (difference.inDays / 7).floor();
+        return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
+      } else if (difference.inDays < 365) {
+        final months = (difference.inDays / 30).floor();
+        return '$months ${months == 1 ? 'month' : 'months'} ago';
+      } else {
+        final years = (difference.inDays / 365).floor();
+        return '$years ${years == 1 ? 'year' : 'years'} ago';
+      }
+    } catch (e) {
+      return 'Recently';
+    }
   }
+
+  /// Show review details in a bottom sheet
 }
-
-// class NewsAndArticles extends StatelessWidget {
-//   const NewsAndArticles({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final articles = [
-//       {
-//         "title": "Real Estate Market Trends 2025",
-//         "subtitle":
-//             "Surat housing market sees steady growth with new developments",
-//         "image": IMGRes.news_1,
-//         "category": "Market Analysis",
-//         "readTime": "3 min read",
-//         "isNew": true,
-//       },
-//       {
-//         "title": "Top 5 Localities to Invest In",
-//         "subtitle":
-//             "Experts suggest emerging areas with high potential returns",
-//         "image": IMGRes.news_2,
-//         "category": "Investment Tips",
-//         "readTime": "5 min read",
-//         "isNew": false,
-//       },
-//       {
-//         "title": "Government Policy Updates",
-//         "subtitle": "New rules expected to boost demand in residential sector",
-//         "image": IMGRes.news_3,
-//         "category": "Policy Updates",
-//         "readTime": "4 min read",
-//         "isNew": true,
-//       },
-//       {
-//         "title": "Smart Home Technologies",
-//         "subtitle": "Future of real estate embraces IoT and automation trends",
-//         "image": IMGRes.news_1,
-//         "category": "Technology",
-//         "readTime": "6 min read",
-//         "isNew": false,
-//       },
-//     ];
-//
-//     return SizedBox(
-//       height: 250,
-//       child: ListView.separated(
-//         scrollDirection: Axis.horizontal,
-//         padding: EdgeInsets.symmetric(horizontal: 12),
-//         clipBehavior: Clip.none,
-//         itemCount: articles.length,
-//         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.medium),
-//         itemBuilder: (context, index) {
-//           final article = articles[index];
-//           final isNew = article["isNew"] as bool;
-//
-//           return GestureDetector(
-//             onTap: () {
-//               // Handle article tap
-//             },
-//             child: Container(
-//               width: 280,
-//               decoration: BoxDecoration(
-//                 color: ColorRes.white,
-//                 borderRadius: BorderRadius.circular(16),
-//                 boxShadow: [
-//                   BoxShadow(
-//                     color: Colors.black.withOpacity(0.08),
-//                     blurRadius: 12,
-//                     offset: const Offset(0, 4),
-//                     spreadRadius: 0,
-//                   ),
-//                   BoxShadow(
-//                     color: Colors.black.withOpacity(0.04),
-//                     blurRadius: 4,
-//                     offset: const Offset(0, 2),
-//                     spreadRadius: 0,
-//                   ),
-//                 ],
-//                 border: Border.all(color: Colors.grey.shade200, width: 0.5),
-//               ),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   /// Enhanced image section with overlay
-//                   Stack(
-//                     children: [
-//                       ClipRRect(
-//                         borderRadius: const BorderRadius.vertical(
-//                           top: Radius.circular(16),
-//                         ),
-//                         child: Container(
-//                           height: 120,
-//                           width: double.infinity,
-//                           decoration: BoxDecoration(
-//                             gradient: LinearGradient(
-//                               colors: [
-//                                 Colors.grey.shade300,
-//                                 Colors.grey.shade100,
-//                               ],
-//                               begin: Alignment.topLeft,
-//                               end: Alignment.bottomRight,
-//                             ),
-//                           ),
-//                           child: Image.asset(
-//                             article["image"]!.toString(),
-//                             height: 120,
-//                             width: double.infinity,
-//                             fit: BoxFit.cover,
-//                             errorBuilder: (context, error, stackTrace) {
-//                               return Container(
-//                                 color: Colors.grey.shade200,
-//                                 child: Icon(
-//                                   Icons.image_not_supported_outlined,
-//                                   color: Colors.grey.shade400,
-//                                   size: 32,
-//                                 ),
-//                               );
-//                             },
-//                           ),
-//                         ),
-//                       ),
-//
-//                       /// Category badge
-//                       Positioned(
-//                         top: 12,
-//                         left: 12,
-//                         child: Container(
-//                           padding: const EdgeInsets.symmetric(
-//                             horizontal: 8,
-//                             vertical: 4,
-//                           ),
-//                           decoration: BoxDecoration(
-//                             color: const Color(0xFF2E7D63),
-//                             borderRadius: BorderRadius.circular(12),
-//                           ),
-//                           child: Text(
-//                             article["category"]!.toString(),
-//                             style: const TextStyle(
-//                               color: ColorRes.white,
-//                               fontSize: 10,
-//                               fontWeight: AppFontWeights.semiBold,
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//
-//                       /// New badge
-//                       if (isNew)
-//                         Positioned(
-//                           top: 12,
-//                           right: 12,
-//                           child: Container(
-//                             padding: const EdgeInsets.symmetric(
-//                               horizontal: 6,
-//                               vertical: 3,
-//                             ),
-//                             decoration: BoxDecoration(
-//                               color: const Color(0xFFE74C3C),
-//                               borderRadius: BorderRadius.circular(8),
-//                             ),
-//                             child: const Text(
-//                               "NEW",
-//                               style: TextStyle(
-//                                 color: ColorRes.white,
-//                                 fontSize: 9,
-//                                 fontWeight: AppFontWeights.extraBold,
-//                                 letterSpacing: 0.5,
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                     ],
-//                   ),
-//
-//                   /// Enhanced content section
-//                   Expanded(
-//                     child: Padding(
-//                       padding: const EdgeInsets.all(16),
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//                               Text(
-//                                 article["title"]!.toString(),
-//                                 maxLines: 2,
-//                                 overflow: TextOverflow.ellipsis,
-//                                 style: const TextStyle(
-//                                   fontSize: 14,
-//                                   fontWeight: AppFontWeights.bold,
-//                                   color: Color(0xFF1A1A1A),
-//                                   height: 1.3,
-//                                 ),
-//                               ),
-//                               const SizedBox(height: 6),
-//                               Text(
-//                                 article["subtitle"]!.toString(),
-//                                 maxLines: 2,
-//                                 overflow: TextOverflow.ellipsis,
-//                                 style: TextStyle(
-//                                   fontSize: 11,
-//                                   color: Colors.grey.shade600,
-//                                   height: 1.4,
-//                                   fontWeight: AppFontWeights.regular,
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//
-//                           /// Read time and action
-//                           Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Row(
-//                                 children: [
-//                                   Icon(
-//                                     Icons.access_time_outlined,
-//                                     size: 14,
-//                                     color: Colors.grey.shade500,
-//                                   ),
-//                                   const SizedBox(width: 4),
-//                                   Text(
-//                                     article["readTime"]!.toString(),
-//                                     style: TextStyle(
-//                                       fontSize: 12,
-//                                       color: Colors.grey.shade500,
-//                                       fontWeight: AppFontWeights.medium,
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                               Container(
-//                                 padding: const EdgeInsets.all(6),
-//                                 decoration: BoxDecoration(
-//                                   color: const Color(
-//                                     0xFF2E7D63,
-//                                   ).withOpacity(0.1),
-//                                   borderRadius: BorderRadius.circular(8),
-//                                 ),
-//                                 child: const Icon(
-//                                   Icons.arrow_forward_ios,
-//                                   size: 12,
-//                                   color: Color(0xFF2E7D63),
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-
-// class NewsAndArticles extends StatelessWidget {
-//   const NewsAndArticles({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final articles = [
-//       {
-//         "title": "Legal Updates",
-//         "subtitle": "Gimini and ChatGPT barf or agg ki barish",
-//         "image": IMGRes.news_1,
-//         "category": "Hot News",
-//         "readTime": "Sep 04, 2025",
-//         "author": "Senior Real Estate Consultant",
-//         "isNew": true,
-//       },
-//       {
-//         "title": "Rise in Premium Residential Property Demand",
-//         "subtitle": "Yash Hot News",
-//         "image": IMGRes.news_2,
-//         "category": "Market Trends",
-//         "readTime": "Sep 04, 2025",
-//         "author": "Senior Real Estate Consultant",
-//         "isNew": false,
-//       },
-//       {
-//         "title": "Smart Cities Development",
-//         "subtitle": "Govt announces 5 new smart city projects",
-//         "image": IMGRes.news_3,
-//         "category": "Government",
-//         "readTime": "Aug 28, 2025",
-//         "author": "Urban Affairs Analyst",
-//         "isNew": true,
-//       },
-//       {
-//         "title": "Affordable Housing Boost",
-//         "subtitle": "New subsidies introduced for first-time buyers",
-//         "image": IMGRes.news_1,
-//         "category": "Policy Updates",
-//         "readTime": "Aug 25, 2025",
-//         "author": "Real Estate Policy Expert",
-//         "isNew": false,
-//       },
-//       {
-//         "title": "Luxury Rentals on the Rise",
-//         "subtitle": "Millennials driving demand for premium rentals",
-//         "image": IMGRes.news_2,
-//         "category": "Lifestyle",
-//         "readTime": "Aug 20, 2025",
-//         "author": "Market Research Team",
-//         "isNew": true,
-//       },
-//       {
-//         "title": "Infrastructure Growth",
-//         "subtitle": "Metro expansion boosting property prices nearby",
-//         "image": IMGRes.news_3,
-//         "category": "Infrastructure",
-//         "readTime": "Aug 18, 2025",
-//         "author": "City Infrastructure Reporter",
-//         "isNew": false,
-//       },
-//       {
-//         "title": "Green Buildings Trend",
-//         "subtitle": "Sustainable housing gaining popularity in metros",
-//         "image": IMGRes.news_1,
-//         "category": "Sustainability",
-//         "readTime": "Aug 15, 2025",
-//         "author": "Environmental Consultant",
-//         "isNew": true,
-//       },
-//       {
-//         "title": "NRI Investments Surge",
-//         "subtitle": "Overseas investors eye Indian luxury homes",
-//         "image": IMGRes.news_2,
-//         "category": "Investment",
-//         "readTime": "Aug 12, 2025",
-//         "author": "Global Property Advisor",
-//         "isNew": false,
-//       },
-//       {
-//         "title": "Tech in Real Estate",
-//         "subtitle": "AI and AR shaping home buying experience",
-//         "image": IMGRes.news_3,
-//         "category": "Technology",
-//         "readTime": "Aug 10, 2025",
-//         "author": "PropTech Analyst",
-//         "isNew": true,
-//       },
-//       {
-//         "title": "Commercial Spaces Demand",
-//         "subtitle": "IT hubs drive growth in office real estate",
-//         "image": IMGRes.news_1,
-//         "category": "Commercial",
-//         "readTime": "Aug 08, 2025",
-//         "author": "Business Reporter",
-//         "isNew": false,
-//       },
-//     ];
-//
-//     return SizedBox(
-//       height: 260,
-//       child: ListView.separated(
-//         scrollDirection: Axis.horizontal,
-//         padding: const EdgeInsets.symmetric(horizontal: 12),
-//         clipBehavior: Clip.none,
-//         itemCount: articles.length,
-//         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.medium),
-//         itemBuilder: (context, index) {
-//           final article = articles[index];
-//           final isNew = article["isNew"] as bool;
-//
-//           return GestureDetector(
-//             onTap: () {
-//               // Handle article tap
-//             },
-//             child: Container(
-//               width: 280,
-//               decoration: BoxDecoration(
-//                 color: ColorRes.white,
-//                 borderRadius: BorderRadius.circular(16),
-//                 // boxShadow: [
-//                 //   BoxShadow(
-//                 //     color: Colors.black.withOpacity(0.08),
-//                 //     blurRadius: 12,
-//                 //     offset: const Offset(0, 4),
-//                 //   ),
-//                 //   BoxShadow(
-//                 //     color: Colors.black.withOpacity(0.04),
-//                 //     blurRadius: 4,
-//                 //     offset: const Offset(0, 2),
-//                 //   ),
-//                 // ],
-//                 border: Border.all(color: Colors.grey.shade300, width: 0.5),
-//               ),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   /// Top image section
-//                   Stack(
-//                     children: [
-//                       ClipRRect(
-//                         borderRadius: const BorderRadius.vertical(
-//                           top: Radius.circular(16),
-//                         ),
-//                         child: Image.asset(
-//                           article["image"]!.toString(),
-//                           height: 120,
-//                           width: double.infinity,
-//                           fit: BoxFit.cover,
-//                           errorBuilder: (context, error, stackTrace) {
-//                             return Container(
-//                               height: 120,
-//                               color: Colors.grey.shade200,
-//                               child: Icon(
-//                                 Icons.image_not_supported_outlined,
-//                                 color: Colors.grey.shade400,
-//                                 size: 32,
-//                               ),
-//                             );
-//                           },
-//                         ),
-//                       ),
-//
-//                       /// Category badge
-//                       Positioned(
-//                         top: 12,
-//                         left: 12,
-//                         child: Container(
-//                           padding: const EdgeInsets.symmetric(
-//                             horizontal: 8,
-//                             vertical: 4,
-//                           ),
-//                           decoration: BoxDecoration(
-//                             color: ColorRes.primary,
-//                             borderRadius: BorderRadius.circular(12),
-//                           ),
-//                           child: Text(
-//                             article["category"]!.toString(),
-//                             style: const TextStyle(
-//                               color: ColorRes.white,
-//                               fontSize: 10,
-//                               fontWeight: AppFontWeights.semiBold,
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//
-//                       /// "NEW" badge
-//                       if (isNew)
-//                         Positioned(
-//                           top: 12,
-//                           right: 12,
-//                           child: Container(
-//                             padding: const EdgeInsets.symmetric(
-//                               horizontal: 6,
-//                               vertical: 3,
-//                             ),
-//                             decoration: BoxDecoration(
-//                               color: const Color(0xFFE74C3C),
-//                               borderRadius: BorderRadius.circular(8),
-//                             ),
-//                             child: const Text(
-//                               "NEW",
-//                               style: TextStyle(
-//                                 color: ColorRes.white,
-//                                 fontSize: 9,
-//                                 fontWeight: AppFontWeights.extraBold,
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                     ],
-//                   ),
-//
-//                   /// Content section
-//                   Expanded(
-//                     child: Padding(
-//                       padding: const EdgeInsets.all(16),
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//                               Text(
-//                                 article["title"]!.toString(),
-//                                 maxLines: 2,
-//                                 overflow: TextOverflow.ellipsis,
-//                                 style: const TextStyle(
-//                                   fontSize: 14,
-//                                   fontWeight: AppFontWeights.bold,
-//                                   color: Color(0xFF1A1A1A),
-//                                 ),
-//                               ),
-//                               const SizedBox(height: 6),
-//                               Text(
-//                                 article["subtitle"]!.toString(),
-//                                 maxLines: 2,
-//                                 overflow: TextOverflow.ellipsis,
-//                                 style: TextStyle(
-//                                   fontSize: 11,
-//                                   color: Colors.grey.shade600,
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//
-//                           /// Footer: author + date + arrow
-//                           Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: [
-//                               Expanded(
-//                                 child: Column(
-//                                   crossAxisAlignment: CrossAxisAlignment.start,
-//                                   children: [
-//                                     Text(
-//                                       article["author"]!.toString(),
-//                                       style: TextStyle(
-//                                         fontSize: 11,
-//                                         color: Colors.grey.shade700,
-//                                         fontWeight: AppFontWeights.medium,
-//                                       ),
-//                                       overflow: TextOverflow.ellipsis,
-//                                     ),
-//                                     const SizedBox(height: 2),
-//                                     Text(
-//                                       article["readTime"]!.toString(),
-//                                       style: TextStyle(
-//                                         fontSize: 10,
-//                                         color: Colors.grey.shade500,
-//                                       ),
-//                                     ),
-//                                   ],
-//                                 ),
-//                               ),
-//                               Container(
-//                                 padding: const EdgeInsets.all(6),
-//                                 decoration: BoxDecoration(
-//                                   color: const Color(
-//                                     0xFF2E7D63,
-//                                   ).withOpacity(0.1),
-//                                   borderRadius: BorderRadius.circular(8),
-//                                 ),
-//                                 child: const Icon(
-//                                   Icons.arrow_forward_ios,
-//                                   size: 12,
-//                                   color: Color(0xFF2E7D63),
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
 
 class NewsAndArticles extends StatelessWidget {
   final List<NewsItem> articles;
@@ -2286,6 +2548,342 @@ class NewsAndArticles extends StatelessWidget {
       return DateTime.now().difference(published).inDays <= 7;
     }
 
+    // return SizedBox(
+    //   height: 270,
+    //   child: ListView.separated(
+    //     shrinkWrap: true,
+    //     scrollDirection: Axis.horizontal,
+    //     padding: const EdgeInsets.symmetric(horizontal: 12),
+    //     clipBehavior: Clip.none,
+    //     itemCount: articles.length,
+    //     separatorBuilder: (_, __) => const SizedBox(width: 12),
+    //     itemBuilder: (context, index) {
+    //       final article = articles[index];
+    //       final isNew = isNewArticle(article.publishDate);
+    //       print("Image ------------------> ${article.coverImage}");
+    //       return GestureDetector(
+    //         onTap: () {
+    //           Get.to(() => NewsDetailScreen(newsItem: article));
+    //         },
+    //         child: Container(
+    //           width: 280,
+    //           decoration: BoxDecoration(
+    //             color: ColorRes.white,
+    //             borderRadius: BorderRadius.circular(16),
+    //             border: Border.all(
+    //               color: ColorRes.leadGreyColor.shade300,
+    //               width: 0.5,
+    //             ),
+    //           ),
+    //           child: Column(
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             children: [
+    //               /// Top image section
+    //               Stack(
+    //                 children: [
+    //                   // ClipRRect(
+    //                   //   borderRadius: const BorderRadius.vertical(
+    //                   //     top: Radius.circular(16),
+    //                   //   ),
+    //                   //   child: Image.network(
+    //                   //     article.coverImage ?? '',
+    //                   //     height: 120,
+    //                   //     width: double.infinity,
+    //                   //     fit: BoxFit.cover,
+    //                   //     errorBuilder: (context, error, stackTrace) {
+    //                   //       return Container(
+    //                   //         height: 120,
+    //                   //         color: Colors.grey.shade200,
+    //                   //         child: Icon(
+    //                   //           Icons.image_not_supported_outlined,
+    //                   //           color: Colors.grey.shade400,
+    //                   //           size: 32,
+    //                   //         ),
+    //                   //       );
+    //                   //     },
+    //                   //   ),
+    //                   // ),
+    //                   CustomImage(
+    //                     type: CustomImageType.network,
+    //                     src: article.coverImage,
+    //                     height: 120,
+    //                     width: double.infinity,
+    //                   ),
+    //
+    //                   /// Category badge
+    //                   if (article.category != null)
+    //                     Positioned(
+    //                       top: 12,
+    //                       left: 12,
+    //                       child: Container(
+    //                         padding: const EdgeInsets.symmetric(
+    //                           horizontal: 8,
+    //                           vertical: 4,
+    //                         ),
+    //                         decoration: BoxDecoration(
+    //                           color: ColorRes.green,
+    //                           borderRadius: BorderRadius.circular(8),
+    //                         ),
+    //                         child: Text(
+    //                           article.category!.capitalize
+    //                               .toString()
+    //                               .replaceAll("_", " "),
+    //                           style: TextStyle(
+    //                             color: ColorRes.white,
+    //                             fontSize: AppFontSizes.extraSmall,
+    //                             fontWeight: AppFontWeights.semiBold,
+    //                           ),
+    //                         ),
+    //                       ),
+    //                     ),
+    //
+    //                   /// "NEW" badge
+    //                   if (isNew)
+    //                     Positioned(
+    //                       top: 12,
+    //                       right: 12,
+    //                       child: Container(
+    //                         padding: const EdgeInsets.symmetric(
+    //                           horizontal: 6,
+    //                           vertical: 3,
+    //                         ),
+    //                         decoration: BoxDecoration(
+    //                           color: ColorRes.homeRed,
+    //                           borderRadius: BorderRadius.circular(8),
+    //                         ),
+    //                         child: Text(
+    //                           "NEW",
+    //                           style: TextStyle(
+    //                             color: ColorRes.white,
+    //                             fontSize: AppFontSizes.mini,
+    //                             fontWeight: AppFontWeights.extraBold,
+    //                           ),
+    //                         ),
+    //                       ),
+    //                     ),
+    //                 ],
+    //               ),
+    //
+    //               /// Content section
+    //               // Expanded(
+    //               //   child: Padding(
+    //               //     padding: const EdgeInsets.all(16),
+    //               //     child: Column(
+    //               //       crossAxisAlignment: CrossAxisAlignment.start,
+    //               //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               //       children: [
+    //               //         Column(
+    //               //           crossAxisAlignment: CrossAxisAlignment.start,
+    //               //           children: [
+    //               //             Text(
+    //               //               article.title ?? '',
+    //               //               maxLines: 2,
+    //               //               overflow: TextOverflow.ellipsis,
+    //               //               style: TextStyle(
+    //               //                 fontSize: AppFontSizes.medium,
+    //               //                 fontWeight: AppFontWeights.bold,
+    //               //                 color: ColorRes.homeBlackFade,
+    //               //               ),
+    //               //             ),
+    //               //             const SizedBox(height: 6),
+    //               //             Text(
+    //               //               article.summary ?? '',
+    //               //               maxLines: 2,
+    //               //               overflow: TextOverflow.ellipsis,
+    //               //               style: TextStyle(
+    //               //                 fontSize: AppFontSizes.caption,
+    //               //                 color: Colors.grey.shade600,
+    //               //               ),
+    //               //             ),
+    //               //           ],
+    //               //         ),
+    //               //
+    //               //         /// Footer: author + read time + arrow
+    //               //         Row(
+    //               //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               //           children: [
+    //               //             Expanded(
+    //               //               child: Column(
+    //               //                 crossAxisAlignment: CrossAxisAlignment.start,
+    //               //                 children: [
+    //               //                   Text(
+    //               //                     article.author ?? '',
+    //               //                     style: TextStyle(
+    //               //                       fontSize: AppFontSizes.caption,
+    //               //                       color: ColorRes.leadGreyColor.shade700,
+    //               //                       fontWeight: AppFontWeights.medium,
+    //               //                     ),
+    //               //                     overflow: TextOverflow.ellipsis,
+    //               //                   ),
+    //               //                   const SizedBox(height: 2),
+    //               //                   Text(
+    //               //                     '${article.readTime ?? 0} min read',
+    //               //                     style: TextStyle(
+    //               //                       fontSize: AppFontSizes.extraSmall,
+    //               //                       color: ColorRes.leadGreyColor.shade500,
+    //               //                     ),
+    //               //                   ),
+    //               //                 ],
+    //               //               ),
+    //               //             ),
+    //               //             Container(
+    //               //               padding: const EdgeInsets.all(6),
+    //               //               decoration: BoxDecoration(
+    //               //                 color: ColorRes.homeGreenFade.withOpacity(
+    //               //                   0.1,
+    //               //                 ),
+    //               //                 borderRadius: BorderRadius.circular(8),
+    //               //               ),
+    //               //               child: const Icon(
+    //               //                 Icons.arrow_forward_ios,
+    //               //                 size: 12,
+    //               //                 color: ColorRes.homeGreenFade,
+    //               //               ),
+    //               //             ),
+    //               //           ],
+    //               //         ),
+    //               //       ],
+    //               //     ),
+    //               //   ),
+    //               // ),
+    //               Expanded(
+    //                 child: Padding(
+    //                   padding: const EdgeInsets.all(24),
+    //                   child: Column(
+    //                     crossAxisAlignment: CrossAxisAlignment.start,
+    //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                     children: [
+    //                       Column(
+    //                         crossAxisAlignment: CrossAxisAlignment.start,
+    //                         children: [
+    //                           Text(
+    //                             article.title ?? '',
+    //                             maxLines: 2,
+    //                             overflow: TextOverflow.ellipsis,
+    //                             style: const TextStyle(
+    //                               fontSize: 20,
+    //                               fontWeight: FontWeight.w600,
+    //                               color: Colors.white,
+    //                               height: 1.3,
+    //                             ),
+    //                           ),
+    //                           const SizedBox(height: 12),
+    //                           Text(
+    //                             article.summary ?? '',
+    //                             maxLines: 2,
+    //                             overflow: TextOverflow.ellipsis,
+    //                             style: TextStyle(
+    //                               fontSize: 14,
+    //                               color: Colors.grey.shade400,
+    //                               height: 1.4,
+    //                             ),
+    //                           ),
+    //                         ],
+    //                       ),
+    //
+    //                       /// Footer: author info and stats
+    //                       Row(
+    //                         children: [
+    //                           // Author avatar
+    //                           Container(
+    //                             width: 40,
+    //                             height: 40,
+    //                             decoration: BoxDecoration(
+    //                               color: Colors.grey.shade700,
+    //                               shape: BoxShape.circle,
+    //                             ),
+    //                             child: const Icon(
+    //                               Icons.person,
+    //                               color: Colors.white,
+    //                               size: 20,
+    //                             ),
+    //                           ),
+    //                           const SizedBox(width: 12),
+    //                           // Author name and date
+    //                           Expanded(
+    //                             child: Column(
+    //                               crossAxisAlignment: CrossAxisAlignment.start,
+    //                               children: [
+    //                                 Text(
+    //                                   article.author ?? '',
+    //                                   style: const TextStyle(
+    //                                     fontSize: 14,
+    //                                     color: Colors.white,
+    //                                     fontWeight: FontWeight.w600,
+    //                                   ),
+    //                                   overflow: TextOverflow.ellipsis,
+    //                                 ),
+    //                                 const SizedBox(height: 2),
+    //                                 Text(
+    //                                   _formatDate(article.publishDate),
+    //                                   style: TextStyle(
+    //                                     fontSize: 12,
+    //                                     color: Colors.grey.shade500,
+    //                                   ),
+    //                                 ),
+    //                               ],
+    //                             ),
+    //                           ),
+    //                           const SizedBox(width: 16),
+    //                           // Stats
+    //                           Row(
+    //                             children: [
+    //                               Icon(
+    //                                 Icons.access_time_rounded,
+    //                                 size: 16,
+    //                                 color: Colors.grey.shade500,
+    //                               ),
+    //                               const SizedBox(width: 4),
+    //                               Text(
+    //                                 '${article.readTime ?? 0} min read',
+    //                                 style: TextStyle(
+    //                                   fontSize: 12,
+    //                                   color: Colors.grey.shade500,
+    //                                 ),
+    //                               ),
+    //                               const SizedBox(width: 16),
+    //                               Icon(
+    //                                 Icons.remove_red_eye_outlined,
+    //                                 size: 16,
+    //                                 color: Colors.grey.shade500,
+    //                               ),
+    //                               const SizedBox(width: 4),
+    //                               Text(
+    //                                 _formatViewCount(article.viewCount ?? 0),
+    //                                 style: TextStyle(
+    //                                   fontSize: 12,
+    //                                   color: Colors.grey.shade500,
+    //                                 ),
+    //                               ),
+    //                               const SizedBox(width: 16),
+    //                               Container(
+    //                                 padding: const EdgeInsets.all(8),
+    //                                 decoration: BoxDecoration(
+    //                                   color: Colors.white.withOpacity(0.1),
+    //                                   borderRadius: BorderRadius.circular(8),
+    //                                 ),
+    //                                 child: const Icon(
+    //                                   Icons.share_outlined,
+    //                                   size: 16,
+    //                                   color: Colors.white,
+    //                                 ),
+    //                               ),
+    //                             ],
+    //                           ),
+    //                         ],
+    //                       ),
+    //                     ],
+    //                   ),
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       );
+    //     },
+    //   ),
+    // );
+
     return SizedBox(
       height: 270,
       child: ListView.separated(
@@ -2294,7 +2892,7 @@ class NewsAndArticles extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         clipBehavior: Clip.none,
         itemCount: articles.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (_, __) => const SizedBox(width: 16),
         itemBuilder: (context, index) {
           final article = articles[index];
           final isNew = isNewArticle(article.publishDate);
@@ -2304,102 +2902,34 @@ class NewsAndArticles extends StatelessWidget {
               Get.to(() => NewsDetailScreen(newsItem: article));
             },
             child: Container(
-              width: 280,
+              width: 250,
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: ColorRes.leadGreyColor.shade300,
-                  width: 0.5,
+                  color: ColorRes.leadGreyColor.withOpacity(0.3),
+                  width: 1,
                 ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// Top image section
-                  Stack(
-                    children: [
-                      // ClipRRect(
-                      //   borderRadius: const BorderRadius.vertical(
-                      //     top: Radius.circular(16),
-                      //   ),
-                      //   child: Image.network(
-                      //     article.coverImage ?? '',
-                      //     height: 120,
-                      //     width: double.infinity,
-                      //     fit: BoxFit.cover,
-                      //     errorBuilder: (context, error, stackTrace) {
-                      //       return Container(
-                      //         height: 120,
-                      //         color: Colors.grey.shade200,
-                      //         child: Icon(
-                      //           Icons.image_not_supported_outlined,
-                      //           color: Colors.grey.shade400,
-                      //           size: 32,
-                      //         ),
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
-                      CustomImage(
+                  /// Top image section - No rounded top corners
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(14),
+                    ),
+                    child: Container(
+                      height: 120,
+                      width: double.infinity,
+                      color: Colors.black,
+                      child: CustomImage(
                         type: CustomImageType.network,
                         src: article.coverImage,
                         height: 120,
                         width: double.infinity,
                       ),
-
-                      /// Category badge
-                      if (article.category != null)
-                        Positioned(
-                          top: 12,
-                          left: 12,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorRes.green,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              article.category!.capitalize
-                                  .toString()
-                                  .replaceAll("_", " "),
-                              style: TextStyle(
-                                color: ColorRes.white,
-                                fontSize: AppFontSizes.extraSmall,
-                                fontWeight: AppFontWeights.semiBold,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                      /// "NEW" badge
-                      if (isNew)
-                        Positioned(
-                          top: 12,
-                          right: 12,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorRes.homeRed,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              "NEW",
-                              style: TextStyle(
-                                color: ColorRes.white,
-                                fontSize: AppFontSizes.mini,
-                                fontWeight: AppFontWeights.extraBold,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                    ),
                   ),
 
                   /// Content section
@@ -2407,39 +2937,53 @@ class NewsAndArticles extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                article.title ?? '',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.medium,
-                                  fontWeight: AppFontWeights.bold,
-                                  color: ColorRes.homeBlackFade,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                article.summary ?? '',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.caption,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
+                        crossAxisAlignment: CrossAxisAlignment.start,
 
-                          /// Footer: author + read time + arrow
+                        children: [
+                          Text(
+                            article.title ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.bodySmall,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.textPrimary,
+                              height: 1.3,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            article.content ?? '',
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.caption,
+                              height: 1.5,
+                              color: ColorRes.leadGreyColor.shade700,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+                          /// Footer: author info and stats
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              // Author avatar
+                              Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade700,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              // Author name and date
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2447,35 +2991,42 @@ class NewsAndArticles extends StatelessWidget {
                                     Text(
                                       article.author ?? '',
                                       style: TextStyle(
-                                        fontSize: AppFontSizes.caption,
-                                        color: ColorRes.leadGreyColor.shade700,
+                                        fontSize: AppFontSizes.small,
+                                        color: ColorRes.textPrimary,
                                         fontWeight: AppFontWeights.medium,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      '${article.readTime ?? 0} min read',
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.extraSmall,
-                                        color: ColorRes.leadGreyColor.shade500,
-                                      ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            article.slug ?? '',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.extraSmall,
+                                              color:
+                                                  ColorRes
+                                                      .leadGreyColor
+                                                      .shade700,
+                                              fontWeight:
+                                                  AppFontWeights.regular,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 12),
+                                        Text(
+                                          _formatDate(article.publishDate),
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.caption,
+                                            color: ColorRes.leadGreyColor,
+                                            fontWeight: AppFontWeights.medium,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.homeGreenFade.withOpacity(
-                                    0.1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 12,
-                                  color: ColorRes.homeGreenFade,
                                 ),
                               ),
                             ],
@@ -2492,119 +3043,256 @@ class NewsAndArticles extends StatelessWidget {
       ),
     );
   }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null) return '';
+    try {
+      final date = DateTime.parse(dateString);
+      final months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+      return '${months[date.month - 1]} ${date.day}, ${date.year}';
+    } catch (e) {
+      return dateString;
+    }
+  }
+
+  String _formatViewCount(int count) {
+    if (count >= 1000) {
+      return '${(count / 1000).toStringAsFixed(1)}k';
+    }
+    return count.toString();
+  }
 }
 
+// class ExploreLocalities extends StatelessWidget {
+//   const ExploreLocalities({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final propertyController = Get.find<PropertyController>();
+//     return Obx(() {
+//       // Get trending areas from controller or use fallback
+//       final trendingAreasResponse = propertyController.trendingAreaList.value;
+//
+//
+//       return SizedBox(
+//         height: 160, // ensures 2 rows visible
+//         child: GridView.builder(
+//           scrollDirection: Axis.horizontal,
+//           shrinkWrap: true,
+//           padding: EdgeInsets.symmetric(horizontal: AppSpacing.medium),
+//           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//             crossAxisCount: 2,
+//             mainAxisSpacing: AppSpacing.small,
+//             crossAxisSpacing: AppSpacing.small,
+//             childAspectRatio: 70 / 150, // wider cards
+//           ),
+//           itemCount: trendingAreasResponse?.data.length,
+//           itemBuilder: (context, index) {
+//             final locality = trendingAreasResponse?.data[index];
+//
+//           return InkWell(
+//             borderRadius: BorderRadius.circular(10),
+//             onTap: () {
+//               // Handle locality tap
+//             },
+//             child: Container(
+//               padding: const EdgeInsets.all(AppSpacing.small),
+//               decoration: BoxDecoration(
+//                 color: ColorRes.white,
+//                 borderRadius: BorderRadius.circular(10),
+//                 border: Border.all(color: ColorRes.leadGreyColor.shade300),
+//                 // boxShadow: [
+//                 //   BoxShadow(
+//                 //     color: Colors.grey.shade200,
+//                 //     blurRadius: 6,
+//                 //     offset: const Offset(2, 3),
+//                 //   ),
+//                 // ],
+//               ),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   /// Locality name
+//                   Text(
+//                     locality?.area??'',
+//                     style: TextStyle(
+//                       fontSize: AppFontSizes.small,
+//                       fontWeight: AppFontWeights.semiBold,
+//                     ),
+//                   ),
+//
+//                   Spacer(),
+//
+//                   /// Property Count
+//                   Text(
+//                     locality.,
+//                     style: TextStyle(
+//                       fontSize: AppFontSizes.small,
+//                       color: ColorRes.leadGreyColor.shade600,
+//                     ),
+//                   ),
+//
+//                   const Spacer(),
+//
+//                   /// Inquiries + Trend Arrow
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.start,
+//                     children: [
+//                       Expanded(
+//                         child: Text(
+//                           locality["change"] as String,
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.small,
+//                             fontWeight: AppFontWeights.semiBold,
+//                             color:
+//                                 isUp
+//                                     ? ColorRes.green.shade600
+//                                     : ColorRes.error.shade600,
+//                           ),
+//                           maxLines: 1,
+//                           overflow: TextOverflow.ellipsis,
+//                         ),
+//                       ),
+//                       const SizedBox(width: 4),
+//                       Icon(
+//                         isUp
+//                             ? Icons.trending_up_rounded
+//                             : Icons.trending_down_rounded,
+//                         size: 16,
+//                         color:
+//                             isUp
+//                                 ? ColorRes.green.shade600
+//                                 : ColorRes.error.shade600,
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           );
+//           },
+//         ),
+//       );
+//     });
+//   }
+//
+//   /// Convert TrendingAreasResponse to localities format for display
+//   /// API Response structure:
+//   /// {
+//   ///   "area": "Gota",
+//   ///   "city": "Ahmedabad",
+//   ///   "propertyCount": 1,
+//   ///   "totalViews": 4,
+//   ///   "totalInquiries": 1
+//   /// }
+//
+// }
+
 class ExploreLocalities extends StatelessWidget {
-  const ExploreLocalities({super.key});
+  final List<TrendingArea> trendingArea;
+
+  const ExploreLocalities({super.key, required this.trendingArea});
 
   @override
   Widget build(BuildContext context) {
-    final localities = [
-      {"name": "Vesu", "price": "₹75L", "trendUp": true, "change": "16%"},
-      {"name": "Adajan", "price": "₹65L", "trendUp": false, "change": "8%"},
-      {"name": "Piplod", "price": "₹90L", "trendUp": true, "change": "12%"},
-      {
-        "name": "City Light",
-        "price": "₹1.2Cr",
-        "trendUp": true,
-        "change": "20%",
-      },
-      {"name": "Athwa", "price": "₹85L", "trendUp": false, "change": "5%"},
-      {"name": "Katargam", "price": "₹60L", "trendUp": true, "change": "10%"},
-      {"name": "Varachha", "price": "₹55L", "trendUp": false, "change": "7%"},
-      {"name": "Udhna", "price": "₹45L", "trendUp": true, "change": "14%"},
-    ];
-
     return SizedBox(
-      height: 160, // ensures 2 rows visible
-      child: GridView.builder(
+      height: 80, // height for one row of cards
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
         padding: EdgeInsets.symmetric(horizontal: AppSpacing.medium),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: AppSpacing.small,
-          crossAxisSpacing: AppSpacing.small,
-          childAspectRatio: 70 / 150, // wider cards
-        ),
-        itemCount: localities.length,
+        itemCount: trendingArea.length,
         itemBuilder: (context, index) {
-          final locality = localities[index];
-          final bool isUp = locality["trendUp"] as bool;
+          final locality = trendingArea[index];
 
-          return InkWell(
-            borderRadius: BorderRadius.circular(10),
-            onTap: () {
-              // Handle locality tap
-            },
-            child: Container(
-              padding: const EdgeInsets.all(AppSpacing.small),
-              decoration: BoxDecoration(
-                color: ColorRes.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Colors.grey.shade200,
-                //     blurRadius: 6,
-                //     offset: const Offset(2, 3),
-                //   ),
-                // ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// Locality name
-                  Text(
-                    locality["name"] as String,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      fontWeight: AppFontWeights.semiBold,
+          // Calculate trend based on inquiries
+          final bool isUp = locality.totalInquiries > 0;
+
+          return Padding(
+            padding: EdgeInsets.only(right: AppSpacing.small),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () {
+                // Handle locality tap - navigate to properties in this area
+                // You can pass locality.area and locality.city to the next screen
+              },
+              child: Container(
+                width: 180, // fixed card width for horizontal list
+                padding: const EdgeInsets.all(AppSpacing.small),
+                decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Locality name
+                    Text(
+                      locality.area,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
 
-                  Spacer(),
+                    const Spacer(),
 
-                  /// Avg Price
-                  Text(
-                    "Avg Price: ${locality["price"]}",
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      color: ColorRes.leadGreyColor.shade600,
+                    /// Property Count
+                    Text(
+                      '${locality.propertyCount} ${locality.propertyCount == 1 ? 'Property' : 'Properties'}',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.leadGreyColor.shade600,
+                      ),
                     ),
-                  ),
 
-                  const Spacer(),
+                    const SizedBox(height: 4),
 
-                  /// Change + Arrow
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        locality["change"] as String,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.small,
-                          fontWeight: AppFontWeights.semiBold,
-                          color:
-                              isUp
-                                  ? ColorRes.green.shade600
-                                  : ColorRes.error.shade600,
+                    /// Inquiries + Trend Arrow
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${locality.totalInquiries} ${locality.totalInquiries == 1 ? 'inquiry' : 'inquiries'}',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.semiBold,
+                              color:
+                                  isUp
+                                      ? ColorRes.green.shade600
+                                      : ColorRes.leadGreyColor.shade600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        isUp
-                            ? Icons.trending_up_rounded
-                            : Icons.trending_down_rounded,
-                        size: 16,
-                        color:
-                            isUp
-                                ? ColorRes.green.shade600
-                                : ColorRes.error.shade600,
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 4),
+                        if (locality.totalInquiries > 0)
+                          Icon(
+                            Icons.trending_up_rounded,
+                            size: 16,
+                            color: ColorRes.green.shade600,
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -2619,48 +3307,40 @@ class TrendingInsights extends StatelessWidget {
 
   final trendingInsights = [
     {
-      "title": "Luxury Housing Boom",
-      "subtitle": "High-net-worth individuals driving luxury sales",
+      "title": "Price Trends",
+      "subtitle": "Find property rates & price trends of top locations",
       "image": IMGRes.news_1,
       "tag": "Trending",
       "isHot": true,
     },
     {
-      "title": "Affordable Housing Schemes",
-      "subtitle": "Govt incentives attract first-time buyers",
+      "title": "City Insights",
+      "subtitle": "Get to know about top cities before you invest",
       "image": IMGRes.news_2,
       "tag": "Hot Topic",
       "isHot": false,
     },
     {
-      "title": "Green Living Demand",
-      "subtitle": "Sustainable homes trending in metro cities",
+      "title": "NesticoPe Research",
+      "subtitle": "Find reports on Indian residential market",
       "image": IMGRes.news_3,
       "tag": "Eco Trend",
       "isHot": true,
     },
     {
-      "title": "Smart Homes Growth",
-      "subtitle": "IoT-enabled apartments gaining traction",
+      "title": "Reviews",
+      "subtitle": "Read authentic reviews from property buyers and renters",
       "image": IMGRes.news_1,
       "tag": "Tech",
       "isHot": false,
-    },
-    {
-      "title": "Rise in Co-working Spaces",
-      "subtitle": "Hybrid work fuels shared offices demand",
-      "image": IMGRes.news_2,
-      "tag": "Work Trend",
-      "isHot": true,
     },
   ];
 
   final List<IconData> icons = [
     Icons.trending_up,
-    Icons.whatshot,
+    Icons.apartment,
     Icons.eco,
-    Icons.smart_toy_outlined,
-    Icons.workspaces,
+    Icons.rate_review,
   ];
 
   final List<Color> iconColors = [
@@ -2777,21 +3457,16 @@ class CompactInsightCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 6),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 12,
-                  color: ColorRes.leadGreyColor.shade400,
-                ),
               ],
             ),
 
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
 
             /// Value / detail
             Text(
               value,
               style: TextStyle(
-                fontSize: AppFontSizes.small,
+                fontSize: AppFontSizes.caption,
                 color: ColorRes.leadGreyColor.shade600,
                 fontWeight: AppFontWeights.medium,
               ),
@@ -2804,6 +3479,93 @@ class CompactInsightCard extends StatelessWidget {
     );
   }
 }
+
+
+class WhyChooseUsSection extends StatelessWidget {
+  final items = [
+    {
+      "title": "Over 7 Properties",
+      "subtitle": "10,000+ properties added every day",
+      "icon": Icons.home_outlined,
+    },
+    {
+      "title": "Verified by Our Team",
+      "subtitle": "Photos, videos and details verified on location",
+      "icon": Icons.verified_outlined,
+    },
+    {
+      "title": "Large User Base",
+      "subtitle": "High active user count and engagement",
+      "icon": Icons.group_outlined,
+    },
+    {
+      "title": "Instant Updates",
+      "subtitle": "Real-time notifications for new listings",
+      "icon": Icons.notifications_active_outlined,
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 12,),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // number of columns
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1.4, // controls height/width ratio
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                item["icon"] as IconData,
+                size: 28,
+                color: ColorRes.primary,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "${item['title']}",
+                style:  TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.primary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "${item['subtitle']}",
+                style: TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  color: ColorRes.leadGreyColor.shade600,
+                  fontWeight: AppFontWeights.medium,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+
 
 class RecommendedInsights extends StatelessWidget {
   const RecommendedInsights({super.key});
