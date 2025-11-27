@@ -109,184 +109,185 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             buildOverviewCards(controller),
                             const SizedBox(height: 20),
 
-                            buildMonthlyPerformance(
-                              title: 'Monthly Performance',
-                              levelName:
-                                  controller
-                                      .resellerInsightsModel
-                                      .value
-                                      ?.data
-                                      .level
-                                      .currentLevel ??
-                                  '',
-
-                              levelIcon: Icons.star,
-                              levelIconColor: ColorRes.orangeColor,
-                              benefits:
-                                  controller
-                                      .resellerInsightsModel
-                                      .value
-                                      ?.data
-                                      .level
-                                      .benefits ??
-                                  [],
-                              progressValue: calculateProgress(
-                                controller
+                            Obx(() =>  buildMonthlyPerformance(
+                                title: 'Monthly Performance',
+                                levelName:
+                                    controller
                                         .resellerInsightsModel
                                         .value
                                         ?.data
                                         .level
-                                        .totalSalesVolume ??
-                                    0,
-                                controller
+                                        .currentLevel ??
+                                    '',
+
+                                levelIcon: Icons.star,
+                                levelIconColor: ColorRes.orangeColor,
+                                benefits:
+                                    controller
                                         .resellerInsightsModel
                                         .value
                                         ?.data
                                         .level
-                                        .nextLevelThreshold ??
-                                    0,
-                              ),
-
-                              currentAmount: Formatter.formatPrice(
-                                (controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .level
-                                            .totalSalesVolume ??
-                                        0)
-                                    .toDouble(),
-                              ),
-                              targetAmount: Formatter.formatPrice(
-                                (controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .level
-                                            .nextLevelThreshold ??
-                                        0)
-                                    .toDouble(),
-                              ),
-
-                              unlockMessage:
-                                  '${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.level.amountToNextLevel ?? 0).toDouble())} more to unlock next level!',
-                              streakDays:
+                                        .benefits ??
+                                    [],
+                                progressValue: calculateProgress(
                                   controller
-                                      .resellerInsightsModel
-                                      .value
-                                      ?.data
-                                      .level
-                                      .nextLevelName ??
-                                  '',
-                              commissionCurrent: Formatter.formatPrice(
-                                (controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .earnings
-                                            .currentMonthCommission ??
-                                        0)
-                                    .toDouble(),
-                              ),
-                              commissionPrevious: Formatter.formatPrice(
-                                (controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .earnings
-                                            .previousMonthCommission ??
-                                        0)
-                                    .toDouble(),
-                              ),
-                              commissionChange:
-                                  calculateCommissionPercentage(
-                                    controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .earnings
-                                            .previousMonthCommission ??
-                                        0,
-                                    controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .earnings
-                                            .currentMonthCommission ??
-                                        0,
-                                  ).toString(),
-                              commissionPositive:
-                                  ((controller
-                                                  .resellerInsightsModel
-                                                  .value
-                                                  ?.data
-                                                  ?.earnings
-                                                  .currentMonthCommission ??
-                                              0)
-                                          .toDouble() >
-                                      (controller
-                                                  .resellerInsightsModel
-                                                  .value
-                                                  ?.data
-                                                  ?.earnings
-                                                  .previousMonthCommission ??
-                                              0)
-                                          .toDouble()),
+                                          .resellerInsightsModel
+                                          .value
+                                          ?.data
+                                          .level
+                                          .totalSalesVolume ??
+                                      0,
+                                  controller
+                                          .resellerInsightsModel
+                                          .value
+                                          ?.data
+                                          .level
+                                          .nextLevelThreshold ??
+                                      0,
+                                ),
 
-                              leadsCurrent:
-                                  controller
-                                      .resellerInsightsModel
-                                      .value
-                                      ?.data
-                                      .performance
-                                      .currentMonthLeads
-                                      .toString() ??
-                                  '0',
-                              leadsPrevious:
-                                  controller
-                                      .resellerInsightsModel
-                                      .value
-                                      ?.data
-                                      .performance
-                                      .previousMonthLeads
-                                      .toString() ??
-                                  '0',
-                              leadsChange:
-                                  calculateCommissionPercentage(
+                                currentAmount: Formatter.formatPrice(
+                                  (controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .level
+                                              .totalSalesVolume ??
+                                          0)
+                                      .toDouble(),
+                                ),
+                                targetAmount: Formatter.formatPrice(
+                                  (controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .level
+                                              .nextLevelThreshold ??
+                                          0)
+                                      .toDouble(),
+                                ),
+
+                                unlockMessage:
+                                    '${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.level.amountToNextLevel ?? 0).toDouble())} more to unlock next level!',
+                                streakDays:
                                     controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .performance
-                                            .previousMonthLeads
-                                            .toDouble() ??
-                                        0.0,
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .level
+                                        .nextLevelName ??
+                                    '',
+                                commissionCurrent: Formatter.formatPrice(
+                                  (controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .earnings
+                                              .currentMonthCommission ??
+                                          0)
+                                      .toDouble(),
+                                ),
+                                commissionPrevious: Formatter.formatPrice(
+                                  (controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .earnings
+                                              .previousMonthCommission ??
+                                          0)
+                                      .toDouble(),
+                                ),
+                                commissionChange:
+                                    calculateCommissionPercentage(
+                                      controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .earnings
+                                              .previousMonthCommission ??
+                                          0,
+                                      controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .earnings
+                                              .currentMonthCommission ??
+                                          0,
+                                    ).toString(),
+                                commissionPositive:
+                                    ((controller
+                                                    .resellerInsightsModel
+                                                    .value
+                                                    ?.data
+                                                    ?.earnings
+                                                    .currentMonthCommission ??
+                                                0)
+                                            .toDouble() >
+                                        (controller
+                                                    .resellerInsightsModel
+                                                    .value
+                                                    ?.data
+                                                    ?.earnings
+                                                    .previousMonthCommission ??
+                                                0)
+                                            .toDouble()),
+
+                                leadsCurrent:
                                     controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .performance
-                                            .currentMonthLeads
-                                            .toDouble() ??
-                                        0.0,
-                                  ).toString(),
-                              leadsPositive:
-                                  ((controller
-                                                  .resellerInsightsModel
-                                                  .value
-                                                  ?.data
-                                                  ?.performance
-                                                  .currentMonthLeads ??
-                                              0)
-                                          .toDouble() >
-                                      (controller
-                                                  .resellerInsightsModel
-                                                  .value
-                                                  ?.data
-                                                  ?.performance
-                                                  .previousMonthLeads ??
-                                              0)
-                                          .toDouble()),
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .performance
+                                        .currentMonthLeads
+                                        .toString() ??
+                                    '0',
+                                leadsPrevious:
+                                    controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .performance
+                                        .previousMonthLeads
+                                        .toString() ??
+                                    '0',
+                                leadsChange:
+                                    calculateCommissionPercentage(
+                                      controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .performance
+                                              .previousMonthLeads
+                                              .toDouble() ??
+                                          0.0,
+                                      controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .performance
+                                              .currentMonthLeads
+                                              .toDouble() ??
+                                          0.0,
+                                    ).toString(),
+                                leadsPositive:
+                                    ((controller
+                                                    .resellerInsightsModel
+                                                    .value
+                                                    ?.data
+                                                    ?.performance
+                                                    .currentMonthLeads ??
+                                                0)
+                                            .toDouble() >
+                                        (controller
+                                                    .resellerInsightsModel
+                                                    .value
+                                                    ?.data
+                                                    ?.performance
+                                                    .previousMonthLeads ??
+                                                0)
+                                            .toDouble()),
+                              ),
                             ),
 
                             const SizedBox(height: 20),
@@ -296,7 +297,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                 title: 'Daily Goal',
                                 goalText:
                                     'Try to generate ${controller.resellerInsightsModel.value?.data.dailyGoals.minimumLeadsForStreak} leads today',
-                                date: '27 Oct 2025',
+                                date: getFormattedDate(),
                                 currentStep:
                                     controller
                                         .resellerInsightsModel
@@ -329,146 +330,160 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
 
                             const SizedBox(height: 20),
 
-                            buildBestResellerOnTheMonth(
-                              month: "October",
-                              year: "2025",
-                              totalCommission:
-                                  "${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.earnings.totalCommission ?? 0).toDouble())}",
-                              commissionSubtitle:
-                                  "${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.earnings.currentMonthCommission ?? 0).toDouble())} earned this month",
-                              level:
+                            Obx(
+                              () =>  buildBestResellerOnTheMonth(
+                                month: "${DateFormat('MMMM').format(DateTime.now())}",
+                                year: "${DateFormat('yyyy').format(DateTime.now())}",
+                                totalCommission:
+                                    "${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.earnings.totalCommission ?? 0).toDouble())}",
+                                commissionSubtitle:
+                                    "${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.earnings.currentMonthCommission ?? 0).toDouble())} earned this month",
+                                level:
+                                    controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .level
+                                        .currentLevel ??
+                                    '',
+                                levelSubtitle: calculateProgress(
                                   controller
-                                      .resellerInsightsModel
-                                      .value
-                                      ?.data
-                                      .level
-                                      .currentLevel ??
-                                  '',
-                              levelSubtitle: calculateProgress(
-                                controller
-                                        .resellerInsightsModel
-                                        .value
-                                        ?.data
-                                        .level
-                                        .progressToNextLevel ??
-                                    0,
-                                controller
-                                        .resellerInsightsModel
-                                        .value
-                                        ?.data
-                                        .level
-                                        .amountToNextLevel ??
-                                    0,
+                                          .resellerInsightsModel
+                                          .value
+                                          ?.data
+                                          .level
+                                          .progressToNextLevel ??
+                                      0,
+                                  controller
+                                          .resellerInsightsModel
+                                          .value
+                                          ?.data
+                                          .level
+                                          .amountToNextLevel ??
+                                      0,
+                                ),
+                                totalLeads:
+                                    "${controller.resellerInsightsModel.value?.data.performance.totalLeads}",
+                                leadsSubtitle:
+                                    "${controller.resellerInsightsModel.value?.data.performance.currentMonthLeads} Generated this month",
+                                commissionColor: ColorRes.success,
+                                levelColor: ColorRes.purpleColor.shade800,
+                                leadsColor: ColorRes.blueColor,
                               ),
-                              totalLeads:
-                                  "${controller.resellerInsightsModel.value?.data.performance.totalLeads}",
-                              leadsSubtitle:
-                                  "${controller.resellerInsightsModel.value?.data.performance.currentMonthLeads} Generated this month",
-                              commissionColor: ColorRes.success,
-                              levelColor: ColorRes.purpleColor.shade800,
-                              leadsColor: ColorRes.blueColor,
                             ),
 
                             const SizedBox(height: 20),
 
-                            resellerLeaderBoard(
-                              title: 'Leaderboard',
-                              bannerTitle: 'Top 10 (Overall)',
-                              bannerSubtitle: 'Gets Extra Rewards',
-                              leaderboardData:
-                                  controller
-                                      .resellerInsightsModel
-                                      .value
-                                      ?.data
-                                      .leaderboard
-                                      .topResellers ??
-                                  [],
+                            Obx(() =>  resellerLeaderBoard(
+                                title: 'Leaderboard',
+                                bannerTitle: 'Top 10 (Overall)',
+                                bannerSubtitle: 'Gets Extra Rewards',
+                                leaderboardData:
+                                    controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .leaderboard
+                                        .topResellers ??
+                                    [],
+                              ),
                             ),
 
                             const SizedBox(height: 20),
 
-                            buildLeaderBoardRanking(
-                              title: 'Leaderboard Rankings',
-                              subtitle: 'Top performers across regions',
-                              filters: ['All', 'City-wise', 'Monthly'],
-                              leaderboardData: [
-                                {
-                                  'rank': 1,
-                                  'name': 'Rajesh Kumar',
-                                  'level': 'Platinum Level',
-                                  'city': 'Ahmedabad',
-                                  'sales': '₹35L',
-                                  'deals': '70',
-                                  'color': ColorRes.orangeColor.withOpacity(
-                                    0.05,
-                                  ),
-                                  'borderColor': ColorRes.orangeColor
-                                      .withOpacity(0.3),
-                                  'medalIcon': Icons.emoji_events,
-                                },
-                                {
-                                  'rank': 2,
-                                  'name': 'Priya Sharma',
-                                  'level': 'Platinum Level',
-                                  'city': 'Ahmedabad',
-                                  'sales': '₹32L',
-                                  'deals': '64',
-                                  'color': ColorRes.orangeColor.withOpacity(
-                                    0.05,
-                                  ),
-                                  'borderColor': ColorRes.orangeColor
-                                      .withOpacity(0.3),
-                                  'medalIcon': Icons.emoji_events,
-                                },
-                                {
-                                  'rank': 3,
-                                  'name': 'You',
-                                  'level': 'Gold Level',
-                                  'city': 'Ahmedabad',
-                                  'sales': '₹29L',
-                                  'deals': '57',
-                                  'color': ColorRes.green.withOpacity(0.05),
-                                  'borderColor': ColorRes.green.withOpacity(
-                                    0.3,
-                                  ),
-                                  'medalIcon': Icons.emoji_events,
-                                  'isCurrentUser': true,
-                                },
-                                {
-                                  'rank': 4,
-                                  'name': 'Amit Patel',
-                                  'level': 'Gold Level',
-                                  'city': 'Ahmedabad',
-                                  'sales': '₹24L',
-                                  'deals': '48',
-                                  'color': ColorRes.leadGreyColor.withOpacity(
-                                    0.05,
-                                  ),
-                                  'borderColor': ColorRes.leadGreyColor
-                                      .withOpacity(0.3),
-                                  'medalIcon': null,
-                                },
-                                {
-                                  'rank': 5,
-                                  'name': 'Neha Desai',
-                                  'level': 'Silver Level',
-                                  'city': 'Ahmedabad',
-                                  'sales': '₹21L',
-                                  'deals': '42',
-                                  'color': ColorRes.blueColor.withOpacity(0.05),
-                                  'borderColor': ColorRes.blueColor.withOpacity(
-                                    0.3,
-                                  ),
-                                  'medalIcon': null,
-                                },
-                              ],
+                            Obx(
+                              () =>  buildLeaderBoardRanking(
+                                title: 'Leaderboard Rankings',
+                                subtitle: 'Top performers across regions',
+                                filters: ['All', 'City-wise', 'Monthly'],
+                                // leaderboardData: [
+                                //   {
+                                //     'rank': 1,
+                                //     'name': 'Rajesh Kumar',
+                                //     'level': 'Platinum Level',
+                                //     'city': 'Ahmedabad',
+                                //     'sales': '₹35L',
+                                //     'deals': '70',
+                                //     'color': ColorRes.orangeColor.withOpacity(
+                                //       0.05,
+                                //     ),
+                                //     'borderColor': ColorRes.orangeColor
+                                //         .withOpacity(0.3),
+                                //     'medalIcon': Icons.emoji_events,
+                                //   },
+                                //   {
+                                //     'rank': 2,
+                                //     'name': 'Priya Sharma',
+                                //     'level': 'Platinum Level',
+                                //     'city': 'Ahmedabad',
+                                //     'sales': '₹32L',
+                                //     'deals': '64',
+                                //     'color': ColorRes.orangeColor.withOpacity(
+                                //       0.05,
+                                //     ),
+                                //     'borderColor': ColorRes.orangeColor
+                                //         .withOpacity(0.3),
+                                //     'medalIcon': Icons.emoji_events,
+                                //   },
+                                //   {
+                                //     'rank': 3,
+                                //     'name': 'You',
+                                //     'level': 'Gold Level',
+                                //     'city': 'Ahmedabad',
+                                //     'sales': '₹29L',
+                                //     'deals': '57',
+                                //     'color': ColorRes.green.withOpacity(0.05),
+                                //     'borderColor': ColorRes.green.withOpacity(
+                                //       0.3,
+                                //     ),
+                                //     'medalIcon': Icons.emoji_events,
+                                //     'isCurrentUser': true,
+                                //   },
+                                //   {
+                                //     'rank': 4,
+                                //     'name': 'Amit Patel',
+                                //     'level': 'Gold Level',
+                                //     'city': 'Ahmedabad',
+                                //     'sales': '₹24L',
+                                //     'deals': '48',
+                                //     'color': ColorRes.leadGreyColor.withOpacity(
+                                //       0.05,
+                                //     ),
+                                //     'borderColor': ColorRes.leadGreyColor
+                                //         .withOpacity(0.3),
+                                //     'medalIcon': null,
+                                //   },
+                                //   {
+                                //     'rank': 5,
+                                //     'name': 'Neha Desai',
+                                //     'level': 'Silver Level',
+                                //     'city': 'Ahmedabad',
+                                //     'sales': '₹21L',
+                                //     'deals': '42',
+                                //     'color': ColorRes.blueColor.withOpacity(0.05),
+                                //     'borderColor': ColorRes.blueColor.withOpacity(
+                                //       0.3,
+                                //     ),
+                                //     'medalIcon': null,
+                                //   },
+                                // ],
+                                leaderboardData:   controller
+                                    .resellerInsightsModel
+                                    .value
+                                    ?.data
+                                    .leaderboard
+                                    .topResellers ??
+                                    [],
+                              ),
                             ),
 
                             const SizedBox(height: 20),
 
-                            buildTopPropertyForGoodCommission(
-                              controller,
-                              controller.itemData,
+                            Obx(
+                              () =>  buildTopPropertyForGoodCommission(
+                                controller,
+                                controller.itemData,
+                              ),
                             ),
                             const SizedBox(height: 20),
 
@@ -1687,7 +1702,7 @@ Widget buildLeaderBoardRanking({
   required String title,
   required String subtitle,
   required List<String> filters,
-  required List<Map<String, dynamic>> leaderboardData,
+  required List<TopReseller> leaderboardData,
   Color headerIconColor = const Color(0xFFFF9800),
   Color defaultFilterColor = Colors.grey,
   Color activeFilterColor = Colors.orange,
@@ -1766,16 +1781,20 @@ Widget buildLeaderBoardRanking({
           itemBuilder: (context, index) {
             final data = leaderboardData[index];
             return buildLeaderCard(
-              rank: data['rank'],
-              name: data['name'],
-              level: data['level'],
-              city: data['city'],
-              sales: data['sales'],
-              deals: data['deals'],
-              color: data['color'],
-              borderColor: data['borderColor'],
-              medalIcon: data['medalIcon'],
-              isCurrentUser: data['isCurrentUser'] ?? false,
+              rank: data.rank,
+              name: data.name,
+              level: data.level,
+              city: data.city,
+              sales: '0',
+              deals: '0',
+              color: data.isCurrentUser == true
+                  ? ColorRes.orangeColor.withOpacity(0.1)
+                  : ColorRes.leadGreyColor.withOpacity(0.05),
+              borderColor: data.isCurrentUser == true
+                  ? ColorRes.orangeColor[700]!
+                  : ColorRes.leadGreyColor[300]!,
+              medalIcon: data.rank <= 3 ? Icons.emoji_events : null,
+              isCurrentUser: data.isCurrentUser ?? false,
             );
           },
         ),
@@ -4184,3 +4203,14 @@ double calculateCommissionPercentage(num lastMonth, num currentMonth) {
 
   return double.parse(percentageChange.toStringAsFixed(2));
 }
+String getFormattedDate() {
+  final now = DateTime.now();
+  final day = now.day;
+  final month = _monthNames[now.month - 1];
+  final year = now.year;
+  return '$day $month $year';
+}
+const List<String> _monthNames = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+];

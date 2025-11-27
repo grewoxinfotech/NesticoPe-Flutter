@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -8,7 +10,8 @@ import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
-import 'package:housing_flutter_app/modules/profile/views/profile_detail.dart';
+import 'package:housing_flutter_app/modules/profile/views/seller_profile_detail.dart';
+import 'package:housing_flutter_app/modules/profile/views/widget/buyer_profile.dart';
 import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
@@ -22,6 +25,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/font_res.dart';
+
+import '../controllers/buyer_profiledata.dart';
 
 // class ProfileDetailScreen extends StatelessWidget {
 //   const ProfileDetailScreen({Key? key}) : super(key: key);
@@ -182,15 +187,17 @@ import 'package:housing_flutter_app/app/constants/font_res.dart';
 class ProfileScreen extends StatelessWidget {
   final String imageUrl;
 
-  const ProfileScreen({super.key, required this.imageUrl});
+   ProfileScreen({super.key, required this.imageUrl});
 
   // Constants for better maintainability
   static const double _defaultPadding = 16.0;
   static const double _cardRadius = 16.0;
   static const double _profileRadius = 36.0;
+  final profileController = Get.find<BuyerProfileDataController>();
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: _buildAppBar(),//
@@ -201,7 +208,7 @@ class ProfileScreen extends StatelessWidget {
               UserHelper.isGuest
                   ? Column(
                     children: [
-                      _buildProfileCard(),
+                      _buildProfileCard(BuyerProfileDataController()),
                       SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
@@ -256,7 +263,7 @@ class ProfileScreen extends StatelessWidget {
                   : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProfileCard(),
+                       _buildProfileCard(profileController),
                       const SizedBox(height: 20),
                       SettingsMenuTile(
                         icon: Icons.monitor_heart_outlined,
@@ -340,7 +347,7 @@ class ProfileScreen extends StatelessWidget {
       elevation: 0,
       backgroundColor: ColorRes.white,
       title: const Text(
-        "My Activity",
+        "My Profile",
         style: TextStyle(
           color: ColorRes.black,
           fontWeight: AppFontWeights.extraBold,
@@ -349,40 +356,74 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard() {
-    return GestureDetector(
-      onTap: () {
-        Get.to(() => SellerProfileScreen());
-      },
-      child: Container(
-        padding: const EdgeInsets.all(_defaultPadding),
-        decoration: BoxDecoration(
-          color: ColorRes.white,
-          borderRadius: BorderRadius.circular(_cardRadius),
-          boxShadow: const [
-            BoxShadow(
-              color: ColorRes.blackShade12,
-              blurRadius: 8,
-              offset: Offset(0, 4),
+  Widget _buildProfileCard(BuyerProfileDataController? profileController) {
+    return Container(
+      padding: const EdgeInsets.all(_defaultPadding),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(_cardRadius),
+        boxShadow: const [
+          BoxShadow(
+            color: ColorRes.blackShade12,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Obx(() =>  _buildProfileAvatar(profileController?.userProfile.value?.profilePic??'')),
+              const SizedBox(width: 16),
+
+              Expanded(child: Obx(() => _ProfileWelcomeSection(name:profileController?.userProfile.value?.username??''))),
+
+            ],
+          ),
+          Divider(
+            color: ColorRes.leadGreyColor.shade200,
+          ),
+          const SizedBox(height: 4),
+          // 🧭 Visit Profile button
+          GestureDetector(
+            onTap: () {
+              Get.to(() => BuyerProfileScreen());
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+
+                Text(
+                  "Visit Profile",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.bodySmall,
+                    fontWeight: AppFontWeights.medium,
+                    color: ColorRes.primary, // subtle emphasis
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: ColorRes.primary,
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            _buildProfileAvatar(),
-            const SizedBox(width: 16),
-            Expanded(child: _ProfileWelcomeSection()),
-          ],
-        ),
+          )
+
+
+        ],
       ),
     );
   }
 
-  Widget _buildProfileAvatar() {
-    return imageUrl.isNotEmpty
+  Widget _buildProfileAvatar(String image) {
+    log("djfgdfg $image");
+    return image.isNotEmpty
         ? CircleAvatar(
           radius: _profileRadius,
-          backgroundImage: NetworkImage(imageUrl),
+          backgroundImage: NetworkImage(image),
           onBackgroundImageError: (_, __) {
             // Fallback to default avatar on image error
           },
@@ -481,10 +522,14 @@ class ProfileScreen extends StatelessWidget {
 
 // Separate widget for profile welcome section (better for maintainability)
 class _ProfileWelcomeSection extends StatelessWidget {
-   _ProfileWelcomeSection();
+  var name;
+
+
+   _ProfileWelcomeSection({required this.name});
 
   @override
   Widget build(BuildContext context) {
+    log("dhfdfhtghtu $name");
     // Fetch string values (safe for null)
     final userType = UserHelper.userTypeString ?? "guest";
     final sellerType = UserHelper.sellerTypeStringValue;
@@ -493,14 +538,14 @@ class _ProfileWelcomeSection extends StatelessWidget {
     String displayRole = userType[0].toUpperCase() + userType.substring(1);
     String displaySellerType =
         sellerType != null
-            ? "(${sellerType[0].toUpperCase()}${sellerType.substring(1)})"
+            ? "(${name})"
             : "";
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Hello 👋 $displayRole $displaySellerType",
+          "Hello 👋 ${name ?? 'Guest'}",
           style: TextStyle(
             fontSize: AppFontSizes.medium,
             fontWeight: AppFontWeights.bold,

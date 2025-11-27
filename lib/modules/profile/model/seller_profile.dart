@@ -86,7 +86,7 @@ class UserUpdateProfile {
   final String firstName;
   final String lastName;
   final String phone;
-  final String image;
+   String? image;
   final String address;
   final String email;
   final String city;
@@ -98,7 +98,7 @@ class UserUpdateProfile {
     required this.lastName,
     required this.phone,
     required this.address,
-    required this.image,
+     this.image,
     required this.email,
     required this.city,
     required this.state,
@@ -114,7 +114,7 @@ class UserUpdateProfile {
       city: map['city'] ?? '',
       state: map['state'] ?? '',
       address: map['address']??'',
-      profileData: SellerProfileData.fromMap(map['profiledata'] ?? {}), image: map['profilePic'],
+      profileData: SellerProfileData.fromMap(map['profiledata'] ?? {}), image: map['profilePic']??'',
     );
   }
 
@@ -127,7 +127,7 @@ class UserUpdateProfile {
       'city': city,
       'state': state,
       'address':address,
-      'profilePic':image,
+      'profilePic':image??"",
       'profiledata': profileData.toMap(),
     };
   }

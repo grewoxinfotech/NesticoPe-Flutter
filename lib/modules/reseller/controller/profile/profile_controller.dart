@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 import 'dart:io';
 
@@ -14,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/getProfile/model/getProfile_model.dart';
 import '../../../../data/network/profile/reseller_profile/model/reseller_update_profile_model.dart';
+import '../../../../data/network/user/service/user_service.dart';
 import '../../model/user/user_model.dart';
 
 class ProfileController extends GetxController {
@@ -21,6 +20,7 @@ class ProfileController extends GetxController {
   final RxBool isEditing = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
+  UserService _userService=UserService();
   final Rxn<ResellerProfile> resellerProfile = Rxn<ResellerProfile>();
   final Rx<UserProfile> profile =
       UserProfile(
@@ -72,6 +72,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     loadProfile();
+    getUserProfile();
     getUserProfileData();
   }
 
@@ -84,9 +85,26 @@ class ProfileController extends GetxController {
       isLoading.value = false;
     });
   }
+  Future<User> getUserProfile() async {
+    final data = await SecureStorage.getUserData();
+    final userId=data?.user?.id;
+    User? user = await _userService.getUserById(userId??'');
+    if (user != null) {
+      return user;
+
+    } else {
+      print("Failed to fetch user profile");
+      return User();
+    }
+  }
 
   Future<void> getUserProfileData() async {
-    profileData.value = await SecureStorage.getUserData();
+    // Fetch user and ensure profileData is initialized before assigning
+    final user = await getUserProfile();
+
+    // Initialize profileData with fetched user so subsequent `.user` reads work
+    profileData.value = UserModel(user: user);
+
     if (profileData.value?.user?.userType == 'reseller') {
       print("jfhfhh ${profileData.value?.toJson()}");
       final data = await GetProfileService.getProfileService.getUserProfileData(
@@ -97,7 +115,7 @@ class ProfileController extends GetxController {
     print("Lok ${resellerProfile.value?.data}");
   }
   Future<Map<String, dynamic>> updateResellerProfile(User userProfile) async {
-    profileData.value = await SecureStorage.getUserData();
+    profileData.value?.user = await getUserProfile();
     if (profileData.value?.user?.userType == 'reseller') {
       print("jfhfhh ${profileData.value?.toJson()}");
       print("🟫 Sending Update Request for User ID: ${profileData.value?.user?.id}");
@@ -106,6 +124,7 @@ class ProfileController extends GetxController {
       final data = await ProfileUpdate.profileUpdate.updateProfileDetails(
         userProfile,
         profileData.value?.user?.id ?? '',
+        selectedImage.value
       );
 
       return data;
@@ -122,7 +141,7 @@ class ProfileController extends GetxController {
     companyController.text = profileData.value?.user?.state ?? "";
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
-    selectedImage.value=File(profileData.value?.user?.profilePic??'');
+
   }
 
   void toggleEdit() {
@@ -532,7 +551,6 @@ class ProfileController extends GetxController {
       lastName: lastNameController.text,
       address: addressController.text,
       zipCode: zipController.text,
-      profilePic: image ?? '',
       username: profileData.value?.user?.username,
       userType: "reseller",
       roleId: profileData.value?.user?.roleId,
@@ -1022,4 +1040,3 @@ class ProfileController extends GetxController {
     super.onClose();
   }
 }
-

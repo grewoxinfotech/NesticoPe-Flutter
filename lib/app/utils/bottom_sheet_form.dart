@@ -152,74 +152,103 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
   Widget build(BuildContext context) {
     if (widget.inQuireSubmitted) {
       return Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 20),
+            // Close button
+            Align(
+              alignment: Alignment.topRight,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(50),
+                onTap: () => Get.back(),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: ColorRes.leadGreyColor.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.close_rounded,
+                    color: ColorRes.primary,
+                    size: 22,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
             // Success Icon
             Container(
-              width: 80,
-              height: 80,
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(
                 color: ColorRes.success.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.check_circle,
+                Icons.check_circle_rounded,
                 color: ColorRes.success,
-                size: 50,
+                size: 45,
               ),
             ),
+
             const SizedBox(height: 24),
-            // Success Title
+
+            // Title
             Text(
               "Inquiry Already Submitted!",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: AppFontWeights.bold,
                 color: ColorRes.blueGrey,
               ),
             ),
+
             const SizedBox(height: 12),
-            // Success Message
+
+            // Subtitle / message
             Text(
-              "You have already submitted an inquiry for this property. The owner will contact you soon.",
+              "You’ve already submitted an inquiry for this property.\nThe owner will contact you soon.",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 15,
                 color: ColorRes.leadGreyColor,
                 height: 1.5,
               ),
             ),
-            const SizedBox(height: 32),
-            // Close Button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorRes.primary,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              onPressed: () {
-                Get.back();
-              },
-              child: Text(
-                "Close",
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.white,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 28),
+
+            // Optional action button
+            // SizedBox(
+            //   width: double.infinity,
+            //   child: ElevatedButton(
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: ColorRes.primary,
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(12),
+            //       ),
+            //       padding: const EdgeInsets.symmetric(vertical: 14),
+            //     ),
+            //     onPressed: () => Get.back(),
+            //     child: Text(
+            //       "Got It",
+            //       style: TextStyle(
+            //         fontSize: 16,
+            //         fontWeight: AppFontWeights.medium,
+            //         color: Colors.white,
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       );
+
     }else{
       return Form(
         key: _formKey,

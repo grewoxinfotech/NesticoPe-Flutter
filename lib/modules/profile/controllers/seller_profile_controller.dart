@@ -1,7 +1,6 @@
-
-
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +14,7 @@ import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/getProfile/model/getProfile_model.dart';
 import '../../../../data/network/profile/reseller_profile/model/reseller_update_profile_model.dart';
 import '../../../data/network/profile/seller/service/seller_service.dart';
+import '../../../data/network/user/service/user_service.dart';
 import '../../reseller/model/user/user_model.dart';
 import '../model/seller_profile.dart';
 
@@ -24,6 +24,7 @@ class SellerProfileController extends GetxController {
   final RxBool isEditing = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
+  UserService _userService=UserService();
   final Rxn<ProfileSellerModel> resellerProfile = Rxn<ProfileSellerModel>();
   final Rx<UserProfile> profile =
       UserProfile(
@@ -82,21 +83,42 @@ class SellerProfileController extends GetxController {
   void onInit() {
     super.onInit();
     loadProfile();
+     getUserProfile();
     getUserProfileData();
+
   }
 
   void loadProfile() {
     isLoading.value = true;
 
     // Simulate API call
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      await getUserProfileData();
       _populateControllers();
       isLoading.value = false;
     });
   }
+  Future<User> getUserProfile() async {
+    final data = await SecureStorage.getUserData();
+    final userId=data?.user?.id;
+    debugPrint('Fetched User Seller: ${userId}');
+    User? user = await _userService.getUserById(userId??'');
 
+    if (user != null) {
+   return user;
+
+    } else {
+      print("Failed to fetch user profile");
+      return User();
+    }
+  }
   Future<void> getUserProfileData() async {
-    profileData.value = await SecureStorage.getUserData();
+
+    final user = await getUserProfile();
+
+    // Initialize profileData with fetched user so subsequent `.user` reads work
+    profileData.value = UserModel(user: user);
+
     if (profileData.value?.user?.userType == 'seller') {
       print("vkjbhfjgi ${profileData.value?.toJson()}");
       final data = await SellerProfileUpdate.profileUpdate.getUserProfileData(
@@ -109,18 +131,19 @@ class SellerProfileController extends GetxController {
     print("Lok ${resellerProfile.value?.id}");
   }
   Future<Map<String, dynamic>> updateResellerProfile(UserUpdateProfile userProfile) async {
-    profileData.value = await SecureStorage.getUserData();
+    profileData.value?.user = await getUserProfile();
     if (profileData.value?.user?.userType == 'seller') {
       print("jfhfhh ${profileData.value?.toJson()}");
       print("🟫 Sending Update Request for User ID: ${profileData.value?.user?.id}");
-      print("🟩 Payload: ${userProfile.toMap()}");
+      print("🟩 Payloadshfdufhdu: ${userProfile.toMap()}");
 
       final data = await SellerProfileUpdate.profileUpdate.updateSellerProfileDetails(
         userProfile,
         profileData.value?.user?.id ?? '',
+        profileImageFile: selectedImage.value!=null?selectedImage.value!:File(profileData.value?.user?.profilePic.toString()??''),
+
       );
 
-      // Return full response (success, otpRequired, message, etc.)
       return data;
     }
     return {'success': false, 'message': 'Invalid user type'};
@@ -136,7 +159,7 @@ class SellerProfileController extends GetxController {
     companyController.text = profileData.value?.user?.state ?? "";
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
-    selectedImage.value=File(profileData.value?.user?.profilePic??'');
+    // selectedImage.value=profile.value.avatarUrl;
     
     
     // Business Details fields from seller profile
@@ -173,13 +196,7 @@ class SellerProfileController extends GetxController {
       if (image != null) {
         final file = File(image.path);
         selectedImage.value = file;
-        // project.update((p) {
-        //   if (p == null) return;
-        //   for (var file in files) {
-        //     p.imageList.add(file.path);
-        //     print('image added ${file.path}');
-        //   }
-        // });
+
         print("📱 Selected local file: ${file.uri}");
 
 
@@ -415,7 +432,6 @@ print(" fdjnfjudfhur $image");
         lastName: lastNameController.text,
         phone: phoneController.text,
         address: addressController.text,
-        image:image??'',
         profileData: SellerProfileData(
           contactName: contactPersonController.text,
           contactPhone: contactPhoneController.text,
@@ -457,9 +473,6 @@ print(" fdjnfjudfhur $image");
           city: positionController.text,
           zipCode: zipController.text,
           state: companyController.text,
-          profilePic:
-          image ??
-              profileData.value?.user?.profilePic,
           username: profileData.value?.user?.username,
           userType: profileData.value?.user?.userType,
           roleId: profileData.value?.user?.roleId,
@@ -925,6 +938,3 @@ print(" fdjnfjudfhur $image");
     super.onClose();
   }
 }
-
-
-

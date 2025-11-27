@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/app/widgets/expandable_tile/expandable_widget.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
@@ -14,9 +15,14 @@ import 'package:get/get.dart';
 import '../../reseller/controller/profile/profile_controller.dart';
 import '../controllers/seller_profile_controller.dart';
 
-class SellerProfileScreen extends StatelessWidget {
+class SellerProfileScreen extends StatefulWidget {
   const SellerProfileScreen({Key? key}) : super(key: key);
 
+  @override
+  State<SellerProfileScreen> createState() => _SellerProfileScreenState();
+}
+
+class _SellerProfileScreenState extends State<SellerProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.put(SellerProfileController());
@@ -62,54 +68,58 @@ class SellerProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Obx(() {
-        if (profileController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return (profileController.profileData.value?.user?.userType == "seller")
-            ? SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: profileController.formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Profile Header
-                    _buildProfileHeader(profileController),
-                    const SizedBox(height: 16),
-
-                    // Contact Info Section (Editable)
-                    Obx(() => _buildContactInfoSection(profileController)),
-                    const SizedBox(height: 16),
-
-                    // Business Details Section (Editable)
-                    Obx(() => _buildBusinessDetailsSection(profileController)),
-                    const SizedBox(height: 16),
-
-                    // Seller Details Section (Read-only)
-                    if (!profileController.isEditing.value)
-                      _buildSellerDetailsSection(profileController),
-                    if (!profileController.isEditing.value)
+      body: SafeArea(
+        child: Obx(() {
+          if (profileController.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
+        
+          return (UserHelper.isSeller)
+              ? SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: profileController.formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Profile Header
+                      _buildProfileHeader(profileController),
                       const SizedBox(height: 16),
-
-                    // Account Information Section (Read-only)
-                    if (!profileController.isEditing.value)
-                      _buildAccountInfoSection(profileController),
-                    if (!profileController.isEditing.value)
+        
+                      // Contact Info Section (Editable)
+                      Obx(() => _buildContactInfoSection(profileController)),
                       const SizedBox(height: 16),
-
-                    // Profile Options
-                    if (!profileController.isEditing.value) ...[
-                      _buildProfileOptionsSection(),
-                      const SizedBox(height: 16),
+        
+                      // Business Details Section (Editable)
+                   if(UserHelper.isSellerBuilder)...[
+                     Obx(() => _buildBusinessDetailsSection(profileController)),
+                     const SizedBox(height: 16),
+                   ],
+        
+                      // Seller Details Section (Read-only)
+                      if (!profileController.isEditing.value)
+                        _buildSellerDetailsSection(profileController),
+                      if (!profileController.isEditing.value)
+                        const SizedBox(height: 16),
+        
+                      // Account Information Section (Read-only)
+                      if (!profileController.isEditing.value)
+                        _buildAccountInfoSection(profileController),
+                      if (!profileController.isEditing.value)
+                        const SizedBox(height: 16),
+        
+                      // Profile Options
+                      if (!profileController.isEditing.value) ...[
+                        _buildProfileOptionsSection(),
+                        const SizedBox(height: 16),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-            )
-            : SizedBox.shrink();
-      }),
+              )
+              : SizedBox.shrink();
+        }),
+      ),
     );
   }
 
@@ -132,24 +142,27 @@ class SellerProfileScreen extends StatelessWidget {
               Obx(() {
                 ImageProvider? imageProvider;
 
-                // Priority: selectedImage (local file) > profilePic (network URL) > null
+                // ✅ 1. Check if user selected a new local image
                 if (controller.selectedImage.value != null) {
-                  // If user selected a new image from gallery/camera
                   imageProvider = FileImage(controller.selectedImage.value!);
-                } else if (controller
-                        .profileData
-                        .value
-                        ?.user
-                        ?.profilePic
-                        ?.isNotEmpty ??
-                    false) {
-                  // If profile pic URL exists from API
-                  imageProvider = FileImage(
-                    File(controller.profileData.value!.user!.profilePic!),
-                  );
                 }
-                // If both are null, imageProvider stays null and shows placeholder icon
+                // ✅ 2. Else use profilePic from API
+                else {
+                  final profilePic = controller.profileData.value?.user?.profilePic;
 
+                  if (profilePic != null && profilePic.isNotEmpty) {
+                    // ✅ If it's a network URL
+                    if (profilePic.startsWith('http') || profilePic.startsWith('https')) {
+                      imageProvider = NetworkImage(profilePic);
+                    }
+                    // ✅ Else if it's a valid local file path
+                    else if (File(profilePic).existsSync()) {
+                      imageProvider = FileImage(File(profilePic));
+                    }
+                  }
+                }
+
+                // ✅ 3. Build the circular avatar
                 return Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -160,22 +173,67 @@ class SellerProfileScreen extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 35,
                       backgroundColor:
-                          imageProvider == null
-                              ? ColorRes.primary.withOpacity(0.1)
-                              : null,
+                      imageProvider == null ? ColorRes.primary.withOpacity(0.1) : null,
                       backgroundImage: imageProvider,
-                      child:
-                          imageProvider == null
-                              ? Icon(
-                                Icons.person,
-                                size: 25,
-                                color: ColorRes.primary.withOpacity(0.8),
-                              )
-                              : null,
+                      child: imageProvider == null
+                          ? Icon(
+                        Icons.person,
+                        size: 25,
+                        color: ColorRes.primary.withOpacity(0.8),
+                      )
+                          : null,
                     ),
                   ),
                 );
               }),
+
+              // Obx(() {
+              //   ImageProvider? imageProvider;
+              //
+              //   // Priority: selectedImage (local file) > profilePic (network URL) > null
+              //   if (controller.selectedImage.value != null) {
+              //     // If user selected a new image from gallery/camera
+              //     imageProvider = FileImage(controller.selectedImage.value!);
+              //   } else if (controller
+              //           .profileData
+              //           .value
+              //           ?.user
+              //           ?.profilePic
+              //           ?.isNotEmpty ??
+              //       false) {
+              //     // If profile pic URL exists from API
+              //     imageProvider = FileImage(
+              //       File(controller.profileData.value!.user!.profilePic!),
+              //     );
+              //   }
+              //   // If both are null, imageProvider stays null and shows placeholder icon
+              //
+              //   return Container(
+              //     decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       border: Border.all(color: ColorRes.primary, width: 2),
+              //     ),
+              //     child: Padding(
+              //       padding: const EdgeInsets.all(2.0),
+              //       child: CircleAvatar(
+              //         radius: 35,
+              //         backgroundColor:
+              //             imageProvider == null
+              //                 ? ColorRes.primary.withOpacity(0.1)
+              //                 : null,
+              //         backgroundImage: imageProvider,
+              //         child:
+              //             imageProvider == null
+              //                 ? Icon(
+              //                   Icons.person,
+              //                   size: 25,
+              //                   color: ColorRes.primary.withOpacity(0.8),
+              //                 )
+              //                 : null,
+              //       ),
+              //     ),
+              //   );
+              // }),
               if (controller.isEditing.value)
                 Positioned(
                   bottom: -2,
@@ -247,7 +305,7 @@ class SellerProfileScreen extends StatelessWidget {
                     SizedBox(
                       width: 150,
                       child: Text(
-                        '${controller.profileData.value?.user?.address ?? 'Not Define'} ',
+                        '${controller.profileData.value?.user?.city ?? 'Not Define'} ',
                         style: TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.leadGreyColor[600],
@@ -268,59 +326,6 @@ class SellerProfileScreen extends StatelessWidget {
   }
 
   // Widget _buildAccountHealthCard() {
-  //   return Container(
-  //     padding: const EdgeInsets.all(16),
-  //     decoration: BoxDecoration(
-  //       color: Colors.grey[50],
-  //       borderRadius: BorderRadius.circular(8),
-  //       border: Border.all(color: Colors.grey[200]!),
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           'ACCOUNT HEALTH',
-  //           style: TextStyle(
-  //             fontSize: 11,
-  //             fontWeight: FontWeight.w600,
-  //             color: Colors.grey[600],
-  //             letterSpacing: 0.5,
-  //           ),
-  //         ),
-  //         const SizedBox(height: 8),
-  //         Row(
-  //           children: [
-  //             Container(
-  //               padding: const EdgeInsets.symmetric(
-  //                 horizontal: 10,
-  //                 vertical: 4,
-  //               ),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.orange[50],
-  //                 borderRadius: BorderRadius.circular(4),
-  //                 border: Border.all(color: Colors.orange[300]!),
-  //               ),
-  //               child: Text(
-  //                 'Warning',
-  //                 style: TextStyle(
-  //                   fontSize: 13,
-  //                   fontWeight: FontWeight.w600,
-  //                   color: Colors.orange[700],
-  //                 ),
-  //               ),
-  //             ),
-  //             const SizedBox(width: 8),
-  //             Text(
-  //               '(3 more to block)',
-  //               style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _buildAccountHealthCard({required int remainingWarnings}) {
     return Container(
       padding: const EdgeInsets.all(16),

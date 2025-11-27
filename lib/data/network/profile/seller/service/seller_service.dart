@@ -46,44 +46,112 @@ class SellerProfileUpdate {
     }
   }
 
+  // Future<Map<String, dynamic>> updateSellerProfileDetails(
+  //     UserUpdateProfile user,
+  //     String userId,) async {
+  //   try {
+  //     // If there's a profile image file, use multipart upload
+  //     // Otherwise, use regular JSON update
+  //     final response = await http.put(
+  //       Uri.parse('$_baseUrl/$userId'),
+  //       headers: await header(),
+  //       body: jsonEncode(user.toMap()),
+  //     );
+  //
+  //     final decoded = jsonDecode(response.body);
+  //     print('📦 Reseller Profile Update Response: $decoded');
+  //     print('📦 Status Code: ${response.statusCode}');
+  //
+  //     if (decoded['otpRequired'] == true ||
+  //         decoded['message']?.toString().toLowerCase().contains('otp') ==
+  //             true) {
+  //       // Save updatePhoneToken if present
+  //       if (decoded['updatePhoneToken'] != null) {
+  //         await SecureStorage.saveToken(decoded['updatePhoneToken']);
+  //         print('✅ Saved updatePhoneToken for OTP verification');
+  //       }
+  //       // Return full decoded response with OTP data
+  //       return decoded;
+  //     }
+  //
+  //     // For success responses (200/201)
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       return decoded;
+  //     }
+  //
+  //     // For other error responses
+  //     print('⚠️ Reseller Profile Update Error Response: $decoded');
+  //     return decoded;
+  //   } catch (e, stack) {
+  //     print('❌ Exception in Reseller Profile Update: $e');
+  //     print(stack);
+  //     return {
+  //       'success': false,
+  //       'message': 'Error updating profile: ${e.toString()}',
+  //     };
+  //   }
+  // }
   Future<Map<String, dynamic>> updateSellerProfileDetails(
       UserUpdateProfile user,
-      String userId,) async {
+      String userId, {
+        File? profileImageFile,
+      }) async {
     try {
-      // If there's a profile image file, use multipart upload
-      // Otherwise, use regular JSON update
-      final response = await http.put(
-        Uri.parse('$_baseUrl/$userId'),
-        headers: await header(),
-        body: jsonEncode(user.toMap()),
-      );
+      final uri = Uri.parse('$_baseUrl/$userId');
+      final request = http.MultipartRequest('PUT', uri);
+
+      // ✅ Add headers
+      final headersMap = await header();
+      request.headers.addAll(headersMap);
+
+      // ✅ Add profile image (if provided)
+      if (profileImageFile != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'profilePic', // adjust key if needed
+            profileImageFile.path,
+          ),
+        );
+        print('🖼️ Added profile image: ${profileImageFile.path}');
+      }
+
+      // ✅ Convert user object to Map
+      final userMap = user.toMap();
+
+      // ✅ Flatten nested maps (like profiledata)
+      final flattenedMap = _flattenToStringMap(userMap);
+
+      // ✅ Add all flattened fields
+      request.fields.addAll(flattenedMap);
+
+      print('📤 Sending multipart request to $uri');
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
       final decoded = jsonDecode(response.body);
-      print('📦 Reseller Profile Update Response: $decoded');
+      print('📦 Seller Profile Update Response: $decoded');
       print('📦 Status Code: ${response.statusCode}');
 
+      // ✅ Handle OTP-required responses
       if (decoded['otpRequired'] == true ||
-          decoded['message']?.toString().toLowerCase().contains('otp') ==
-              true) {
-        // Save updatePhoneToken if present
+          decoded['message']?.toString().toLowerCase().contains('otp') == true) {
         if (decoded['updatePhoneToken'] != null) {
           await SecureStorage.saveToken(decoded['updatePhoneToken']);
           print('✅ Saved updatePhoneToken for OTP verification');
         }
-        // Return full decoded response with OTP data
         return decoded;
       }
 
-      // For success responses (200/201)
+      // ✅ Success
       if (response.statusCode == 200 || response.statusCode == 201) {
         return decoded;
       }
 
-      // For other error responses
-      print('⚠️ Reseller Profile Update Error Response: $decoded');
+      // ⚠️ Error
+      print('⚠️ Seller Profile Update Error Response: $decoded');
       return decoded;
     } catch (e, stack) {
-      print('❌ Exception in Reseller Profile Update: $e');
+      print('❌ Exception in Seller Profile Update: $e');
       print(stack);
       return {
         'success': false,
@@ -91,6 +159,25 @@ class SellerProfileUpdate {
       };
     }
   }
+  Map<String, String> _flattenToStringMap(Map<String, dynamic> data, [String parentKey = '']) {
+    final result = <String, String>{};
+
+    data.forEach((key, value) {
+      final newKey = parentKey.isEmpty ? key : '$parentKey[$key]';
+      if (value == null) return;
+
+      if (value is Map<String, dynamic>) {
+        result.addAll(_flattenToStringMap(value, newKey));
+      } else {
+        result[newKey] = value.toString();
+      }
+    });
+
+    return result;
+  }
+
+
+
 
   Future<Map<String, dynamic>> verifyOtpForSellerNumber(String otp,
       User user,

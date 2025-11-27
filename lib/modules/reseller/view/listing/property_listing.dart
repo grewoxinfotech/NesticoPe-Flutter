@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -56,12 +58,12 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
       if (userId != null && userId.isNotEmpty) {
         final filter = {"assignedTo": userId};
-        // Apply filters first
-        print("Applying filters: $filter");
         await propertyController.applyFilters(filter);
 
         // Then load initial data
+        log("=============$filter");
         await propertyController.loadInitial();
+        log("=======Apply======$filter");
       } else {
         print("Warning: User ID is null or empty");
       }
@@ -301,54 +303,54 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
       body: Column(
         children: [
           // Enhanced Search Bar
-          Container(
-            color: ColorRes.white,
-            padding: EdgeInsets.fromLTRB(
-              getResponsivePadding(context),
-              12,
-              getResponsivePadding(context),
-              12,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: ColorRes.leadGreyColor[50],
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: ColorRes.leadGreyColor.shade200,
-                  width: 1.5,
-                ),
-              ),
-              child: TextField(
-                onChanged: controller.updateSearch,
-                style: TextStyle(fontSize: AppFontSizes.medium),
-                decoration: InputDecoration(
-                  hintText: 'Search properties by name or location...',
-                  hintStyle: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    color: ColorRes.leadGreyColor[400],
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search_rounded,
-                    color: ColorRes.leadGreyColor[400],
-                  ),
-                  suffixIcon: Obx(
-                    () =>
-                        controller.searchQuery.value.isNotEmpty
-                            ? IconButton(
-                              icon: Icon(
-                                Icons.clear_rounded,
-                                color: ColorRes.leadGreyColor[400],
-                              ),
-                              onPressed: () => controller.updateSearch(''),
-                            )
-                            : SizedBox.shrink(),
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 16),
-                ),
-              ),
-            ),
-          ),
+          // Container(
+          //   color: ColorRes.white,
+          //   padding: EdgeInsets.fromLTRB(
+          //     getResponsivePadding(context),
+          //     12,
+          //     getResponsivePadding(context),
+          //     12,
+          //   ),
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //       color: ColorRes.leadGreyColor[50],
+          //       borderRadius: BorderRadius.circular(16),
+          //       border: Border.all(
+          //         color: ColorRes.leadGreyColor.shade200,
+          //         width: 1.5,
+          //       ),
+          //     ),
+          //     child: TextField(
+          //       onChanged: controller.updateSearch,
+          //       style: TextStyle(fontSize: AppFontSizes.medium),
+          //       decoration: InputDecoration(
+          //         hintText: 'Search properties by name or location...',
+          //         hintStyle: TextStyle(
+          //           fontSize: AppFontSizes.medium,
+          //           color: ColorRes.leadGreyColor[400],
+          //         ),
+          //         prefixIcon: Icon(
+          //           Icons.search_rounded,
+          //           color: ColorRes.leadGreyColor[400],
+          //         ),
+          //         suffixIcon: Obx(
+          //           () =>
+          //               controller.searchQuery.value.isNotEmpty
+          //                   ? IconButton(
+          //                     icon: Icon(
+          //                       Icons.clear_rounded,
+          //                       color: ColorRes.leadGreyColor[400],
+          //                     ),
+          //                     onPressed: () => controller.updateSearch(''),
+          //                   )
+          //                   : SizedBox.shrink(),
+          //         ),
+          //         border: InputBorder.none,
+          //         contentPadding: EdgeInsets.symmetric(vertical: 16),
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
           // Active Filters Display
           Obx(() {

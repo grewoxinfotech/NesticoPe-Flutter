@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -18,16 +20,20 @@ import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../builder/controller/builder_form_controller.dart';
 import '../../builder/view/builder_form_screen.dart';
+import '../../profile/controllers/buyer_profiledata.dart';
 import '../../property/controllers/property_controller.dart';
 
 class HomeHeader extends StatefulWidget {
   final List<String> propertyTypes;
   final String backgroundImage;
+  final String image;
+
 
   const HomeHeader({
     super.key,
     this.backgroundImage =
         "https://sitasurat.in/assets/images/about/surat-city.jpg",
+    this.image="https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
     this.propertyTypes = const [
       "Buy",
       "Sell",
@@ -48,6 +54,7 @@ class HomeHeader extends StatefulWidget {
 class _HomeHeaderState extends State<HomeHeader> {
   final propertyController = Get.find<PropertyController>();
   final projectController = Get.find<ProjectWizardController>();
+
   int selectedIndex = 0;
 
   @override
@@ -127,6 +134,8 @@ class _HomeHeaderState extends State<HomeHeader> {
               // SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
+                  log('dhfgugh djfdfjdn fhgfhglkb ${widget.image
+                      }');
                   Get.to(
                     () => ProfileScreen(
                       imageUrl:
@@ -138,24 +147,16 @@ class _HomeHeaderState extends State<HomeHeader> {
                   width: 45,
                   height: 45,
                   decoration: BoxDecoration(
-                    border: Border.all(color: ColorRes.grey.withOpacity(0.2)),
+                    border: Border.all(color: ColorRes.grey.withOpacity(0.2),width: 2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-
-                  // child: ClipRRect(
-                  //   borderRadius: BorderRadius.circular(10),
-                  //   child: Image.network(
-                  //     "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-                  //     fit: BoxFit.cover,
-                  //   ),
-                  // ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: CustomImage(
                       fit: BoxFit.cover,
                       type: CustomImageType.network,
-                      src:
-                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                      src: widget.image ??
+                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg"
                     ),
                   ),
                 ),

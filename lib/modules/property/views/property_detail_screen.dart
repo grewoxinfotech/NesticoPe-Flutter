@@ -124,7 +124,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   Future<void> _loadData() async {
     try {
       _isLoading.value = true;
-      await controller.getAllInQuireData(widget.property?.propertyId??'');
+      await controller.getAllInQuireData(widget.property?.id??'');
 
       // Fetch property if only ID was provided
       if (widget.property == null && widget.propertyId != null) {
@@ -808,9 +808,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   ),
                   builder: (context) => DraggableScrollableSheet(
                     expand: false,
-                    initialChildSize: 0.85,
-                    minChildSize: 0.5,
-                    maxChildSize: 0.85,
+                    minChildSize: 0.45,
+                    initialChildSize: controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
+                    maxChildSize: controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
                     builder: (context, scrollController) => SingleChildScrollView(
                       controller: scrollController,
                       child: Padding(
@@ -867,7 +867,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                               );
 
                               Get.back();
-                              await controller.getAllInQuireData(widget.property?.propertyId??'');
+                              await controller.getAllInQuireData(widget.property?.id??'');
                             } else {
                               CustomSnackBar.show(
                                 Get.overlayContext!,

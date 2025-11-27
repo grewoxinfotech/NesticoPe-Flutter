@@ -15,6 +15,7 @@ class CompareManager extends GetxController {
 
 
   void toggle(Items item, {int max = 2}) {
+    
     final id = item.id;
     if (id == null) return;
     if (_selected.containsKey(id)) {

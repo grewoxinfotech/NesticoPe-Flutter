@@ -16,6 +16,7 @@ import '../../../../../app/utils/formater/formater.dart';
 import '../../../../../app/widgets/texts/headline_text.dart';
 import '../../../../../data/network/property/models/property_model.dart';
 import '../../../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
+import '../../../../profile/controllers/buyer_profiledata.dart';
 import '../../../../profile/views/profile_screen.dart';
 import '../../../../reseller/view/property_reseller.dart';
 import '../../../../reseller/widget/graph/linear_graph.dart';
@@ -212,6 +213,7 @@ class SellerHomeScreen extends StatefulWidget {
 
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
   final controller = Get.find<PropertyController>();
+  final profileController = Get.find<BuyerProfileDataController>();
 
   @override
   void initState() {
@@ -325,14 +327,17 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color: ColorRes.grey.withOpacity(0.2),
+                                      width: 2
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-                                      fit: BoxFit.cover,
+                                  child: Obx(
+                                    () =>  ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        profileController.userProfile.value?.profilePic??"https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                 ),

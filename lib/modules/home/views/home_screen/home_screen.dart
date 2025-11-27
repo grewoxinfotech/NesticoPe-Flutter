@@ -49,6 +49,7 @@ import '../../../../app/manager/project_compare_manager.dart';
 import '../../../../app/utils/file_upload_section/file_upload_section.dart';
 
 import '../../../add_property/view/create_property.dart';
+import '../../../profile/controllers/buyer_profiledata.dart';
 import '../../../search_property/model/search_model.dart';
 import '../../widgets/unified_comparison_floating_button.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
@@ -251,6 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Get.find<PropertyFavoriteController>();
   final NewsController newsController = Get.put(NewsController());
   final trendingCityController = Get.put(TrendingCityController());
+  final profileController = Get.put(BuyerProfileDataController());
   final RecommendedPropertyController _recommendedPropertyController = Get.put(
     RecommendedPropertyController(),
   );
@@ -427,6 +429,7 @@ class _HomeScreenState extends State<HomeScreen> {
       debugPrint("User Data: ${user?.toJson()}");
       favoriteController.getFavorite(user?.user?.id ?? '');
       await controller.getRecommendedPropertyById(user?.user?.id ?? '');
+      await profileController.getUserProfile();
 
       log("home city ${controller.selectedCity.value}");
       controller.fetchTradingArea(controller.selectedCity.value);
@@ -444,7 +447,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   SizedBox(height: 12),
-                  HomeHeader(),
+                  Obx(
+                    () =>  HomeHeader(
+                      image: profileController.userProfile.value?.profilePic??'',
+                    ),
+                  ),
 
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

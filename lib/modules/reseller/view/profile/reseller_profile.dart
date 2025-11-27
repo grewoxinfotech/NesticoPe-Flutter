@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/app/widgets/expandable_tile/expandable_widget.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
@@ -68,7 +69,7 @@ class ResellerProfileScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return(profileController.profileData.value?.user?.userType=="reseller")? SingleChildScrollView(
+        return(UserHelper.isReseller)? SingleChildScrollView(
 
 
           padding: const EdgeInsets.all(16),
@@ -245,23 +246,27 @@ class ResellerProfileScreen extends StatelessWidget {
               Obx(() {
                 ImageProvider? imageProvider;
 
-                // Priority: selectedImage > avatarUrl > null
+                // ✅ 1. Check if user selected a new local image
                 if (controller.selectedImage.value != null) {
-                  // If user selected a new image from gallery/camera
                   imageProvider = FileImage(controller.selectedImage.value!);
-                } else if (controller
-                    .profileData
-                    .value
-                    ?.user
-                    ?.profilePic
-                    ?.isNotEmpty ??
-                    false) {
-                  // If profile pic URL exists from API
-                  imageProvider = FileImage(
-                    File(controller.profileData.value!.user!.profilePic!),
-                  );
+                }
+                // ✅ 2. Else use profilePic from API
+                else {
+                  final profilePic = controller.profileData.value?.user?.profilePic;
+
+                  if (profilePic != null && profilePic.isNotEmpty) {
+                    // ✅ If it's a network URL
+                    if (profilePic.startsWith('http') || profilePic.startsWith('https')) {
+                      imageProvider = NetworkImage(profilePic);
+                    }
+                    // ✅ Else if it's a valid local file path
+                    else if (File(profilePic).existsSync()) {
+                      imageProvider = FileImage(File(profilePic));
+                    }
+                  }
                 }
 
+                // ✅ 3. Build the circular avatar
                 return Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -272,22 +277,65 @@ class ResellerProfileScreen extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 35,
                       backgroundColor:
-                          imageProvider == null
-                              ? ColorRes.primary.withOpacity(0.1)
-                              : null,
+                      imageProvider == null ? ColorRes.primary.withOpacity(0.1) : null,
                       backgroundImage: imageProvider,
-                      child:
-                          imageProvider == null
-                              ? Icon(
-                                Icons.person,
-                                size: 25,
-                                color: ColorRes.primary.withOpacity(0.8),
-                              )
-                              : null,
+                      child: imageProvider == null
+                          ? Icon(
+                        Icons.person,
+                        size: 25,
+                        color: ColorRes.primary.withOpacity(0.8),
+                      )
+                          : null,
                     ),
                   ),
                 );
               }),
+              // Obx(() {
+              //   ImageProvider? imageProvider;
+              //
+              //   // Priority: selectedImage > avatarUrl > null
+              //   if (controller.selectedImage.value != null) {
+              //     // If user selected a new image from gallery/camera
+              //     imageProvider = FileImage(controller.selectedImage.value!);
+              //   } else if (controller
+              //       .profileData
+              //       .value
+              //       ?.user
+              //       ?.profilePic
+              //       ?.isNotEmpty ??
+              //       false) {
+              //     // If profile pic URL exists from API
+              //     imageProvider = FileImage(
+              //       File(controller.profileData.value!.user!.profilePic!),
+              //     );
+              //   }
+              //
+              //   return Container(
+              //     decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       border: Border.all(color: ColorRes.primary, width: 2),
+              //     ),
+              //     child: Padding(
+              //       padding: const EdgeInsets.all(2.0),
+              //       child: CircleAvatar(
+              //         radius: 35,
+              //         backgroundColor:
+              //             imageProvider == null
+              //                 ? ColorRes.primary.withOpacity(0.1)
+              //                 : null,
+              //         backgroundImage: imageProvider,
+              //         child:
+              //             imageProvider == null
+              //                 ? Icon(
+              //                   Icons.person,
+              //                   size: 25,
+              //                   color: ColorRes.primary.withOpacity(0.8),
+              //                 )
+              //                 : null,
+              //       ),
+              //     ),
+              //   );
+              // }),
               if (controller.isEditing.value)
                 Positioned(
                   bottom: -2,
@@ -359,7 +407,7 @@ class ResellerProfileScreen extends StatelessWidget {
                     SizedBox(
                       width: 150,
                       child: Text(
-                        '${controller.profileData.value?.user?.address ?? 'Not Define'} ',
+                        '${controller.profileData.value?.user?.city ?? 'Not Define'} ',
                         style: TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.leadGreyColor[600],

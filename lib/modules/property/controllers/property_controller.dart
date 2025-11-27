@@ -280,12 +280,15 @@ class PropertyController extends PaginatedController<Items> {
       final inquiries = await _contactedService.fetchContactedInquiries(userId);
       inquiryResponse.assignAll(inquiries);
 
-      print(
-        "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}",
-      );
-
       final result = inquiryResponse.any((e) => e.propertyId == propertyId);
+
       hasSubmittedInquiry.value = result;
+      print(
+        "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ${hasSubmittedInquiry.value}",
+      );
+      print(
+        "Inquiry Response ** ${result} ${hasSubmittedInquiry.value}",
+      );
     } catch (e) {
       print("Error fetching inquiries: $e");
     }
@@ -324,8 +327,10 @@ class PropertyController extends PaginatedController<Items> {
   /// Apply filters and refresh (expects a plain Map)
   Future<void> applyFilters(Map<String, String> newFilters) async {
     try {
+      log("djfhyu $newFilters");
       isLoading.value = true;
       filters = Map<String, String>.from(newFilters);
+      log("djfhyu dfhjd $filters");
       currentPage.value = 1;
       items.clear();
       await refreshList();
@@ -449,9 +454,9 @@ class PropertyController extends PaginatedController<Items> {
   @override
   void onClose() {
     // selectedCityZ.dispose();
-    selectedLocalityController.dispose();
-    minBudget.dispose();
-    maxBudget.dispose();
+    // selectedLocalityController.dispose();
+    // minBudget.dispose();
+    // maxBudget.dispose();
     super.onClose();
   }
 }

@@ -94,9 +94,9 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
         return Column(
           children: [
             // Search bar
-            LeadSearchBar(
-              onSearchChanged: controller.updateSearch,
-            ),
+            // LeadSearchBar(
+            //   onSearchChanged: controller.updateSearch,
+            // ),
 
             // Filter chips
             Obx(
