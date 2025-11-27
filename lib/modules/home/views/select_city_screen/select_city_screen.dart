@@ -54,7 +54,8 @@ class SelectCityScreen extends StatelessWidget {
                 ),
                 onChanged: (value) {
                   if (value.trim().isNotEmpty) {
-                    controller.fetchPredictionsCity(value.trim());
+
+                    controller.fetchGooglePlaces(value.trim());
                   } else {
                     controller.predictions.clear();
                   }

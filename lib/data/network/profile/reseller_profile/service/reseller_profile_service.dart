@@ -46,7 +46,7 @@ class ProfileUpdate {
   //       return decoded;
   //     }
   //
-  //     // For success responses (200/201)
+  //     // For story responses (200/201)
   //     if (response.statusCode == 200 || response.statusCode == 201) {
   //       return decoded;
   //     }
@@ -58,7 +58,7 @@ class ProfileUpdate {
   //     print('❌ Exception in Reseller Profile Update: $e');
   //     print(stack);
   //     return {
-  //       'success': false,
+  //       'story': false,
   //       'message': 'Error updating profile: ${e.toString()}',
   //     };
   //   }
@@ -113,7 +113,7 @@ class ProfileUpdate {
         return decoded;
       }
 
-      // ✅ Handle success (200/201)
+      // ✅ Handle story (200/201)
       if (response.statusCode == 200 || response.statusCode == 201) {
         return decoded;
       }
@@ -125,7 +125,7 @@ class ProfileUpdate {
       print('❌ Exception in Reseller Profile Update: $e');
       print(stack);
       return {
-        'success': false,
+        'story': false,
         'message': 'Error updating profile: ${e.toString()}',
       };
     }
@@ -153,7 +153,7 @@ class ProfileUpdate {
       } else {
         print('⚠️ Reseller Profile Update Error Response: $decoded');
         return {
-          'success': false,
+          'story': false,
           'message': decoded['message'] ?? 'Failed to verify OTP',
         };
       }
@@ -161,7 +161,7 @@ class ProfileUpdate {
       print('❌ Exception in Reseller Profile Update: $e');
       print(stack);
       return {
-        'success': false,
+        'story': false,
         'message': 'Error verifying OTP: ${e.toString()}',
       };
     }
@@ -195,7 +195,7 @@ class ProfileUpdate {
       } else {
         print('⚠️ Resend OTP Error Response: $decoded');
         return {
-          'success': false,
+          'story': false,
           'message': decoded['message'] ?? 'Failed to resend OTP',
         };
       }
@@ -203,7 +203,7 @@ class ProfileUpdate {
       print('❌ Exception in Resend OTP: $e');
       print(stack);
       return {
-        'success': false,
+        'story': false,
         'message': 'Error resending OTP: ${e.toString()}',
       };
     }

@@ -101,7 +101,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            "Loading success stories...",
+            "Loading story stories...",
             style: TextStyle(
               fontSize: AppFontSizes.body,
               color: ColorRes.leadGreyColor,
@@ -145,7 +145,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "Start celebrating achievements!\nCreate your first success story and inspire others.",
+              "Start celebrating achievements!\nCreate your first story story and inspire others.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: AppFontSizes.bodySmall,

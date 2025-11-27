@@ -11,7 +11,7 @@ class ResellerUpdateProfile {
 
   factory ResellerUpdateProfile.fromMap(Map<String, dynamic> map) {
     return ResellerUpdateProfile(
-      success: map['success'] as bool?,
+      success: map['story'] as bool?,
       message: map['message'] as String?,
       data: map['data'] != null ? ResellerData.fromMap(map['data']) : null,
     );
@@ -19,7 +19,7 @@ class ResellerUpdateProfile {
 
   Map<String, dynamic> toMap() {
     return {
-      'success': success,
+      'story': success,
       'message': message,
       'data': data?.toMap(),
     };

@@ -26,9 +26,9 @@ class UserService {
       // Parse the response body
       final jsonData = json.decode(response.body);
 
-      // Check if the API response indicates success
-      if (response.statusCode == 200 && jsonData['success'] == true) {
-        // Only parse user data if success is true and data exists
+      // Check if the API response indicates story
+      if (response.statusCode == 200 && jsonData['story'] == true) {
+        // Only parse user data if story is true and data exists
         if (jsonData['data'] != null) {
           return User.fromJson(jsonData['data']);
         } else {

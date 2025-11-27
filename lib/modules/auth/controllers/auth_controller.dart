@@ -143,7 +143,7 @@ class AuthController extends GetxController {
         referCode: referralCode,
       );
 
-      if (response['success'] == true && response['data']['token'] != null) {
+      if (response['story'] == true && response['data']['token'] != null) {
         final token = response['data']['token'];
         await SecureStorage.saveToken(token);
 
@@ -196,7 +196,7 @@ class AuthController extends GetxController {
         sellerType: sellerType,
       );
 
-      if (response['success'] == true && response['data']['token'] != null) {
+      if (response['story'] == true && response['data']['token'] != null) {
         final token = response['data']['token'];
         await SecureStorage.saveToken(token);
 

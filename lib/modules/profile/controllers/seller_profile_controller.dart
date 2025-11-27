@@ -128,6 +128,7 @@ class SellerProfileController extends GetxController {
       resellerProfile.value = ProfileSellerModel.fromJson(data??{});
       print("Seller efgryfgrfyy${resellerProfile.value?.toJson()}");
     }
+    _populateControllers();
     print("Lok ${resellerProfile.value?.id}");
   }
   Future<Map<String, dynamic>> updateResellerProfile(UserUpdateProfile userProfile) async {
@@ -146,7 +147,7 @@ class SellerProfileController extends GetxController {
 
       return data;
     }
-    return {'success': false, 'message': 'Invalid user type'};
+    return {'story': false, 'message': 'Invalid user type'};
   }
 
   void _populateControllers() {
@@ -452,12 +453,12 @@ print(" fdjnfjudfhur $image");
       print('🔍 FULL API RESPONSE: $response');
       print('🔍 otpRequired value: ${response['otpRequired']}');
       print('🔍 otpRequired type: ${response['otpRequired'].runtimeType}');
-      print('🔍 success value: ${response['success']}');
+      print('🔍 story value: ${response['story']}');
       print('🔍 message value: ${response['message']}');
 
       final isOtpRequired = response['otpRequired'] == true ||
           response['otpRequired'] == 'true' ||
-          (response['success'] == false &&
+          (response['story'] == false &&
               response['message']?.toString().toLowerCase().contains('otp') == true);
 
       if (isOtpRequired) {
@@ -511,7 +512,7 @@ print(" fdjnfjudfhur $image");
       }
 
 
-      if (response['success'] == true) {
+      if (response['story'] == true) {
         if (profileData.value?.user != null) {
           profileData.value = UserModel(
             user: User(
@@ -605,7 +606,7 @@ print(" fdjnfjudfhur $image");
         profileData.value?.user?.id ?? '',
       );
 
-      if (response['success'] == true) {
+      if (response['story'] == true) {
         _resendTimer?.cancel();
 
         if (response['data']?['user'] != null) {
@@ -705,7 +706,7 @@ print(" fdjnfjudfhur $image");
         pendingPhone.value,
       );
 
-      if (response['success'] == true) {
+      if (response['story'] == true) {
 
         otpResendTimer.value = 60;
         _startResendTimer();

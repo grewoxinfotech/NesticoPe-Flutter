@@ -34,9 +34,9 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
     //
     //   try {
     //     final authController = Provider.of<AuthController>(context, listen: false);
-    //     final success = await authController.requestOtp(context,_phoneController.text.trim());
+    //     final story = await authController.requestOtp(context,_phoneController.text.trim());
     //
-    //     if (success) {
+    //     if (story) {
     //       setState(() {
     //         _otpSent = true;
     //       });
@@ -63,9 +63,9 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
   //
   //     try {
   //       final authController = Provider.of<AuthController>(context, listen: false);
-  //       final success = await authController.verifyOtp(context,_otpController.text.trim());
+  //       final story = await authController.verifyOtp(context,_otpController.text.trim());
   //
-  //       if (success) {
+  //       if (story) {
   //         Navigator.of(context).pushReplacement(
   //           MaterialPageRoute(builder: (context) => HomeScreen())
   //         );

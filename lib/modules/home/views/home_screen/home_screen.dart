@@ -48,8 +48,10 @@ import '../../../../app/manager/compare_manager.dart' show CompareManager;
 import '../../../../app/manager/project_compare_manager.dart';
 import '../../../../app/utils/file_upload_section/file_upload_section.dart';
 
+import '../../../../app/widgets/mic_search/search_mic.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../profile/controllers/buyer_profiledata.dart';
+import '../../../search_property/controller/search_controller.dart';
 import '../../../search_property/model/search_model.dart';
 import '../../widgets/unified_comparison_floating_button.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
@@ -252,6 +254,10 @@ class _HomeScreenState extends State<HomeScreen> {
       Get.find<PropertyFavoriteController>();
   final NewsController newsController = Get.put(NewsController());
   final trendingCityController = Get.put(TrendingCityController());
+  final MicController micController = Get.put(MicController());
+  final GoogleMapController googleMapController = Get.put(
+    GoogleMapController(),
+  );
   final profileController = Get.put(BuyerProfileDataController());
   final RecommendedPropertyController _recommendedPropertyController = Get.put(
     RecommendedPropertyController(),
@@ -448,8 +454,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   SizedBox(height: 12),
                   Obx(
-                    () =>  HomeHeader(
-                      image: profileController.userProfile.value?.profilePic??'',
+                    () => HomeHeader(
+                      image:
+                          profileController.userProfile.value?.profilePic ?? '',
                     ),
                   ),
 
@@ -1487,7 +1494,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: ElevatedButton(
                       onPressed: () {
-                        showFindPropertyDialog(controller, context);
+                        showFindPropertyDialog(
+                          controller,
+                          googleMapController,
+                          context,
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 48),
@@ -1511,8 +1522,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
 Future<void> showFindPropertyDialog(
   PropertyController controller,
+  GoogleMapController googleMapController,
   BuildContext context,
 ) async {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Get.dialog(
     Dialog(
       backgroundColor: ColorRes.white,
@@ -1524,518 +1537,519 @@ Future<void> showFindPropertyDialog(
           color: ColorRes.white,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: ColorRes.primary.withOpacity(0.05),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: ColorRes.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.search,
-                      color: ColorRes.primary,
-                      size: 24,
-                    ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Text(
-                      "Find Your Dream Property",
-                      style: TextStyle(
-                        fontSize: AppFontSizes.large,
-                        fontWeight: AppFontWeights.bold,
-                        color: ColorRes.textPrimary,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 230,
+
+                      child: Text(
+                        "Find Your Dream Property",
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.body,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.white,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () => Get.back(),
-                    icon: const Icon(
-                      Icons.close,
-                      color: ColorRes.textSecondary,
-                    ),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-            ),
-
-            // Form Content
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // City Field
-                    _buildFieldLabel('City *'),
-                    const SizedBox(height: 8),
-                    buildTextField(
-                      "Select City",
-                      Icons.location_city_outlined,
-                      controller.selectedCityZ,
-                      maxLines: 1,
-                      minLines: 1,
-                      isEnable: false,
-                      onTap: () async {
-                        Prediction selectedCity = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => CommonSearchField(
-                                  onCitySelected: (city) {
-                                    Navigator.pop(context, city);
-                                  },
-                                  isFromAddProperty: true,
-                                  initialSearchText:
-                                      controller.selectedCityZ.text,
-                                ),
-                          ),
-                        );
-                        controller.selectedCityZ.text =
-                            selectedCity.structuredFormatting?.mainText ?? '';
-                        print(
-                          "city fgrjigj${controller.selectedCityZ.text}    ${selectedCity.structuredFormatting?.mainText}",
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Locality Field
-                    // _buildFieldLabel('Locality (Optional)'),
-                    // const SizedBox(height: 8),
-                    // TextFormField(
-                    //   controller: controller.selectedLocalityController,
-                    //   style: const TextStyle(
-                    //     fontSize: AppFontSizes.small,
-                    //   ),
-                    //   decoration: InputDecoration(
-                    //     hintText: 'Enter Locality',
-                    //     hintStyle: TextStyle(
-                    //       fontSize: AppFontSizes.small,
-                    //       color: ColorRes.leadGreyColor.shade500,
-                    //     ),
-                    //     prefixIcon: const Icon(
-                    //       Icons.place_outlined,
-                    //       color: ColorRes.primary,
-                    //       size: 18,
-                    //     ),
-                    //     contentPadding: const EdgeInsets.symmetric(
-                    //       vertical: 12,
-                    //       horizontal: 10,
-                    //     ),
-                    //     enabledBorder: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(12),
-                    //       borderSide: BorderSide(
-                    //         width: 0.8,
-                    //         color: ColorRes.grey.withOpacity(0.3),
-                    //       ),
-                    //     ),
-                    //     focusedBorder: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(12),
-                    //       borderSide: const BorderSide(
-                    //         width: 1.2,
-                    //         color: ColorRes.primary,
-                    //       ),
-                    //     ),
-                    //     filled: true,
-                    //     fillColor: Colors.grey.shade50,
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 16),
-
-                    // Listing Type & BHK Row
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildFieldLabel('Listing Type'),
-                        const SizedBox(height: 8),
-                        Obx(
-                          () => DropdownButtonFormField<String>(
-                            value:
-                                controller.listingTypes.contains(
-                                      controller.selectedListingType.value,
-                                    )
-                                    ? controller.selectedListingType.value
-                                    : null,
-                            isDense: true,
-                            decoration: InputDecoration(
-                              hintText: 'Select',
-                              hintStyle: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.leadGreyColor.shade500,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.category_outlined,
-                                color: ColorRes.primary,
-                                size: 18,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 8,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 0.8,
-                                  color: ColorRes.grey.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  width: 1.2,
-                                  color: ColorRes.primary,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey.shade50,
-                            ),
-                            items:
-                                controller.listingTypes
-                                    .map(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(
-                                          e,
-                                          style: const TextStyle(
-                                            fontSize: AppFontSizes.small,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                            onChanged:
-                                (val) =>
-                                    controller.selectedListingType.value = val,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildFieldLabel('BHK'),
-                        const SizedBox(height: 8),
-                        Obx(
-                          () => DropdownButtonFormField<String>(
-                            value:
-                                controller.bhkList.contains(
-                                      controller.selectedBhk.value,
-                                    )
-                                    ? controller.selectedBhk.value
-                                    : null,
-                            isDense: true,
-                            decoration: InputDecoration(
-                              hintText: 'Select',
-                              hintStyle: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.leadGreyColor.shade500,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.home_outlined,
-                                color: ColorRes.primary,
-                                size: 18,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 8,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 0.8,
-                                  color: ColorRes.grey.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  width: 1.2,
-                                  color: ColorRes.primary,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey.shade50,
-                            ),
-                            items:
-                                controller.bhkList
-                                    .map(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(
-                                          e,
-                                          style: const TextStyle(
-                                            fontSize: AppFontSizes.small,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                            onChanged:
-                                (val) => controller.selectedBhk.value = val,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildFieldLabel('Property Type'),
-                        const SizedBox(height: 8),
-                        Obx(
-                          () => DropdownButtonFormField<String>(
-                            value:
-                                controller.propertyFilterTypes.contains(
-                                      controller.selectedPropertyType.value,
-                                    )
-                                    ? controller.selectedPropertyType.value
-                                    : null,
-                            isDense: true,
-                            decoration: InputDecoration(
-                              hintText: 'Select',
-                              hintStyle: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.leadGreyColor.shade500,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.apartment_outlined,
-                                color: ColorRes.primary,
-                                size: 18,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 8,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 0.8,
-                                  color: ColorRes.grey.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  width: 1.2,
-                                  color: ColorRes.primary,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey.shade50,
-                            ),
-                            items:
-                                controller.propertyFilterTypes
-                                    .map(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(
-                                          e,
-                                          style: const TextStyle(
-                                            fontSize: AppFontSizes.small,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                            onChanged:
-                                (val) =>
-                                    controller.selectedPropertyType.value = val,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Budget Range
-                    _buildFieldLabel('Budget Range (Optional)'),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: controller.minBudget,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(
-                              fontSize: AppFontSizes.small,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Min ₹',
-                              hintStyle: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.leadGreyColor.shade500,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.currency_rupee,
-                                color: ColorRes.primary,
-                                size: 18,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 10,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 0.8,
-                                  color: ColorRes.grey.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  width: 1.2,
-                                  color: ColorRes.primary,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey.shade50,
-                            ),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            'to',
-                            style: TextStyle(
-                              color: ColorRes.textSecondary,
-                              fontWeight: AppFontWeights.medium,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: TextFormField(
-                            controller: controller.maxBudget,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(
-                              fontSize: AppFontSizes.small,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Max ₹',
-                              hintStyle: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.leadGreyColor.shade500,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.currency_rupee,
-                                color: ColorRes.primary,
-                                size: 18,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 10,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 0.8,
-                                  color: ColorRes.grey.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  width: 1.2,
-                                  color: ColorRes.primary,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey.shade50,
-                            ),
-                          ),
-                        ),
-                      ],
+                    Spacer(),
+                    IconButton(
+                      onPressed: () => Get.back(),
+                      icon: const Icon(Icons.close, color: ColorRes.white),
                     ),
                   ],
                 ),
               ),
-            ),
-
-            // Footer Buttons
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: ColorRes.white,
-                border: Border(
-                  top: BorderSide(
-                    color: ColorRes.grey.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Get.back(),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: const BorderSide(color: ColorRes.primary),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+              // Form Content
+              Flexible(
+                flex: 1,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // City Field
+                      Row(
+                        children: [
+                          _buildFieldLabel('City'),
+                          SizedBox(width: 4,),
+                          Text('*',style: const TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.error,
+                          ),)
+                        ],
                       ),
-                      child: const Text(
-                        'Cancel',
+
+                      const SizedBox(height: 8),
+
+
+                   // CitySelectionWidget(
+                   //        controller: controller.selectedCityZ,
+                   //        googleMapController: googleMapController,
+                   //        formKey: _formKey,
+                   //      ),
+                  Stack(
+                    children: [
+                      TextFormField(
+                        controller: controller.selectedCityZ,
                         style: TextStyle(
                           fontSize: AppFontSizes.medium,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.primary,
+                          color: ColorRes.textPrimary,
                         ),
+
+                        decoration: InputDecoration(
+                          hintText: "Select City",
+                          hintStyle: TextStyle(
+                            fontSize: AppFontSizes.small,
+                            color: ColorRes.leadGreyColor.shade500,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: 12,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              width: 0.8,
+                              color: ColorRes.grey.withOpacity(0.3),
+                            ),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              width: 0.8,
+                              color: ColorRes.grey.withOpacity(0.3),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(width: 1.2, color: ColorRes.primary),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey.shade50,
+                          errorStyle: TextStyle(
+                            color: ColorRes.error.shade700,
+                            fontSize: AppFontSizes.small,
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.location_city_outlined,
+                            color: ColorRes.primary,
+                            size: 20,
+                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a city';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) async {
+                          if (value.isNotEmpty) {
+                            await googleMapController.fetchGooglePlaces(value);
+                            log("City input: $value");
+                          } else {
+                            googleMapController.predictions.clear();
+                          }
+                        },
                       ),
-                    ),
+
+                      const SizedBox(height: 8),
+
+                      Obx(() {
+                        final predictions = googleMapController.predictions;
+
+                        if (predictions.isEmpty) {
+                          return const SizedBox();
+                        }
+
+                        return Container(
+                          constraints: const BoxConstraints(maxHeight: 250),
+                          margin: const EdgeInsets.only(top: 40),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(16),
+                              bottomRight: Radius.circular(16),
+                            ),
+                            border: Border.all(
+                              color: ColorRes.grey.withOpacity(0.3),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: predictions.length > 3 ? 3 : predictions.length,
+                            itemBuilder: (context, index) {
+                              final city = predictions[index];
+                              return ListTile(
+                                leading: const Icon(
+                                  Icons.location_city_outlined,
+                                  color: ColorRes.primary,
+                                  size: 20,
+                                ),
+                                title: Text(
+                                  city.description ?? '',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.medium,
+                                    color: ColorRes.textPrimary,
+                                  ),
+                                ),
+                                onTap: () {
+                                  controller.selectedCityZ.text = city.structuredFormatting?.mainText ?? '';
+                                  googleMapController.predictions.clear();
+                                  FocusScope.of(context).unfocus(); // hide keyboard
+                                },
+                              );
+                            },
+                          ),
+                        );
+                      }),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      onPressed: controller.findProperties,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorRes.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.search, size: 20),
-                          SizedBox(width: 8),
-                          Text(
-                            'Find Properties',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: AppFontWeights.semiBold,
+
+                      const SizedBox(height: 16),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildFieldLabel('Listing Type'),
+                          const SizedBox(height: 8),
+                          Obx(
+                            () => DropdownButtonFormField<String>(
+                              value:
+                                  controller.listingTypes.contains(
+                                        controller.selectedListingType.value,
+                                      )
+                                      ? controller.selectedListingType.value
+                                      : null,
+                              isDense: true,
+                              decoration: InputDecoration(
+
+                                hintText: 'Select',
+                                hintStyle: TextStyle(
+                                  fontSize: AppFontSizes.caption,
+                                  color: ColorRes.leadGreyColor.shade500,
+                                ),
+                                prefixIcon: const Icon(
+                                  Icons.category_outlined,
+                                  color: ColorRes.primary,
+                                  size: 18,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 8,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 0.8,
+                                    color: ColorRes.grey.withOpacity(0.3),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    width: 1.2,
+                                    color: ColorRes.primary,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey.shade50,
+                              ),
+                              items:
+                                  controller.listingTypes
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e,
+                                            style: const TextStyle(
+                                              fontSize: AppFontSizes.small,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged:
+                                  (val) =>
+                                      controller.selectedListingType.value = val,
                             ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildFieldLabel('BHK'),
+                          const SizedBox(height: 8),
+                          Obx(
+                            () => DropdownButtonFormField<String>(
+                              value:
+                                  controller.bhkList.contains(
+                                        controller.selectedBhk.value,
+                                      )
+                                      ? controller.selectedBhk.value
+                                      : null,
+                              isDense: true,
+                              decoration: InputDecoration(
+                                hintText: 'Select',
+                                hintStyle: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  color: ColorRes.leadGreyColor.shade500,
+                                ),
+                                prefixIcon: const Icon(
+                                  Icons.home_outlined,
+                                  color: ColorRes.primary,
+                                  size: 18,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 8,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 0.8,
+                                    color: ColorRes.grey.withOpacity(0.3),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    width: 1.2,
+                                    color: ColorRes.primary,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey.shade50,
+                              ),
+                              items:
+                                  controller.bhkList
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e,
+                                            style: const TextStyle(
+                                              fontSize: AppFontSizes.small,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged:
+                                  (val) => controller.selectedBhk.value = val,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      _buildFieldLabel('Budget Range'),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: controller.minBudget,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.small,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Min',
+                                hintStyle: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  color: ColorRes.leadGreyColor.shade500,
+                                ),
+                                prefixIcon: const Icon(
+                                  Icons.currency_rupee,
+                                  color: ColorRes.primary,
+                                  size: 18,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 10,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 0.8,
+                                    color: ColorRes.grey.withOpacity(0.3),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    width: 1.2,
+                                    color: ColorRes.primary,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey.shade50,
+                              ),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              'to',
+                              style: TextStyle(
+                                color: ColorRes.textSecondary,
+                                fontWeight: AppFontWeights.medium,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextField(
+                              controller: controller.maxBudget,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.small,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Max',
+                                hintStyle: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  color: ColorRes.leadGreyColor.shade500,
+                                ),
+                                prefixIcon: const Icon(
+                                  Icons.currency_rupee,
+                                  color: ColorRes.primary,
+                                  size: 18,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 10,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 0.8,
+                                    color: ColorRes.grey.withOpacity(0.3),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    width: 1.2,
+                                    color: ColorRes.primary,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey.shade50,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Footer Buttons
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  border: Border(
+                    top: BorderSide(
+                      color: ColorRes.grey.withOpacity(0.2),
+                      width: 1,
                     ),
                   ),
-                ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Get.back(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: const BorderSide(color: ColorRes.primary),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton(
+                        onPressed:(){
+                          if (_formKey.currentState!.validate())
+                          {
+                            controller.findProperties();
+                          }
+                          else{
+                            print("Form is not valid");
+                          }
+                          },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorRes.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.search, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Find Properties',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     ),
@@ -2048,7 +2062,7 @@ Widget _buildFieldLabel(String label) {
   return Text(
     label,
     style: const TextStyle(
-      fontSize: AppFontSizes.medium,
+      fontSize: AppFontSizes.small,
       fontWeight: AppFontWeights.semiBold,
       color: ColorRes.textPrimary,
     ),
@@ -4993,3 +5007,405 @@ Widget _buildEmptyState() {
     ),
   );
 }
+
+
+class StateSelectionWidget extends StatelessWidget {
+  final TextEditingController controller;
+final bool isEditing;
+  final Function(Prediction)? onCitySelected; // ✅ callback for selected city
+
+  const StateSelectionWidget({
+    super.key,
+    required this.controller,
+
+    this.onCitySelected,  this.isEditing=true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final googleMapController = Get.find<GoogleMapController>();
+    return Column(
+      children: [
+        // 🔹 Custom TextField
+        TextFormField(
+          controller: controller,
+          enabled: isEditing,
+          style: TextStyle(
+            fontSize: AppFontSizes.small,
+            color: ColorRes.homeBlackFade,
+          ),
+          decoration: InputDecoration(
+            labelText: "Select State",
+            labelStyle: TextStyle(
+              fontSize: AppFontSizes.small,
+              color
+                  : ColorRes.leadGreyColor[500],
+            ),
+            prefixIcon: Icon(Icons.location_city_outlined, size: 20, color: ColorRes.leadGreyColor[600]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: ColorRes.leadGreyColor.withOpacity(0.3),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: ColorRes.leadGreyColor.withOpacity(0.3),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: ColorRes.blueColor, width: 1.5),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: ColorRes.leadGreyColor.withOpacity(0.2),
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: ColorRes.error, width: 1),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: ColorRes.error, width: 1.5),
+            ),
+            filled: true,
+            fillColor:
+            ColorRes.leadGreyColor[50] ,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+          ),
+          onChanged: (value) async {
+            if (value.isNotEmpty) {
+              await googleMapController.fetchGooglePlaces(value);
+              log("City input: $value");
+            } else {
+              googleMapController.predictions.clear();
+            }
+          },
+        ),
+
+        const SizedBox(height: 8),
+
+        // 🔹 City Suggestions (Obx listens for updates)
+        Obx(() {
+          final predictions = googleMapController.predictions;
+          final parsedCities = googleMapController.cityStateList;
+
+          // choose which list to show
+          final hasParsed = parsedCities.isNotEmpty;
+          final items = hasParsed ? parsedCities : predictions;
+
+          if (items.isEmpty) return const SizedBox();
+
+          return Container(
+            constraints: const BoxConstraints(maxHeight: 250),
+            margin: const EdgeInsets.only(top: 4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                )
+              ],
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: items.length > 3 ? 3 : items.length,
+              itemBuilder: (context, index) {
+                if (hasParsed) {
+                  // ✅ Cast item to Map<String, String?>
+                  final cityData = items[index] as Map<String, String?>;
+
+                  log("djhfudfhg ${cityData}");
+
+
+                  return ListTile(
+                    leading: const Icon(Icons.location_city_outlined,
+                        size: 20, color: ColorRes.primary),
+                    title: Text(
+                      cityData['city'] ?? '',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.homeBlackFade,
+                      ),
+                    ),
+                    subtitle: Text(
+                      '${cityData['state'] ?? ''}, ${cityData['country'] ?? ''}',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.leadGreyColor[700],
+                      ),
+                    ),
+                    onTap: () {
+                      controller.text = cityData['city'] ?? '';
+                      googleMapController.predictions.clear();
+                      googleMapController.cityStateList.clear();
+                      FocusScope.of(context).unfocus();
+
+                      if (onCitySelected != null) {
+                        onCitySelected!(
+                          Prediction(description: cityData['state']),
+                        );
+                      }
+                    },
+                  );
+                } else {
+                  final city = items[index] as Prediction;
+                  return ListTile(
+                    leading: const Icon(Icons.location_city_outlined,
+                        size: 20, color: ColorRes.primary),
+                    title: Text(
+                      city.description ?? '',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.homeBlackFade,
+                      ),
+                    ),
+                    onTap: () {
+                      controller.text = city.description ?? '';
+                      googleMapController.predictions.clear();
+                      FocusScope.of(context).unfocus();
+
+                      if (onCitySelected != null) onCitySelected!(city);
+                    },
+                  );
+                }
+              },
+            ),
+          );
+        })
+      ],
+    );
+  }
+}
+class CitySelectionWidget extends StatelessWidget {
+  final TextEditingController controller;
+  final bool isEditing;
+  final Function(Prediction)? onCitySelected; // ✅ callback for selected city
+
+  const CitySelectionWidget({
+    super.key,
+    required this.controller,
+
+    this.onCitySelected, this.isEditing=true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final googleMapController = Get.find<GoogleMapController>();
+    return Column(
+      children: [
+        // 🔹 Custom TextField
+        TextFormField(
+          controller: controller,
+          enabled: isEditing,
+          style: TextStyle(
+            fontSize: AppFontSizes.small,
+            color: ColorRes.homeBlackFade,
+          ),
+          decoration: InputDecoration(
+            labelText: "Select City",
+            labelStyle: TextStyle(
+              fontSize: AppFontSizes.small,
+              color
+                  : ColorRes.leadGreyColor[500],
+            ),
+            prefixIcon: Icon(Icons.apartment_outlined, size: 20, color: ColorRes.leadGreyColor[600]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: ColorRes.leadGreyColor.withOpacity(0.3),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: ColorRes.leadGreyColor.withOpacity(0.3),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: ColorRes.blueColor, width: 1.5),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: ColorRes.leadGreyColor.withOpacity(0.2),
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: ColorRes.error, width: 1),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: ColorRes.error, width: 1.5),
+            ),
+            filled: true,
+            fillColor:
+            ColorRes.leadGreyColor[50] ,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+          ),
+          onChanged: (value) async {
+            if (value.isNotEmpty) {
+              await googleMapController.fetchGooglePlaces(value);
+              log("City input: $value");
+            } else {
+              googleMapController.predictions.clear();
+            }
+          },
+        ),
+
+        const SizedBox(height: 8),
+
+        // 🔹 City Suggestions (Obx listens for updates)
+        // Obx(() {
+        //   final predictions = googleMapController.predictions;
+        //
+        //   if (predictions.isEmpty) {
+        //     return const SizedBox(); // hide when no suggestions
+        //   }
+        //
+        //   return Container(
+        //     constraints: const BoxConstraints(maxHeight: 250),
+        //     margin: const EdgeInsets.only(top: 4),
+        //     decoration: BoxDecoration(
+        //       color: Colors.white,
+        //       borderRadius: BorderRadius.circular(12),
+        //     ),
+        //     child: ListView.builder(
+        //       shrinkWrap: true,
+        //       itemCount: predictions.length > 3 ? 3 : predictions.length,
+        //       itemBuilder: (context, index) {
+        //         final city = predictions[index];
+        //         return ListTile(
+        //           leading: const Icon(Icons.location_city_outlined,size: 20,color: ColorRes.primary,),
+        //           title: Text(city.description ?? '',style: TextStyle(
+        //             fontSize: AppFontSizes.small,
+        //             color: ColorRes.homeBlackFade,
+        //           ),),
+        //           onTap: () {
+        //             controller.text = city.description ?? '';
+        //             googleMapController.predictions.clear();
+        //             FocusScope.of(context).unfocus(); // hide keyboard
+        //
+        //             // ✅ Return selected city via callback
+        //             if (onCitySelected != null) {
+        //               onCitySelected!(city);
+        //             }
+        //           },
+        //         );
+        //       },
+        //     ),
+        //   );
+        // }),
+        Obx(() {
+          final predictions = googleMapController.predictions;
+          final parsedCities = googleMapController.cityStateList;
+
+          // choose which list to show
+          final hasParsed = parsedCities.isNotEmpty;
+          final items = hasParsed ? parsedCities : predictions;
+
+          if (items.isEmpty) return const SizedBox();
+
+          return Container(
+            constraints: const BoxConstraints(maxHeight: 250),
+            margin: const EdgeInsets.only(top: 4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                )
+              ],
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: items.length > 3 ? 3 : items.length,
+              itemBuilder: (context, index) {
+                if (hasParsed) {
+                  // ✅ Cast item to Map<String, String?>
+                  final cityData = items[index] as Map<String, String?>;
+
+                  log("djhfudfhg ${cityData}");
+
+
+                  return ListTile(
+                    leading: const Icon(Icons.location_city_outlined,
+                        size: 20, color: ColorRes.primary),
+                    title: Text(
+                      cityData['city'] ?? '',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.homeBlackFade,
+                      ),
+                    ),
+                    subtitle: Text(
+                      '${cityData['state'] ?? ''}, ${cityData['country'] ?? ''}',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.leadGreyColor[700],
+                      ),
+                    ),
+                    onTap: () {
+                      controller.text = cityData['city'] ?? '';
+                      googleMapController.predictions.clear();
+                      googleMapController.cityStateList.clear();
+                      FocusScope.of(context).unfocus();
+
+                      if (onCitySelected != null) {
+                        onCitySelected!(
+                          Prediction(description: cityData['city'],reference: cityData['state']),
+                        );
+                      }
+                    },
+                  );
+                } else {
+                  final city = items[index] as Prediction;
+                  return ListTile(
+                    leading: const Icon(Icons.location_city_outlined,
+                        size: 20, color: ColorRes.primary),
+                    title: Text(
+                      city.description ?? '',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.homeBlackFade,
+                      ),
+                    ),
+                    onTap: () {
+                      controller.text = city.description ?? '';
+                      googleMapController.predictions.clear();
+                      FocusScope.of(context).unfocus();
+
+                      if (onCitySelected != null) onCitySelected!(city);
+                    },
+                  );
+                }
+              },
+            ),
+          );
+        })
+
+
+      ],
+    );
+  }
+}
+
+

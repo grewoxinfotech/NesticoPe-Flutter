@@ -1,24 +1,24 @@
 // class InquiryResponse {
-//   final bool success;
+//   final bool story;
 //   final String message;
 //   final InquiryData data;
 //
 //   InquiryResponse({
-//     required this.success,
+//     required this.story,
 //     required this.message,
 //     required this.data,
 //   });
 //
 //   factory InquiryResponse.fromJson(Map<String, dynamic> json) {
 //     return InquiryResponse(
-//       success: json['success'] ?? false,
+//       story: json['story'] ?? false,
 //       message: json['message'] ?? '',
 //       data: InquiryData.fromJson(json['data'] ?? {}),
 //     );
 //   }
 //
 //   Map<String, dynamic> toJson() => {
-//     'success': success,
+//     'story': story,
 //     'message': message,
 //     'data': data.toJson(),
 //   };
@@ -122,14 +122,14 @@ class InquiryResponse {
 
   factory InquiryResponse.fromJson(Map<String, dynamic> json) {
     return InquiryResponse(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: InquiryData.fromJson(json['data'] ?? {}),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'success': success,
+    'story': success,
     'message': message,
     'data': data.toJson(),
   };

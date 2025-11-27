@@ -48,9 +48,9 @@ class ResellerSuccessStoryService {
           (json) => ResellerSuccessItem.fromJson(json),
         );
       } else {
-        debugPrint("❌ Failed to load success stories: ${response.statusCode}");
+        debugPrint("❌ Failed to load story stories: ${response.statusCode}");
         debugPrint("Response body: ${response.body}");
-        throw Exception("Failed to load success stories");
+        throw Exception("Failed to load story stories");
       }
     } catch (e) {
       debugPrint("⚠️ Exception in fetchSuccessStories: $e");
@@ -120,7 +120,7 @@ class ResellerSuccessStoryService {
 
       CustomSnackBar.show(
         Get.overlayContext!,
-        message: "Failed to create success story",
+        message: "Failed to create story story",
         type: SnackBarType.error,
       );
       return false;
@@ -128,7 +128,7 @@ class ResellerSuccessStoryService {
       debugPrint("❌ Create Success Story Exception: $e");
       CustomSnackBar.show(
         Get.overlayContext!,
-        message: "Error while creating success story",
+        message: "Error while creating story story",
         type: SnackBarType.error,
       );
       return false;
@@ -200,7 +200,7 @@ class ResellerSuccessStoryService {
 
       CustomSnackBar.show(
         Get.overlayContext!,
-        message: "Failed to update success story",
+        message: "Failed to update story story",
         type: SnackBarType.error,
       );
       return false;
@@ -208,7 +208,7 @@ class ResellerSuccessStoryService {
       debugPrint("❌ Update Success Story Exception: $e");
       CustomSnackBar.show(
         Get.overlayContext!,
-        message: "Error while updating success story",
+        message: "Error while updating story story",
         type: SnackBarType.error,
       );
       return false;

@@ -25,6 +25,7 @@ import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart'
     hide buildActionButton, getLeadStageFromString, getLeadStatusFromString;
 import '../controller/dashborad_controller/dashboard_controller.dart';
 import '../model/dashboard/dashboard_model.dart';
+import '../widget/story/add_success_story.dart';
 import 'lead/lead_screen.dart';
 import 'lead_overview/lead_detail.dart';
 import 'listing/property_listing.dart';
@@ -575,7 +576,55 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             // const SizedBox(height: 20),
                             // _buildRecentLeads(controller),
                             const SizedBox(height: 20),
-                            buildTopProducts(controller),
+                            // buildTopProducts(controller),
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(40),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.emoji_events,
+                                    size: 80,
+                                    color: Colors.amber,
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'Share Your Success',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Add your achievement story and inspire others',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 30),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      Get.to(() => AddSuccessStoryScreen());
+                                    },
+                                    icon: Icon(Icons.add),
+                                    label: Text('Add Success Story'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue[700],
+                                      foregroundColor: Colors.white,
+                                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                      textStyle: TextStyle(fontSize: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       )
@@ -605,7 +654,6 @@ Widget buildTopPropertyForGoodCommission(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header Section
         Row(
           children: [
             Icon(

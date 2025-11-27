@@ -748,15 +748,15 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       //                       };
       //                       log(" Inquiry  ${inquiry['meta']} ");
       //
-      //                       final success = await controller.addInquiry(
+      //                       final story = await controller.addInquiry(
       //                         inquiry,
       //                         property?.id ?? '',
       //                       );
-      //                       if (success) {
+      //                       if (story) {
       //                         CustomSnackBar.show(
       //                           Get.overlayContext!,
       //                           message: "Inquiry Added Successfully",
-      //                           type: SnackBarType.success,
+      //                           type: SnackBarType.story,
       //                         );
       //                         Get.back();
       //                       } else {

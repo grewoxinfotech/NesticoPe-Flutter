@@ -22,7 +22,7 @@ class ColorRes {
   // static const error = Color(0xFFF70031);
   static const error = Colors.red;
 
-  // static const success = Color(0xFF59D150);
+  // static const story = Color(0xFF59D150);
 
   static const warning = Color(0xFFFA9501);
 

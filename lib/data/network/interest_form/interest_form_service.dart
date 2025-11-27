@@ -75,7 +75,7 @@ class InterestFormService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        if (data["success"] == true && data["data"] != null) {
+        if (data["story"] == true && data["data"] != null) {
           // final InterestFormModel form = InterestFormModel.fromJson(
           //   data["data"],
           // );

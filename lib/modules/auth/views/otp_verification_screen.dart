@@ -90,7 +90,7 @@
 //   //       NesticoPeSnackBar.showAwesomeSnackbar(
 //   //         title: 'Success',
 //   //         message: 'OTP verified. Please set your new password.',
-//   //         contentType: ContentType.success,
+//   //         contentType: ContentType.story,
 //   //       );
 //   //
 //   //       // Store token after successful verification
@@ -102,7 +102,7 @@
 //   //       NesticoPeSnackBar.showAwesomeSnackbar(
 //   //         title: 'Success',
 //   //         message: 'Account verified successfully!',
-//   //         contentType: ContentType.success,
+//   //         contentType: ContentType.story,
 //   //       );
 //   //
 //   //       // Store token after successful verification
@@ -177,7 +177,7 @@
 //     NesticoPeSnackBar.showAwesomeSnackbar(
 //       title: 'Success',
 //       message: 'OTP verified. Please set your new password.',
-//       contentType: ContentType.success,
+//       contentType: ContentType.story,
 //     );
 //
 //     await SecureStorage.saveToken(token);
@@ -195,7 +195,7 @@
 //     NesticoPeSnackBar.showAwesomeSnackbar(
 //       title: 'Success',
 //       message: 'Account verified successfully!',
-//       contentType: ContentType.success,
+//       contentType: ContentType.story,
 //     );
 //
 //     await SecureStorage.saveToken(token);
@@ -238,7 +238,7 @@
 //       NesticoPeSnackBar.showAwesomeSnackbar(
 //         title: "OTP Resent",
 //         message: "New OTP sent to ${widget.phone}",
-//         contentType: ContentType.success,
+//         contentType: ContentType.story,
 //       );
 //     } catch (e) {
 //       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -488,14 +488,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   //
   //   await authController.verifyOtpSellerRegister(_otpController.text, token);
   //
-  //   final success = await authController.completeSellerRegistration(
+  //   final story = await authController.completeSellerRegistration(
   //     widget.data ?? {},
   //   );
   //
   //   NesticoPeSnackBar.showAwesomeSnackbar(
   //     title: 'Success',
   //     message: 'Seller account verified successfully!',
-  //     contentType: ContentType.success,
+  //     contentType: ContentType.story,
   //   );
   //
   //   // await SecureStorage.saveToken(token);

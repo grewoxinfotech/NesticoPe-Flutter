@@ -63,7 +63,7 @@ leading: IconButton(onPressed: () {
               // Business Details Section (Editable)
               // Profile Options
 
-                _buildProfileOptionsSection(),
+                // _buildProfileOptionsSection(),
                 const SizedBox(height: 16),
 
             ],
@@ -585,22 +585,23 @@ leading: IconButton(onPressed: () {
 
             // Read-only display
             _buildInfoRow(
-              Icons.person,
+              Icons.person_outline,
               '${controller.userProfile.value?.firstName ?? ''} ${controller.userProfile.value?.lastName ?? ''}',
             ),
             const SizedBox(height: 12),
             _buildInfoRow(
-              Icons.email,
+              Icons.email_outlined,
               controller.userProfile.value?.email ?? '',
             ),
             const SizedBox(height: 12),
             _buildInfoRow(
-              Icons.phone,
+              Icons.phone_outlined,
               controller.userProfile.value?.phone ?? '',
             ),
             const SizedBox(height: 12),
             _buildInfoRow(
-              Icons.location_on,
+              Icons.location_on_outlined,
+
               '${controller.userProfile.value?.city ?? ''}, ${controller.userProfile.value?.state ?? ''}',
             ),
             const SizedBox(height: 12),
@@ -891,37 +892,48 @@ leading: IconButton(onPressed: () {
 
   // Helper method for info rows (with icon)
   Widget _buildInfoRow(IconData icon, String value, {String? label}) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: ColorRes.leadGreyColor[600]),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (label != null) ...[
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: ColorRes.leadGreyColor[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: ColorRes.leadGreyColor[600]),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (label != null) ...[
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.extraSmall,
+                      color: ColorRes.leadGreyColor[600],
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                ],
                 Text(
-                  label,
+                  value,
                   style: TextStyle(
-                    fontSize: AppFontSizes.extraSmall,
-                    color: ColorRes.leadGreyColor[600],
+                    fontSize: AppFontSizes.small,
+                    color: ColorRes.textPrimary,
                     fontWeight: AppFontWeights.medium,
                   ),
                 ),
-                const SizedBox(height: 4),
               ],
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: AppFontSizes.small,
-                  color: ColorRes.textPrimary,
-                  fontWeight: AppFontWeights.medium,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

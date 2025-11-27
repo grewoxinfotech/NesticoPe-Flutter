@@ -11,14 +11,14 @@ class ResellerFakeLeadStatsResponse {
 
   factory ResellerFakeLeadStatsResponse.fromJson(Map<String, dynamic> json) {
     return ResellerFakeLeadStatsResponse(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: ResellerFakeLeadStatsData.fromJson(json['data'] ?? {}),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'success': success,
+    'story': success,
     'message': message,
     'data': data.toJson(),
   };

@@ -7,14 +7,14 @@ class ViewResponseModel {
 
   factory ViewResponseModel.fromJson(Map<String, dynamic> json) {
     return ViewResponseModel(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? ViewData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'success': success,
+    'story': success,
     'message': message,
     'data': data?.toJson(),
   };

@@ -12,6 +12,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 
 import 'package:get/get.dart';
 
+import '../../home/views/home_screen/home_screen.dart';
 import '../../reseller/controller/profile/profile_controller.dart';
 import '../controllers/seller_profile_controller.dart';
 
@@ -91,7 +92,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                       const SizedBox(height: 16),
         
                       // Business Details Section (Editable)
-                   if(UserHelper.isSellerBuilder)...[
+                   if(UserHelper.isSellerOwner)...[
                      Obx(() => _buildBusinessDetailsSection(profileController)),
                      const SizedBox(height: 16),
                    ],
@@ -110,7 +111,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
         
                       // Profile Options
                       if (!profileController.isEditing.value) ...[
-                        _buildProfileOptionsSection(),
+                        // _buildProfileOptionsSection(),
                         const SizedBox(height: 16),
                       ],
                     ],
@@ -141,28 +142,34 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             children: [
               Obx(() {
                 ImageProvider? imageProvider;
-
-                // ✅ 1. Check if user selected a new local image
+                bool isLoading = false;
+                bool isNetworkImage = false;
+                final profilePic =
+                    controller.profileData.value?.user?.profilePic;
+                // 1️⃣ Check if user selected a new local image
                 if (controller.selectedImage.value != null) {
                   imageProvider = FileImage(controller.selectedImage.value!);
                 }
-                // ✅ 2. Else use profilePic from API
+                // 2️⃣ Else use profilePic from API
                 else {
-                  final profilePic = controller.profileData.value?.user?.profilePic;
+
 
                   if (profilePic != null && profilePic.isNotEmpty) {
-                    // ✅ If it's a network URL
-                    if (profilePic.startsWith('http') || profilePic.startsWith('https')) {
+                    // ✅ Network image
+                    if (profilePic.startsWith('http') ||
+                        profilePic.startsWith('https')) {
                       imageProvider = NetworkImage(profilePic);
+                      isNetworkImage = true;
+                      isLoading =
+                      true; // show loader until image finishes loading
                     }
-                    // ✅ Else if it's a valid local file path
+                    // ✅ Local file
                     else if (File(profilePic).existsSync()) {
                       imageProvider = FileImage(File(profilePic));
                     }
                   }
                 }
 
-                // ✅ 3. Build the circular avatar
                 return Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -170,18 +177,50 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: CircleAvatar(
-                      radius: 35,
-                      backgroundColor:
-                      imageProvider == null ? ColorRes.primary.withOpacity(0.1) : null,
-                      backgroundImage: imageProvider,
-                      child: imageProvider == null
-                          ? Icon(
-                        Icons.person,
-                        size: 25,
-                        color: ColorRes.primary.withOpacity(0.8),
-                      )
-                          : null,
+                    child: ClipOval(
+                      child: SizedBox(
+                        width: 70,
+                        height: 70,
+                        child: imageProvider != null
+                            ? (isNetworkImage
+                            ? Image.network(
+                          profilePic!,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: SizedBox(
+                                width: 25,
+                                height: 25,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: ColorRes.primary,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) => Center(
+                            child: Icon(
+                              Icons.person,
+                              size: 30,
+                              color: ColorRes.primary.withOpacity(0.8),
+                            ),
+                          ),
+                        )
+                            : Image.file(
+                          File(profilePic!),
+                          fit: BoxFit.cover,
+                        ))
+                            : CircleAvatar(
+                          radius: 35,
+                          backgroundColor: ColorRes.primary.withOpacity(0.1),
+                          child: Icon(
+                            Icons.person,
+                            size: 25,
+                            color: ColorRes.primary.withOpacity(0.8),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 );
@@ -190,24 +229,27 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               // Obx(() {
               //   ImageProvider? imageProvider;
               //
-              //   // Priority: selectedImage (local file) > profilePic (network URL) > null
+              //   // ✅ 1. Check if user selected a new local image
               //   if (controller.selectedImage.value != null) {
-              //     // If user selected a new image from gallery/camera
               //     imageProvider = FileImage(controller.selectedImage.value!);
-              //   } else if (controller
-              //           .profileData
-              //           .value
-              //           ?.user
-              //           ?.profilePic
-              //           ?.isNotEmpty ??
-              //       false) {
-              //     // If profile pic URL exists from API
-              //     imageProvider = FileImage(
-              //       File(controller.profileData.value!.user!.profilePic!),
-              //     );
               //   }
-              //   // If both are null, imageProvider stays null and shows placeholder icon
+              //   // ✅ 2. Else use profilePic from API
+              //   else {
+              //     final profilePic = controller.profileData.value?.user?.profilePic;
               //
+              //     if (profilePic != null && profilePic.isNotEmpty) {
+              //       // ✅ If it's a network URL
+              //       if (profilePic.startsWith('http') || profilePic.startsWith('https')) {
+              //         imageProvider = NetworkImage(profilePic);
+              //       }
+              //       // ✅ Else if it's a valid local file path
+              //       else if (File(profilePic).existsSync()) {
+              //         imageProvider = FileImage(File(profilePic));
+              //       }
+              //     }
+              //   }
+              //
+              //   // ✅ 3. Build the circular avatar
               //   return Container(
               //     decoration: BoxDecoration(
               //       shape: BoxShape.circle,
@@ -218,22 +260,21 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               //       child: CircleAvatar(
               //         radius: 35,
               //         backgroundColor:
-              //             imageProvider == null
-              //                 ? ColorRes.primary.withOpacity(0.1)
-              //                 : null,
+              //         imageProvider == null ? ColorRes.primary.withOpacity(0.1) : null,
               //         backgroundImage: imageProvider,
-              //         child:
-              //             imageProvider == null
-              //                 ? Icon(
-              //                   Icons.person,
-              //                   size: 25,
-              //                   color: ColorRes.primary.withOpacity(0.8),
-              //                 )
-              //                 : null,
+              //         child: imageProvider == null
+              //             ? Icon(
+              //           Icons.person,
+              //           size: 25,
+              //           color: ColorRes.primary.withOpacity(0.8),
+              //         )
+              //             : null,
               //       ),
               //     ),
               //   );
               // }),
+
+
               if (controller.isEditing.value)
                 Positioned(
                   bottom: -2,
@@ -326,126 +367,6 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
   }
 
   // Widget _buildAccountHealthCard() {
-  Widget _buildAccountHealthCard({required int remainingWarnings}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'ACCOUNT HEALTH',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[600],
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.orange[50],
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Colors.orange[300]!),
-                ),
-                child: Text(
-                  'Warning',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.orange[700],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '($remainingWarnings more to block)',
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReportCard({required String date, required String leadId}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.red[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.red[100]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            date,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            leadId,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[800],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatisticsCards(ProfileController controller) {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            'Total Commission',
-            '${Formatter.formatPrice(int.tryParse(controller.resellerProfile.value?.data.totalCommissions ?? '') ?? 0) ?? ''}',
-            Icons.trending_up,
-            ColorRes.success,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _buildStatCard(
-            'Total Sales',
-            '${controller.resellerProfile.value?.data.totalSales ?? ''}',
-            Icons.people_alt_outlined,
-            ColorRes.blueColor,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _buildStatCard(
-            'Success Rate',
-            '${controller.resellerProfile.value?.data.successRate}',
-            Icons.star_rounded,
-            ColorRes.homeAmber,
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildStatCard(
     String title,
@@ -622,13 +543,13 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          if (controller.isEditing.value) ...[
+         // if (controller.isEditing.value) ...[
             // Editable form fields
             _buildFormField(
               controller: controller.nameController,
               label: 'First Name',
               icon: Icons.person_outline,
-              enabled: true,
+              enabled: controller.isEditing.value,
               validator:
                   (value) =>
                       value?.isEmpty ?? true ? 'First name is required' : null,
@@ -638,7 +559,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               controller: controller.lastNameController,
               label: 'Last Name',
               icon: Icons.person_outline,
-              enabled: true,
+              enabled: controller.isEditing.value,
               validator:
                   (value) =>
                       value?.isEmpty ?? true ? 'Last name is required' : null,
@@ -648,7 +569,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               controller: controller.emailController,
               label: 'Email',
               icon: Icons.email_outlined,
-              enabled: true,
+              enabled: controller.isEditing.value,
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value?.isEmpty ?? true) return 'Email is required';
@@ -661,32 +582,55 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               controller: controller.phoneController,
               label: 'Phone',
               icon: Icons.phone_outlined,
-              enabled: true,
+              enabled: controller.isEditing.value,
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.positionController,
-              label: 'City',
-              icon: Icons.location_city_outlined,
-              enabled: true,
-            ),
+            // _buildFormField(
+            //   controller: controller.positionController,
+            //   label: 'City',
+            //   icon: Icons.location_city_outlined,
+            //   enabled: controller.isEditing.value,
+            // ),
+          CitySelectionWidget(
+            isEditing: controller.isEditing.value,
+            controller: controller.positionController,
+            onCitySelected: (selectedCity) {
+              print("✅ Selected city: ${selectedCity.description}");
+              controller.positionController.text =
+                  selectedCity.description ?? '';
+              controller.companyController.text =
+                  selectedCity.reference ?? '';
+              // You can also store city details in your controller here
+            },
+          ),
             const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.companyController,
-              label: 'State',
-              icon: Icons.location_on_outlined,
-              enabled: true,
-            ),
-            const SizedBox(height: 14),
+            // _buildFormField(
+            //   controller: controller.companyController,
+            //   label: 'State',
+            //   icon: Icons.location_on_outlined,
+            //   enabled: true,
+            // ),
+          StateSelectionWidget(
+            isEditing: controller.isEditing.value,
+            controller: controller.companyController,
+            onCitySelected: (selectedCity) {
+              print("✅ Selected city: ${selectedCity.description}");
+              controller.companyController.text =
+                  selectedCity.description ?? '';
+              // You can also store city details in your controller here
+            },
+          ),
+
+          const SizedBox(height: 14),
             _buildFormField(
               controller: controller.addressController,
               label: 'Address',
               icon: Icons.location_city_outlined,
-              enabled: true,
+              enabled: controller.isEditing.value,
             ),
 
-          ] else ...[
+          ] /*else ...[
             // Read-only display
             _buildInfoRow(
               Icons.person,
@@ -713,8 +657,8 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               '${controller.profileData.value?.user?.address ?? ''}',
             ),
 
-          ],
-        ],
+          ],*/
+     //   ],
       ),
     );
   }
@@ -760,20 +704,20 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          if (controller.isEditing.value) ...[
+         // if (controller.isEditing.value) ...[
             // Editable form fields
             _buildFormField(
               controller: controller.contactPersonController,
               label: 'Contact Person',
               icon: Icons.person_outline,
-              enabled: true,
+              enabled: controller.isEditing.value,
             ),
             const SizedBox(height: 14),
             _buildFormField(
               controller: controller.contactPhoneController,
               label: 'Contact Phone',
               icon: Icons.phone_outlined,
-              enabled: true,
+              enabled: controller.isEditing.value,
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 14),
@@ -781,23 +725,23 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               controller: controller.companyNameController,
               label: 'Company Name',
               icon: Icons.business,
-              enabled: true,
+              enabled: controller.isEditing.value,
             ),
             const SizedBox(height: 14),
             _buildFormField(
               controller: controller.reraNumberController,
               label: 'RERA Number',
               icon: Icons.assignment,
-              enabled: true,
+              enabled: controller.isEditing.value,
             ),
             const SizedBox(height: 14),
             _buildFormField(
               controller: controller.gstNumberController,
               label: 'GST Number',
               icon: Icons.receipt_long,
-              enabled: true,
+              enabled: controller.isEditing.value,
             ),
-          ] else ...[
+           /*else ...[
             // Read-only display
             _buildInfoRow(
               Icons.person_outline,
@@ -828,7 +772,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               controller.resellerProfile.value?.gstNumber ?? 'Not Set',
               label: 'GST Number',
             ),
-          ],
+          ],*/
           // Save/Cancel buttons at bottom when editing
           if (controller.isEditing.value) ...[
             const SizedBox(height: 24),

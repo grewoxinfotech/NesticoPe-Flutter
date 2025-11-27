@@ -75,7 +75,7 @@
 //
 //       try {
 //         final authController = Get.find<AuthController>();
-//         final success = await authController.register(
+//         final story = await authController.register(
 //           context: context,
 //           username: _usernameController.text.trim(),
 //           password: _passwordController.text.trim(),
@@ -90,7 +90,7 @@
 //           userType: _roleToString(_selectedRole),
 //         );
 //
-//         if (!success) {
+//         if (!story) {
 //           _showErrorDialog(authController.errorMessage.value);
 //         }
 //       } catch (e) {
@@ -459,14 +459,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           data: data,
         );
 
-        // if (!success) {
+        // if (!story) {
         //   _showErrorDialog(authController.errorMessage.value);
         // } else {
         //   // _showSuccessDialog();
         //   NesticoPeSnackBar.showAwesomeSnackbar(
         //     title: "Success",
         //     message: "OTP sent Successfully",
-        //     contentType: ContentType.success,
+        //     contentType: ContentType.story,
         //   );
         // }
       } catch (e) {
@@ -503,14 +503,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           userType: _roleToString(_selectedRole),
         );
 
-        // if (!success) {
+        // if (!story) {
         //   _showErrorDialog(authController.errorMessage.value);
         // } else {
         //   // _showSuccessDialog();
         //   NesticoPeSnackBar.showAwesomeSnackbar(
         //     title: "Success",
         //     message: "OTP sent Successfully",
-        //     contentType: ContentType.success,
+        //     contentType: ContentType.story,
         //   );
         // }
       } catch (e) {

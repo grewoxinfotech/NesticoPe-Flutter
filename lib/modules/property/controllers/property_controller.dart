@@ -385,6 +385,7 @@ class PropertyController extends PaginatedController<Items> {
   final propertyFilterTypes = ['Residential', 'Commercial'].obs;
 
   final selectedCityZ = TextEditingController();
+  final selectedStateZ = TextEditingController();
   final selectedLocalityController = TextEditingController();
   final selectedLocality = RxnString();
   final selectedListingType = RxnString();
@@ -437,9 +438,11 @@ class PropertyController extends PaginatedController<Items> {
       filters['maxPrice'] = maxBudget.text;
     }
 
-    // Close dialog
-    Get.back();
-    Get.to(() => PropertyDetail(filters: [filters]));
+
+     // Close dialog
+     Get.back();
+     Get.to(() => PropertyDetail(filters: [filters]));
+
 
     print('🔍 Finding properties with filters: $filters');
     selectedPropertyType.value = null;

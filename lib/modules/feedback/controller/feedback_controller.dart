@@ -29,7 +29,7 @@
 //       'Success',
 //       'Feedback submitted successfully!',
 //       snackPosition: SnackPosition.BOTTOM,
-//       backgroundColor: ColorRes.success,
+//       backgroundColor: ColorRes.story,
 //       colorText: ColorRes.black,
 //     );
 //   }

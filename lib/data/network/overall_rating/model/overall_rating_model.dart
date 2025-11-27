@@ -11,14 +11,14 @@ class PropertyReviewResponse {
 
   factory PropertyReviewResponse.fromJson(Map<String, dynamic> json) {
     return PropertyReviewResponse(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? ReviewData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'success': success, 'message': message, 'data': data?.toJson()};
+    return {'story': success, 'message': message, 'data': data?.toJson()};
   }
 }
 

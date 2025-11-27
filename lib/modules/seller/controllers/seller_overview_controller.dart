@@ -34,7 +34,7 @@ class SellerOverviewController extends GetxController {
   // }
 
   // final Map<String, dynamic> overview = {
-  //   "success": true,
+  //   "story": true,
   //   "message": "Seller insights fetched successfully",
   //   "data": {
   //     "propertyMetrics": {

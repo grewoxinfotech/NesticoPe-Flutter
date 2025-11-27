@@ -61,7 +61,7 @@
 //         page: currentPage.value,
 //       );
 //
-//       if (response != null && response.success == true) {
+//       if (response != null && response.story == true) {
 //         if (refresh) {
 //           allReviews.value = response.data?.items ?? [];
 //         } else {
@@ -143,7 +143,7 @@
 //         page: currentPage.value,
 //       );
 //
-//       if (response != null && response.success == true) {
+//       if (response != null && response.story == true) {
 //         allReviews.addAll(response.data?.items ?? []);
 //         hasMore.value = response.data?.hasMore ?? false;
 //

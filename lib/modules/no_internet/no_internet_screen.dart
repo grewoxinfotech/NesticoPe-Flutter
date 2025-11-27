@@ -53,7 +53,7 @@ class _NoInternetScreenState extends State<NoInternetScreen>
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (networkService.isConnected) {
-      // Internet is back, show success message briefly
+      // Internet is back, show story message briefly
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

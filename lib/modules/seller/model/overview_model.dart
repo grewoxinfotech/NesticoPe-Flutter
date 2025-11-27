@@ -11,14 +11,14 @@ class SellerOverviewModel {
 
   factory SellerOverviewModel.fromJson(Map<String, dynamic> json) {
     return SellerOverviewModel(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? OverviewData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'success': success,
+    'story': success,
     'message': message,
     'data': data?.toJson(),
   };

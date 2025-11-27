@@ -11,7 +11,7 @@ class SellerInsightsModel {
 
   factory SellerInsightsModel.fromJson(Map<String, dynamic> json) {
     return SellerInsightsModel(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: SellerInsightsData.fromJson(json['data'] ?? {}),
     );
@@ -19,7 +19,7 @@ class SellerInsightsModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'success': success,
+      'story': success,
       'message': message,
       'data': data.toMap(),
     };

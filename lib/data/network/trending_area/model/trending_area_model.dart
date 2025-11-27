@@ -13,7 +13,7 @@ class TrendingAreasResponse {
 
   factory TrendingAreasResponse.fromJson(Map<String, dynamic> json) {
     return TrendingAreasResponse(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: (json['data'] as List<dynamic>?)
           ?.map((e) => TrendingArea.fromJson(e))
@@ -23,7 +23,7 @@ class TrendingAreasResponse {
   }
 
   Map<String, dynamic> toJson() => {
-    'success': success,
+    'story': success,
     'message': message,
     'data': data.map((e) => e.toJson()).toList(),
   };

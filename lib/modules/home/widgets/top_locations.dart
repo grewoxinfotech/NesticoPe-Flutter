@@ -73,7 +73,7 @@
 //                                 ? Icons.arrow_upward
 //                                 : Icons.arrow_downward,
 //                             color:
-//                                 isPositive ? ColorRes.success : ColorRes.error,
+//                                 isPositive ? ColorRes.story : ColorRes.error,
 //                             size: 12,
 //                           ),
 //                           const SizedBox(width: 2),

@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,6 +9,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../../home/views/home_screen/home_screen.dart';
 import '../../controller/fack_lead_controller/fack_lead_controller.dart';
 import '../../controller/profile/profile_controller.dart';
 import 'package:get/get.dart';
@@ -21,7 +20,6 @@ class ResellerProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.put(ProfileController());
-
 
     return Scaffold(
       backgroundColor: ColorRes.white,
@@ -69,35 +67,35 @@ class ResellerProfileScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return(UserHelper.isReseller)? SingleChildScrollView(
+        return (UserHelper.isReseller)
+            ? SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Profile Header
+                  _buildProfileHeader(profileController),
+                  const SizedBox(height: 16),
 
+                  // Statistics Cards
+                  _buildStatisticsCards(profileController),
+                  const SizedBox(height: 16),
 
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // Profile Header
-              _buildProfileHeader(profileController),
-              const SizedBox(height: 16),
+                  _buildLeadOverView(),
+                  const SizedBox(height: 16),
 
-              // Statistics Cards
-              _buildStatisticsCards(profileController),
-              const SizedBox(height: 16),
+                  // Profile Information Form
+                  Obx(() => _buildProfileForm(profileController)),
+                  const SizedBox(height: 16),
 
-              _buildLeadOverView(),
-              const SizedBox(height: 16),
-
-              // Profile Information Form
-              Obx(() => _buildProfileForm(profileController)),
-              const SizedBox(height: 16),
-
-              // Profile Options
-              if (!profileController.isEditing.value) ...[
-                _buildProfileOptionsSection(),
-                const SizedBox(height: 16),
-              ],
-            ],
-          ),
-        ):SizedBox.shrink();
+                  // Profile Options
+                  if (!profileController.isEditing.value) ...[
+                    // _buildProfileOptionsSection(),
+                    const SizedBox(height: 16),
+                  ],
+                ],
+              ),
+            )
+            : SizedBox.shrink();
       }),
     );
   }
@@ -243,30 +241,83 @@ class ResellerProfileScreen extends StatelessWidget {
         children: [
           Stack(
             children: [
+              // Obx(() {
+              //   ImageProvider? imageProvider;
+              //
+              //   // ✅ 1. Check if user selected a new local image
+              //   if (controller.selectedImage.value != null) {
+              //     imageProvider = FileImage(controller.selectedImage.value!);
+              //   }
+              //   // ✅ 2. Else use profilePic from API
+              //   else {
+              //     final profilePic = controller.profileData.value?.user?.profilePic;
+              //
+              //     if (profilePic != null && profilePic.isNotEmpty) {
+              //       // ✅ If it's a network URL
+              //       if (profilePic.startsWith('http') || profilePic.startsWith('https')) {
+              //         imageProvider = NetworkImage(profilePic);
+              //       }
+              //       // ✅ Else if it's a valid local file path
+              //       else if (File(profilePic).existsSync()) {
+              //         imageProvider = FileImage(File(profilePic));
+              //       }
+              //     }
+              //   }
+              //
+              //   // ✅ 3. Build the circular avatar
+              //   return Container(
+              //     decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       border: Border.all(color: ColorRes.primary, width: 2),
+              //     ),
+              //     child: Padding(
+              //       padding: const EdgeInsets.all(2.0),
+              //       child: CircleAvatar(
+              //         radius: 35,
+              //         backgroundColor:
+              //         imageProvider == null ? ColorRes.primary.withOpacity(0.1) : null,
+              //         backgroundImage: imageProvider,
+              //         child: imageProvider == null
+              //             ? Icon(
+              //           Icons.person,
+              //           size: 25,
+              //           color: ColorRes.primary.withOpacity(0.8),
+              //         )
+              //             : null,
+              //       ),
+              //     ),
+              //   );
+              // }),
               Obx(() {
                 ImageProvider? imageProvider;
-
-                // ✅ 1. Check if user selected a new local image
+                bool isLoading = false;
+                bool isNetworkImage = false;
+                final profilePic =
+                    controller.profileData.value?.user?.profilePic;
+                // 1️⃣ Check if user selected a new local image
                 if (controller.selectedImage.value != null) {
                   imageProvider = FileImage(controller.selectedImage.value!);
                 }
-                // ✅ 2. Else use profilePic from API
+                // 2️⃣ Else use profilePic from API
                 else {
-                  final profilePic = controller.profileData.value?.user?.profilePic;
+
 
                   if (profilePic != null && profilePic.isNotEmpty) {
-                    // ✅ If it's a network URL
-                    if (profilePic.startsWith('http') || profilePic.startsWith('https')) {
+                    // ✅ Network image
+                    if (profilePic.startsWith('http') ||
+                        profilePic.startsWith('https')) {
                       imageProvider = NetworkImage(profilePic);
+                      isNetworkImage = true;
+                      isLoading =
+                      true; // show loader until image finishes loading
                     }
-                    // ✅ Else if it's a valid local file path
+                    // ✅ Local file
                     else if (File(profilePic).existsSync()) {
                       imageProvider = FileImage(File(profilePic));
                     }
                   }
                 }
 
-                // ✅ 3. Build the circular avatar
                 return Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -274,22 +325,55 @@ class ResellerProfileScreen extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: CircleAvatar(
-                      radius: 35,
-                      backgroundColor:
-                      imageProvider == null ? ColorRes.primary.withOpacity(0.1) : null,
-                      backgroundImage: imageProvider,
-                      child: imageProvider == null
-                          ? Icon(
-                        Icons.person,
-                        size: 25,
-                        color: ColorRes.primary.withOpacity(0.8),
-                      )
-                          : null,
+                    child: ClipOval(
+                      child: SizedBox(
+                        width: 70,
+                        height: 70,
+                        child: imageProvider != null
+                            ? (isNetworkImage
+                            ? Image.network(
+                          profilePic!,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: SizedBox(
+                                width: 25,
+                                height: 25,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: ColorRes.primary,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) => Center(
+                            child: Icon(
+                              Icons.person,
+                              size: 30,
+                              color: ColorRes.primary.withOpacity(0.8),
+                            ),
+                          ),
+                        )
+                            : Image.file(
+                          File(profilePic!),
+                          fit: BoxFit.cover,
+                        ))
+                            : CircleAvatar(
+                          radius: 35,
+                          backgroundColor: ColorRes.primary.withOpacity(0.1),
+                          child: Icon(
+                            Icons.person,
+                            size: 25,
+                            color: ColorRes.primary.withOpacity(0.8),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 );
               }),
+
               // Obx(() {
               //   ImageProvider? imageProvider;
               //
@@ -1006,7 +1090,6 @@ class ResellerProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileForm(ProfileController controller) {
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -1087,26 +1170,50 @@ class ResellerProfileScreen extends StatelessWidget {
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 14),
-            _buildFormField(
+            // _buildFormField(
+            //   controller: controller.positionController,
+            //   label: 'City',
+            //   icon: Icons.location_on_outlined,
+            //   enabled: controller.isEditing.value,
+            // ),
+            CitySelectionWidget(
+              isEditing: controller.isEditing.value,
               controller: controller.positionController,
-              label: 'City',
-              icon: Icons.location_on_outlined,
-              enabled: controller.isEditing.value,
+              onCitySelected: (selectedCity) {
+                print("✅ Selected city: ${selectedCity.description}");
+                controller.positionController.text =
+                    selectedCity.description ?? '';
+                controller.companyController.text =
+                    selectedCity.reference ?? '';
+                // You can also store city details in your controller here
+              },
             ),
+
             const SizedBox(height: 14),
             _buildFormField(
               controller: controller.addressController,
               label: 'Address',
-              icon: Icons.apartment_outlined,
-              enabled: controller.isEditing.value,
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.companyController,
-              label: 'State',
               icon: Icons.location_on_outlined,
               enabled: controller.isEditing.value,
             ),
+            const SizedBox(height: 14),
+            StateSelectionWidget(
+              isEditing: controller.isEditing.value,
+              controller: controller.companyController,
+              onCitySelected: (selectedCity) {
+                print("✅ Selected city: ${selectedCity.description}");
+                controller.companyController.text =
+                    selectedCity.description ?? '';
+                // You can also store city details in your controller here
+              },
+            ),
+
+            // _buildFormField(
+            //   controller: controller.companyController,
+            //   label: 'State',
+            //   icon: Icons.location_on_outlined,
+            //   enabled: controller.isEditing.value,
+            // ),
             // const SizedBox(height: 14),
             // _buildFormField(
             //   controller: controller.bioController,

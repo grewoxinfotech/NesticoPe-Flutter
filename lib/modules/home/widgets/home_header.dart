@@ -112,14 +112,48 @@ class _HomeHeaderState extends State<HomeHeader> {
                                 return SizedBox.shrink();
                               }
 
-                              return Text(
-                                // widget.cityName,
-                                propertyController.selectedCity.value,
-                                style: const TextStyle(
-                                  fontSize: AppFontSizes.body,
-                                  color: ColorRes.textColor,
-                                  fontWeight: AppFontWeights.semiBold,
-                                  // fontFamily: 'Roboto',
+                              return InkWell(
+                                onTap:
+                                  () async {
+                                    final filter = await Get.to(
+                                          () => CommonSearchField(
+                                        isNavigate: true,
+                                        onTap: (city) {
+                                          final filters = {"city": city.split(",").first};
+                                          propertyController.fetchTradingArea(
+                                            filters['city'] ?? '',
+                                          );
+                                          Get.back(result: filters);
+                                        },
+                                      ),
+                                    );
+                                    if (filter != null &&
+                                        filter is Map &&
+                                        filter['city'] != null) {
+                                      final String city = filter['city'];
+
+                                      // Apply city filter to home (Yes case)
+                                      await SecureStorage.saveSelectedCity(city);
+                                      propertyController.fetchTradingArea(city);
+                                      propertyController.applyFilter('city', city);
+                                      projectController.applyFilter('city', city);
+                                      // Reload top properties for the new city
+                                      await propertyController.loadTopProperties();
+                                      await projectController.loadTopProject();
+
+                                      // Navigate to PropertyDetail in both cases (Yes and No)
+                                    }
+
+                                },
+                                child: Text(
+                                  // widget.cityName,
+                                  propertyController.selectedCity.value,
+                                  style: const TextStyle(
+                                    fontSize: AppFontSizes.body,
+                                    color: ColorRes.textColor,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    // fontFamily: 'Roboto',
+                                  ),
                                 ),
                               );
                             }),

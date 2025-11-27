@@ -11,7 +11,7 @@ class CityResponse {
 
   factory CityResponse.fromJson(Map<String, dynamic> json) {
     return CityResponse(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data:
           json['data'] != null
@@ -24,7 +24,7 @@ class CityResponse {
 
   Map<String, dynamic> toJson() {
     return {
-      'success': success,
+      'story': success,
       'message': message,
       'data': data.map((x) => x.toJson()).toList(),
     };

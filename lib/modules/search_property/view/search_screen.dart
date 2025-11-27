@@ -23,6 +23,7 @@ import 'package:housing_flutter_app/utils/global.dart';
 import 'package:housing_flutter_app/widgets/input/custom_text_field.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../../builder/view/project_detail/project_detail.dart';
 import '../../filter_property/controller/city_insigths_controller.dart';
 import '../../filter_property/model/city_insigths_model.dart';
 import '../../propert_detail/view/property_details.dart';
@@ -514,8 +515,8 @@ class CommonSearchField extends StatefulWidget {
 }
 
 class _CommonSearchFieldState extends State<CommonSearchField> {
-  final MicController micController = Get.put(MicController());
-  final GoogleMapController controller = Get.put(GoogleMapController());
+  final MicController micController = Get.find<MicController>();
+  final GoogleMapController controller = Get.find<GoogleMapController>();
 
   //final trendingArea=Get.put(HomeFeedController());
 
@@ -673,55 +674,55 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () {
-                      // Open bottom sheet
-                      Get.bottomSheet(
-                        _openMicSheet(),
-                        backgroundColor: ColorRes.white,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
-                        ),
-                      );
-                      micController.listen();
-                      ever(micController.isListening, (bool listening) {
-                        if (!listening) {
-                          micController.stopListening();
-                          if ((Get.isBottomSheetOpen ?? false) ||
-                              micController.searchText.value.text.isNotEmpty) {
-                            Get.back(); // Close the bottom sheet
-                          }
-                        }
-                      });
-                    },
-                    child: Container(
-                      height: 52,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 14,
-                        horizontal: 15,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: ColorRes.leadGreyColor.shade300,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Obx(
-                        () => Icon(
-                          micController.isListening.value
-                              ? Icons.mic
-                              : Icons.mic_none,
-                          color: ColorRes.primary,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // const SizedBox(width: 8),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     // Open bottom sheet
+                  //     Get.bottomSheet(
+                  //       _openMicSheet(),
+                  //       backgroundColor: ColorRes.white,
+                  //       isScrollControlled: true,
+                  //       shape: const RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.vertical(
+                  //           top: Radius.circular(20),
+                  //         ),
+                  //       ),
+                  //     );
+                  //     micController.listen();
+                  //     ever(micController.isListening, (bool listening) {
+                  //       if (!listening) {
+                  //         micController.stopListening();
+                  //         if ((Get.isBottomSheetOpen ?? false) ||
+                  //             micController.searchText.value.text.isNotEmpty) {
+                  //           Get.back(); // Close the bottom sheet
+                  //         }
+                  //       }
+                  //     });
+                  //   },
+                  //   child: Container(
+                  //     height: 52,
+                  //     padding: const EdgeInsets.symmetric(
+                  //       vertical: 14,
+                  //       horizontal: 15,
+                  //     ),
+                  //     decoration: BoxDecoration(
+                  //       border: Border.all(
+                  //         color: ColorRes.leadGreyColor.shade300,
+                  //         width: 1,
+                  //       ),
+                  //       borderRadius: BorderRadius.circular(16),
+                  //     ),
+                  //     child: Obx(
+                  //       () => Icon(
+                  //         micController.isListening.value
+                  //             ? Icons.mic
+                  //             : Icons.mic_none,
+                  //         color: ColorRes.primary,
+                  //         size: 24,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -895,6 +896,10 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                           Get.to(() => PropertyDetailScreen(property: item.items!));
                           controller.predictions.clear();
                           micController.searchText.value.clear();
+                        } if(item.projectItem != null) {
+                          Get.to(() => ProjectDetailsScreen(projectItem: item.projectItem!));
+                          controller.predictions.clear();
+                          micController.searchText.value.clear();
                         }
                         else if(widget.isLocality)
                         {
@@ -939,11 +944,12 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                         child: Row(
                           children: [
                             Icon(
+                              // 🏠 Property/BHK search result
                               item.items != null
-                                  ? Icons.home
-                                  : (widget.isLocality
-                                      ? Icons.location_on
-                                      : Icons.apartment),
+                                  ? Icons.home_filled
+                                  : item.projectItem != null
+                                  ? Icons.apartment_outlined
+                                  : Icons.location_on_outlined,
                               color: ColorRes.primary,
                             ),
                             const SizedBox(width: 12),

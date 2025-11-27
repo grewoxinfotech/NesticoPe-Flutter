@@ -1,3 +1,4 @@
+import '../../../data/network/builder/model/builder_model.dart';
 import '../../../data/network/property/models/property_model.dart';
 
 class SearchFilterModel {
@@ -27,7 +28,7 @@ class SearchFilterModel {
 
 class Prediction {
   final Items? items;
-  final String? description;
+  final ProjectItem? projectItem;  final String? description;
   final List<MatchedSubstring>? matchedSubstrings;
   final String? placeId;
   final String? reference;
@@ -35,7 +36,8 @@ class Prediction {
   final List<Term>? terms;
   final List<String>? types;
 
-  Prediction({
+  Prediction( {
+    this.projectItem,
     this.description,
     this.matchedSubstrings,
     this.placeId,
@@ -56,6 +58,7 @@ class Prediction {
           : [],
       placeId: json['place_id'],
       items: json['items'] != null ? Items.fromJson(json['items']) : null,
+      projectItem: json['items'] != null ? ProjectItem.fromJson(json['items']) : null,
       reference: json['reference'],
       structuredFormatting: json['structured_formatting'] != null
           ? StructuredFormatting.fromJson(json['structured_formatting'])
@@ -153,6 +156,25 @@ class Term {
     return {
       'offset': offset,
       'value': value,
+    };
+  }
+}
+extension PredictionParser on Prediction {
+  Map<String, String?> get toLocationMap {
+    if (terms == null || terms!.isEmpty) return {};
+
+    String? city;
+    String? state;
+    String? country;
+
+    if (terms!.isNotEmpty) city = terms![0].value;
+    if (terms!.length > 1) state = terms![1].value;
+    if (terms!.length > 2) country = terms![2].value;
+
+    return {
+      'city': city,
+      'state': state,
+      'country': country,
     };
   }
 }

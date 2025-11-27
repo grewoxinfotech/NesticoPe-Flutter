@@ -5,98 +5,377 @@ import 'package:housing_flutter_app/confige/search_api/search_api.dart';
 import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
 import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
 
+import '../../../data/network/builder/service/builder_service.dart';
+
 class GoogleMapController extends GetxController {
   /// Reactive variables
   var isLoading = false.obs;
   var predictions = <Prediction>[].obs;
 PropertyService _propertyService = PropertyService();
+  BuilderService _builderService = BuilderService();
   var nearbyLandmarks = <Map<String, dynamic>>[].obs;
 
+  RxList<Map<String, String?>> cityStateList = <Map<String, String?>>[].obs;
+
+
   /// Fetch predictions from Google API or Properties for BHK search
+  ///
+  /// =========================OLD CODE Past=========================
+  // Future<void> fetchPredictionsCity(String city) async {
+  //   if (city.trim().isEmpty) {
+  //     predictions.clear();
+  //     return;
+  //   }
+  //
+  //   final String trimmedCity = city.trim().toUpperCase();
+  //   print("\n====== SEARCH DEBUG ======");
+  //   print("Search query: $trimmedCity");
+  //   print("Contains BHK: ${trimmedCity.contains("BHK")}");
+  //   print("=========================\n");
+  //
+  //  if(!trimmedCity.contains("BHK"))
+  //    {
+  //      try {
+  //        isLoading.value = true;
+  //
+  //        final response = await GoogleMapApi.instance.searchCities(city);
+  //
+  //        print("resposne ===== $response");
+  //
+  //        if (response != null) {
+  //          final model = SearchFilterModel.fromJson(response);
+  //          print("model ===== ${model.toJson()}");
+  //          predictions.value = model.predictions ?? [];
+  //        } else {
+  //          predictions.clear();
+  //        }
+  //      } catch (e) {
+  //        print("❌ Error fetching predictions: $e");
+  //        predictions.clear();
+  //      } finally {
+  //        isLoading.value = false;
+  //      }
+  //    }
+  //  else{
+  //    try {
+  //      isLoading.value = true;
+  //      print("🏘️ BHK Search Started for: $city");
+  //
+  //      // Extract BHK number from search query (e.g., "4bhk" -> "4", "2 bhk" -> "2")
+  //      final bhkMatch = RegExp(r'(\d+)').firstMatch(trimmedCity);
+  //      final bhkNumber = bhkMatch?.group(1) ?? city[0];
+  //
+  //      print("🔢 Extracted BHK number: $bhkNumber");
+  //
+  //      final response = await _propertyService.fetchProperties(
+  //        filters: {
+  //          'bhk': bhkNumber,
+  //        },
+  //      );
+  //
+  //      print("✅ BHK Properties Response: ${response.items.length} items found");
+  //      if (response.items.isEmpty) {
+  //        print("⚠️ No properties found for $bhkNumber BHK");
+  //      } else {
+  //        print("🏠 First property: ${response.items.first.toJson()}");
+  //      }
+  //
+  //      if (response.items.isNotEmpty) {
+  //
+  //        predictions.value = response.items.map((property) {
+  //          return Prediction(
+  //            description: "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''} in ${property.city ?? ''}",
+  //            placeId: property.id ?? '',
+  //            structuredFormatting: StructuredFormatting(
+  //              mainText: "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''}",
+  //              secondaryText: "${property.address ?? ''}, ${property.city ?? ''}",
+  //            ),
+  //            items: property, // Store the entire property object
+  //          );
+  //        }).toList();
+  //      } else {
+  //        predictions.clear();
+  //      }
+  //    } catch (e, stackTrace) {
+  //      log("❌ Error fetching BHK properties: $e");
+  //      log("Stack trace: $stackTrace");
+  //      predictions.clear();
+  //    } finally {
+  //      isLoading.value = false;
+  //    }
+  //  }
+  // }
+///================================OLD CODE Fresh END=============================
+  // Future<void> fetchPredictionsCity(String city) async {
+  //   if (city.trim().isEmpty) {
+  //     predictions.clear();
+  //     return;
+  //   }
+  //
+  //   final respon = await _builderService.fetchProjects(
+  //     filters: {'projectName': city},
+  //   );
+  //
+  //   if (respon.items.isNotEmpty) {
+  //     predictions.value = respon.items.map((property) {
+  //       return Prediction(
+  //         description:
+  //         "${property.projectName ?? ''}",
+  //         placeId: property.id ?? '',
+  //         structuredFormatting: StructuredFormatting(
+  //             secondaryText: "${'Project' ?? ''}, ${property.projectContactInfo?.name ?? ''}",
+  //         ),
+  //         projectItem: property, // Store the full property
+  //       );
+  //     }).toList();
+  //   } else {
+  //     predictions.clear();
+  //   }
+  //
+  //
+  //
+  //
+  //   final String trimmedCity = city.trim().toUpperCase();
+  //   print("\n====== SEARCH DEBUG ======");
+  //   print("Search query: $trimmedCity");
+  //   print("Contains BHK: ${trimmedCity.contains("BHK")}");
+  //   print("=========================\n");
+  //
+  //   // 🔹 Case 1: Normal City Search (Google Autocomplete)
+  //   if (!trimmedCity.contains("BHK")) {
+  //     try {
+  //       isLoading.value = true;
+  //
+  //       final response = await GoogleMapApi.instance.searchCities(city);
+  //       print("response ===== $response");
+  //
+  //       if (response != null) {
+  //         final model = SearchFilterModel.fromJson(response);
+  //         print("model ===== ${model.toJson()}");
+  //
+  //         // 🔹 1️⃣ Parse Google predictions
+  //         final predictionsList = model.predictions ?? [];
+  //
+  //         // 🔹 2️⃣ Convert to structured maps (city/state/country)
+  //         final parsedList = predictionsList.map((p) => p.toLocationMap).toList();
+  //
+  //         print("Parsed location list ===== $parsedList");
+  //         predictions.value = predictionsList;
+  //         cityStateList.assignAll(parsedList);
+  //
+  //         // You can also keep a parallel list if needed:
+  //         // cityStateList.assignAll(parsedList);
+  //
+  //       } else {
+  //         predictions.clear();
+  //       }
+  //     } catch (e) {
+  //       print("❌ Error fetching predictions: $e");
+  //       predictions.clear();
+  //     } finally {
+  //       isLoading.value = false;
+  //     }
+  //   }
+  //
+  //   // 🔹 Case 2: BHK Search (Custom property logic)
+  //   else {
+  //     try {
+  //       isLoading.value = true;
+  //       print("🏘️ BHK Search Started for: $city");
+  //
+  //       final bhkMatch = RegExp(r'(\d+)').firstMatch(trimmedCity);
+  //       final bhkNumber = bhkMatch?.group(1) ?? city[0];
+  //
+  //       print("🔢 Extracted BHK number: $bhkNumber");
+  //
+  //       final response = await _propertyService.fetchProperties(
+  //         filters: {'bhk': bhkNumber},
+  //       );
+  //
+  //       print("✅ BHK Properties Response: ${response.items.length} items found");
+  //
+  //       if (response.items.isNotEmpty) {
+  //         predictions.value = response.items.map((property) {
+  //           return Prediction(
+  //             description:
+  //             "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''} in ${property.city ?? ''}",
+  //             placeId: property.id ?? '',
+  //             structuredFormatting: StructuredFormatting(
+  //               mainText:
+  //               "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''}",
+  //               secondaryText: "${property.address ?? ''}, ${property.city ?? ''}",
+  //             ),
+  //             items: property, // Store the full property
+  //           );
+  //         }).toList();
+  //       } else {
+  //         predictions.clear();
+  //       }
+  //     } catch (e, stackTrace) {
+  //       log("❌ Error fetching BHK properties: $e");
+  //       log("Stack trace: $stackTrace");
+  //       predictions.clear();
+  //     } finally {
+  //       isLoading.value = false;
+  //     }
+  //   }
+  // }
+
+
   Future<void> fetchPredictionsCity(String city) async {
     if (city.trim().isEmpty) {
       predictions.clear();
       return;
     }
-    
-    final String trimmedCity = city.trim().toUpperCase();
-    print("\n====== SEARCH DEBUG ======");
-    print("Search query: $trimmedCity");
-    print("Contains BHK: ${trimmedCity.contains("BHK")}");
-    print("=========================\n");
-    
-   if(!trimmedCity.contains("BHK"))
-     {
-       try {
-         isLoading.value = true;
 
-         final response = await GoogleMapApi.instance.searchCities(city);
+    try {
+      isLoading.value = true;
+      final String trimmedCity = city.trim().toUpperCase();
 
-         print("resposne ===== $response");
+      print("\n====== SEARCH DEBUG ======");
+      print("Search query: $trimmedCity");
+      print("Contains BHK: ${trimmedCity.contains("BHK")}");
+      print("=========================\n");
 
-         if (response != null) {
-           final model = SearchFilterModel.fromJson(response);
-           print("model ===== ${model.toJson()}");
-           predictions.value = model.predictions ?? [];
-         } else {
-           predictions.clear();
-         }
-       } catch (e) {
-         print("❌ Error fetching predictions: $e");
-         predictions.clear();
-       } finally {
-         isLoading.value = false;
-       }
-     }
-   else{
-     try {
-       isLoading.value = true;
-       print("🏘️ BHK Search Started for: $city");
-       
-       // Extract BHK number from search query (e.g., "4bhk" -> "4", "2 bhk" -> "2")
-       final bhkMatch = RegExp(r'(\d+)').firstMatch(trimmedCity);
-       final bhkNumber = bhkMatch?.group(1) ?? city[0];
-       
-       print("🔢 Extracted BHK number: $bhkNumber");
-       
-       final response = await _propertyService.fetchProperties(
-         filters: {
-           'bhk': bhkNumber,
-         },
-       );
+      // 🔹 Case 1: BHK Search (Custom property logic)
+      if (trimmedCity.contains("BHK")) {
+        print("🏘️ BHK Search Started for: $city");
 
-       print("✅ BHK Properties Response: ${response.items.length} items found");
-       if (response.items.isEmpty) {
-         print("⚠️ No properties found for $bhkNumber BHK");
-       } else {
-         print("🏠 First property: ${response.items.first.toJson()}");
-       }
+        final bhkMatch = RegExp(r'(\d+)').firstMatch(trimmedCity);
+        final bhkNumber = bhkMatch?.group(1) ?? city[0];
 
-       if (response.items.isNotEmpty) {
+        print("🔢 Extracted BHK number: $bhkNumber");
 
-         predictions.value = response.items.map((property) {
-           return Prediction(
-             description: "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''} in ${property.city ?? ''}",
-             placeId: property.id ?? '',
-             structuredFormatting: StructuredFormatting(
-               mainText: "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''}",
-               secondaryText: "${property.address ?? ''}, ${property.city ?? ''}",
-             ),
-             items: property, // Store the entire property object
-           );
-         }).toList();
-       } else {
-         predictions.clear();
-       }
-     } catch (e, stackTrace) {
-       log("❌ Error fetching BHK properties: $e");
-       log("Stack trace: $stackTrace");
-       predictions.clear();
-     } finally {
-       isLoading.value = false;
-     }
-   }
+        final response = await _propertyService.fetchProperties(
+          filters: {'bhk': bhkNumber},
+        );
+
+        print("✅ BHK Properties Response: ${response.items.length} items found");
+
+        if (response.items.isNotEmpty) {
+          predictions.value = response.items.map((property) {
+            return Prediction(
+              description:
+              "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''} in ${property.city ?? ''}",
+              placeId: property.id ?? '',
+              structuredFormatting: StructuredFormatting(
+                mainText:
+                "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''}",
+                secondaryText: "${property.address ?? ''}, ${property.city ?? ''}",
+              ),
+              items: property,
+            );
+          }).toList();
+        } else {
+          predictions.clear();
+        }
+      }
+      // 🔹 Case 2: Combined Project + Location Search
+      else {
+        print("🔍 Combined Search Started for: $city");
+
+        List<Prediction> combinedPredictions = [];
+
+        // 🔸 1. Fetch and filter PROJECTS
+        try {
+          final projectResponse = await _builderService.fetchProjects();
+
+          log("Project Response: ${projectResponse.items.length} projects");
+
+          if (projectResponse.items.isNotEmpty) {
+            final searchQuery = city.toLowerCase();
+
+            final filteredProjects = projectResponse.items.where((project) {
+              final projectName = project.projectName?.toLowerCase() ?? '';
+              return projectName.contains(searchQuery);
+            }).toList();
+
+            print("✅ Filtered Projects: ${filteredProjects.length} matching projects for '$city'");
+
+            if (filteredProjects.isNotEmpty) {
+              final projectPredictions = filteredProjects.map((project) {
+                return Prediction(
+                  description: project.projectName ?? '',
+                  placeId: project.id ?? '',
+                  structuredFormatting: StructuredFormatting(
+                    mainText: project.projectName ?? '',
+                    secondaryText:
+                    "Project • ${project.city ?? ''}, ${project.state ?? ''} • ${project.projectContactInfo?.name ?? 'Builder'}",
+                  ),
+                  projectItem: project,
+                );
+              }).toList();
+
+              combinedPredictions.addAll(projectPredictions);
+            }
+          } }catch (e) {
+          print("❌ Error fetching projects: $e");
+        }
+
+        // 🔸 2. Fetch and add GOOGLE PLACES locations
+        try {
+          final googleResponse = await GoogleMapApi.instance.searchCities(city);
+
+          log("Google Response: $googleResponse");
+
+          if (googleResponse != null) {
+            final model = SearchFilterModel.fromJson(googleResponse);
+            print("Google Places model ===== ${model.toJson()}");
+
+            final predictionsList = model.predictions ?? [];
+            final parsedList = predictionsList.map((p) => p.toLocationMap).toList();
+
+            print("Parsed location list ===== $parsedList");
+
+            if (predictionsList.isNotEmpty) {
+              combinedPredictions.addAll(predictionsList);
+              cityStateList.assignAll(parsedList);
+            }
+          }} catch (e) {
+          print("❌ Error fetching Google Places: $e");
+        }
+
+        // 🔸 3. Update predictions with combined results
+        if (combinedPredictions.isNotEmpty) {
+          predictions.value = combinedPredictions;
+          print("✅ Total Predictions: ${combinedPredictions.length} (Projects + Locations)");
+        } else {
+          predictions.clear();
+          print("ℹ️ No results found for '$city'");
+        }
+      }
+    } catch (e, stackTrace) {
+      log("❌ Error fetching predictions: $e");
+      log("Stack trace: $stackTrace");
+      predictions.clear();
+    } finally {
+      isLoading.value = false;
+    }
   }
+  Future<void> fetchGooglePlaces(String city) async {
+    try {
+      final response = await GoogleMapApi.instance.searchCities(city);
+      print("Google Places response ===== $response");
+
+      if (response != null) {
+        final model = SearchFilterModel.fromJson(response);
+        print("Google Places model ===== ${model.toJson()}");
+
+        final predictionsList = model.predictions ?? [];
+        final parsedList = predictionsList.map((p) => p.toLocationMap).toList();
+
+        print("Parsed location list ===== $parsedList");
+
+        predictions.value = predictionsList;
+        cityStateList.assignAll(parsedList);
+      } else {
+        predictions.clear();
+      }
+    } catch (e) {
+      print("❌ Error fetching Google Places: $e");
+      predictions.clear();
+    }}
+
 
   Future<void> fetchPredictionsState(String state) async {
     try {
@@ -378,3 +657,133 @@ PropertyService _propertyService = PropertyService();
     super.onClose();
   }
 }
+
+
+
+/*Future<void> fetchPredictionsCity(String city) async {
+  if (city.trim().isEmpty) {
+    predictions.clear();
+    return;
+  }
+
+  try {
+    isLoading.value = true;
+    final String trimmedCity = city.trim().toUpperCase();
+
+    print("\n====== SEARCH DEBUG ======");
+    print("Search query: $trimmedCity");
+    print("Contains BHK: ${trimmedCity.contains("BHK")}");
+    print("=========================\n");
+
+    // 🔹 Case 1: BHK Search (Custom property logic)
+    if (trimmedCity.contains("BHK")) {
+      print("🏘️ BHK Search Started for: $city");
+
+      final bhkMatch = RegExp(r'(\d+)').firstMatch(trimmedCity);
+      final bhkNumber = bhkMatch?.group(1) ?? city[0];
+
+      print("🔢 Extracted BHK number: $bhkNumber");
+
+      final response = await _propertyService.fetchProperties(
+        filters: {'bhk': bhkNumber},
+      );
+
+      print("✅ BHK Properties Response: ${response.items.length} items found");
+
+      if (response.items.isNotEmpty) {
+        predictions.value = response.items.map((property) {
+          return Prediction(
+            description:
+            "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''} in ${property.city ?? ''}",
+            placeId: property.id ?? '',
+            structuredFormatting: StructuredFormatting(
+              mainText:
+              "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''}",
+              secondaryText: "${property.address ?? ''}, ${property.city ?? ''}",
+            ),
+            items: property,
+          );
+        }).toList();
+      } else {
+        predictions.clear();
+      }
+    }
+    // 🔹 Case 2: Project Name Search
+    else {
+      print("🏗️ Project Search Started for: $city");
+
+      // 🔸 Fetch ALL projects first (no filters)
+      final response = await _builderService.fetchProjects();
+
+      log("Search project response: ${response.toJson((model) => model.toJson())}");
+      print("✅ All Projects Fetched: ${response.items.length} total projects");
+
+      if (response.items.isNotEmpty) {
+        final searchQuery = city.toLowerCase();
+
+        // 🔸 Filter projects by comparing search query with project name
+        final filteredProjects = response.items.where((project) {
+          final projectName = project.projectName?.toLowerCase() ?? '';
+          return projectName.contains(searchQuery);
+        }).toList();
+
+        print("✅ Filtered Projects: ${filteredProjects.length} matching projects for '$city'");
+
+        if (filteredProjects.isNotEmpty) {
+          predictions.value = filteredProjects.map((project) {
+            return Prediction(
+              description: project.projectName ?? '',
+              placeId: project.id ?? '',
+              structuredFormatting: StructuredFormatting(
+                mainText: project.projectName ?? '',
+                secondaryText:
+                "Project • ${project.city ?? ''}, ${project.state ?? ''} • ${project.projectContactInfo?.name ?? 'Builder'}",
+              ),
+              projectItem: project,
+            );
+          }).toList();
+        } else {
+          // If no projects match, try Google Places
+          print("ℹ️ No projects found matching '$city', falling back to Google Places");
+          await _fetchGooglePlaces(city);
+        }
+      } else {
+        // If no projects at all, try Google Places
+        print("ℹ️ No projects in database, falling back to Google Places");
+        await _fetchGooglePlaces(city);
+      }
+    }
+  } catch (e, stackTrace) {
+    log("❌ Error fetching predictions: $e");
+    log("Stack trace: $stackTrace");
+    predictions.clear();
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+// 🔹 Separate method for Google Places API
+Future<void> _fetchGooglePlaces(String city) async {
+  try {
+    final response = await GoogleMapApi.instance.searchCities(city);
+    print("Google Places response ===== $response");
+
+    if (response != null) {
+      final model = SearchFilterModel.fromJson(response);
+      print("Google Places model ===== ${model.toJson()}");
+
+      final predictionsList = model.predictions ?? [];
+      final parsedList = predictionsList.map((p) => p.toLocationMap).toList();
+
+      print("Parsed location list ===== $parsedList");
+
+      predictions.value = predictionsList;
+      cityStateList.assignAll(parsedList);
+    } else {
+      predictions.clear();
+    }
+  } catch (e) {
+    print("❌ Error fetching Google Places: $e");
+    predictions.clear();
+  }
+}*/

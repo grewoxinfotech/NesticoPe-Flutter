@@ -603,6 +603,8 @@
 //   }
 // }
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
@@ -610,6 +612,7 @@ import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
 
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/property/models/property_model.dart';
@@ -679,6 +682,22 @@ class DashboardController extends GetxController {
         'Penthouse',
         'Office',
       ].obs;
+  final formKey = GlobalKey<FormState>();
+
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final achievementController = TextEditingController();
+  final totalDealsController = TextEditingController();
+  final totalValueController = TextEditingController();
+
+  var selectedMonth = Rx<DateTime?>(null);
+  var selectedStatus = 'Published'.obs;
+  var rating = 5.0.obs;
+  var imageFile = Rx<File?>(null);
+
+  final statusOptions = ['Published', 'Draft', 'Archived'];
+
+  final picker = ImagePicker();
 
   @override
   void onInit() {
@@ -699,6 +718,14 @@ class DashboardController extends GetxController {
     ever(filterMaxPrice, (_) => applyFilters());
     ever(sortOption, (_) => applySorting());
   }
+
+  Future<void> pickImage() async {
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      imageFile.value = File(picked.path);
+    }
+  }
+
 
   Future<Rxn<ResellerInsightsModel>> fetchResellerDashboardDataFromApi() async {
     final user = await SecureStorage.getUserData();
@@ -1815,5 +1842,26 @@ class DashboardController extends GetxController {
     // error & filters visibility
     error.value = '';
     showFilters.value = false;
+  }
+  void submitForm() {
+    if (formKey.currentState!.validate()) {
+      Get.snackbar(
+        'Success',
+        'Story added successfully!',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+      Get.back();
+    }
+  }
+  @override
+  void onClose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    achievementController.dispose();
+    totalDealsController.dispose();
+    totalValueController.dispose();
+    super.onClose();
   }
 }

@@ -11,14 +11,14 @@ class ResellerProfile {
 
   factory ResellerProfile.fromJson(Map<String, dynamic> json) {
     return ResellerProfile(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: ResellerProfileData.fromJson(json['data'] ?? {}),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'success': success,
+    'story': success,
     'message': message,
     'data': data.toJson(),
   };

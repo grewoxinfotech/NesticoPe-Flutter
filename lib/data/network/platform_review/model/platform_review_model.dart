@@ -13,14 +13,14 @@ class ReviewResponse {
 
   factory ReviewResponse.fromJson(Map<String, dynamic> json) {
     return ReviewResponse(
-      success: json['success'],
+      success: json['story'],
       message: json['message'],
       data: json['data'] != null ? ReviewData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'success': success,
+    'story': success,
     'message': message,
     'data': data?.toJson(),
   };
@@ -244,14 +244,14 @@ class UsersResponse {
 
   factory UsersResponse.fromJson(Map<String, dynamic> json) {
     return UsersResponse(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? UsersData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toMap() => {
-    'success': success,
+    'story': success,
     'message': message,
     'data': data?.toMap(),
   };

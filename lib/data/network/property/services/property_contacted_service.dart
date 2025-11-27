@@ -19,7 +19,7 @@ class PropertyContactedService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
 
-        if (data['success'] == true && data['data'] != null) {
+        if (data['story'] == true && data['data'] != null) {
           final inquiryResponse = InquiryResponse.fromJson(data);
           return inquiryResponse.data.items ?? [];
         } else {

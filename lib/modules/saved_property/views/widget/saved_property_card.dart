@@ -304,7 +304,7 @@ import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 //                     child: Container(
 //                       padding: const EdgeInsets.all(4),
 //                       decoration: BoxDecoration(
-//                         color: ColorRes.success,
+//                         color: ColorRes.story,
 //                         borderRadius: BorderRadius.circular(6),
 //                       ),
 //                       child: const Icon(
@@ -571,7 +571,7 @@ import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 //   Color _getStatusColor(String status) {
 //     switch (status.toLowerCase()) {
 //       case 'approved':
-//         return ColorRes.success;
+//         return ColorRes.story;
 //       case 'upcoming':
 //         return const Color(0xFFF59E0B);
 //       case 'ongoing':

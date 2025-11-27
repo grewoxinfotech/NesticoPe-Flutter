@@ -6,13 +6,13 @@ class LocationPriceMatrixModel {
 
   factory LocationPriceMatrixModel.fromJson(Map<String, dynamic> json) {
     return LocationPriceMatrixModel(
-      success: json['success'],
+      success: json['story'],
       data: json['data'] != null ? LocationPriceMatrixData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'success': success,
+    'story': success,
     'data': data?.toJson(),
   };
 }

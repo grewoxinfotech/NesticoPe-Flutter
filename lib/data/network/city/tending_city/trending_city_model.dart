@@ -11,7 +11,7 @@ class TrendingCitiesResponse {
 
   factory TrendingCitiesResponse.fromJson(Map<String, dynamic> json) {
     return TrendingCitiesResponse(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data:
           json['data'] != null
@@ -24,7 +24,7 @@ class TrendingCitiesResponse {
 
   Map<String, dynamic> toJson() {
     return {
-      'success': success,
+      'story': success,
       'message': message,
       'data': data.map((x) => x.toJson()).toList(),
     };

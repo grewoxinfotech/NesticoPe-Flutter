@@ -2,25 +2,25 @@
 //
 // /// ✅ Root Response
 // class TopPropertiesResponse {
-//   final bool success;
+//   final bool story;
 //   final String message;
 //   final TopPropertiesData data;
 //
 //   TopPropertiesResponse({
-//     required this.success,
+//     required this.story,
 //     required this.message,
 //     required this.data,
 //   });
 //
 //   factory TopPropertiesResponse.fromMap(Map<String, dynamic> map) =>
 //       TopPropertiesResponse(
-//         success: map['success'] ?? false,
+//         story: map['story'] ?? false,
 //         message: map['message'] ?? '',
 //         data: TopPropertiesData.fromMap(map['data'] ?? {}),
 //       );
 //
 //   Map<String, dynamic> toMap() => {
-//     'success': success,
+//     'story': story,
 //     'message': message,
 //     'data': data.toMap(),
 //   };

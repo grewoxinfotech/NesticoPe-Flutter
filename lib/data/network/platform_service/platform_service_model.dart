@@ -7,7 +7,7 @@ class PlatformServicesModel {
 
   factory PlatformServicesModel.fromJson(Map<String, dynamic> json) {
     return PlatformServicesModel(
-      success: json['success'] as bool?,
+      success: json['story'] as bool?,
       message: json['message'] as String?,
       data:
           json['data'] != null
@@ -19,7 +19,7 @@ class PlatformServicesModel {
   }
 
   Map<String, dynamic> toJson() => {
-    'success': success,
+    'story': success,
     'message': message,
     'data': data?.toJson(),
   };

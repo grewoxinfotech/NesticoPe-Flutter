@@ -11,14 +11,14 @@ class FavoriteResponseModel {
 
   factory FavoriteResponseModel.fromJson(Map<String, dynamic> json) {
     return FavoriteResponseModel(
-      success: json['success'] ?? false,
+      success: json['story'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? FavoriteData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'success': success, 'message': message, 'data': data?.toJson()};
+    return {'story': success, 'message': message, 'data': data?.toJson()};
   }
 }
 
