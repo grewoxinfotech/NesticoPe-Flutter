@@ -7,19 +7,24 @@ import 'package:housing_flutter_app/app/constants/font_res.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/profile/views/seller_profile_detail.dart';
 import 'package:housing_flutter_app/modules/profile/views/widget/buyer_profile.dart';
 import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dart';
+import 'package:housing_flutter_app/modules/review/views/widget/add_app_review_screen.dart';
+import 'package:housing_flutter_app/modules/review/views/widget/app_review_card.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/widgets/expandable_tile/expandable_widget.dart';
 import '../../auth/views/select_account_type_screen.dart';
+import '../../calender/views/calender_screen.dart';
 import '../../profile/views/edit_profile_screen.dart';
+import '../../review/controllers/review_controller.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -187,7 +192,7 @@ import '../controllers/buyer_profiledata.dart';
 class ProfileScreen extends StatelessWidget {
   final String imageUrl;
 
-   ProfileScreen({super.key, required this.imageUrl});
+  ProfileScreen({super.key, required this.imageUrl});
 
   // Constants for better maintainability
   static const double _defaultPadding = 16.0;
@@ -197,10 +202,9 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: ColorRes.white,
-      appBar: _buildAppBar(),//
+      appBar: _buildAppBar(), //
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(_defaultPadding),
@@ -263,7 +267,7 @@ class ProfileScreen extends StatelessWidget {
                   : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                       _buildProfileCard(profileController),
+                      _buildProfileCard(profileController),
                       const SizedBox(height: 20),
                       SettingsMenuTile(
                         icon: Icons.monitor_heart_outlined,
@@ -277,6 +281,41 @@ class ProfileScreen extends StatelessWidget {
                           title: "Referral",
                           subTitle: "Refer And Earn",
                           onTap: () => Get.to(() => ReferralProgramScreen()),
+                        ),
+                      ],
+
+                      if (UserHelper.isSeller) ...[
+                        Obx(() {
+                          final controller = Get.put(ReviewController());
+
+                          final review = controller.appReview.value;
+
+                          if (review == null) {
+                            // 🔹 No review exists → Show Settings tile
+                            return SettingsMenuTile(
+                              icon: Icons.reviews_outlined,
+                              title: "Reviews and Ratings",
+                              subTitle: "Add your review",
+                              onTap: () {
+                                Get.to(() => AddAppReviewScreen())!.then((_) {
+                                  controller
+                                      .getAppReview(); // refresh after returning
+                                });
+                              },
+                            );
+                          } else {
+                            // 🔹 Review exists → Show Review section
+                            return _buildReviewSection(review);
+                          }
+                        }),
+                      ],
+
+                      if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
+                        SettingsMenuTile(
+                          icon: Icons.event_available,
+                          title: "Events",
+                          subTitle: "Upcoming events",
+                          onTap: () => Get.to(() => CalendarScreen()),
                         ),
                       ],
 
@@ -374,16 +413,23 @@ class ProfileScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Obx(() =>  _buildProfileAvatar(profileController?.userProfile.value?.profilePic??'')),
+              Obx(
+                () => _buildProfileAvatar(
+                  profileController?.userProfile.value?.profilePic ?? '',
+                ),
+              ),
               const SizedBox(width: 16),
 
-              Expanded(child: Obx(() => _ProfileWelcomeSection(name:profileController?.userProfile.value?.username??''))),
-
+              Expanded(
+                child: Obx(
+                  () => _ProfileWelcomeSection(
+                    name: profileController?.userProfile.value?.username ?? '',
+                  ),
+                ),
+              ),
             ],
           ),
-          Divider(
-            color: ColorRes.leadGreyColor.shade200,
-          ),
+          Divider(color: ColorRes.leadGreyColor.shade200),
           const SizedBox(height: 4),
           // 🧭 Visit Profile button
           GestureDetector(
@@ -393,7 +439,6 @@ class ProfileScreen extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-
                 Text(
                   "Visit Profile",
                   style: TextStyle(
@@ -410,9 +455,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-          )
-
-
+          ),
         ],
       ),
     );
@@ -433,6 +476,16 @@ class ProfileScreen extends StatelessWidget {
           backgroundColor: ColorRes.primary,
           child: const Icon(Icons.person, color: ColorRes.white, size: 32),
         );
+  }
+
+  Widget _buildReviewSection(ReviewItem review) {
+    return ExpandableTile(
+      title: "Reviews and Ratings",
+      subtitle: "See your reviews",
+      leadingIcon: Icons.reviews,
+      trailingIcon: Icons.keyboard_arrow_down_rounded,
+      children: [AppReviewCard(review: review)],
+    );
   }
 
   Widget _buildQuickLinksSection() {
@@ -524,8 +577,7 @@ class ProfileScreen extends StatelessWidget {
 class _ProfileWelcomeSection extends StatelessWidget {
   var name;
 
-
-   _ProfileWelcomeSection({required this.name});
+  _ProfileWelcomeSection({required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -536,10 +588,7 @@ class _ProfileWelcomeSection extends StatelessWidget {
 
     // Capitalize first letter for UI
     String displayRole = userType[0].toUpperCase() + userType.substring(1);
-    String displaySellerType =
-        sellerType != null
-            ? "(${name})"
-            : "";
+    String displaySellerType = sellerType != null ? "(${name})" : "";
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -549,18 +598,24 @@ class _ProfileWelcomeSection extends StatelessWidget {
           style: TextStyle(
             fontSize: AppFontSizes.medium,
             fontWeight: AppFontWeights.bold,
-            color: ColorRes.textPrimary
+            color: ColorRes.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           "✓ Easy contact with sellers",
 
-          style: TextStyle(color: ColorRes.leadGreyColor,fontSize: AppFontSizes.small),
+          style: TextStyle(
+            color: ColorRes.leadGreyColor,
+            fontSize: AppFontSizes.small,
+          ),
         ),
         Text(
           "✓ Personalized experience",
-          style: TextStyle(color: ColorRes.leadGreyColor,fontSize: AppFontSizes.small),
+          style: TextStyle(
+            color: ColorRes.leadGreyColor,
+            fontSize: AppFontSizes.small,
+          ),
         ),
       ],
     );

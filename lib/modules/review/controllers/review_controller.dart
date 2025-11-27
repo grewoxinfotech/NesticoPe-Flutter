@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
 import 'package:housing_flutter_app/modules/property/controllers/overall_rating_controller.dart';
 
@@ -15,6 +18,8 @@ class ReviewController extends PaginatedController<ReviewItem> {
   // Reactive variables
   RxString statusFilter = 'all'.obs;
   RxMap<String, String> filters = <String, String>{}.obs;
+
+  Rxn<ReviewItem> appReview = Rxn<ReviewItem>();
 
   // Form controllers
   // Form
@@ -43,6 +48,7 @@ class ReviewController extends PaginatedController<ReviewItem> {
       refreshList();
     });
     loadInitial(); // Load first page automatically
+    getAppReview();
   }
 
   /// ✅ Fetch paginated reviews
@@ -75,6 +81,89 @@ class ReviewController extends PaginatedController<ReviewItem> {
     } catch (e) {
       print("❌ Error creating review: $e");
       return false;
+    }
+  }
+
+  /// 🌟 Add app review
+  Future<bool> addAppReview({
+    required String title,
+    required String content,
+    double rating = 0.0,
+  }) async {
+    try {
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id;
+      // Build review data
+      final reviewData = ReviewItem(
+        entityType: "seller",
+        rating: rating,
+        title: title,
+        content: content,
+        entityId: userId,
+        reviewerId: userId,
+        status: "published",
+        isVerified: user?.user?.isVerified ?? false,
+      );
+
+      // Call service to add review
+      final success = await _service.createReview(reviewData);
+
+      if (success) {
+        // Optionally refresh app review list
+        await refreshList();
+      }
+
+      return success;
+    } catch (e) {
+      print("❌ Error adding app review: $e");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: '${e.toString()}',
+        contentType: ContentType.failure,
+      );
+      return false;
+    }
+  }
+
+  /// 📌 Get all app reviews for the logged-in user
+  Future<ReviewItem?> getAppReviews() async {
+    try {
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id;
+
+      if (userId == null) {
+        print("❌ No user ID found in secure storage");
+        return null;
+      }
+
+      // Call review service with filters (entityType + reviewerId)
+      final response = await _service.fetchReviews(
+        page: 1,
+        filters: {
+          'entity_type': 'seller', // App review type
+          'reviewer_id': userId, // Fetch only this user’s app reviews
+        },
+      );
+
+      print("Fetched app reviews: ${response.items.length}");
+
+      return response.items.first;
+    } catch (e) {
+      print("❌ Error fetching app reviews: $e");
+      return null;
+    }
+  }
+
+  Future<void> getAppReview() async {
+    try {
+      final reviews = await getAppReviews(); // Your existing fetch method
+      if (reviews != null) {
+        appReview.value = reviews;
+      } else {
+        appReview.value = null;
+      }
+    } catch (e) {
+      appReview.value = null;
     }
   }
 
