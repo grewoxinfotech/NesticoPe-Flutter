@@ -9,52 +9,85 @@ class ApiConstants {
 
   // Auth Endpoints
   static String get auth => "$baseURL/auth";
+
   static String get loginEndpoint => "$auth/login";
+
   static String get registerEndpoint => "$auth/signup";
+
   static String get verifyOtpEndpoint => "$auth/verify-otp";
+
   static String get resendOtpEndpoint => "$auth/resend-otp";
+
   static String get sellerRegister => "$auth/seller-register";
+
   static String get covertToSeller => "$auth/convert-buyer-to-seller";
+
   static String get convertToReseller => "$auth/convert-buyer-to-reseller";
+
   static String get referralGet => "$baseURL/referral/my-stats";
+
   static String get generateReferCode => "$baseURL/referral/generate-code";
+
   static String get getUserProfile => "$baseURL/user/profile";
+
   static String get getSellerDashboard => "$baseURL/insight/seller";
+
   static String get getSellerProfile => "$baseURL/insight/seller";
 
   static String get recommmendedPorperties => "$baseURL/property/recommended";
 
   // Lead
   static String get leads => "$baseURL/lead";
+
   static String get news => "$baseURL/newsArticle";
+
   static String get platformService => "$baseURL/platformService";
 
   static String get propertyRecommend =>
       "$baseURL/property/personalized-recommendations";
+
   static String get builderProject => "$baseURL/builderproject";
+
   static String get propertyReport => "$baseURL/propertyReport";
+
   static String get resellerSuccessStory => "$baseURL/resellerSuccessStory";
+
   static String get locationPriceMetrics => "$baseURL/locationPriceMetrics";
+
   static String get review => "$baseURL/review";
+
   static String get overAllRating => "$baseURL/review/property";
+
   static String get user => "$baseURL/user";
 
   static String get topProperties => "$baseURL/property/top/properties";
+
   static String get topProject => "$baseURL/builderproject/top/projects";
 
   static String get interestForm => "$baseURL/interestForm";
+
   static String get propertyShare => "$baseURL/propertyShare";
+
   static String get multiPropertyShare => "$baseURL/propertyShare/bundles";
 
   static String get resellerDashboard => "$baseURL/insight/reseller";
+
   static String get property => "$baseURL/property";
+
   static String get fackLead => "$baseURL/lead/reseller";
+
   static String get topSeller => "$baseURL/user/sellers/top";
+
+  static String get calendar => "$baseURL/calendar";
+
+  static String get calendarCategory => "$baseURL/calendarCategory";
 
   //---------------------------------other-----------------------------//
 
   static String get cityInsights => "$baseURL/cityInsights/existing/city";
+
   static String get trendingCityInsights => "$baseURL/cityInsights/trending";
+
   static String get platformReview => "$baseURL/review";
 
   static const String logoutEndpoint = "/auth/logout";
@@ -73,6 +106,7 @@ class ApiConstants {
   //Trending area
 
   static const String trendingAreaAPi = '/cityInsights/trending/areas?city';
+
   // Bookings Endpoints
   static const String bookingsEndpoint = "/bookings";
 
