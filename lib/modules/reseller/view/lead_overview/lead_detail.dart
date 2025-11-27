@@ -1074,7 +1074,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //           padding: EdgeInsets.all(16),
   //           decoration: BoxDecoration(
   //             borderRadius: BorderRadius.circular(16),
-  //             border: Border.all(color: ColorRes.story.shade200, width: 1),
+  //             border: Border.all(color: ColorRes.success.shade200, width: 1),
   //           ),
   //           child: Column(
   //             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1107,7 +1107,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //                           style: TextStyle(
   //                             fontSize: isCompact ? AppFontSizes.large : 32,
   //                             fontWeight: AppFontWeights.semiBold,
-  //                             color: ColorRes.story.shade800,
+  //                             color: ColorRes.success.shade800,
   //                             height: 1.2,
   //                           ),
   //                         ),
@@ -1353,7 +1353,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //                           style: ElevatedButton.styleFrom(
   //                             backgroundColor:
   //                                 !hasOffer
-  //                                     ? ColorRes.story.shade600
+  //                                     ? ColorRes.success.shade600
   //                                     : ColorRes.leadGreyColor.shade400,
   //                             foregroundColor: ColorRes.white,
   //                             padding: EdgeInsets.symmetric(vertical: 14),
@@ -1361,7 +1361,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //                               borderRadius: BorderRadius.circular(12),
   //                             ),
   //                             elevation: 0,
-  //                             shadowColor: ColorRes.story.withOpacity(0.3),
+  //                             shadowColor: ColorRes.success.withOpacity(0.3),
   //                           ),
   //                         ),
   //                       ),
@@ -1402,7 +1402,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //           padding: const EdgeInsets.all(16),
   //           decoration: BoxDecoration(
   //             borderRadius: BorderRadius.circular(16),
-  //             border: Border.all(color: ColorRes.story.shade200, width: 1),
+  //             border: Border.all(color: ColorRes.success.shade200, width: 1),
   //           ),
   //           child: Column(
   //             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1431,7 +1431,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //                           style: TextStyle(
   //                             fontSize: isCompact ? AppFontSizes.large : 32,
   //                             fontWeight: AppFontWeights.semiBold,
-  //                             color: ColorRes.story.shade800,
+  //                             color: ColorRes.success.shade800,
   //                             height: 1.2,
   //                           ),
   //                         ),
@@ -1547,7 +1547,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //                     style: TextStyle(
   //                       fontSize: isCompact ? AppFontSizes.large : 22,
   //                       fontWeight: AppFontWeights.extraBold,
-  //                       color: ColorRes.story.shade700,
+  //                       color: ColorRes.success.shade700,
   //                     ),
   //                   ),
   //                 ],
@@ -1592,7 +1592,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //                           style: ElevatedButton.styleFrom(
   //                             backgroundColor:
   //                                 !hasOffer
-  //                                     ? ColorRes.story.shade600
+  //                                     ? ColorRes.success.shade600
   //                                     : ColorRes.leadGreyColor.shade400,
   //                             foregroundColor: ColorRes.white,
   //                             padding: const EdgeInsets.symmetric(vertical: 14),

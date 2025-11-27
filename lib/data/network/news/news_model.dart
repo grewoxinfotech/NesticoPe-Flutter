@@ -17,7 +17,7 @@ class NewsModel {
   }
 
   Map<String, dynamic> toJson() => {
-    'story': success,
+    'success': success,
     'message': message,
     'data': data?.toJson(),
   };

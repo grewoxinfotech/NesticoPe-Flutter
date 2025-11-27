@@ -24,7 +24,7 @@ class TrendingAreasResponse {
   }
 
   Map<String, dynamic> toJson() => {
-    'story': success,
+    'success': success,
     'message': message,
     'data': data.map((e) => e.toJson()).toList(),
   };

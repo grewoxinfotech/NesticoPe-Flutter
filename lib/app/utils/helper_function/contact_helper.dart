@@ -181,9 +181,9 @@ class ContactHelper {
         );
       }
 
-      debugPrint("📸 Opened Instagram story composer");
+      debugPrint("📸 Opened Instagram success composer");
     } catch (e) {
-      debugPrint("❌ Failed to open Instagram story: $e");
+      debugPrint("❌ Failed to open Instagram success: $e");
     }
   }
 
@@ -240,7 +240,7 @@ class ContactHelper {
 
       debugPrint("📘 Opened Facebook Story composer");
     } catch (e) {
-      debugPrint("❌ Failed to open Facebook story: $e");
+      debugPrint("❌ Failed to open Facebook success: $e");
     }
   }
 

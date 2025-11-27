@@ -733,7 +733,7 @@ class ReSellerPropertyShareController extends GetxController {
   }) {
     switch (platform.toLowerCase()) {
       case 'whatsapp':
-        if (shareType == 'story') {
+        if (shareType == 'success') {
           ContactHelper.openPublicWhatsApp(message: link, shareToStatus: true);
         } else {
           ContactHelper.openPublicWhatsApp(message: link);
@@ -741,7 +741,7 @@ class ReSellerPropertyShareController extends GetxController {
         break;
 
       // case 'instagram':
-      //   if (shareType == 'story') {
+      //   if (shareType == 'success') {
       //     ContactHelper.shareToInstagramStory(link);
       //   } else {
       //     ContactHelper.shareToInstagramFeed(link);
@@ -749,7 +749,7 @@ class ReSellerPropertyShareController extends GetxController {
       //   break;
 
       case 'facebook':
-        if (shareType == 'story') {
+        if (shareType == 'success') {
           ContactHelper.shareToFacebookStory(link);
         } else {
           ContactHelper.shareToFacebookFeed(link, caption: "Check this out!");

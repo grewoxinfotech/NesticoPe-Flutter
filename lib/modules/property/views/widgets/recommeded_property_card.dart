@@ -119,7 +119,7 @@
 //                       borderRadius: AppRadius.small,
 //                       fontWeight: AppFontWeights.bold,
 //                       showIcon: true,
-//                       iconColor: ColorRes.story,
+//                       iconColor: ColorRes.success,
 //                       iconSize: 13,
 //                     ),
 //                   ),

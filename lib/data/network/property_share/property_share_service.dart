@@ -75,7 +75,7 @@ class PropertyShareService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        if (data["story"] == true && data["data"] != null) {
+        if (data["success"] == true && data["data"] != null) {
           final List listData = data["data"]['items'];
 
           debugPrint(

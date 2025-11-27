@@ -48,9 +48,9 @@ class ResellerSuccessStoryService {
           (json) => ResellerSuccessItem.fromJson(json),
         );
       } else {
-        debugPrint("❌ Failed to load story stories: ${response.statusCode}");
+        debugPrint("❌ Failed to load success stories: ${response.statusCode}");
         debugPrint("Response body: ${response.body}");
-        throw Exception("Failed to load story stories");
+        throw Exception("Failed to load success stories");
       }
     } catch (e) {
       debugPrint("⚠️ Exception in fetchSuccessStories: $e");
@@ -112,7 +112,7 @@ class ResellerSuccessStoryService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         CustomSnackBar.show(
           Get.overlayContext!,
-          message: "Success story created successfully",
+          message: "Success success created successfully",
           type: SnackBarType.success,
         );
         return true;
@@ -120,7 +120,7 @@ class ResellerSuccessStoryService {
 
       CustomSnackBar.show(
         Get.overlayContext!,
-        message: "Failed to create story story",
+        message: "Failed to create success success",
         type: SnackBarType.error,
       );
       return false;
@@ -128,7 +128,7 @@ class ResellerSuccessStoryService {
       debugPrint("❌ Create Success Story Exception: $e");
       CustomSnackBar.show(
         Get.overlayContext!,
-        message: "Error while creating story story",
+        message: "Error while creating success success",
         type: SnackBarType.error,
       );
       return false;
@@ -192,7 +192,7 @@ class ResellerSuccessStoryService {
       if (response.statusCode == 200) {
         CustomSnackBar.show(
           Get.overlayContext!,
-          message: "Success story updated successfully",
+          message: "Success success updated successfully",
           type: SnackBarType.success,
         );
         return true;
@@ -200,7 +200,7 @@ class ResellerSuccessStoryService {
 
       CustomSnackBar.show(
         Get.overlayContext!,
-        message: "Failed to update story story",
+        message: "Failed to update success success",
         type: SnackBarType.error,
       );
       return false;
@@ -208,7 +208,7 @@ class ResellerSuccessStoryService {
       debugPrint("❌ Update Success Story Exception: $e");
       CustomSnackBar.show(
         Get.overlayContext!,
-        message: "Error while updating story story",
+        message: "Error while updating success success",
         type: SnackBarType.error,
       );
       return false;

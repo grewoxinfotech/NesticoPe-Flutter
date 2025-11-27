@@ -18,7 +18,7 @@ class SellerOverviewModel {
   }
 
   Map<String, dynamic> toJson() => {
-    'story': success,
+    'success': success,
     'message': message,
     'data': data?.toJson(),
   };

@@ -16,7 +16,7 @@ class ReviewResponse {
   }
 
   Map<String, dynamic> toJson() => {
-    'story': success,
+    'success': success,
     'message': message,
     'data': data?.toJson(),
   };
@@ -241,7 +241,7 @@ class UsersResponse {
   }
 
   Map<String, dynamic> toMap() => {
-    'story': success,
+    'success': success,
     'message': message,
     'data': data?.toMap(),
   };

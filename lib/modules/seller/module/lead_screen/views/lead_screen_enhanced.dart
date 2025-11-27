@@ -3726,7 +3726,7 @@
 //     case 'lost':
 //       return ColorRes.error;
 //     case 'converted':
-//       return ColorRes.story;
+//       return ColorRes.success;
 //     default:
 //       return ColorRes.leadGreyColor;
 //   }

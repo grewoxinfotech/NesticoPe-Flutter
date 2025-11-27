@@ -1,10 +1,10 @@
 // class ResellerInsightsModel {
-//   final bool story;
+//   final bool success;
 //   final String message;
 //   final ResellerData data;
 //
 //   ResellerInsightsModel({
-//     required this.story,
+//     required this.success,
 //     required this.message,
 //     required this.data,
 //   });
@@ -12,14 +12,18 @@
 //   factory ResellerInsightsModel.fromJson(Map<String, dynamic>? json) {
 //     if (json == null) {
 //       return ResellerInsightsModel(
-//         story: false,
+//         success: false,
 //         message: '',
 //         data: ResellerData.empty(),
 //       );
 //     }
 //
 //     return ResellerInsightsModel(
-//       story: json['success'] ?? false,
+
+
+
+//       success: json['success'] ?? false,
+
 //       message: json['message'] ?? '',
 //       data: json['data'] == null
 //           ? ResellerData.empty()
@@ -28,7 +32,7 @@
 //   }
 //
 //   Map<String, dynamic> toJson() => {
-//     "story": story,
+//     "success": success,
 //     "message": message,
 //     "data": data.toJson(),
 //   };
@@ -524,7 +528,7 @@ class ResellerInsightsModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {'story': success, 'message': message, 'data': data.toJson()};
+    return {'success': success, 'message': message, 'data': data.toJson()};
   }
 
   static ResellerInsightsModel fromRawJson(String str) =>

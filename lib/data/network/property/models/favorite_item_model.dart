@@ -18,7 +18,7 @@ class FavoriteResponseModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {'story': success, 'message': message, 'data': data?.toJson()};
+    return {'success': success, 'message': message, 'data': data?.toJson()};
   }
 }
 

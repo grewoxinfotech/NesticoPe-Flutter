@@ -1,12 +1,12 @@
 // class Referrel_Model {
-//   bool? story;
+//   bool? success;
 //   String? message;
 //   List<Data>? data;
 //
-//   Referrel_Model({this.story, this.message, this.data});
+//   Referrel_Model({this.success, this.message, this.data});
 //
 //   Referrel_Model.fromJson(Map<String, dynamic> json) {
-//     story = json['success'];
+//     success = json['success'];
 //     message = json['message'];
 //     if (json['data'] != null) {
 //       data = <Data>[];
@@ -18,11 +18,11 @@
 //
 //   Map<String, dynamic> toJson() {
 //     final Map<String, dynamic> data = new Map<String, dynamic>();
+
 //     data['success'] = this.story;
-//     data['message'] = this.message;
-//     if (this.data != null) {
+
+//     data['success'] = this.success;
 //       data['data'] = this.data!.map((v) => v.toJson()).toList();
-//     }
 //     return data;
 //   }
 // }

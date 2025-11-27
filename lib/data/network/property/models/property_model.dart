@@ -1,12 +1,12 @@
 // class PropertyModel {
-//   bool? story;
+//   bool? success;
 //   PropertyMessage? message;
 //   dynamic data;
 //
-//   PropertyModel({this.story, this.message, this.data});
+//   PropertyModel({this.success, this.message, this.data});
 //
 //   PropertyModel.fromJson(Map<String, dynamic> json) {
-//     story = json['success'];
+//     success = json['success'];
 //     message = json['message'] != null
 //         ? PropertyMessage.fromJson(json['message'])
 //         : null;
@@ -14,7 +14,7 @@
 //   }
 //
 //   Map<String, dynamic> toJson() => {
-//     'story': story,
+//     'success': success,
 //     'message': message?.toJson(),
 //     'data': data,
 //   };
@@ -640,7 +640,7 @@ class PropertyModel {
   }
 
   Map<String, dynamic> toJson() => {
-    'story': success,
+    'success': success,
     'message': message?.toJson(),
     'data': data,
   };

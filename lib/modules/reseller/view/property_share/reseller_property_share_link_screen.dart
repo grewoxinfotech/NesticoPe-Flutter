@@ -336,19 +336,19 @@ class ResellerPropertyShareLinkScreen extends StatelessWidget {
   // TAP HANDLERS (simple + clean)
   // -----------------------------
   void _onWhatsAppStoryTap() =>
-      redirectToShare(platform: "whatsapp", shareType: "story");
+      redirectToShare(platform: "whatsapp", shareType: "success");
 
   void _onWhatsAppChatTap() =>
       redirectToShare(platform: "whatsapp", shareType: "chat");
 
   void _onInstagramStoryTap() =>
-      redirectToShare(platform: "instagram", shareType: "story");
+      redirectToShare(platform: "instagram", shareType: "success");
 
   void _onInstagramChatTap() =>
       redirectToShare(platform: "instagram", shareType: "chat");
 
   void _onFacebookStoryTap() =>
-      redirectToShare(platform: "facebook", shareType: "story");
+      redirectToShare(platform: "facebook", shareType: "success");
 
   void _onFacebookChatTap() =>
       redirectToShare(platform: "facebook", shareType: "chat");

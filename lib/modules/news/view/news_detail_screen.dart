@@ -461,7 +461,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Help others discover this story by sharing it on your favorite platform.',
+                              'Help others discover this success by sharing it on your favorite platform.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: AppFontSizes.small,

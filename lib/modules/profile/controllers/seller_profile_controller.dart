@@ -155,7 +155,7 @@ class SellerProfileController extends GetxController {
 
       return data;
     }
-    return {'story': false, 'message': 'Invalid user type'};
+    return {'success': false, 'message': 'Invalid user type'};
   }
 
   void _populateControllers() {
@@ -459,15 +459,14 @@ class SellerProfileController extends GetxController {
       print('🔍 FULL API RESPONSE: $response');
       print('🔍 otpRequired value: ${response['otpRequired']}');
       print('🔍 otpRequired type: ${response['otpRequired'].runtimeType}');
-      print('🔍 story value: ${response['success']}');
+      print('🔍 success value: ${response['success']}');
       print('🔍 message value: ${response['message']}');
 
       final isOtpRequired =
           response['otpRequired'] == true ||
           response['otpRequired'] == 'true' ||
           (response['success'] == false &&
-              response['message']?.toString().toLowerCase().contains('otp') ==
-                  true);
+              response['message']?.toString().toLowerCase().contains('otp') == true);
 
       if (isOtpRequired) {
         print('🔵 OTP Required detected!');

@@ -26,6 +26,7 @@ import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart'
 import '../controller/dashborad_controller/dashboard_controller.dart';
 import '../model/dashboard/dashboard_model.dart';
 import '../widget/story/add_success_story.dart';
+
 import 'lead/lead_screen.dart';
 import 'lead_overview/lead_detail.dart';
 import 'listing/property_listing.dart';
@@ -598,7 +599,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                   ),
                                   SizedBox(height: 10),
                                   Text(
-                                    'Add your achievement story and inspire others',
+                                    'Add your achievement success and inspire others',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,

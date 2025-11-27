@@ -75,20 +75,20 @@ class ResellerSuccessStoryController
   // ====================================================
 
   Future<bool> createStory(
-    ResellerSuccessItem story, {
+    ResellerSuccessItem success, {
     String? imageFilePath,
   }) async {
     try {
       isLoading.value = true;
       final imageFile = imageFilePath != null ? File(imageFilePath) : null;
       final success = await _service.createSuccessStory(
-        storyData: story,
+        storyData: success,
         image: imageFile,
       );
       if (success) await loadInitial();
       return success;
     } catch (e) {
-      debugPrint("❌ Create story error: $e");
+      debugPrint("❌ Create success error: $e");
       return false;
     } finally {
       isLoading.value = false;
@@ -118,7 +118,7 @@ class ResellerSuccessStoryController
       }
       return success;
     } catch (e) {
-      debugPrint("❌ Update story error: $e");
+      debugPrint("❌ Update success error: $e");
       return false;
     } finally {
       isLoading.value = false;
@@ -133,7 +133,7 @@ class ResellerSuccessStoryController
       items.refresh();
       return true;
     } catch (e) {
-      debugPrint("❌ Delete story error: $e");
+      debugPrint("❌ Delete success error: $e");
       return false;
     }
   }
@@ -168,48 +168,48 @@ class ResellerSuccessStoryController
     imagePath.value = null;
   }
 
-  // void populateForm(ResellerSuccessItem story) {
-  //   print("Populating form with story: ${story.toJson()}");
-  //   titleController.text = story.title;
-  //   descriptionController.text = story.description;
-  //   achievementController.text = story.achievement;
-  //   totalDealsController.text = story.totalDeals.toString();
-  //   totalValueController.text = story.totalValue;
-  //   monthYearController.text = "${story.monthYear.year}-${story.monthYear.month.toString().padLeft(2, '0')}";
-  //   selectedMonthYear.value = story.monthYear;
-  //   rating.value = story.rating;
-  //   selectedStatus.value = story.status;
-  //   if (story.image != null) {
-  //     imagePath.value = File(story.image!);
+  // void populateForm(ResellerSuccessItem success) {
+  //   print("Populating form with success: ${success.toJson()}");
+  //   titleController.text = success.title;
+  //   descriptionController.text = success.description;
+  //   achievementController.text = success.achievement;
+  //   totalDealsController.text = success.totalDeals.toString();
+  //   totalValueController.text = success.totalValue;
+  //   monthYearController.text = "${success.monthYear.year}-${success.monthYear.month.toString().padLeft(2, '0')}";
+  //   selectedMonthYear.value = success.monthYear;
+  //   rating.value = success.rating;
+  //   selectedStatus.value = success.status;
+  //   if (success.image != null) {
+  //     imagePath.value = File(success.image!);
   //   } else {
   //     imagePath.value = null;
   //   }
   // }
 
-  void populateForm(ResellerSuccessItem story) {
-    print("Populating form with story: ${story.toJson()}");
+  void populateForm(ResellerSuccessItem success) {
+    print("Populating form with success: ${success.toJson()}");
 
-    titleController.text = story.title;
-    descriptionController.text = story.description;
-    achievementController.text = story.achievement;
-    totalDealsController.text = story.totalDeals.toString();
-    totalValueController.text = story.totalValue;
+    titleController.text = success.title;
+    descriptionController.text = success.description;
+    achievementController.text = success.achievement;
+    totalDealsController.text = success.totalDeals.toString();
+    totalValueController.text = success.totalValue;
     monthYearController.text =
-        "${story.monthYear.year}-${story.monthYear.month.toString().padLeft(2, '0')}";
-    selectedMonthYear.value = story.monthYear;
-    rating.value = story.rating;
-    selectedStatus.value = story.status;
+        "${success.monthYear.year}-${success.monthYear.month.toString().padLeft(2, '0')}";
+    selectedMonthYear.value = success.monthYear;
+    rating.value = success.rating;
+    selectedStatus.value = success.status;
 
-    if (story.image != null && story.image!.isNotEmpty) {
+    if (success.image != null && success.image!.isNotEmpty) {
       // ✅ Check if the image path exists locally
-      final file = File(story.image!);
+      final file = File(success.image!);
       if (file.existsSync()) {
         // Local file exists
         imagePath.value = file;
       } else {
         // Treat as network URL
         imagePath.value = File(
-          story.image!,
+          success.image!,
         ); // create a separate RxString for network image
       }
     }

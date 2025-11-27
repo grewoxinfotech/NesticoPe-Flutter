@@ -56,7 +56,7 @@ class SellerListWidget extends StatelessWidget {
                 //         AgentTagData(
                 //           icon: Icons.verified,
                 //           text: "Trusted agent",
-                //           color: ColorRes.story,
+                //           color: ColorRes.success,
                 //         ),
                 //         AgentTagData(
                 //           icon: Icons.star,

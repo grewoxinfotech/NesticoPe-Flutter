@@ -30,19 +30,20 @@ class AddSuccessStoryScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildLabel('Title'),
-              TextFormField(
-                controller: controller.titleController,
-                decoration: _inputDecoration('e.g., 3 BHK Luxury Apartment Deal Closed'),
-                validator: (v) => v!.isEmpty ? 'Please enter a title' : null,
-              ),
-              buildTextField('Enter the title', Icons.drive_file_rename_outline, controller.titleController),
+
+              // TextFormField(
+              //   controller: controller.titleController,
+              //   decoration: _inputDecoration('e.g., 3 BHK Luxury Apartment Deal Closed'),
+              //   validator: (v) => v!.isEmpty ? 'Please enter a title' : null,
+              // ),
+              buildTextField('e.g., 3 BHK Luxury Apartment Deal Closed', Icons.drive_file_rename_outline, controller.titleController),
               SizedBox(height: 20),
 
               _buildLabel('Description'),
               TextFormField(
                 controller: controller.descriptionController,
                 maxLines: 4,
-                decoration: _inputDecoration('Describe your success story in detail...'),
+                decoration: _inputDecoration('Describe your success success in detail...'),
                 validator: (v) => v!.isEmpty ? 'Please enter a description' : null,
               ),
               SizedBox(height: 20),

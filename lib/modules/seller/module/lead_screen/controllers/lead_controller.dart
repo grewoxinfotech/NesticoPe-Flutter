@@ -189,9 +189,9 @@
 //   // --- CRUD Methods ---
 //   Future<bool> createLead(LeadItem lead) async {
 //     try {
-//       final story = await _service.createLead(lead);
-//       if (story) await loadInitial();
-//       return story;
+//       final success = await _service.createLead(lead);
+//       if (success) await loadInitial();
+//       return success;
 //     } catch (e) {
 //       print("Create lead error: $e");
 //       return false;
@@ -200,15 +200,15 @@
 //
 //   Future<bool> updateLead(String id, LeadItem updatedLead) async {
 //     try {
-//       final story = await _service.updateLead(id, updatedLead);
-//       if (story) {
+//       final success = await _service.updateLead(id, updatedLead);
+//       if (success) {
 //         int index = items.indexWhere((item) => item.id == id);
 //         if (index != -1) {
 //           items[index] = updatedLead;
 //           items.refresh();
 //         }
 //       }
-//       return story;
+//       return success;
 //     } catch (e) {
 //       print("Update lead error: $e");
 //       return false;
@@ -217,9 +217,9 @@
 //
 //   Future<bool> deleteLead(String id) async {
 //     try {
-//       final story = await _service.deleteLead(id);
-//       if (story) items.removeWhere((item) => item.id == id);
-//       return story;
+//       final success = await _service.deleteLead(id);
+//       if (success) items.removeWhere((item) => item.id == id);
+//       return success;
 //     } catch (e) {
 //       print("Delete lead error: $e");
 //       return false;

@@ -18,7 +18,12 @@ class SellerInsightsModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {'story': success, 'message': message, 'data': data.toMap()};
+    return {
+      'success': success,
+      'message': message,
+      'data': data.toMap(),
+    };
+
   }
 }
 

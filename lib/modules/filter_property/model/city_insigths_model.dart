@@ -24,7 +24,7 @@ class CityResponse {
 
   Map<String, dynamic> toJson() {
     return {
-      'story': success,
+      'success': success,
       'message': message,
       'data': data.map((x) => x.toJson()).toList(),
     };
