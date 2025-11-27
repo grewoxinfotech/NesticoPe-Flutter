@@ -11,7 +11,7 @@ class ResellerProfile {
 
   factory ResellerProfile.fromJson(Map<String, dynamic> json) {
     return ResellerProfile(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data: ResellerProfileData.fromJson(json['data'] ?? {}),
     );

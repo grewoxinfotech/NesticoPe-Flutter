@@ -3,28 +3,21 @@ class ResellerUpdateProfile {
   final String? message;
   final ResellerData? data;
 
-  ResellerUpdateProfile({
-    this.success,
-    this.message,
-    this.data,
-  });
+  ResellerUpdateProfile({this.success, this.message, this.data});
 
   factory ResellerUpdateProfile.fromMap(Map<String, dynamic> map) {
     return ResellerUpdateProfile(
-      success: map['story'] as bool?,
+      success: map['success'] as bool?,
       message: map['message'] as String?,
       data: map['data'] != null ? ResellerData.fromMap(map['data']) : null,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'story': success,
-      'message': message,
-      'data': data?.toMap(),
-    };
+    return {'story': success, 'message': message, 'data': data?.toMap()};
   }
 }
+
 class ResellerData {
   final String? id;
   final String? createdBy;

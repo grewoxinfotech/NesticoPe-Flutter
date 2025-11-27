@@ -21,7 +21,7 @@ class ProfileController extends GetxController {
   final RxBool isEditing = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
-  UserService _userService=UserService();
+  UserService _userService = UserService();
   final Rxn<ResellerProfile> resellerProfile = Rxn<ResellerProfile>();
   final Rx<UserProfile> profile =
       UserProfile(
@@ -32,7 +32,7 @@ class ProfileController extends GetxController {
         position: 'Sales Manager',
         company: 'Tech Solutions Inc.',
         bio:
-        'Experienced sales professional with over 10 years in the industry.',
+            'Experienced sales professional with over 10 years in the industry.',
         avatarUrl: '',
         totalSales: 2500000.0,
         leadsCount: 156,
@@ -41,7 +41,8 @@ class ProfileController extends GetxController {
       ).obs;
 
   final Rxn<UserModel> profileData = Rxn<UserModel>();
-  final Rxn<ResellerUpdateProfile> profileUpdateData = Rxn<ResellerUpdateProfile>();
+  final Rxn<ResellerUpdateProfile> profileUpdateData =
+      Rxn<ResellerUpdateProfile>();
 
   // OTP verification data
   final RxString pendingPhone = ''.obs;
@@ -84,13 +85,13 @@ class ProfileController extends GetxController {
       isLoading.value = false;
     });
   }
+
   Future<User> getUserProfile() async {
     final data = await SecureStorage.getUserData();
-    final userId=data?.user?.id;
-    User? user = await _userService.getUserById(userId??'');
+    final userId = data?.user?.id;
+    User? user = await _userService.getUserById(userId ?? '');
     if (user != null) {
       return user;
-
     } else {
       print("Failed to fetch user profile");
       return User();
@@ -114,17 +115,20 @@ class ProfileController extends GetxController {
     _populateControllers();
     print("Lok ${resellerProfile.value?.data}");
   }
+
   Future<Map<String, dynamic>> updateResellerProfile(User userProfile) async {
     profileData.value?.user = await getUserProfile();
     if (profileData.value?.user?.userType == 'reseller') {
       print("jfhfhh ${profileData.value?.toJson()}");
-      print("🟫 Sending Update Request for User ID: ${profileData.value?.user?.id}");
+      print(
+        "🟫 Sending Update Request for User ID: ${profileData.value?.user?.id}",
+      );
       print("🟩 Payload: ${userProfile.toJson()}");
 
       final data = await ProfileUpdate.profileUpdate.updateProfileDetails(
         userProfile,
         profileData.value?.user?.id ?? '',
-        selectedImage.value
+        selectedImage.value,
       );
 
       return data;
@@ -133,7 +137,6 @@ class ProfileController extends GetxController {
   }
 
   void _populateControllers() {
-
     nameController.text = profileData.value?.user?.firstName ?? "";
     lastNameController.text = profileData.value?.user?.lastName ?? "";
     emailController.text = profileData.value?.user?.email ?? "";
@@ -142,7 +145,6 @@ class ProfileController extends GetxController {
     companyController.text = profileData.value?.user?.state ?? "";
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
-
   }
 
   void toggleEdit() {
@@ -406,12 +408,12 @@ class ProfileController extends GetxController {
   //     print('🔍 FULL API RESPONSE: $response');
   //     print('🔍 otpRequired value: ${response['otpRequired']}');
   //     print('🔍 otpRequired type: ${response['otpRequired'].runtimeType}');
-  //     print('🔍 story value: ${response['story']}');
+  //     print('🔍 story value: ${response['success']}');
   //     print('🔍 message value: ${response['message']}');
   //
   //     final isOtpRequired = response['otpRequired'] == true ||
   //         response['otpRequired'] == 'true' ||
-  //         (response['story'] == false &&
+  //         (response['success'] == false &&
   //             response['message']?.toString().toLowerCase().contains('otp') == true);
   //
   //     if (isOtpRequired) {
@@ -455,7 +457,7 @@ class ProfileController extends GetxController {
   //     }
   //
   //     // Check if update was successful (no OTP required)
-  //     if (response['story'] == true) {
+  //     if (response['success'] == true) {
   //       if (profileData.value?.user != null) {
   //         profileData.value = UserModel(
   //           user: User(
@@ -574,13 +576,15 @@ class ProfileController extends GetxController {
 
       print('🔍 otpRequired value: ${response['otpRequired']}');
       print('🔍 otpRequired type: ${response['otpRequired'].runtimeType}');
-      print('🔍 story value: ${response['story']}');
+      print('🔍 story value: ${response['success']}');
       print('🔍 message value: ${response['message']}');
 
-      final isOtpRequired = response['otpRequired'] == true ||
+      final isOtpRequired =
+          response['otpRequired'] == true ||
           response['otpRequired'] == 'true' ||
-          (response['story'] == false &&
-              response['message']?.toString().toLowerCase().contains('otp') == true);
+          (response['success'] == false &&
+              response['message']?.toString().toLowerCase().contains('otp') ==
+                  true);
 
       if (isOtpRequired) {
         print('🔵 OTP Required detected!');
@@ -596,14 +600,18 @@ class ProfileController extends GetxController {
         print('🔵 Pending phone: ${pendingPhone.value}');
 
         if (response['updatePhoneToken'] == null) {
-          print('⚠️ Warning: API did not send updatePhoneToken in initial response');
+          print(
+            '⚠️ Warning: API did not send updatePhoneToken in initial response',
+          );
           print('⚠️ Triggering resend OTP to obtain token...');
 
           // Show dialog first
           isSaving.value = false;
           _showOtpVerificationDialog(
             phone: pendingPhone.value,
-            message: response['message']?.toString() ?? 'OTP verification required for phone number change',
+            message:
+                response['message']?.toString() ??
+                'OTP verification required for phone number change',
           );
 
           otpResendTimer.value = 0;
@@ -616,14 +624,16 @@ class ProfileController extends GetxController {
 
           _showOtpVerificationDialog(
             phone: pendingPhone.value,
-            message: response['message']?.toString() ?? 'OTP verification required for phone number change',
+            message:
+                response['message']?.toString() ??
+                'OTP verification required for phone number change',
           );
         }
         return;
       }
 
       // Check if update was successful (no OTP required)
-      if (response['story'] == true) {
+      if (response['success'] == true) {
         if (profileData.value?.user != null) {
           profileData.value = UserModel(
             user: User(
@@ -709,13 +719,14 @@ class ProfileController extends GetxController {
     isVerifyingOtp.value = true;
 
     try {
-      final response = await ProfileUpdate.profileUpdate.verifyOtpForResellerNumber(
-        otp,
-        pendingUserData!,
-        profileData.value?.user?.id ?? '',
-      );
+      final response = await ProfileUpdate.profileUpdate
+          .verifyOtpForResellerNumber(
+            otp,
+            pendingUserData!,
+            profileData.value?.user?.id ?? '',
+          );
 
-      if (response['story'] == true) {
+      if (response['success'] == true) {
         _resendTimer?.cancel();
         // Update local profileData with new values
         if (response['data']?['user'] != null) {
@@ -740,13 +751,10 @@ class ProfileController extends GetxController {
             token: profileData.value?.token,
           );
 
-
           await SecureStorage.saveUserData(profileData.value!);
-
 
           await getUserProfileData();
         }
-
 
         _populateControllers();
 
@@ -795,7 +803,6 @@ class ProfileController extends GetxController {
     }
   }
 
-
   Future<void> resendOtpForPhoneUpdate() async {
     if (pendingPhone.value.isEmpty) {
       Get.snackbar(
@@ -815,7 +822,7 @@ class ProfileController extends GetxController {
         pendingPhone.value,
       );
 
-      if (response['story'] == true) {
+      if (response['success'] == true) {
         // Start resend timer (60 seconds)
         otpResendTimer.value = 60;
         _startResendTimer();
@@ -871,8 +878,6 @@ class ProfileController extends GetxController {
       }
     });
   }
-
-
 
   void _showOtpVerificationDialog({
     required String phone,
@@ -943,7 +948,7 @@ class ProfileController extends GetxController {
               ),
               const SizedBox(height: 16),
               Obx(
-                    () => Row(
+                () => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (otpResendTimer.value > 0)
@@ -956,16 +961,20 @@ class ProfileController extends GetxController {
                       )
                     else
                       TextButton.icon(
-                        onPressed: isResendingOtp.value
-                            ? null
-                            : resendOtpForPhoneUpdate,
-                        icon: isResendingOtp.value
-                            ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                            : const Icon(Icons.refresh, size: 18),
+                        onPressed:
+                            isResendingOtp.value
+                                ? null
+                                : resendOtpForPhoneUpdate,
+                        icon:
+                            isResendingOtp.value
+                                ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : const Icon(Icons.refresh, size: 18),
                         label: const Text('Resend OTP'),
                       ),
                   ],
@@ -986,22 +995,23 @@ class ProfileController extends GetxController {
             child: const Text('Cancel'),
           ),
           Obx(
-                () => ElevatedButton(
-              onPressed: (!isVerifyButtonEnabled.value || isVerifyingOtp.value)
-                  ? null
-                  : () {
-                if (otpController.text.length == 6) {
-                  verifyPhoneUpdateOtp(otpController.text);
-                } else {
-                  Get.snackbar(
-                    'Error',
-                    'Please enter 6-digit OTP',
-                    backgroundColor: Colors.red,
-                    colorText: ColorRes.white,
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                }
-              },
+            () => ElevatedButton(
+              onPressed:
+                  (!isVerifyButtonEnabled.value || isVerifyingOtp.value)
+                      ? null
+                      : () {
+                        if (otpController.text.length == 6) {
+                          verifyPhoneUpdateOtp(otpController.text);
+                        } else {
+                          Get.snackbar(
+                            'Error',
+                            'Please enter 6-digit OTP',
+                            backgroundColor: Colors.red,
+                            colorText: ColorRes.white,
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        }
+                      },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorRes.blueColor,
                 foregroundColor: ColorRes.white,
@@ -1009,19 +1019,19 @@ class ProfileController extends GetxController {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: isVerifyingOtp.value
-                  ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: ColorRes.white,
-                ),
-              )
-                  : const Text('Verify'),
+              child:
+                  isVerifyingOtp.value
+                      ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: ColorRes.white,
+                        ),
+                      )
+                      : const Text('Verify'),
             ),
           ),
-
         ],
       ),
       barrierDismissible: false,

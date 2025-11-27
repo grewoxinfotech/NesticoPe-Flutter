@@ -6,7 +6,7 @@
 //   Referrel_Model({this.story, this.message, this.data});
 //
 //   Referrel_Model.fromJson(Map<String, dynamic> json) {
-//     story = json['story'];
+//     story = json['success'];
 //     message = json['message'];
 //     if (json['data'] != null) {
 //       data = <Data>[];
@@ -18,7 +18,7 @@
 //
 //   Map<String, dynamic> toJson() {
 //     final Map<String, dynamic> data = new Map<String, dynamic>();
-//     data['story'] = this.story;
+//     data['success'] = this.story;
 //     data['message'] = this.message;
 //     if (this.data != null) {
 //       data['data'] = this.data!.map((v) => v.toJson()).toList();
@@ -112,7 +112,6 @@
 //   }
 // }
 
-
 import 'dart:convert';
 
 class ReferralModel {
@@ -123,7 +122,7 @@ class ReferralModel {
   ReferralModel({this.success, this.message, this.data});
 
   ReferralModel.fromJson(Map<String, dynamic> json) {
-    success = json['story'];
+    success = json['success'];
     message = json['message'];
     if (json['data'] != null) {
       data = <Data>[];
@@ -135,7 +134,7 @@ class ReferralModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> result = {};
-    result['story'] = success;
+    result['success'] = success;
     result['message'] = message;
     if (data != null) {
       result['data'] = data!.map((v) => v.toJson()).toList();
@@ -198,8 +197,7 @@ class Data {
       try {
         final decoded = referred.isNotEmpty ? jsonDecode(referred) : [];
         if (decoded is List) {
-          referredUsers =
-              decoded.map((v) => ReferredUser.fromJson(v)).toList();
+          referredUsers = decoded.map((v) => ReferredUser.fromJson(v)).toList();
         } else {
           referredUsers = [];
         }

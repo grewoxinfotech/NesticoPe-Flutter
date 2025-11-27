@@ -11,18 +11,14 @@ class SellerInsightsModel {
 
   factory SellerInsightsModel.fromJson(Map<String, dynamic> json) {
     return SellerInsightsModel(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data: SellerInsightsData.fromJson(json['data'] ?? {}),
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'story': success,
-      'message': message,
-      'data': data.toMap(),
-    };
+    return {'story': success, 'message': message, 'data': data.toMap()};
   }
 }
 
@@ -45,8 +41,12 @@ class SellerInsightsData {
     return SellerInsightsData(
       propertyMetrics: PropertyMetrics.fromJson(json['propertyMetrics'] ?? {}),
       leadAnalytics: LeadAnalytics.fromJson(json['leadAnalytics'] ?? {}),
-      financialMetrics: FinancialMetrics.fromJson(json['financialMetrics'] ?? {}),
-      engagementMetrics: EngagementMetrics.fromJson(json['engagementMetrics'] ?? {}),
+      financialMetrics: FinancialMetrics.fromJson(
+        json['financialMetrics'] ?? {},
+      ),
+      engagementMetrics: EngagementMetrics.fromJson(
+        json['engagementMetrics'] ?? {},
+      ),
       lastUpdated: json['lastUpdated'] ?? '',
     );
   }
@@ -79,9 +79,10 @@ class PropertyMetrics {
     return PropertyMetrics(
       totalProperties: json['totalProperties'] ?? 0,
       activeListings: json['activeListings'] ?? 0,
-      viewsHistory: (json['viewsHistory'] as List?)
-          ?.map((e) => ViewHistory.fromJson(e))
-          .toList() ??
+      viewsHistory:
+          (json['viewsHistory'] as List?)
+              ?.map((e) => ViewHistory.fromJson(e))
+              .toList() ??
           [],
       statusDistribution: json['statusDistribution'] ?? {},
     );
@@ -101,23 +102,14 @@ class ViewHistory {
   final String month;
   final int views;
 
-  ViewHistory({
-    required this.month,
-    required this.views,
-  });
+  ViewHistory({required this.month, required this.views});
 
   factory ViewHistory.fromJson(Map<String, dynamic> json) {
-    return ViewHistory(
-      month: json['month'] ?? '',
-      views: json['views'] ?? 0,
-    );
+    return ViewHistory(month: json['month'] ?? '', views: json['views'] ?? 0);
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'month': month,
-      'views': views,
-    };
+    return {'month': month, 'views': views};
   }
 }
 
@@ -139,9 +131,10 @@ class LeadAnalytics {
       totalLeads: json['totalLeads'] ?? 0,
       sourceDistribution: json['sourceDistribution'] ?? {},
       conversionRate: (json['conversionRate'] ?? 0).toDouble(),
-      leadsTimeline: (json['leadsTimeline'] as List?)
-          ?.map((e) => LeadsTimeline.fromJson(e))
-          .toList() ??
+      leadsTimeline:
+          (json['leadsTimeline'] as List?)
+              ?.map((e) => LeadsTimeline.fromJson(e))
+              .toList() ??
           [],
     );
   }
@@ -160,23 +153,14 @@ class LeadsTimeline {
   final String month;
   final int count;
 
-  LeadsTimeline({
-    required this.month,
-    required this.count,
-  });
+  LeadsTimeline({required this.month, required this.count});
 
   factory LeadsTimeline.fromJson(Map<String, dynamic> json) {
-    return LeadsTimeline(
-      month: json['month'] ?? '',
-      count: json['count'] ?? 0,
-    );
+    return LeadsTimeline(month: json['month'] ?? '', count: json['count'] ?? 0);
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'month': month,
-      'count': count,
-    };
+    return {'month': month, 'count': count};
   }
 }
 

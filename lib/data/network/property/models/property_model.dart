@@ -6,7 +6,7 @@
 //   PropertyModel({this.story, this.message, this.data});
 //
 //   PropertyModel.fromJson(Map<String, dynamic> json) {
-//     story = json['story'];
+//     story = json['success'];
 //     message = json['message'] != null
 //         ? PropertyMessage.fromJson(json['message'])
 //         : null;
@@ -631,7 +631,7 @@ class PropertyModel {
   PropertyModel({this.success, this.message, this.data});
 
   PropertyModel.fromJson(Map<String, dynamic> json) {
-    success = json['story'] as bool?;
+    success = json['success'] as bool?;
     message =
         json['message'] != null
             ? PropertyMessage.fromJson(json['message'] as Map<String, dynamic>)
@@ -838,12 +838,16 @@ class Items {
     title = json['title'] as String?;
     type = json['type'] as String?;
     listingType = json['listingType'] as String?;
-    performanceScorePercent = TypeConverter.parseDouble(json['performanceScorePercent']);
+    performanceScorePercent = TypeConverter.parseDouble(
+      json['performanceScorePercent'],
+    );
 
     propertyType = json['propertyType'] as String?;
     propertyDescription = json['propertyDescription'] as String?;
     propertyId = json['propertyId'] as String?;
-    calculatedPerformanceScore = TypeConverter.parseDouble(json['calculatedPerformanceScore']);
+    calculatedPerformanceScore = TypeConverter.parseDouble(
+      json['calculatedPerformanceScore'],
+    );
     keywords = (json['keywords'] as List?)?.map((e) => e as String).toList();
     propertyImages =
         (json['propertyImages'] as List?)?.map((e) => e as String).toList();
@@ -1095,12 +1099,14 @@ class PropertyDetails {
     servantRoom = json['servant_room'] as bool?;
     locality = json['locality'] as String?;
     subLocality = json['sub_locality'] as String?;
-    liftInfo = json['lift_info'] != null ? LiftInfo.fromJson(json['lift_info']) : null;
+    liftInfo =
+        json['lift_info'] != null ? LiftInfo.fromJson(json['lift_info']) : null;
     tenantType = json['tenant_type'] as String?;
     petFriendly = json['pet_friendly'] as bool?;
     availableFrom = json['available_from'] as String?;
     transactionType = json['transaction_type'] as String?;
-    plotInfo = json['plot_info'] != null ? PlotInfo.fromJson(json['plot_info']) : null;
+    plotInfo =
+        json['plot_info'] != null ? PlotInfo.fromJson(json['plot_info']) : null;
     propertyBuiltUpArea = TypeConverter.parseDouble(
       json['property_built_up_area'],
     );
@@ -1168,6 +1174,7 @@ class PropertyDetails {
     return data;
   }
 }
+
 class LiftInfo {
   bool? serviceLift;
 
@@ -1219,6 +1226,7 @@ class PlotInfo {
     'possession_status': possessionStatus,
   };
 }
+
 class FloorInfo {
   int? floorNumber;
   int? totalFloors;
@@ -1235,7 +1243,6 @@ class FloorInfo {
     'total_floors': totalFloors,
   };
 }
-
 
 class FurnishInfo {
   final String? furnishType;
@@ -1260,10 +1267,13 @@ class FurnishInfo {
       brokerNegotiable: json['broker_negotiable'] as bool?,
       parkingCharges: json['parking_charges'] as String?,
       paintingCharges: json['painting_charges'] as String?,
-      maintenanceCharges: TypeConverter.parseDouble(json['maintenance_charges']),
-      furnishDetails: json['furnish_details'] != null
-          ? FurnishDetails.fromJson(json['furnish_details'])
-          : null,
+      maintenanceCharges: TypeConverter.parseDouble(
+        json['maintenance_charges'],
+      ),
+      furnishDetails:
+          json['furnish_details'] != null
+              ? FurnishDetails.fromJson(json['furnish_details'])
+              : null,
     );
   }
 
@@ -1292,7 +1302,6 @@ class FurnishInfo {
     return data;
   }
 }
-
 
 class FurnishDetails {
   final bool? washingMachine;
@@ -1468,7 +1477,11 @@ class PossessionInfo {
   String? propertyAgeInYear;
   String? possessionDate;
 
-  PossessionInfo({this.possessionStatus, this.propertyAgeInYear, this.possessionDate});
+  PossessionInfo({
+    this.possessionStatus,
+    this.propertyAgeInYear,
+    this.possessionDate,
+  });
 
   PossessionInfo.fromJson(Map<String, dynamic> json) {
     possessionStatus = json['possession_status'] as String?;
@@ -1881,6 +1894,3 @@ class TypeConverter {
     return null;
   }
 }
-
-
-

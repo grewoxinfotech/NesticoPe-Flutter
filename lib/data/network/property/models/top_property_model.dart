@@ -14,7 +14,7 @@
 //
 //   factory TopPropertiesResponse.fromMap(Map<String, dynamic> map) =>
 //       TopPropertiesResponse(
-//         story: map['story'] ?? false,
+//         story: map['success'] ?? false,
 //         message: map['message'] ?? '',
 //         data: TopPropertiesData.fromMap(map['data'] ?? {}),
 //       );

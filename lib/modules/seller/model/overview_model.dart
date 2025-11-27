@@ -11,7 +11,7 @@ class SellerOverviewModel {
 
   factory SellerOverviewModel.fromJson(Map<String, dynamic> json) {
     return SellerOverviewModel(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? OverviewData.fromJson(json['data']) : null,
     );

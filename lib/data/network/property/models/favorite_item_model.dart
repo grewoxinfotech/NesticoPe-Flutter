@@ -11,7 +11,7 @@ class FavoriteResponseModel {
 
   factory FavoriteResponseModel.fromJson(Map<String, dynamic> json) {
     return FavoriteResponseModel(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? FavoriteData.fromJson(json['data']) : null,
     );

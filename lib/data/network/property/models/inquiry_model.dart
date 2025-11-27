@@ -11,7 +11,7 @@
 //
 //   factory InquiryResponse.fromJson(Map<String, dynamic> json) {
 //     return InquiryResponse(
-//       story: json['story'] ?? false,
+//       story: json['success'] ?? false,
 //       message: json['message'] ?? '',
 //       data: InquiryData.fromJson(json['data'] ?? {}),
 //     );
@@ -122,7 +122,7 @@ class InquiryResponse {
 
   factory InquiryResponse.fromJson(Map<String, dynamic> json) {
     return InquiryResponse(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data: InquiryData.fromJson(json['data'] ?? {}),
     );

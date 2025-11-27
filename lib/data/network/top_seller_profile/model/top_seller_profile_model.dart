@@ -7,7 +7,7 @@ class TopSellersResponse {
 
   factory TopSellersResponse.fromJson(Map<String, dynamic> json) {
     return TopSellersResponse(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? TopSellersData.fromJson(json['data']) : null,
     );

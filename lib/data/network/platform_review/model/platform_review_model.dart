@@ -5,15 +5,11 @@ class ReviewResponse {
   final String? message;
   final ReviewData? data;
 
-  ReviewResponse({
-    this.success,
-    this.message,
-    this.data,
-  });
+  ReviewResponse({this.success, this.message, this.data});
 
   factory ReviewResponse.fromJson(Map<String, dynamic> json) {
     return ReviewResponse(
-      success: json['story'],
+      success: json['success'],
       message: json['message'],
       data: json['data'] != null ? ReviewData.fromJson(json['data']) : null,
     );
@@ -50,9 +46,8 @@ class ReviewData {
 
   factory ReviewData.fromJson(Map<String, dynamic> json) {
     return ReviewData(
-      items: (json['items'] as List?)
-          ?.map((e) => ReviewItem.fromJson(e))
-          .toList(),
+      items:
+          (json['items'] as List?)?.map((e) => ReviewItem.fromJson(e)).toList(),
       total: json['total'],
       currentPage: json['currentPage'],
       totalPages: json['totalPages'],
@@ -141,9 +136,10 @@ class ReviewItem {
       rating: (json['rating'] as num?)?.toDouble(),
       title: json['title'],
       content: json['content'],
-      detailedRatings: json['detailed_ratings'] != null
-          ? DetailedRatings.fromJson(json['detailed_ratings'])
-          : null,
+      detailedRatings:
+          json['detailed_ratings'] != null
+              ? DetailedRatings.fromJson(json['detailed_ratings'])
+              : null,
       photos: (json['photos'] as List?)?.map((e) => e.toString()).toList(),
       videos: (json['videos'] as List?)?.map((e) => e.toString()).toList(),
       pros: json['pros'],
@@ -229,22 +225,16 @@ class DetailedRatings {
   };
 }
 
-
-
 class UsersResponse {
   final bool success;
   final String message;
   final UsersData? data;
 
-  UsersResponse({
-    required this.success,
-    required this.message,
-    this.data,
-  });
+  UsersResponse({required this.success, required this.message, this.data});
 
   factory UsersResponse.fromJson(Map<String, dynamic> json) {
     return UsersResponse(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data: json['data'] != null ? UsersData.fromJson(json['data']) : null,
     );
@@ -276,9 +266,10 @@ class UsersData {
 
   factory UsersData.fromJson(Map<String, dynamic> json) {
     return UsersData(
-      items: (json['items'] as List<dynamic>?)
-          ?.map((e) => UserItem.fromJson(e))
-          .toList() ??
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((e) => UserItem.fromJson(e))
+              .toList() ??
           [],
       total: json['total'] ?? 0,
       currentPage: json['currentPage'] ?? 1,
@@ -401,4 +392,3 @@ class UserItem {
     'updatedAt': updatedAt,
   };
 }
-

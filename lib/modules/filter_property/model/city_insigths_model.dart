@@ -11,7 +11,7 @@ class CityResponse {
 
   factory CityResponse.fromJson(Map<String, dynamic> json) {
     return CityResponse(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data:
           json['data'] != null

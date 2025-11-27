@@ -18,13 +18,12 @@ import '../../../data/network/user/service/user_service.dart';
 import '../../reseller/model/user/user_model.dart';
 import '../model/seller_profile.dart';
 
-
 class SellerProfileController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isEditing = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
-  UserService _userService=UserService();
+  UserService _userService = UserService();
   final Rxn<ProfileSellerModel> resellerProfile = Rxn<ProfileSellerModel>();
   final Rx<UserProfile> profile =
       UserProfile(
@@ -35,7 +34,7 @@ class SellerProfileController extends GetxController {
         position: 'Sales Manager',
         company: 'Tech Solutions Inc.',
         bio:
-        'Experienced sales professional with over 10 years in the industry.',
+            'Experienced sales professional with over 10 years in the industry.',
         avatarUrl: '',
         totalSales: 2500000.0,
         leadsCount: 156,
@@ -44,7 +43,8 @@ class SellerProfileController extends GetxController {
       ).obs;
 
   final Rxn<UserModel> profileData = Rxn<UserModel>();
-  final Rxn<ResellerUpdateProfile> profileUpdateData = Rxn<ResellerUpdateProfile>();
+  final Rxn<ResellerUpdateProfile> profileUpdateData =
+      Rxn<ResellerUpdateProfile>();
 
   // OTP verification data
   final RxString pendingPhone = ''.obs;
@@ -54,7 +54,6 @@ class SellerProfileController extends GetxController {
   User? pendingUserData; // Store user data for OTP verification
   Timer? _resendTimer; // Timer instance to prevent multiple timers
   final RxBool isVerifyButtonEnabled = true.obs;
-
 
   // Image picker
   final ImagePicker _picker = ImagePicker();
@@ -69,7 +68,7 @@ class SellerProfileController extends GetxController {
   final companyController = TextEditingController(); // State
   final addressController = TextEditingController();
   final zipController = TextEditingController();
-  
+
   // Form controllers - Business Details
   final contactPersonController = TextEditingController();
   final contactPhoneController = TextEditingController();
@@ -83,9 +82,8 @@ class SellerProfileController extends GetxController {
   void onInit() {
     super.onInit();
     loadProfile();
-     getUserProfile();
+    getUserProfile();
     getUserProfileData();
-
   }
 
   void loadProfile() {
@@ -98,22 +96,22 @@ class SellerProfileController extends GetxController {
       isLoading.value = false;
     });
   }
+
   Future<User> getUserProfile() async {
     final data = await SecureStorage.getUserData();
-    final userId=data?.user?.id;
+    final userId = data?.user?.id;
     debugPrint('Fetched User Seller: ${userId}');
-    User? user = await _userService.getUserById(userId??'');
+    User? user = await _userService.getUserById(userId ?? '');
 
     if (user != null) {
-   return user;
-
+      return user;
     } else {
       print("Failed to fetch user profile");
       return User();
     }
   }
-  Future<void> getUserProfileData() async {
 
+  Future<void> getUserProfileData() async {
     final user = await getUserProfile();
 
     // Initialize profileData with fetched user so subsequent `.user` reads work
@@ -125,25 +123,35 @@ class SellerProfileController extends GetxController {
         profileData.value?.user?.id ?? '',
       );
       print("Seller ${data}");
-      resellerProfile.value = ProfileSellerModel.fromJson(data??{});
+      resellerProfile.value = ProfileSellerModel.fromJson(data ?? {});
       print("Seller efgryfgrfyy${resellerProfile.value?.toJson()}");
     }
     _populateControllers();
     print("Lok ${resellerProfile.value?.id}");
   }
-  Future<Map<String, dynamic>> updateResellerProfile(UserUpdateProfile userProfile) async {
+
+  Future<Map<String, dynamic>> updateResellerProfile(
+    UserUpdateProfile userProfile,
+  ) async {
     profileData.value?.user = await getUserProfile();
     if (profileData.value?.user?.userType == 'seller') {
       print("jfhfhh ${profileData.value?.toJson()}");
-      print("🟫 Sending Update Request for User ID: ${profileData.value?.user?.id}");
+      print(
+        "🟫 Sending Update Request for User ID: ${profileData.value?.user?.id}",
+      );
       print("🟩 Payloadshfdufhdu: ${userProfile.toMap()}");
 
-      final data = await SellerProfileUpdate.profileUpdate.updateSellerProfileDetails(
-        userProfile,
-        profileData.value?.user?.id ?? '',
-        profileImageFile: selectedImage.value!=null?selectedImage.value!:File(profileData.value?.user?.profilePic.toString()??''),
-
-      );
+      final data = await SellerProfileUpdate.profileUpdate
+          .updateSellerProfileDetails(
+            userProfile,
+            profileData.value?.user?.id ?? '',
+            profileImageFile:
+                selectedImage.value != null
+                    ? selectedImage.value!
+                    : File(
+                      profileData.value?.user?.profilePic.toString() ?? '',
+                    ),
+          );
 
       return data;
     }
@@ -161,8 +169,7 @@ class SellerProfileController extends GetxController {
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
     // selectedImage.value=profile.value.avatarUrl;
-    
-    
+
     // Business Details fields from seller profile
     contactPersonController.text = resellerProfile.value?.contactName ?? "";
     contactPhoneController.text = resellerProfile.value?.contactPhone ?? "";
@@ -200,10 +207,9 @@ class SellerProfileController extends GetxController {
 
         print("📱 Selected local file: ${file.uri}");
 
-
-
-        print("hufgeriuf ${selectedImage.value?.uri}  ${image.path}   ${selectedImage.value.toString()}");
-
+        print(
+          "hufgeriuf ${selectedImage.value?.uri}  ${image.path}   ${selectedImage.value.toString()}",
+        );
 
         Get.snackbar(
           'Success',
@@ -403,7 +409,7 @@ class SellerProfileController extends GetxController {
   Future<void> saveProfile() async {
     print('🔵 saveProfile() called');
     print('🔵 formKey.currentState: ${formKey.currentState}');
-    
+
     try {
       // Validate form if in editing mode
       if (formKey.currentState != null && !formKey.currentState!.validate()) {
@@ -423,7 +429,7 @@ class SellerProfileController extends GetxController {
         }
       }
 
-print(" fdjnfjudfhur $image");
+      print(" fdjnfjudfhur $image");
       // Build user object from form data
       UserUpdateProfile user = UserUpdateProfile(
         city: positionController.text,
@@ -453,17 +459,18 @@ print(" fdjnfjudfhur $image");
       print('🔍 FULL API RESPONSE: $response');
       print('🔍 otpRequired value: ${response['otpRequired']}');
       print('🔍 otpRequired type: ${response['otpRequired'].runtimeType}');
-      print('🔍 story value: ${response['story']}');
+      print('🔍 story value: ${response['success']}');
       print('🔍 message value: ${response['message']}');
 
-      final isOtpRequired = response['otpRequired'] == true ||
+      final isOtpRequired =
+          response['otpRequired'] == true ||
           response['otpRequired'] == 'true' ||
-          (response['story'] == false &&
-              response['message']?.toString().toLowerCase().contains('otp') == true);
+          (response['success'] == false &&
+              response['message']?.toString().toLowerCase().contains('otp') ==
+                  true);
 
       if (isOtpRequired) {
         print('🔵 OTP Required detected!');
-
 
         pendingUserData = User(
           id: profileData.value?.user?.id,
@@ -479,21 +486,23 @@ print(" fdjnfjudfhur $image");
           roleId: profileData.value?.user?.roleId,
           isVerified: profileData.value?.user?.isVerified,
           address: addressController.text,
-
         );
 
         pendingPhone.value = response['phone'] ?? phoneController.text;
         print('🔵 Pending phone: ${pendingPhone.value}');
 
         if (response['updatePhoneToken'] == null) {
-          print('⚠️ Warning: API did not send updatePhoneToken in initial response');
+          print(
+            '⚠️ Warning: API did not send updatePhoneToken in initial response',
+          );
           print('⚠️ Triggering resend OTP to obtain token...');
-
 
           isSaving.value = false;
           _showOtpVerificationDialog(
             phone: pendingPhone.value,
-            message: response['message'] ?? 'OTP verification required for phone number change',
+            message:
+                response['message'] ??
+                'OTP verification required for phone number change',
           );
           otpResendTimer.value = 0;
           await resendOtpForPhoneUpdate();
@@ -505,14 +514,15 @@ print(" fdjnfjudfhur $image");
 
           _showOtpVerificationDialog(
             phone: pendingPhone.value,
-            message: response['message'] ?? 'OTP verification required for phone number change',
+            message:
+                response['message'] ??
+                'OTP verification required for phone number change',
           );
         }
         return;
       }
 
-
-      if (response['story'] == true) {
+      if (response['success'] == true) {
         if (profileData.value?.user != null) {
           profileData.value = UserModel(
             user: User(
@@ -525,9 +535,7 @@ print(" fdjnfjudfhur $image");
 
               zipCode: zipController.text,
               state: companyController.text,
-              profilePic:
-              image??
-                  profileData.value?.user?.profilePic,
+              profilePic: image ?? profileData.value?.user?.profilePic,
               username: profileData.value?.user?.username,
               userType: profileData.value?.user?.userType,
               roleId: profileData.value?.user?.roleId,
@@ -539,9 +547,7 @@ print(" fdjnfjudfhur $image");
           await SecureStorage.saveUserData(profileData.value!);
         }
 
-
         await getUserProfileData();
-
 
         _populateControllers();
 
@@ -600,13 +606,14 @@ print(" fdjnfjudfhur $image");
     isVerifyingOtp.value = true;
 
     try {
-      final response = await SellerProfileUpdate.profileUpdate.verifyOtpForSellerNumber(
-        otp,
-        pendingUserData!,
-        profileData.value?.user?.id ?? '',
-      );
+      final response = await SellerProfileUpdate.profileUpdate
+          .verifyOtpForSellerNumber(
+            otp,
+            pendingUserData!,
+            profileData.value?.user?.id ?? '',
+          );
 
-      if (response['story'] == true) {
+      if (response['success'] == true) {
         _resendTimer?.cancel();
 
         if (response['data']?['user'] != null) {
@@ -631,13 +638,10 @@ print(" fdjnfjudfhur $image");
             token: profileData.value?.token,
           );
 
-
           await SecureStorage.saveUserData(profileData.value!);
-
 
           await getUserProfileData();
         }
-
 
         _populateControllers();
 
@@ -686,7 +690,6 @@ print(" fdjnfjudfhur $image");
     }
   }
 
-
   Future<void> resendOtpForPhoneUpdate() async {
     if (pendingPhone.value.isEmpty) {
       Get.snackbar(
@@ -701,13 +704,13 @@ print(" fdjnfjudfhur $image");
     isResendingOtp.value = true;
 
     try {
-      final response = await SellerProfileUpdate.profileUpdate.resendPhoneSellerUpdateOtp(
-        profileData.value?.user?.id ?? '',
-        pendingPhone.value,
-      );
+      final response = await SellerProfileUpdate.profileUpdate
+          .resendPhoneSellerUpdateOtp(
+            profileData.value?.user?.id ?? '',
+            pendingPhone.value,
+          );
 
-      if (response['story'] == true) {
-
+      if (response['success'] == true) {
         otpResendTimer.value = 60;
         _startResendTimer();
         isVerifyButtonEnabled.value = true;
@@ -769,7 +772,6 @@ print(" fdjnfjudfhur $image");
     required String phone,
     required String message,
   }) {
-
     final otpController = TextEditingController();
 
     Get.dialog(
@@ -832,7 +834,7 @@ print(" fdjnfjudfhur $image");
               ),
               const SizedBox(height: 16),
               Obx(
-                    () => Row(
+                () => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (otpResendTimer.value > 0)
@@ -845,16 +847,20 @@ print(" fdjnfjudfhur $image");
                       )
                     else
                       TextButton.icon(
-                        onPressed: isResendingOtp.value
-                            ? null
-                            : resendOtpForPhoneUpdate,
-                        icon: isResendingOtp.value
-                            ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                            : const Icon(Icons.refresh, size: 18),
+                        onPressed:
+                            isResendingOtp.value
+                                ? null
+                                : resendOtpForPhoneUpdate,
+                        icon:
+                            isResendingOtp.value
+                                ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : const Icon(Icons.refresh, size: 18),
                         label: const Text('Resend OTP'),
                       ),
                   ],
@@ -875,23 +881,23 @@ print(" fdjnfjudfhur $image");
             child: const Text('Cancel'),
           ),
           Obx(
-                () => ElevatedButton(
-              onPressed: (!isVerifyButtonEnabled.value || isVerifyingOtp.value)
-                  ? null
-                  : () {
-                if (otpController.text.length == 6) {
-                  verifyPhoneUpdateOtp(otpController.text);
-
-                } else {
-                  Get.snackbar(
-                    'Error',
-                    'Please enter 6-digit OTP',
-                    backgroundColor: Colors.red,
-                    colorText: ColorRes.white,
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                }
-              },
+            () => ElevatedButton(
+              onPressed:
+                  (!isVerifyButtonEnabled.value || isVerifyingOtp.value)
+                      ? null
+                      : () {
+                        if (otpController.text.length == 6) {
+                          verifyPhoneUpdateOtp(otpController.text);
+                        } else {
+                          Get.snackbar(
+                            'Error',
+                            'Please enter 6-digit OTP',
+                            backgroundColor: Colors.red,
+                            colorText: ColorRes.white,
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        }
+                      },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorRes.blueColor,
                 foregroundColor: ColorRes.white,
@@ -899,19 +905,19 @@ print(" fdjnfjudfhur $image");
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: isVerifyingOtp.value
-                  ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: ColorRes.white,
-                ),
-              )
-                  : const Text('Verify'),
+              child:
+                  isVerifyingOtp.value
+                      ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: ColorRes.white,
+                        ),
+                      )
+                      : const Text('Verify'),
             ),
           ),
-
         ],
       ),
       barrierDismissible: false,
@@ -920,7 +926,6 @@ print(" fdjnfjudfhur $image");
 
   @override
   void onClose() {
-
     _resendTimer?.cancel();
     nameController.dispose();
     lastNameController.dispose();
@@ -935,7 +940,7 @@ print(" fdjnfjudfhur $image");
     companyNameController.dispose();
     reraNumberController.dispose();
     gstNumberController.dispose();
-    
+
     super.onClose();
   }
 }

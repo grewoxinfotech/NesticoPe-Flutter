@@ -29,7 +29,7 @@ class AuthService {
 
     final data = jsonDecode(response.body);
 
-    if (response.statusCode == 200 && data["story"] == true) {
+    if (response.statusCode == 200 && data["success"] == true) {
       final user = UserModel.fromJson(data['data']);
       final token = data['token'] ?? user.token;
 
@@ -131,7 +131,7 @@ class AuthService {
         final body = jsonDecode(response.body);
         print("Seller Complete [DEBUG]=> ${response.body}");
 
-        if (body['story'] == true) {
+        if (body['success'] == true) {
           // Return token from response
           return body['data']['token'];
         }
@@ -151,7 +151,7 @@ class AuthService {
 
     final data = jsonDecode(response.body);
 
-    if (response.statusCode != 200 || data['story'] != true) {
+    if (response.statusCode != 200 || data['success'] != true) {
       throw Exception(data['message'] ?? 'Failed to resend OTP');
     }
   }
@@ -164,7 +164,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    if (response.statusCode == 200 && data['story'] == true) {
+    if (response.statusCode == 200 && data['success'] == true) {
       return UserModel.fromJson(data['data']['user'])
         ..token = data['data']['token'] ?? token;
     }
@@ -179,7 +179,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    if (response.statusCode == 200 && data['story'] == true) {
+    if (response.statusCode == 200 && data['success'] == true) {
       return data['data']['token'];
     } else {
       throw Exception(data["message"] ?? "Failed to send OTP");
@@ -196,7 +196,7 @@ class AuthService {
     final data = jsonDecode(response.body);
     print("OTP [DEBUG]=> ${response.body}");
     // debugPrint("[DEBUG]=> ${response.body}");
-    if (response.statusCode == 200 && data['story'] == true) {
+    if (response.statusCode == 200 && data['success'] == true) {
       return data['data']['token'];
     }
     throw Exception(data['message'] ?? 'OTP verification failed');
@@ -212,7 +212,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    if (response.statusCode == 200 && data['story'] == true) {
+    if (response.statusCode == 200 && data['success'] == true) {
       return true;
     } else {
       throw Exception(data["message"] ?? "Failed to convert buyer to seller");
@@ -228,7 +228,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    if (response.statusCode == 200 && data['story'] == true) {
+    if (response.statusCode == 200 && data['success'] == true) {
       return true;
     } else {
       throw Exception(data["message"] ?? "Failed to convert buyer to reseller");
@@ -244,7 +244,7 @@ class AuthService {
 
     final data = jsonDecode(response.body);
     print("[DEBUG]=> ${response.body}");
-    if (response.statusCode == 200 && data['story'] == true) {
+    if (response.statusCode == 200 && data['success'] == true) {
       return data['data']['resetToken'];
     } else {
       throw Exception(data["message"] ?? "OTP verification failed");
@@ -259,7 +259,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    if (response.statusCode != 200 || data['story'] != true) {
+    if (response.statusCode != 200 || data['success'] != true) {
       throw Exception(data["message"] ?? "Password reset failed");
     }
   }

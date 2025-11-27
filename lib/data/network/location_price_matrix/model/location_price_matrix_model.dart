@@ -6,18 +6,18 @@ class LocationPriceMatrixModel {
 
   factory LocationPriceMatrixModel.fromJson(Map<String, dynamic> json) {
     return LocationPriceMatrixModel(
-      success: json['story'],
-      data: json['data'] != null ? LocationPriceMatrixData.fromJson(json['data']) : null,
+      success: json['success'],
+      data:
+          json['data'] != null
+              ? LocationPriceMatrixData.fromJson(json['data'])
+              : null,
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'story': success,
-    'data': data?.toJson(),
-  };
+  Map<String, dynamic> toJson() => {'story': success, 'data': data?.toJson()};
 }
 
-class  LocationPriceMatrixData{
+class LocationPriceMatrixData {
   final Map<String, dynamic>? buy;
   final Map<String, dynamic>? rent;
 
@@ -26,14 +26,12 @@ class  LocationPriceMatrixData{
   factory LocationPriceMatrixData.fromJson(Map<String, dynamic> json) {
     return LocationPriceMatrixData(
       buy: json['buy'] != null ? Map<String, dynamic>.from(json['buy']) : null,
-      rent: json['rent'] != null ? Map<String, dynamic>.from(json['rent']) : null,
+      rent:
+          json['rent'] != null ? Map<String, dynamic>.from(json['rent']) : null,
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'buy': buy,
-    'rent': rent,
-  };
+  Map<String, dynamic> toJson() => {'buy': buy, 'rent': rent};
 }
 
 /// Generic model for Buy/Rent listings (used within nested maps)
@@ -65,12 +63,14 @@ class LocationPriceMatrixListings {
       location: json['location'],
       totalListings: json['totalListings'],
       avgPrice: json['avgPrice'],
-      pricePerSqFt: json['pricePerSqFt'] != null
-          ? PricePerSqFt.fromJson(json['pricePerSqFt'])
-          : null,
-      bhkDistribution: json['bhkDistribution'] != null
-          ? Map<String, dynamic>.from(json['bhkDistribution'])
-          : {},
+      pricePerSqFt:
+          json['pricePerSqFt'] != null
+              ? PricePerSqFt.fromJson(json['pricePerSqFt'])
+              : null,
+      bhkDistribution:
+          json['bhkDistribution'] != null
+              ? Map<String, dynamic>.from(json['bhkDistribution'])
+              : {},
       demandIndex: json['demandIndex'],
       minPrice: json['minPrice'],
       maxPrice: json['maxPrice'],
@@ -97,16 +97,8 @@ class PricePerSqFt {
   PricePerSqFt({this.min, this.max, this.avg});
 
   factory PricePerSqFt.fromJson(Map<String, dynamic> json) {
-    return PricePerSqFt(
-      min: json['min'],
-      max: json['max'],
-      avg: json['avg'],
-    );
+    return PricePerSqFt(min: json['min'], max: json['max'], avg: json['avg']);
   }
 
-  Map<String, dynamic> toJson() => {
-    'min': min,
-    'max': max,
-    'avg': avg,
-  };
+  Map<String, dynamic> toJson() => {'min': min, 'max': max, 'avg': avg};
 }

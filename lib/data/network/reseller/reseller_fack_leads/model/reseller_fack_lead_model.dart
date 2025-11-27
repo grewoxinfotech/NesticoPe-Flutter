@@ -11,7 +11,7 @@ class ResellerFakeLeadStatsResponse {
 
   factory ResellerFakeLeadStatsResponse.fromJson(Map<String, dynamic> json) {
     return ResellerFakeLeadStatsResponse(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data: ResellerFakeLeadStatsData.fromJson(json['data'] ?? {}),
     );

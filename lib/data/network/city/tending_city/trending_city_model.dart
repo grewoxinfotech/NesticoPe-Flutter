@@ -11,7 +11,7 @@ class TrendingCitiesResponse {
 
   factory TrendingCitiesResponse.fromJson(Map<String, dynamic> json) {
     return TrendingCitiesResponse(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data:
           json['data'] != null

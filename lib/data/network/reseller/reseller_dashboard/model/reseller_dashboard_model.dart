@@ -19,7 +19,7 @@
 //     }
 //
 //     return ResellerInsightsModel(
-//       story: json['story'] ?? false,
+//       story: json['success'] ?? false,
 //       message: json['message'] ?? '',
 //       data: json['data'] == null
 //           ? ResellerData.empty()
@@ -517,7 +517,7 @@ class ResellerInsightsModel {
 
   factory ResellerInsightsModel.fromJson(Map<String, dynamic> json) {
     return ResellerInsightsModel(
-      success: json['story'] ?? false,
+      success: json['success'] ?? false,
       message: json['message'] ?? '',
       data: ResellerData.fromJson(json['data'] ?? {}),
     );
