@@ -11,12 +11,12 @@ import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../controller/reseller_success_stories_controller/reseller_success_stories_controller.dart';
 
 class AddResellerSuccessStoryScreen extends StatelessWidget {
-  final ResellerSuccessItem? success;
+  final ResellerSuccessItem? story;
   final bool isEditMode;
 
   AddResellerSuccessStoryScreen({
     super.key,
-    this.success,
+    this.story,
     this.isEditMode = false,
   });
   final ResellerSuccessStoryController controller = Get.put(
@@ -73,7 +73,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
   Future<void> _submit() async {
     if (!controller.formKey.currentState!.validate()) return;
 
-    final success = ResellerSuccessItem(
+    final story = ResellerSuccessItem(
       resellerId: "",
       id: '',
       title: controller.titleController.text.trim(),
@@ -88,7 +88,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
     );
 
     final success = await controller.createStory(
-      success,
+      story,
       imageFilePath:
           controller.imagePath.value != null
               ? controller.imagePath.value!.path
@@ -111,8 +111,8 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
     if (!controller.formKey.currentState!.validate()) return;
 
     final data = ResellerSuccessItem(
-      resellerId: success?.resellerId ?? "",
-      id: success?.id ?? '',
+      resellerId: story?.resellerId ?? "",
+      id: story?.id ?? '',
       title: controller.titleController.text.trim(),
       description: controller.descriptionController.text.trim(),
       achievement: controller.achievementController.text.trim(),
@@ -123,14 +123,14 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
       totalValue: controller.totalValueController.text.trim(),
       rating: controller.rating.value,
       status: controller.selectedStatus.value ?? 'draft',
-      createdAt: success?.createdAt,
-      createdBy: success?.createdBy,
+      createdAt: story?.createdAt,
+      createdBy: story?.createdBy,
       updatedAt: DateTime.now(),
       updatedBy: null,
     );
 
     final success = await controller.updateStory(
-      success?.id ?? '',
+      story?.id ?? '',
       data,
       imageFilePath:
           controller.imagePath.value != null
@@ -152,8 +152,8 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isEditMode && success != null) {
-      controller.populateForm(success!);
+    if (isEditMode && story != null) {
+      controller.populateForm(story!);
     }
     return Scaffold(
       appBar: AppBar(
@@ -173,7 +173,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 controller: controller.titleController,
                 isRequired: true,
-                hintText: "Enter success title",
+                hintText: "Enter story title",
                 validator:
                     (val) =>
                         val == null || val.isEmpty ? "Title is required" : null,
@@ -187,7 +187,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
 
                 isRequired: true,
-                hintText: "Enter success description",
+                hintText: "Enter story description",
                 maxLines: 3,
                 validator:
                     (val) =>
@@ -385,7 +385,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
 
   Widget _buildImageContent() {
     final file = controller.imagePath.value; // Rxn<File>
-    final networkImage = success?.image; // URL from API if edit mode
+    final networkImage = story?.image; // URL from API if edit mode
 
     // 🧠 Case 1: No image (neither picked nor from network)
     if ((file == null || file.path.isEmpty) &&
@@ -421,7 +421,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
       );
     }
 
-    // 🧠 Case 3: Network image (editing existing success)
+    // 🧠 Case 3: Network image (editing existing story)
     if (networkImage != null && networkImage.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(16),

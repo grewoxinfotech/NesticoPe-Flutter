@@ -43,8 +43,8 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     if (index < controller.items.length) {
-                      final success = controller.items[index];
-                      return _buildStoryCard(success, index);
+                      final story = controller.items[index];
+                      return _buildStoryCard(story, index);
                     } else if (controller.isLoading.value) {
                       return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
@@ -101,7 +101,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            "Loading success stories...",
+            "Loading story stories...",
             style: TextStyle(
               fontSize: AppFontSizes.body,
               color: ColorRes.leadGreyColor,
@@ -145,7 +145,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "Start celebrating achievements!\nCreate your first success success and inspire others.",
+              "Start celebrating achievements!\nCreate your first story story and inspire others.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: AppFontSizes.bodySmall,
@@ -179,9 +179,9 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStoryCard(ResellerSuccessItem success, int index) {
+  Widget _buildStoryCard(ResellerSuccessItem story, int index) {
     final formattedDate = DateFormat.yMMMM().format(
-      DateTime.parse(success.monthYear.toIso8601String()),
+      DateTime.parse(story.monthYear.toIso8601String()),
     );
 
     return Container(
@@ -201,7 +201,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
           onTap: () {
             Get.to(
               () =>
-                  AddResellerSuccessStoryScreen(success: success, isEditMode: true),
+                  AddResellerSuccessStoryScreen(story: story, isEditMode: true),
             );
           },
           child: Stack(
@@ -233,7 +233,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
 
                             children: [
                               Text(
-                                '${success.title}' ?? "Untitled Story",
+                                '${story.title}' ?? "Untitled Story",
                                 style: TextStyle(
                                   fontSize: AppFontSizes.body,
                                   fontWeight: AppFontWeights.semiBold,
@@ -263,7 +263,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: _getStatusColor(
-                              success.status,
+                              story.status,
                             ).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -271,15 +271,15 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                _getStatusIcon(success.status),
+                                _getStatusIcon(story.status),
                                 size: 12,
-                                color: _getStatusColor(success.status),
+                                color: _getStatusColor(story.status),
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                _formatStatus(success.status),
+                                _formatStatus(story.status),
                                 style: TextStyle(
-                                  color: _getStatusColor(success.status),
+                                  color: _getStatusColor(story.status),
                                   fontSize: AppFontSizes.caption,
                                   fontWeight: AppFontWeights.medium,
                                 ),
@@ -292,10 +292,10 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                     const SizedBox(height: 14),
 
                     // Description with Read More
-                    if (success.description != null &&
-                        success.description!.isNotEmpty)
+                    if (story.description != null &&
+                        story.description!.isNotEmpty)
                       ReadMoreText(
-                        '${success.description}',
+                        '${story.description}',
                         trimLines: 4,
                         colorClickableText: ColorRes.primary,
                         trimMode: TrimMode.Line,
@@ -321,8 +321,8 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     // Achievement Highlight
-                    if (success.achievement != null &&
-                        success.achievement!.isNotEmpty)
+                    if (story.achievement != null &&
+                        story.achievement!.isNotEmpty)
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
@@ -352,7 +352,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    success.achievement!,
+                                    story.achievement!,
                                     style: TextStyle(
                                       fontSize: AppFontSizes.extraSmall,
                                       fontWeight: AppFontWeights.medium,
@@ -375,7 +375,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                         Expanded(
                           child: _buildMetricCard(
                             Icons.handshake,
-                            success.totalDeals?.toString() ?? "0",
+                            story.totalDeals?.toString() ?? "0",
                             "Deals",
                             ColorRes.lightPurpleColor,
                             ColorRes.leadIndigoColor,
@@ -385,7 +385,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                         Expanded(
                           child: _buildMetricCard(
                             Icons.account_balance_wallet,
-                            "₹${_formatCurrency(success.totalValue)}",
+                            "₹${_formatCurrency(story.totalValue)}",
                             "Value",
                             ColorRes.green,
                             ColorRes.green,
@@ -395,7 +395,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
                         Expanded(
                           child: _buildMetricCard(
                             Icons.star_rounded,
-                            success.rating?.toStringAsFixed(1) ?? "0.0",
+                            story.rating?.toStringAsFixed(1) ?? "0.0",
                             "Rating",
                             ColorRes.homeAmber,
                             ColorRes.homeAmber,
