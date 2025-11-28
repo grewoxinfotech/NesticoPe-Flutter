@@ -94,8 +94,8 @@ class ReviewItem {
   final int? reportCount;
   final String? createdAt;
   final String? updatedAt;
-
-  ReviewItem({
+  final EntityUser? entityUser;
+  ReviewItem( {this.entityUser,
     this.id,
     this.createdBy,
     this.updatedBy,
@@ -136,6 +136,9 @@ class ReviewItem {
       rating: (json['rating'] as num?)?.toDouble(),
       title: json['title'],
       content: json['content'],
+      entityUser: json['entityUser'] != null
+          ? EntityUser.fromJson(json['entityUser'])
+          : null,
       detailedRatings:
           json['detailed_ratings'] != null
               ? DetailedRatings.fromJson(json['detailed_ratings'])
@@ -167,6 +170,7 @@ class ReviewItem {
     'entity_type': entityType,
     'entity_id': entityId,
     'reviewer_id': reviewerId,
+    'entityUser': entityUser?.toJson(),
     'rating': rating,
     'title': title,
     'content': content,
@@ -188,6 +192,21 @@ class ReviewItem {
     'report_count': reportCount,
     'createdAt': createdAt,
     'updatedAt': updatedAt,
+  };
+}
+class EntityUser {
+  final String? username;
+
+  EntityUser({this.username});
+
+  factory EntityUser.fromJson(Map<String, dynamic> json) {
+    return EntityUser(
+      username: json['username'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'username': username,
   };
 }
 

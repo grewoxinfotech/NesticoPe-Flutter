@@ -5,7 +5,7 @@ class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
   static const String baseURL =
-      "http://192.168.1.5:19725/api/v1"; // Real Device (WiFi)
+      "http://192.168.1.7:19725/api/v1"; // Real Device (WiFi)
 
   // Auth Endpoints
   static String get auth => "$baseURL/auth";
@@ -125,6 +125,11 @@ class ApiConstants {
 
   static Future<Map<String, String>> getHeaders() async {
     final token = await SecureStorage.getToken();
+    print("header_token: $token");
+    return {contentType: applicationJson, authorization: "Bearer $token"};
+  }
+  static Future<Map<String, String>> getUpdatedHeaders() async {
+    final token = await SecureStorage.getUpdatePhoneToken();
     print("header_token: $token");
     return {contentType: applicationJson, authorization: "Bearer $token"};
   }

@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -23,6 +24,9 @@ class SellerProfileUpdate {
   static Future<Map<String, String>> header() async {
     return await ApiConstants.getHeaders();
   }
+  static Future<Map<String, String>> headerUpdateToken() async {
+    return await ApiConstants.getUpdatedHeaders();
+  }
 
   Future<Map<String, dynamic>?> getUserProfileData(String userId) async {
     try {
@@ -31,7 +35,7 @@ class SellerProfileUpdate {
         headers: await header(),
       );
       final decoded = jsonDecode(response.body);
-      print('📦 Seller Raw Response: $decoded');
+      print('📦 Selhjuyler Raw Response: $decoded');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return decoded['data'];
@@ -74,7 +78,7 @@ class SellerProfileUpdate {
   //       return decoded;
   //     }
   //
-  //     // For success responses (200/201)
+  //     // For story responses (200/201)
   //     if (response.statusCode == 200 || response.statusCode == 201) {
   //       return decoded;
   //     }
@@ -86,7 +90,7 @@ class SellerProfileUpdate {
   //     print('❌ Exception in Reseller Profile Update: $e');
   //     print(stack);
   //     return {
-  //       'success': false,
+  //       'story': false,
   //       'message': 'Error updating profile: ${e.toString()}',
   //     };
   //   }
@@ -108,7 +112,7 @@ class SellerProfileUpdate {
       if (profileImageFile != null) {
         request.files.add(
           await http.MultipartFile.fromPath(
-            'profilePic', // adjust key if needed
+            'profilePic',
             profileImageFile.path,
           ),
         );
@@ -136,7 +140,7 @@ class SellerProfileUpdate {
       if (decoded['otpRequired'] == true ||
           decoded['message']?.toString().toLowerCase().contains('otp') == true) {
         if (decoded['updatePhoneToken'] != null) {
-          await SecureStorage.saveToken(decoded['updatePhoneToken']);
+          await SecureStorage.saveUpdatePhoneToken(decoded['updatePhoneToken']);
           print('✅ Saved updatePhoneToken for OTP verification');
         }
         return decoded;
@@ -154,7 +158,7 @@ class SellerProfileUpdate {
       print('❌ Exception in Seller Profile Update: $e');
       print(stack);
       return {
-        'success': false,
+        'story': false,
         'message': 'Error updating profile: ${e.toString()}',
       };
     }
@@ -163,6 +167,7 @@ class SellerProfileUpdate {
     final result = <String, String>{};
 
     data.forEach((key, value) {
+      if(key == 'profilePic') return;
       final newKey = parentKey.isEmpty ? key : '$parentKey[$key]';
       if (value == null) return;
 
@@ -180,12 +185,15 @@ class SellerProfileUpdate {
 
 
   Future<Map<String, dynamic>> verifyOtpForSellerNumber(String otp,
-      User user,
+      Map user,
       String userId,) async {
     try {
+      log('user id dshfbd $userId');
+      log('user OTP  $otp');
+      log("user Data ${user}");
       final response = await http.post(
         Uri.parse('$_baseUrl/$userId/verify-phone-update'),
-        headers: await header(),
+        headers: await headerUpdateToken(),
         body: jsonEncode({"otp": otp, "updateData": user}),
       );
 
@@ -194,13 +202,12 @@ class SellerProfileUpdate {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Clear the updatePhoneToken after successful verification
-        await SecureStorage.deleteUpdatePhoneToken();
         print('✅ Cleared updatePhoneToken after successful verification');
         return decoded;
       } else {
         print('⚠️ Reseller Profile Update Error Response: $decoded');
         return {
-          'success': false,
+          'story': false,
           'message': decoded['message'] ?? 'Failed to verify OTP',
         };
       }
@@ -208,7 +215,7 @@ class SellerProfileUpdate {
       print('❌ Exception in Reseller Profile Update: $e');
       print(stack);
       return {
-        'success': false,
+        'story': false,
         'message': 'Error verifying OTP: ${e.toString()}',
       };
     }
@@ -221,7 +228,7 @@ class SellerProfileUpdate {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/$userId/resend-phone-update-otp'),
-        headers: await header(),
+        headers: await headerUpdateToken(),
         body: jsonEncode({'phone': phone}),
       );
 
@@ -240,7 +247,7 @@ class SellerProfileUpdate {
       } else {
         print('⚠️ Resend OTP Error Response: $decoded');
         return {
-          'success': false,
+          'story': false,
           'message': decoded['message'] ?? 'Failed to resend OTP',
         };
       }
@@ -248,7 +255,7 @@ class SellerProfileUpdate {
       print('❌ Exception in Resend OTP: $e');
       print(stack);
       return {
-        'success': false,
+        'story': false,
         'message': 'Error resending OTP: ${e.toString()}',
       };
     }

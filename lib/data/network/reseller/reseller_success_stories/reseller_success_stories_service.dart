@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -141,6 +142,7 @@ class ResellerSuccessStoryService {
     required ResellerSuccessItem storyData,
     File? image,
   }) async {
+    log("djfhd $image");
     try {
       final uri = Uri.parse('$baseUrl/$storyId');
       debugPrint("📤 Updating Success Story at: $uri");
@@ -158,6 +160,7 @@ class ResellerSuccessStoryService {
       // ===== Attach image if local file =====
       if (image != null) {
         final isNetwork = Uri.tryParse(image.path)?.isAbsolute ?? false;
+        log("djfhd $isNetwork");
         if (!isNetwork) {
           request.files.add(
             await http.MultipartFile.fromPath(
@@ -168,6 +171,7 @@ class ResellerSuccessStoryService {
           );
         }
       }
+
 
       // ===== Attach fields =====
       storyMap.forEach((key, value) {
@@ -213,5 +217,21 @@ class ResellerSuccessStoryService {
       );
       return false;
     }
+  }
+  Future<bool> deleteSuccessStory(String id) async {
+    final uri = Uri.parse('$baseUrl/$id');
+    debugPrint("📤 Deleting Success Story at: $uri");
+    // Implementation for delete can be added here
+    final response=await http.delete(uri, headers: await headers());
+    if(response.statusCode==200){
+      final data= jsonDecode(response.body);
+
+      debugPrint("✅ Success Story deleted successfully");
+      return data['success'];
+    }else{
+      debugPrint("❌ Failed to delete Success Story: ${response.statusCode}");
+      return false;
+    }
+
   }
 }

@@ -21,6 +21,7 @@ import '../model/seller_profile.dart';
 class SellerProfileController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isEditing = false.obs;
+  final RxBool isLoadingIMage=false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
   UserService _userService = UserService();
@@ -122,7 +123,7 @@ class SellerProfileController extends GetxController {
       final data = await SellerProfileUpdate.profileUpdate.getUserProfileData(
         profileData.value?.user?.id ?? '',
       );
-      print("Seller ${data}");
+      print("Seller kgokjgij${data}");
       resellerProfile.value = ProfileSellerModel.fromJson(data ?? {});
       print("Seller efgryfgrfyy${resellerProfile.value?.toJson()}");
     }
@@ -145,12 +146,7 @@ class SellerProfileController extends GetxController {
           .updateSellerProfileDetails(
             userProfile,
             profileData.value?.user?.id ?? '',
-            profileImageFile:
-                selectedImage.value != null
-                    ? selectedImage.value!
-                    : File(
-                      profileData.value?.user?.profilePic.toString() ?? '',
-                    ),
+            profileImageFile:selectedImage.value
           );
 
       return data;
@@ -168,7 +164,7 @@ class SellerProfileController extends GetxController {
     companyController.text = profileData.value?.user?.state ?? "";
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
-    // selectedImage.value=profile.value.avatarUrl;
+
 
     // Business Details fields from seller profile
     contactPersonController.text = resellerProfile.value?.contactName ?? "";
@@ -194,6 +190,7 @@ class SellerProfileController extends GetxController {
   // Image picker methods
   Future<void> pickImageFromGallery() async {
     try {
+      isLoadingIMage.value=true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 1024,
@@ -202,14 +199,7 @@ class SellerProfileController extends GetxController {
       );
 
       if (image != null) {
-        final file = File(image.path);
-        selectedImage.value = file;
-
-        print("📱 Selected local file: ${file.uri}");
-
-        print(
-          "hufgeriuf ${selectedImage.value?.uri}  ${image.path}   ${selectedImage.value.toString()}",
-        );
+        selectedImage.value = File(image.path);
 
         Get.snackbar(
           'Success',
@@ -233,10 +223,15 @@ class SellerProfileController extends GetxController {
         borderRadius: 12,
       );
     }
+    finally{
+      isLoadingIMage.value=false;
+    }
+
   }
 
   Future<void> pickImageFromCamera() async {
     try {
+      isLoadingIMage.value=true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         maxWidth: 1024,
@@ -267,6 +262,9 @@ class SellerProfileController extends GetxController {
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
       );
+    }
+    finally{
+      isLoadingIMage.value=false;
     }
   }
 
@@ -339,7 +337,7 @@ class SellerProfileController extends GetxController {
                   },
                 ),
                 if (selectedImage.value != null ||
-                    (profileData.value?.user?.profilePic?.isNotEmpty ?? false))
+                    (profile.value.avatarUrl.isNotEmpty?? false))
                   ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
@@ -369,6 +367,7 @@ class SellerProfileController extends GetxController {
 
   void removeProfileImage() {
     selectedImage.value = null;
+    profile.value = profile.value.copyWith(avatarUrl: '');
     // Note: Removing profile pic from server would require an API call
     // For now, just clear the local selection
     Get.snackbar(
@@ -603,12 +602,29 @@ class SellerProfileController extends GetxController {
     }
 
     isVerifyingOtp.value = true;
+    final Map<String, dynamic> userDataMap = {
+      'firstName': pendingUserData?.firstName,
+      'lastName': pendingUserData?.lastName,
+      'phone': pendingUserData?.phone,
+      'email': pendingUserData?.email,
+      'city': pendingUserData?.city,
+      'state': pendingUserData?.state,
+      'address': pendingUserData?.address,
+      'profiledata': {
+        'contactName':contactPersonController.text ,
+        'contactPhone': contactPhoneController.text,
+        'companyName': companyNameController.text,
+        'gstNumber': gstNumberController.text,
+        'reraNumber': reraNumberController.text,
+      },
+    };
+
 
     try {
       final response = await SellerProfileUpdate.profileUpdate
           .verifyOtpForSellerNumber(
             otp,
-            pendingUserData!,
+        userDataMap!,
             profileData.value?.user?.id ?? '',
           );
 

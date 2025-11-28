@@ -775,11 +775,13 @@ class TopProperty {
   final String image;
   final num price;
   final num commission;
+  final String? profilePic;
 
   TopProperty({
     required this.id,
     required this.propertyType,
     required this.city,
+    this.profilePic,
     this.state,
     required this.image,
     required this.price,
@@ -791,6 +793,7 @@ class TopProperty {
       id: json['id'] ?? '',
       propertyType: json['propertyType'] ?? '',
       city: json['city'] ?? '',
+      profilePic: json['profilePic']??'',
       state: json['state'],
       image: json['image'] ?? '',
       price: json['price'] ?? 0,
@@ -806,6 +809,7 @@ class TopProperty {
       'state': state,
       'image': image,
       'price': price,
+      'profilePic': profilePic,
       'commission': commission,
     };
   }

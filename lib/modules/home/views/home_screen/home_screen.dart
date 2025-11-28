@@ -2245,8 +2245,8 @@ class ReviewsAndTestimonials extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      (review.user?.username?.isNotEmpty ?? false)
-                          ? review.user!.username![1]
+                      (review.review?.entityUser?.username?.isNotEmpty ?? false)
+                          ? review.review!.entityUser!.username![1]
                               .toUpperCase() // ensure uppercase letter
                           : '?', // fallback if username is null/empty
                       style: TextStyle(
@@ -2272,7 +2272,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '${review.user?.username}',
+                                      '${review.review.entityUser?.username}',
                                       maxLines: 1,
 
                                       style: TextStyle(
@@ -2283,6 +2283,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
+                                  SizedBox(width: 8,),
                                   Text(
                                     _formatDate(review.review.createdAt),
                                     style: TextStyle(

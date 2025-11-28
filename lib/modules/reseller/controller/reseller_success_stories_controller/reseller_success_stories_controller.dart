@@ -16,6 +16,7 @@ class ResellerSuccessStoryController
 
   // ---------------- Form Controllers ----------------
   final formKey = GlobalKey<FormState>();
+  bool _isControllerActive = true;
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController achievementController = TextEditingController();
@@ -44,6 +45,7 @@ class ResellerSuccessStoryController
 
   @override
   void onClose() {
+    _isControllerActive = false;
     titleController.dispose();
     descriptionController.dispose();
     achievementController.dispose();
@@ -52,10 +54,6 @@ class ResellerSuccessStoryController
     monthYearController.dispose();
     super.onClose();
   }
-
-  // ====================================================
-  // ================ Pagination Fetch ==================
-  // ====================================================
   @override
   Future<PaginationResponse<ResellerSuccessItem>> fetchItems(int page) async {
     try {
@@ -126,16 +124,20 @@ class ResellerSuccessStoryController
     }
   }
 
-  Future<bool> deleteStory(String id) async {
+  Future<void> deleteStory(String id) async {
     try {
-      // If you have delete API, you can use it here.
-      // For now, remove locally for demo.
-      items.removeWhere((item) => item.id == id);
-      items.refresh();
-      return true;
+      final success = await _service.deleteSuccessStory(id);
+     if(success)
+       {
+         items.removeWhere((item) => item.id == id);
+         items.refresh();
+
+       }
+
+
     } catch (e) {
       debugPrint("❌ Delete story error: $e");
-      return false;
+
     }
   }
 
@@ -157,16 +159,22 @@ class ResellerSuccessStoryController
   // ====================================================
 
   void resetForm() {
-    titleController.clear();
-    descriptionController.clear();
-    achievementController.clear();
-    totalDealsController.clear();
-    totalValueController.clear();
-    monthYearController.clear();
-    selectedMonthYear.value = null;
-    rating.value = 0;
-    selectedStatus.value = statusOptions.first;
-    imagePath.value = null;
+    if (!_isControllerActive) return;
+    try {
+      titleController.clear();
+      descriptionController.clear();
+      achievementController.clear();
+      totalDealsController.clear();
+      totalValueController.clear();
+      monthYearController.clear();
+
+      selectedMonthYear.value = null;
+      rating.value = 0;
+      selectedStatus.value = statusOptions.first;
+      imagePath.value = null;
+    } catch (e) {
+      debugPrint("⚠️ resetForm called after dispose: $e");
+    }
   }
 
   // void populateForm(ResellerSuccessItem story) {
@@ -287,4 +295,5 @@ class ResellerSuccessStoryController
       );
     }
   }
+
 }

@@ -19,6 +19,9 @@ class ProfileUpdate {
   static Future<Map<String, String>> header() async {
     return await ApiConstants.getHeaders();
   }
+  static Future<Map<String, String>> headerUpdateToken() async {
+    return await ApiConstants.getUpdatedHeaders();
+  }
   // Future<Map<String, dynamic>> updateProfileDetails(
   //   User user,
   //   String userId,
@@ -90,6 +93,7 @@ class ProfileUpdate {
       // ✅ Add user fields as form fields
       final userMap = user.toJson(); // ensure your `User` model has `toJson()`
       userMap.forEach((key, value) {
+        if(key == 'profilePic') return; // already handled above
         if (value != null) {
           request.fields[key] = value.toString();
         }
@@ -107,8 +111,8 @@ class ProfileUpdate {
       if (decoded['otpRequired'] == true ||
           decoded['message']?.toString().toLowerCase().contains('otp') == true) {
         if (decoded['updatePhoneToken'] != null) {
-          await SecureStorage.saveToken(decoded['updatePhoneToken']);
-          print('✅ Saved updatePhoneToken for OTP verification');
+          await SecureStorage.saveUpdatePhoneToken(decoded['updatePhoneToken']);
+          print('✅ Saved updatePhoneToken for OTP verification ${decoded['updatePhoneToken']}');
         }
         return decoded;
       }
@@ -134,18 +138,24 @@ class ProfileUpdate {
 
   Future<Map<String, dynamic>> verifyOtpForResellerNumber(
     String otp,
-    User user,
+    Map user,
     String userId,
   ) async {
     try {
+
+      log('user id dshfbd $userId');
+      log('user OTP  $otp');
+      log("user Data ${user}");
+
+
       final response = await http.post(
         Uri.parse('$_baseUrl/$userId/verify-phone-update'),
-        headers: await header(),
+        headers: await headerUpdateToken(),
         body: jsonEncode({"otp": otp, "updateData": user}),
       );
 
       final decoded = jsonDecode(response.body);
-      print('📦 Reseller Verify Update Response: $decoded');
+      print('📦 Reseller Verify Update Response: ${decoded.toString()}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Clear the updatePhoneToken after successful verification
@@ -176,7 +186,7 @@ class ProfileUpdate {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/$userId/resend-phone-update-otp'),
-        headers: await header(),
+        headers: await headerUpdateToken(),
         body: jsonEncode({'phone': phone}),
       );
 
@@ -186,7 +196,7 @@ class ProfileUpdate {
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Save new updatePhoneToken
         if (decoded['data']?['updatePhoneToken'] != null) {
-          await SecureStorage.saveToken(
+          await SecureStorage.saveUpdatePhoneToken(
             decoded['data']['updatePhoneToken'],
           );
           print('✅ Saved new updatePhoneToken after resend');

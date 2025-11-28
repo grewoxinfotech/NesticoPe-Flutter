@@ -1,10 +1,13 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import 'package:housing_flutter_app/modules/reseller/view/profile/reseller_profile.dart';
+import 'package:housing_flutter_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:housing_flutter_app/modules/reseller/widget/graph/linear_graph.dart';
@@ -25,7 +28,6 @@ import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart'
     hide buildActionButton, getLeadStageFromString, getLeadStatusFromString;
 import '../controller/dashborad_controller/dashboard_controller.dart';
 import '../model/dashboard/dashboard_model.dart';
-import '../widget/story/add_success_story.dart';
 
 import 'lead/lead_screen.dart';
 import 'lead_overview/lead_detail.dart';
@@ -111,7 +113,8 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             buildOverviewCards(controller),
                             const SizedBox(height: 20),
 
-                            Obx(() =>  buildMonthlyPerformance(
+                            Obx(
+                              () => buildMonthlyPerformance(
                                 title: 'Monthly Performance',
                                 levelName:
                                     controller
@@ -333,9 +336,11 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             const SizedBox(height: 20),
 
                             Obx(
-                              () =>  buildBestResellerOnTheMonth(
-                                month: "${DateFormat('MMMM').format(DateTime.now())}",
-                                year: "${DateFormat('yyyy').format(DateTime.now())}",
+                              () => buildBestResellerOnTheMonth(
+                                month:
+                                    "${DateFormat('MMMM').format(DateTime.now())}",
+                                year:
+                                    "${DateFormat('yyyy').format(DateTime.now())}",
                                 totalCommission:
                                     "${Formatter.formatPrice((controller.resellerInsightsModel.value?.data.earnings.totalCommission ?? 0).toDouble())}",
                                 commissionSubtitle:
@@ -376,7 +381,8 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
 
                             const SizedBox(height: 20),
 
-                            Obx(() =>  resellerLeaderBoard(
+                            Obx(
+                              () => resellerLeaderBoard(
                                 title: 'Leaderboard',
                                 bannerTitle: 'Top 10 (Overall)',
                                 bannerSubtitle: 'Gets Extra Rewards',
@@ -394,7 +400,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             const SizedBox(height: 20),
 
                             Obx(
-                              () =>  buildLeaderBoardRanking(
+                              () => buildLeaderBoardRanking(
                                 title: 'Leaderboard Rankings',
                                 subtitle: 'Top performers across regions',
                                 filters: ['All', 'City-wise', 'Monthly'],
@@ -469,12 +475,13 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                 //     'medalIcon': null,
                                 //   },
                                 // ],
-                                leaderboardData:   controller
-                                    .resellerInsightsModel
-                                    .value
-                                    ?.data
-                                    .leaderboard
-                                    .topResellers ??
+                                leaderboardData:
+                                    controller
+                                        .resellerInsightsModel
+                                        .value
+                                        ?.data
+                                        .leaderboard
+                                        .topResellers ??
                                     [],
                               ),
                             ),
@@ -482,7 +489,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             const SizedBox(height: 20),
 
                             Obx(
-                              () =>  buildTopPropertyForGoodCommission(
+                              () => buildTopPropertyForGoodCommission(
                                 controller,
                                 controller.itemData,
                               ),
@@ -576,56 +583,126 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             buildCommissionGraph(controller),
                             // const SizedBox(height: 20),
                             // _buildRecentLeads(controller),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 15),
                             // buildTopProducts(controller),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(40),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.emoji_events,
-                                    size: 80,
-                                    color: Colors.amber,
-                                  ),
-                                  SizedBox(height: 20),
-                                  Text(
-                                    'Share Your Success',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    'Add your achievement success and inspire others',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  SizedBox(height: 30),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      Get.to(() => AddSuccessStoryScreen());
-                                    },
-                                    icon: Icon(Icons.add),
-                                    label: Text('Add Success Story'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue[700],
-                                      foregroundColor: Colors.white,
-                                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                                      textStyle: TextStyle(fontSize: 16),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                            Obx(() {
+                              final successStories =
+                                  controller
+                                      .resellerInsightsModel
+                                      .value
+                                      ?.data
+                                      .successStories;
+
+                              final isEmpty =
+                                  successStories == null ||
+                                  successStories.isEmpty;
+
+                              return isEmpty
+                                  ? Column(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: ColorRes.white,
+                                          border: Border.all(
+                                            color:
+                                                ColorRes.leadGreyColor.shade300,
+                                            width: 1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.all(40),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'Share Your Success',
+                                              style: TextStyle(
+                                                fontSize: AppFontSizes.body,
+                                                fontWeight:
+                                                    AppFontWeights.semiBold,
+                                                color: ColorRes.textColor,
+                                              ),
+                                            ),
+                                            SizedBox(height: 12),
+
+                                            Text(
+                                              'Add your achievement success and inspire others in the community',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: AppFontSizes.small,
+                                                color:
+                                                    ColorRes
+                                                        .leadGreyColor
+                                                        .shade700,
+                                                height: 1.5,
+                                              ),
+                                            ),
+                                            SizedBox(height: 20),
+
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: ColorRes.primary,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: ElevatedButton.icon(
+                                                onPressed: () {
+                                                  Get.to(
+                                                    () =>
+                                                        AddResellerSuccessStoryScreen(
+                                                          isEditMode: false,
+                                                        ),
+                                                  );
+                                                },
+                                                icon: Icon(
+                                                  Icons.add_circle_outline,
+                                                  size: 22,
+                                                ),
+                                                label: Text(
+                                                  'Add Success Story',
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  foregroundColor: Colors.white,
+                                                  shadowColor:
+                                                      Colors.transparent,
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 12,
+                                                  ),
+                                                  textStyle: TextStyle(
+                                                    fontSize:
+                                                        AppFontSizes.medium,
+                                                    fontWeight:
+                                                        AppFontWeights.semiBold,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                    ],
+                                  )
+                                  : Column(
+                                    children: [
+                                      SuccessStoryCard(
+                                        story: successStories.first,
+                                        controller: controller,
+                                      ),
+                                    ],
+                                  );
+                            }),
                           ],
                         ),
                       )
@@ -636,7 +713,1101 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
       ),
     );
   }
+} // import your model
+
+class SuccessStoryCard extends StatelessWidget {
+  final SuccessStory story;
+  final DashboardController controller;
+
+  const SuccessStoryCard({
+    super.key,
+    required this.story,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isPublished = story.status.toLowerCase() == 'published';
+    final formattedDate = _formatMonthYear(story.monthYear);
+
+    return Align(
+      alignment: Alignment.center,
+      child: FractionallySizedBox(
+        widthFactor: 1,
+        child: Card(
+          color: ColorRes.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          elevation: 3,
+          clipBehavior: Clip.hardEdge,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 🔹 Image Stack Section
+              Stack(
+                children: [
+                  // Main Image
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child:
+                        story.image != null && story.image!.isNotEmpty
+                            ? Image.network(
+                              story.image!,
+                              fit: BoxFit.cover,
+
+                              // 🌀 Add loading indicator
+                              loadingBuilder: (
+                                context,
+                                child,
+                                loadingProgress,
+                              ) {
+                                if (loadingProgress == null) return child;
+                                return Container(
+                                  color: ColorRes.leadGreyColor.shade200,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: ColorRes.primary,
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  (loadingProgress
+                                                          .expectedTotalBytes ??
+                                                      1)
+                                              : null,
+                                    ),
+                                  ),
+                                );
+                              },
+                              errorBuilder:
+                                  (context, error, stackTrace) => Container(
+                                    color: ColorRes.leadGreyColor.shade700,
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: ColorRes.white.withOpacity(0.7),
+                                      size: 40,
+                                    ),
+                                  ),
+                            )
+                            : Container(
+                              color: ColorRes.leadGreyColor.shade700,
+                              child: Icon(
+                                Icons.image,
+                                color: ColorRes.white.withOpacity(0.7),
+                                size: 40,
+                              ),
+                            ),
+                  ),
+
+                  // Published/Draft Badge
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color:
+                              isPublished
+                                  ? ColorRes.green
+                                  : ColorRes.leadGreyColor.shade800,
+                          width: 0.5,
+                        ),
+                        color:
+                            isPublished
+                                ? ColorRes.green
+                                : ColorRes.leadGreyColor.shade600,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: ColorRes.white,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            isPublished ? 'PUBLISHED' : 'DRAFT',
+                            style: const TextStyle(
+                              color: ColorRes.white,
+                              fontSize: AppFontSizes.caption,
+                              fontWeight: AppFontWeights.semiBold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Date Badge (bottom-left)
+                  Positioned(
+                    bottom: 10,
+                    left: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: ColorRes.black, width: 0.5),
+                        color: ColorRes.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today_outlined,
+                            color: ColorRes.black,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(
+                              color: ColorRes.black,
+                              fontSize: AppFontSizes.caption,
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              // 🔹 Content Section
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            story.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.textColor,
+                            ),
+                          ),
+                        ),
+                      SizedBox(width: 12,),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: ColorRes.homeAmber.shade200,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            color: ColorRes.homeAmber.shade50,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.star,
+                                color: ColorRes.homeAmber.shade800,
+                                size: 14,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                story.rating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  color: ColorRes.homeAmber.shade800,
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      story.description,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.leadGreyColor.shade600,
+                        height: 1.4,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+                    Divider(height: 1, color: ColorRes.border),
+                    const SizedBox(height: 8),
+
+                    // Achievement Box
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.emoji_events_outlined,
+                              color: ColorRes.green,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'ACHIEVEMENT',
+                              style: TextStyle(
+                                color: ColorRes.green,
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.semiBold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          story.achievement,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.leadGreyColor.shade600,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+                    Divider(height: 1, color: ColorRes.border),
+                    const SizedBox(height: 8),
+
+                    // Performance Section
+                    _buildPerformanceSection(),
+                    const SizedBox(height: 8),
+
+                    // Action Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              ResellerSuccessItem storyData =
+                                  ResellerSuccessItem(
+                                    id: story.id,
+                                    title: story.title,
+                                    description: story.description,
+                                    achievement: story.achievement,
+                                    totalDeals: story.totalDeals,
+                                    totalValue: story.totalValue,
+                                    monthYear: DateTime.parse(story.monthYear),
+
+                                    rating: story.rating,
+                                    status: story.status,
+                                    image: story.image,
+                                    resellerId: story.resellerId,
+                                  );
+                              Get.to(
+                                () => AddResellerSuccessStoryScreen(
+                                  isEditMode: true,
+                                  story: storyData,
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorRes.green.withOpacity(0.1),
+                              foregroundColor: ColorRes.green,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Edit',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.dialog(
+                                AlertDialog(
+                                  backgroundColor: ColorRes.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  icon: Icon(Icons.info,color: ColorRes.homeAmber,),
+                                  title: const Text(
+                                    'Delete Success Story',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.large,
+                                      fontWeight: AppFontWeights.bold,
+                                    ),
+                                  ),
+                                  content: const Text(
+                                    'Are you sure you want to delete this story?',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.medium,
+                                      fontWeight: AppFontWeights.regular,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Get.back(); // close dialog
+                                      },
+                                      child: const Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          color: ColorRes.grey,
+                                          fontWeight: AppFontWeights.medium,
+                                        ),
+                                      ),
+                                    ),
+                                    Obx(() {
+                                      return ElevatedButton(
+                                        onPressed: controller.deleteSuccessStory.value
+                                            ? null // disable while deleting
+                                            : () {
+                                          Get.back(); // close dialog
+                                          controller.deleteStory(story.id);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: ColorRes.error,
+                                          foregroundColor: ColorRes.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        child: controller.deleteSuccessStory.value
+                                            ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                            : const Text(
+                                          'Yes, Delete',
+                                          style: TextStyle(
+                                            fontWeight: AppFontWeights.semiBold,
+                                          ),
+                                        ),
+                                      );
+                                    })
+                                  ],
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorRes.error.withOpacity(0.1),
+                              foregroundColor: ColorRes.error,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPerformanceSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.bar_chart,
+              color: ColorRes.builderGridLightPurple,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'PERFORMANCE',
+              style: TextStyle(
+                color: ColorRes.builderGridLightPurple,
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildPerformanceTile(
+                icon: Icons.check_circle_outline,
+                iconColor: ColorRes.builderGridLightBlue,
+                bgColor: ColorRes.builderGridLightBlue.withOpacity(0.1),
+                label: 'TOTAL LEADS',
+                value: Formatter.formatNumber(story.totalDeals),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildPerformanceTile(
+                icon: Icons.attach_money,
+                iconColor: ColorRes.green,
+                bgColor: ColorRes.green.withOpacity(0.1),
+                label: 'TOTAL VALUE',
+                value: '${Formatter.formatPrice(int.tryParse(story.totalValue) ?? 0)}',
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildPerformanceTile(
+                icon: Icons.star_outline,
+                iconColor: ColorRes.homeAmber,
+                bgColor: ColorRes.homeAmber.withOpacity(0.1),
+                label: 'AVG PER DEAL',
+                value:
+                    '${Formatter.formatPrice(((int.tryParse(story.totalValue) ?? 0) / story.totalDeals).round())}',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPerformanceTile({
+    required IconData icon,
+    required Color iconColor,
+    required Color bgColor,
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: ColorRes.background,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: iconColor, size: 16),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            label,
+            style: TextStyle(
+              color: ColorRes.leadGreyColor.shade600,
+              fontSize: AppFontSizes.mini,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: const TextStyle(
+              color: ColorRes.textColor,
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatMonthYear(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('MMM yyyy').format(date);
+    } catch (_) {
+      return dateString;
+    }
+  }
+
+  String _formatValue(int value) {
+    if (value >= 100000) {
+      return '${(value / 100000).toStringAsFixed(0)}L';
+    } else if (value >= 1000) {
+      return '${(value / 1000).toStringAsFixed(0)}K';
+    }
+    return value.toString();
+  }
 }
+
+// class SuccessStoryCard extends StatelessWidget {
+//   final SuccessStory story;
+//
+//   const SuccessStoryCard({super.key, required this.story});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final isPublished = story.status.toLowerCase() == 'published';
+//     final formattedDate = _formatMonthYear(story.monthYear);
+//
+//     return Align(
+//       alignment: Alignment.center,
+//       child: FractionallySizedBox(
+//         widthFactor: 1,
+//         child: Card(
+//           color: ColorRes.white,
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.circular(16),
+//           ),
+//           margin: const EdgeInsets.symmetric(vertical: 10),
+//           elevation: 3,
+//           clipBehavior: Clip.hardEdge,
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               // 🔹 Content Section (moved to top)
+//               Padding(
+//                 padding: const EdgeInsets.all(16.0),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     // Image and Title Row
+//                     Row(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: [
+//                         // Small Image
+//                         Container(
+//                           width: 60,
+//                           height: 60,
+//                           decoration: BoxDecoration(
+//                             borderRadius: BorderRadius.circular(12),
+//                             color: ColorRes.leadGreyColor[800],
+//                           ),
+//                           clipBehavior: Clip.hardEdge,
+//                           child:
+//                               story.image != null && story.image!.isNotEmpty
+//                                   ? Image.network(
+//                                     story.image!,
+//                                     fit: BoxFit.cover,
+//                                     errorBuilder:
+//                                         (context, error, stackTrace) => Icon(
+//                                           Icons.broken_image,
+//                                           color: ColorRes.white.withOpacity(
+//                                             0.7,
+//                                           ),
+//                                           size: 30,
+//                                         ),
+//                                   )
+//                                   : Icon(
+//                                     Icons.image,
+//                                     color: ColorRes.white.withOpacity(0.7),
+//                                     size: 30,
+//                                   ),
+//                         ),
+//                         const SizedBox(width: 12),
+//
+//                         // Title and Badge
+//                         Expanded(
+//                           child: Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               // Trophy icon and title
+//                               Row(
+//                                 children: [
+//                                   Expanded(
+//                                     child: Text(
+//                                       story.title,
+//                                       maxLines: 1,
+//                                       overflow: TextOverflow.ellipsis,
+//                                       style: const TextStyle(
+//                                         fontSize: AppFontSizes.medium,
+//                                         fontWeight: AppFontWeights.semiBold,
+//                                         color: ColorRes.textColor,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   const SizedBox(width: 6),
+//
+//                                 ],
+//                               ),
+//                               const SizedBox(height: 6),
+//                               Row(
+//                                 children: [
+//                                   Icon(
+//                                     Icons.calendar_today_outlined,
+//                                     color: ColorRes.leadGreyColor.shade600,
+//                                     size: 16,
+//                                   ),
+//                                   const SizedBox(width: 4),
+//                                   Text(
+//                                     formattedDate,
+//                                     style: TextStyle(
+//                                       color: ColorRes.leadGreyColor.shade600,
+//                                       fontSize: AppFontSizes.small,
+//                                     ),
+//                                   ),
+//                                   const Spacer(),
+//                                   Container(
+//                                     padding: const EdgeInsets.symmetric(
+//                                       horizontal: 12,
+//                                       vertical: 4,
+//                                     ),
+//                                     decoration: BoxDecoration(
+//                                       color:
+//                                       isPublished
+//                                           ? ColorRes.green.withOpacity(0.1)
+//                                           : ColorRes.leadGreyColor.withOpacity(0.1),
+//                                       borderRadius: BorderRadius.circular(20),
+//                                     ),
+//                                     child: Row(
+//                                       children: [
+//                                         Container(
+//                                           width: 8,
+//                                           height: 8,
+//                                           decoration: BoxDecoration(
+//                                             color:
+//                                             isPublished
+//                                                 ? ColorRes.green
+//                                                 : ColorRes.leadGreyColor,
+//                                             shape: BoxShape.circle,
+//                                           ),
+//                                         ),
+//                                         const SizedBox(width: 6),
+//                                         Text(
+//                                           isPublished ? 'PUBLISHED' : 'DRAFT',
+//                                           style: TextStyle(
+//                                             color:
+//                                             isPublished
+//                                                 ? ColorRes.green
+//                                                 : ColorRes.leadGreyColor,
+//                                             fontSize: AppFontSizes.caption,
+//                                             fontWeight: AppFontWeights.semiBold,
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//
+//                               // Row(
+//                               //   children: [
+//                               //     RatingBarIndicator(
+//                               //       rating: story.rating.toDouble(),
+//                               //       itemBuilder:
+//                               //           (context, index) => const Icon(
+//                               //             Icons.star,
+//                               //             color: Colors.amber,
+//                               //           ),
+//                               //       itemSize: 15,
+//                               //     ),
+//                               //     const SizedBox(width: 6),
+//                               //     Text(
+//                               //       "(${story.rating.toStringAsFixed(1)})",
+//                               //       style:  TextStyle(
+//                               //         color: ColorRes.leadGreyColor.shade700,
+//                               //         fontSize: AppFontSizes.caption,
+//                               //       ),
+//                               //     ),
+//                               //   ],
+//                               // ),
+//                             ],
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                     //
+//                     // const SizedBox(height: 12),
+//                     //
+//                     // Row(
+//                     //   children: [
+//                     //     Icon(
+//                     //       Icons.calendar_today_outlined,
+//                     //       color: ColorRes.leadGreyColor.shade600,
+//                     //       size: 16,
+//                     //     ),
+//                     //     const SizedBox(width: 4),
+//                     //     Text(
+//                     //       formattedDate,
+//                     //       style: TextStyle(
+//                     //         color: ColorRes.leadGreyColor.shade600,
+//                     //         fontSize: AppFontSizes.small,
+//                     //       ),
+//                     //     ),
+//                     //     const Spacer(),
+//                     //     Container(
+//                     //       padding: const EdgeInsets.symmetric(
+//                     //         horizontal: 12,
+//                     //         vertical: 4,
+//                     //       ),
+//                     //       decoration: BoxDecoration(
+//                     //         color:
+//                     //             isPublished
+//                     //                 ? ColorRes.green.withOpacity(0.1)
+//                     //                 : ColorRes.leadGreyColor.withOpacity(0.1),
+//                     //         borderRadius: BorderRadius.circular(20),
+//                     //       ),
+//                     //       child: Row(
+//                     //         children: [
+//                     //           Container(
+//                     //             width: 8,
+//                     //             height: 8,
+//                     //             decoration: BoxDecoration(
+//                     //               color:
+//                     //                   isPublished
+//                     //                       ? ColorRes.green
+//                     //                       : ColorRes.leadGreyColor,
+//                     //               shape: BoxShape.circle,
+//                     //             ),
+//                     //           ),
+//                     //           const SizedBox(width: 6),
+//                     //           Text(
+//                     //             isPublished ? 'PUBLISHED' : 'DRAFT',
+//                     //             style: TextStyle(
+//                     //               color:
+//                     //                   isPublished
+//                     //                       ? ColorRes.green
+//                     //                       : ColorRes.leadGreyColor,
+//                     //               fontSize: AppFontSizes.caption,
+//                     //               fontWeight: AppFontWeights.semiBold,
+//                     //             ),
+//                     //           ),
+//                     //         ],
+//                     //       ),
+//                     //     ),
+//                     //   ],
+//                     // ),
+//                   ],
+//                 ),
+//               ),
+//               Padding(
+//                 padding: EdgeInsets.symmetric(horizontal: 16),
+//                 child: Container(
+//                   padding: EdgeInsets.all(8),
+//                   decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.circular(12),
+//                     color: ColorRes.green.withOpacity(0.05),
+//                   border: Border.all(
+//                       color: ColorRes.green.withOpacity(0.3),
+//                       width: 1,
+//                   ),
+//                   ),
+//                   child: Column(
+//                     children: [
+//                       Row(
+//                         children: [
+//                           Icon(
+//                             Icons.emoji_events_outlined,
+//                             color: ColorRes.green,
+//                             size: 20,
+//                           ),
+//                           const SizedBox(width: 8),
+//                           Text(
+//                             'ACHIEVEMENT',
+//
+//                             style: TextStyle(
+//                               color: ColorRes.green,
+//                               fontSize: AppFontSizes.small,
+//                               fontWeight: AppFontWeights.semiBold,
+//                               letterSpacing: 0.5,
+//                             ),
+//                           ),
+//                           Spacer(),
+//                           Container(
+//                             padding: const EdgeInsets.symmetric(
+//                               horizontal: 8,
+//                               vertical: 2,
+//                             ),
+//                             decoration: BoxDecoration(
+//                               border: Border.all(color: ColorRes.homeAmber.shade200,width: 1),
+//                               borderRadius: BorderRadius.circular(12),
+//                               color: ColorRes.homeAmber.shade50,
+//
+//                             ),
+//                             child: Row(
+//                               children: [
+//                                 Icon(
+//                                   Icons.star,
+//                                   color: ColorRes.homeAmber.shade800,
+//                                   size: 14,
+//                                 ),
+//                                 const SizedBox(width: 4),
+//                                 Text(
+//                                   '${story.rating.toStringAsFixed(1)}',
+//                                   style: TextStyle(
+//                                     color:
+//                                     ColorRes.homeAmber.shade800,
+//                                     fontSize: AppFontSizes.caption,
+//                                     fontWeight: AppFontWeights.semiBold,
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           )
+//                         ],
+//                       ),
+//                       const SizedBox(height: 6),
+//
+//                       // Achievement description
+//                       Text(
+//                         story.achievement,
+//                         maxLines: 3,
+//                         style: TextStyle(
+//                           fontSize: AppFontSizes.caption,
+//                           color: ColorRes.leadGreyColor.shade600,
+//                           height: 1.4,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//
+//
+//
+//               const SizedBox(height: 16),
+//
+//               // const Padding(
+//               //   padding: EdgeInsets.symmetric(horizontal: 16),
+//               //   child: Divider(height: 1, color: ColorRes.border),
+//               // ),
+//               //
+//               // const SizedBox(height: 16),
+//
+//               // 🔹 Performance Section
+//               Padding(
+//                 padding: const EdgeInsets.symmetric(horizontal: 16),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Row(
+//                       children: [
+//                         Icon(
+//                           Icons.bar_chart,
+//                           color: ColorRes.builderGridLightPurple,
+//                           size: 20,
+//                         ),
+//                         const SizedBox(width: 8),
+//                         Text(
+//                           'PERFORMANCE',
+//                           style: TextStyle(
+//                             color: ColorRes.builderGridLightPurple,
+//                             fontSize: AppFontSizes.small,
+//                             fontWeight: AppFontWeights.semiBold,
+//                             letterSpacing: 0.5,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                     const SizedBox(height: 12),
+//
+//                     // Horizontal Performance Tiles
+//                   Row(
+//                     children: [
+//                       Expanded(
+//                         child: _buildPerformanceTile(
+//                           icon: Icons.check_circle_outline,
+//                           iconColor: ColorRes.builderGridLightBlue,
+//                           bgColor: ColorRes.builderGridLightBlue.withOpacity(0.1),
+//                           label: 'TOTAL LEADS',
+//                           value: story.totalDeals.toString(),
+//                         ),
+//                       ),
+//                       const SizedBox(width: 8),
+//
+//                       Expanded(
+//                         child: _buildPerformanceTile(
+//                           icon: Icons.attach_money,
+//                           iconColor: ColorRes.green,
+//                           bgColor: ColorRes.green.withOpacity(0.1),
+//                           label: 'TOTAL VALUE',
+//                           value:
+//                           '₹${_formatValue(int.tryParse(story.totalValue) ?? 0)}',
+//                         ),
+//                       ),
+//                       const SizedBox(width: 8),
+//
+//                       Expanded(
+//                         child: _buildPerformanceTile(
+//                           icon: Icons.star_outline,
+//                           iconColor: ColorRes.homeAmber,
+//                           bgColor: ColorRes.homeAmber.withOpacity(0.1),
+//                           label: 'AVG PER DEAL',
+//                           value:
+//                           '₹${_formatValue(((int.tryParse(story.totalValue) ?? 0) / story.totalDeals).round())}',
+//                         ),
+//                       ),
+//                     ],
+//                   )
+//                   ],
+//                 ),
+//               ),
+//
+//               const SizedBox(height: 8),
+//
+//               // 🔹 Action Buttons
+//               Padding(
+//                 padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+//                 child: Row(
+//                   children: [
+//                     Expanded(
+//                       child: ElevatedButton(
+//                         onPressed: () {},
+//                         style: ElevatedButton.styleFrom(
+//                           backgroundColor: ColorRes.green.withOpacity(0.1),
+//                           foregroundColor: ColorRes.green,
+//                           elevation: 0,
+//                           padding: const EdgeInsets.symmetric(vertical: 12),
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(12),
+//                           ),
+//                         ),
+//                         child: const Text(
+//                           'Edit',
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.medium,
+//                             fontWeight: AppFontWeights.semiBold,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     const SizedBox(width: 12),
+//                     Expanded(
+//                       child: ElevatedButton(
+//                         onPressed: () {},
+//                         style: ElevatedButton.styleFrom(
+//                           backgroundColor: ColorRes.error.withOpacity(0.1),
+//                           foregroundColor: ColorRes.error,
+//                           elevation: 0,
+//                           padding: const EdgeInsets.symmetric(vertical: 12),
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(12),
+//                           ),
+//                         ),
+//                         child: const Text(
+//                           'Delete',
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.medium,
+//                             fontWeight: AppFontWeights.semiBold,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildPerformanceTile({
+//     required IconData icon,
+//     required Color iconColor,
+//     required Color bgColor,
+//     required String label,
+//     required String value,
+//   }) {
+//     return Container(
+//       padding: const EdgeInsets.all(8),
+//       decoration: BoxDecoration(
+//         color: ColorRes.background,
+//         borderRadius: BorderRadius.circular(12),
+//       ),
+//       child: Column(
+//         children: [
+//           Container(
+//             padding: const EdgeInsets.all(6),
+//             decoration: BoxDecoration(
+//               color: bgColor,
+//               borderRadius: BorderRadius.circular(8),
+//             ),
+//             child: Icon(icon, color: iconColor, size: 16),
+//           ),
+//           const SizedBox(height: 12),
+//           Text(
+//             label,
+//             style: TextStyle(
+//               color: ColorRes.leadGreyColor.shade600,
+//               fontSize: AppFontSizes.mini,
+//               fontWeight: AppFontWeights.medium,
+//             ),
+//           ),
+//           const SizedBox(height: 2),
+//           Text(
+//             value,
+//             style: const TextStyle(
+//               color: ColorRes.textColor,
+//               fontSize: AppFontSizes.medium,
+//               fontWeight: AppFontWeights.semiBold,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   String _formatMonthYear(String dateString) {
+//     try {
+//       final date = DateTime.parse(dateString);
+//       return DateFormat('MMM yyyy').format(date);
+//     } catch (_) {
+//       return dateString;
+//     }
+//   }
+//
+//   String _formatValue(int value) {
+//     if (value >= 100000) {
+//       return '${(value / 100000).toStringAsFixed(0)}L';
+//     } else if (value >= 1000) {
+//       return '${(value / 1000).toStringAsFixed(0)}K';
+//     }
+//     return value.toString();
+//   }
+// }
 
 Widget buildTopPropertyForGoodCommission(
   DashboardController controller,
@@ -1836,12 +3007,14 @@ Widget buildLeaderBoardRanking({
               city: data.city,
               sales: '0',
               deals: '0',
-              color: data.isCurrentUser == true
-                  ? ColorRes.orangeColor.withOpacity(0.1)
-                  : ColorRes.leadGreyColor.withOpacity(0.05),
-              borderColor: data.isCurrentUser == true
-                  ? ColorRes.orangeColor[700]!
-                  : ColorRes.leadGreyColor[300]!,
+              color:
+                  data.isCurrentUser == true
+                      ? ColorRes.orangeColor.withOpacity(0.1)
+                      : ColorRes.leadGreyColor.withOpacity(0.05),
+              borderColor:
+                  data.isCurrentUser == true
+                      ? ColorRes.orangeColor[700]!
+                      : ColorRes.leadGreyColor[300]!,
               medalIcon: data.rank <= 3 ? Icons.emoji_events : null,
               isCurrentUser: data.isCurrentUser ?? false,
             );
@@ -4252,6 +5425,7 @@ double calculateCommissionPercentage(num lastMonth, num currentMonth) {
 
   return double.parse(percentageChange.toStringAsFixed(2));
 }
+
 String getFormattedDate() {
   final now = DateTime.now();
   final day = now.day;
@@ -4259,7 +5433,18 @@ String getFormattedDate() {
   final year = now.year;
   return '$day $month $year';
 }
+
 const List<String> _monthNames = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];

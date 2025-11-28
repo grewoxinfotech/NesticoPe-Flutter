@@ -21,6 +21,7 @@ class ProfileController extends GetxController {
   final RxBool isEditing = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
+  final RxBool isLoadingIMage=false.obs;
   UserService _userService = UserService();
   final Rxn<ResellerProfile> resellerProfile = Rxn<ResellerProfile>();
   final Rx<UserProfile> profile =
@@ -163,6 +164,7 @@ class ProfileController extends GetxController {
 
   Future<void> pickImageFromGallery() async {
     try {
+      isLoadingIMage.value=true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 1024,
@@ -195,10 +197,14 @@ class ProfileController extends GetxController {
         borderRadius: 12,
       );
     }
+    finally{
+      isLoadingIMage.value=false;
+    }
   }
 
   Future<void> pickImageFromCamera() async {
     try {
+      isLoadingIMage.value=true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         maxWidth: 1024,
@@ -229,6 +235,9 @@ class ProfileController extends GetxController {
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
       );
+    }
+    finally{
+      isLoadingIMage.value=false;
     }
   }
 
@@ -367,168 +376,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  // Future<void> saveProfile() async {
-  //   if (!formKey.currentState!.validate()) return;
-  //
-  //   isSaving.value = true;
-  //
-  //   String? image;
-  //   if (selectedImage.value != null) {
-  //     image = await _uploadImage(selectedImage.value!);
-  //     if (image == null) {
-  //       // Upload failed, stop here
-  //       Get.snackbar('Error', 'Failed to upload image');
-  //       isSaving.value = false;
-  //       return;
-  //     }
-  //   }
-  //
-  //   // Build user object from form data
-  //   User user = User(
-  //     city: positionController.text,
-  //     state: companyController.text,
-  //     email: emailController.text,
-  //     firstName: nameController.text,
-  //     lastName: lastNameController.text,
-  //     address: addressController.text,
-  //     zipCode: zipController.text,
-  //     profilePic:
-  //     image ?? '',
-  //     username: profileData.value?.user?.username,
-  //     userType: "reseller",
-  //     roleId: profileData.value?.user?.roleId,
-  //     phone: phoneController.text,
-  //     isVerified: profileData.value?.user?.isVerified,
-  //   );
-  //   print("usr data ${user.toJson()}");
-  //
-  //   try {
-  //
-  //     final response = await updateResellerProfile(user);
-  //     print('🔍 FULL API RESPONSE: $response');
-  //     print('🔍 otpRequired value: ${response['otpRequired']}');
-  //     print('🔍 otpRequired type: ${response['otpRequired'].runtimeType}');
-  //     print('🔍 success value: ${response['success']}');
-  //     print('🔍 message value: ${response['message']}');
-  //
-  //     final isOtpRequired = response['otpRequired'] == true ||
-  //         response['otpRequired'] == 'true' ||
-  //         (response['success'] == false &&
-  //             response['message']?.toString().toLowerCase().contains('otp') == true);
-  //
-  //     if (isOtpRequired) {
-  //       print('🔵 OTP Required detected!');
-  //
-  //
-  //       pendingUserData = user;
-  //
-  //
-  //       pendingPhone.value = response['phone'] ?? phoneController.text;
-  //       print('🔵 Pending phone: ${pendingPhone.value}');
-  //
-  //
-  //       if (response['updatePhoneToken'] == null) {
-  //         print('⚠️ Warning: API did not send updatePhoneToken in initial response');
-  //         print('⚠️ Triggering resend OTP to obtain token...');
-  //
-  //         // Show dialog first
-  //         isSaving.value = false;
-  //         _showOtpVerificationDialog(
-  //           phone: pendingPhone.value,
-  //           message: response['message'] ?? 'OTP verification required for phone number change',
-  //         );
-  //
-  //
-  //         otpResendTimer.value = 0;
-  //         await resendOtpForPhoneUpdate();
-  //       } else {
-  //
-  //         otpResendTimer.value = 60;
-  //         _startResendTimer();
-  //
-  //         isSaving.value = false;
-  //
-  //         _showOtpVerificationDialog(
-  //           phone: pendingPhone.value,
-  //           message: response['message'] ?? 'OTP verification required for phone number change',
-  //         );
-  //       }
-  //       return;
-  //     }
-  //
-  //     // Check if update was successful (no OTP required)
-  //     if (response['success'] == true) {
-  //       if (profileData.value?.user != null) {
-  //         profileData.value = UserModel(
-  //           user: User(
-  //             id: profileData.value?.user?.id,
-  //             firstName: nameController.text,
-  //             lastName: lastNameController.text,
-  //             email: emailController.text,
-  //             phone: phoneController.text,
-  //             city: positionController.text,
-  //
-  //             zipCode: zipController.text,
-  //             state: companyController.text,
-  //             profilePic:
-  //             image??
-  //                 '',
-  //             username: profileData.value?.user?.username,
-  //             userType: profileData.value?.user?.userType,
-  //             roleId: profileData.value?.user?.roleId,
-  //             isVerified: profileData.value?.user?.isVerified,
-  //             address: addressController.text,
-  //           ),
-  //           token: profileData.value?.token,
-  //         );
-  //         await SecureStorage.saveUserData(profileData.value!);
-  //       }
-  //
-  //       // Refresh user profile data from API
-  //       await getUserProfileData();
-  //
-  //       // Refresh controllers with updated data
-  //       _populateControllers();
-  //
-  //       selectedImage.value = null;
-  //       isEditing.value = false;
-  //
-  //       Get.snackbar(
-  //         'Success',
-  //         response['message'] ?? 'Profile updated successfully',
-  //         backgroundColor: Colors.green,
-  //         colorText: ColorRes.white,
-  //         snackPosition: SnackPosition.BOTTOM,
-  //         margin: const EdgeInsets.all(16),
-  //         borderRadius: 12,
-  //       );
-  //     } else {
-  //       // API returned error
-  //       Get.snackbar(
-  //         'Error',
-  //         response['message'] ?? 'Failed to update profile',
-  //         backgroundColor: Colors.red,
-  //         colorText: ColorRes.white,
-  //         snackPosition: SnackPosition.BOTTOM,
-  //         margin: const EdgeInsets.all(16),
-  //         borderRadius: 12,
-  //       );
-  //     }
-  //   } catch (e) {
-  //     print('Error saving profile: $e');
-  //     Get.snackbar(
-  //       'Error',
-  //       'An error occurred while updating profile',
-  //       backgroundColor: Colors.red,
-  //       colorText: ColorRes.white,
-  //       snackPosition: SnackPosition.BOTTOM,
-  //       margin: const EdgeInsets.all(16),
-  //       borderRadius: 12,
-  //     );
-  //   } finally {
-  //     isSaving.value = false;
-  //   }
-  // }
+
 
   Future<void> saveProfile() async {
     if (!formKey.currentState!.validate()) return;
@@ -545,8 +393,6 @@ class ProfileController extends GetxController {
         return;
       }
     }
-
-    // Build user object from form data
     User user = User(
       city: positionController.text,
       state: companyController.text,
@@ -561,6 +407,15 @@ class ProfileController extends GetxController {
       phone: phoneController.text,
       isVerified: profileData.value?.user?.isVerified,
     );
+    final Map userDataMap = {
+      'city': positionController.text,
+      'state': companyController.text,
+      'email': emailController.text,
+      'firstName': nameController.text,
+      'lastName': lastNameController.text,
+      'address': addressController.text,
+      'phone': phoneController.text,
+    };
     print("usr data ${user.toJson()}");
 
     try {
@@ -631,7 +486,7 @@ class ProfileController extends GetxController {
         return;
       }
 
-      // Check if update was successful (no OTP required)
+
       if (response['success'] == true) {
         if (profileData.value?.user != null) {
           profileData.value = UserModel(
@@ -716,12 +571,21 @@ class ProfileController extends GetxController {
     }
 
     isVerifyingOtp.value = true;
+    final Map userDataMap = {
+      'city': pendingUserData?.city,
+      'state': pendingUserData?.state,
+      'email': pendingUserData?.email,
+      'firstName': pendingUserData?.firstName,
+      'lastName': pendingUserData?.lastName,
+      'address': pendingUserData?.address,
+      'phone': pendingUserData?.phone,
+    };
 
     try {
       final response = await ProfileUpdate.profileUpdate
           .verifyOtpForResellerNumber(
             otp,
-            pendingUserData!,
+        userDataMap!,
             profileData.value?.user?.id ?? '',
           );
 

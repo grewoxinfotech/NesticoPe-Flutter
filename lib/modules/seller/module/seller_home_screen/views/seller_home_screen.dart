@@ -312,37 +312,66 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                               ),
 
                               // SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () {
-                                  Get.to(
-                                    () => ProfileScreen(
-                                      imageUrl:
-                                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(
+                              () => ProfileScreen(
+                            imageUrl: profileController.userProfile.value?.profilePic ??
+                                "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: 45,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: ColorRes.grey.withOpacity(0.2),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Obx(
+                              () => ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              profileController.userProfile.value?.profilePic ??
+                                  "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                              fit: BoxFit.cover,
+
+                              // 🔹 Add loading indicator
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: ColorRes.white,
                                     ),
-                                  );
-                                },
-                                child: Container(
-                                  width: 45,
-                                  height: 45,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: ColorRes.grey.withOpacity(0.2),
-                                      width: 2
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: Obx(
-                                    () =>  ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.network(
-                                        profileController.userProfile.value?.profilePic??"https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
+                                );
+                              },
+
+                              // 🔹 Fallback if image fails
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: ColorRes.grey.withOpacity(0.1),
+                                  child: const Icon(
+                                    Icons.person,
+                                    color: ColorRes.white,
+                                    size: 24,
                                   ),
-                                ),
-                              ),
-                            ],
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    ],
                           ),
                         ),
                         const SizedBox(height: 20),

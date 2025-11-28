@@ -1,10 +1,15 @@
+import 'dart:developer';
+
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+import 'package:housing_flutter_app/modules/review/views/widget/rating_widget.dart';
 import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:intl/intl.dart';
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
@@ -22,6 +27,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
   final ResellerSuccessStoryController controller = Get.put(
     ResellerSuccessStoryController(),
   );
+  final DashboardController dashboardController = Get.find<DashboardController>();
 
   // final formKey = GlobalKey<FormState>();
   //
@@ -128,7 +134,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
       updatedAt: DateTime.now(),
       updatedBy: null,
     );
-
+log("Update file path ${controller.imagePath.value}");
     final success = await controller.updateStory(
       story?.id ?? '',
       data,
@@ -146,6 +152,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
       return;
     }
     Get.back();
+    await dashboardController.fetchResellerDashboardDataFromApi();
 
     controller.resetForm();
   }
@@ -291,36 +298,35 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 16),
+              // Obx(() => Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: List.generate(5, (index) {
+              //     final isSelected = index < controller.rating.value;
+              //
+              //     return AnimatedContainer(
+              //       duration: Duration(milliseconds: 200),
+              //       curve: Curves.easeInOut,
+              //       margin: EdgeInsets.symmetric(horizontal: 4),
+              //       child: IconButton(
+              //         iconSize: 36,
+              //         splashRadius: 26,
+              //         onPressed: () => controller.rating.value = (index + 1),
+              //         icon: Icon(
+              //           isSelected ? Icons.star_rounded : Icons.star_border_rounded,
+              //           color: isSelected ? Colors.amber : Colors.grey.shade400,
+              //         ),
+              //       ),
+              //     );
+              //   }),
+              // )),
 
-              // --- Rating Slider ---
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Rating (0 - 5)",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                  ),
-                  Text(
-                    controller.rating.value.toStringAsFixed(1),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
               Obx(
-                () => Slider(
-                  value: controller.rating.value.toDouble(),
-                  // Slider needs a double
-                  min: 0,
-                  max: 5,
-                  divisions: 5,
-                  label: controller.rating.value.toString(),
-                  onChanged: (value) => controller.rating.value = value.round(),
-                  // convert back to int
-                ),
+                () =>  RatingField(title:  "Rating (0 - 5)", rating: controller.rating.value.toDouble(), onRatingChanged: (newRating) {
+                  controller.rating.value = newRating.toInt();
+
+                },),
               ),
+
               const SizedBox(height: 24),
 
               Obx(
@@ -334,7 +340,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Get.theme.dividerColor),
                     ),
-                    child: _buildImageContent(),
+                    child: _buildImageContent(isEditMode),
                   ),
                 ),
               ),
@@ -343,36 +349,39 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
 
               // --- Submit Button ---
               Obx(
-                () => SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorRes.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                () => SafeArea(
+
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorRes.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                    ),
-                    label: Text(
-                      isEditMode
-                          ? controller.isLoading.value
-                              ? "Updating..."
-                              : "Update Story"
-                          : controller.isLoading.value
-                          ? "Creating..."
-                          : "Create Story",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                      label: Text(
+                        isEditMode
+                            ? controller.isLoading.value
+                                ? "Updating..."
+                                : "Update Story"
+                            : controller.isLoading.value
+                            ? "Creating..."
+                            : "Create Story",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
+                      onPressed:
+                          controller.isLoading.value
+                              ? null
+                              : isEditMode
+                              ? _update
+                              : _submit,
                     ),
-                    onPressed:
-                        controller.isLoading.value
-                            ? null
-                            : isEditMode
-                            ? _update
-                            : _submit,
                   ),
                 ),
               ),
@@ -383,11 +392,11 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildImageContent() {
+  Widget _buildImageContent(bool isEditMode) {
     final file = controller.imagePath.value; // Rxn<File>
     final networkImage = story?.image; // URL from API if edit mode
 
-    // 🧠 Case 1: No image (neither picked nor from network)
+    // 🧠 Case 1: No image at all
     if ((file == null || file.path.isEmpty) &&
         (networkImage == null || networkImage.isEmpty)) {
       return Center(
@@ -408,34 +417,139 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
       );
     }
 
-    // 🧠 Case 2: Local image selected (from gallery)
+    // 🧠 Case 2 or 3: Local or Network image
+    Widget imageWidget;
+
     if (file != null && file.existsSync()) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Image.file(
-          file,
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover,
-        ),
+      imageWidget = Image.file(file, fit: BoxFit.cover, width: double.infinity);
+    } else if (networkImage != null && networkImage.isNotEmpty) {
+      imageWidget = CustomImage(
+        type: CustomImageType.network,
+        src: networkImage,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
       );
+    } else {
+      return const SizedBox.shrink();
     }
 
-    // 🧠 Case 3: Network image (editing existing story)
-    if (networkImage != null && networkImage.isNotEmpty) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: CustomImage(
-          type: CustomImageType.network,
-          src: networkImage,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
+    // 🔹 Wrap with Stack to show overlay actions when in edit mode
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: imageWidget,
         ),
-      );
-    }
 
-    // Default fallback (shouldn’t reach here)
-    return const SizedBox.shrink();
+        // 🔹 Gradient overlay (for better text contrast)
+        if (isEditMode)
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.center,
+                  colors: [
+                    Colors.black.withOpacity(0.5),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+        // 🔹 Action buttons
+        if (isEditMode)
+          Positioned(
+            bottom: 60,
+
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: controller.builderImagePicker,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorRes.primary,
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  icon: const Icon(Icons.edit, color: ColorRes.white, size: 18),
+                  label: const Text(
+                    "Change",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
   }
+  // Widget _buildImageContent() {
+  //   final file = controller.imagePath.value; // Rxn<File>
+  //   final networkImage = story?.image; // URL from API if edit mode
+  //
+  //   // 🧠 Case 1: No image (neither picked nor from network)
+  //   if ((file == null || file.path.isEmpty) &&
+  //       (networkImage == null || networkImage.isEmpty)) {
+  //     return Center(
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           const Icon(Icons.add_a_photo, size: 40, color: ColorRes.primary),
+  //           const SizedBox(height: 8),
+  //           Text(
+  //             "Add Image",
+  //             style: TextStyle(
+  //               color: Get.theme.colorScheme.onSurface.withOpacity(0.7),
+  //               fontSize: 14,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }
+  //
+  //   // 🧠 Case 2: Local image selected (from gallery)
+  //   if (file != null && file.existsSync()) {
+  //     return ClipRRect(
+  //       borderRadius: BorderRadius.circular(16),
+  //       child: Image.file(
+  //         file,
+  //         width: double.infinity,
+  //         height: double.infinity,
+  //         fit: BoxFit.cover,
+  //       ),
+  //     );
+  //   }
+  //
+  //   // 🧠 Case 3: Network image (editing existing story)
+  //   if (networkImage != null && networkImage.isNotEmpty) {
+  //     return ClipRRect(
+  //       borderRadius: BorderRadius.circular(16),
+  //       child: CustomImage(
+  //         type: CustomImageType.network,
+  //         src: networkImage,
+  //         fit: BoxFit.cover,
+  //         width: double.infinity,
+  //         height: double.infinity,
+  //       ),
+  //     );
+  //   }
+  //
+  //   // Default fallback (shouldn’t reach here)
+  //   return const SizedBox.shrink();
+  // }
 }

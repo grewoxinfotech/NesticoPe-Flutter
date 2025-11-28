@@ -173,7 +173,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                   Get.to(
                     () => ProfileScreen(
                       imageUrl:
-                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                          widget.image,
                     ),
                   );
                 },

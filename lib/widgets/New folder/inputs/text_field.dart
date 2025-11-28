@@ -92,7 +92,7 @@ class NesticoPeTextField extends StatelessWidget {
           autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
           onTap: onTap,
           style: TextStyle(
-            fontSize: AppFontSizes.bodyMedium,
+            fontSize: AppFontSizes.bodySmall,
             color: Get.theme.colorScheme.onSurface,
             fontWeight: AppFontWeights.medium,
           ),

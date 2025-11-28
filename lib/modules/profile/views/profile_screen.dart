@@ -212,7 +212,7 @@ class ProfileScreen extends StatelessWidget {
               UserHelper.isGuest
                   ? Column(
                     children: [
-                      _buildProfileCard(BuyerProfileDataController()),
+                      _buildProfileCard(BuyerProfileDataController(),imageUrl),
                       SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
@@ -267,7 +267,11 @@ class ProfileScreen extends StatelessWidget {
                   : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProfileCard(profileController),
+
+             
+
+                       _buildProfileCard(profileController,imageUrl),
+
                       const SizedBox(height: 20),
                       SettingsMenuTile(
                         icon: Icons.monitor_heart_outlined,
@@ -395,7 +399,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard(BuyerProfileDataController? profileController) {
+  Widget _buildProfileCard(BuyerProfileDataController? profileController,String image) {
     return Container(
       padding: const EdgeInsets.all(_defaultPadding),
       decoration: BoxDecoration(
@@ -413,11 +417,7 @@ class ProfileScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Obx(
-                () => _buildProfileAvatar(
-                  profileController?.userProfile.value?.profilePic ?? '',
-                ),
-              ),
+             _buildProfileAvatar(image??''),
               const SizedBox(width: 16),
 
               Expanded(
@@ -463,20 +463,62 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildProfileAvatar(String image) {
     log("djfgdfg $image");
-    return image.isNotEmpty
-        ? CircleAvatar(
-          radius: _profileRadius,
-          backgroundImage: NetworkImage(image),
-          onBackgroundImageError: (_, __) {
-            // Fallback to default avatar on image error
-          },
-        )
-        : CircleAvatar(
-          radius: _profileRadius,
-          backgroundColor: ColorRes.primary,
-          child: const Icon(Icons.person, color: ColorRes.white, size: 32),
-        );
+
+    const double _profileRadius = 35; // adjust or use your variable
+
+    if (image.isNotEmpty) {
+      return CircleAvatar(
+        radius: _profileRadius,
+        backgroundColor: Colors.transparent,
+        child: ClipOval(
+          child: Image.network(
+            image,
+            fit: BoxFit.cover,
+            width: _profileRadius * 2,
+            height: _profileRadius * 2,
+            // 🔹 Show loader while image loads
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: SizedBox(
+                  width: 25,
+                  height: 25,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: ColorRes.primary,
+                  ),
+                ),
+              );
+            },
+            // 🔹 Fallback on error
+            errorBuilder: (context, error, stackTrace) {
+              return CircleAvatar(
+                radius: _profileRadius,
+                backgroundColor: ColorRes.primary,
+                child: const Icon(
+                  Icons.person,
+                  color: ColorRes.white,
+                  size: 32,
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    } else {
+      // 🔹 Default avatar if no image
+      return CircleAvatar(
+        radius: _profileRadius,
+        backgroundColor: ColorRes.primary,
+        child: const Icon(
+          Icons.person,
+          color: ColorRes.white,
+          size: 32,
+        ),
+      );
+    }
   }
+
 
   Widget _buildReviewSection(ReviewItem review) {
     return ExpandableTile(
@@ -488,7 +530,10 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+
+
   Widget _buildQuickLinksSection() {
+    
     return ExpandableTile(
       title: 'Quick Links',
       subtitle: 'Access frequently used features',

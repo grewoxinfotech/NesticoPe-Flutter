@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -290,31 +291,36 @@ class ResellerProfileScreen extends StatelessWidget {
               // }),
               Obx(() {
                 ImageProvider? imageProvider;
-                bool isLoading = false;
-                bool isNetworkImage = false;
-                final profilePic =
-                    controller.profileData.value?.user?.profilePic;
-                // 1️⃣ Check if user selected a new local image
-                if (controller.selectedImage.value != null) {
-                  imageProvider = FileImage(controller.selectedImage.value!);
+                final profilePic = controller.profileData.value?.user?.profilePic;
+                final selectedImage = controller.selectedImage.value;
+
+                // 🔹 Show loader if image upload in progress
+                if (controller.isLoadingIMage.value) {
+                  return const Center(child: CircularProgressIndicator());
                 }
-                // 2️⃣ Else use profilePic from API
-                else {
+
+                bool isNetworkImage = false;
+                String? imageUrl;
+
+                // 1️⃣ If user selected a new image
+                if (selectedImage != null) {
+                  if (selectedImage is File) {
+                    imageProvider = FileImage(selectedImage);
+                  } else if (selectedImage.toString().startsWith('http')) {
+                    imageUrl = selectedImage.toString();
+                    imageProvider = NetworkImage(imageUrl);
+                    isNetworkImage = true;
+                  }
+                }
 
 
-                  if (profilePic != null && profilePic.isNotEmpty) {
-                    // ✅ Network image
-                    if (profilePic.startsWith('http') ||
-                        profilePic.startsWith('https')) {
-                      imageProvider = NetworkImage(profilePic);
-                      isNetworkImage = true;
-                      isLoading =
-                      true; // show loader until image finishes loading
-                    }
-                    // ✅ Local file
-                    else if (File(profilePic).existsSync()) {
-                      imageProvider = FileImage(File(profilePic));
-                    }
+                else if (profilePic != null && profilePic.isNotEmpty) {
+                  if (profilePic.startsWith('http')) {
+                    imageUrl = profilePic;
+                    imageProvider = NetworkImage(profilePic);
+                    isNetworkImage = true;
+                  } else if (File(profilePic).existsSync()) {
+                    imageProvider = FileImage(File(profilePic));
                   }
                 }
 
@@ -332,33 +338,21 @@ class ResellerProfileScreen extends StatelessWidget {
                         child: imageProvider != null
                             ? (isNetworkImage
                             ? Image.network(
-                          profilePic!,
+                          imageUrl!,
                           fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
+                          loadingBuilder: (context, child, progress) {
+                            if (progress == null) return child;
+                            return const Center(
                               child: SizedBox(
                                 width: 25,
                                 height: 25,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: ColorRes.primary,
-                                ),
+                                child: CircularProgressIndicator(strokeWidth: 2),
                               ),
                             );
                           },
-                          errorBuilder: (context, error, stackTrace) => Center(
-                            child: Icon(
-                              Icons.person,
-                              size: 30,
-                              color: ColorRes.primary.withOpacity(0.8),
-                            ),
-                          ),
+                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 30),
                         )
-                            : Image.file(
-                          File(profilePic!),
-                          fit: BoxFit.cover,
-                        ))
+                            : Image(image: imageProvider, fit: BoxFit.cover))
                             : CircleAvatar(
                           radius: 35,
                           backgroundColor: ColorRes.primary.withOpacity(0.1),
@@ -1198,7 +1192,7 @@ class ResellerProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             StateSelectionWidget(
-              isEditing: controller.isEditing.value,
+              isEditing: false,
               controller: controller.companyController,
               onCitySelected: (selectedCity) {
                 print("✅ Selected city: ${selectedCity.description}");

@@ -620,6 +620,7 @@ import '../../../../data/network/referral/model/referrel_model.dart';
 import '../../../../data/network/referral/service/referrel_service.dart';
 import '../../../../data/network/reseller/reseller_dashboard/model/reseller_dashboard_model.dart';
 import '../../../../data/network/reseller/reseller_dashboard/service/reseller_dashboard_service.dart';
+import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_service.dart';
 import '../../../../utils/global.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
@@ -631,6 +632,10 @@ class DashboardController extends GetxController {
   Rxn<ReferralModel> dummyReferral = Rxn<ReferralModel>();
   PropertyService _propertyService = PropertyService();
   Rxn<UserModel> userModel = Rxn<UserModel>();
+  RxBool deleteSuccessStory = false.obs;
+
+
+  final ResellerSuccessStoryService _service = ResellerSuccessStoryService();
 
   final RxBool isLoading = false.obs;
   final RxBool isRefreshing = false.obs;
@@ -726,7 +731,6 @@ class DashboardController extends GetxController {
     }
   }
 
-
   Future<Rxn<ResellerInsightsModel>> fetchResellerDashboardDataFromApi() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id;
@@ -737,6 +741,24 @@ class DashboardController extends GetxController {
 
     return resellerInsightsModel;
   }
+
+  Future<void> deleteStory(String id) async {
+    try {
+      deleteSuccessStory.value = true;
+
+      final success = await _service.deleteSuccessStory(id);
+
+      if (success) {
+        await fetchResellerDashboardDataFromApi();
+      }
+    } catch (e) {
+      debugPrint("❌ Delete story error: $e");
+    } finally {
+      // Always reset loading state, even if an error occurs
+      deleteSuccessStory.value = false;
+    }
+  }
+
 
   Future<void> fetchReferralService() async {
     try {
@@ -1843,6 +1865,7 @@ class DashboardController extends GetxController {
     error.value = '';
     showFilters.value = false;
   }
+
   void submitForm() {
     if (formKey.currentState!.validate()) {
       Get.snackbar(
@@ -1855,6 +1878,7 @@ class DashboardController extends GetxController {
       Get.back();
     }
   }
+
   @override
   void onClose() {
     titleController.dispose();

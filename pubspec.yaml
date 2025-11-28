@@ -51,6 +51,7 @@ dependencies:
   file_picker:
   pdfx:
   open_filex:
+  flutter_rating_bar: ^4.0.1
 
 
 dev_dependencies:
