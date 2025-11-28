@@ -7,20 +7,192 @@ import 'package:housing_flutter_app/app/manager/property/property_name_manager.d
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../data/network/property/models/property_model.dart';
+import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/controllers/property_controller.dart';
 import '../../../property/views/property_detail_screen.dart';
 import '../../../property/views/widgets/property_media_gallery.dart';
 
-// Import your existing files
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+// class PropertyOverviewSellerScreen extends StatelessWidget {
+//   final Items property;
+//
+//   const PropertyOverviewSellerScreen({Key? key, required this.property})
+//       : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final controller = Get.find<PropertyController>();
+//     final isCompact = MediaQuery
+//         .of(context)
+//         .size
+//         .width < 600;
+//
+//     return Scaffold(
+//       backgroundColor: ColorRes.white,
+//       appBar: AppBar(
+//         leading: IconButton(
+//           icon: const Icon(Icons.arrow_back),
+//           onPressed: () => Get.back(),
+//         ),
+//         title: Text(
+//           'Property Overview',
+//           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+//         ),
+//         backgroundColor: ColorRes.white,
+//         elevation: 0,
+//       ),
+//       body: SingleChildScrollView(
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             // Property Images Gallery
+//             // _buildPropertyImageGallery(context),
+//             PropertyMediaGallery(
+//               images: property.propertyMedia?.images,
+//               videos: property.propertyMedia?.videos,
+//               itemId: property.id,
+//               showReraTag: !controller.isDeveloper.value,
+//               showBackButton: false,
+//               showFavorite: false,
+//               showShare: false,
+//             ),
+//
+//             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+//
+//             // Property Status & Performance
+//             _buildStatusSection(context, isCompact),
+//
+//             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+//
+//             // Property Overview
+//             _buildPropertyOverviewSection(context, isCompact),
+//
+//             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+//
+//             // Financial Information
+//             _buildFinancialSection(context, isCompact),
+//
+//             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+//
+//             // Property Details
+//             _buildPropertyDetailsSection(context, isCompact),
+//
+//             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+//
+//             // Amenities
+//             if (property.propertyDetails?.amenities?.isNotEmpty ?? false) ...[
+//               _buildAmenitiesSection(context, isCompact),
+//               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+//             ],
+//
+//             // Performance Metrics
+//             _buildPerformanceSection(context, isCompact),
+//
+//             Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+//
+//             // Assignment Info (if assigned)
+//             if (property.assignedTo != null) ...[
+//               _buildAssignmentSection(context, isCompact),
+//               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+//             ],
+//
+//             // Action Buttons
+//             _buildActionButtons(context, isCompact),
+//
+//             SizedBox(height: 20),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+class PropertyOverviewSellerScreen extends StatefulWidget {
+  final String propertyId;
 
-class PropertyOverviewSellerScreen extends StatelessWidget {
-  final Items property;
-
-  const PropertyOverviewSellerScreen({Key? key, required this.property})
+  const PropertyOverviewSellerScreen({Key? key, required this.propertyId})
     : super(key: key);
+
+  @override
+  State<PropertyOverviewSellerScreen> createState() =>
+      _PropertyOverviewSellerScreenState();
+}
+
+class _PropertyOverviewSellerScreenState
+    extends State<PropertyOverviewSellerScreen> {
+  late final PropertyController controller;
+  final Rxn<Items> _property = Rxn<Items>();
+  final RxBool _isLoading = true.obs;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = Get.put(
+      PropertyController(),
+      tag: 'property_${widget.propertyId}',
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  @override
+  void dispose() {
+    Get.delete<PropertyController>(tag: 'property_${widget.propertyId}');
+    super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      _isLoading.value = true;
+
+      final fetchedProperty = await controller.getPropertyById(
+        widget.propertyId,
+      );
+      if (fetchedProperty == null) {
+        // Show error and go back
+        if (mounted) {
+          Get.snackbar(
+            'Error',
+            'Property not found',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          Get.back();
+        }
+        return;
+      }
+      _property.value = fetchedProperty;
+
+      // final currentProperty = _property.value;
+      // if (currentProperty == null) return;
+      //
+      // // Set review filter
+      // reviewController.filters.value = {"entity_id": currentProperty.id ?? ""};
+      // reviewController.filters.refresh();
+      //
+      // // Fetch nearby landmarks and all categories
+      // if (currentProperty.address?.isNotEmpty ?? false) {
+      //   await mapController.fetchAllCategoriesData(currentProperty.address!);
+      // }
+      //
+      // // Check review permission
+      // final user = await SecureStorage.getUserData();
+      // final userId = user?.user?.id ?? '';
+      // if (currentProperty.id != null) {
+      //   final exists = await reviewController.isReviewExist(
+      //     entityId: currentProperty.id!,
+      //     reviewerId: userId,
+      //   );
+      //   canAddReview.value = !exists;
+      // }
+      //
+      // // Track view
+      // controller.addView(currentProperty.id ?? '');
+      // _overallRatingController.fetchOverallRating(currentProperty.id ?? '');
+    } finally {
+      _isLoading.value = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,176 +206,182 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
         ),
-        title: Text(
+        title: const Text(
           'Property Overview',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Property Images Gallery
-            // _buildPropertyImageGallery(context),
-            PropertyMediaGallery(
-              images: property.propertyMedia?.images,
-              videos: property.propertyMedia?.videos,
-              itemId: property.id,
-              showReraTag: !controller.isDeveloper.value,
-              showBackButton: false,
-              showFavorite: false,
-              showShare: false,
-            ),
 
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+      body: Obx(() {
+        if (_isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-            // Property Status & Performance
-            _buildStatusSection(context, isCompact),
+        if (_property.value == null) {
+          return const Center(child: Text("Property not found"));
+        }
 
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        final property = _property.value!;
 
-            // Property Overview
-            _buildPropertyOverviewSection(context, isCompact),
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 📌 Property Media
+              PropertyMediaGallery(
+                images: property.propertyMedia?.images,
+                videos: property.propertyMedia?.videos,
+                itemId: property.id,
+                showReraTag: !controller.isDeveloper.value,
+                showBackButton: false,
+                showFavorite: false,
+                showShare: false,
+              ),
 
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-            // Financial Information
-            _buildFinancialSection(context, isCompact),
-
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-            // Property Details
-            _buildPropertyDetailsSection(context, isCompact),
-
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-            // Amenities
-            if (property.propertyDetails?.amenities?.isNotEmpty ?? false) ...[
-              _buildAmenitiesSection(context, isCompact),
               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-            ],
 
-            // Performance Metrics
-            _buildPerformanceSection(context, isCompact),
-
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-            // Assignment Info (if assigned)
-            if (property.assignedTo != null) ...[
-              _buildAssignmentSection(context, isCompact),
+              _buildStatusSection(context, isCompact),
               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+
+              _buildPropertyOverviewSection(context, isCompact),
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+
+              _buildFinancialSection(context, isCompact),
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+
+              _buildPropertyDetailsSection(context, isCompact),
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+
+              if (property.propertyDetails?.amenities?.isNotEmpty ?? false) ...[
+                _buildAmenitiesSection(context, isCompact),
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+              ],
+
+              _buildPerformanceSection(context, isCompact),
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+
+              if (property.assignedTo != null) ...[
+                _buildAssignmentSection(context, isCompact),
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+              ],
+
+              if (property.scoreBreakdown != null) ...[
+                PerformanceScoreWidget(score: property.scoreBreakdown!),
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+              ],
+
+              _buildActionButtons(context, isCompact),
+
+              const SizedBox(height: 20),
             ],
-
-            // Action Buttons
-            _buildActionButtons(context, isCompact),
-
-            SizedBox(height: 20),
-          ],
-        ),
-      ),
+          ),
+        );
+      }),
     );
   }
 
-  Widget _buildPropertyImageGallery(BuildContext context) {
-    final images =
-        property.propertyMedia?.images ?? property.propertyImages ?? [];
-
-    if (images.isEmpty) {
-      return Container(
-        height: 280,
-        color: ColorRes.leadGreyColor[300],
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.home, size: 80, color: ColorRes.leadGreyColor[400]),
-            SizedBox(height: 8),
-            Text(
-              property.title ?? 'No images available',
-              style: TextStyle(
-                fontSize: AppFontSizes.body,
-                fontWeight: AppFontWeights.extraBold,
-                color: ColorRes.leadGreyColor[600],
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Container(
-      height: 280,
-      child: Stack(
-        children: [
-          PageView.builder(
-            itemCount: images.length,
-            itemBuilder: (context, index) {
-              return Image.network(
-                images[index],
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: ColorRes.leadGreyColor[300],
-                    child: Icon(
-                      Icons.image_not_supported,
-                      size: 80,
-                      color: ColorRes.leadGreyColor[400],
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-
-          // Image counter
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: ColorRes.black.withOpacity(0.6),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                '1/${images.length}',
-                style: TextStyle(
-                  color: ColorRes.white,
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.semiBold,
-                ),
-              ),
-            ),
-          ),
-
-          // Status Badge
-          Positioned(
-            top: 16,
-            left: 16,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: _getStatusColor(property.propertyStatus ?? 'active'),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                _formatStatus(property.propertyStatus ?? 'active'),
-                style: TextStyle(
-                  color: ColorRes.white,
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.extraBold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildPropertyImageGallery(BuildContext context) {
+  //   final images =
+  //       property.propertyMedia?.images ?? property.propertyImages ?? [];
+  //
+  //   if (images.isEmpty) {
+  //     return Container(
+  //       height: 280,
+  //       color: ColorRes.leadGreyColor[300],
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           Icon(Icons.home, size: 80, color: ColorRes.leadGreyColor[400]),
+  //           SizedBox(height: 8),
+  //           Text(
+  //             property.title ?? 'No images available',
+  //             style: TextStyle(
+  //               fontSize: AppFontSizes.body,
+  //               fontWeight: AppFontWeights.extraBold,
+  //               color: ColorRes.leadGreyColor[600],
+  //             ),
+  //             textAlign: TextAlign.center,
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }
+  //
+  //   return Container(
+  //     height: 280,
+  //     child: Stack(
+  //       children: [
+  //         PageView.builder(
+  //           itemCount: images.length,
+  //           itemBuilder: (context, index) {
+  //             return Image.network(
+  //               images[index],
+  //               fit: BoxFit.cover,
+  //               errorBuilder: (context, error, stackTrace) {
+  //                 return Container(
+  //                   color: ColorRes.leadGreyColor[300],
+  //                   child: Icon(
+  //                     Icons.image_not_supported,
+  //                     size: 80,
+  //                     color: ColorRes.leadGreyColor[400],
+  //                   ),
+  //                 );
+  //               },
+  //             );
+  //           },
+  //         ),
+  //
+  //         // Image counter
+  //         Positioned(
+  //           bottom: 16,
+  //           right: 16,
+  //           child: Container(
+  //             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //             decoration: BoxDecoration(
+  //               color: ColorRes.black.withOpacity(0.6),
+  //               borderRadius: BorderRadius.circular(20),
+  //             ),
+  //             child: Text(
+  //               '1/${images.length}',
+  //               style: TextStyle(
+  //                 color: ColorRes.white,
+  //                 fontSize: AppFontSizes.small,
+  //                 fontWeight: AppFontWeights.semiBold,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //
+  //         // Status Badge
+  //         Positioned(
+  //           top: 16,
+  //           left: 16,
+  //           child: Container(
+  //             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  //             decoration: BoxDecoration(
+  //               color: _getStatusColor(property.propertyStatus ?? 'active'),
+  //               borderRadius: BorderRadius.circular(8),
+  //             ),
+  //             child: Text(
+  //               _formatStatus(property.propertyStatus ?? 'active'),
+  //               style: TextStyle(
+  //                 color: ColorRes.white,
+  //                 fontSize: AppFontSizes.small,
+  //                 fontWeight: AppFontWeights.extraBold,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildStatusSection(BuildContext context, bool isCompact) {
+    final property = _property.value!;
+
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
@@ -230,9 +408,9 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                   child: Text(
                     ' ${property.propertyStatus?.toUpperCase() ?? 'N/A'} ',
                     style: TextStyle(
-                      fontSize: AppFontSizes.small,
+                      fontSize: AppFontSizes.extraSmall,
                       color: ColorRes.primary,
-                      fontWeight: AppFontWeights.extraBold,
+                      fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
                 ),
@@ -302,8 +480,8 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: AppFontSizes.body,
-              fontWeight: AppFontWeights.extraBold,
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.bold,
               color: color,
             ),
           ),
@@ -313,23 +491,11 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
   }
 
   Widget _buildPropertyOverviewSection(BuildContext context, bool isCompact) {
-    final propertyDetails = property.propertyDetails;
+    final property = _property.value!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Padding(
-        //   padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-        //   child: Text(
-        //     'Property Overview',
-        //     style: TextStyle(
-        //       fontSize: 16,
-        //       fontWeight: AppFontWeights.semiBold,
-        //       color: ColorRes.leadGreyColor[800],
-        //     ),
-        //   ),
-        // ),
-        // SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
           child: Builder(
@@ -381,91 +547,12 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
 
         Facilities(property: property ?? Items()),
         SizedBox(height: 20),
-
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-        //   children: [
-        //     if (propertyDetails?.propertyCarpetArea != null)
-        //       _buildStatItem(
-        //         '${propertyDetails!.propertyCarpetArea}',
-        //         'Carpet Area\n(sq.ft)',
-        //         Icons.straighten,
-        //       ),
-        //     if (propertyDetails?.bathroom != null) ...[
-        //       Container(width: 1, height: 50, color: ColorRes.leadGreyColor[300]),
-        //       _buildStatItem(
-        //         '${propertyDetails!.bathroom}',
-        //         'Bathrooms',
-        //         Icons.bathtub_outlined,
-        //       ),
-        //     ],
-        //     if (propertyDetails?.balcony != null) ...[
-        //       Container(width: 1, height: 50, color: ColorRes.leadGreyColor[300]),
-        //       _buildStatItem(
-        //         '${propertyDetails!.balcony}',
-        //         'Balconies',
-        //         Icons.balcony_outlined,
-        //       ),
-        //     ],
-        //   ],
-        // ),
-      ],
-    );
-  }
-
-  Widget _buildOverviewChip(String text, IconData icon, Color color) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: color),
-          SizedBox(width: 4),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: AppFontSizes.small,
-              color: color,
-              fontWeight: AppFontWeights.semiBold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String value, String label, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, size: 22, color: ColorRes.blueColor.shade700),
-        SizedBox(height: 8),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: AppFontSizes.body,
-            fontWeight: AppFontWeights.extraBold,
-            color: ColorRes.leadGreyColor[900],
-          ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: AppFontSizes.caption,
-            color: ColorRes.leadGreyColor[600],
-          ),
-          textAlign: TextAlign.center,
-        ),
       ],
     );
   }
 
   Widget _buildFinancialSection(BuildContext context, bool isCompact) {
+    final property = _property.value!;
     final financialInfo = property.propertyDetails?.financialInfo;
     final listingType = property.listingType ?? "";
 
@@ -520,8 +607,8 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                         Text(
                           priceManager.displayPrice,
                           style: TextStyle(
-                            fontSize: AppFontSizes.title,
-                            fontWeight: AppFontWeights.extraBold,
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.bold,
                             color: ColorRes.success.shade800,
                           ),
                         ),
@@ -548,7 +635,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: AppFontSizes.caption,
                             color: ColorRes.orangeColor.shade700,
-                            fontWeight: AppFontWeights.extraBold,
+                            fontWeight: AppFontWeights.semiBold,
                           ),
                         ),
                       ),
@@ -603,8 +690,8 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: AppFontSizes.body,
-              fontWeight: AppFontWeights.extraBold,
+              fontSize: AppFontSizes.bodySmall,
+              fontWeight: AppFontWeights.semiBold,
               color: ColorRes.blueColor.shade700,
             ),
           ),
@@ -614,7 +701,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
   }
 
   Widget _buildPropertyDetailsSection(BuildContext context, bool isCompact) {
-    final propertyDetails = property.propertyDetails;
+    final property = _property.value!;
 
     return Padding(
       padding: EdgeInsets.all(16),
@@ -697,6 +784,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
   }
 
   Widget _buildAmenitiesSection(BuildContext context, bool isCompact) {
+    final property = _property.value!;
     final amenities = property.propertyDetails?.amenities ?? [];
 
     return Padding(
@@ -756,6 +844,8 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
   }
 
   Widget _buildPerformanceSection(BuildContext context, bool isCompact) {
+    final property = _property.value!;
+
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
@@ -859,7 +949,7 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
                   value,
                   style: TextStyle(
                     fontSize: AppFontSizes.large,
-                    fontWeight: AppFontWeights.extraBold,
+                    fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.leadGreyColor[900],
                   ),
                 ),
@@ -872,6 +962,8 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
   }
 
   Widget _buildAssignmentSection(BuildContext context, bool isCompact) {
+    final property = _property.value!;
+
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
@@ -895,7 +987,6 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                _buildDetailRow('Assigned To', property.assignedTo ?? 'N/A'),
                 _buildDetailRow(
                   'Status',
                   _formatStatus(property.assignmentStatus ?? 'N/A'),
@@ -1026,13 +1117,6 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
     return price.toStringAsFixed(0);
   }
 
-  String _formatParking(ParkingInfo parkingInfo) {
-    List<String> parking = [];
-    if (parkingInfo.open ?? false) parking.add('Open');
-    if (parkingInfo.covered ?? false) parking.add('Covered');
-    return parking.isEmpty ? 'None' : parking.join(' & ');
-  }
-
   String _formatDate(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
@@ -1040,5 +1124,64 @@ class PropertyOverviewSellerScreen extends StatelessWidget {
     } catch (e) {
       return dateStr;
     }
+  }
+
+  Widget _buildOverviewChip(String text, IconData icon, Color color) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: color),
+          SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: AppFontSizes.small,
+              color: color,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String value, String label, IconData icon) {
+    return Column(
+      children: [
+        Icon(icon, size: 22, color: ColorRes.blueColor.shade700),
+        SizedBox(height: 8),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: AppFontSizes.body,
+            fontWeight: AppFontWeights.extraBold,
+            color: ColorRes.leadGreyColor[900],
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: AppFontSizes.caption,
+            color: ColorRes.leadGreyColor[600],
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  String _formatParking(ParkingInfo parkingInfo) {
+    List<String> parking = [];
+    if (parkingInfo.open ?? false) parking.add('Open');
+    if (parkingInfo.covered ?? false) parking.add('Covered');
+    return parking.isEmpty ? 'None' : parking.join(' & ');
   }
 }

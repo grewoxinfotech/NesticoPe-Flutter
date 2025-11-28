@@ -7,7 +7,6 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
 
 class PropertyContactedController extends GetxController {
   final PropertyContactedService _service = PropertyContactedService();
-  final PropertyController _propertyController = Get.find<PropertyController>();
 
   /// Reactive list of contacted property IDs
   RxList<String> contactedPropertyIds = <String>[].obs;

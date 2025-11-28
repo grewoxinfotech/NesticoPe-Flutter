@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
@@ -28,13 +27,14 @@ import 'package:housing_flutter_app/modules/review/views/widget/add_property_rev
 import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
 import 'package:housing_flutter_app/app/manager/compare_manager.dart';
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:housing_flutter_app/widgets/bar/bottom_bar/customer_bottom_bar.dart';
 import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
-// import 'package:housing_flutter_app/modules/home/widgets/comparison_floating_button.dart';
 
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../app/constants/enum.dart';
 import '../../../app/manager/property_detail_manager.dart';
 import '../../../app/manager/property_highlight_manager.dart';
 import '../../../app/utils/helper_function/contact_helper.dart';
@@ -42,22 +42,24 @@ import '../../../app/widgets/texts/headline_text.dart';
 import '../../../data/network/overall_rating/model/overall_rating_model.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../../utils/common_widget/rera_widget.dart';
+import '../../../widgets/button/property_action_button.dart';
+import '../../../widgets/map/address_and_map_detail.dart';
+import '../../../widgets/map/near_by_location_map_section.dart';
 import '../../../widgets/property/furnishing_details.dart';
-// import '../../home/widgets/property_comparison_floating_button.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
+import '../../review/views/widget/property_project_review_section.dart';
 import '../../search_property/controller/search_controller.dart';
 import '../controllers/overall_rating_controller.dart';
-
 
 class PropertyDetailScreen extends StatefulWidget {
   final Items? property;
   final String? propertyId;
 
   const PropertyDetailScreen({super.key, this.property, this.propertyId})
-      : assert(
-  property != null || propertyId != null,
-  'Either property or propertyId must be provided',
-  );
+    : assert(
+        property != null || propertyId != null,
+        'Either property or propertyId must be provided',
+      );
 
   @override
   State<PropertyDetailScreen> createState() => _PropertyDetailScreenState();
@@ -124,7 +126,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   Future<void> _loadData() async {
     try {
       _isLoading.value = true;
-      await controller.getAllInQuireData(widget.property?.id??'');
+      await controller.getAllInQuireData(
+        widget.property?.id ?? widget.propertyId ?? '',
+      );
 
       // Fetch property if only ID was provided
       if (widget.property == null && widget.propertyId != null) {
@@ -184,6 +188,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final priceManager = PropertyPriceManager(
+      financialInfo:
+          property?.propertyDetails?.financialInfo ?? FinancialInfo(),
+      listingType: property?.listingType ?? '',
+    );
     return Scaffold(
       backgroundColor: ColorRes.white,
       extendBody: true,
@@ -221,8 +230,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             ),
           );
         }
-        log("Furnishing detail ${property?.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}");
-        log("FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}");
+        log(
+          "Furnishing detail ${property?.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}",
+        );
+        log(
+          "FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}",
+        );
         return SafeArea(
           child: Stack(
             children: [
@@ -259,7 +272,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if(property?.propertyDetails!=null)...[
+                    if (property?.propertyDetails != null) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Property Details'),
                       const SizedBox(height: 8),
@@ -272,15 +285,17 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-
-
-                    if(property?.propertyDetails?.furnishInfo?.furnishDetails!=null)...[
+                    if (property
+                            ?.propertyDetails
+                            ?.furnishInfo
+                            ?.furnishDetails !=
+                        null) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Furnishing'),
                       // const SizedBox(height: 8),
                       // Facilities(property: property ?? Items()),
                       FurnishingDetails(
-                        property: property??Items(),
+                        property: property ?? Items(),
                         bgColor: ColorRes.propertyBg,
                         txtColor: ColorRes.propertyText,
                       ),
@@ -289,7 +304,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         endIndent: 18,
                         color: ColorRes.leadGreyColor.shade300,
                       ),
-
                     ],
                     // PG Rules Section (only for PG listing type)
                     if (property?.listingType?.toUpperCase() == "PG" &&
@@ -352,30 +366,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if(property?.location?.isNotEmpty??false)...[
+                    if (property?.location?.isNotEmpty ?? false) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Location'),
                       const SizedBox(height: 8),
-                      AddressAndMapDetails(property: property!),
+                      AddressAndMapDetails(address: property?.address ?? ''),
                       const SizedBox(height: 12),
                     ],
 
-                    // if (property?.nearbyLocations != null) ...[
-                    //   Divider(
-                    //     indent: 18,
-                    //     endIndent: 18,
-                    //     color: ColorRes.leadGreyColor.shade300,
-                    //   ),
-                    //
-                    //   const SizedBox(height: 8),
-                    //   const TitleWithViewAll(title: 'Nearby Landmarks'),
-                    //   const SizedBox(height: 12),
-                    //   NearbyPropertyDetails(
-                    //     nearbyLocations: property?.nearbyLocations ?? [],
-                    //   ),
-                    //   const SizedBox(height: 12),
-                    // ],
-                    // Category-based Nearby Places with Google Map Style
                     Obx(() {
                       if (mapController.isLoading.value) {
                         return const Center(
@@ -387,11 +385,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       }
 
                       // Check if any category has data
-                      final hasData = mapController.allCategoriesData.values.any(
-                            (places) => places.isNotEmpty,
-                      );
+                      final hasData = mapController.allCategoriesData.values
+                          .any((places) => places.isNotEmpty);
 
-                      if (!hasData || mapController.propertyLatLng.value == null) {
+                      if (!hasData ||
+                          mapController.propertyLatLng.value == null) {
                         return const SizedBox.shrink();
                       }
 
@@ -416,7 +414,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       );
                     }),
 
-                    if(property?.ownerName?.isNotEmpty??false)...[
+                    if (property?.ownerName?.isNotEmpty ?? false) ...[
                       Divider(
                         indent: 18,
                         endIndent: 18,
@@ -426,25 +424,56 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Owner Details'),
                       const SizedBox(height: 8),
-                      OwnerInformation(property: property!, controller: controller),
+                      OwnerInformation(
+                        property: property!,
+                        controller: controller,
+                      ),
                       const SizedBox(height: 12),
                     ],
-                    // Divider(
-                    //   indent: 18,
-                    //   endIndent: 18,
-                    //   color: ColorRes.leadGreyColor.shade300,
-                    // ),
-                    // const SizedBox(height: 12),
 
-                    // const TitleWithViewAll(title: 'Check availability of Agent'),
-                    // const SizedBox(height: 12),
-                    // ContactSellerCard(property: property ?? Items()),
-
-                    // const SizedBox(height: 12),
                     // Obx(() {
-                    //   if (!controller.isDeveloper.value) {
-                    //     return const SizedBox.shrink(); // hide if not developer
+                    //   final overallCtrl = _overallRatingController;
+                    //   final reviewCtrl = reviewController;
+                    //
+                    //   final isOverallLoading =
+                    //       overallCtrl.isLoading.value &&
+                    //       overallCtrl.ratingData.value == null;
+                    //   final isReviewLoading =
+                    //       reviewCtrl.isLoading.value &&
+                    //       reviewCtrl.items.isEmpty;
+                    //
+                    //   // 🌀 Show loader if both are still loading
+                    //   if (isOverallLoading && isReviewLoading) {
+                    //     return const Center(child: CircularProgressIndicator());
                     //   }
+                    //
+                    //   // 🈳 Hide section if both are empty and not loading
+                    //   if (!overallCtrl.isLoading.value &&
+                    //       !reviewCtrl.isLoading.value &&
+                    //       (overallCtrl.ratingData.value == null ||
+                    //           overallCtrl
+                    //                   .ratingData
+                    //                   .value
+                    //                   ?.data
+                    //                   ?.totalReviews ==
+                    //               0) &&
+                    //       reviewCtrl.items.isEmpty) {
+                    //     return const SizedBox.shrink();
+                    //   }
+                    //
+                    //   // 🧩 Extract safe data
+                    //   final overallData = overallCtrl.ratingData.value?.data;
+                    //   final totalReviews = overallData?.totalReviews ?? 0;
+                    //   final overallRating = overallData?.overallRating ?? 0.0;
+                    //   final DetailedRatings detailedRatings =
+                    //       overallData?.detailedRatings ??
+                    //       DetailedRatings(
+                    //         accuracy: 0,
+                    //         amenities: 0,
+                    //         cleanliness: 0,
+                    //         location: 0,
+                    //         value: 0,
+                    //       );
                     //
                     //   return Column(
                     //     crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,180 +484,116 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     //         color: ColorRes.leadGreyColor.shade300,
                     //       ),
                     //       const SizedBox(height: 12),
-                    //       const TitleWithViewAll(title: 'Project Brochures'),
-                    //       const SizedBox(height: 12),
-                    //       const ProjectBrochure(
-                    //         brochureImageUrl:
-                    //             'https://cdn.dribbble.com/userupload/12289156/file/original-1b5719cd15e5e7e54052ebe7ed9ad2a7.jpg?resize=400x0',
-                    //         brochureUrl: "",
-                    //         totalPages: 4,
+                    //       const TitleWithViewAll(
+                    //         title: 'Reviews & Ratings',
+                    //         showViewAll: true,
                     //       ),
-                    //       const SizedBox(height: 12),
-                    //       Divider(
-                    //         indent: 18,
-                    //         endIndent: 18,
-                    //         color: ColorRes.leadGreyColor.shade300,
+                    //       // 🟡 Overall Rating Section
+                    //       OverallRatingWidget(
+                    //         totalReviews: totalReviews,
+                    //         overallRating: overallRating,
+                    //         detailedRatings: detailedRatings,
                     //       ),
+                    //
                     //       const SizedBox(height: 12),
-                    //       const TitleWithViewAll(title: 'Premium projects nearby'),
+                    //
+                    //       // 📋 Review List Section
+                    //       if (reviewCtrl.items.isNotEmpty) ...[
+                    //         SizedBox(
+                    //           height: 220,
+                    //           child: ListView.separated(
+                    //             // shrinkWrap: true,
+                    //             scrollDirection: Axis.horizontal,
+                    //             padding: const EdgeInsets.symmetric(
+                    //               horizontal: 16,
+                    //             ),
+                    //             itemCount: reviewCtrl.items.length,
+                    //             separatorBuilder:
+                    //                 (_, __) => const SizedBox(width: 16),
+                    //             itemBuilder: (context, index) {
+                    //               final review = reviewCtrl.items[index];
+                    //               return PropertyReviewCard(reviewItem: review);
+                    //             },
+                    //           ),
+                    //         ),
+                    //       ] else if (!reviewCtrl.isLoading.value &&
+                    //           totalReviews == 0) ...[
+                    //         const Padding(
+                    //           padding: EdgeInsets.symmetric(
+                    //             horizontal: 16,
+                    //             vertical: 8,
+                    //           ),
+                    //           child: Text(
+                    //             "No reviews yet",
+                    //             style: TextStyle(color: Colors.grey),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ],
+                    //   );
+                    // }),
+                    //
+                    // Obx(() {
+                    //   if (!canAddReview.value) {
+                    //     return SizedBox.shrink();
+                    //   }
+                    //   return Column(
+                    //     children: [
                     //       const SizedBox(height: 12),
-                    //       ProjectDetails(
-                    //         launchedDate: property?.lastRenewalDate ?? '',
-                    //         maxPrice: 3.5,
-                    //         minPrice: 1.8,
-                    //         nearbyProjects: property?.nearbyLocations ?? [],
-                    //         projectArea: 22,
-                    //         projectName: "",
-                    //         reraId: '322',
-                    //         units: 256,
-                    //       ),
-                    //       const SizedBox(height: 12),
-                    //       RecommendedInsights(
-                    //         nearbyLocations: property?.nearbyLocations ?? [],
+                    //       Padding(
+                    //         padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //         child: NesticoPeButton(
+                    //           width: double.infinity,
+                    //           boxShadow: [],
+                    //           onTap: () async {
+                    //             if (UserHelper.isGuest) {
+                    //               Get.to(() => LoginScreen());
+                    //             } else {
+                    //               final result = await Get.to(
+                    //                 () => AddReviewScreen(
+                    //                   entityType: 'property',
+                    //                   entityId: property?.id ?? '',
+                    //                 ),
+                    //               );
+                    //
+                    //               // 👇 Hide button immediately if review was successfully added
+                    //               if (result == true) {
+                    //                 canAddReview.value = false;
+                    //
+                    //                 reviewController.refreshList();
+                    //                 _overallRatingController.fetchOverallRating(
+                    //                   property?.id ?? '',
+                    //                 );
+                    //               }
+                    //             }
+                    //           },
+                    //
+                    //           title: "Add Review",
+                    //         ),
                     //       ),
                     //     ],
                     //   );
                     // }),
+                    //
                     // const SizedBox(height: 12),
+                    ReviewSection(
+                      canAddReview: canAddReview,
+                      overallController: _overallRatingController,
+                      reviewController: reviewController,
+                      entityType: "property",
+                      entityId: property?.id ?? '',
+                      reviewCardBuilder:
+                          (context, item) =>
+                              PropertyReviewCard(reviewItem: item),
+                      overallWidgetBuilder: (total, rating, details) {
+                        return OverallRatingWidget(
+                          totalReviews: total,
+                          overallRating: rating,
+                          detailedRatings: details,
+                        );
+                      },
+                    ),
 
-                    Obx(() {
-                      final overallCtrl = _overallRatingController;
-                      final reviewCtrl = reviewController;
-
-                      final isOverallLoading =
-                          overallCtrl.isLoading.value &&
-                              overallCtrl.ratingData.value == null;
-                      final isReviewLoading =
-                          reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
-
-                      // 🌀 Show loader if both are still loading
-                      if (isOverallLoading && isReviewLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      // 🈳 Hide section if both are empty and not loading
-                      if (!overallCtrl.isLoading.value &&
-                          !reviewCtrl.isLoading.value &&
-                          (overallCtrl.ratingData.value == null ||
-                              overallCtrl.ratingData.value?.data?.totalReviews ==
-                                  0) &&
-                          reviewCtrl.items.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-
-                      // 🧩 Extract safe data
-                      final overallData = overallCtrl.ratingData.value?.data;
-                      final totalReviews = overallData?.totalReviews ?? 0;
-                      final overallRating = overallData?.overallRating ?? 0.0;
-                      final DetailedRatings detailedRatings =
-                          overallData?.detailedRatings ??
-                              DetailedRatings(
-                                accuracy: 0,
-                                amenities: 0,
-                                cleanliness: 0,
-                                location: 0,
-                                value: 0,
-                              );
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Divider(
-                            indent: 18,
-                            endIndent: 18,
-                            color: ColorRes.leadGreyColor.shade300,
-                          ),
-                          const SizedBox(height: 12),
-                          const TitleWithViewAll(
-                            title: 'Reviews & Ratings',
-                            showViewAll: true,
-                          ),
-                          // 🟡 Overall Rating Section
-                          OverallRatingWidget(
-                            totalReviews: totalReviews,
-                            overallRating: overallRating,
-                            detailedRatings: detailedRatings,
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          // 📋 Review List Section
-                          if (reviewCtrl.items.isNotEmpty) ...[
-                            SizedBox(
-                              height: 220,
-                              child: ListView.separated(
-                                // shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                itemCount: reviewCtrl.items.length,
-                                separatorBuilder:
-                                    (_, __) => const SizedBox(width: 16),
-                                itemBuilder: (context, index) {
-                                  final review = reviewCtrl.items[index];
-                                  return PropertyReviewCard(reviewItem: review);
-                                },
-                              ),
-                            ),
-                          ] else if (!reviewCtrl.isLoading.value &&
-                              totalReviews == 0) ...[
-                            const Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              child: Text(
-                                "No reviews yet",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ),
-                          ],
-                        ],
-                      );
-                    }),
-
-                    Obx(() {
-                      if (!canAddReview.value) {
-                        return SizedBox.shrink();
-                      }
-                      return Column(
-                        children: [
-                          const SizedBox(height: 12),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: NesticoPeButton(
-                              width: double.infinity,
-                              boxShadow: [],
-                              onTap: () async {
-                                if (UserHelper.isGuest) {
-                                  Get.to(() => LoginScreen());
-                                } else {
-                                  final result = await Get.to(
-                                        () => AddReviewScreen(
-                                      entityType: 'property',
-                                      entityId: property?.id ?? '',
-                                    ),
-                                  );
-
-                                  // 👇 Hide button immediately if review was successfully added
-                                  if (result == true) {
-                                    canAddReview.value = false;
-
-                                    reviewController.refreshList();
-                                    _overallRatingController.fetchOverallRating(
-                                      property?.id ?? '',
-                                    );
-                                  }
-                                }
-                              },
-
-                              title: "Add Review",
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
-
-                    const SizedBox(height: 12),
                     Divider(
                       indent: 18,
                       endIndent: 18,
@@ -661,14 +626,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 ),
               ),
               // Comparison floating button
-              UnifiedComparisonFloatingButton(
-                bottom: 16,
-              )
-
+              UnifiedComparisonFloatingButton(bottom: 16),
             ],
           ),
         );
       }),
+
       // bottomNavigationBar: Obx(() {
       //   if (_isLoading.value || property == null) {
       //     return const SizedBox.shrink();
@@ -786,15 +749,138 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       // }),
 
       // Update in your first document (bottomNavigationBar)
-
       bottomNavigationBar: Obx(() {
         if (_isLoading.value || property == null) {
           return const SizedBox.shrink();
         }
         return SafeArea(
-          child: PropertyBottomBar(
-            property: property!,
-            onCallOwner: () {
+          // child: PropertyBottomBar(
+          //   property: property!,
+          //   onCallOwner: () {
+          //     if (UserHelper.isGuest) {
+          //       Get.to(() => LoginScreen());
+          //     } else {
+          //       showModalBottomSheet(
+          //         context: context,
+          //         isScrollControlled: true,
+          //         shape: const RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.vertical(
+          //             top: Radius.circular(20),
+          //           ),
+          //         ),
+          //         builder:
+          //             (context) => DraggableScrollableSheet(
+          //               expand: false,
+          //               minChildSize: 0.45,
+          //               initialChildSize:
+          //                   controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
+          //               maxChildSize:
+          //                   controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
+          //               builder:
+          //                   (
+          //                     context,
+          //                     scrollController,
+          //                   ) => SingleChildScrollView(
+          //                     controller: scrollController,
+          //                     child: Padding(
+          //                       padding: EdgeInsets.only(
+          //                         bottom:
+          //                             MediaQuery.of(context).viewInsets.bottom,
+          //                         left: 16,
+          //                         right: 16,
+          //                         top: 16,
+          //                       ),
+          //                       child: ContactOwnerBottom(
+          //                         property: property ?? Items(),
+          //                         // Check if inquiry already submitted
+          //                         inQuireSubmitted:
+          //                             controller.hasSubmittedInquiry.value,
+          //                         titleText: "Contact the Owner",
+          //                         chatButtonText: "Chat via WhatsApp",
+          //                         formTitle: "Quick Contact Form",
+          //                         contactButtonText: "Send Request",
+          //                         nameIcon: Icons.person,
+          //                         phoneIcon: Icons.phone,
+          //                         emailIcon: Icons.email,
+          //                         allowSellerContact: false,
+          //                         negotiable: false,
+          //                         onChatPressed: () {
+          //                           print("WhatsApp button clicked!");
+          //                         },
+          //                         onContactPressed: (
+          //                           name,
+          //                           phone,
+          //                           email,
+          //                           price,
+          //                           isNegotiable,
+          //                           isAllowAllCondition,
+          //                           planningToBuy,
+          //                         ) async {
+          //                           final inquiry = {
+          //                             "name": name ?? "",
+          //                             "phone": phone ?? "",
+          //                             "email": email ?? "",
+          //                             "agreeToContact":
+          //                                 isAllowAllCondition ?? false,
+          //                             "meta": {
+          //                               if (price != null)
+          //                                 "negotiablePrice": price,
+          //                               if (isNegotiable != null)
+          //                                 "isNegotiable": isNegotiable,
+          //                               if (planningToBuy != null)
+          //                                 "timePeriod": planningToBuy,
+          //                             },
+          //                           };
+          //                           log("Inquiry ${inquiry['meta']}");
+          //
+          //                           final success = await controller.addInquiry(
+          //                             inquiry,
+          //                             property?.id ?? '',
+          //                           );
+          //
+          //                           if (success) {
+          //                             // Mark inquiry as submitted
+          //
+          //                             controller.hasSubmittedInquiry.value =
+          //                                 true;
+          //
+          //                             CustomSnackBar.show(
+          //                               Get.overlayContext!,
+          //                               message: "Inquiry Added Successfully",
+          //                               type: SnackBarType.success,
+          //                             );
+          //
+          //                             Get.back();
+          //                             await controller.getAllInQuireData(
+          //                               widget.property?.id ?? '',
+          //                             );
+          //                           } else {
+          //                             CustomSnackBar.show(
+          //                               Get.overlayContext!,
+          //                               message: "Failed to Submit Inquiry",
+          //                               type: SnackBarType.error,
+          //                             );
+          //                           }
+          //                         },
+          //                         onAllowSellerContactChanged: (value) {
+          //                           print("Allow sellers changed: $value");
+          //                         },
+          //                         onHomeLoanInterestChanged: (value) {
+          //                           print("Home loan interest changed: $value");
+          //                         },
+          //                       ),
+          //                     ),
+          //                   ),
+          //             ),
+          //       );
+          //     }
+          //   },
+          //   onScheduleVisit: () {},
+          // ),
+          child: ReusableBottomBar(
+            mainPriceText: priceManager.totalPriceDisplay,
+            priceBreakdown: priceManager.propertyPriceSummary,
+            onPrimaryAction: () {
               if (UserHelper.isGuest) {
                 Get.to(() => LoginScreen());
               } else {
@@ -806,90 +892,113 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       top: Radius.circular(20),
                     ),
                   ),
-                  builder: (context) => DraggableScrollableSheet(
-                    expand: false,
-                    minChildSize: 0.45,
-                    initialChildSize: controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
-                    maxChildSize: controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
-                    builder: (context, scrollController) => SingleChildScrollView(
-                      controller: scrollController,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                          left: 16,
-                          right: 16,
-                          top: 16,
-                        ),
-                        child: ContactOwnerBottom(
-                          property: property ?? Items(),
-                          // Check if inquiry already submitted
-                          inQuireSubmitted: controller.hasSubmittedInquiry.value,
-                          titleText: "Contact the Owner",
-                          chatButtonText: "Chat via WhatsApp",
-                          formTitle: "Quick Contact Form",
-                          contactButtonText: "Send Request",
-                          nameIcon: Icons.person,
-                          phoneIcon: Icons.phone,
-                          emailIcon: Icons.email,
-                          allowSellerContact: false,
-                          negotiable: false,
-                          onChatPressed: () {
-                            print("WhatsApp button clicked!");
-                          },
-                          onContactPressed: (name, phone, email, price, isNegotiable, isAllowAllCondition, planningToBuy) async {
-                            final inquiry = {
-                              "name": name ?? "",
-                              "phone": phone ?? "",
-                              "email": email ?? "",
-                              "agreeToContact": isAllowAllCondition ?? false,
-                              "meta": {
-                                if (price != null) "negotiablePrice": price,
-                                if (isNegotiable != null) "isNegotiable": isNegotiable,
-                                if (planningToBuy != null) "timePeriod": planningToBuy,
-                              }
-                            };
-                            log("Inquiry ${inquiry['meta']}");
+                  builder:
+                      (context) => DraggableScrollableSheet(
+                        expand: false,
+                        minChildSize: 0.45,
+                        initialChildSize:
+                            controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
+                        maxChildSize:
+                            controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
+                        builder:
+                            (
+                              context,
+                              scrollController,
+                            ) => SingleChildScrollView(
+                              controller: scrollController,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom,
+                                  left: 16,
+                                  right: 16,
+                                  top: 16,
+                                ),
+                                child: ContactOwnerBottom(
+                                  // Check if inquiry already submitted
+                                  inQuireSubmitted:
+                                      controller.hasSubmittedInquiry.value,
+                                  titleText: "Contact the Owner",
+                                  chatButtonText: "Chat via WhatsApp",
+                                  formTitle: "Quick Contact Form",
+                                  contactButtonText: "Send Request",
+                                  nameIcon: Icons.person,
+                                  phoneIcon: Icons.phone,
+                                  emailIcon: Icons.email,
+                                  allowSellerContact: false,
+                                  negotiable: false,
+                                  onChatPressed: () {
+                                    print("WhatsApp button clicked!");
+                                  },
+                                  onContactPressed: (
+                                    name,
+                                    phone,
+                                    email,
+                                    price,
+                                    isNegotiable,
+                                    isAllowAllCondition,
+                                    planningToBuy,
+                                  ) async {
+                                    final inquiry = {
+                                      "name": name ?? "",
+                                      "phone": phone ?? "",
+                                      "email": email ?? "",
+                                      "agreeToContact":
+                                          isAllowAllCondition ?? false,
+                                      "meta": {
+                                        if (price != null)
+                                          "negotiablePrice": price,
+                                        if (isNegotiable != null)
+                                          "isNegotiable": isNegotiable,
+                                        if (planningToBuy != null)
+                                          "timePeriod": planningToBuy,
+                                      },
+                                    };
+                                    log("Inquiry ${inquiry['meta']}");
 
-                            final success = await controller.addInquiry(
-                              inquiry,
-                              property?.id ?? '',
-                            );
+                                    final success = await controller.addInquiry(
+                                      inquiry,
+                                      property?.id ?? '',
+                                    );
 
-                            if (success) {
-                              // Mark inquiry as submitted
+                                    if (success) {
+                                      // Mark inquiry as submitted
 
-                              controller.hasSubmittedInquiry.value = true;
+                                      controller.hasSubmittedInquiry.value =
+                                          true;
 
-                              CustomSnackBar.show(
-                                Get.overlayContext!,
-                                message: "Inquiry Added Successfully",
-                                type: SnackBarType.success,
-                              );
+                                      CustomSnackBar.show(
+                                        Get.overlayContext!,
+                                        message: "Inquiry Added Successfully",
+                                        type: SnackBarType.success,
+                                      );
 
-                              Get.back();
-                              await controller.getAllInQuireData(widget.property?.id??'');
-                            } else {
-                              CustomSnackBar.show(
-                                Get.overlayContext!,
-                                message: "Failed to Submit Inquiry",
-                                type: SnackBarType.error,
-                              );
-                            }
-                          },
-                          onAllowSellerContactChanged: (value) {
-                            print("Allow sellers changed: $value");
-                          },
-                          onHomeLoanInterestChanged: (value) {
-                            print("Home loan interest changed: $value");
-                          },
-                        ),
+                                      Get.back();
+                                      await controller.getAllInQuireData(
+                                        widget.property?.id ?? '',
+                                      );
+                                    } else {
+                                      CustomSnackBar.show(
+                                        Get.overlayContext!,
+                                        message: "Failed to Submit Inquiry",
+                                        type: SnackBarType.error,
+                                      );
+                                    }
+                                  },
+                                  onAllowSellerContactChanged: (value) {
+                                    print("Allow sellers changed: $value");
+                                  },
+                                  onHomeLoanInterestChanged: (value) {
+                                    print("Home loan interest changed: $value");
+                                  },
+                                ),
+                              ),
+                            ),
                       ),
-                    ),
-                  ),
                 );
               }
             },
-            onScheduleVisit: () {},
+            primaryTitle: "View Contact",
           ),
         );
       }),
@@ -952,97 +1061,107 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               ),
 
               /// Right side icons (compare, favorite, share)
+              // Positioned(
+              //   top: 16,
+              //   right: 16,
+              //   child: Row(
+              //     children: [
+              //       // Compare button
+              //       Obx(() {
+              //         final selected = compare.isSelected(id);
+              //         return CircularIcon(
+              //           icon: Icons.compare_arrows,
+              //           backgroundColor:
+              //               selected ? ColorRes.primary : ColorRes.white,
+              //           iconColor: selected ? ColorRes.white : ColorRes.primary,
+              //           onPressed: () {
+              //             final before = compare.count;
+              //             compare.toggle(property!, max: 2);
+              //             final after = compare.count;
+              //
+              //             final ctx = Get.overlayContext;
+              //             if (ctx != null) {
+              //               if (after > before) {
+              //                 CustomSnackBar.show(
+              //                   ctx,
+              //                   message:
+              //                       after == 2
+              //                           ? 'Ready to compare!'
+              //                           : 'Added to compare (${after}/2)',
+              //                   type: SnackBarType.success,
+              //                   actionLabel: after == 2 ? 'Compare Now' : null,
+              //                   onActionPressed:
+              //                       after == 2
+              //                           ? () {
+              //                             Get.back(); // Close snackbar first
+              //                             if (Get.isRegistered<
+              //                               NavigationController
+              //                             >()) {
+              //                               Get.find<NavigationController>()
+              //                                   .changeIndex(2);
+              //                             }
+              //                           }
+              //                           : null,
+              //                 );
+              //               } else if (after < before) {
+              //                 CustomSnackBar.show(
+              //                   ctx,
+              //                   message:
+              //                       after == 0
+              //                           ? 'Removed from compare'
+              //                           : 'Removed from compare (${after}/2)',
+              //                   type: SnackBarType.info,
+              //                 );
+              //               } else if (after == before && before >= 2) {
+              //                 CustomSnackBar.show(
+              //                   ctx,
+              //                   message: 'You can only compare 2 properties',
+              //                   type: SnackBarType.warning,
+              //                 );
+              //               }
+              //             }
+              //           },
+              //         );
+              //       }),
+              //       const SizedBox(width: 12),
+              //       // Favorite button
+              //       Obx(() {
+              //         final isFavorite = favoriteController.favorites.contains(
+              //           id,
+              //         );
+              //         return CircularIcon(
+              //           icon:
+              //               isFavorite
+              //                   ? Icons.favorite
+              //                   : Icons.favorite_border_rounded,
+              //           backgroundColor: ColorRes.white,
+              //           iconColor:
+              //               isFavorite
+              //                   ? ColorRes.redAccentColor
+              //                   : ColorRes.black,
+              //           onPressed: () {
+              //             favoriteController.toggleFavorite(id);
+              //           },
+              //         );
+              //       }),
+              //       const SizedBox(width: 12),
+              //       // Share button
+              //       CircularIcon(
+              //         icon: Icons.share_outlined,
+              //         onPressed: () {},
+              //         backgroundColor: ColorRes.white,
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Positioned(
                 top: 16,
                 right: 16,
-                child: Row(
-                  children: [
-                    // Compare button
-                    Obx(() {
-                      final selected = compare.isSelected(id);
-                      return CircularIcon(
-                        icon: Icons.compare_arrows,
-                        backgroundColor:
-                        selected ? ColorRes.primary : ColorRes.white,
-                        iconColor: selected ? ColorRes.white : ColorRes.primary,
-                        onPressed: () {
-                          final before = compare.count;
-                          compare.toggle(property!, max: 2);
-                          final after = compare.count;
-
-                          final ctx = Get.overlayContext;
-                          if (ctx != null) {
-                            if (after > before) {
-                              CustomSnackBar.show(
-                                ctx,
-                                message:
-                                after == 2
-                                    ? 'Ready to compare!'
-                                    : 'Added to compare (${after}/2)',
-                                type: SnackBarType.success,
-                                actionLabel: after == 2 ? 'Compare Now' : null,
-                                onActionPressed:
-                                after == 2
-                                    ? () {
-                                  Get.back(); // Close snackbar first
-                                  if (Get.isRegistered<
-                                      NavigationController
-                                  >()) {
-                                    Get.find<NavigationController>()
-                                        .changeIndex(2);
-                                  }
-                                }
-                                    : null,
-                              );
-                            } else if (after < before) {
-                              CustomSnackBar.show(
-                                ctx,
-                                message:
-                                after == 0
-                                    ? 'Removed from compare'
-                                    : 'Removed from compare (${after}/2)',
-                                type: SnackBarType.info,
-                              );
-                            } else if (after == before && before >= 2) {
-                              CustomSnackBar.show(
-                                ctx,
-                                message: 'You can only compare 2 properties',
-                                type: SnackBarType.warning,
-                              );
-                            }
-                          }
-                        },
-                      );
-                    }),
-                    const SizedBox(width: 12),
-                    // Favorite button
-                    Obx(() {
-                      final isFavorite = favoriteController.favorites.contains(
-                        id,
-                      );
-                      return CircularIcon(
-                        icon:
-                        isFavorite
-                            ? Icons.favorite
-                            : Icons.favorite_border_rounded,
-                        backgroundColor: ColorRes.white,
-                        iconColor:
-                        isFavorite
-                            ? ColorRes.redAccentColor
-                            : ColorRes.black,
-                        onPressed: () {
-                          favoriteController.toggleFavorite(id);
-                        },
-                      );
-                    }),
-                    const SizedBox(width: 12),
-                    // Share button
-                    CircularIcon(
-                      icon: Icons.share_outlined,
-                      onPressed: () {},
-                      backgroundColor: ColorRes.white,
-                    ),
-                  ],
+                child: EntityActionButtons(
+                  id: property?.id ?? '',
+                  entity: property,
+                  compareController: compare,
+                  favoriteController: favoriteController,
                 ),
               ),
 
@@ -1410,51 +1529,63 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         spacing: 12,
         runSpacing: 12,
         children:
-        rulesList.map((rule) {
-          final isAllowed = rule['allowed'] as bool;
-          return Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 8,
-            ),
-            decoration: BoxDecoration(
-              color:
-              isAllowed
-                  ? ColorRes.green.withOpacity(0.02)
-                  : ColorRes.error.withOpacity(0.02),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  rule['icon'] as IconData,
-                  size: 16,
-                  color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
+            rulesList.map((rule) {
+              final isAllowed = rule['allowed'] as bool;
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
                 ),
-                const SizedBox(width: 6),
-                Text(
-                  rule['label'] as String,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.bodySmall,
-                    fontWeight: AppFontWeights.medium,
-                    color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
+                decoration: BoxDecoration(
+                  color:
+                      isAllowed
+                          ? ColorRes.green.withOpacity(0.02)
+                          : ColorRes.error.withOpacity(0.02),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color:
+                        isAllowed
+                            ? ColorRes.green.withOpacity(0.8)
+                            : ColorRes.error.withOpacity(0.8),
+                    width: 1,
                   ),
                 ),
-                const SizedBox(width: 4),
-                Icon(
-                  isAllowed ? Icons.check_circle : Icons.cancel,
-                  size: 14,
-                  color: isAllowed ? ColorRes.green.withOpacity(0.8) : ColorRes.error.withOpacity(0.8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      rule['icon'] as IconData,
+                      size: 16,
+                      color:
+                          isAllowed
+                              ? ColorRes.green.withOpacity(0.8)
+                              : ColorRes.error.withOpacity(0.8),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      rule['label'] as String,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.medium,
+                        color:
+                            isAllowed
+                                ? ColorRes.green.withOpacity(0.8)
+                                : ColorRes.error.withOpacity(0.8),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      isAllowed ? Icons.check_circle : Icons.cancel,
+                      size: 14,
+                      color:
+                          isAllowed
+                              ? ColorRes.green.withOpacity(0.8)
+                              : ColorRes.error.withOpacity(0.8),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
       ),
     );
   }
@@ -1465,101 +1596,101 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children:
-        rooms.map((room) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: ColorRes.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: ColorRes.leadGreyColor.shade300),
-              boxShadow: [
-                BoxShadow(
-                  color: ColorRes.black.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      room.roomType?.toUpperCase() ?? 'Room',
-                      style:  TextStyle(
-                        fontSize: AppFontSizes.body,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textPrimary,
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorRes.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${Formatter.formatPrice(room.rent??0)} / month',
-                        style: const TextStyle(
-                          fontSize: AppFontSizes.small,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.primary,
-                        ),
-                      ),
+            rooms.map((room) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorRes.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-
-                if (room.securityDeposit != null &&
-                    room.securityDeposit! > 0) ...[
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.security,
-                        size: 14,
-                        color: ColorRes.leadGreyColor,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Security Deposit: ${Formatter.formatPrice(room.securityDeposit??0)}',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.small,
-                          color: ColorRes.leadGreyColor.shade700,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          room.roomType?.toUpperCase() ?? 'Room',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
                         ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${Formatter.formatPrice(room.rent ?? 0)} / month',
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    if (room.securityDeposit != null &&
+                        room.securityDeposit! > 0) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.security,
+                            size: 14,
+                            color: ColorRes.leadGreyColor,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Security Deposit: ${Formatter.formatPrice(room.securityDeposit ?? 0)}',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              color: ColorRes.leadGreyColor.shade700,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                ],
 
-                // Room Facilities
-                if (room.roomFacilityInfo != null) ...[
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Facilities:',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.bodySmall,
-                      fontWeight: AppFontWeights.semiBold,
-                      color: ColorRes.blackShade87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _buildFacilityChips(room.roomFacilityInfo!),
-                  ),
-                ],
-              ],
-            ),
-          );
-        }).toList(),
+                    // Room Facilities
+                    if (room.roomFacilityInfo != null) ...[
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Facilities:',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.blackShade87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _buildFacilityChips(room.roomFacilityInfo!),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            }).toList(),
       ),
     );
   }
@@ -1631,222 +1762,222 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     );
   }
 
-// Widget _buildTitleSection(Items property) {
-//   return Padding(
-//     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Row(
-//           crossAxisAlignment: CrossAxisAlignment.baseline,
-//           textBaseline: TextBaseline.alphabetic,
-//           children: [
-//             // Title
-//             Expanded(
-//               child: Text(
-//                 property.title ?? "-",
-//                 style: TextStyle(
-//                   fontSize: 17,
-//                   fontWeight: AppFontWeights.semiBold,
-//                   color: ColorRes.textPrimary,
-//                 ),
-//                 maxLines: 2,
-//                 overflow: TextOverflow.ellipsis,
-//               ),
-//             ),
+  // Widget _buildTitleSection(Items property) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           crossAxisAlignment: CrossAxisAlignment.baseline,
+  //           textBaseline: TextBaseline.alphabetic,
+  //           children: [
+  //             // Title
+  //             Expanded(
+  //               child: Text(
+  //                 property.title ?? "-",
+  //                 style: TextStyle(
+  //                   fontSize: 17,
+  //                   fontWeight: AppFontWeights.semiBold,
+  //                   color: ColorRes.textPrimary,
+  //                 ),
+  //                 maxLines: 2,
+  //                 overflow: TextOverflow.ellipsis,
+  //               ),
+  //             ),
 
-//             const SizedBox(width: 8),
-//             Row(
-//               children: [
-//                 Icon(Icons.star, size: 16, color: Colors.amber),
-//                 const SizedBox(width: 4),
-//                 Text(
-//                   "4.5",
-//                   style: TextStyle(
-//                     fontSize: 15,
-//                     fontWeight: AppFontWeights.semiBold,
-//                     color: Colors.black,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ],
-//         ),
+  //             const SizedBox(width: 8),
+  //             Row(
+  //               children: [
+  //                 Icon(Icons.star, size: 16, color: Colors.amber),
+  //                 const SizedBox(width: 4),
+  //                 Text(
+  //                   "4.5",
+  //                   style: TextStyle(
+  //                     fontSize: 15,
+  //                     fontWeight: AppFontWeights.semiBold,
+  //                     color: Colors.black,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
 
-//         const SizedBox(height: 4),
-//         Row(
-//           crossAxisAlignment: CrossAxisAlignment.center,
-//           children: [
-//             // Icon(Icons.location_on_rounded, size: 16, color: ColorRes.leadGreyColor[600]),
-//             // const SizedBox(width: 4),
-//             Expanded(
-//               child: Text(
-//                 '${property.city ?? '-'}, ${property.state ?? "-"}',
-//                 style: TextStyle(fontSize: 13, color: ColorRes.leadGreyColor[600]),
-//                 overflow: TextOverflow.ellipsis,
-//               ),
-//             ),
-//           ],
-//         ),
+  //         const SizedBox(height: 4),
+  //         Row(
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           children: [
+  //             // Icon(Icons.location_on_rounded, size: 16, color: ColorRes.leadGreyColor[600]),
+  //             // const SizedBox(width: 4),
+  //             Expanded(
+  //               child: Text(
+  //                 '${property.city ?? '-'}, ${property.state ?? "-"}',
+  //                 style: TextStyle(fontSize: 13, color: ColorRes.leadGreyColor[600]),
+  //                 overflow: TextOverflow.ellipsis,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
 
-//         const SizedBox(height: 4),
+  //         const SizedBox(height: 4),
 
-//         // Type + See on Map Row
-//         Row(
-//           children: [
-//             // Type Chip
-//             if (property.listingType != null)
-//               Container(
-//                 padding: const EdgeInsets.symmetric(
-//                   horizontal: 10,
-//                   vertical: 4,
-//                 ),
-//                 decoration: BoxDecoration(
-//                   color: ColorRes.primary.withOpacity(0.15),
-//                   borderRadius: BorderRadius.circular(AppRadius.small),
-//                 ),
-//                 child: Text(
-//                   property.listingType!.toUpperCase(),
-//                   style: TextStyle(
-//                     fontSize: 12,
-//                     fontWeight: AppFontWeights.semiBold,
-//                     color: ColorRes.primary,
-//                   ),
-//                 ),
-//               ),
+  //         // Type + See on Map Row
+  //         Row(
+  //           children: [
+  //             // Type Chip
+  //             if (property.listingType != null)
+  //               Container(
+  //                 padding: const EdgeInsets.symmetric(
+  //                   horizontal: 10,
+  //                   vertical: 4,
+  //                 ),
+  //                 decoration: BoxDecoration(
+  //                   color: ColorRes.primary.withOpacity(0.15),
+  //                   borderRadius: BorderRadius.circular(AppRadius.small),
+  //                 ),
+  //                 child: Text(
+  //                   property.listingType!.toUpperCase(),
+  //                   style: TextStyle(
+  //                     fontSize: 12,
+  //                     fontWeight: AppFontWeights.semiBold,
+  //                     color: ColorRes.primary,
+  //                   ),
+  //                 ),
+  //               ),
 
-//             const Spacer(),
+  //             const Spacer(),
 
-//             // See on Map Button
-//             GestureDetector(
-//               onTap: () {
-//                 // TODO: Add map navigation logic
-//               },
-//               child: Container(
-//                 padding: const EdgeInsets.symmetric(
-//                   horizontal: 10,
-//                   vertical: 4,
-//                 ),
-//                 decoration: BoxDecoration(
-//                   color: ColorRes.primary.withOpacity(0.1),
-//                   borderRadius: BorderRadius.circular(AppRadius.small),
-//                 ),
-//                 child: Row(
-//                   mainAxisSize: MainAxisSize.min,
-//                   children: [
-//                     Icon(
-//                       Icons.location_pin,
-//                       size: 16,
-//                       color: ColorRes.primary,
-//                     ),
-//                     const SizedBox(width: 4),
-//                     Text(
-//                       "See on Map",
-//                       style: TextStyle(
-//                         fontSize: 12,
-//                         fontWeight: AppFontWeights.semiBold,
-//                         color: ColorRes.primary,
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ],
-//     ),
-//   );
-// }
+  //             // See on Map Button
+  //             GestureDetector(
+  //               onTap: () {
+  //                 // TODO: Add map navigation logic
+  //               },
+  //               child: Container(
+  //                 padding: const EdgeInsets.symmetric(
+  //                   horizontal: 10,
+  //                   vertical: 4,
+  //                 ),
+  //                 decoration: BoxDecoration(
+  //                   color: ColorRes.primary.withOpacity(0.1),
+  //                   borderRadius: BorderRadius.circular(AppRadius.small),
+  //                 ),
+  //                 child: Row(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   children: [
+  //                     Icon(
+  //                       Icons.location_pin,
+  //                       size: 16,
+  //                       color: ColorRes.primary,
+  //                     ),
+  //                     const SizedBox(width: 4),
+  //                     Text(
+  //                       "See on Map",
+  //                       style: TextStyle(
+  //                         fontSize: 12,
+  //                         fontWeight: AppFontWeights.semiBold,
+  //                         color: ColorRes.primary,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-// Widget _buildPriceAndType() {
-//   return Padding(
-//     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-//     child: Row(
-//       children: [
-//         const Text(
-//           "₹8.9 Cr",
-//           style: TextStyle(
-//             fontSize: AppFontSizes.large,
-//             fontWeight: AppFontWeights.semiBold,
-//           ),
-//         ),
-//         const SizedBox(width: 16),
-//         Chip(
-//           label: const Text("Sell - apartment"),
-//           backgroundColor: ColorRes.orangeColor.shade50,
-//         ),
-//       ],
-//     ),
-//   );
-// }
-//
-// Widget _buildFeatureChips() {
-//   return const Padding(
-//     padding: EdgeInsets.all(16),
-//     child: Wrap(
-//       spacing: 12,
-//       runSpacing: 8,
-//       children: [
-//         Chip(label: Text("4 BHK")),
-//         Chip(label: Text("5 Bath")),
-//         Chip(label: Text("2 Balcony")),
-//         Chip(label: Text("Floor: 34/34")),
-//         Chip(label: Text("Area: 3900 sqft")),
-//         Chip(label: Text("Facing: West")),
-//       ],
-//     ),
-//   );
-// }
-//
-// Widget _buildSection(String title, String content) {
-//   return Padding(
-//     padding: const EdgeInsets.all(16.0),
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text(
-//           title,
-//           style: const TextStyle(
-//             fontSize: AppFontSizes.large,
-//             fontWeight: FontWeight.bold,
-//           ),
-//         ),
-//         const SizedBox(height: 8),
-//         Text(content),
-//       ],
-//     ),
-//   );
-// }
-//
-// Widget _buildAmenitiesSection() {
-//   final List<String> amenities = [
-//     "Infinity Pool",
-//     "Sky Lounge",
-//     "24x7 Concierge",
-//     "Private Elevator",
-//     "Smart Lighting",
-//     "Solar Panels",
-//   ];
-//   return Padding(
-//     padding: const EdgeInsets.all(16),
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         const Text(
-//           "Amenities",
-//           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//         ),
-//         const SizedBox(height: 8),
-//         Wrap(
-//           spacing: 12,
-//           runSpacing: 8,
-//           children: amenities.map((e) => Chip(label: Text(e))).toList(),
-//         ),
-//       ],
-//     ),
-//   );
-// }
+  // Widget _buildPriceAndType() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //     child: Row(
+  //       children: [
+  //         const Text(
+  //           "₹8.9 Cr",
+  //           style: TextStyle(
+  //             fontSize: AppFontSizes.large,
+  //             fontWeight: AppFontWeights.semiBold,
+  //           ),
+  //         ),
+  //         const SizedBox(width: 16),
+  //         Chip(
+  //           label: const Text("Sell - apartment"),
+  //           backgroundColor: ColorRes.orangeColor.shade50,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildFeatureChips() {
+  //   return const Padding(
+  //     padding: EdgeInsets.all(16),
+  //     child: Wrap(
+  //       spacing: 12,
+  //       runSpacing: 8,
+  //       children: [
+  //         Chip(label: Text("4 BHK")),
+  //         Chip(label: Text("5 Bath")),
+  //         Chip(label: Text("2 Balcony")),
+  //         Chip(label: Text("Floor: 34/34")),
+  //         Chip(label: Text("Area: 3900 sqft")),
+  //         Chip(label: Text("Facing: West")),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildSection(String title, String content) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16.0),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           title,
+  //           style: const TextStyle(
+  //             fontSize: AppFontSizes.large,
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         Text(content),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildAmenitiesSection() {
+  //   final List<String> amenities = [
+  //     "Infinity Pool",
+  //     "Sky Lounge",
+  //     "24x7 Concierge",
+  //     "Private Elevator",
+  //     "Smart Lighting",
+  //     "Solar Panels",
+  //   ];
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const Text(
+  //           "Amenities",
+  //           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         Wrap(
+  //           spacing: 12,
+  //           runSpacing: 8,
+  //           children: amenities.map((e) => Chip(label: Text(e))).toList(),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class CircularIcon extends StatelessWidget {
@@ -1885,286 +2016,285 @@ class CircularIcon extends StatelessWidget {
   }
 }
 
-class PropertyBottomBar extends StatelessWidget {
-  final Items property;
-
-  // final String price;
-  final VoidCallback onCallOwner;
-  final VoidCallback onScheduleVisit;
-
-  const PropertyBottomBar({
-    super.key,
-    // required this.price,
-    required this.onCallOwner,
-    required this.onScheduleVisit,
-    required this.property,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final price = PropertyPriceManager(
-      listingType: property.listingType ?? '',
-      financialInfo: property.propertyDetails?.financialInfo ?? FinancialInfo(),
-      pgInfo: property.propertyDetails?.pgInfo, // Added for PG support
-    );
-    return Container(
-      height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      decoration: const BoxDecoration(
-        color: ColorRes.white,
-        boxShadow: [
-          BoxShadow(
-            color: ColorRes.blackShade12,
-            blurRadius: 6,
-            offset: Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                price.totalPriceDisplay,
-                style: const TextStyle(
-                  fontSize: AppFontSizes.large,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.black,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              GestureDetector(
-                onTap: () {
-                  Get.bottomSheet(
-                    PricingBottomSheet(
-                      financialInfo:
-                      property.propertyDetails?.financialInfo ??
-                          FinancialInfo(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  'See Pricing in Detail',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.extraSmall,
-                    color: ColorRes.primary,
-                    fontWeight: AppFontWeights.semiBold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SizedBox(
-                width: 140,
-                child: NesticoPeButton(
-
-                  onTap: onCallOwner,
-                  title: "View Contact",
-                ),
-              ),
-              // const SizedBox(width: 6),
-              // SizedBox(
-              //   width: 50,
-              //   child: ElevatedButton(
-              //     onPressed: () {},
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: ColorRes.propertyBg,
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(
-              //           AppRadius.medium,
-              //         ), // Adjust for more/less curve
-              //       ),
-              //       padding: const EdgeInsets.symmetric(
-              //         vertical: 16,
-              //       ), // Optional: for better touch target
-              //     ),
-              //     child: const Icon(Icons.phone_outlined),
-              //   ),
-              // ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class PricingBottomSheet extends StatelessWidget {
-  final FinancialInfo? financialInfo;
-
-  const PricingBottomSheet({super.key, required this.financialInfo});
-
-  @override
-  Widget build(BuildContext context) {
-    if (financialInfo == null) {
-      return const SizedBox.shrink(); // nothing if null
-    }
-
-    final info = financialInfo!;
-
-    // Build a list of rows dynamically
-    final List<Widget> rows = [];
-
-    if (_isValid(info.price)) {
-      rows.add(_priceRow("Property Price", info.price.toStringAsFixed(2)));
-    }
-    if (_isValid(info.maintenance)) {
-      rows.add(
-        _priceRow(
-          "Maintenance (Monthly)",
-          info.maintenance!.toStringAsFixed(2),
-        ),
-      );
-    }
-    if (_isValid(info.propertyRentPerMonth)) {
-      rows.add(
-        _priceRow("Rent / Month", info.propertyRentPerMonth.toStringAsFixed(2)),
-      );
-    }
-    if (_isValid(info.pricePerSqft)) {
-      rows.add(
-        _priceRow("Price per Sqft", info.pricePerSqft.toStringAsFixed(2)),
-      );
-    }
-    if (_isValid(info.brokerCommission)) {
-      rows.add(
-        _priceRow(
-          "Broker Commission",
-          info.brokerCommission.toStringAsFixed(2),
-        ),
-      );
-    }
-    if (_isValid(info.propertySecurityDeposit)) {
-      rows.add(
-        _priceRow(
-          "Security Deposit",
-          _formatCurrency(info.propertySecurityDeposit),
-        ),
-      );
-    }
-    if (info.negotiable) {
-      rows.add(_priceRow("Negotiable", "Yes"));
-    }
-
-    // Calculate total only if there are meaningful values
-    final total = _totalPrice(info);
-    if (total > 0) {
-      rows.add(const Divider(height: 28));
-      rows.add(
-        _priceRow("Total Price", _formatCurrency(total), isHighlight: true),
-      );
-    }
-
-    // If no rows, don’t show sheet
-    if (rows.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: const BoxDecoration(
-          color: ColorRes.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Drag Handle
-            Center(
-              child: Container(
-                width: 40,
-                height: 5,
-                margin: const EdgeInsets.only(bottom: 12),
-                decoration: BoxDecoration(
-                  color: ColorRes.leadGreyColor.shade400,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-
-            const Text(
-              "Pricing Details",
-              style: TextStyle(
-                fontSize: AppFontSizes.subtitle,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            ...rows,
-
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _priceRow(String label, String value, {bool isHighlight = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
-              fontWeight:
-              isHighlight
-                  ? AppFontWeights.semiBold
-                  : AppFontWeights.regular,
-              color:
-              isHighlight
-                  ? ColorRes.black
-                  : ColorRes.leadGreyColor.shade700,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
-              fontWeight:
-              isHighlight
-                  ? AppFontWeights.extraBold
-                  : AppFontWeights.medium,
-              color: isHighlight ? ColorRes.green : ColorRes.black,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  bool _isValid(num? value) {
-    return value != null && value > 0;
-  }
-
-  int _totalPrice(FinancialInfo info) {
-    try {
-      return (info.price +
-          (info.brokerCommission) +
-          (info.propertySecurityDeposit))
-          .toInt();
-    } catch (_) {
-      return 0;
-    }
-  }
-
-  static String _formatCurrency(num? value) {
-    if (value == null || value == 0) return "—";
-    return "₹${value.toStringAsFixed(0)}";
-  }
-}
+// class PropertyBottomBar extends StatelessWidget {
+//   final Items property;
+//
+//   // final String price;
+//   final VoidCallback onCallOwner;
+//   final VoidCallback onScheduleVisit;
+//
+//   const PropertyBottomBar({
+//     super.key,
+//     // required this.price,
+//     required this.onCallOwner,
+//     required this.onScheduleVisit,
+//     required this.property,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final price = PropertyPriceManager(
+//       listingType: property.listingType ?? '',
+//       financialInfo: property.propertyDetails?.financialInfo ?? FinancialInfo(),
+//       pgInfo: property.propertyDetails?.pgInfo, // Added for PG support
+//     );
+//     return Container(
+//       height: 80,
+//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+//       decoration: const BoxDecoration(
+//         color: ColorRes.white,
+//         boxShadow: [
+//           BoxShadow(
+//             color: ColorRes.blackShade12,
+//             blurRadius: 6,
+//             offset: Offset(0, -2),
+//           ),
+//         ],
+//       ),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Text(
+//                 price.totalPriceDisplay,
+//                 style: const TextStyle(
+//                   fontSize: AppFontSizes.large,
+//                   fontWeight: AppFontWeights.semiBold,
+//                   color: ColorRes.black,
+//                 ),
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//               GestureDetector(
+//                 onTap: () {
+//                   Get.bottomSheet(
+//                     PricingBottomSheet(
+//                       financialInfo:
+//                           property.propertyDetails?.financialInfo ??
+//                           FinancialInfo(),
+//                     ),
+//                   );
+//                 },
+//                 child: const Text(
+//                   'See Pricing in Detail',
+//                   style: TextStyle(
+//                     fontSize: AppFontSizes.extraSmall,
+//                     color: ColorRes.primary,
+//                     fontWeight: AppFontWeights.semiBold,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.end,
+//             children: [
+//               SizedBox(
+//                 width: 140,
+//                 child: NesticoPeButton(
+//                   onTap: onCallOwner,
+//                   title: "View Contact",
+//                 ),
+//               ),
+//               // const SizedBox(width: 6),
+//               // SizedBox(
+//               //   width: 50,
+//               //   child: ElevatedButton(
+//               //     onPressed: () {},
+//               //     style: ElevatedButton.styleFrom(
+//               //       backgroundColor: ColorRes.propertyBg,
+//               //       shape: RoundedRectangleBorder(
+//               //         borderRadius: BorderRadius.circular(
+//               //           AppRadius.medium,
+//               //         ), // Adjust for more/less curve
+//               //       ),
+//               //       padding: const EdgeInsets.symmetric(
+//               //         vertical: 16,
+//               //       ), // Optional: for better touch target
+//               //     ),
+//               //     child: const Icon(Icons.phone_outlined),
+//               //   ),
+//               // ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// class PricingBottomSheet extends StatelessWidget {
+//   final FinancialInfo? financialInfo;
+//
+//   const PricingBottomSheet({super.key, required this.financialInfo});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     if (financialInfo == null) {
+//       return const SizedBox.shrink(); // nothing if null
+//     }
+//
+//     final info = financialInfo!;
+//
+//     // Build a list of rows dynamically
+//     final List<Widget> rows = [];
+//
+//     if (_isValid(info.price)) {
+//       rows.add(_priceRow("Property Price", info.price.toStringAsFixed(2)));
+//     }
+//     if (_isValid(info.maintenance)) {
+//       rows.add(
+//         _priceRow(
+//           "Maintenance (Monthly)",
+//           info.maintenance!.toStringAsFixed(2),
+//         ),
+//       );
+//     }
+//     if (_isValid(info.propertyRentPerMonth)) {
+//       rows.add(
+//         _priceRow("Rent / Month", info.propertyRentPerMonth.toStringAsFixed(2)),
+//       );
+//     }
+//     if (_isValid(info.pricePerSqft)) {
+//       rows.add(
+//         _priceRow("Price per Sqft", info.pricePerSqft.toStringAsFixed(2)),
+//       );
+//     }
+//     if (_isValid(info.brokerCommission)) {
+//       rows.add(
+//         _priceRow(
+//           "Broker Commission",
+//           info.brokerCommission.toStringAsFixed(2),
+//         ),
+//       );
+//     }
+//     if (_isValid(info.propertySecurityDeposit)) {
+//       rows.add(
+//         _priceRow(
+//           "Security Deposit",
+//           _formatCurrency(info.propertySecurityDeposit),
+//         ),
+//       );
+//     }
+//     if (info.negotiable) {
+//       rows.add(_priceRow("Negotiable", "Yes"));
+//     }
+//
+//     // Calculate total only if there are meaningful values
+//     final total = _totalPrice(info);
+//     if (total > 0) {
+//       rows.add(const Divider(height: 28));
+//       rows.add(
+//         _priceRow("Total Price", _formatCurrency(total), isHighlight: true),
+//       );
+//     }
+//
+//     // If no rows, don’t show sheet
+//     if (rows.isEmpty) {
+//       return const SizedBox.shrink();
+//     }
+//
+//     return SafeArea(
+//       child: Container(
+//         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+//         decoration: const BoxDecoration(
+//           color: ColorRes.white,
+//           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+//         ),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             // Drag Handle
+//             Center(
+//               child: Container(
+//                 width: 40,
+//                 height: 5,
+//                 margin: const EdgeInsets.only(bottom: 12),
+//                 decoration: BoxDecoration(
+//                   color: ColorRes.leadGreyColor.shade400,
+//                   borderRadius: BorderRadius.circular(10),
+//                 ),
+//               ),
+//             ),
+//
+//             const Text(
+//               "Pricing Details",
+//               style: TextStyle(
+//                 fontSize: AppFontSizes.subtitle,
+//                 fontWeight: AppFontWeights.semiBold,
+//                 color: ColorRes.textPrimary,
+//               ),
+//             ),
+//             const SizedBox(height: 16),
+//
+//             ...rows,
+//
+//             const SizedBox(height: 20),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _priceRow(String label, String value, {bool isHighlight = false}) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 6),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           Text(
+//             label,
+//             style: TextStyle(
+//               fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
+//               fontWeight:
+//                   isHighlight
+//                       ? AppFontWeights.semiBold
+//                       : AppFontWeights.regular,
+//               color:
+//                   isHighlight
+//                       ? ColorRes.black
+//                       : ColorRes.leadGreyColor.shade700,
+//             ),
+//           ),
+//           Text(
+//             value,
+//             style: TextStyle(
+//               fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
+//               fontWeight:
+//                   isHighlight
+//                       ? AppFontWeights.extraBold
+//                       : AppFontWeights.medium,
+//               color: isHighlight ? ColorRes.green : ColorRes.black,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   bool _isValid(num? value) {
+//     return value != null && value > 0;
+//   }
+//
+//   int _totalPrice(FinancialInfo info) {
+//     try {
+//       return (info.price +
+//               (info.brokerCommission) +
+//               (info.propertySecurityDeposit))
+//           .toInt();
+//     } catch (_) {
+//       return 0;
+//     }
+//   }
+//
+//   static String _formatCurrency(num? value) {
+//     if (value == null || value == 0) return "—";
+//     return "₹${value.toStringAsFixed(0)}";
+//   }
+// }
 
 class Facilities extends StatelessWidget {
   final Items property;
@@ -2188,18 +2318,18 @@ class Facilities extends StatelessWidget {
         spacing: 12,
         runSpacing: 12,
         children:
-        highlights.map((item) {
-          // final key = item.keys.first;
-          // final value = item.values.first;
-          // final icon = iconMap[key] ?? Icons.info_outline;
+            highlights.map((item) {
+              // final key = item.keys.first;
+              // final value = item.values.first;
+              // final icon = iconMap[key] ?? Icons.info_outline;
 
-          return FacilitiesCard(
-            label: item.value,
-            icon: item.icon ?? Icons.info_outline,
-            bgColor: bgColor,
-            foreColor: txtColor,
-          );
-        }).toList(),
+              return FacilitiesCard(
+                label: item.value,
+                icon: item.icon ?? Icons.info_outline,
+                bgColor: bgColor,
+                foreColor: txtColor,
+              );
+            }).toList(),
       ),
     );
   }
@@ -2268,7 +2398,7 @@ class Details extends StatelessWidget {
 
     return Obx(() {
       final isExpanded = controller.isExpanded.value;
-      final visibleDetails = details ;
+      final visibleDetails = details;
       // final visibleDetails = isExpanded ? details : details.take(4).toList();
 
       final screenWidth = MediaQuery.of(context).size.width;
@@ -2284,39 +2414,39 @@ class Details extends StatelessWidget {
               spacing: 20,
               runSpacing: 12,
               children:
-              visibleDetails.map((entry) {
-                final title = entry.keys.first;
-                final value = entry.values.first;
+                  visibleDetails.map((entry) {
+                    final title = entry.keys.first;
+                    final value = entry.values.first;
 
-                return SizedBox(
-                  width: itemWidth,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.caption,
-                          fontWeight: AppFontWeights.medium,
-                          color: ColorRes.leadGreyColor[700],
-                        ),
+                    return SizedBox(
+                      width: itemWidth,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.caption,
+                              fontWeight: AppFontWeights.medium,
+                              color: ColorRes.leadGreyColor[700],
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            value,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.blackShade87,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        value,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: const TextStyle(
-                          fontSize: AppFontSizes.small,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.blackShade87,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
+                    );
+                  }).toList(),
             ),
           ),
 
@@ -2369,74 +2499,74 @@ class AmenitiesSection extends StatelessWidget {
         spacing: 12,
         runSpacing: 12,
         children:
-        amenities.map((item) {
-          print("Items: $item");
-          return Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 8,
-            ),
-            decoration: BoxDecoration(
-              // color: bgColor,
-              color: ColorRes.overlay.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  IconManager.getAmenitiesIcon(item),
-                  size: 16,
-                  color: txtColor,
+            amenities.map((item) {
+              print("Items: $item");
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  StringManager.formatLabel(item) ?? ' -',
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.medium,
-                    // color: txtColor,
-                    color: ColorRes.textColor,
-                  ),
+                decoration: BoxDecoration(
+                  // color: bgColor,
+                  color: ColorRes.overlay.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(24),
                 ),
-              ],
-            ),
-          );
-        }).toList(),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      IconManager.getAmenitiesIcon(item),
+                      size: 16,
+                      color: txtColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      StringManager.formatLabel(item) ?? ' -',
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.medium,
+                        // color: txtColor,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
       ),
     );
   }
 }
 
-class AddressAndMapDetails extends StatelessWidget {
-  final Items property;
-
-  const AddressAndMapDetails({super.key, required this.property});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.location_on_rounded, size: 16),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              "${property.address ?? ''}, ${property.city ?? ''}, ${property.state ?? ''}, ${property.zipCode ?? ''},",
-              style: const TextStyle(
-                fontSize: AppFontSizes.caption,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-    );
-  }
-}
+// class AddressAndMapDetails extends StatelessWidget {
+//   final Items property;
+//
+//   const AddressAndMapDetails({super.key, required this.property});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 16),
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           const Icon(Icons.location_on_rounded, size: 16),
+//           const SizedBox(width: 8),
+//           Flexible(
+//             child: Text(
+//               "${property.address ?? ''}, ${property.city ?? ''}, ${property.state ?? ''}, ${property.zipCode ?? ''},",
+//               style: const TextStyle(
+//                 fontSize: AppFontSizes.caption,
+//                 fontWeight: FontWeight.w400,
+//               ),
+//             ),
+//           ),
+//           const SizedBox(width: 8),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class NearbyPropertyDetails extends StatelessWidget {
   final List<NearbyLocations> nearbyLocations;
@@ -2583,426 +2713,6 @@ class RecommendedInsights extends StatelessWidget {
 }
 
 // Category-based Nearby Location Section with Google Map UI
-class NearbyLocationMapSection extends StatefulWidget {
-  final String address;
-  final GoogleMapController mapController;
-
-  const NearbyLocationMapSection({
-    super.key,
-    required this.address,
-    required this.mapController,
-  });
-
-  @override
-  State<NearbyLocationMapSection> createState() =>
-      _NearbyLocationMapSectionState();
-}
-
-class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
-  gmaps.GoogleMapController? _googleMapController;
-
-  @override
-  void dispose() {
-    _googleMapController?.dispose();
-    super.dispose();
-  }
-
-  // Build markers based on current data (without setState)
-  Set<gmaps.Marker> _buildMarkers() {
-    final latLng = widget.mapController.propertyLatLng.value;
-    if (latLng == null) return {};
-
-    final markers = <gmaps.Marker>{};
-
-    // Add property marker (Blue)
-    markers.add(
-      gmaps.Marker(
-        markerId: const gmaps.MarkerId('property'),
-        position: gmaps.LatLng(latLng['lat']!, latLng['lng']!),
-        infoWindow: gmaps.InfoWindow(
-          title: 'Property Location',
-          snippet: widget.address,
-        ),
-        icon: gmaps.BitmapDescriptor.defaultMarkerWithHue(
-          gmaps.BitmapDescriptor.hueBlue,
-        ),
-      ),
-    );
-
-    // Add nearby places markers (Red)
-    final categoryPlaces = widget.mapController.categoryPlaces;
-    for (var i = 0; i < categoryPlaces.length; i++) {
-      final place = categoryPlaces[i];
-      if (place['lat'] != null && place['lng'] != null) {
-        markers.add(
-          gmaps.Marker(
-            markerId: gmaps.MarkerId('place_$i'),
-            position: gmaps.LatLng(place['lat'], place['lng']),
-            infoWindow: gmaps.InfoWindow(
-              title: place['name'] ?? 'Location',
-              snippet: place['distanceText'] ?? '',
-            ),
-            icon: gmaps.BitmapDescriptor.defaultMarkerWithHue(
-              gmaps.BitmapDescriptor.hueRed,
-            ),
-          ),
-        );
-      }
-    }
-
-    return markers;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Map Preview with Categories
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: ColorRes.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: ColorRes.leadGreyColor.shade300,
-              width: 1,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Google Map with property marker
-              Obx(() {
-                final latLng = widget.mapController.propertyLatLng.value;
-                final categoryPlaces = widget.mapController.categoryPlaces;
-
-                // Build markers based on current data
-                final markers = _buildMarkers();
-
-                if (latLng == null) {
-                  return Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: ColorRes.leadGreyColor.shade200,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(12),
-                      ),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.map,
-                            size: 48,
-                            color: ColorRes.leadGreyColor.shade400,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            widget.address,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.caption,
-                              color: ColorRes.leadGreyColor.shade600,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
-                final initialPosition = gmaps.LatLng(
-                  latLng['lat']!,
-                  latLng['lng']!,
-                );
-
-                return ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(12),
-                  ),
-                  child: SizedBox(
-                    height: 200,
-                    child: gmaps.GoogleMap(
-                      initialCameraPosition: gmaps.CameraPosition(
-                        target: initialPosition,
-                        zoom: 14.5,
-                      ),
-                      markers: markers,
-                      // Enable all gestures
-                      scrollGesturesEnabled: true,
-                      zoomGesturesEnabled: true,
-                      tiltGesturesEnabled: true,
-                      rotateGesturesEnabled: true,
-                      // Map controls
-                      zoomControlsEnabled: false,
-                      mapToolbarEnabled: false,
-                      myLocationButtonEnabled: false,
-                      compassEnabled: true,
-                      // Map type
-                      mapType: gmaps.MapType.normal,
-                      // Fix gesture conflicts with parent scroll
-                      gestureRecognizers:
-                      <Factory<OneSequenceGestureRecognizer>>{
-                        Factory<OneSequenceGestureRecognizer>(
-                              () => EagerGestureRecognizer(),
-                        ),
-                      },
-                      onMapCreated: (controller) {
-                        _googleMapController = controller;
-                      },
-                    ),
-                  ),
-                );
-              }),
-
-              const SizedBox(height: 12),
-
-              // Category Tabs
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Schools around your location',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.medium,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildCategoryButton(
-                            'Education',
-                            Icons.school_outlined,
-                            'school',
-                          ),
-                          const SizedBox(width: 8),
-                          _buildCategoryButton(
-                            'Healthcare',
-                            Icons.local_hospital_outlined,
-                            'hospital',
-                          ),
-                          const SizedBox(width: 8),
-                          _buildCategoryButton(
-                            'Food & Dining',
-                            Icons.restaurant_outlined,
-                            'restaurant',
-                          ),
-                          const SizedBox(width: 8),
-                          _buildCategoryButton(
-                            'Shopping',
-                            Icons.shopping_bag_outlined,
-                            'shopping_mall',
-                          ),
-                          const SizedBox(width: 8),
-                          _buildCategoryButton(
-                            'Entertainment',
-                            Icons.movie_outlined,
-                            'movie_theater',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // Selected Category Places List
-              Obx(() {
-                if (widget.mapController.isLoading.value) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-
-                if (widget.mapController.categoryPlaces.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  children: [
-                    Divider(height: 1, color: ColorRes.grey.withOpacity(0.3)),
-                    const SizedBox(height: 8),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      itemCount:
-                      widget.mapController.categoryPlaces.length > 5
-                          ? 5
-                          : widget.mapController.categoryPlaces.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (context, index) {
-                        final place =
-                        widget.mapController.categoryPlaces[index];
-                        return GestureDetector(
-                          onTap: () {
-                            ContactHelper.openInGoogleMaps(place['address']);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: ColorRes.background,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.primary.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    Icons.location_on,
-                                    color: ColorRes.primary,
-                                    size: 20,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        place['name'] ?? '-',
-                                        style: const TextStyle(
-                                          fontWeight: AppFontWeights.semiBold,
-                                          fontSize: AppFontSizes.small,
-                                          color: ColorRes.textPrimary,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            place['distanceText'] ?? '-',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.caption,
-                                              color:
-                                              ColorRes
-                                                  .leadGreyColor
-                                                  .shade600,
-                                            ),
-                                          ),
-                                          Text(
-                                            ' • ',
-                                            style: TextStyle(
-                                              color:
-                                              ColorRes
-                                                  .leadGreyColor
-                                                  .shade600,
-                                            ),
-                                          ),
-                                          Text(
-                                            place['walkTime'] ?? '-',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.caption,
-                                              color:
-                                              ColorRes
-                                                  .leadGreyColor
-                                                  .shade600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 14,
-                                  color: ColorRes.leadGreyColor.shade400,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              }),
-
-              const SizedBox(height: 8),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCategoryButton(String label, IconData icon, String type) {
-    return Obx(() {
-      final isSelected = widget.mapController.selectedCategory.value == type;
-      return GestureDetector(
-        onTap: () {
-          widget.mapController.selectCategory(type);
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color:
-            isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color:
-              isSelected
-                  ? ColorRes.primary
-                  : ColorRes.leadGreyColor.shade300,
-              width: 1,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 18,
-                color:
-                isSelected
-                    ? ColorRes.white
-                    : ColorRes.leadGreyColor.shade700,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: AppFontSizes.caption,
-                  fontWeight:
-                  isSelected
-                      ? AppFontWeights.semiBold
-                      : AppFontWeights.medium,
-                  color:
-                  isSelected
-                      ? ColorRes.white
-                      : ColorRes.leadGreyColor.shade700,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
-}
 
 class OwnerInformation extends StatelessWidget {
   final Items property;
@@ -3365,7 +3075,7 @@ class ContactSellerCard extends StatelessWidget {
 
           // Checkboxes using Obx
           Obx(
-                () => Row(
+            () => Row(
               children: [
                 Checkbox(
                   value: controller.allowContact.value,
@@ -3387,13 +3097,13 @@ class ContactSellerCard extends StatelessWidget {
             ),
           ),
           Obx(
-                () => Row(
+            () => Row(
               children: [
                 Checkbox(
                   value: controller.interestedInHomeLoan.value,
                   onChanged:
                       (val) =>
-                  controller.interestedInHomeLoan.value = val ?? false,
+                          controller.interestedInHomeLoan.value = val ?? false,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -3504,10 +3214,10 @@ class ProjectBrochure extends StatelessWidget {
                         width: double.infinity,
                         errorBuilder:
                             (context, error, stackTrace) => const Icon(
-                          Icons.broken_image,
-                          size: 50,
-                          color: ColorRes.leadGreyColor,
-                        ),
+                              Icons.broken_image,
+                              size: 50,
+                              color: ColorRes.leadGreyColor,
+                            ),
                       ),
                     ),
                     Positioned(
@@ -3668,9 +3378,9 @@ class ProjectDetails extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color:
-                      project.name == projectName
-                          ? ColorRes.deepPurpleColor
-                          : ColorRes.leadGreyColor.shade300,
+                          project.name == projectName
+                              ? ColorRes.deepPurpleColor
+                              : ColorRes.leadGreyColor.shade300,
                     ),
                   ),
                   child: Column(
@@ -3939,9 +3649,9 @@ class _PropertyFeedbackComponentState extends State<PropertyFeedbackComponent> {
                     Icons.star,
                     size: 32,
                     color:
-                    index < _rating
-                        ? ColorRes.primary
-                        : ColorRes.leadGreyColor.shade400,
+                        index < _rating
+                            ? ColorRes.primary
+                            : ColorRes.leadGreyColor.shade400,
                   ),
                 );
               }),

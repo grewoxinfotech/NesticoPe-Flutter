@@ -4,18 +4,27 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../data/database/secure_storage_service.dart';
+import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/builder/model/builder_model.dart'
     hide ProjectContactInfo, ProjectSize, MediaGallery, Brochure;
 // import '../../../data/network/builder/model/builder_projectModel.dart';
+import '../../../data/network/property/models/inquiry_model.dart';
+import '../../../data/network/property/services/property_contacted_service.dart';
 import '../../../data/network/property/services/property_service.dart';
 
 class ProjectController extends GetxController {
   // final Rx<ProjectItem?> project = Rx<ProjectItem>();
+
   final PropertyService _propertyService = PropertyService();
 
   final RxInt selectedConfigIndex = 0.obs;
   final RxInt selectedImageIndex = 0.obs;
   final RxBool isLoading = true.obs;
+  final RxBool hasSubmittedInquiry = false.obs;
+  final PropertyContactedService _contactedService = PropertyContactedService();
+  RxList<Inquiry> inquiryResponse = <Inquiry>[].obs;
+
   final currentConfigPage = 0.obs;
   RxMap<int, int> variantIndexMap = <int, int>{}.obs;
   late PageController configPageController;
@@ -96,5 +105,29 @@ class ProjectController extends GetxController {
   Future<bool> addView(String id) async {
     final success = await _propertyService.addView(id);
     return success;
+  }
+
+  Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
+    final success = await _propertyService.addInquiry(data, id);
+    return success;
+  }
+
+  Future<void> getAllInQuireData(String propertyId) async {
+    try {
+      final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+      final userId = user.user?.id ?? '';
+      final inquiries = await _contactedService.fetchContactedInquiries(userId);
+      inquiryResponse.assignAll(inquiries);
+
+      final result = inquiryResponse.any((e) => e.propertyId == propertyId);
+
+      hasSubmittedInquiry.value = result;
+      print(
+        "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ${hasSubmittedInquiry.value}",
+      );
+      print("Inquiry Response ** ${result} ${hasSubmittedInquiry.value}");
+    } catch (e) {
+      print("Error fetching inquiries: $e");
+    }
   }
 }

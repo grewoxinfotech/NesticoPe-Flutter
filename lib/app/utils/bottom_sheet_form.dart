@@ -11,7 +11,7 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
 import '../../modules/add_property/view/create_property.dart';
 
 class ContactOwnerBottom extends StatefulWidget {
-  final Items property;
+  // final Items property;
 
   // Titles & Labels
   final String titleText;
@@ -25,7 +25,6 @@ class ContactOwnerBottom extends StatefulWidget {
   final String termsClickableText;
   final bool inQuireSubmitted;
 
-
   // Button Colors
   final Color chatButtonColor;
   final Color contactButtonColor;
@@ -36,7 +35,16 @@ class ContactOwnerBottom extends StatefulWidget {
 
   // Callbacks
   final VoidCallback? onChatPressed;
-  final Function(String? name, String? phone, String? email,String? price,bool isNegotiable ,bool isAllowAllCondition,String planningToBuy)? onContactPressed;
+  final Function(
+    String? name,
+    String? phone,
+    String? email,
+    String? price,
+    bool isNegotiable,
+    bool isAllowAllCondition,
+    String planningToBuy,
+  )?
+  onContactPressed;
   final ValueChanged<bool?>? onAllowSellerContactChanged;
   final ValueChanged<bool?>? onHomeLoanInterestChanged;
 
@@ -48,7 +56,7 @@ class ContactOwnerBottom extends StatefulWidget {
 
   const ContactOwnerBottom({
     super.key,
-    required this.property,
+    // required this.property,
     this.titleText = "Contact Property Owner",
     this.chatButtonText = "Chat on WhatsApp",
     this.formTitle = "One Time Contact Form",
@@ -63,7 +71,7 @@ class ContactOwnerBottom extends StatefulWidget {
     this.allowSellerContact = false,
     this.negotiable = false,
     this.onChatPressed,
-    this.inQuireSubmitted=false,
+    this.inQuireSubmitted = false,
     this.onContactPressed,
     this.onAllowSellerContactChanged,
     this.onHomeLoanInterestChanged,
@@ -86,7 +94,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
   late TextEditingController _nameController;
   late TextEditingController _phoneController;
   late TextEditingController _emailController;
-   TextEditingController _negotiablePriceController=TextEditingController();
+  TextEditingController _negotiablePriceController = TextEditingController();
 
   // Checkbox states
   late bool _allowSellerContact;
@@ -99,7 +107,6 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
     _nameController = TextEditingController();
     _phoneController = TextEditingController();
     _emailController = TextEditingController();
-
 
     _allowSellerContact = widget.allowSellerContact;
     _negotiable = widget.negotiable;
@@ -126,20 +133,18 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-
-         // All fields valid
-         if (widget.onContactPressed != null) {
-           widget.onContactPressed!(
-               _nameController.text.trim(),
-               _phoneController.text.trim(),
-               _emailController.text.trim(),
-               _negotiablePriceController.text.trim(),
-               _negotiable,
-               _allowSellerContact,
-               dropdownValue
-
-           );
-         }
+      // All fields valid
+      if (widget.onContactPressed != null) {
+        widget.onContactPressed!(
+          _nameController.text.trim(),
+          _phoneController.text.trim(),
+          _emailController.text.trim(),
+          _negotiablePriceController.text.trim(),
+          _negotiable,
+          _allowSellerContact,
+          dropdownValue,
+        );
+      }
     } else {
       // Show error if needed
       ScaffoldMessenger.of(context).showSnackBar(
@@ -248,8 +253,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
           ],
         ),
       );
-
-    }else{
+    } else {
       return Form(
         key: _formKey,
         child: Column(
@@ -265,38 +269,38 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                 color: ColorRes.blueGrey,
               ),
             ),
-            const SizedBox(height: 12),
-
-            // Owner info
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: ColorRes.blueColor.shade100,
-                  backgroundImage: AssetImage(IMGRes.home2),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${widget.property.ownerName}",
-                      style: TextStyle(
-                        fontWeight: AppFontWeights.semiBold,
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      "+91 ${widget.property.ownerPhone}",
-                      style: TextStyle(
-                        color: ColorRes.leadGreyColor,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            // const SizedBox(height: 12),
+            //
+            // // Owner info
+            // Row(
+            //   children: [
+            //     CircleAvatar(
+            //       radius: 20,
+            //       backgroundColor: ColorRes.blueColor.shade100,
+            //       backgroundImage: AssetImage(IMGRes.home2),
+            //     ),
+            //     const SizedBox(width: 12),
+            //     Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         Text(
+            //           "${widget.property.ownerName}",
+            //           style: TextStyle(
+            //             fontWeight: AppFontWeights.semiBold,
+            //             fontSize: 12,
+            //           ),
+            //         ),
+            //         Text(
+            //           "+91 ${widget.property.ownerPhone}",
+            //           style: TextStyle(
+            //             color: ColorRes.leadGreyColor,
+            //             fontSize: 11,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 16),
 
             // WhatsApp button
@@ -342,12 +346,13 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               ],
             ),
 
-
-
             const SizedBox(height: 12),
             Text(
               widget.formTitle,
-              style: TextStyle(fontSize: 13, fontWeight: AppFontWeights.semiBold),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: AppFontWeights.semiBold,
+              ),
             ),
             const SizedBox(height: 14),
 
@@ -404,7 +409,8 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
 
             // Email field
             TextFormField(
-              controller: _emailController,style: TextStyle(fontSize: AppFontSizes.bodySmall),
+              controller: _emailController,
+              style: TextStyle(fontSize: AppFontSizes.bodySmall),
               decoration: InputDecoration(
                 labelText: widget.emailLabel,
                 labelStyle: TextStyle(
@@ -464,22 +470,22 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                 spacing: 12,
                 runSpacing: 12,
                 children:
-                [
-                  'less than 1 month',
-                  'less than 3 month',
-                  'less than 6 month',
-                  'less than 12 month',
-                ].map((option) {
-                  return buildChoice(
-                    title: option,
-                    selected: dropdownValue == option,
-                    onTap: () {
-                      setState(() {
-                        dropdownValue = option;
-                      });
-                    },
-                  );
-                }).toList(),
+                    [
+                      'less than 1 month',
+                      'less than 3 month',
+                      'less than 6 month',
+                      'less than 12 month',
+                    ].map((option) {
+                      return buildChoice(
+                        title: option,
+                        selected: dropdownValue == option,
+                        onTap: () {
+                          setState(() {
+                            dropdownValue = option;
+                          });
+                        },
+                      );
+                    }).toList(),
               ),
               const SizedBox(height: 16),
               buildSectionTitle("Negotiable Price"),
@@ -506,7 +512,8 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                 ),
                 keyboardType: TextInputType.phone,
                 validator:
-                    (value) => value == null || value.isEmpty ? "Required" : null,
+                    (value) =>
+                        value == null || value.isEmpty ? "Required" : null,
               ),
               const SizedBox(height: 12),
             ],
@@ -543,9 +550,10 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
             // Contact Button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: _allowSellerContact == true
-                    ? widget.contactButtonColor
-                    : Colors.grey.shade400,
+                backgroundColor:
+                    _allowSellerContact == true
+                        ? widget.contactButtonColor
+                        : Colors.grey.shade400,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -582,22 +590,16 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                         fontWeight: AppFontWeights.medium,
                       ),
                     ),
-
                   ],
                 ),
               ),
-
             ),
             SizedBox(height: 50),
-
           ],
 
-
           // const SizedBox(height: 10),
-
         ),
       );
     }
-
   }
 }

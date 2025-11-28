@@ -249,7 +249,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         Expanded(
                           child: Text(
                             widget.property.address ?? '-',
-                            style:  TextStyle(
+                            style: TextStyle(
                               fontWeight: AppFontWeights.medium,
                               fontSize: AppFontSizes.extraSmall,
                               color: ColorRes.leadGreyColor.shade600,
@@ -352,11 +352,13 @@ class _RecommendedCardState extends State<RecommendedCard> {
                     Text(
                       price.displayPrice.toString() ?? '0',
 
-                      style:  TextStyle(
-                        fontWeight:AppFontWeights.semiBold ,
+                      style: TextStyle(
+                        fontWeight: AppFontWeights.semiBold,
                         fontSize: AppFontSizes.bodyMedium,
                         color: ColorRes.primary,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 5),
                     // Divider
@@ -429,9 +431,8 @@ class Facilities extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     final highlights = PropertyHighlightManager(property).getHighlights();
-log('Highkiutjhg ${highlights.map((e) => e.title,)}');
+    log('Highkiutjhg ${highlights.map((e) => e.title)}');
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(

@@ -301,7 +301,7 @@ class ProfileScreen extends StatelessWidget {
                               title: "Reviews and Ratings",
                               subTitle: "Add your review",
                               onTap: () {
-                                Get.to(() => AddAppReviewScreen())!.then((_) {
+                                Get.dialog(AddAppReviewDialog()).then((_) {
                                   controller
                                       .getAppReview(); // refresh after returning
                                 });

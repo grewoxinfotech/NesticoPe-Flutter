@@ -140,38 +140,78 @@ class PropertyController extends PaginatedController<Items> {
   //   refreshList();
   // }
 
-  void applyFilter(String key, String val) {
+  // void applyFilter(String key, String val) {
+  //   filters ??= {};
+  //   print('dfhb $key');
+  //   if (key == 'propertyType') {
+  //     // Add/replace property type while keeping city
+  //     final cityValue = filters!['city'];
+  //     filters = {if (cityValue != null) 'city': cityValue, 'propertyType': val};
+  //     print("Applied: propertyType=$val, city=${cityValue ?? '-'}");
+  //   } else if (key == 'city') {
+  //     // When changing city, REMOVE propertyType & listingType
+  //     filters = {'city': val};
+  //     selectedCity.value = val;
+  //     print("City changed → Reset filters. city=$val");
+  //     // Reload top properties when city changes
+  //     loadTopProperties();
+  //   } else if (key == 'listingType') {
+  //     // Add/replace listingType while keeping city
+  //     final cityValue = filters!['city'];
+  //     filters = {
+  //       if (cityValue != null) 'city': cityValue,
+  //       'listingType': val.toUpperCase(),
+  //     };
+  //     print("Applied: listingType=$val, city=${cityValue ?? '-'}");
+  //   } else {
+  //     // Generic filter
+  //     filters![key] = val;
+  //     print("Applied filter: $key=$val");
+  //   }
+  //
+  //   print("Current filters: $filters");
+  //
+  //   // Reset pagination
+  //   currentPage.value = 1;
+  //   totalPages.value = 1;
+  //   hasMore.value = true;
+  //   items.clear();
+  //
+  //   refreshList();
+  // }
+
+  void applyFilter(String key, String val, {bool includeCity = true}) {
     filters ??= {};
-    print('dfhb $key');
+
+    print('ApplyFilter called: key=$key, val=$val');
+
     if (key == 'propertyType') {
-      // Add/replace property type while keeping city
-      final cityValue = filters!['city'];
-      filters = {if (cityValue != null) 'city': cityValue, 'propertyType': val};
-      print("Applied: propertyType=$val, city=${cityValue ?? '-'}");
+      final cityValue = includeCity ? filters!['city'] : null;
+      filters = {
+        if (includeCity && cityValue != null) 'city': cityValue,
+        'propertyType': val,
+      };
     } else if (key == 'city') {
-      // When changing city, REMOVE propertyType & listingType
       filters = {'city': val};
       selectedCity.value = val;
-      print("City changed → Reset filters. city=$val");
-      // Reload top properties when city changes
       loadTopProperties();
     } else if (key == 'listingType') {
-      // Add/replace listingType while keeping city
-      final cityValue = filters!['city'];
+      final cityValue = includeCity ? filters!['city'] : null;
       filters = {
-        if (cityValue != null) 'city': cityValue,
+        if (includeCity && cityValue != null) 'city': cityValue,
         'listingType': val.toUpperCase(),
       };
-      print("Applied: listingType=$val, city=${cityValue ?? '-'}");
     } else {
       // Generic filter
-      filters![key] = val;
-      print("Applied filter: $key=$val");
+      if (includeCity) {
+        filters![key] = val;
+      } else {
+        filters = {key: val};
+      }
     }
 
     print("Current filters: $filters");
 
-    // Reset pagination
     currentPage.value = 1;
     totalPages.value = 1;
     hasMore.value = true;
@@ -286,9 +326,7 @@ class PropertyController extends PaginatedController<Items> {
       print(
         "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ${hasSubmittedInquiry.value}",
       );
-      print(
-        "Inquiry Response ** ${result} ${hasSubmittedInquiry.value}",
-      );
+      print("Inquiry Response ** ${result} ${hasSubmittedInquiry.value}");
     } catch (e) {
       print("Error fetching inquiries: $e");
     }
@@ -438,11 +476,9 @@ class PropertyController extends PaginatedController<Items> {
       filters['maxPrice'] = maxBudget.text;
     }
 
-
-     // Close dialog
-     Get.back();
-     Get.to(() => PropertyDetail(filters: [filters]));
-
+    // Close dialog
+    Get.back();
+    Get.to(() => PropertyDetail(filters: [filters]));
 
     print('🔍 Finding properties with filters: $filters');
     selectedPropertyType.value = null;

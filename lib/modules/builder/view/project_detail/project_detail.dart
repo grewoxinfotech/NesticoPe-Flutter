@@ -2,21 +2,41 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/manager/compare_manager.dart';
 import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
+import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/modules/property/controllers/overall_rating_controller.dart';
+import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/size_manager.dart';
 import '../../../../app/constants/svg_res.dart';
+import '../../../../app/utils/bottom_sheet_form.dart';
+import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../app/widgets/media/media_preview.dart';
+import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
+import '../../../../app/widgets/texts/headline_text.dart';
 import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 
 // import '../../../../data/network/builder/model/builder_projectModel.dart';
+import '../../../../widgets/bar/bottom_bar/customer_bottom_bar.dart';
+import '../../../../widgets/button/property_action_button.dart';
+import '../../../../widgets/map/address_and_map_detail.dart';
+import '../../../../widgets/map/near_by_location_map_section.dart';
+import '../../../auth/views/login_screen.dart';
+import '../../../home/widgets/unified_comparison_floating_button.dart';
+import '../../../property/views/property_detail_screen.dart';
+import '../../../property/views/widgets/overall_rating_widget.dart';
+import '../../../review/controllers/review_controller.dart';
+import '../../../review/views/widget/property_project_review_section.dart';
+import '../../../review/views/widget/property_review_card.dart';
+import '../../../search_property/controller/search_controller.dart';
 import '../../controller/builder_form_controller.dart';
 import '../../controller/project_controller.dart';
 import 'package:get/get.dart';
@@ -40,6 +60,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   late final ProjectWizardController wizardController;
   final Rxn<ProjectItem> _project = Rxn<ProjectItem>();
   final RxBool _isLoading = true.obs;
+  late final OverallRatingController _overallRatingController;
+  late final ReviewController reviewController;
+  final RxBool canAddReview = true.obs;
+  late final GoogleMapController mapController;
 
   @override
   void initState() {
@@ -53,6 +77,12 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ProjectWizardController(isBuilderView: false),
       tag: 'project_detail_$projectId',
     );
+    mapController = Get.put(GoogleMapController(), tag: 'map_$projectId');
+    _overallRatingController = Get.put(
+      OverallRatingController(),
+      tag: 'rating_$projectId',
+    );
+    reviewController = Get.put(ReviewController(), tag: 'review_$projectId');
 
     // Set project if provided
     if (widget.projectItem != null) {
@@ -77,6 +107,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   Future<void> _loadData() async {
     try {
       _isLoading.value = true;
+      await projectController.getAllInQuireData(
+        widget.projectItem?.id ?? widget.projectId ?? '',
+      );
 
       // Fetch project if only ID was provided
       if (widget.projectItem == null && widget.projectId != null) {
@@ -101,12 +134,26 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       final currentProject = _project.value;
       if (currentProject == null) return;
 
+      reviewController.filters.value = {"entity_id": currentProject.id ?? ""};
+      reviewController.filters.refresh();
+
+      if (currentProject.address.isNotEmpty ?? false) {
+        await mapController.fetchAllCategoriesData(currentProject.address);
+      }
+
       // Check review permission
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id ?? '';
 
+      final exists = await reviewController.isReviewExist(
+        entityId: currentProject.id,
+        reviewerId: userId,
+      );
+      canAddReview.value = !exists;
+
       // Track view
       projectController.addView(currentProject.id);
+      _overallRatingController.fetchOverallRating(currentProject.id);
     } finally {
       _isLoading.value = false;
     }
@@ -156,26 +203,169 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           );
         }
 
-        return CustomScrollView(
-          slivers: [
-            _buildAppBar(context, project!),
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildProjectDetails(project!),
-                  _buildMediaGallery(project!),
-                  _buildConfigurations(controller, project!),
-                  _buildAmenities(project!),
-                  if(project?.brochures.isNotEmpty??false )...[
-                    _buildDocuments(controller, project!),
-                  ],
-                  _buildContactSection(controller, project!),
-                  const SizedBox(height: 24),
-                ],
-              ),
+        return Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                _buildAppBar(context, project!),
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildProjectDetails(project!),
+                      _buildMediaGallery(project!),
+                      _buildConfigurations(controller, project!),
+                      SizedBox(height: 12),
+                      _buildMapSection(controller, project!),
+                      _buildAmenities(project!),
+                      SizedBox(height: 12),
+                      _buildReviewSection(
+                        canAddReview: canAddReview,
+                        overallRatingController: _overallRatingController,
+                        project: project!,
+                        reviewController: reviewController,
+                      ),
+                      if (project?.brochures.isNotEmpty ?? false) ...[
+                        _buildDocuments(controller, project!),
+                      ],
+                      _buildContactSection(controller, project!),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ],
             ),
+            UnifiedComparisonFloatingButton(bottom: 16),
           ],
+        );
+      }),
+      bottomNavigationBar: Obx(() {
+        if (_isLoading.value || project == null) {
+          return const SizedBox.shrink();
+        }
+        return SafeArea(
+          child: ReusableBottomBar(
+            mainPriceText: project?.getPriceRange() ?? '',
+            priceBreakdown: {},
+            onPrimaryAction: () {
+              if (UserHelper.isGuest) {
+                Get.to(() => LoginScreen());
+              } else {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  builder:
+                      (context) => DraggableScrollableSheet(
+                        expand: false,
+                        minChildSize: 0.45,
+                        initialChildSize:
+                            controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
+                        maxChildSize:
+                            controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
+                        builder:
+                            (
+                              context,
+                              scrollController,
+                            ) => SingleChildScrollView(
+                              controller: scrollController,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom,
+                                  left: 16,
+                                  right: 16,
+                                  top: 16,
+                                ),
+                                child: ContactOwnerBottom(
+                                  // Check if inquiry already submitted
+                                  inQuireSubmitted:
+                                      controller.hasSubmittedInquiry.value,
+                                  titleText: "Contact the Owner",
+                                  chatButtonText: "Chat via WhatsApp",
+                                  formTitle: "Quick Contact Form",
+                                  contactButtonText: "Send Request",
+                                  nameIcon: Icons.person,
+                                  phoneIcon: Icons.phone,
+                                  emailIcon: Icons.email,
+                                  allowSellerContact: false,
+                                  negotiable: false,
+                                  onChatPressed: () {
+                                    print("WhatsApp button clicked!");
+                                  },
+                                  onContactPressed: (
+                                    name,
+                                    phone,
+                                    email,
+                                    price,
+                                    isNegotiable,
+                                    isAllowAllCondition,
+                                    planningToBuy,
+                                  ) async {
+                                    final inquiry = {
+                                      "name": name ?? "",
+                                      "phone": phone ?? "",
+                                      "email": email ?? "",
+                                      "agreeToContact":
+                                          isAllowAllCondition ?? false,
+                                      "meta": {
+                                        if (price != null)
+                                          "negotiablePrice": price,
+                                        if (isNegotiable != null)
+                                          "isNegotiable": isNegotiable,
+                                        if (planningToBuy != null)
+                                          "timePeriod": planningToBuy,
+                                      },
+                                    };
+
+                                    final success = await controller.addInquiry(
+                                      inquiry,
+                                      project?.id ?? '',
+                                    );
+
+                                    if (success) {
+                                      // Mark inquiry as submitted
+
+                                      controller.hasSubmittedInquiry.value =
+                                          true;
+
+                                      CustomSnackBar.show(
+                                        Get.overlayContext!,
+                                        message: "Inquiry Added Successfully",
+                                        type: SnackBarType.success,
+                                      );
+
+                                      Get.back();
+                                      await controller.getAllInQuireData(
+                                        project?.id ?? '',
+                                      );
+                                    } else {
+                                      CustomSnackBar.show(
+                                        Get.overlayContext!,
+                                        message: "Failed to Submit Inquiry",
+                                        type: SnackBarType.error,
+                                      );
+                                    }
+                                  },
+                                  onAllowSellerContactChanged: (value) {
+                                    print("Allow sellers changed: $value");
+                                  },
+                                  onHomeLoanInterestChanged: (value) {
+                                    print("Home loan interest changed: $value");
+                                  },
+                                ),
+                              ),
+                            ),
+                      ),
+                );
+              }
+            },
+            primaryTitle: "View Contact",
+          ),
         );
       }),
     );
@@ -200,16 +390,28 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         ),
       ),
       actions: [
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            margin: const EdgeInsets.only(right: 12),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: ColorRes.white,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.share, color: ColorRes.black),
+        // GestureDetector(
+        //   onTap: () {},
+        //   child: Container(
+        //     margin: const EdgeInsets.only(right: 12),
+        //     padding: const EdgeInsets.all(8),
+        //     decoration: BoxDecoration(
+        //       color: ColorRes.white,
+        //       shape: BoxShape.circle,
+        //     ),
+        //     child: const Icon(Icons.share, color: ColorRes.black),
+        //   ),
+        // ),
+        Padding(
+          padding: const EdgeInsets.only(right: 12.0),
+          child: EntityActionButtons(
+            id: project.id,
+            entity: project,
+            projectCompareController: Get.find<ProjectCompareManager>(),
+            favoriteController: Get.find<PropertyFavoriteController>(),
+            onShare: () {
+              // your project share logic
+            },
           ),
         ),
       ],
@@ -1031,9 +1233,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             ),
             itemCount: project.amenities.length,
             itemBuilder: (context, index) {
-              print("Project deatils ${project.amenities.map((e) => e,)}");
+              print("Project deatils ${project.amenities.map((e) => e)}");
 
-              return _buildAmenityItem(project.amenities[index],index);
+              return _buildAmenityItem(project.amenities[index], index);
             },
           ),
         ],
@@ -1094,11 +1296,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: AppSvgIcon(
-            assetName: icon,
-            color: color,
-            folder: 'amenities',
-          ),
+          child: AppSvgIcon(assetName: icon, color: color, folder: 'amenities'),
         ),
         const SizedBox(height: 8),
         Text(
@@ -1115,8 +1313,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ],
     );
   }
-
-
 
   Widget _buildDocuments(ProjectController controller, ProjectItem project) {
     return Container(
@@ -1356,6 +1552,99 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           fit: BoxFit.cover,
         );
       },
+    );
+  }
+
+  Container _buildMapSection(
+    ProjectController controller,
+    ProjectItem projectItem,
+  ) {
+    return Container(
+      color: ColorRes.white,
+      child: Column(
+        children: [
+          if (projectItem.location?.isNotEmpty ?? false) ...[
+            const SizedBox(height: 12),
+            const TitleWithViewAll(title: 'Location'),
+            const SizedBox(height: 8),
+            AddressAndMapDetails(
+              address: projectItem.address,
+              city: projectItem.city,
+              state: projectItem.state,
+              zipCode: projectItem.zipCode,
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          Obx(() {
+            if (mapController.isLoading.value) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            // Check if any category has data
+            final hasData = mapController.allCategoriesData.values.any(
+              (places) => places.isNotEmpty,
+            );
+
+            if (!hasData || mapController.propertyLatLng.value == null) {
+              return const SizedBox.shrink();
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Divider(
+                  indent: 18,
+                  endIndent: 18,
+                  color: ColorRes.leadGreyColor.shade300,
+                ),
+                const SizedBox(height: 12),
+
+                // Embedded Map Preview Section
+                NearbyLocationMapSection(
+                  address: projectItem.address ?? '',
+                  mapController: mapController,
+                ),
+
+                const SizedBox(height: 12),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Container _buildReviewSection({
+    required RxBool canAddReview,
+    required ReviewController reviewController,
+    required ProjectItem? project,
+    required OverallRatingController overallRatingController,
+  }) {
+    return Container(
+      color: ColorRes.white,
+      padding: EdgeInsets.only(top: 12),
+      child: ReviewSection(
+        canAddReview: canAddReview,
+        overallController: overallRatingController,
+        reviewController: reviewController,
+        entityType: "project",
+        entityId: project?.id ?? '',
+        reviewCardBuilder:
+            (context, item) => PropertyReviewCard(reviewItem: item),
+        overallWidgetBuilder: (total, rating, details) {
+          return OverallRatingWidget(
+            totalReviews: total,
+            overallRating: rating,
+            detailedRatings: details,
+          );
+        },
+      ),
     );
   }
 }

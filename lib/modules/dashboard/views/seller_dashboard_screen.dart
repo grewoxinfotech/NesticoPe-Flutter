@@ -146,7 +146,7 @@ class SellerDashboardScreen extends StatefulWidget {
 }
 
 class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
-  final controller = Get.find<PropertyController>();
+  final controller = Get.put(PropertyController());
 
   @override
   void initState() {
@@ -157,7 +157,11 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
   Future<void> loadPropertyBySeller() async {
     final user = await SecureStorage.getUserData();
     if (user != null) {
-      controller.applyFilter("created_by", user.user?.id.toString() ?? "");
+      controller.applyFilter(
+        "created_by",
+        user.user?.id.toString() ?? "",
+        includeCity: false,
+      );
     }
   }
 
@@ -272,7 +276,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
           case 3:
             return SubscriptionPlansScreen();
           case 4:
-            return  SellerProfileScreen();
+            return SellerProfileScreen();
           default:
             return const SizedBox();
         }

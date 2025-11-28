@@ -764,6 +764,7 @@ class Items {
   String? lastReportedAt;
   String? createdAt;
   String? updatedAt;
+  ScoreBreakdownModel? scoreBreakdown;
 
   Items({
     this.propertyMedia,
@@ -823,6 +824,7 @@ class Items {
     this.lastReportedAt,
     this.createdAt,
     this.updatedAt,
+    this.scoreBreakdown,
   });
 
   Items.fromJson(Map<String, dynamic> json) {
@@ -904,6 +906,12 @@ class Items {
     lastReportedAt = json['lastReportedAt'] as String?;
     createdAt = json['createdAt'] as String?;
     updatedAt = json['updatedAt'] as String?;
+    scoreBreakdown =
+        json['scoreBreakdown'] != null
+            ? ScoreBreakdownModel.fromJson(
+              json['scoreBreakdown'] as Map<String, dynamic>,
+            )
+            : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -975,6 +983,11 @@ class Items {
     data['lastReportedAt'] = lastReportedAt;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
+    if (scoreBreakdown != null) {
+      final score = scoreBreakdown!.toJson();
+      score.removeWhere((key, value) => value == null);
+      data['scoreBreakdown'] = score;
+    }
 
     return data;
   }
@@ -1510,185 +1523,6 @@ class NearbyLocations {
   Map<String, dynamic> toJson() => {'name': name, 'distance': distance};
 }
 
-/// PG Information
-
-// class PgInfo {
-//   final String? pgName;
-//   final String? pgFor;
-//   final String? pgSuitedFor;
-//   final String? pgMealOffered;
-//   final String? pgCommonArea;
-//   final String? pgManageBy;
-//   final bool? pgOwnerStaysAtPg;
-//   final double? mealChargesPerMonth;
-//   final double? electricityChargesPerMonth;
-//   final PgRules? pgRules;
-//   // final PgRoomInfo? pgRoomInfo;
-//   final List<PgRoomInfo>? pgRoomInfo;
-//
-//   PgInfo({
-//     this.pgName,
-//     this.pgFor,
-//     this.pgSuitedFor,
-//     this.pgMealOffered,
-//     this.pgCommonArea,
-//     this.pgManageBy,
-//     this.pgOwnerStaysAtPg,
-//     this.mealChargesPerMonth,
-//     this.electricityChargesPerMonth,
-//     this.pgRules,
-//     this.pgRoomInfo,
-//   });
-//
-//   factory PgInfo.fromJson(Map<String, dynamic> json) {
-//     return PgInfo(
-//       pgName: json['pg_name'],
-//       pgFor: json['pg_for'],
-//       pgSuitedFor: json['pg_suited_for'],
-//       pgMealOffered: json['pg_meal_offered'],
-//       pgCommonArea: json['pg_common_area'],
-//       pgManageBy: json['pg_manage_by'],
-//       pgOwnerStaysAtPg: json['pg_owner_stays_at_pg'],
-//       mealChargesPerMonth: json['meal_charges_per_month']?.toDouble(),
-//       electricityChargesPerMonth:
-//           json['electricity_charges_per_month']?.toDouble(),
-//       pgRules:
-//           json['pg_rules'] != null ? PgRules.fromJson(json['pg_rules']) : null,
-//       pgRoomInfo:
-//           json['pg_room_info'] != null
-//               ? List<PgRoomInfo>.from(
-//                 json['pg_room_info'].map((x) => PgRoomInfo.fromJson(x)),
-//               )
-//               : null,
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = {};
-//     if (pgName != null) data['pg_name'] = pgName;
-//     if (pgFor != null) data['pg_for'] = pgFor;
-//     if (pgSuitedFor != null) data['pg_suited_for'] = pgSuitedFor;
-//     if (pgMealOffered != null) data['pg_meal_offered'] = pgMealOffered;
-//     if (pgCommonArea != null) data['pg_common_area'] = pgCommonArea;
-//     if (pgManageBy != null) data['pg_manage_by'] = pgManageBy;
-//     if (pgOwnerStaysAtPg != null)
-//       data['pg_owner_stays_at_pg'] = pgOwnerStaysAtPg;
-//     if (mealChargesPerMonth != null)
-//       data['meal_charges_per_month'] = mealChargesPerMonth;
-//     if (electricityChargesPerMonth != null)
-//       data['electricity_charges_per_month'] = electricityChargesPerMonth;
-//     if (pgRules != null) data['pg_rules'] = pgRules!.toJson();
-//     if (pgRoomInfo != null) {
-//       // ✅ Correct: convert each PgRoomInfo to JSON and return as list
-//       data['pg_room_info'] = pgRoomInfo!.map((x) => x.toJson()).toList();
-//     }
-//     return data;
-//   }
-// }
-//
-// class PgRules {
-//   final bool? nonVegAllowed;
-//   final bool? smokingAllowed;
-//   final bool? drinkingAllowed;
-//   final bool? petsAllowed;
-//   final bool? lateEntryAllowed;
-//   final String? lateEntryTime;
-//   final bool? visitorAllowed;
-//   final bool? gurdianAllowed;
-//
-//   PgRules({
-//     this.nonVegAllowed,
-//     this.smokingAllowed,
-//     this.drinkingAllowed,
-//     this.petsAllowed,
-//     this.lateEntryAllowed,
-//     this.lateEntryTime,
-//     this.visitorAllowed,
-//     this.gurdianAllowed,
-//   });
-//
-//   factory PgRules.fromJson(Map<String, dynamic> json) {
-//     return PgRules(
-//       nonVegAllowed: json['non_veg_allowed'],
-//       smokingAllowed: json['smoking_allowed'],
-//       drinkingAllowed: json['drinking_allowed'],
-//       petsAllowed: json['pets_allowed'],
-//       lateEntryAllowed: json['late_entry_allowed'],
-//       lateEntryTime: json['late_entry_time'],
-//       visitorAllowed: json['visitor_allowed'],
-//       gurdianAllowed: json['gurdian_allowed'],
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = {};
-//     if (nonVegAllowed != null) data['non_veg_allowed'] = nonVegAllowed;
-//     if (smokingAllowed != null) data['smoking_allowed'] = smokingAllowed;
-//     if (drinkingAllowed != null) data['drinking_allowed'] = drinkingAllowed;
-//     if (petsAllowed != null) data['pets_allowed'] = petsAllowed;
-//     if (lateEntryAllowed != null) data['late_entry_allowed'] = lateEntryAllowed;
-//     if (lateEntryTime != null) data['late_entry_time'] = lateEntryTime;
-//     if (visitorAllowed != null) data['visitor_allowed'] = visitorAllowed;
-//     if (gurdianAllowed != null) data['gurdian_allowed'] = gurdianAllowed;
-//     return data;
-//   }
-// }
-//
-// class PgRoomInfo {
-//   final String? roomType;
-//   final int? totalBeds;
-//   final RoomFacilityInfo? roomFacilityInfo;
-//
-//   PgRoomInfo({this.roomType, this.totalBeds, this.roomFacilityInfo});
-//
-//   factory PgRoomInfo.fromJson(Map<String, dynamic> json) {
-//     return PgRoomInfo(
-//       roomType: json['room_type'],
-//       totalBeds: json['total_beds'],
-//       roomFacilityInfo:
-//           json['room_facility_info'] != null
-//               ? RoomFacilityInfo.fromJson(json['room_facility_info'])
-//               : null,
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = {};
-//     if (roomType != null) data['room_type'] = roomType;
-//     if (totalBeds != null) data['total_beds'] = totalBeds;
-//     if (roomFacilityInfo != null)
-//       data['room_facility_info'] = roomFacilityInfo!.toJson();
-//     return data;
-//   }
-// }
-//
-// class RoomFacilityInfo {
-//   final bool? wifi;
-//   final bool? tv;
-//   final bool? ac;
-//   final String? other;
-//
-//   RoomFacilityInfo({this.wifi, this.tv, this.ac, this.other});
-//
-//   factory RoomFacilityInfo.fromJson(Map<String, dynamic> json) {
-//     return RoomFacilityInfo(
-//       wifi: json['wifi'],
-//       tv: json['tv'],
-//       ac: json['ac'],
-//       other: json['other'],
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = {};
-//     if (wifi != null) data['wifi'] = wifi;
-//     if (tv != null) data['tv'] = tv;
-//     if (ac != null) data['ac'] = ac;
-//     if (other != null) data['other'] = other;
-//     return data;
-//   }
-// }
-
 class PgInfo {
   final String? pgName;
   final String? pgFor;
@@ -1874,6 +1708,225 @@ class RoomFacilityInfo {
       'fridge': fridge,
       'cupboard': cupboard,
       'other': other,
+    };
+  }
+}
+
+class ScoreBreakdownModel {
+  final double totalScore;
+  final double maxScore;
+  final ScoreComponents components;
+
+  ScoreBreakdownModel({
+    required this.totalScore,
+    required this.maxScore,
+    required this.components,
+  });
+
+  factory ScoreBreakdownModel.fromJson(Map<String, dynamic> json) {
+    return ScoreBreakdownModel(
+      totalScore: (json['totalScore'] ?? 0).toDouble(),
+      maxScore: (json['maxScore'] ?? 0).toDouble(),
+      components: ScoreComponents.fromJson(json['components'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "totalScore": totalScore,
+      "maxScore": maxScore,
+      "components": components.toJson(),
+    };
+  }
+}
+
+class ScoreComponents {
+  final BasePerformanceComponent basePerformance;
+  final SimpleComponent subscriptionPlan;
+  final BreakdownComponent mediaQuality;
+  final BreakdownComponent engagement;
+  final PremiumComponent premium;
+
+  ScoreComponents({
+    required this.basePerformance,
+    required this.subscriptionPlan,
+    required this.mediaQuality,
+    required this.engagement,
+    required this.premium,
+  });
+
+  factory ScoreComponents.fromJson(Map<String, dynamic> json) {
+    return ScoreComponents(
+      basePerformance: BasePerformanceComponent.fromJson(
+        json['basePerformance'] ?? {},
+      ),
+      subscriptionPlan: SimpleComponent.fromJson(
+        json['subscriptionPlan'] ?? {},
+      ),
+      mediaQuality: BreakdownComponent.fromJson(json['mediaQuality'] ?? {}),
+      engagement: BreakdownComponent.fromJson(json['engagement'] ?? {}),
+      premium: PremiumComponent.fromJson(json['premium'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "basePerformance": basePerformance.toJson(),
+      "subscriptionPlan": subscriptionPlan.toJson(),
+      "mediaQuality": mediaQuality.toJson(),
+      "engagement": engagement.toJson(),
+      "premium": premium.toJson(),
+    };
+  }
+}
+
+/// Base Performance has "raw" extra field
+class BasePerformanceComponent {
+  final double score;
+  final double max;
+  final double raw;
+  final String description;
+
+  BasePerformanceComponent({
+    required this.score,
+    required this.max,
+    required this.raw,
+    required this.description,
+  });
+
+  factory BasePerformanceComponent.fromJson(Map<String, dynamic> json) {
+    return BasePerformanceComponent(
+      score: (json['score'] ?? 0).toDouble(),
+      max: (json['max'] ?? 0).toDouble(),
+      raw: (json['raw'] ?? 0).toDouble(),
+      description: json['description'] ?? "",
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {"score": score, "max": max, "raw": raw, "description": description};
+  }
+}
+
+/// Subscription & Similar simple components
+class SimpleComponent {
+  final double score;
+  final double max;
+  final String description;
+
+  SimpleComponent({
+    required this.score,
+    required this.max,
+    required this.description,
+  });
+
+  factory SimpleComponent.fromJson(Map<String, dynamic> json) {
+    return SimpleComponent(
+      score: (json['score'] ?? 0).toDouble(),
+      max: (json['max'] ?? 0).toDouble(),
+      description: json['description'] ?? "",
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {"score": score, "max": max, "description": description};
+  }
+}
+
+/// Components with nested breakdown like images/videos/documents
+class BreakdownComponent {
+  final double score;
+  final double max;
+  final String description;
+  final Map<String, SubBreakdown> breakdown;
+
+  BreakdownComponent({
+    required this.score,
+    required this.max,
+    required this.description,
+    required this.breakdown,
+  });
+
+  factory BreakdownComponent.fromJson(Map<String, dynamic> json) {
+    final rawBreakdown = json['breakdown'] as Map<String, dynamic>? ?? {};
+
+    return BreakdownComponent(
+      score: (json['score'] ?? 0).toDouble(),
+      max: (json['max'] ?? 0).toDouble(),
+      description: json['description'] ?? "",
+      breakdown: rawBreakdown.map(
+        (key, value) => MapEntry(key, SubBreakdown.fromJson(value)),
+      ),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "score": score,
+      "max": max,
+      "description": description,
+      "breakdown": breakdown.map((key, value) => MapEntry(key, value.toJson())),
+    };
+  }
+}
+
+/// Inner breakdown items like images/videos/views/inquiries
+class SubBreakdown {
+  final int count;
+  final double score;
+  final double max;
+  final int? maxCount;
+
+  SubBreakdown({
+    required this.count,
+    required this.score,
+    required this.max,
+    this.maxCount,
+  });
+
+  factory SubBreakdown.fromJson(Map<String, dynamic> json) {
+    return SubBreakdown(
+      count: json['count'] ?? 0,
+      score: (json['score'] ?? 0).toDouble(),
+      max: (json['max'] ?? 0).toDouble(),
+      maxCount: json.containsKey('maxcount') ? json['maxcount'] ?? 0 : 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {"count": count, "score": score, "max": max, "maxcount": maxCount};
+  }
+}
+
+/// Premium has extra field "isPremium"
+class PremiumComponent {
+  final double score;
+  final double max;
+  final bool isPremium;
+  final String description;
+
+  PremiumComponent({
+    required this.score,
+    required this.max,
+    required this.isPremium,
+    required this.description,
+  });
+
+  factory PremiumComponent.fromJson(Map<String, dynamic> json) {
+    return PremiumComponent(
+      score: (json['score'] ?? 0).toDouble(),
+      max: (json['max'] ?? 0).toDouble(),
+      isPremium: json['isPremium'] ?? false,
+      description: json['description'] ?? "",
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "score": score,
+      "max": max,
+      "isPremium": isPremium,
+      "description": description,
     };
   }
 }

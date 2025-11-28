@@ -58,8 +58,9 @@ class ReviewService {
         headers: await headers(),
         body: jsonEncode(reviewData.toJson()),
       );
+      print('=============${response.statusCode}');
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print('✅ Review created successfully');
         return true;
       } else {

@@ -12,12 +12,9 @@ import '../../../../../data/network/property/models/property_model.dart';
 import '../../../../reseller/view/lead_overview/lead_detail.dart';
 
 class PropertyOverviewScreen extends StatelessWidget {
-  // final List<Map<String, dynamic>> properties;
   final List<Items> properties;
 
   const PropertyOverviewScreen({super.key, required this.properties});
-
-  // Dummy data generator - you can replace this with your actual data
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +54,9 @@ class PropertyOverviewScreen extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => PropertyOverviewSellerScreen(property: property));
+        Get.to(
+          () => PropertyOverviewSellerScreen(propertyId: property.id ?? ''),
+        );
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
@@ -210,27 +209,6 @@ class PropertyOverviewScreen extends StatelessWidget {
 
                       const SizedBox(height: 12),
 
-                      // Property Features
-                      // Row(
-                      //   children: [
-                      //     _buildFeatureChip(
-                      //       Icons.hotel,
-                      //       '${property.propertyDetails?.bhk ?? 0} BHK',
-                      //     ),
-                      //     const SizedBox(width: 8),
-                      //     _buildFeatureChip(
-                      //       Icons.bathtub,
-                      //       '${property.propertyDetails?.bathroom ?? 0} Baths',
-                      //     ),
-                      //     const SizedBox(width: 8),
-                      //     _buildFeatureChip(
-                      //       Icons.square_foot,
-                      //       property.propertyDetails?.propertyBuiltUpArea
-                      //               .toString() ??
-                      //           '0 sq ft',
-                      //     ),
-                      //   ],
-                      // ),
                       Facilities(property: property),
 
                       const SizedBox(height: 16),

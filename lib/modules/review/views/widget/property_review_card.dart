@@ -302,6 +302,7 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
         border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 0.8),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 🧑‍💼 Header — Avatar + Reviewer Info
@@ -334,9 +335,8 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
             style: TextStyle(
               fontSize: AppFontSizes.body,
               color: ColorRes.leadGreyColor.shade800,
-              height: 1.5,
             ),
-            maxLines: 4,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
 
