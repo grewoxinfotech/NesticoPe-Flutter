@@ -334,7 +334,8 @@ class LeadController extends PaginatedController<LeadItem> {
 
   late final bool fromReseller;
   Items customFields = Items();
-  RxList<Items> leadPropertiesList = <Items>[].obs;  // Store all properties fetched for leads
+  RxList<Items> leadPropertiesList =
+      <Items>[].obs; // Store all properties fetched for leads
 
   final PropertyController propertyController = Get.put(
     PropertyController(),
@@ -465,7 +466,6 @@ class LeadController extends PaginatedController<LeadItem> {
           userId: userId,
           filters: filters.value,
           fromReseller: fromReseller,
-          
         );
         if (response.items.isNotEmpty) {
           for (var item in response.items) {

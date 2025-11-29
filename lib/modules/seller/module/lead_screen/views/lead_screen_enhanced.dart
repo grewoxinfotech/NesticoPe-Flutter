@@ -3753,110 +3753,250 @@ import '../../../../reseller/model/dashboard/dashboard_model.dart';
 import '../../../../reseller/view/lead_overview/lead_detail.dart';
 import '../controllers/lead_controller.dart';
 
+// class SellerLeadScreen extends StatelessWidget {
+//   final bool isViewAll;
+//
+//   const SellerLeadScreen({super.key, this.isViewAll = false});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     Get.lazyPut(() => LeadController(), tag: "seller");
+//     final leadController = Get.find<LeadController>(tag: "seller");
+//     // final controller = Get.find<SellerDashboardScreen>();
+//
+//     return Scaffold(
+//       backgroundColor: ColorRes.white,
+//       appBar: AppBar(
+//         leading:
+//             (isViewAll)
+//                 ? IconButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   icon: Icon(Icons.arrow_back),
+//                 )
+//                 : null,
+//         title: Text(
+//           'Property Buyer Leads',
+//           style: TextStyle(fontWeight: AppFontWeights.bold),
+//         ),
+//         automaticallyImplyLeading: (isViewAll),
+//         backgroundColor: ColorRes.white,
+//         elevation: 0,
+//         actions: [
+//           IconButton(
+//             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
+//             onPressed: () {
+//               showFilterBottomSheet(context, leadController);
+//             },
+//           ),
+//         ],
+//       ),
+//
+//       body: Obx(() {
+//         // Loading state
+//         if (leadController.isLoading.value && leadController.items.isEmpty) {
+//           return const Center(child: CircularProgressIndicator());
+//         }
+//
+//         final filteredLeads = leadController.items.value;
+//
+//         return Column(
+//           children: [
+//             // Search bar and filters always shown
+//             // buildSearchAndFilter(context, controller),
+//             buildSelectedFiltersChips(context, leadController),
+//
+//             // Main content
+//             Expanded(
+//               child:
+//                   filteredLeads.isEmpty
+//                       ? Center(
+//                         child: Text(
+//                           'No leads available. Tap + to add a new lead.',
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.medium,
+//                             color: ColorRes.leadGreyColor[600],
+//                             fontWeight: AppFontWeights.medium,
+//                           ),
+//                         ),
+//                       )
+//                       : RefreshIndicator(
+//                         onRefresh: leadController.refreshList,
+//                         child: ListView.separated(
+//                           padding: EdgeInsets.all(
+//                             getResponsivePadding(context),
+//                           ),
+//                           itemCount: filteredLeads.length,
+//                           separatorBuilder:
+//                               (context, index) => SizedBox(
+//                                 height: getResponsiveSpacing(context),
+//                               ),
+//                           itemBuilder: (context, index) {
+//                             final lead = filteredLeads[index];
+//                             String? propertyPrice;
+//                             if (lead.propertyId != null) {
+//                               log("dhuhsfhdfhu ${leadController.leadPropertiesList.map((element) => element.toJson(),)}");
+//                               final matchingProperty = leadController.leadPropertiesList
+//                                   .firstWhereOrNull((p) => p.id == lead.propertyId);
+//                               if (matchingProperty != null &&
+//                                   matchingProperty.propertyDetails?.financialInfo?.price != null) {
+//                                 propertyPrice = PropertyPriceManager(
+//                                   listingType: matchingProperty.listingType ?? '',
+//                                   financialInfo: matchingProperty.propertyDetails?.financialInfo,
+//                                 ).displayPrice;
+//                               }
+//                             }
+//                             return GestureDetector(
+//                               onTap: () {
+//                                 Get.to(
+//                                   () => LeadDetailScreen(
+//                                     lead: lead,
+//                                     isFromLead: true,
+//                                   ),
+//                                 );
+//                               },
+//                               child: buildLeadCard(context, lead,propertyPrice??''),
+//                             );
+//                           },
+//                         ),
+//                       ),
+//             ),
+//           ],
+//         );
+//       }),
+//     );
+//   }
+// }
+
 class SellerLeadScreen extends StatelessWidget {
   final bool isViewAll;
+  final String? propertyId; // <-- NEW
 
-  const SellerLeadScreen({super.key, this.isViewAll = false});
+  const SellerLeadScreen({super.key, this.isViewAll = false, this.propertyId});
 
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController(), tag: "seller");
     final leadController = Get.find<LeadController>(tag: "seller");
-    // final controller = Get.find<SellerDashboardScreen>();
+
+    /// Fetch data only once
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!leadController.isLoading.value && leadController.items.isEmpty) {
+        await leadController.refreshList(); // loads all leads
+
+        // If propertyId provided → filter items locally (no controller change)
+        if (propertyId != null) {
+          _applyPropertyFilter(leadController);
+        }
+      }
+    });
 
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading:
-            (isViewAll)
+            isViewAll
                 ? IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
                 )
                 : null,
-        title: Text(
+        title: const Text(
           'Property Buyer Leads',
           style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
-        automaticallyImplyLeading: (isViewAll),
+        automaticallyImplyLeading: isViewAll,
         backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
-            onPressed: () {
-              showFilterBottomSheet(context, leadController);
-            },
+            onPressed: () => showFilterBottomSheet(context, leadController),
           ),
         ],
       ),
 
       body: Obx(() {
-        // Loading state
         if (leadController.isLoading.value && leadController.items.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final filteredLeads = leadController.items.value;
+        final leads = leadController.items;
 
         return Column(
           children: [
-            // Search bar and filters always shown
-            // buildSearchAndFilter(context, controller),
             buildSelectedFiltersChips(context, leadController),
 
-            // Main content
             Expanded(
               child:
-                  filteredLeads.isEmpty
+                  leads.isEmpty
                       ? Center(
                         child: Text(
-                          'No leads available. Tap + to add a new lead.',
+                          'No leads available.',
                           style: TextStyle(
                             fontSize: AppFontSizes.medium,
                             color: ColorRes.leadGreyColor[600],
-                            fontWeight: AppFontWeights.medium,
                           ),
                         ),
                       )
                       : RefreshIndicator(
-                        onRefresh: leadController.refreshList,
+                        onRefresh: () async {
+                          await leadController.refreshList();
+                          if (propertyId != null) {
+                            _applyPropertyFilter(leadController);
+                          }
+                        },
                         child: ListView.separated(
                           padding: EdgeInsets.all(
                             getResponsivePadding(context),
                           ),
-                          itemCount: filteredLeads.length,
+                          itemCount: leads.length,
                           separatorBuilder:
-                              (context, index) => SizedBox(
+                              (_, __) => SizedBox(
                                 height: getResponsiveSpacing(context),
                               ),
                           itemBuilder: (context, index) {
-                            final lead = filteredLeads[index];
+                            final lead = leads[index];
+
                             String? propertyPrice;
                             if (lead.propertyId != null) {
-                              log("dhuhsfhdfhu ${leadController.leadPropertiesList.map((element) => element.toJson(),)}");
-                              final matchingProperty = leadController.leadPropertiesList
-                                  .firstWhereOrNull((p) => p.id == lead.propertyId);
-                              if (matchingProperty != null &&
-                                  matchingProperty.propertyDetails?.financialInfo?.price != null) {
-                                propertyPrice = PropertyPriceManager(
-                                  listingType: matchingProperty.listingType ?? '',
-                                  financialInfo: matchingProperty.propertyDetails?.financialInfo,
-                                ).displayPrice;
+                              final matchingProperty = leadController
+                                  .leadPropertiesList
+                                  .firstWhereOrNull(
+                                    (p) => p.id == lead.propertyId,
+                                  );
+
+                              if (matchingProperty
+                                      ?.propertyDetails
+                                      ?.financialInfo
+                                      ?.price !=
+                                  null) {
+                                propertyPrice =
+                                    PropertyPriceManager(
+                                      listingType:
+                                          matchingProperty?.listingType ?? '',
+                                      financialInfo:
+                                          matchingProperty
+                                              ?.propertyDetails
+                                              ?.financialInfo,
+                                    ).displayPrice;
                               }
                             }
+
                             return GestureDetector(
-                              onTap: () {
-                                Get.to(
-                                  () => LeadDetailScreen(
-                                    lead: lead,
-                                    isFromLead: true,
+                              onTap:
+                                  () => Get.to(
+                                    () => LeadDetailScreen(
+                                      lead: lead,
+                                      isFromLead: true,
+                                    ),
                                   ),
-                                );
-                              },
-                              child: buildLeadCard(context, lead,propertyPrice??''),
+                              child: buildLeadCard(
+                                context,
+                                lead,
+                                propertyPrice ?? '',
+                              ),
                             );
                           },
                         ),
@@ -3866,6 +4006,18 @@ class SellerLeadScreen extends StatelessWidget {
         );
       }),
     );
+  }
+
+  /// UI-side filtering (Controller stays untouched)
+  void _applyPropertyFilter(LeadController controller) {
+    if (propertyId == null) return;
+
+    final filtered =
+        controller.items
+            .where((lead) => lead.propertyId == propertyId)
+            .toList();
+
+    controller.items.assignAll(filtered);
   }
 }
 
@@ -4095,13 +4247,12 @@ Widget buildEmptyState(BuildContext context) {
 Widget buildLeadCard(
   BuildContext context,
   LeadItem lead,
-  String displayPrice
+  String displayPrice,
   // SellerDashboardScreen controller,
 ) {
   final leadController = Get.find<LeadController>(tag: "seller");
   final isCompact = MediaQuery.of(context).size.width < 600;
   final cardPadding = isCompact ? 12.0 : 16.0;
-
 
   return Container(
     padding: EdgeInsets.all(cardPadding),

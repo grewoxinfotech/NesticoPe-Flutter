@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
+import 'package:housing_flutter_app/modules/seller/view/widget/seller_property_approval_history.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
@@ -11,6 +12,7 @@ import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/controllers/property_controller.dart';
 import '../../../property/views/property_detail_screen.dart';
 import '../../../property/views/widgets/property_media_gallery.dart';
+import '../../module/lead_screen/views/lead_screen_enhanced.dart';
 
 // class PropertyOverviewSellerScreen extends StatelessWidget {
 //   final Items property;
@@ -272,6 +274,22 @@ class _PropertyOverviewSellerScreenState
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
               ],
 
+              _buildMenuItem("Approval History", Icons.history, () {
+                Get.to(
+                  () => SellerPropertyApprovalHistory(
+                    propertyId: property.id ?? '',
+                  ),
+                );
+              }),
+              SizedBox(height: 10),
+              _buildMenuItem(
+                "Property lead",
+                Icons.label_important_outline,
+                () {
+                  Get.to(() => SellerLeadScreen());
+                },
+              ),
+
               _buildActionButtons(context, isCompact),
 
               const SizedBox(height: 20),
@@ -279,6 +297,42 @@ class _PropertyOverviewSellerScreenState
           ),
         );
       }),
+    );
+  }
+
+  GestureDetector _buildMenuItem(
+    String label,
+    IconData icon,
+    Function() onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(12),
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: ColorRes.primary),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: AppFontSizes.body,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.leadGreyColor[800],
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
+            Icon(Icons.arrow_forward_ios, color: ColorRes.leadGreyColor[600]),
+          ],
+        ),
+      ),
     );
   }
 
