@@ -3871,7 +3871,7 @@ import '../controllers/lead_controller.dart';
 
 class SellerLeadScreen extends StatelessWidget {
   final bool isViewAll;
-  final String? propertyId; // <-- NEW
+  final String? propertyId;
 
   const SellerLeadScreen({super.key, this.isViewAll = false, this.propertyId});
 
@@ -3880,15 +3880,18 @@ class SellerLeadScreen extends StatelessWidget {
     Get.lazyPut(() => LeadController(), tag: "seller");
     final leadController = Get.find<LeadController>(tag: "seller");
 
-    /// Fetch data only once
+    /// FETCH + FILTER LOGIC
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!leadController.isLoading.value && leadController.items.isEmpty) {
-        await leadController.refreshList(); // loads all leads
+      // 🔥 IMPORTANT: Remove all previous stored leads
+      leadController.items.clear();
+      leadController.leadPropertiesList.clear();
 
-        // If propertyId provided → filter items locally (no controller change)
-        if (propertyId != null) {
-          _applyPropertyFilter(leadController);
-        }
+      // Re-fetch fresh leads from API
+      await leadController.refreshList();
+
+      // If propertyId provided → filter freshly loaded list
+      if (propertyId != null) {
+        _applyPropertyFilter(leadController);
       }
     });
 
@@ -3942,6 +3945,10 @@ class SellerLeadScreen extends StatelessWidget {
                       )
                       : RefreshIndicator(
                         onRefresh: () async {
+                          // Same logic on pull-to-refresh
+                          leadController.items.clear();
+                          leadController.leadPropertiesList.clear();
+
                           await leadController.refreshList();
                           if (propertyId != null) {
                             _applyPropertyFilter(leadController);
@@ -4008,7 +4015,7 @@ class SellerLeadScreen extends StatelessWidget {
     );
   }
 
-  /// UI-side filtering (Controller stays untouched)
+  /// Filters leads based on propertyId (No controller modification)
   void _applyPropertyFilter(LeadController controller) {
     if (propertyId == null) return;
 

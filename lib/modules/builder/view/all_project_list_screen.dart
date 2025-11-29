@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 import 'package:housing_flutter_app/modules/builder/controller/all_project_controller.dart';
 import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:housing_flutter_app/modules/builder/view/widget/project_filter_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/list_screen_appbar.dart';
 import 'package:housing_flutter_app/widgets/bar/filter_bar/filter_chip_bar.dart';
 import 'package:housing_flutter_app/widgets/empty_state/empty_state.dart';
@@ -30,7 +31,7 @@ class AllProjectListScreen extends StatefulWidget {
 
 class _AllProjectListScreenState extends State<AllProjectListScreen> {
   final AllProjectController controller = Get.put(AllProjectController());
-  final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+  RxMap<String, String> selectedFilters = <String, String>{}.obs;
 
   @override
   void initState() {
@@ -55,6 +56,29 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
     return Scaffold(
       backgroundColor: ColorRes.white,
 
+      // appBar: ListScreenAppbar(
+      //   showAppBar: widget.isAppBarShow,
+      //   title: "Project List",
+      //   onBack: () {
+      //     Get.back();
+      //   },
+      //   onFilterTap: () async {
+      //     // final result = await Get.to<Map<String, String>>(
+      //     //   () => RealEstateFilterScreen(
+      //     //     initialFilters: Map<String, String>.from(selectedFilters),
+      //     //   ),
+      //     //   transition: Transition.rightToLeft,
+      //     // );
+      //     //
+      //     // if (result != null) {
+      //     //   selectedFilters
+      //     //     ..clear()
+      //     //     ..addAll(result);
+      //     //
+      //     //   controller.applyFilters(Map<String, String>.from(selectedFilters));
+      //     // }
+      //   },
+      // ),
       appBar: ListScreenAppbar(
         showAppBar: widget.isAppBarShow,
         title: "Project List",
@@ -62,20 +86,19 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
           Get.back();
         },
         onFilterTap: () async {
-          // final result = await Get.to<Map<String, String>>(
-          //   () => RealEstateFilterScreen(
-          //     initialFilters: Map<String, String>.from(selectedFilters),
-          //   ),
-          //   transition: Transition.rightToLeft,
-          // );
-          //
-          // if (result != null) {
-          //   selectedFilters
-          //     ..clear()
-          //     ..addAll(result);
-          //
-          //   controller.applyFilters(Map<String, String>.from(selectedFilters));
-          // }
+          var filters = await Get.to(
+            () => ProjectFilterScreen(
+              initialFilters: selectedFilters.value,
+              onApply: (filterData) {
+                Get.back(result: filterData);
+              },
+            ),
+          );
+
+          if (filters != null) {
+            selectedFilters.value = filters;
+            controller.applyFilters(filters);
+          }
         },
       ),
 

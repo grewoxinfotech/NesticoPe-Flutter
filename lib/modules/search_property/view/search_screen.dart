@@ -503,7 +503,7 @@ class CommonSearchField extends StatefulWidget {
     this.onCitySelected,
     this.isFromAddProperty = false,
     this.initialSearchText,
-    this.isNavigate=false,
+    this.isNavigate = false,
     this.hintText = 'Change City...',
     this.onTap,
     this.isLocality = false, // Default to city search
@@ -618,26 +618,29 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                         fillColor: ColorRes.white,
                         suffixIcon: InkWell(
                           onTap: () {
-                            final searchText = micController.searchText.value.text.trim();
+                            final searchText =
+                                micController.searchText.value.text.trim();
                             final upperSearchText = searchText.toUpperCase();
-                            
 
-                            if (upperSearchText.contains('BHK') && searchText.isNotEmpty) {
-
-                              final bhkMatch = RegExp(r'(\d+)').firstMatch(upperSearchText);
+                            if (upperSearchText.contains('BHK') &&
+                                searchText.isNotEmpty) {
+                              final bhkMatch = RegExp(
+                                r'(\d+)',
+                              ).firstMatch(upperSearchText);
                               final bhkNumber = bhkMatch?.group(1) ?? '';
-
 
                               Get.to(
                                 () => PropertyDetail(
                                   filters: [
                                     {
                                       'bhk': bhkNumber,
-                                      "city":propertyController.selectedCity.value
+                                      "city":
+                                          propertyController.selectedCity.value,
                                     },
                                   ],
                                 ),
-                              );}
+                              );
+                            }
                             // } else if (searchText.isNotEmpty) {
                             //
                             //   Get.to(
@@ -650,7 +653,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                             //     ),
                             //   );
                             // }
-                            
+
                             // Clear search
                             controller.predictions.clear();
                             micController.searchText.value.clear();
@@ -859,83 +862,100 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                       //     }
                       //   }
                       // },
-                      onTap:(widget.isFromAddProperty)?(){
+                      onTap:
+                          (widget.isFromAddProperty)
+                              ? () {
+                                if (widget.isLocality) {
+                                  if (widget.onTap != null) {
+                                    widget.onTap!(item.description!);
+                                  } else {
+                                    if (widget.onCitySelected != null) {
+                                      widget.onCitySelected!(item);
 
-                        if(widget.isLocality)
-                        {
-                          if(widget.onTap!=null)
-                          {
-                            widget.onTap!(item.description!);
-                          }
-                          else{
-                            if (widget.onCitySelected != null) {
-                              widget.onCitySelected!(item);
+                                      controller.predictions.clear();
+                                      micController.searchText.value.clear();
+                                    }
+                                  }
+                                } else {
+                                  // Fallback if onTap is not provided
+                                  if (widget.onTap != null) {
+                                    widget.onTap!(item.description!);
+                                  } else if (widget.onCitySelected != null) {
+                                    widget.onCitySelected!(item);
 
-                              controller.predictions.clear();
-                              micController.searchText.value.clear();
-                            }
-                          }
+                                    controller.predictions
+                                        .clear(); // Clear predictions
+                                    micController.searchText.value.clear();
+                                  }
+                                }
+                              }
+                              : () {
+                                // Check if this is a BHK property search result
+                                if (item.items != null) {
+                                  Get.to(
+                                    () => PropertyDetailScreen(
+                                      property: item.items!,
+                                    ),
+                                  );
+                                  controller.predictions.clear();
+                                  micController.searchText.value.clear();
+                                }
+                                if (item.projectItem != null) {
+                                  Get.to(
+                                    () => ProjectDetailsScreen(
+                                      projectItem: item.projectItem!,
+                                    ),
+                                  );
+                                  controller.predictions.clear();
+                                  micController.searchText.value.clear();
+                                } else if (widget.isLocality) {
+                                  if (widget.onTap != null) {
+                                    widget.onTap!(item.description!);
+                                  }
 
-                        }
-                        else {
-                          // Fallback if onTap is not provided
-                          if (widget.onTap != null) {
-                            widget.onTap!(item.description!);
-                          }
-                          else if(widget.onCitySelected != null) {
-                            widget.onCitySelected!(item);
+                                  if (widget.onCitySelected != null) {
+                                    widget.onCitySelected!(item);
+                                  }
 
-                            controller.predictions.clear(); // Clear predictions
-                            micController.searchText.value.clear();
-                          }
-                        }
-                      }: ()
-                      {
-                        // Check if this is a BHK property search result
-                        if(item.items != null) {
-                          Get.to(() => PropertyDetailScreen(property: item.items!));
-                          controller.predictions.clear();
-                          micController.searchText.value.clear();
-                        } if(item.projectItem != null) {
-                          Get.to(() => ProjectDetailsScreen(projectItem: item.projectItem!));
-                          controller.predictions.clear();
-                          micController.searchText.value.clear();
-                        }
-                        else if(widget.isLocality)
-                        {
-
-                          if(widget.onTap!=null)
-                          {
-                            widget.onTap!(item.description!);
-                          }
-
-                            if (widget.onCitySelected != null) {
-                              widget.onCitySelected!(item);
-                            }
-
-                          Get.to(() => PropertyDetail(filters: [{
-                                  'city':item.description!.split(',').first
-                                }]));
-                          controller.predictions.clear(); // Clear predictions
-                          micController.searchText.value.clear();
-                        }
-                        else {
-
-                          if (widget.onTap != null) {
-                            widget.onTap!(item.description!);
-                          }
-                           if(widget.onCitySelected != null) {
-                            widget.onCitySelected!(item);
-
-
-                          }
-                          controller.predictions.clear(); // Clear predictions
-                          micController.searchText.value.clear();
-                          Get.to(() => PropertyDetail(filters: [{
-                                  'city':item.description!.split(',').first
-                                }]));
-                        }
-                      },
+                                  Get.to(
+                                    () => PropertyDetail(
+                                      filters: [
+                                        {
+                                          'city':
+                                              item.description!
+                                                  .split(',')
+                                                  .first,
+                                        },
+                                      ],
+                                    ),
+                                  );
+                                  controller.predictions
+                                      .clear(); // Clear predictions
+                                  micController.searchText.value.clear();
+                                } else {
+                                  if (widget.onTap != null) {
+                                    widget.onTap!(item.description!);
+                                  }
+                                  if (widget.onCitySelected != null) {
+                                    widget.onCitySelected!(item);
+                                  }
+                                  controller.predictions
+                                      .clear(); // Clear predictions
+                                  micController.searchText.value.clear();
+                                  Get.to(
+                                    () => PropertyDetail(
+                                      filters: [
+                                        {
+                                          'city':
+                                              item.description!
+                                                  .split(',')
+                                                  .first,
+                                        },
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppPadding.medium,

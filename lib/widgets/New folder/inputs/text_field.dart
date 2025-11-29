@@ -29,7 +29,7 @@ class NesticoPeTextField extends StatelessWidget {
   const NesticoPeTextField({
     super.key,
     this.controller,
-    required this.title,
+    this.title,
     this.validator,
     this.hintText,
     this.obscureText = false,
@@ -56,14 +56,15 @@ class NesticoPeTextField extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              title!,
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                color: ColorRes.black,
-                fontWeight: AppFontWeights.semiBold,
+            if (title != null)
+              Text(
+                title!,
+                style: TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  color: ColorRes.black,
+                  fontWeight: AppFontWeights.semiBold,
+                ),
               ),
-            ),
             if (isRequired)
               Text(
                 ' *',

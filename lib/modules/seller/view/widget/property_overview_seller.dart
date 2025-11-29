@@ -286,7 +286,7 @@ class _PropertyOverviewSellerScreenState
                 "Property lead",
                 Icons.label_important_outline,
                 () {
-                  Get.to(() => SellerLeadScreen());
+                  Get.to(() => SellerLeadScreen(propertyId: property.id ?? ''));
                 },
               ),
 

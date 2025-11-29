@@ -1544,7 +1544,10 @@ Future<void> showFindPropertyDialog(
             children: [
               // Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: const BorderRadius.only(
@@ -1588,150 +1591,172 @@ Future<void> showFindPropertyDialog(
                       Row(
                         children: [
                           _buildFieldLabel('City'),
-                          SizedBox(width: 4,),
-                          Text('*',style: const TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.error,
-                          ),)
+                          SizedBox(width: 4),
+                          Text(
+                            '*',
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.error,
+                            ),
+                          ),
                         ],
                       ),
 
                       const SizedBox(height: 8),
 
-
-                   // CitySelectionWidget(
-                   //        controller: controller.selectedCityZ,
-                   //        googleMapController: googleMapController,
-                   //        formKey: _formKey,
-                   //      ),
-                  Stack(
-                    children: [
-                      TextFormField(
-                        controller: controller.selectedCityZ,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          color: ColorRes.textPrimary,
-                        ),
-
-                        decoration: InputDecoration(
-                          hintText: "Select City",
-                          hintStyle: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            color: ColorRes.leadGreyColor.shade500,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14,
-                            horizontal: 12,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              width: 0.8,
-                              color: ColorRes.grey.withOpacity(0.3),
+                      // CitySelectionWidget(
+                      //        controller: controller.selectedCityZ,
+                      //        googleMapController: googleMapController,
+                      //        formKey: _formKey,
+                      //      ),
+                      Stack(
+                        children: [
+                          TextFormField(
+                            controller: controller.selectedCityZ,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              color: ColorRes.textPrimary,
                             ),
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              width: 0.8,
-                              color: ColorRes.grey.withOpacity(0.3),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(width: 1.2, color: ColorRes.primary),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey.shade50,
-                          errorStyle: TextStyle(
-                            color: ColorRes.error.shade700,
-                            fontSize: AppFontSizes.small,
-                          ),
-                          prefixIcon: const Icon(
-                            Icons.location_city_outlined,
-                            color: ColorRes.primary,
-                            size: 20,
-                          ),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select a city';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) async {
-                          if (value.isNotEmpty) {
-                            await googleMapController.fetchGooglePlaces(value);
-                            log("City input: $value");
-                          } else {
-                            googleMapController.predictions.clear();
-                          }
-                        },
-                      ),
 
-                      const SizedBox(height: 8),
-
-                      Obx(() {
-                        final predictions = googleMapController.predictions;
-
-                        if (predictions.isEmpty) {
-                          return const SizedBox();
-                        }
-
-                        return Container(
-                          constraints: const BoxConstraints(maxHeight: 250),
-                          margin: const EdgeInsets.only(top: 40),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(16),
-                              bottomRight: Radius.circular(16),
-                            ),
-                            border: Border.all(
-                              color: ColorRes.grey.withOpacity(0.3),
-                              width: 0.8,
-                            ),
-                          ),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: predictions.length > 3 ? 3 : predictions.length,
-                            itemBuilder: (context, index) {
-                              final city = predictions[index];
-                              return ListTile(
-                                leading: const Icon(
-                                  Icons.location_city_outlined,
+                            decoration: InputDecoration(
+                              hintText: "Select City",
+                              hintStyle: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor.shade500,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 14,
+                                horizontal: 12,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 0.8,
+                                  color: ColorRes.grey.withOpacity(0.3),
+                                ),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 0.8,
+                                  color: ColorRes.grey.withOpacity(0.3),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  width: 1.2,
                                   color: ColorRes.primary,
-                                  size: 20,
                                 ),
-                                title: Text(
-                                  city.description ?? '',
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.medium,
-                                    color: ColorRes.textPrimary,
-                                  ),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  width: 1.2,
+                                  color: ColorRes.error,
                                 ),
-                                onTap: () {
-                                  controller.selectedCityZ.text = city.structuredFormatting?.mainText ?? '';
-                                  googleMapController.predictions.clear();
-                                  FocusScope.of(context).unfocus(); // hide keyboard
-                                },
-                              );
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  width: 1.2,
+                                  color: ColorRes.error,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey.shade50,
+                              errorStyle: TextStyle(
+                                color: ColorRes.error.shade700,
+                                fontSize: AppFontSizes.small,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.location_city_outlined,
+                                color: ColorRes.primary,
+                                size: 20,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a city';
+                              }
+                              return null;
+                            },
+                            onChanged: (value) async {
+                              if (value.isNotEmpty) {
+                                await googleMapController.fetchGooglePlaces(
+                                  value,
+                                );
+                                log("City input: $value");
+                              } else {
+                                googleMapController.predictions.clear();
+                              }
                             },
                           ),
-                        );
-                      }),
-                    ],
-                  ),
+
+                          const SizedBox(height: 8),
+
+                          Obx(() {
+                            final predictions = googleMapController.predictions;
+
+                            if (predictions.isEmpty) {
+                              return const SizedBox();
+                            }
+
+                            return Container(
+                              constraints: const BoxConstraints(maxHeight: 250),
+                              margin: const EdgeInsets.only(top: 40),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(16),
+                                  bottomRight: Radius.circular(16),
+                                ),
+                                border: Border.all(
+                                  color: ColorRes.grey.withOpacity(0.3),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount:
+                                    predictions.length > 3
+                                        ? 3
+                                        : predictions.length,
+                                itemBuilder: (context, index) {
+                                  final city = predictions[index];
+                                  return ListTile(
+                                    leading: const Icon(
+                                      Icons.location_city_outlined,
+                                      color: ColorRes.primary,
+                                      size: 20,
+                                    ),
+                                    title: Text(
+                                      city.description ?? '',
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        color: ColorRes.textPrimary,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      controller.selectedCityZ.text =
+                                          city.structuredFormatting?.mainText ??
+                                          '';
+                                      googleMapController.predictions.clear();
+                                      FocusScope.of(
+                                        context,
+                                      ).unfocus(); // hide keyboard
+                                    },
+                                  );
+                                },
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
 
                       const SizedBox(height: 16),
 
@@ -1750,7 +1775,6 @@ Future<void> showFindPropertyDialog(
                                       : null,
                               isDense: true,
                               decoration: InputDecoration(
-
                                 hintText: 'Select',
                                 hintStyle: TextStyle(
                                   fontSize: AppFontSizes.caption,
@@ -1798,7 +1822,8 @@ Future<void> showFindPropertyDialog(
                                       .toList(),
                               onChanged:
                                   (val) =>
-                                      controller.selectedListingType.value = val,
+                                      controller.selectedListingType.value =
+                                          val,
                             ),
                           ),
                         ],
@@ -2012,15 +2037,13 @@ Future<void> showFindPropertyDialog(
                     Expanded(
                       flex: 2,
                       child: ElevatedButton(
-                        onPressed:(){
-                          if (_formKey.currentState!.validate())
-                          {
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
                             controller.findProperties();
-                          }
-                          else{
+                          } else {
                             print("Form is not valid");
                           }
-                          },
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -2283,7 +2306,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  SizedBox(width: 8,),
+                                  SizedBox(width: 8),
                                   Text(
                                     _formatDate(review.review.createdAt),
                                     style: TextStyle(
@@ -5009,17 +5032,17 @@ Widget _buildEmptyState() {
   );
 }
 
-
 class StateSelectionWidget extends StatelessWidget {
   final TextEditingController controller;
-final bool isEditing;
+  final bool isEditing;
   final Function(Prediction)? onCitySelected; // ✅ callback for selected city
 
   const StateSelectionWidget({
     super.key,
     required this.controller,
 
-    this.onCitySelected,  this.isEditing=true,
+    this.onCitySelected,
+    this.isEditing = true,
   });
 
   @override
@@ -5039,10 +5062,13 @@ final bool isEditing;
             labelText: "Select State",
             labelStyle: TextStyle(
               fontSize: AppFontSizes.small,
-              color
-                  : ColorRes.leadGreyColor[500],
+              color: ColorRes.leadGreyColor[500],
             ),
-            prefixIcon: Icon(Icons.location_city_outlined, size: 20, color: ColorRes.leadGreyColor[600]),
+            prefixIcon: Icon(
+              Icons.location_city_outlined,
+              size: 20,
+              color: ColorRes.leadGreyColor[600],
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
@@ -5057,7 +5083,10 @@ final bool isEditing;
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: ColorRes.blueColor, width: 1.5),
+              borderSide: const BorderSide(
+                color: ColorRes.blueColor,
+                width: 1.5,
+              ),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -5074,8 +5103,7 @@ final bool isEditing;
               borderSide: const BorderSide(color: ColorRes.error, width: 1.5),
             ),
             filled: true,
-            fillColor:
-            ColorRes.leadGreyColor[50] ,
+            fillColor: ColorRes.leadGreyColor[50],
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 14,
@@ -5115,7 +5143,7 @@ final bool isEditing;
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
-                )
+                ),
               ],
             ),
             child: ListView.builder(
@@ -5128,10 +5156,12 @@ final bool isEditing;
 
                   log("djhfudfhg ${cityData}");
 
-
                   return ListTile(
-                    leading: const Icon(Icons.location_city_outlined,
-                        size: 20, color: ColorRes.primary),
+                    leading: const Icon(
+                      Icons.location_city_outlined,
+                      size: 20,
+                      color: ColorRes.primary,
+                    ),
                     title: Text(
                       cityData['city'] ?? '',
                       style: TextStyle(
@@ -5162,8 +5192,11 @@ final bool isEditing;
                 } else {
                   final city = items[index] as Prediction;
                   return ListTile(
-                    leading: const Icon(Icons.location_city_outlined,
-                        size: 20, color: ColorRes.primary),
+                    leading: const Icon(
+                      Icons.location_city_outlined,
+                      size: 20,
+                      color: ColorRes.primary,
+                    ),
                     title: Text(
                       city.description ?? '',
                       style: TextStyle(
@@ -5183,11 +5216,12 @@ final bool isEditing;
               },
             ),
           );
-        })
+        }),
       ],
     );
   }
 }
+
 class CitySelectionWidget extends StatelessWidget {
   final TextEditingController controller;
   final bool isEditing;
@@ -5197,7 +5231,8 @@ class CitySelectionWidget extends StatelessWidget {
     super.key,
     required this.controller,
 
-    this.onCitySelected, this.isEditing=true,
+    this.onCitySelected,
+    this.isEditing = true,
   });
 
   @override
@@ -5217,10 +5252,13 @@ class CitySelectionWidget extends StatelessWidget {
             labelText: "Select City",
             labelStyle: TextStyle(
               fontSize: AppFontSizes.small,
-              color
-                  : ColorRes.leadGreyColor[500],
+              color: ColorRes.leadGreyColor[500],
             ),
-            prefixIcon: Icon(Icons.apartment_outlined, size: 20, color: ColorRes.leadGreyColor[600]),
+            prefixIcon: Icon(
+              Icons.apartment_outlined,
+              size: 20,
+              color: ColorRes.leadGreyColor[600],
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
@@ -5235,7 +5273,10 @@ class CitySelectionWidget extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: ColorRes.blueColor, width: 1.5),
+              borderSide: const BorderSide(
+                color: ColorRes.blueColor,
+                width: 1.5,
+              ),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -5252,8 +5293,7 @@ class CitySelectionWidget extends StatelessWidget {
               borderSide: const BorderSide(color: ColorRes.error, width: 1.5),
             ),
             filled: true,
-            fillColor:
-            ColorRes.leadGreyColor[50] ,
+            fillColor: ColorRes.leadGreyColor[50],
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 14,
@@ -5333,7 +5373,7 @@ class CitySelectionWidget extends StatelessWidget {
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
-                )
+                ),
               ],
             ),
             child: ListView.builder(
@@ -5346,10 +5386,12 @@ class CitySelectionWidget extends StatelessWidget {
 
                   log("djhfudfhg ${cityData}");
 
-
                   return ListTile(
-                    leading: const Icon(Icons.location_city_outlined,
-                        size: 20, color: ColorRes.primary),
+                    leading: const Icon(
+                      Icons.location_city_outlined,
+                      size: 20,
+                      color: ColorRes.primary,
+                    ),
                     title: Text(
                       cityData['city'] ?? '',
                       style: TextStyle(
@@ -5372,7 +5414,10 @@ class CitySelectionWidget extends StatelessWidget {
 
                       if (onCitySelected != null) {
                         onCitySelected!(
-                          Prediction(description: cityData['city'],reference: cityData['state']),
+                          Prediction(
+                            description: cityData['city'],
+                            reference: cityData['state'],
+                          ),
                         );
                       }
                     },
@@ -5380,8 +5425,11 @@ class CitySelectionWidget extends StatelessWidget {
                 } else {
                   final city = items[index] as Prediction;
                   return ListTile(
-                    leading: const Icon(Icons.location_city_outlined,
-                        size: 20, color: ColorRes.primary),
+                    leading: const Icon(
+                      Icons.location_city_outlined,
+                      size: 20,
+                      color: ColorRes.primary,
+                    ),
                     title: Text(
                       city.description ?? '',
                       style: TextStyle(
@@ -5401,12 +5449,8 @@ class CitySelectionWidget extends StatelessWidget {
               },
             ),
           );
-        })
-
-
+        }),
       ],
     );
   }
 }
-
-
