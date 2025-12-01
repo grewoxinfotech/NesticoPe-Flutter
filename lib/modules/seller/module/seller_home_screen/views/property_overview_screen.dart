@@ -32,13 +32,15 @@ class PropertyOverviewScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: properties.length,
-        itemBuilder: (context, index) {
-          final property = properties[index];
-          return _buildPropertyCard(property);
-        },
+      body: SafeArea(
+        child: ListView.builder(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          itemCount: properties.length,
+          itemBuilder: (context, index) {
+            final property = properties[index];
+            return _buildPropertyCard(property);
+          },
+        ),
       ),
     );
   }

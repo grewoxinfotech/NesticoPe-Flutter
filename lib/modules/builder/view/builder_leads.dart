@@ -6,10 +6,14 @@ import 'package:housing_flutter_app/modules/common/lead_components/lead_componen
 import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
 
 import '../../../data/network/property/models/property_model.dart';
+import '../../../widgets/bottom_sheet/lead_filter_bottomsheet.dart';
+import '../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
+import '../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../seller/module/lead_screen/model/lead_model.dart';
 
 class BuilderLeads extends StatefulWidget {
   final bool isViewAll;
+
   const BuilderLeads({super.key, this.isViewAll = false});
 
   @override
@@ -17,12 +21,37 @@ class BuilderLeads extends StatefulWidget {
 }
 
 class _BuilderLeadsState extends State<BuilderLeads> {
+  late final LeadController leadController;
+  RxBool isLoadingLead = false.obs;
   String searchQuery = '';
   final RxList<String> selectedFilters = <String>[].obs;
   bool isLoading = false;
 
-  // Dummy leads data
-  final dummyLeads = [];
+  @override
+  void initState() {
+    leadController =
+        Get.isRegistered<LeadController>(tag: "seller")
+            ? Get.find<LeadController>(tag: "seller")
+            : Get.put(LeadController(), tag: "seller");
+
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _loadData();
+    });
+  }
+
+  Future<void> _loadData() async {
+    isLoadingLead.value = true;
+    leadController.items.clear();
+    leadController.leadPropertiesList.clear();
+
+    // Re-fetch fresh leads from API
+    await leadController.refreshList();
+    // if (widget.propertyId != null) {
+    //   _applyPropertyFilter(leadController);
+    // }
+    isLoadingLead.value = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,121 +59,93 @@ class _BuilderLeadsState extends State<BuilderLeads> {
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading:
-            (widget.isViewAll)
+            widget.isViewAll
                 ? IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
                 )
                 : null,
-        title: Text(
-          'Property Buyer Leads',
+        title: const Text(
+          'Leads',
           style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
-        automaticallyImplyLeading: (widget.isViewAll),
+        automaticallyImplyLeading: widget.isViewAll,
         backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
-            onPressed: () {
-              LeadFilterBottomSheet.show(
-                context: context,
-                selectedFilters: selectedFilters,
-                onApplyFilters: () {
-                  setState(() {}); // Refresh UI after filter applied
-                  // TODO: Apply filter to API here
-                  applyFiltersToAPI();
-                },
-              );
-            },
+            onPressed: () => showFilterBottomSheet(context, leadController),
           ),
         ],
       ),
-      body: Column(
-        children: [
-          LeadSearchBar(
-            onSearchChanged: (value) {
-              setState(() {
-                searchQuery = value;
-              });
-            },
-          ),
-          Obx(
-            () => LeadFilterChips(
-              selectedFilters: selectedFilters.toList(),
-              onRemoveFilter: (filter) {
-                setState(() {
-                  selectedFilters.remove(filter);
-                });
-                // TODO: Apply filter to API here
-                // applyFiltersToAPI();
-              },
-              onClearAll: () {
-                setState(() {
-                  selectedFilters.clear();
-                });
-                // TODO: Clear filters from API here
-                // clearFiltersFromAPI();
-              },
-            ),
-          ),
-          Expanded(
-            child:
-                isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : dummyLeads.isEmpty
-                    ? Center(
-                      child: Text(
-                        'No leads available. Tap + to add a new lead.',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          color: ColorRes.leadGreyColor[600],
-                          fontWeight: AppFontWeights.medium,
+      body: Obx(
+        () => Column(
+          children: [
+            buildSelectedFiltersChips(context, leadController, () async {
+              leadController.filters.clear();
+              await _loadData();
+            }),
+            Expanded(
+              child:
+                  leadController.isLoading.value && isLoadingLead.value
+                      ? const Center(child: CircularProgressIndicator())
+                      : leadController.items.isEmpty
+                      ? Center(
+                        child: Text(
+                          'No leads available. Tap + to add a new lead.',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            color: ColorRes.leadGreyColor[600],
+                            fontWeight: AppFontWeights.medium,
+                          ),
+                        ),
+                      )
+                      : RefreshIndicator(
+                        onRefresh: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          await Future.delayed(Duration(seconds: 1));
+                          setState(() {
+                            isLoading = false;
+                          });
+                        },
+                        child: ListView.separated(
+                          padding: EdgeInsets.all(
+                            getResponsivePadding(context),
+                          ),
+                          itemCount: leadController.items.length,
+                          separatorBuilder:
+                              (context, index) => SizedBox(
+                                height: getResponsiveSpacing(context),
+                              ),
+                          itemBuilder: (context, index) {
+                            final lead = leadController.items[index];
+                            return LeadCardWidget(
+                              lead: lead,
+                              isCompact:
+                                  MediaQuery.of(context).size.width < 600,
+                              showDataMasking: false,
+                              onView: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('View ${lead.name}')),
+                                );
+                              },
+                              onEdit: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Edit ${lead.name}')),
+                                );
+                              },
+                              onDelete:
+                                  () => showDeleteConfirmation(context, lead),
+                            );
+                          },
                         ),
                       ),
-                    )
-                    : RefreshIndicator(
-                      onRefresh: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        await Future.delayed(Duration(seconds: 1));
-                        setState(() {
-                          isLoading = false;
-                        });
-                      },
-                      child: ListView.separated(
-                        padding: EdgeInsets.all(getResponsivePadding(context)),
-                        itemCount: dummyLeads.length,
-                        separatorBuilder:
-                            (context, index) =>
-                                SizedBox(height: getResponsiveSpacing(context)),
-                        itemBuilder: (context, index) {
-                          final lead = dummyLeads[index];
-                          return LeadCardWidget(
-                            lead: lead,
-                            isCompact: MediaQuery.of(context).size.width < 600,
-                            showDataMasking: false,
-                            onView: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('View ${lead.name}')),
-                              );
-                            },
-                            onEdit: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Edit ${lead.name}')),
-                              );
-                            },
-                            onDelete:
-                                () => showDeleteConfirmation(context, lead),
-                          );
-                        },
-                      ),
-                    ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

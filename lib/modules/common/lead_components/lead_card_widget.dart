@@ -20,8 +20,8 @@ class LeadCardWidget extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onView;
   final bool showDataMasking;
-  final String? propertyPrice;  // Add property price from matching property
-  final RxList<Items>? leadPropertiesList;  // List of properties to match
+  final String? propertyPrice; // Add property price from matching property
+  final RxList<Items>? leadPropertiesList; // List of properties to match
 
   const LeadCardWidget({
     Key? key,
@@ -32,8 +32,8 @@ class LeadCardWidget extends StatelessWidget {
     this.onDelete,
     this.onView,
     this.showDataMasking = true,
-    this.propertyPrice,  // Accept property price
-    this.leadPropertiesList,  // Accept properties list
+    this.propertyPrice, // Accept property price
+    this.leadPropertiesList, // Accept properties list
   }) : super(key: key);
 
   // /// Method to match lead property ID with leadPropertiesList
@@ -77,7 +77,7 @@ class LeadCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardPadding = isCompact ? 12.0 : 16.0;
-    
+
     // Get financial info and listing type from matching property
     // final matchingFinancialInfo = _getMatchingPropertyFinancialInfo();
     // final matchingListingType = _getMatchingPropertyListingType();
@@ -132,9 +132,7 @@ class LeadCardWidget extends StatelessWidget {
                       SizedBox(
                         width: 180,
                         child: Text(
-                          showDataMasking
-                              ? DataMasker.maskName(lead.name!)
-                              : lead.name!,
+                          DataMasker.maskName(lead.name!),
                           style: TextStyle(
                             fontSize:
                                 isCompact
@@ -151,9 +149,7 @@ class LeadCardWidget extends StatelessWidget {
                       SizedBox(
                         width: 180,
                         child: Text(
-                          showDataMasking
-                              ? DataMasker.maskPhone(lead.phone!)
-                              : lead.phone!,
+                          DataMasker.maskPhone(lead.phone!),
                           style: TextStyle(
                             fontSize:
                                 isCompact
@@ -172,9 +168,7 @@ class LeadCardWidget extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                showDataMasking
-                                    ? DataMasker.maskEmail(lead.email!)
-                                    : lead.email!,
+                                DataMasker.maskEmail(lead.email!),
                                 style: TextStyle(
                                   fontSize: AppFontSizes.extraSmall,
                                   color: ColorRes.leadGreyColor[600],
@@ -195,25 +189,29 @@ class LeadCardWidget extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      'Budget',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.extraSmall,
-                        color: ColorRes.leadGreyColor[800],
-                        fontWeight: AppFontWeights.regular,
+                    if (propertyPrice != null) ...[
+                      Text(
+                        'Budget',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.extraSmall,
+                          color: ColorRes.leadGreyColor[800],
+                          fontWeight: AppFontWeights.regular,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      '$propertyPrice',
-                      style: TextStyle(
-                        fontSize:
-                            isCompact ? AppFontSizes.medium : AppFontSizes.body,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.success,
+                      SizedBox(height: 4),
+                      Text(
+                        '$propertyPrice',
+                        style: TextStyle(
+                          fontSize:
+                              isCompact
+                                  ? AppFontSizes.medium
+                                  : AppFontSizes.body,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.success,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4),
+                      SizedBox(height: 4),
+                    ],
                     Text(
                       formatTime(lead.createdAt!),
                       style: TextStyle(
@@ -299,41 +297,41 @@ class LeadCardWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Spacer(),
-
-                // Action Buttons
-                Row(
-                  children: [
-                    if (onView != null) ...[
-                      buildActionButton(
-                        icon: Icons.visibility,
-                        color: ColorRes.blueColor,
-                        onPressed: onView!,
-                        tooltip: 'View Lead',
-                        isCompact: isCompact,
-                      ),
-                      SizedBox(width: 8),
-                    ],
-                    if (onEdit != null) ...[
-                      buildActionButton(
-                        icon: Icons.edit,
-                        color: ColorRes.orangeColor,
-                        onPressed: onEdit!,
-                        tooltip: 'Edit Lead',
-                        isCompact: isCompact,
-                      ),
-                      SizedBox(width: 8),
-                    ],
-                    if (onDelete != null)
-                      buildActionButton(
-                        icon: Icons.delete,
-                        color: ColorRes.error,
-                        onPressed: onDelete!,
-                        tooltip: 'Delete Lead',
-                        isCompact: isCompact,
-                      ),
-                  ],
-                ),
+                // Spacer(),
+                //
+                // // Action Buttons
+                // Row(
+                //   children: [
+                //     if (onView != null) ...[
+                //       buildActionButton(
+                //         icon: Icons.visibility,
+                //         color: ColorRes.blueColor,
+                //         onPressed: onView!,
+                //         tooltip: 'View Lead',
+                //         isCompact: isCompact,
+                //       ),
+                //       SizedBox(width: 8),
+                //     ],
+                //     if (onEdit != null) ...[
+                //       buildActionButton(
+                //         icon: Icons.edit,
+                //         color: ColorRes.orangeColor,
+                //         onPressed: onEdit!,
+                //         tooltip: 'Edit Lead',
+                //         isCompact: isCompact,
+                //       ),
+                //       SizedBox(width: 8),
+                //     ],
+                //     if (onDelete != null)
+                //       buildActionButton(
+                //         icon: Icons.delete,
+                //         color: ColorRes.error,
+                //         onPressed: onDelete!,
+                //         tooltip: 'Delete Lead',
+                //         isCompact: isCompact,
+                //       ),
+                //   ],
+                // ),
               ],
             ),
           ],

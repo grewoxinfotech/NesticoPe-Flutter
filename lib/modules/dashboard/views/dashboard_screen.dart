@@ -3,6 +3,7 @@ import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_h
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
+import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
 import 'package:housing_flutter_app/modules/calender/views/calender_screen.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/widget/favourite_screen.dart';
@@ -77,6 +78,9 @@ class DashboardScreen extends StatelessWidget {
                 // if (UserHelper.isSellerBuilder) ...[
                 ElevatedButton(
                   onPressed: () {
+                    // if (Get.isRegistered<ProjectWizardController>()) {
+                    //   Get.delete<ProjectWizardController>();
+                    // }
                     Get.to(() => BuilderMainScreen());
                   },
 
@@ -84,7 +88,6 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 // ],
-
                 // if (UserHelper.isReseller) ...[
                 ElevatedButton(
                   onPressed: () {

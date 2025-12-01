@@ -467,6 +467,8 @@
 // /// 🔹 MODEL FOR ADDING PROJECT (used for API POST/PUT)
 // /// ===============================
 //
+import 'dart:io';
+
 import '../../../../app/utils/formater/formater.dart';
 
 class AddProjectModel {
@@ -728,8 +730,6 @@ class AddProjectModel {
 //   };
 // }
 
-
-
 /// ===============================
 /// 🔹 COMMON MODELS
 /// ===============================
@@ -819,10 +819,7 @@ class SizeRange {
     maxSize: (json['maxSize'] ?? 0).toDouble(),
   );
 
-  Map<String, dynamic> toJson() => {
-    'minSize': minSize,
-    'maxSize': maxSize,
-  };
+  Map<String, dynamic> toJson() => {'minSize': minSize, 'maxSize': maxSize};
 }
 
 class ScoreDetails {
@@ -977,9 +974,10 @@ class ProjectConfiguration {
   factory ProjectConfiguration.fromJson(Map<String, dynamic> json) =>
       ProjectConfiguration(
         bhk: json['bhk'] ?? 0,
-        variants: (json['variants'] as List<dynamic>? ?? [])
-            .map((v) => ProjectVariant.fromJson(v))
-            .toList(),
+        variants:
+            (json['variants'] as List<dynamic>? ?? [])
+                .map((v) => ProjectVariant.fromJson(v))
+                .toList(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -1100,39 +1098,46 @@ class ProjectItem {
     projectId: json['projectId'] ?? '',
     projectName: json['projectName'] ?? '',
     projectArea: json['projectArea']?.toString() ?? '',
-    projectSize: json['projectSize'] != null
-        ? ProjectSize.fromJson(json['projectSize'])
-        : null,
-    sizeRange: json['sizeRange'] != null
-        ? SizeRange.fromJson(json['sizeRange'])
-        : null,
+    projectSize:
+        json['projectSize'] != null
+            ? ProjectSize.fromJson(json['projectSize'])
+            : null,
+    sizeRange:
+        json['sizeRange'] != null
+            ? SizeRange.fromJson(json['sizeRange'])
+            : null,
     launchDate: json['launchDate'],
     possessionDate: json['possessionDate'],
-    configuration: (json['configurations'] as List<dynamic>? ?? [])
-        .map((v) => ProjectConfiguration.fromJson(v))
-        .toList(),
+    configuration:
+        (json['configurations'] as List<dynamic>? ?? [])
+            .map((v) => ProjectConfiguration.fromJson(v))
+            .toList(),
     reraId: json['reraId'] ?? '',
     propertyTypes: json['propertyTypes'] ?? '',
-    projectContactInfo: json['projectContactInfo'] != null
-        ? ProjectContactInfo.fromJson(json['projectContactInfo'])
-        : null,
+    projectContactInfo:
+        json['projectContactInfo'] != null
+            ? ProjectContactInfo.fromJson(json['projectContactInfo'])
+            : null,
     status: json['status'] ?? '',
     address: json['address'] ?? '',
     city: json['city'] ?? '',
     state: json['state'] ?? '',
     zipCode: json['zipCode']?.toString() ?? '',
     location: json['location'],
-    nearbyLocations: (json['nearbyLocations'] as List? ?? [])
-        .map((e) => NearbyLocation.fromJson(e))
-        .toList(),
+    nearbyLocations:
+        (json['nearbyLocations'] as List? ?? [])
+            .map((e) => NearbyLocation.fromJson(e))
+            .toList(),
     amenities: List<String>.from(json['amenities'] ?? []),
     projectHighlights: List<String>.from(json['projectHighlights'] ?? []),
-    mediaGallery: json['mediaGallery'] != null
-        ? MediaGallery.fromJson(json['mediaGallery'])
-        : null,
-    brochures: (json['brochures'] as List<dynamic>? ?? [])
-        .map((e) => Brochure.fromJson(e))
-        .toList(),
+    mediaGallery:
+        json['mediaGallery'] != null
+            ? MediaGallery.fromJson(json['mediaGallery'])
+            : null,
+    brochures:
+        (json['brochures'] as List<dynamic>? ?? [])
+            .map((e) => Brochure.fromJson(e))
+            .toList(),
     isVerified: json['isVerified'] ?? false,
     isActive: json['isActive'] ?? false,
     createdAt: json['createdAt'],
@@ -1157,9 +1162,10 @@ class ProjectItem {
     isHiddenDueToReports: json['isHiddenDueToReports'],
     lastReportedAt: json['lastReportedAt'],
     advancedScore: (json['advancedScore'] ?? 0).toDouble(),
-    scoreDetails: json['scoreDetails'] != null
-        ? ScoreDetails.fromJson(json['scoreDetails'])
-        : null,
+    scoreDetails:
+        json['scoreDetails'] != null
+            ? ScoreDetails.fromJson(json['scoreDetails'])
+            : null,
   );
 
   /// ✅ Added complete toJson method
@@ -1215,14 +1221,14 @@ class ProjectItem {
   };
 }
 
-
 extension ProjectItemPriceRange on ProjectItem {
   String getPriceRange() {
-    final prices = configuration
-        .expand((config) => config.variants)
-        .map((variant) => variant.price)
-        .where((p) => p > 0)
-        .toList();
+    final prices =
+        configuration
+            .expand((config) => config.variants)
+            .map((variant) => variant.price)
+            .where((p) => p > 0)
+            .toList();
 
     if (prices.isEmpty) return "Price not available";
 
@@ -1232,6 +1238,64 @@ extension ProjectItemPriceRange on ProjectItem {
     return minPrice == maxPrice
         ? Formatter.formatPrice(minPrice)
         : "${Formatter.formatPrice(minPrice)} - ${Formatter.formatNumber(maxPrice)}";
+  }
+}
+
+extension ProjectItemMapper on ProjectItem {
+  AddProjectModel toAddProjectModel() {
+    return AddProjectModel(
+      id: id,
+      projectName: projectName,
+      projectArea: double.tryParse(projectArea) ?? 0.0,
+
+      projectSize: projectSize ?? ProjectSize(totalBuildings: 0, totalUnits: 0),
+
+      launchDate:
+          launchDate != null
+              ? DateTime.tryParse(launchDate!) ?? DateTime.now()
+              : DateTime.now(),
+
+      possessionDate:
+          possessionDate != null
+              ? DateTime.tryParse(possessionDate!) ?? DateTime.now()
+              : DateTime.now(),
+
+      configurations: configuration,
+
+      reraId: reraId,
+      propertyTypes: propertyTypes,
+      status: status,
+
+      address: address,
+      city: city,
+      state: state,
+      zipCode: zipCode,
+      location: location ?? "",
+
+      nearbyLocations:
+          nearbyLocations
+              .map((e) => {"name": e.name, "distance": e.distance})
+              .toList(),
+
+      amenities: amenities,
+      projectHighlights: projectHighlights,
+
+      mediaGallery: mediaGallery,
+
+      /// Extract only URLs from brochures list
+      imageList: mediaGallery?.images ?? [],
+      videoList: mediaGallery?.videos ?? [],
+      documentList: mediaGallery?.documents ?? [],
+
+      brochure: brochures.isNotEmpty ? brochures.first.url : null,
+      pdfPath:
+          (mediaGallery?.documents != null &&
+                  mediaGallery!.documents.isNotEmpty)
+              ? mediaGallery?.documents.first
+              : null,
+
+      projectContactInfo: projectContactInfo,
+    );
   }
 }
 
@@ -1246,8 +1310,19 @@ class NearbyLocation {
     distance: json['distance'] ?? '',
   );
 
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'distance': distance,
-  };
+  Map<String, dynamic> toJson() => {'name': name, 'distance': distance};
+}
+
+class MediaItem {
+  final File? file;
+  final String? url;
+  final bool isExisting;
+
+  MediaItem.file(this.file) : url = null, isExisting = false;
+
+  MediaItem.url(this.url) : file = null, isExisting = true;
+
+  String get path => file?.path ?? url ?? '';
+  bool get isFile => file != null;
+  bool get isUrl => url != null;
 }

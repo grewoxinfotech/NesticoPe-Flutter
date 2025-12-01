@@ -282,7 +282,10 @@ class CreateProjectScreen extends GetView<ProjectWizardController> {
       case 0:
         return StepBasicInfo(formKey: controller.formKeys[0]);
       case 1:
-        return StepConfigurations(formKey: controller.formKeys[1]);
+        return StepConfigurations(
+          formKey: controller.formKeys[1],
+          isFromEdit: isFromEdit,
+        );
       case 2:
         return StepLocation(formKey: controller.formKeys[2]);
       case 3:

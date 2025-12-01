@@ -23,8 +23,7 @@ class BuilderPropertyListing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => ProjectWizardController(isBuilderView: true));
-    final controller = Get.find<ProjectWizardController>();
+    final controller = Get.find<ProjectWizardController>(tag: "builder");
     final projectController = Get.put(ProjectController());
     return Scaffold(
       backgroundColor: ColorRes.leadGreyColor.shade100,
@@ -410,7 +409,13 @@ class BuilderProjectCard extends StatelessWidget {
                               final wizardController = Get.put(
                                 ProjectWizardController(isBuilderView: true),
                               );
-                              // await wizardController.updateProjectData(project);
+                              await wizardController.updateProjectData(
+                                project.toAddProjectModel(),
+                              );
+
+                              debugPrint(
+                                "Project For Edit: ${project.toAddProjectModel().configurations.map((e) => e.toJson())}",
+                              );
                             }),
                           );
 

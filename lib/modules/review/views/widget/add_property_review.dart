@@ -34,190 +34,180 @@ class AddReviewScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           children: [
             // Title
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                color: ColorRes.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: ColorRes.leadGreyColor.shade300,
-                  width: 1,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                NesticoPeTextField(
+                  isRequired: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  controller: controller.titleController,
+                  title: 'Review Title',
+                  hintText: 'Summarize your experience',
+
+                  validator:
+                      (v) => (v == null || v.isEmpty) ? 'Enter a title' : null,
                 ),
-              ),
-              child: Column(
-                children: [
-                  NesticoPeTextField(
-                    isRequired: true,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: controller.titleController,
-                    title: 'Review Title',
-                    hintText: 'Summarize your experience',
+                const SizedBox(height: 13),
 
-                    validator:
-                        (v) =>
-                            (v == null || v.isEmpty) ? 'Enter a title' : null,
-                  ),
-                  const SizedBox(height: 13),
+                // Content
+                NesticoPeTextField(
+                  // isRequired: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  controller: controller.contentController,
+                  title: 'Your Review (Optional)',
+                  hintText: 'Share your detailed experience...',
+                  maxLines: 4,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'Enter your review';
+                    if (v.length < 20)
+                      return 'Review must be at least 20 characters';
+                    return null;
+                  },
+                ),
+                SizedBox(height: 13),
 
-                  // Content
-                  NesticoPeTextField(
-                    // isRequired: true,
+                // Overall Rating
+                Obx(
+                  () => _buildRatingSection(
+                    title: 'Overall Rating',
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: controller.contentController,
-                    title: 'Your Review (Optional)',
-                    hintText: 'Share your detailed experience...',
-                    maxLines: 4,
-                    validator: (v) {
-                      if (v == null || v.isEmpty) return 'Enter your review';
-                      if (v.length < 20)
-                        return 'Review must be at least 20 characters';
-                      return null;
+                    rating: controller.overallRating.value,
+                    onRatingChanged: (rating) {
+                      controller.overallRating.value = rating;
                     },
+                    isRequired: true,
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Overall Rating
-            Obx(
-              () => _buildRatingSection(
-                title: 'Overall Rating',
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                rating: controller.overallRating.value,
-                onRatingChanged: (rating) {
-                  controller.overallRating.value = rating;
-                },
-                isRequired: true,
-              ),
-            ),
-
-            const SizedBox(height: 16),
-            // Divider(height: 32, color: ColorRes.leadGreyColor.shade300),
-
-            // Detailed Ratings Header
-            Text(
-              'Detailed Ratings',
-              style: TextStyle(
-                fontSize: AppFontSizes.headingTitle,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                color: ColorRes.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: ColorRes.leadGreyColor.shade300,
-                  width: 1,
                 ),
-              ),
-              child: Column(
-                children: [
-                  // Location Rating
-                  Obx(
-                    () => _buildRatingSectionWithoutContainer(
-                      title: 'Location',
 
-                      rating: controller.locationRating.value,
-                      onRatingChanged: (rating) {
-                        controller.locationRating.value = rating;
-                      },
+                const SizedBox(height: 16),
+                // Divider(height: 32, color: ColorRes.leadGreyColor.shade300),
+
+                // Detailed Ratings Header
+                Text(
+                  'Detailed Ratings',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.headingTitle,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                const SizedBox(height: 16),
+
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: ColorRes.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: ColorRes.leadGreyColor.shade300,
+                      width: 1,
                     ),
                   ),
+                  child: Column(
+                    children: [
+                      // Location Rating
+                      Obx(
+                        () => _buildRatingSectionWithoutContainer(
+                          title: 'Location',
 
-                  const SizedBox(height: 12),
+                          rating: controller.locationRating.value,
+                          onRatingChanged: (rating) {
+                            controller.locationRating.value = rating;
+                          },
+                        ),
+                      ),
 
-                  // Cleanliness Rating
-                  Obx(
-                    () => _buildRatingSectionWithoutContainer(
-                      title: 'Cleanliness',
+                      const SizedBox(height: 12),
 
-                      rating: controller.cleanlinessRating.value,
-                      onRatingChanged: (rating) {
-                        controller.cleanlinessRating.value = rating;
-                      },
-                    ),
+                      // Cleanliness Rating
+                      Obx(
+                        () => _buildRatingSectionWithoutContainer(
+                          title: 'Cleanliness',
+
+                          rating: controller.cleanlinessRating.value,
+                          onRatingChanged: (rating) {
+                            controller.cleanlinessRating.value = rating;
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Accuracy Rating
+                      Obx(
+                        () => _buildRatingSectionWithoutContainer(
+                          title: 'Accuracy',
+
+                          rating: controller.accuracyRating.value,
+                          onRatingChanged: (rating) {
+                            controller.accuracyRating.value = rating;
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Value Rating
+                      Obx(
+                        () => _buildRatingSectionWithoutContainer(
+                          title: 'Value',
+
+                          rating: controller.valueRating.value,
+                          onRatingChanged: (rating) {
+                            controller.valueRating.value = rating;
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Amenities Rating
+                      Obx(
+                        () => _buildRatingSectionWithoutContainer(
+                          title: 'Amenities',
+
+                          rating: controller.amenitiesRating.value,
+                          onRatingChanged: (rating) {
+                            controller.amenitiesRating.value = rating;
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-
-                  const SizedBox(height: 12),
-
-                  // Accuracy Rating
-                  Obx(
-                    () => _buildRatingSectionWithoutContainer(
-                      title: 'Accuracy',
-
-                      rating: controller.accuracyRating.value,
-                      onRatingChanged: (rating) {
-                        controller.accuracyRating.value = rating;
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Value Rating
-                  Obx(
-                    () => _buildRatingSectionWithoutContainer(
-                      title: 'Value',
-
-                      rating: controller.valueRating.value,
-                      onRatingChanged: (rating) {
-                        controller.valueRating.value = rating;
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Amenities Rating
-                  Obx(
-                    () => _buildRatingSectionWithoutContainer(
-                      title: 'Amenities',
-
-                      rating: controller.amenitiesRating.value,
-                      onRatingChanged: (rating) {
-                        controller.amenitiesRating.value = rating;
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 20),
+                //
+                // Pros & Cons
+                // Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+                //   decoration: BoxDecoration(
+                //       color: ColorRes.white,
+                //       borderRadius: BorderRadius.circular(12),
+                //       border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+                //   ),
+                //   child: Column(
+                //     children: [
+                //       NesticoPeTextField(
+                //         controller: controller.prosController,
+                //         title: 'Pros',
+                //         hintText: 'What did you like?',
+                //         maxLines: 3,
+                //
+                //       ),
+                //       const SizedBox(height: 16),
+                //       NesticoPeTextField(
+                //         controller: controller.consController,
+                //         title: 'Cons',
+                //         hintText: 'What could be improved?',
+                //         maxLines: 3,
+                //
+                //       ),
+                //     ],
+                //   ),
+                // )
+              ],
             ),
-            const SizedBox(height: 20),
-            //
-            // Pros & Cons
-            // Container(
-            //   padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
-            //   decoration: BoxDecoration(
-            //       color: ColorRes.white,
-            //       borderRadius: BorderRadius.circular(12),
-            //       border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
-            //   ),
-            //   child: Column(
-            //     children: [
-            //       NesticoPeTextField(
-            //         controller: controller.prosController,
-            //         title: 'Pros',
-            //         hintText: 'What did you like?',
-            //         maxLines: 3,
-            //
-            //       ),
-            //       const SizedBox(height: 16),
-            //       NesticoPeTextField(
-            //         controller: controller.consController,
-            //         title: 'Cons',
-            //         hintText: 'What could be improved?',
-            //         maxLines: 3,
-            //
-            //       ),
-            //     ],
-            //   ),
-            // )
           ],
         ),
       ),

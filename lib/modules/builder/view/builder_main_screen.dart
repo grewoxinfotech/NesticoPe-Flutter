@@ -98,6 +98,7 @@
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
 import 'package:housing_flutter_app/modules/builder/view/builder_form_screen.dart';
+import 'package:housing_flutter_app/modules/builder/view/subscription_plan/builder_sunbscription_plan.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
@@ -116,11 +117,13 @@ class BuilderMainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationController = Get.put(BuilderNavigationController());
+    Get.put(ProjectWizardController(isBuilderView: true), tag: "builder");
 
     final screens = [
       const BuilderDashboard(),
       const BuilderPropertyListing(),
       BuilderLeads(),
+      BuilderSubscriptionPlanScreen(),
       SellerProfileScreen(),
     ];
 
@@ -135,6 +138,7 @@ class BuilderMainScreen extends StatelessWidget {
         onPressed: () {
           final controller = Get.put(
             ProjectWizardController(isBuilderView: false),
+            tag: "builder",
           );
           controller.resetForm();
           Get.to(CreateProjectScreen());
@@ -190,6 +194,13 @@ class BuilderMainScreen extends StatelessWidget {
                   child: Icon(Icons.people, size: 22),
                 ),
                 label: 'Leads',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.card_giftcard_outlined, size: 22),
+                ),
+                label: 'Plans',
               ),
               BottomNavigationBarItem(
                 icon: Padding(

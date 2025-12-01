@@ -274,7 +274,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
             });
           // return SellerListingView();
           case 3:
-            return SubscriptionPlansScreen();
+            return SellerSubscriptionPlanScreen();
           case 4:
             return SellerProfileScreen();
           default:

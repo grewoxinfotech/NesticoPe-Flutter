@@ -659,12 +659,13 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     super.onInit();
     getCity();
     if (isBuilderView) {
+      print('isBuilderView');
       setUserIdFilter().then((_) => loadInitial());
-      loadTopProject();
+      // loadTopProject();
     } else {
-
+      print('isBuyerView');
       loadInitial();
-      loadTopProject();// buyer view, no filter
+      // loadTopProject();// buyer view, no filter
     }
     assignData();
   }
@@ -692,10 +693,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   }
 
   @override
-
-
-
-
   Future<void> getCity() async {
     try {
       final city = await SecureStorage.getSelectedCity();
@@ -717,6 +714,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       print("❌ Error getting city: $e");
     }
   }
+
   Future<PaginationResponse<ProjectItem>> fetchItems(int page) async {
     try {
       log("hguthtuhlkjhojvgcdvf $filters");
@@ -732,7 +730,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       rethrow;
     }
   }
-  void cityAssign(String city){
+
+  void cityAssign(String city) {
     selectedCity.value = city;
     log("dhgfyfg ${selectedCity.value}");
     //refresh();
@@ -749,28 +748,22 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         'propertyTypes': val,
       };
       print("🔍 Top Applied: propertyTypes=$val, city=${cityValue ?? '-'}");
-    }
-
-    else if (key == 'city') {
+    } else if (key == 'city') {
       // When changing city, REMOVE propertyType & listingType
       filters = {'city': val};
       selectedCity.value = val;
       print("🏙️ City changed → Reset filters. city=$val");
       // Reload top properties when city changes
       loadTopProject();
-    }
-
-    else if (key == 'listingType') {
+    } else if (key == 'listingType') {
       // Add/replace listingType while keeping city
       final cityValue = filters!['city'];
       filters = {
         if (cityValue != null) 'city': cityValue,
         'listingType': val.toUpperCase(),
       };
-      print("🔍Top Applied: listingType=$val, city=${cityValue ?? '-' }");
-    }
-
-    else {
+      print("🔍Top Applied: listingType=$val, city=${cityValue ?? '-'}");
+    } else {
       // Generic filter
       filters![key] = val;
       print("🔧 Top Applied filter: $key=$val");
@@ -786,6 +779,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
     refreshList();
   }
+
   Future<void> loadTopProject({int page = 1}) async {
     try {
       print("🏗️ Loading top properties, page $page...");
@@ -795,12 +789,13 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       } else {
         topProjects.addAll(response.items);
       }
-      print("✅ Loaded ${response.items.length} top properties ${topProjects.value.map((e) => e.toJson(),)}");
+      print(
+        "✅ Loaded ${response.items.length} top properties ${topProjects.value.map((e) => e.toJson())}",
+      );
     } catch (e) {
       print("❌ Error loading top properties: $e");
     }
   }
-
 
   /// Apply filters and refresh (expects a plain Map)
   Future<void> applyFilters(Map<String, String> newFilters) async {
@@ -837,10 +832,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     clearFilter('propertyType');
   }
 
-
-
   Future<PaginationResponse<ProjectItem>> fetchTopItems(int page) async {
-
     try {
       final response = await _builderService.fetchProjects(
         page: page,
@@ -860,7 +852,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     final userId = userData?.user?.id ?? '';
 
     filters = {'created_by': userId};
-    await loadTopProject();
+    applyFilters(filters!);
+    // await loadTopProject();
   }
 
   Future<void> fetchUserData() async {

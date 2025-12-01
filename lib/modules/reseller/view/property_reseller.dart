@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import 'package:housing_flutter_app/modules/reseller/view/profile/reseller_profile.dart';
 import 'package:housing_flutter_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
+import 'package:housing_flutter_app/modules/reseller/view/subscription_plan/reseller_subscription_plan.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:housing_flutter_app/modules/reseller/widget/graph/linear_graph.dart';
@@ -908,7 +909,7 @@ class SuccessStoryCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                      SizedBox(width: 12,),
+                        SizedBox(width: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
@@ -1060,7 +1061,10 @@ class SuccessStoryCard extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  icon: Icon(Icons.info,color: ColorRes.homeAmber,),
+                                  icon: Icon(
+                                    Icons.info,
+                                    color: ColorRes.homeAmber,
+                                  ),
                                   title: const Text(
                                     'Delete Success Story',
                                     style: TextStyle(
@@ -1090,36 +1094,44 @@ class SuccessStoryCard extends StatelessWidget {
                                     ),
                                     Obx(() {
                                       return ElevatedButton(
-                                        onPressed: controller.deleteSuccessStory.value
-                                            ? null // disable while deleting
-                                            : () {
-                                          Get.back(); // close dialog
-                                          controller.deleteStory(story.id);
-                                        },
+                                        onPressed:
+                                            controller.deleteSuccessStory.value
+                                                ? null // disable while deleting
+                                                : () {
+                                                  Get.back(); // close dialog
+                                                  controller.deleteStory(
+                                                    story.id,
+                                                  );
+                                                },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: ColorRes.error,
                                           foregroundColor: ColorRes.white,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                           ),
                                         ),
-                                        child: controller.deleteSuccessStory.value
-                                            ? const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                            : const Text(
-                                          'Yes, Delete',
-                                          style: TextStyle(
-                                            fontWeight: AppFontWeights.semiBold,
-                                          ),
-                                        ),
+                                        child:
+                                            controller.deleteSuccessStory.value
+                                                ? const SizedBox(
+                                                  height: 20,
+                                                  width: 20,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                        color: Colors.white,
+                                                      ),
+                                                )
+                                                : const Text(
+                                                  'Yes, Delete',
+                                                  style: TextStyle(
+                                                    fontWeight:
+                                                        AppFontWeights.semiBold,
+                                                  ),
+                                                ),
                                       );
-                                    })
+                                    }),
                                   ],
                                 ),
                               );
@@ -1196,7 +1208,8 @@ class SuccessStoryCard extends StatelessWidget {
                 iconColor: ColorRes.green,
                 bgColor: ColorRes.green.withOpacity(0.1),
                 label: 'TOTAL VALUE',
-                value: '${Formatter.formatPrice(int.tryParse(story.totalValue) ?? 0)}',
+                value:
+                    '${Formatter.formatPrice(int.tryParse(story.totalValue) ?? 0)}',
               ),
             ),
             const SizedBox(width: 8),
@@ -5107,6 +5120,7 @@ class MainNavigationScreen extends StatelessWidget {
       ResellerDashboardScreen(),
       ProductListingScreen(),
       ResellerLeadScreen(),
+      ResellerSubscriptionPlanScreen(),
       ResellerProfileScreen(),
     ];
 
@@ -5156,6 +5170,13 @@ class MainNavigationScreen extends StatelessWidget {
                   child: Icon(Icons.people, size: 22),
                 ),
                 label: 'Leads',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.card_giftcard_outlined, size: 22),
+                ),
+                label: 'Plans',
               ),
               BottomNavigationBarItem(
                 icon: Padding(

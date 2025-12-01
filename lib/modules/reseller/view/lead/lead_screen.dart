@@ -24,7 +24,6 @@ class ResellerLeadScreen extends StatefulWidget {
 
 class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
   @override
-
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController(), tag: "reseller");
     final leadController = Get.find<LeadController>(tag: "reseller");
@@ -90,7 +89,6 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
 
         final filteredLeads = leadController.items.value;
 
-
         return Column(
           children: [
             // Search bar
@@ -145,27 +143,41 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
                               ),
                           itemBuilder: (context, index) {
                             LeadItem lead = filteredLeads[index];
-                            
+
                             // Find matching property price
                             String? propertyPrice;
                             if (lead.propertyId != null) {
-                              final matchingProperty = leadController.leadPropertiesList
-                                  .firstWhereOrNull((p) => p.id == lead.propertyId);
-                              if (matchingProperty != null && 
-                                  matchingProperty.propertyDetails?.financialInfo?.price != null) {
-                                propertyPrice = PropertyPriceManager(
-                                  listingType: matchingProperty.listingType ?? '',
-                                  financialInfo: matchingProperty.propertyDetails?.financialInfo,
-                                ).displayPrice;
+                              final matchingProperty = leadController
+                                  .leadPropertiesList
+                                  .firstWhereOrNull(
+                                    (p) => p.id == lead.propertyId,
+                                  );
+                              if (matchingProperty != null &&
+                                  matchingProperty
+                                          .propertyDetails
+                                          ?.financialInfo
+                                          ?.price !=
+                                      null) {
+                                propertyPrice =
+                                    PropertyPriceManager(
+                                      listingType:
+                                          matchingProperty.listingType ?? '',
+                                      financialInfo:
+                                          matchingProperty
+                                              .propertyDetails
+                                              ?.financialInfo,
+                                    ).displayPrice;
                               }
                             }
 
                             return LeadCardWidget(
                               lead: lead,
-                              isCompact: MediaQuery.of(context).size.width < 600,
+                              isCompact:
+                                  MediaQuery.of(context).size.width < 600,
                               showDataMasking: true, // Reseller needs masking
                               propertyPrice: propertyPrice,
-                              leadPropertiesList: leadController.leadPropertiesList,
+                              leadPropertiesList:
+                                  leadController.leadPropertiesList,
                               onTap: () {
                                 Get.to(
                                   () => LeadDetailScreen(
@@ -174,20 +186,20 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
                                   ),
                                 );
                               },
-                              onEdit: () {
-                                leadController.resetForm();
-                                Get.to(
-                                  () => AddLeadScreen(
-                                    lead: lead,
-                                    isEditMode: true,
-                                  ),
-                                );
-                              },
-                              onDelete: () => _showDeleteConfirmation(
-                                context,
-                                lead,
-                                leadController,
-                              ),
+                              // onEdit: () {
+                              //   leadController.resetForm();
+                              //   Get.to(
+                              //     () => AddLeadScreen(
+                              //       lead: lead,
+                              //       isEditMode: true,
+                              //     ),
+                              //   );
+                              // },
+                              // onDelete: () => _showDeleteConfirmation(
+                              //   context,
+                              //   lead,
+                              //   leadController,
+                              // ),
                             );
                           },
                         ),
@@ -209,7 +221,9 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: ColorRes.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             'Delete Buyer Lead',
             style: TextStyle(

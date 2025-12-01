@@ -28,12 +28,12 @@ class HomeHeader extends StatefulWidget {
   final String backgroundImage;
   final String image;
 
-
   const HomeHeader({
     super.key,
     this.backgroundImage =
         "https://sitasurat.in/assets/images/about/surat-city.jpg",
-    this.image="https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+    this.image =
+        "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
     this.propertyTypes = const [
       "Buy",
       "Sell",
@@ -113,37 +113,41 @@ class _HomeHeaderState extends State<HomeHeader> {
                               }
 
                               return InkWell(
-                                onTap:
-                                  () async {
-                                    final filter = await Get.to(
-                                          () => CommonSearchField(
-                                        isNavigate: true,
-                                        onTap: (city) {
-                                          final filters = {"city": city.split(",").first};
-                                          propertyController.fetchTradingArea(
-                                            filters['city'] ?? '',
-                                          );
-                                          Get.back(result: filters);
-                                        },
-                                      ),
+                                onTap: () async {
+                                  final filter = await Get.to(
+                                    () => CommonSearchField(
+                                      isNavigate: true,
+                                      onTap: (city) {
+                                        final filters = {
+                                          "city": city.split(",").first,
+                                        };
+                                        propertyController.fetchTradingArea(
+                                          filters['city'] ?? '',
+                                        );
+                                        Get.back(result: filters);
+                                      },
+                                    ),
+                                  );
+                                  if (filter != null &&
+                                      filter is Map &&
+                                      filter['city'] != null) {
+                                    final String city = filter['city'];
+
+                                    // Apply city filter to home (Yes case)
+                                    await SecureStorage.saveSelectedCity(city);
+                                    propertyController.fetchTradingArea(city);
+                                    propertyController.applyFilter(
+                                      'city',
+                                      city,
                                     );
-                                    if (filter != null &&
-                                        filter is Map &&
-                                        filter['city'] != null) {
-                                      final String city = filter['city'];
+                                    projectController.applyFilter('city', city);
+                                    // Reload top properties for the new city
+                                    await propertyController
+                                        .loadTopProperties();
+                                    await projectController.loadTopProject();
 
-                                      // Apply city filter to home (Yes case)
-                                      await SecureStorage.saveSelectedCity(city);
-                                      propertyController.fetchTradingArea(city);
-                                      propertyController.applyFilter('city', city);
-                                      projectController.applyFilter('city', city);
-                                      // Reload top properties for the new city
-                                      await propertyController.loadTopProperties();
-                                      await projectController.loadTopProject();
-
-                                      // Navigate to PropertyDetail in both cases (Yes and No)
-                                    }
-
+                                    // Navigate to PropertyDetail in both cases (Yes and No)
+                                  }
                                 },
                                 child: Text(
                                   // widget.cityName,
@@ -168,50 +172,54 @@ class _HomeHeaderState extends State<HomeHeader> {
               // SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
-                  log('dhfgugh djfdfjdn fhgfhglkb ${widget.image
-                      }');
-                  Get.to(
-                    () => ProfileScreen(
-                      imageUrl:
-                          widget.image,
-                    ),
-                  );
+                  log('dhfgugh djfdfjdn fhgfhglkb ${widget.image}');
+                  Get.to(() => ProfileScreen(imageUrl: widget.image));
                 },
-                child:(widget.image.isEmpty)? Container(
-                  width: 45,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: ColorRes.primary,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: ColorRes.grey.withOpacity(0.2),width: 2),
-                  ),
-                  child:  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Center(
-                      child: Icon(
-                        Icons.home_work,
-                        size: 22,
-                        color: ColorRes.white,
-                      ),
-                    ),
-                  ),
-                ): Container(
-                  width: 45,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ColorRes.grey.withOpacity(0.2),width: 2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: CustomImage(
-                      fit: BoxFit.cover,
-                      type: CustomImageType.network,
-                      src: widget.image ??
-                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg"
-                    ),
-                  ),
-                ),
+                child:
+                    (widget.image.isEmpty)
+                        ? Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: ColorRes.grey.withOpacity(0.2),
+                              width: 2,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Center(
+                              child: Icon(
+                                Icons.home_work,
+                                size: 22,
+                                color: ColorRes.white,
+                              ),
+                            ),
+                          ),
+                        )
+                        : Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: ColorRes.grey.withOpacity(0.2),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CustomImage(
+                              fit: BoxFit.cover,
+                              type: CustomImageType.network,
+                              src:
+                                  widget.image ??
+                                  "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                            ),
+                          ),
+                        ),
               ),
             ],
           ),
@@ -304,9 +312,17 @@ class _HomeHeaderState extends State<HomeHeader> {
                         }
 
                         if (UserHelper.isSellerBuilder) {
-                          Get.lazyPut(
-                            () => ProjectWizardController(isBuilderView: true),
-                          );
+                          if (Get.isRegistered<ProjectWizardController>(
+                            tag: "builder",
+                          )) {
+                            Get.find<ProjectWizardController>(tag: "builder");
+                          } else {
+                            Get.lazyPut(
+                              () =>
+                                  ProjectWizardController(isBuilderView: true),
+                              tag: "builder",
+                            );
+                          }
                           Get.to(() => CreateProjectScreen());
                         }
                       }

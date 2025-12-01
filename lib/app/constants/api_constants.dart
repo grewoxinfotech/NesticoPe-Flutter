@@ -36,6 +36,10 @@ class ApiConstants {
 
   static String get recommmendedPorperties => "$baseURL/property/recommended";
 
+  static String get subscriptionPlan => "$baseURL/subscriptionPlan";
+
+  static String get subscription => "$baseURL/subscription";
+
   // Lead
   static String get leads => "$baseURL/lead";
 

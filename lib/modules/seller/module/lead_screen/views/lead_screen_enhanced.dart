@@ -3747,6 +3747,8 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/manager/data_masker.dart';
 
+import '../../../../../widgets/bottom_sheet/lead_filter_bottomsheet.dart';
+import '../../../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
 import '../../../../dashboard/views/seller_dashboard_screen.dart';
 import '../../../../reseller/controller/dashborad_controller/dashboard_controller.dart';
 import '../../../../reseller/model/dashboard/dashboard_model.dart';
@@ -3869,47 +3871,81 @@ import '../controllers/lead_controller.dart';
 //   }
 // }
 
-class SellerLeadScreen extends StatelessWidget {
+class SellerLeadScreen extends StatefulWidget {
   final bool isViewAll;
   final String? propertyId;
 
   const SellerLeadScreen({super.key, this.isViewAll = false, this.propertyId});
 
   @override
-  Widget build(BuildContext context) {
-    Get.lazyPut(() => LeadController(), tag: "seller");
-    final leadController = Get.find<LeadController>(tag: "seller");
+  State<SellerLeadScreen> createState() => _SellerLeadScreenState();
+}
 
-    /// FETCH + FILTER LOGIC
+class _SellerLeadScreenState extends State<SellerLeadScreen> {
+  late final LeadController leadController;
+  RxBool isLoadingLead = false.obs;
+
+  @override
+  void initState() {
+    leadController =
+        Get.isRegistered<LeadController>(tag: "seller")
+            ? Get.find<LeadController>(tag: "seller")
+            : Get.put(LeadController(), tag: "seller");
+
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // 🔥 IMPORTANT: Remove all previous stored leads
-      leadController.items.clear();
-      leadController.leadPropertiesList.clear();
-
-      // Re-fetch fresh leads from API
-      await leadController.refreshList();
-
-      // If propertyId provided → filter freshly loaded list
-      if (propertyId != null) {
-        _applyPropertyFilter(leadController);
-      }
+      await _loadData();
     });
+  }
+
+  Future<void> _loadData() async {
+    isLoadingLead.value = true;
+    leadController.items.clear();
+    leadController.leadPropertiesList.clear();
+
+    // Re-fetch fresh leads from API
+    await leadController.refreshList();
+    if (widget.propertyId != null) {
+      _applyPropertyFilter(leadController);
+    }
+    isLoadingLead.value = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Get.lazyPut(() => LeadController(), tag: "seller");
+    // final leadController = Get.find<LeadController>(tag: "seller");
+
+    // /// FETCH + FILTER LOGIC
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   // 🔥 IMPORTANT: Remove all previous stored leads
+    //   leadController.items.clear();
+    //   leadController.leadPropertiesList.clear();
+    //
+    //   // Re-fetch fresh leads from API
+    //   await leadController.refreshList();
+    //
+    //   // If propertyId provided → filter freshly loaded list
+    //   if (widget.propertyId != null) {
+    //     _applyPropertyFilter(leadController);
+    //   }
+    // });
 
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading:
-            isViewAll
+            widget.isViewAll
                 ? IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.arrow_back),
                 )
                 : null,
         title: const Text(
-          'Property Buyer Leads',
+          'Leads',
           style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
-        automaticallyImplyLeading: isViewAll,
+        automaticallyImplyLeading: widget.isViewAll,
         backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
@@ -3921,7 +3957,9 @@ class SellerLeadScreen extends StatelessWidget {
       ),
 
       body: Obx(() {
-        if (leadController.isLoading.value && leadController.items.isEmpty) {
+        if (leadController.isLoading.value &&
+            leadController.items.isEmpty &&
+            isLoadingLead.value) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -3929,7 +3967,10 @@ class SellerLeadScreen extends StatelessWidget {
 
         return Column(
           children: [
-            buildSelectedFiltersChips(context, leadController),
+            buildSelectedFiltersChips(context, leadController, () async {
+              leadController.filters.clear();
+              await _loadData();
+            }),
 
             Expanded(
               child:
@@ -3950,7 +3991,7 @@ class SellerLeadScreen extends StatelessWidget {
                           leadController.leadPropertiesList.clear();
 
                           await leadController.refreshList();
-                          if (propertyId != null) {
+                          if (widget.propertyId != null) {
                             _applyPropertyFilter(leadController);
                           }
                         },
@@ -4017,825 +4058,570 @@ class SellerLeadScreen extends StatelessWidget {
 
   /// Filters leads based on propertyId (No controller modification)
   void _applyPropertyFilter(LeadController controller) {
-    if (propertyId == null) return;
+    if (widget.propertyId == null) return;
 
     final filtered =
         controller.items
-            .where((lead) => lead.propertyId == propertyId)
+            .where((lead) => lead.propertyId == widget.propertyId)
             .toList();
 
     controller.items.assignAll(filtered);
   }
-}
 
-Widget buildSearchAndFilter(
-  BuildContext context,
-  DashboardController controller,
-) {
-  return Container(
-    margin: EdgeInsets.all(getResponsivePadding(context)),
-    padding: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
-    decoration: BoxDecoration(
-      color: ColorRes.white,
-      borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-    ),
-    child: TextField(
-      onChanged: controller.updateSearch,
-      style: TextStyle(fontSize: AppFontSizes.medium),
-      decoration: InputDecoration(
-        hintText: 'Search buyer leads...',
-        hintStyle: TextStyle(fontSize: AppFontSizes.medium),
-        prefixIcon: const Icon(Icons.search),
-        border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(vertical: 16),
-      ),
-    ),
-  );
-}
-
-Widget buildSelectedFiltersChips(
-  BuildContext context,
-  LeadController controller,
-) {
-  return Obx(() {
-    final filters = controller.filters;
-
-    if (filters.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
+  Widget buildSearchAndFilter(
+    BuildContext context,
+    DashboardController controller,
+  ) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: getResponsivePadding(context),
-        vertical: 8,
+      margin: EdgeInsets.all(getResponsivePadding(context)),
+      padding: EdgeInsets.symmetric(horizontal: getResponsivePadding(context)),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
+      child: TextField(
+        onChanged: controller.updateSearch,
+        style: TextStyle(fontSize: AppFontSizes.medium),
+        decoration: InputDecoration(
+          hintText: 'Search buyer leads...',
+          hintStyle: TextStyle(fontSize: AppFontSizes.medium),
+          prefixIcon: const Icon(Icons.search),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+      ),
+    );
+  }
+
+  // Widget buildSelectedFiltersChips(
+  //   BuildContext context,
+  //   LeadController controller,
+  // ) {
+  //   return Obx(() {
+  //     final filters = controller.filters;
+  //
+  //     if (filters.isEmpty) {
+  //       return const SizedBox.shrink();
+  //     }
+  //
+  //     return Container(
+  //       padding: EdgeInsets.symmetric(
+  //         horizontal: getResponsivePadding(context),
+  //         vertical: 8,
+  //       ),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           // Header
+  //           Row(
+  //             children: [
+  //               Text(
+  //                 'Active Filters:',
+  //                 style: TextStyle(
+  //                   fontSize: AppFontSizes.small,
+  //                   fontWeight: AppFontWeights.semiBold,
+  //                   color: ColorRes.leadGreyColor[700],
+  //                 ),
+  //               ),
+  //               const Spacer(),
+  //               TextButton.icon(
+  //                 onPressed: () async {
+  //                   controller.filters.clear();
+  //                   await _loadData();
+  //                 },
+  //                 icon: const Icon(
+  //                   Icons.clear,
+  //                   size: 16,
+  //                   color: ColorRes.primary,
+  //                 ),
+  //                 label: Text(
+  //                   'Clear All',
+  //                   style: TextStyle(
+  //                     fontSize: AppFontSizes.small,
+  //                     color: ColorRes.primary,
+  //                     fontWeight: AppFontWeights.medium,
+  //                   ),
+  //                 ),
+  //                 style: TextButton.styleFrom(
+  //                   padding: EdgeInsets.zero,
+  //                   minimumSize: Size.zero,
+  //                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //
+  //           const SizedBox(height: 8),
+  //
+  //           // Filter Chips
+  //           SingleChildScrollView(
+  //             scrollDirection: Axis.horizontal,
+  //             child: Row(
+  //               children:
+  //                   filters.entries.map((entry) {
+  //                     final filterType = entry.key; // e.g. "status"
+  //                     final filterValue = entry.value; // e.g. "contacted"
+  //
+  //                     final chipColor =
+  //                         (filterType.toLowerCase() == 'stage')
+  //                             ? ColorRes.primary
+  //                             : (filterType.toLowerCase() == 'status')
+  //                             ? ColorRes.green
+  //                             : ColorRes.blueGrey;
+  //
+  //                     return Container(
+  //                       margin: const EdgeInsets.only(right: 8),
+  //                       decoration: BoxDecoration(
+  //                         color: ColorRes.success.withOpacity(0.08),
+  //                         borderRadius: BorderRadius.circular(10),
+  //                         border: Border.all(
+  //                           color: ColorRes.success.withOpacity(0.3),
+  //                           width: 1,
+  //                         ),
+  //                       ),
+  //                       child: Padding(
+  //                         padding: const EdgeInsets.symmetric(
+  //                           horizontal: 12,
+  //                           vertical: 6,
+  //                         ),
+  //                         child: Row(
+  //                           mainAxisSize: MainAxisSize.min,
+  //                           children: [
+  //                             // Filter Type Badge
+  //                             Container(
+  //                               padding: const EdgeInsets.symmetric(
+  //                                 horizontal: 6,
+  //                                 vertical: 2,
+  //                               ),
+  //                               decoration: BoxDecoration(
+  //                                 color: chipColor,
+  //                                 borderRadius: BorderRadius.circular(4),
+  //                               ),
+  //                               child: Text(
+  //                                 filterType.capitalizeFirst ?? '',
+  //                                 style: TextStyle(
+  //                                   fontSize: AppFontSizes.extraSmall,
+  //                                   color: ColorRes.white,
+  //                                   fontWeight: AppFontWeights.bold,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                             const SizedBox(width: 6),
+  //
+  //                             // Filter Value
+  //                             Text(
+  //                               filterValue
+  //                                       .replaceAll("_", " ")
+  //                                       .capitalizeFirst ??
+  //                                   '',
+  //                               style: TextStyle(
+  //                                 fontSize: AppFontSizes.small,
+  //                                 color: chipColor,
+  //                                 fontWeight: AppFontWeights.semiBold,
+  //                               ),
+  //                             ),
+  //                             const SizedBox(width: 6),
+  //
+  //                             // Remove Button
+  //                             InkWell(
+  //                               onTap: () async {
+  //                                 final updatedFilters =
+  //                                     Map<String, String>.from(
+  //                                       controller.filters,
+  //                                     );
+  //                                 updatedFilters.remove(filterType);
+  //                                 await controller.applyFilters(updatedFilters);
+  //                               },
+  //                               borderRadius: BorderRadius.circular(12),
+  //                               child: const Padding(
+  //                                 padding: EdgeInsets.all(2),
+  //                                 child: Icon(
+  //                                   Icons.close,
+  //                                   size: 14,
+  //                                   color: ColorRes.error,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     );
+  //                   }).toList(),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   });
+  // }
+
+  Widget buildEmptyState(BuildContext context) {
+    return Center(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Header
-          Row(
-            children: [
-              Text(
-                'Active Filters:',
-                style: TextStyle(
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.leadGreyColor[700],
-                ),
-              ),
-              const Spacer(),
-              TextButton.icon(
-                onPressed: () async {
-                  controller.filters.clear();
-                  await controller.applyFilters({});
-                },
-                icon: const Icon(
-                  Icons.clear,
-                  size: 16,
-                  color: ColorRes.primary,
-                ),
-                label: Text(
-                  'Clear All',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.small,
-                    color: ColorRes.primary,
-                    fontWeight: AppFontWeights.medium,
-                  ),
-                ),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
-            ],
+          Icon(
+            Icons.real_estate_agent,
+            size: 64,
+            color: ColorRes.leadGreyColor[400],
           ),
-
+          const SizedBox(height: 16),
+          Text(
+            'No buyer leads found',
+            style: TextStyle(
+              fontSize: AppFontSizes.large,
+              color: ColorRes.leadGreyColor[600],
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
           const SizedBox(height: 8),
-
-          // Filter Chips
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children:
-                  filters.entries.map((entry) {
-                    final filterType = entry.key; // e.g. "status"
-                    final filterValue = entry.value; // e.g. "contacted"
-
-                    final chipColor =
-                        (filterType.toLowerCase() == 'stage')
-                            ? ColorRes.primary
-                            : (filterType.toLowerCase() == 'status')
-                            ? ColorRes.green
-                            : ColorRes.blueGrey;
-
-                    return Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      decoration: BoxDecoration(
-                        color: ColorRes.success.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: ColorRes.success.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Filter Type Badge
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: chipColor,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                filterType.capitalizeFirst ?? '',
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.extraSmall,
-                                  color: ColorRes.white,
-                                  fontWeight: AppFontWeights.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-
-                            // Filter Value
-                            Text(
-                              filterValue
-                                      .replaceAll("_", " ")
-                                      .capitalizeFirst ??
-                                  '',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: chipColor,
-                                fontWeight: AppFontWeights.semiBold,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-
-                            // Remove Button
-                            InkWell(
-                              onTap: () async {
-                                final updatedFilters = Map<String, String>.from(
-                                  controller.filters,
-                                );
-                                updatedFilters.remove(filterType);
-                                await controller.applyFilters(updatedFilters);
-                              },
-                              borderRadius: BorderRadius.circular(12),
-                              child: const Padding(
-                                padding: EdgeInsets.all(2),
-                                child: Icon(
-                                  Icons.close,
-                                  size: 14,
-                                  color: ColorRes.error,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              'Add your first property buyer to get started',
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                color: ColorRes.leadGreyColor[500],
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ],
       ),
     );
-  });
-}
+  }
 
-Widget buildEmptyState(BuildContext context) {
-  return Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.real_estate_agent,
-          size: 64,
-          color: ColorRes.leadGreyColor[400],
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'No buyer leads found',
-          style: TextStyle(
-            fontSize: AppFontSizes.large,
-            color: ColorRes.leadGreyColor[600],
-            fontWeight: AppFontWeights.medium,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Text(
-            'Add your first property buyer to get started',
-            style: TextStyle(
-              fontSize: AppFontSizes.medium,
-              color: ColorRes.leadGreyColor[500],
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ],
-    ),
-  );
-}
+  Widget buildLeadCard(
+    BuildContext context,
+    LeadItem lead,
+    String displayPrice,
+    // SellerDashboardScreen controller,
+  ) {
+    final leadController = Get.find<LeadController>(tag: "seller");
+    final isCompact = MediaQuery.of(context).size.width < 600;
+    final cardPadding = isCompact ? 12.0 : 16.0;
 
-Widget buildLeadCard(
-  BuildContext context,
-  LeadItem lead,
-  String displayPrice,
-  // SellerDashboardScreen controller,
-) {
-  final leadController = Get.find<LeadController>(tag: "seller");
-  final isCompact = MediaQuery.of(context).size.width < 600;
-  final cardPadding = isCompact ? 12.0 : 16.0;
-
-  return Container(
-    padding: EdgeInsets.all(cardPadding),
-    decoration: BoxDecoration(
-      color: ColorRes.white,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: isCompact ? 18 : 20,
-              backgroundColor: ColorRes.primary.withOpacity(0.2),
-              child: Text(
-                getInitials(lead.name!),
-                style: TextStyle(
-                  color: ColorRes.primary,
-                  fontWeight: AppFontWeights.bold,
-                  fontSize:
-                      isCompact ? AppFontSizes.small : AppFontSizes.medium,
-                ),
-              ),
-            ),
-            SizedBox(width: isCompact ? 8 : 12),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 180,
-                    child: Text(
-                      DataMasker.maskName(lead.name!),
-
-                      style: TextStyle(
-                        fontSize:
-                            isCompact ? AppFontSizes.medium : AppFontSizes.body,
-                        fontWeight: AppFontWeights.bold,
-                        color: ColorRes.textColor,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  SizedBox(height: 2),
-                  SizedBox(
-                    width: 180,
-                    child: Text(
-                      DataMasker.maskPhone(lead.phone!),
-                      style: TextStyle(
-                        fontSize:
-                            isCompact
-                                ? AppFontSizes.extraSmall
-                                : AppFontSizes.small,
-                        color: ColorRes.leadGreyColor[700],
-                        fontWeight: AppFontWeights.regular,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (lead.email != null && lead.email!.isNotEmpty) ...[
-                    SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            DataMasker.maskEmail(lead.email!),
-
-                            style: TextStyle(
-                              fontSize: AppFontSizes.extraSmall,
-                              color: ColorRes.leadGreyColor[600],
-                              fontWeight: AppFontWeights.regular,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'Budget',
+    return Container(
+      padding: EdgeInsets.all(cardPadding),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: isCompact ? 18 : 20,
+                backgroundColor: ColorRes.primary.withOpacity(0.2),
+                child: Text(
+                  getInitials(lead.name!),
                   style: TextStyle(
-                    fontSize: AppFontSizes.extraSmall,
-                    color: ColorRes.leadGreyColor[800],
-                    fontWeight: AppFontWeights.regular,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  '${displayPrice}',
-                  style: TextStyle(
+                    color: ColorRes.primary,
+                    fontWeight: AppFontWeights.bold,
                     fontSize:
-                        isCompact ? AppFontSizes.medium : AppFontSizes.body,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.success,
+                        isCompact ? AppFontSizes.small : AppFontSizes.medium,
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
-                  formatTime(lead.createdAt!),
-                  style: TextStyle(
-                    fontSize: AppFontSizes.caption,
-                    color: ColorRes.leadGreyColor[600],
-                    fontWeight: AppFontWeights.regular,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        SizedBox(height: isCompact ? 8 : 12),
-        Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
-        SizedBox(height: isCompact ? 8 : 12),
+              ),
+              SizedBox(width: isCompact ? 8 : 12),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        DataMasker.maskName(lead.name!),
 
-        Row(
-          children: [
-            // Status Badge
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: isCompact ? 10 : 14,
-                vertical: isCompact ? 6 : 8,
-              ),
-              decoration: BoxDecoration(
-                color: getStatusColor(
-                  getLeadStatusFromString(lead.status!),
-                ).withOpacity(0.08),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: getStatusColor(
-                    getLeadStatusFromString(lead.status!),
-                  ).withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Text(
-                getStatusText(getLeadStatusFromString(lead.status!)),
-                style: TextStyle(
-                  fontSize:
-                      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
-                  color: getStatusColor(getLeadStatusFromString(lead.status!)),
-                  fontWeight: AppFontWeights.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            SizedBox(width: 8),
-            // Stage Badge
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: isCompact ? 10 : 14,
-                vertical: isCompact ? 6 : 8,
-              ),
-              decoration: BoxDecoration(
-                color: getStageColor(
-                  getLeadStageFromString(lead.stage),
-                ).withOpacity(0.08),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: getStageColor(
-                    getLeadStageFromString(lead.stage),
-                  ).withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Text(
-                getStageText(getLeadStageFromString(lead.stage)),
-                style: TextStyle(
-                  fontSize:
-                      isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
-                  color: getStageColor(getLeadStageFromString(lead.stage)),
-                  fontWeight: AppFontWeights.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Spacer(),
-            Row(
-              children: [
-                buildActionButton(
-                  icon: Icons.edit,
-                  color: ColorRes.orangeColor,
-                  onPressed: () {
-                    leadController.resetForm();
-                    Get.to(() => AddLeadScreen(lead: lead, isEditMode: true));
-                  },
-
-                  tooltip: 'Edit Lead',
-                  isCompact: isCompact,
-                ),
-                SizedBox(width: 8),
-                buildActionButton(
-                  icon: Icons.delete,
-                  color: ColorRes.error,
-                  onPressed: () {},
-                  // () => showDeleteConfirmation(context, lead, controller),
-                  tooltip: 'Delete Lead',
-                  isCompact: isCompact,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
-void showFilterBottomSheet(BuildContext context, LeadController controller) {
-  // Temporary copy of current filters
-  final RxMap<String, String> tempFilters =
-      Map<String, String>.from(controller.filters).obs;
-
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: ColorRes.transparentColor,
-    builder:
-        (context) => StatefulBuilder(
-          builder: (context, setState) {
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.75,
-              decoration: const BoxDecoration(
-                color: ColorRes.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: Column(
-                children: [
-                  // Handle bar
-                  Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: ColorRes.leadGreyColor[300],
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-
-                  // Header
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Filter Leads',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.body,
-                            fontWeight: AppFontWeights.semiBold,
-                          ),
+                        style: TextStyle(
+                          fontSize:
+                              isCompact
+                                  ? AppFontSizes.medium
+                                  : AppFontSizes.body,
+                          fontWeight: AppFontWeights.bold,
+                          color: ColorRes.textColor,
                         ),
-                        TextButton(
-                          onPressed: () {
-                            tempFilters.clear();
-                            controller.resetFilters();
-                            setState(() {});
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: ColorRes.error[400],
-                          ),
-                          child: Text(
-                            'Clear All',
-                            style: TextStyle(
-                              fontWeight: AppFontWeights.medium,
-                              fontSize: AppFontSizes.small,
-                            ),
-                          ),
-                        ),
-                      ],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-
-                  Divider(height: 1, color: ColorRes.leadGreyColor[300]),
-
-                  // Filter Sections
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    SizedBox(height: 2),
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        DataMasker.maskPhone(lead.phone!),
+                        style: TextStyle(
+                          fontSize:
+                              isCompact
+                                  ? AppFontSizes.extraSmall
+                                  : AppFontSizes.small,
+                          color: ColorRes.leadGreyColor[700],
+                          fontWeight: AppFontWeights.regular,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (lead.email != null && lead.email!.isNotEmpty) ...[
+                      SizedBox(height: 4),
+                      Row(
                         children: [
-                          // Stage Section
-                          buildFilterSection(
-                            context: context,
-                            title: 'Stage',
-                            icon: Icons.stairs,
-                            filterType: 'stage',
-                            options:
-                                controller.stageList
-                                    .map(
-                                      (s) =>
-                                          s
-                                              .replaceAll('_', ' ')
-                                              .capitalizeFirst ??
-                                          s,
-                                    )
-                                    .toList(),
-                            tempFilters: tempFilters,
-                            setState: setState,
-                          ),
+                          Expanded(
+                            child: Text(
+                              DataMasker.maskEmail(lead.email!),
 
-                          const SizedBox(height: 24),
-
-                          // Status Section
-                          buildFilterSection(
-                            context: context,
-                            title: 'Status',
-                            icon: Icons.flag,
-                            filterType: 'status',
-                            options:
-                                controller.statusList
-                                    .map(
-                                      (s) =>
-                                          s
-                                              .replaceAll('_', ' ')
-                                              .capitalizeFirst ??
-                                          s,
-                                    )
-                                    .toList(),
-                            tempFilters: tempFilters,
-                            setState: setState,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.extraSmall,
+                                color: ColorRes.leadGreyColor[600],
+                                fontWeight: AppFontWeights.regular,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),
+                    ],
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Budget',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.extraSmall,
+                      color: ColorRes.leadGreyColor[800],
+                      fontWeight: AppFontWeights.regular,
                     ),
                   ),
-
-                  // Apply Button
-                  SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Obx(
-                        () => ElevatedButton(
-                          onPressed: () async {
-                            // Apply selected filters
-                            await controller.applyFilters(
-                              Map<String, String>.from(tempFilters),
-                            );
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorRes.primary,
-                            foregroundColor: ColorRes.white,
-                            padding: const EdgeInsets.all(16.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            minimumSize: const Size(double.infinity, 50),
-                          ),
-                          child: Text(
-                            'Apply Filters (${tempFilters.length})',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.body,
-                              fontWeight: AppFontWeights.bold,
-                            ),
-                          ),
-                        ),
-                      ),
+                  SizedBox(height: 4),
+                  Text(
+                    '${displayPrice}',
+                    style: TextStyle(
+                      fontSize:
+                          isCompact ? AppFontSizes.medium : AppFontSizes.body,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.success,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    formatTime(lead.createdAt!),
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      color: ColorRes.leadGreyColor[600],
+                      fontWeight: AppFontWeights.regular,
                     ),
                   ),
                 ],
               ),
-            );
-          },
-        ),
-  );
-}
+            ],
+          ),
+          SizedBox(height: isCompact ? 8 : 12),
+          Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
+          SizedBox(height: isCompact ? 8 : 12),
 
-Widget buildFilterSection({
-  required BuildContext context,
-  required String title,
-  required IconData icon,
-  required String filterType,
-  required List<String> options,
-  required RxMap<String, String> tempFilters,
-  required void Function(void Function()) setState,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Row(
-        children: [
-          Icon(icon, size: 18, color: ColorRes.primary),
-          const SizedBox(width: 8),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: AppFontSizes.body,
-              fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.leadGreyColor[800],
-            ),
+          Row(
+            children: [
+              // Status Badge
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isCompact ? 10 : 14,
+                  vertical: isCompact ? 6 : 8,
+                ),
+                decoration: BoxDecoration(
+                  color: getStatusColor(
+                    getLeadStatusFromString(lead.status!),
+                  ).withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: getStatusColor(
+                      getLeadStatusFromString(lead.status!),
+                    ).withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  getStatusText(getLeadStatusFromString(lead.status!)),
+                  style: TextStyle(
+                    fontSize:
+                        isCompact
+                            ? AppFontSizes.extraSmall
+                            : AppFontSizes.small,
+                    color: getStatusColor(
+                      getLeadStatusFromString(lead.status!),
+                    ),
+                    fontWeight: AppFontWeights.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(width: 8),
+              // Stage Badge
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isCompact ? 10 : 14,
+                  vertical: isCompact ? 6 : 8,
+                ),
+                decoration: BoxDecoration(
+                  color: getStageColor(
+                    getLeadStageFromString(lead.stage),
+                  ).withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: getStageColor(
+                      getLeadStageFromString(lead.stage),
+                    ).withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  getStageText(getLeadStageFromString(lead.stage)),
+                  style: TextStyle(
+                    fontSize:
+                        isCompact
+                            ? AppFontSizes.extraSmall
+                            : AppFontSizes.small,
+                    color: getStageColor(getLeadStageFromString(lead.stage)),
+                    fontWeight: AppFontWeights.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ],
       ),
-      const SizedBox(height: 8),
-      Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children:
-            options.map((option) {
-              final isSelected =
-                  tempFilters[filterType] ==
-                  option.toLowerCase().replaceAll(" ", "_");
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      tempFilters.remove(filterType);
-                    } else {
-                      tempFilters[filterType] = option.toLowerCase().replaceAll(
-                        " ",
-                        "_",
-                      );
-                    }
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color:
-                        isSelected
-                            ? ColorRes.primary.withOpacity(0.1)
-                            : ColorRes.white,
-                    border: Border.all(
-                      color:
-                          isSelected
-                              ? ColorRes.primary
-                              : ColorRes.leadGreyColor[300]!,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    option,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      color:
-                          isSelected
-                              ? ColorRes.primary
-                              : ColorRes.leadGreyColor[700],
-                      fontWeight: AppFontWeights.medium,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-      ),
-    ],
-  );
-}
+    );
+  }
 
-// Keep all other functions (showLeadForm, _buildFormField, showLeadDetails, etc.) unchanged
-
-Widget buildFormField({
-  required BuildContext context,
-  required TextEditingController controller,
-  required String label,
-  required IconData icon,
-  TextInputType? keyboardType,
-  String? Function(String?)? validator,
-  int maxLines = 1,
-  bool isEnable = true,
-}) {
-  return TextFormField(
-    minLines: 1,
-    enabled: isEnable,
-    controller: controller,
-    style: TextStyle(fontSize: AppFontSizes.small),
-    decoration: InputDecoration(
-      labelText: label,
-      labelStyle: TextStyle(fontSize: AppFontSizes.small),
-      prefixIcon: Icon(icon, size: 18),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(width: 1, color: ColorRes.grey.withOpacity(0.3)),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(width: 1, color: ColorRes.primary),
-      ),
-      disabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(width: 1, color: ColorRes.grey.withOpacity(0.3)),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(width: 1, color: ColorRes.grey.withOpacity(0.3)),
-      ),
-    ),
-    keyboardType: keyboardType,
-    validator: validator,
-    maxLines: maxLines,
-  );
-}
-
-void showLeadDetails(BuildContext context, Lead lead) {
-  showDialog(
-    context: context,
-
-    builder:
-        (context) => AlertDialog(
-          backgroundColor: ColorRes.white,
-          title: Text(
-            lead.name,
-            style: TextStyle(
-              fontSize: AppFontSizes.large,
-              fontWeight: AppFontWeights.bold,
-            ),
+  // Keep all other functions (showLeadForm, _buildFormField, showLeadDetails, etc.) unchanged
+  Widget buildFormField({
+    required BuildContext context,
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+    int maxLines = 1,
+    bool isEnable = true,
+  }) {
+    return TextFormField(
+      minLines: 1,
+      enabled: isEnable,
+      controller: controller,
+      style: TextStyle(fontSize: AppFontSizes.small),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(fontSize: AppFontSizes.small),
+        prefixIcon: Icon(icon, size: 18),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            width: 1,
+            color: ColorRes.grey.withOpacity(0.3),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildDetailRow(context, 'Location', lead.company),
-              buildDetailRow(context, 'Email', lead.email),
-              buildDetailRow(context, 'Phone', lead.phone),
-              buildDetailRow(
-                context,
-                'Budget',
-                '${Formatter.formatPrice(lead.estimatedValue)}',
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(width: 1, color: ColorRes.primary),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            width: 1,
+            color: ColorRes.grey.withOpacity(0.3),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            width: 1,
+            color: ColorRes.grey.withOpacity(0.3),
+          ),
+        ),
+      ),
+      keyboardType: keyboardType,
+      validator: validator,
+      maxLines: maxLines,
+    );
+  }
+
+  void showLeadDetails(BuildContext context, Lead lead) {
+    showDialog(
+      context: context,
+
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: ColorRes.white,
+            title: Text(
+              lead.name,
+              style: TextStyle(
+                fontSize: AppFontSizes.large,
+                fontWeight: AppFontWeights.bold,
               ),
-              buildDetailRow(context, 'Status', getStatusText(lead.status)),
-              buildDetailRow(context, 'Added', formatTime(lead.createdAt)),
-              if (lead.notes.isNotEmpty)
-                buildDetailRow(context, 'Notes', lead.notes),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildDetailRow(context, 'Location', lead.company),
+                buildDetailRow(context, 'Email', lead.email),
+                buildDetailRow(context, 'Phone', lead.phone),
+                buildDetailRow(
+                  context,
+                  'Budget',
+                  '${Formatter.formatPrice(lead.estimatedValue)}',
+                ),
+                buildDetailRow(context, 'Status', getStatusText(lead.status)),
+                buildDetailRow(context, 'Added', formatTime(lead.createdAt)),
+                if (lead.notes.isNotEmpty)
+                  buildDetailRow(context, 'Notes', lead.notes),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Close',
+                  style: TextStyle(fontSize: AppFontSizes.medium),
+                ),
+              ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'Close',
-                style: TextStyle(fontSize: AppFontSizes.medium),
+    );
+  }
+
+  Widget buildDetailRow(BuildContext context, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 70,
+            child: Text(
+              '$label:',
+              style: TextStyle(
+                fontWeight: AppFontWeights.bold,
+                fontSize: AppFontSizes.small,
               ),
             ),
-          ],
-        ),
-  );
-}
-
-Widget buildDetailRow(BuildContext context, String label, String value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 70,
-          child: Text(
-            '$label:',
-            style: TextStyle(
-              fontWeight: AppFontWeights.bold,
-              fontSize: AppFontSizes.small,
-            ),
           ),
-        ),
-        Expanded(
-          child: Text(value, style: TextStyle(fontSize: AppFontSizes.small)),
-        ),
-      ],
-    ),
-  );
+          Expanded(
+            child: Text(value, style: TextStyle(fontSize: AppFontSizes.small)),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 void showDeleteConfirmation(
