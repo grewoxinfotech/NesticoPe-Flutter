@@ -48,9 +48,12 @@ import '../../../../app/manager/compare_manager.dart' show CompareManager;
 import '../../../../app/manager/project_compare_manager.dart';
 import '../../../../app/utils/file_upload_section/file_upload_section.dart';
 
+import '../../../../app/utils/validation.dart';
 import '../../../../app/widgets/mic_search/search_mic.dart';
+import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../profile/controllers/buyer_profiledata.dart';
+import '../../../property/controllers/share_property_controller.dart';
 import '../../../search_property/controller/search_controller.dart';
 import '../../../search_property/model/search_model.dart';
 import '../../widgets/unified_comparison_floating_button.dart';
@@ -259,6 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
     GoogleMapController(),
   );
   final profileController = Get.put(BuyerProfileDataController());
+  final SharePropertyController propertyShareController=Get.put(SharePropertyController());
   final RecommendedPropertyController _recommendedPropertyController = Get.put(
     RecommendedPropertyController(),
   );
@@ -1521,18 +1525,18 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 Future<void> showFindPropertyDialog(
-  PropertyController controller,
-  GoogleMapController googleMapController,
-  BuildContext context,
-) async {
+    PropertyController controller,
+    GoogleMapController googleMapController,
+    BuildContext context,
+    ) async {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Get.dialog(
     Dialog(
       backgroundColor: ColorRes.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 500, maxHeight: 700),
+        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
         decoration: BoxDecoration(
           color: ColorRes.white,
           borderRadius: BorderRadius.circular(20),
@@ -1555,30 +1559,34 @@ Future<void> showFindPropertyDialog(
                     topRight: Radius.circular(20),
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: 230,
-
-                      child: Text(
-                        "Find Your Dream Property",
-                        maxLines: 1,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.body,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Find Your Dream Property",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.white,
+                          ),
                         ),
                       ),
-                    ),
-                    Spacer(),
-                    IconButton(
-                      onPressed: () => Get.back(),
-                      icon: const Icon(Icons.close, color: ColorRes.white),
-                    ),
-                  ],
+                      InkWell(
+                        onTap: () => Get.back(),
+                        borderRadius: BorderRadius.circular(50),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: ColorRes.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+
               // Form Content
               Flexible(
                 flex: 1,
@@ -1587,118 +1595,28 @@ Future<void> showFindPropertyDialog(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // City Field
-                      Row(
-                        children: [
-                          _buildFieldLabel('City'),
-                          SizedBox(width: 4),
-                          Text(
-                            '*',
-                            style: const TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.error,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      // CitySelectionWidget(
-                      //        controller: controller.selectedCityZ,
-                      //        googleMapController: googleMapController,
-                      //        formKey: _formKey,
-                      //      ),
+                      // City Field with Dropdown
                       Stack(
                         children: [
-                          TextFormField(
-                            controller: controller.selectedCityZ,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              color: ColorRes.textPrimary,
-                            ),
-
-                            decoration: InputDecoration(
-                              hintText: "Select City",
-                              hintStyle: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.leadGreyColor.shade500,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 14,
-                                horizontal: 12,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 0.8,
-                                  color: ColorRes.grey.withOpacity(0.3),
-                                ),
-                              ),
-                              disabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 0.8,
-                                  color: ColorRes.grey.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  width: 1.2,
-                                  color: ColorRes.primary,
-                                ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  width: 1.2,
-                                  color: ColorRes.error,
-                                ),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  width: 1.2,
-                                  color: ColorRes.error,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey.shade50,
-                              errorStyle: TextStyle(
-                                color: ColorRes.error.shade700,
-                                fontSize: AppFontSizes.small,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.location_city_outlined,
-                                color: ColorRes.primary,
-                                size: 20,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select a city';
-                              }
-                              return null;
-                            },
+                          NesticoPeTextField(
+                            title: "City",
+                            isRequired: true,
+                            prefixIcon: Icons.location_city_outlined,
+                            hintText: "Select City",
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: (value) => requiredField(value, 'City'),
                             onChanged: (value) async {
                               if (value.isNotEmpty) {
-                                await googleMapController.fetchGooglePlaces(
-                                  value,
-                                );
+                                await googleMapController.fetchGooglePlaces(value);
                                 log("City input: $value");
                               } else {
                                 googleMapController.predictions.clear();
                               }
                             },
+                            controller: controller.selectedCityZ,
                           ),
 
-                          const SizedBox(height: 8),
-
+                          // City Predictions Dropdown - Below TextField
                           Obx(() {
                             final predictions = googleMapController.predictions;
 
@@ -1706,52 +1624,71 @@ Future<void> showFindPropertyDialog(
                               return const SizedBox();
                             }
 
-                            return Container(
-                              constraints: const BoxConstraints(maxHeight: 250),
-                              margin: const EdgeInsets.only(top: 40),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(16),
-                                  bottomRight: Radius.circular(16),
-                                ),
-                                border: Border.all(
-                                  color: ColorRes.grey.withOpacity(0.3),
-                                  width: 0.8,
-                                ),
-                              ),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount:
-                                    predictions.length > 3
-                                        ? 3
-                                        : predictions.length,
-                                itemBuilder: (context, index) {
-                                  final city = predictions[index];
-                                  return ListTile(
-                                    leading: const Icon(
-                                      Icons.location_city_outlined,
-                                      color: ColorRes.primary,
-                                      size: 20,
+                            return Positioned(
+                              top: 90, // Position below the text field
+                              left: 0,
+                              right: 0,
+                              child: Material(
+                                elevation: 8,
+                                shadowColor: Colors.black26,
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  constraints: const BoxConstraints(maxHeight: 250),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: ColorRes.primary.withOpacity(0.2),
+                                      width: 1,
                                     ),
-                                    title: Text(
-                                      city.description ?? '',
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.medium,
-                                        color: ColorRes.textPrimary,
-                                      ),
+                                  ),
+                                  child: ListView.separated(
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    itemCount: predictions.length > 3 ? 3 : predictions.length,
+                                    separatorBuilder: (context, index) => Divider(
+                                      height: 1,
+                                      thickness: 0.5,
+                                      color: ColorRes.grey.withOpacity(0.2),
                                     ),
-                                    onTap: () {
-                                      controller.selectedCityZ.text =
-                                          city.structuredFormatting?.mainText ??
-                                          '';
-                                      googleMapController.predictions.clear();
-                                      FocusScope.of(
-                                        context,
-                                      ).unfocus(); // hide keyboard
+                                    itemBuilder: (context, index) {
+                                      final city = predictions[index];
+                                      return InkWell(
+                                        onTap: () {
+                                          controller.selectedCityZ.text =
+                                              city.structuredFormatting?.mainText ?? '';
+                                          googleMapController.predictions.clear();
+                                          FocusScope.of(context).unfocus();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 12,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.location_on,
+                                                color: ColorRes.primary,
+                                                size: 20,
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Text(
+                                                  city.description ?? '',
+                                                  style: TextStyle(
+                                                    fontSize: AppFontSizes.medium,
+                                                    color: ColorRes.textPrimary,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
                                     },
-                                  );
-                                },
+                                  ),
+                                ),
                               ),
                             );
                           }),
@@ -1760,40 +1697,53 @@ Future<void> showFindPropertyDialog(
 
                       const SizedBox(height: 16),
 
+                      // Listing Type Dropdown
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildFieldLabel('Listing Type'),
                           const SizedBox(height: 8),
                           Obx(
-                            () => DropdownButtonFormField<String>(
-                              value:
-                                  controller.listingTypes.contains(
-                                        controller.selectedListingType.value,
-                                      )
-                                      ? controller.selectedListingType.value
-                                      : null,
+                                () => DropdownButtonFormField<String>(
+                              value: controller.listingTypes.contains(
+                                controller.selectedListingType.value,
+                              )
+                                  ? controller.selectedListingType.value
+                                  : null,
                               isDense: true,
+                              isExpanded: true,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                color: ColorRes.textPrimary,
+                              ),
                               decoration: InputDecoration(
                                 hintText: 'Select',
                                 hintStyle: TextStyle(
-                                  fontSize: AppFontSizes.caption,
-                                  color: ColorRes.leadGreyColor.shade500,
+                                  color: Get.theme.colorScheme.onSurface.withAlpha(128),
+                                  fontSize: AppFontSizes.bodyMedium,
+                                  fontWeight: AppFontWeights.regular,
                                 ),
                                 prefixIcon: const Icon(
                                   Icons.category_outlined,
                                   color: ColorRes.primary,
-                                  size: 18,
+                                  size: 20,
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                  horizontal: 8,
+                                  vertical: 14,
+                                  horizontal: 12,
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(
                                     width: 0.8,
-                                    color: ColorRes.grey.withOpacity(0.3),
+                                    color: ColorRes.grey.withOpacity(0.2),
+                                  ),
+                                ),
+                                disabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 0.8,
+                                    color: ColorRes.grey.withOpacity(0.2),
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -1804,65 +1754,82 @@ Future<void> showFindPropertyDialog(
                                   ),
                                 ),
                                 filled: true,
-                                fillColor: Colors.grey.shade50,
+                                fillColor: Get.theme.colorScheme.surface,
                               ),
-                              items:
-                                  controller.listingTypes
-                                      .map(
-                                        (e) => DropdownMenuItem(
-                                          value: e,
-                                          child: Text(
-                                            e,
-                                            style: const TextStyle(
-                                              fontSize: AppFontSizes.small,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                              onChanged:
-                                  (val) =>
-                                      controller.selectedListingType.value =
-                                          val,
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                color: ColorRes.primary,
+                              ),
+                              items: controller.listingTypes
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(
+                                    e,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.medium,
+                                      color: ColorRes.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                              )
+                                  .toList(),
+                              onChanged: (val) =>
+                              controller.selectedListingType.value = val,
                             ),
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 12),
+
+                      // BHK Dropdown
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildFieldLabel('BHK'),
                           const SizedBox(height: 8),
                           Obx(
-                            () => DropdownButtonFormField<String>(
-                              value:
-                                  controller.bhkList.contains(
-                                        controller.selectedBhk.value,
-                                      )
-                                      ? controller.selectedBhk.value
-                                      : null,
+                                () => DropdownButtonFormField<String>(
+                              value: controller.bhkList.contains(
+                                controller.selectedBhk.value,
+                              )
+                                  ? controller.selectedBhk.value
+                                  : null,
                               isDense: true,
+                              isExpanded: true,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                color: ColorRes.textPrimary,
+                              ),
                               decoration: InputDecoration(
                                 hintText: 'Select',
                                 hintStyle: TextStyle(
-                                  fontSize: AppFontSizes.small,
-                                  color: ColorRes.leadGreyColor.shade500,
+                                  color: Get.theme.colorScheme.onSurface.withAlpha(128),
+                                  fontSize: AppFontSizes.bodyMedium,
+                                  fontWeight: AppFontWeights.regular,
                                 ),
                                 prefixIcon: const Icon(
                                   Icons.home_outlined,
                                   color: ColorRes.primary,
-                                  size: 18,
+                                  size: 20,
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                  horizontal: 8,
+                                  vertical: 14,
+                                  horizontal: 12,
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(
                                     width: 0.8,
-                                    color: ColorRes.grey.withOpacity(0.3),
+                                    color: ColorRes.grey.withOpacity(0.2),
+                                  ),
+                                ),
+                                disabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 0.8,
+                                    color: ColorRes.grey.withOpacity(0.2),
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -1873,29 +1840,35 @@ Future<void> showFindPropertyDialog(
                                   ),
                                 ),
                                 filled: true,
-                                fillColor: Colors.grey.shade50,
+                                fillColor: Get.theme.colorScheme.surface,
                               ),
-                              items:
-                                  controller.bhkList
-                                      .map(
-                                        (e) => DropdownMenuItem(
-                                          value: e,
-                                          child: Text(
-                                            e,
-                                            style: const TextStyle(
-                                              fontSize: AppFontSizes.small,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                              onChanged:
-                                  (val) => controller.selectedBhk.value = val,
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                color: ColorRes.primary,
+                              ),
+                              items: controller.bhkList
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(
+                                    e,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.medium,
+                                      color: ColorRes.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                              )
+                                  .toList(),
+                              onChanged: (val) => controller.selectedBhk.value = val,
                             ),
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 12),
+
+                      // Budget Range
                       _buildFieldLabel('Budget Range'),
                       const SizedBox(height: 8),
                       Row(
@@ -1910,8 +1883,9 @@ Future<void> showFindPropertyDialog(
                               decoration: InputDecoration(
                                 hintText: 'Min',
                                 hintStyle: TextStyle(
-                                  fontSize: AppFontSizes.small,
-                                  color: ColorRes.leadGreyColor.shade500,
+                                  color: Get.theme.colorScheme.onSurface.withAlpha(128),
+                                  fontSize: AppFontSizes.bodyMedium,
+                                  fontWeight: AppFontWeights.regular,
                                 ),
                                 prefixIcon: const Icon(
                                   Icons.currency_rupee,
@@ -1937,7 +1911,7 @@ Future<void> showFindPropertyDialog(
                                   ),
                                 ),
                                 filled: true,
-                                fillColor: Colors.grey.shade50,
+                                fillColor: ColorRes.white,
                               ),
                             ),
                           ),
@@ -1961,8 +1935,9 @@ Future<void> showFindPropertyDialog(
                               decoration: InputDecoration(
                                 hintText: 'Max',
                                 hintStyle: TextStyle(
-                                  fontSize: AppFontSizes.small,
-                                  color: ColorRes.leadGreyColor.shade500,
+                                  color: Get.theme.colorScheme.onSurface.withAlpha(128),
+                                  fontSize: AppFontSizes.bodyMedium,
+                                  fontWeight: AppFontWeights.regular,
                                 ),
                                 prefixIcon: const Icon(
                                   Icons.currency_rupee,
@@ -1988,7 +1963,7 @@ Future<void> showFindPropertyDialog(
                                   ),
                                 ),
                                 filled: true,
-                                fillColor: Colors.grey.shade50,
+                                fillColor: ColorRes.white,
                               ),
                             ),
                           ),
@@ -2015,7 +1990,9 @@ Future<void> showFindPropertyDialog(
                   children: [
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () => Get.back(),
+                        onPressed: () {
+                          controller.resetTheForm();
+                        },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           side: const BorderSide(color: ColorRes.primary),
@@ -2052,9 +2029,9 @@ Future<void> showFindPropertyDialog(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Icon(Icons.search, size: 20),
                             SizedBox(width: 8),
                             Text(
@@ -2080,17 +2057,597 @@ Future<void> showFindPropertyDialog(
   );
 }
 
-// Helper widget for field labels
 Widget _buildFieldLabel(String label) {
   return Text(
     label,
     style: const TextStyle(
-      fontSize: AppFontSizes.small,
+      fontSize: AppFontSizes.medium,
       fontWeight: AppFontWeights.semiBold,
       color: ColorRes.textPrimary,
     ),
   );
 }
+
+// Future<void> showFindPropertyDialog(
+//   PropertyController controller,
+//   GoogleMapController googleMapController,
+//   BuildContext context,
+// ) async {
+//   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+//   Get.dialog(
+//     Dialog(
+//       backgroundColor: ColorRes.white,
+//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+//       insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+//       child: Container(
+//         constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+//         decoration: BoxDecoration(
+//           color: ColorRes.white,
+//           borderRadius: BorderRadius.circular(20),
+//         ),
+//         child: Form(
+//           key: _formKey,
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               // Header
+//               Container(
+//                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+//                 decoration: BoxDecoration(
+//                   color: ColorRes.primary,
+//                   borderRadius: const BorderRadius.only(
+//                     topLeft: Radius.circular(20),
+//                     topRight: Radius.circular(20),
+//                   ),
+//                 ),
+//                 child: Padding(
+//                   padding: const EdgeInsets.all(8.0),
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       SizedBox(
+//                         width: 230,
+//
+//                         child: Text(
+//                           "Find Your Dream Property",
+//                           maxLines: 1,
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.body,
+//                             fontWeight: AppFontWeights.semiBold,
+//                             color: ColorRes.white,
+//                           ),
+//                         ),
+//                       ),
+//                       Spacer(),
+//                       InkWell(onTap: () => Get.back(),child: Icon(Icons.close, color: ColorRes.white, size: 20)),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//               // Form Content
+//               Flexible(
+//                 flex: 1,
+//                 child: SingleChildScrollView(
+//                   padding: const EdgeInsets.all(20),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       // City Field
+//                       // Row(
+//                       //   children: [
+//                       //     _buildFieldLabel('City'),
+//                       //     SizedBox(width: 4,),
+//                       //     Text('*',style: const TextStyle(
+//                       //       fontSize: AppFontSizes.medium,
+//                       //       fontWeight: AppFontWeights.semiBold,
+//                       //       color: ColorRes.error,
+//                       //     ),)
+//                       //   ],
+//                       // ),
+//                       //
+//                       // const SizedBox(height: 8),
+//
+//
+//                    // CitySelectionWidget(
+//                    //        controller: controller.selectedCityZ,
+//                    //        googleMapController: googleMapController,
+//                    //        formKey: _formKey,
+//                    //      ),
+//                   Stack(
+//                     children: [
+//                       // TextFormField(
+//                       //   controller: controller.selectedCityZ,
+//                       //   style: TextStyle(
+//                       //     fontSize: AppFontSizes.medium,
+//                       //     color: ColorRes.textPrimary,
+//                       //   ),
+//                       //
+//                       //   decoration: InputDecoration(
+//                       //     hintText: "Select City",
+//                       //     hintStyle: TextStyle(
+//                       //       fontSize: AppFontSizes.small,
+//                       //       color: ColorRes.leadGreyColor.shade500,
+//                       //     ),
+//                       //     contentPadding: const EdgeInsets.symmetric(
+//                       //       vertical: 14,
+//                       //       horizontal: 12,
+//                       //     ),
+//                       //     enabledBorder: OutlineInputBorder(
+//                       //       borderRadius: BorderRadius.circular(12),
+//                       //       borderSide: BorderSide(
+//                       //         width: 0.8,
+//                       //         color: ColorRes.grey.withOpacity(0.3),
+//                       //       ),
+//                       //     ),
+//                       //     disabledBorder: OutlineInputBorder(
+//                       //       borderRadius: BorderRadius.circular(12),
+//                       //       borderSide: BorderSide(
+//                       //         width: 0.8,
+//                       //         color: ColorRes.grey.withOpacity(0.3),
+//                       //       ),
+//                       //     ),
+//                       //     focusedBorder: OutlineInputBorder(
+//                       //       borderRadius: BorderRadius.circular(12),
+//                       //       borderSide: const BorderSide(width: 1.2, color: ColorRes.primary),
+//                       //     ),
+//                       //     errorBorder: OutlineInputBorder(
+//                       //       borderRadius: BorderRadius.circular(12),
+//                       //       borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
+//                       //     ),
+//                       //     focusedErrorBorder: OutlineInputBorder(
+//                       //       borderRadius: BorderRadius.circular(12),
+//                       //       borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
+//                       //     ),
+//                       //     filled: true,
+//                       //     fillColor: Get.theme.colorScheme.surface,
+//                       //     errorStyle: TextStyle(
+//                       //       color: ColorRes.error.shade700,
+//                       //       fontSize: AppFontSizes.small,
+//                       //     ),
+//                       //     prefixIcon: const Icon(
+//                       //       Icons.location_city_outlined,
+//                       //       color: ColorRes.primary,
+//                       //       size: 20,
+//                       //     ),
+//                       //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+//                       //   ),
+//                       //   validator: (value) {
+//                       //     if (value == null || value.isEmpty) {
+//                       //       return 'Please select a city';
+//                       //     }
+//                       //     return null;
+//                       //   },
+//                       //   onChanged: (value) async {
+//                       //     if (value.isNotEmpty) {
+//                       //       await googleMapController.fetchGooglePlaces(value);
+//                       //       log("City input: $value");
+//                       //     } else {
+//                       //       googleMapController.predictions.clear();
+//                       //     }
+//                       //   },
+//                       // ),
+//                       NesticoPeTextField(
+//                         title: "City",
+//                         isRequired: true,
+//                         prefixIcon: Icons.location_city_outlined,
+//
+//
+//                         hintText: "Select City",
+//                         autovalidateMode: AutovalidateMode.onUserInteraction,
+//                         validator: (value) => requiredField(value, 'City'),
+//                         onChanged: (value) async {
+//                               if (value.isNotEmpty) {
+//                                 await googleMapController.fetchGooglePlaces(value);
+//                                 log("City input: $value");
+//                               } else {
+//                                 googleMapController.predictions.clear();
+//                               }
+//                         },
+//                         controller: controller.selectedCityZ,
+//                       ),
+//
+//                       const SizedBox(height: 8),
+//
+//                       Obx(() {
+//                         final predictions = googleMapController.predictions;
+//
+//                         if (predictions.isEmpty) {
+//                           return const SizedBox();
+//                         }
+//
+//                         return Container(
+//                           constraints: const BoxConstraints(maxHeight: 250),
+//                           margin: const EdgeInsets.only(top: 40),
+//                           decoration: BoxDecoration(
+//                             color: Colors.white,
+//                             borderRadius: BorderRadius.only(
+//                               bottomLeft: Radius.circular(16),
+//                               bottomRight: Radius.circular(16),
+//                             ),
+//                             border: Border.all(
+//                               color: ColorRes.grey.withOpacity(0.3),
+//                               width: 0.8,
+//                             ),
+//                           ),
+//                           child: ListView.builder(
+//                             shrinkWrap: true,
+//                             itemCount: predictions.length > 3 ? 3 : predictions.length,
+//                             itemBuilder: (context, index) {
+//                               final city = predictions[index];
+//                               return ListTile(
+//                                 leading: const Icon(
+//                                   Icons.location_city_outlined,
+//                                   color: ColorRes.primary,
+//                                   size: 20,
+//                                 ),
+//                                 title: Text(
+//                                   city.description ?? '',
+//                                   style: TextStyle(
+//                                     fontSize: AppFontSizes.medium,
+//                                     color: ColorRes.textPrimary,
+//                                   ),
+//                                 ),
+//                                 onTap: () {
+//                                   controller.selectedCityZ.text = city.structuredFormatting?.mainText ?? '';
+//                                   googleMapController.predictions.clear();
+//                                   FocusScope.of(context).unfocus(); // hide keyboard
+//                                 },
+//                               );
+//                             },
+//                           ),
+//                         );
+//                       }),
+//                     ],
+//                   ),
+//
+//                       const SizedBox(height: 16),
+//
+//                       Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           _buildFieldLabel('Listing Type'),
+//                           const SizedBox(height: 8),
+//                           Obx(
+//                             () => DropdownButtonFormField<String>(
+//                               value:
+//                                   controller.listingTypes.contains(
+//                                         controller.selectedListingType.value,
+//                                       )
+//                                       ? controller.selectedListingType.value
+//                                       : null,
+//                               isDense: true,
+//
+//                               decoration: InputDecoration(
+//                                 hint: Text('Select',style:TextStyle(
+//                                   color: Get.theme.colorScheme.onSurface.withAlpha(128),
+//                                   fontSize: AppFontSizes.bodyMedium,
+//                                   fontWeight: AppFontWeights.regular,
+//                                 ) ,),
+//                                 hintStyle: TextStyle(
+//                                   color: Get.theme.colorScheme.onSurface.withAlpha(128),
+//                                   fontSize: AppFontSizes.bodyMedium,
+//                                   fontWeight: AppFontWeights.regular,
+//                                 ),
+//
+//                                 prefixIcon: const Icon(
+//                                   Icons.category_outlined,
+//                                   color: ColorRes.primary,
+//                                   size: 18,
+//                                 ),
+//                                 contentPadding: const EdgeInsets.symmetric(
+//                                   vertical: 12,
+//                                   horizontal: 8,
+//                                 ),
+//                                 enabledBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                   borderSide: BorderSide(
+//                                     width: 0.8,
+//                                     color: ColorRes.grey.withOpacity(0.3),
+//                                   ),
+//                                 ),
+//                                 focusedBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                   borderSide: const BorderSide(
+//                                     width: 1.2,
+//                                     color: ColorRes.primary,
+//                                   ),
+//                                 ),
+//                                 filled: true,
+//                                 fillColor: ColorRes.white,
+//                               ),
+//                               items:
+//                                   controller.listingTypes
+//                                       .map(
+//                                         (e) => DropdownMenuItem(
+//                                           value: e,
+//                                           child: Text(
+//                                             e,
+//                                             style: TextStyle(
+//                                               fontSize: AppFontSizes.small,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       )
+//                                       .toList(),
+//                               onChanged:
+//                                   (val) =>
+//                                       controller.selectedListingType.value = val,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                       const SizedBox(height: 12),
+//                       Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           _buildFieldLabel('BHK'),
+//                           const SizedBox(height: 8),
+//                           Obx(
+//                             () => DropdownButtonFormField<String>(
+//                               value:
+//                                   controller.bhkList.contains(
+//                                         controller.selectedBhk.value,
+//                                       )
+//                                       ? controller.selectedBhk.value
+//                                       : null,
+//                               isDense: true,
+//                               decoration: InputDecoration(
+//                                 hint: Text('Select',style:TextStyle(
+//                                   color: Get.theme.colorScheme.onSurface.withAlpha(128),
+//                                   fontSize: AppFontSizes.bodyMedium,
+//                                   fontWeight: AppFontWeights.regular,
+//                                 ) ,),
+//                                 hintStyle: TextStyle(
+//                                   color: Get.theme.colorScheme.onSurface.withAlpha(128),
+//                                   fontSize: AppFontSizes.bodyMedium,
+//                                   fontWeight: AppFontWeights.regular,
+//                                 ),
+//                                 prefixIcon: const Icon(
+//                                   Icons.home_outlined,
+//                                   color: ColorRes.primary,
+//                                   size: 18,
+//                                 ),
+//                                 contentPadding: const EdgeInsets.symmetric(
+//                                   vertical: 12,
+//                                   horizontal: 8,
+//                                 ),
+//                                 enabledBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                   borderSide: BorderSide(
+//                                     width: 0.8,
+//                                     color: ColorRes.grey.withOpacity(0.3),
+//                                   ),
+//                                 ),
+//                                 focusedBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                   borderSide: const BorderSide(
+//                                     width: 1.2,
+//                                     color: ColorRes.primary,
+//                                   ),
+//                                 ),
+//                                 filled: true,
+//                                 fillColor: ColorRes.white,
+//                               ),
+//                               items:
+//                                   controller.bhkList
+//                                       .map(
+//                                         (e) => DropdownMenuItem(
+//                                           value: e,
+//                                           child: Text(
+//                                             e,
+//                                             style: const TextStyle(
+//                                               fontSize: AppFontSizes.small,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       )
+//                                       .toList(),
+//                               onChanged:
+//                                   (val) => controller.selectedBhk.value = val,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                       const SizedBox(height: 12),
+//                       _buildFieldLabel('Budget Range'),
+//                       const SizedBox(height: 8),
+//                       Row(
+//                         children: [
+//                           Expanded(
+//                             child: TextField(
+//                               controller: controller.minBudget,
+//                               keyboardType: TextInputType.number,
+//                               style: const TextStyle(
+//                                 fontSize: AppFontSizes.small,
+//                               ),
+//                               decoration: InputDecoration(
+//                                 hintText: 'Min',
+//                                 hintStyle: TextStyle(
+//                                   color: Get.theme.colorScheme.onSurface.withAlpha(128),
+//                                   fontSize: AppFontSizes.bodyMedium,
+//                                   fontWeight: AppFontWeights.regular,
+//                                 ),
+//                                 prefixIcon: const Icon(
+//                                   Icons.currency_rupee,
+//                                   color: ColorRes.primary,
+//                                   size: 18,
+//                                 ),
+//                                 contentPadding: const EdgeInsets.symmetric(
+//                                   vertical: 12,
+//                                   horizontal: 10,
+//                                 ),
+//                                 enabledBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                   borderSide: BorderSide(
+//                                     width: 0.8,
+//                                     color: ColorRes.grey.withOpacity(0.3),
+//                                   ),
+//                                 ),
+//                                 focusedBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                   borderSide: const BorderSide(
+//                                     width: 1.2,
+//                                     color: ColorRes.primary,
+//                                   ),
+//                                 ),
+//                                 filled: true,
+//                                 fillColor: ColorRes.white,
+//                               ),
+//                             ),
+//                           ),
+//                           const Padding(
+//                             padding: EdgeInsets.symmetric(horizontal: 8),
+//                             child: Text(
+//                               'to',
+//                               style: TextStyle(
+//                                 color: ColorRes.textSecondary,
+//                                 fontWeight: AppFontWeights.medium,
+//                               ),
+//                             ),
+//                           ),
+//                           Expanded(
+//                             child: TextField(
+//                               controller: controller.maxBudget,
+//                               keyboardType: TextInputType.number,
+//                               style: const TextStyle(
+//                                 fontSize: AppFontSizes.small,
+//                               ),
+//                               decoration: InputDecoration(
+//                                 hintText: 'Max',
+//                                 hintStyle: TextStyle(
+//                                   color: Get.theme.colorScheme.onSurface.withAlpha(128),
+//                                   fontSize: AppFontSizes.bodyMedium,
+//                                   fontWeight: AppFontWeights.regular,
+//                                 ),
+//                                 prefixIcon: const Icon(
+//                                   Icons.currency_rupee,
+//                                   color: ColorRes.primary,
+//                                   size: 18,
+//                                 ),
+//                                 contentPadding: const EdgeInsets.symmetric(
+//                                   vertical: 12,
+//                                   horizontal: 10,
+//                                 ),
+//                                 enabledBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                   borderSide: BorderSide(
+//                                     width: 0.8,
+//                                     color: ColorRes.grey.withOpacity(0.3),
+//                                   ),
+//                                 ),
+//                                 focusedBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                   borderSide: const BorderSide(
+//                                     width: 1.2,
+//                                     color: ColorRes.primary,
+//                                   ),
+//                                 ),
+//                                 filled: true,
+//                                 fillColor: ColorRes.white,
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//
+//               // Footer Buttons
+//               Container(
+//                 padding: const EdgeInsets.all(20),
+//                 decoration: BoxDecoration(
+//                   color: ColorRes.white,
+//                   border: Border(
+//                     top: BorderSide(
+//                       color: ColorRes.grey.withOpacity(0.2),
+//                       width: 1,
+//                     ),
+//                   ),
+//                 ),
+//                 child: Row(
+//                   children: [
+//                     Expanded(
+//                       child: OutlinedButton(
+//                         onPressed: () => Get.back(),
+//                         style: OutlinedButton.styleFrom(
+//                           padding: const EdgeInsets.symmetric(vertical: 14),
+//                           side: const BorderSide(color: ColorRes.primary),
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(12),
+//                           ),
+//                         ),
+//                         child: const Text(
+//                           'Cancel',
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.medium,
+//                             fontWeight: AppFontWeights.semiBold,
+//                             color: ColorRes.primary,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     const SizedBox(width: 12),
+//                     Expanded(
+//                       flex: 2,
+//                       child: ElevatedButton(
+//                         onPressed:(){
+//                           if (_formKey.currentState!.validate())
+//                           {
+//                             controller.findProperties();
+//                           }
+//                           else{
+//                             print("Form is not valid");
+//                           }
+//                           },
+//                         style: ElevatedButton.styleFrom(
+//                           backgroundColor: ColorRes.primary,
+//                           padding: const EdgeInsets.symmetric(vertical: 14),
+//                           elevation: 0,
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(12),
+//                           ),
+//                         ),
+//                         child: Row(
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: const [
+//                             Icon(Icons.search, size: 20),
+//                             SizedBox(width: 8),
+//                             Text(
+//                               'Find Properties',
+//                               style: TextStyle(
+//                                 fontSize: AppFontSizes.medium,
+//                                 fontWeight: AppFontWeights.semiBold,
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     ),
+//     barrierDismissible: true,
+//   );
+// }
+//
+// // Helper widget for field labels
+// Widget _buildFieldLabel(String label) {
+//   return Text(
+//     label,
+//     style: const TextStyle(
+//       fontSize: AppFontSizes.small,
+//       fontWeight: AppFontWeights.semiBold,
+//       color: ColorRes.textPrimary,
+//     ),
+//   );
+// }
 
 class CityDropdown extends StatefulWidget {
   const CityDropdown({super.key});

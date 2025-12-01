@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
 void showDeleteConfirmationDialog({
@@ -23,14 +24,15 @@ void showDeleteConfirmationDialog({
             /// TITLE
             Text(
               title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: AppFontSizes.body, fontWeight: AppFontWeights.semiBold,color: ColorRes.textColor),
+              
             ),
             const SizedBox(height: 12),
 
             /// MESSAGE
             Text(
               message,
-              style: const TextStyle(fontSize: 15, color: Colors.black87),
+              style:  TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.black.withOpacity(0.6)),
             ),
             const SizedBox(height: 22),
 

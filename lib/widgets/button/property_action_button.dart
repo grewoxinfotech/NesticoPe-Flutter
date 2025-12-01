@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/contact_helper.dart';
 
 import '../../app/constants/color_res.dart';
 import '../../app/manager/compare_manager.dart';
 import '../../app/manager/project_compare_manager.dart';
 import '../../app/widgets/snack_bar/custom_snackbar.dart';
+import '../../modules/property/controllers/share_property_controller.dart';
 import '../../modules/property/views/property_detail_screen.dart';
 import '../../modules/saved_property/controllers/property_favorite_controller.dart';
 import '../bar/navigation_bar/navigation_Bar.dart';
@@ -33,6 +35,7 @@ class EntityActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final SharePropertyController propertyShareController=Get.find<SharePropertyController>();
     return Row(
       children: [
         // ------------------ COMPARE BUTTON ------------------
@@ -137,9 +140,15 @@ class EntityActionButtons extends StatelessWidget {
           backgroundColor: ColorRes.white,
           onPressed:
               onShare ??
-              () {
-                // Default share action
-              },
+                      () async {
+                    await propertyShareController.getPropertyLinkById(id);
+                    final shareUrl = propertyShareController.shareProperty.value?.data?.shareUrl;
+                    if (shareUrl != null && shareUrl.isNotEmpty) {
+                      ContactHelper.shareContent(link: shareUrl,);
+                    } else {
+                      Get.snackbar("Error", "Unable to generate share link right now.");
+                    }
+                  },
         ),
       ],
     );

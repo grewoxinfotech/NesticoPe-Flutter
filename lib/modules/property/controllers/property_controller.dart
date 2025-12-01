@@ -490,6 +490,17 @@ class PropertyController extends PaginatedController<Items> {
     maxBudget.clear();
   }
 
+  void resetTheForm()
+  {
+    Get.back();
+    selectedPropertyType.value = null;
+    selectedBhk.value = null;
+    selectedListingType.value = null;
+    selectedLocality.value = null;
+    selectedCityZ.clear();
+    minBudget.clear();
+    maxBudget.clear();
+  }
   @override
   void onClose() {
     // selectedCityZ.dispose();

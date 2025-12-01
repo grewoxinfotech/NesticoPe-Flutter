@@ -57,6 +57,7 @@ class ApiConstants {
   static String get review => "$baseURL/review";
 
   static String get overAllRating => "$baseURL/review/property";
+  static String get sharePropertyLink => "$baseURL/propertyShare/simple";
 
   static String get user => "$baseURL/user";
 

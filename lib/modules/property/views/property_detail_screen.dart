@@ -20,6 +20,7 @@ import 'package:housing_flutter_app/app/widgets/video_player/custom_video_player
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/property/controllers/share_property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/recommended_property.dart';
 import 'package:housing_flutter_app/modules/property/views/widgets/overall_rating_widget.dart';
 import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
@@ -72,6 +73,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   late final OverallRatingController _overallRatingController;
   late final ReviewController reviewController;
   final RxBool canAddReview = true.obs;
+
+
   final Rxn<Items> _property = Rxn<Items>();
 
   final RxBool _isLoading = true.obs;

@@ -409,9 +409,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             entity: project,
             projectCompareController: Get.find<ProjectCompareManager>(),
             favoriteController: Get.find<PropertyFavoriteController>(),
-            onShare: () {
-              // your project share logic
-            },
           ),
         ),
       ],

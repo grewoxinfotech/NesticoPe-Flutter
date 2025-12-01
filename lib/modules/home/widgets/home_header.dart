@@ -177,7 +177,25 @@ class _HomeHeaderState extends State<HomeHeader> {
                     ),
                   );
                 },
-                child: Container(
+                child:(widget.image.isEmpty)? Container(
+                  width: 45,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: ColorRes.primary,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: ColorRes.grey.withOpacity(0.2),width: 2),
+                  ),
+                  child:  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Center(
+                      child: Icon(
+                        Icons.home_work,
+                        size: 22,
+                        color: ColorRes.white,
+                      ),
+                    ),
+                  ),
+                ): Container(
                   width: 45,
                   height: 45,
                   decoration: BoxDecoration(

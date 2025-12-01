@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/utils/validation.dart';
 import '../../../../data/network/calender/model/calender_category_model.dart';
@@ -299,23 +300,47 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
   Get.dialog(
     Dialog(
       backgroundColor: ColorRes.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         constraints: BoxConstraints(
           maxHeight: Get.height * 0.8,
-          maxWidth: Get.width * 0.9,
+          maxWidth: Get.width * 1,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Dialog Title
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                isEdit ? "Edit Event" : "Add Event",
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: ColorRes.primary,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 230,
+                      child: Text(
+                        isEdit ? "Edit Event" : "Add Event",
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.body,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.white
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    InkWell(onTap: () => Get.back(),child: Icon(Icons.close, color: ColorRes.white, size: 20)),
+                  ],
                 ),
               ),
             ),
@@ -323,7 +348,7 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
             // Scrollable Form
             Flexible(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding:  EdgeInsets.symmetric(horizontal: 16,vertical: 12),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -354,8 +379,11 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
                         return CustomDropdownWithAdd<CalenderCategoryModel>(
                           key: dropdownKey,
                           title: "Category",
+
                           hintText: "Select category",
+
                           value: selectedCategory.value,
+
                           items: eventController.categories,
                           itemBuilder:
                               (c) => Row(
@@ -364,6 +392,11 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
                                     child: Text(
                                       c.name ?? "-",
                                       overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.bodySmall,
+                                        color: Get.theme.colorScheme.onSurface,
+                                        fontWeight: AppFontWeights.medium,
+                                      ),
                                     ),
                                   ),
                                   if (c.createdBy.toLowerCase() != 'system')
@@ -519,7 +552,6 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
     barrierDismissible: false,
   );
 }
-
 Future<String?> openAddCategoryDialog({
   String? initialText,
   bool isEdit = false,
@@ -527,42 +559,175 @@ Future<String?> openAddCategoryDialog({
   final TextEditingController textCtrl = TextEditingController(
     text: initialText ?? "",
   );
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  return await Get.defaultDialog<String?>(
-    title: isEdit ? "Edit Category" : "Add Category",
-    barrierDismissible: false,
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          controller: textCtrl,
-          decoration: InputDecoration(
-            hintText: "Enter category name",
-            border: OutlineInputBorder(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 10,
-            ),
+  return await Get.dialog<String?>(
+    Dialog(
+      backgroundColor: ColorRes.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Container(
+        constraints: BoxConstraints(maxWidth: 400),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Text(
+                    isEdit ? "Edit Category" : "Add Category",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.body,
+                      color: ColorRes.white,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // Text Field
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: NesticoPeTextField(
+                  title: "Category Name",
+                  hintText: "Enter category name...",
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => requiredField(value, 'Category'),
+                  controller: textCtrl,
+
+                ),
+              ),
+              // SizedBox(height: 24),
+
+              // Action Buttons
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Cancel Button
+                    TextButton(
+                      onPressed: () => Get.back(result: null),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          color: Colors.grey[600],
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+
+                    // Confirm Button
+                    ElevatedButton(
+                      onPressed: () {
+                        if (formKey.currentState?.validate() ?? false) {
+                          final text = textCtrl.text.trim();
+                          if (text.isNotEmpty) {
+                            Get.back(result: text);
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorRes.primary,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        isEdit ? "Update" : "Add",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     ),
-    textConfirm: isEdit ? "Update" : "Add",
-    textCancel: "Cancel",
-    onConfirm: () {
-      final text = textCtrl.text.trim();
-      if (text.isEmpty) {
-        Get.snackbar("Error", "Please enter category name");
-        return;
-      }
-      Get.back(result: text); // return text
-    },
-    onCancel: () {
-      Get.back(result: null); // return nothing
-    },
+    barrierDismissible: false,
   );
 }
-
+// Future<String?> openAddCategoryDialog({
+//   String? initialText,
+//   bool isEdit = false,
+// }) async {
+//   final TextEditingController textCtrl = TextEditingController(
+//     text: initialText ?? "",
+//   );
+//
+//   return await Get.defaultDialog<String?>(
+//     titleStyle:  TextStyle(
+//     fontSize: AppFontSizes.large,
+//     color: ColorRes.textColor,
+//     fontWeight: AppFontWeights.medium,
+//   ),
+//     title: isEdit ? "Edit Category" : "Add Category",
+//
+//     barrierDismissible: false,
+//     content: Padding(
+//       padding:  EdgeInsets.all(8),
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           NesticoPeTextField(
+//             title: "New Category",
+//             hintText: "Enter category name...",
+//             autovalidateMode: AutovalidateMode.onUserInteraction,
+//             validator: (value) => requiredField(value, 'Category'),
+//             controller: textCtrl,
+//           ),
+//         ],
+//       ),
+//     ),
+//     textConfirm: isEdit ? "Update" : "Add",
+//     textCancel: "Cancel",
+//
+//     onConfirm: () {
+//
+//       final text = textCtrl.text.trim();
+//       if (text.isEmpty) {
+//         Get.snackbar("Error", "Please enter category name");
+//         return;
+//       }
+//       Get.back(result: text); // return text
+//     },
+//     /*onCancel: () {
+//       Get.back(result: null); // return nothing
+//     },*/
+//   );
+// }
+// make this ui perfect for add category
 class DatePickerTextField extends StatelessWidget {
   final String title;
   final String hintText;
@@ -584,6 +749,7 @@ class DatePickerTextField extends StatelessWidget {
         onTap: () async {
           final picked = await showDatePicker(
             context: context,
+
             initialDate: selectedDate.value,
             firstDate: DateTime.now(),
             lastDate: DateTime(2050),
@@ -601,9 +767,10 @@ class DatePickerTextField extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textColor
                   ),
                 ),
               ),
@@ -611,8 +778,8 @@ class DatePickerTextField extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade400),
-                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: ColorRes.leadGreyColor.shade200),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
@@ -624,7 +791,11 @@ class DatePickerTextField extends StatelessWidget {
                   const SizedBox(width: 10),
                   Text(
                     DateFormat("dd-MM-yyyy").format(selectedDate.value),
-                    style: const TextStyle(fontSize: 14),
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      color: Get.theme.colorScheme.onSurface,
+                      fontWeight: AppFontWeights.medium,
+                    ),
                   ),
                 ],
               ),
@@ -817,19 +988,20 @@ class _CustomDropdownWithAddState<T> extends State<CustomDropdownWithAdd<T>> {
                                     vertical: 14,
                                   ),
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
                                         Icons.add_circle_outline,
-                                        color: Colors.blue.shade600,
+                                        color: ColorRes.primary,
                                         size: 20,
                                       ),
                                       const SizedBox(width: 12),
                                       Text(
                                         "Add New Category",
                                         style: TextStyle(
-                                          color: Colors.blue.shade600,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15,
+                                          color: ColorRes.primary,
+                                          fontWeight: AppFontWeights.semiBold,
+                                          fontSize: AppFontSizes.medium,
                                         ),
                                       ),
                                     ],
@@ -876,16 +1048,16 @@ class _CustomDropdownWithAddState<T> extends State<CustomDropdownWithAdd<T>> {
           // Dropdown Field
           InkWell(
             onTap: toggleDropdown,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(
                   color: isOpen ? Colors.blue.shade400 : Colors.grey.shade300,
                   width: isOpen ? 2 : 1,
                 ),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
@@ -898,12 +1070,12 @@ class _CustomDropdownWithAddState<T> extends State<CustomDropdownWithAdd<T>> {
                         color:
                             widget.value == null
                                 ? Colors.grey.shade500
-                                : Colors.black87,
-                        fontSize: 15,
+                                :  Get.theme.colorScheme.onSurface,
+                        fontSize: AppFontSizes.bodySmall,
                         fontWeight:
                             widget.value == null
-                                ? FontWeight.normal
-                                : FontWeight.w500,
+                                ?  AppFontWeights.medium
+                                : AppFontWeights.medium,
                       ),
                     ),
                   ),

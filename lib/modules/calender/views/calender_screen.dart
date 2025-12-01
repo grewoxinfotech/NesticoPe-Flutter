@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/network/calender/model/calender_model.dart';
 import 'package:housing_flutter_app/modules/calender/views/widgets/add_event_widget.dart';
@@ -36,6 +37,7 @@ class CalendarScreen extends StatelessWidget {
           // ---- Month Navigation Row ----
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
             children: [
               IconButton(
                 onPressed: controller.previousMonth,
@@ -56,30 +58,32 @@ class CalendarScreen extends StatelessWidget {
           ),
 
           const SizedBox(height: 10),
+          SizedBox(
+            // flex: 1,
+            height: 350,
+            child: Card(
 
-          // ---- Calendar Section ----
-          Expanded(
-            flex: 1,
-            child: Column(
-              children: [
-                buildWeekDays(),
-                Expanded(
-                  child: Card(
-                    child: PageView.builder(
-                      controller: controller.pageController,
-                      onPageChanged: controller.onPageChanged,
-                      itemBuilder: (context, index) {
-                        final date = DateTime(
-                          DateTime.now().year,
-                          DateTime.now().month + (index - 5000),
-                          1,
-                        );
-                        return buildMonthGrid(date);
-                      },
+              child: Column(
+                children: [
+                  buildWeekDays(),
+                  Expanded(
+                    child: Card(
+                      child: PageView.builder(
+                        controller: controller.pageController,
+                        onPageChanged: controller.onPageChanged,
+                        itemBuilder: (context, index) {
+                          final date = DateTime(
+                            DateTime.now().year,
+                            DateTime.now().month + (index - 5000),
+                            1,
+                          );
+                          return buildMonthGrid(date);
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
@@ -174,8 +178,8 @@ class CalendarScreen extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     alignment: Alignment.center,
                     child: Text(
-                      e,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      e[0],
+                      style: TextStyle(fontWeight: AppFontWeights.semiBold),
                     ),
                   ),
                 ),
@@ -232,7 +236,7 @@ class CalendarScreen extends StatelessWidget {
               bgColor = Colors.blue;
               textColor = Colors.white;
             } else if (dayDate.isBefore(todayNormalized)) {
-              textColor = Colors.grey; // past dates gray
+              textColor = ColorRes.leadGreyColor.shade600; // past dates gray
             } else if (dayDate == todayNormalized) {
               bgColor = Colors.orangeAccent.withOpacity(
                 0.3,
@@ -244,7 +248,8 @@ class CalendarScreen extends StatelessWidget {
               margin: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.circular(8),
+                // borderRadius: BorderRadius.circular(8),
+                shape: BoxShape.circle
               ),
               alignment: Alignment.center,
               child: Stack(
@@ -255,14 +260,14 @@ class CalendarScreen extends StatelessWidget {
                       style: TextStyle(
                         color: textColor,
                         fontWeight:
-                            dayDate == todayNormalized ? FontWeight.bold : null,
+                            dayDate == todayNormalized ? AppFontWeights.semiBold : null,
                       ),
                     ),
                   ),
                   if (hasEvent)
                     Positioned(
                       bottom: 4,
-                      right: 4,
+                      right: 16,
                       child: Container(
                         width: 6,
                         height: 6,

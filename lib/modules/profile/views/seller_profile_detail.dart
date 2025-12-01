@@ -92,7 +92,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                       const SizedBox(height: 16),
         
                       // Business Details Section (Editable)
-                   if(UserHelper.isSellerOwner)...[
+                   if(UserHelper.isSellerBuilder)...[
                      Obx(() => _buildBusinessDetailsSection(profileController)),
                      const SizedBox(height: 16),
                    ],

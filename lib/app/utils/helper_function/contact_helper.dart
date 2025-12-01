@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -288,6 +289,7 @@ class ContactHelper {
     String? imagePath, // Optional image path
   }) async {
     try {
+      log("link $link");
       // Combine text and link
       final shareText = [
         if (text != null) text,

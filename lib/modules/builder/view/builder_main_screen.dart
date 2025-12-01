@@ -101,6 +101,7 @@ import 'package:housing_flutter_app/modules/builder/view/builder_form_screen.dar
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
+import '../../profile/views/seller_profile_detail.dart';
 import '../controller/builder_navigation_controller.dart';
 import 'package:get/get.dart';
 
@@ -120,7 +121,7 @@ class BuilderMainScreen extends StatelessWidget {
       const BuilderDashboard(),
       const BuilderPropertyListing(),
       BuilderLeads(),
-      const BuilderProfile(),
+      SellerProfileScreen(),
     ];
 
     return Scaffold(
