@@ -214,6 +214,7 @@ class _PropertyOverviewSellerScreenState
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
+
       ),
 
       body: Obx(() {

@@ -173,9 +173,10 @@ leading: IconButton(onPressed: () {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 150,
+                  width: 140,
                   child: Text(
                     '${controller.userProfile.value?.username ?? ''}',
+                    maxLines: 1,
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.bold,
@@ -558,25 +559,28 @@ leading: IconButton(onPressed: () {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: ColorRes.blueColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.contacts_outlined,
-                  color: ColorRes.blueColor[700],
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
+              // Container(
+              //   padding: const EdgeInsets.all(8),
+              //   decoration: BoxDecoration(
+              //     color: ColorRes.blueColor.withOpacity(0.1),
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Icon(
+              //     Icons.contacts_outlined,
+              //     color: ColorRes.blueColor[700],
+              //     size: 20,
+              //   ),
+              // ),
+              // const SizedBox(width: 12),
               Text(
                 'Profile Info',
                 style: TextStyle(
+                  // fontSize: AppFontSizes.bodyMedium,
+                  // color: ColorRes.homeBlackFade,
+                  // fontWeight: AppFontWeights.medium,
                   fontSize: AppFontSizes.bodyMedium,
-                  color: ColorRes.homeBlackFade,
-                  fontWeight: AppFontWeights.medium,
+                  fontWeight: AppFontWeights.bold,
+                  color: ColorRes.textPrimary,
                 ),
               ),
             ],

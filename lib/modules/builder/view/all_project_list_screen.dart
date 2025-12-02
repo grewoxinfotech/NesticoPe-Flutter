@@ -85,12 +85,31 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
         onBack: () {
           Get.back();
         },
+        // onFilterTap: () async {
+        //   var filters = await Get.to(
+        //     () => ProjectFilterScreen(
+        //       initialFilters: selectedFilters.value,
+        //       onApply: (filterData) {
+        //         Get.back(result: filterData);
+        //       },
+        //     ),
+        //   );
+        //
+        //   if (filters != null) {
+        //     selectedFilters.value = filters;
+        //     controller.applyFilters(filters);
+        //   }
+        // },
         onFilterTap: () async {
-          var filters = await Get.to(
-            () => ProjectFilterScreen(
+          var filters = await showModalBottomSheet<Map<String, String>>(
+            context: Get.context!, // or use your BuildContext if available
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => ProjectFilterSheet(
               initialFilters: selectedFilters.value,
               onApply: (filterData) {
-                Get.back(result: filterData);
+                // ✅ Close sheet and return filters
+                Navigator.pop(context, filterData);
               },
             ),
           );
@@ -100,6 +119,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
             controller.applyFilters(filters);
           }
         },
+
       ),
 
       body: SafeArea(

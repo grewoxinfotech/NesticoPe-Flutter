@@ -312,7 +312,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                       );
                     },
                     priceRangeFormatter:
-                        (min, max) => _formatPriceRange(min, max),
+                        (min, max) => formatPriceRange(min, max),
                   );
                 }),
 
@@ -420,17 +420,18 @@ class _PropertyDetailState extends State<PropertyDetail> {
     );
   }
 
-  String _formatPriceRange(dynamic min, dynamic max) {
-    double minVal =
-        (min is num) ? min.toDouble() : double.tryParse(min.toString()) ?? 0;
-    double maxVal =
-        (max is num) ? max.toDouble() : double.tryParse(max.toString()) ?? 0;
 
-    // 🧠 Handle special cases
-    if (minVal == 0 && maxVal == 0) return "₹0";
-    if (minVal == 0) return "Up to ${Formatter.formatPrice(maxVal)}";
-    if (maxVal == 0) return "From ${Formatter.formatPrice(minVal)}";
+}
+String formatPriceRange(dynamic min, dynamic max) {
+  double minVal =
+  (min is num) ? min.toDouble() : double.tryParse(min.toString()) ?? 0;
+  double maxVal =
+  (max is num) ? max.toDouble() : double.tryParse(max.toString()) ?? 0;
 
-    return "${Formatter.formatPrice(minVal)} - ${Formatter.formatPrice(maxVal)}";
-  }
+  // 🧠 Handle special cases
+  if (minVal == 0 && maxVal == 0) return "₹0";
+  if (minVal == 0) return "Up to ${Formatter.formatPrice(maxVal)}";
+  if (maxVal == 0) return "From ${Formatter.formatPrice(minVal)}";
+
+  return "${Formatter.formatPrice(minVal)} - ${Formatter.formatPrice(maxVal)}";
 }

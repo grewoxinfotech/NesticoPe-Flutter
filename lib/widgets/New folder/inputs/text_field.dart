@@ -25,6 +25,7 @@ class NesticoPeTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final TextCapitalization textCapitalization;
   final int? maxLength;
+  final TextStyle style;
 
   const NesticoPeTextField({
     super.key,
@@ -33,6 +34,11 @@ class NesticoPeTextField extends StatelessWidget {
     this.validator,
     this.hintText,
     this.obscureText = false,
+    this.style = const TextStyle(
+      fontSize: AppFontSizes.medium,
+      color: ColorRes.black,
+      fontWeight: AppFontWeights.semiBold,
+    ),
     this.suffixIcon,
     this.prefixIcon,
     this.isRequired = false,
@@ -59,11 +65,7 @@ class NesticoPeTextField extends StatelessWidget {
             if (title != null)
               Text(
                 title!,
-                style: TextStyle(
-                  fontSize: AppFontSizes.medium,
-                  color: ColorRes.black,
-                  fontWeight: AppFontWeights.semiBold,
-                ),
+                style: style,
               ),
             if (isRequired)
               Text(

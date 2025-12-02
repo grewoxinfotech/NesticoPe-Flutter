@@ -603,6 +603,8 @@
 //   }
 // }
 
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -610,6 +612,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:image_picker/image_picker.dart';
@@ -629,11 +632,11 @@ class DashboardController extends GetxController {
   Rxn<ResellerInsightsModel> resellerInsightsModel =
       Rxn<ResellerInsightsModel>();
   RxList<Items> itemData = <Items>[].obs;
+  PropertyController propertyController = PropertyController();
   Rxn<ReferralModel> dummyReferral = Rxn<ReferralModel>();
   PropertyService _propertyService = PropertyService();
   Rxn<UserModel> userModel = Rxn<UserModel>();
   RxBool deleteSuccessStory = false.obs;
-
 
   final ResellerSuccessStoryService _service = ResellerSuccessStoryService();
 
@@ -659,6 +662,7 @@ class DashboardController extends GetxController {
   final RxString selectedCategory = 'All'.obs;
   final RxString selectedCategoryInLead = "All".obs;
   final RxList<String> selectedProductCategories = <String>[].obs;
+  final Rx<RangeValues> _rangeValues = const RangeValues(0.0, 100000000).obs;
   final RxDouble minPrice = 0.0.obs;
   final RxDouble maxPrice = 1000.0.obs;
   final RxDouble filterMinPrice = 0.0.obs;
@@ -672,6 +676,35 @@ class DashboardController extends GetxController {
   final offerController = TextEditingController();
   final messageController = TextEditingController();
   final leadController = Get.put(LeadController(), tag: "reseller");
+
+  ////=============================Filter Variable==========================================
+
+  final txtStartDate = TextEditingController();
+  final txtEndDate = TextEditingController();
+  RxString resellerApprovalStatus = ''.obs;
+  DateTime startDate=DateTime.now();
+  DateTime endDate=DateTime.now();
+  RxDouble resellerMinPrice = 0.0.obs;
+  RxDouble resellerMaxPrice = 100000000.0.obs;
+  RxString resellerPropertyCategory = "".obs;
+  RxString resellerListingType = "".obs;
+  final RxString resellerSelectedState = ''.obs;
+  final RxString resellerSelectedCity = ''.obs;
+
+  RxString resellerPropertyType = "".obs;
+  RxString resellerBHKType = "".obs;
+  RxString resellerVerified = "".obs;
+  RxString resellerFurnishingType = "".obs;
+  final txtCitySearch = TextEditingController();
+
+  final txtStateSearch = TextEditingController();
+  final txtSearchPropertyByID = TextEditingController();
+  RxList<String> resellerStatePropertyList = <String>[].obs;
+  RxList<String> resellerCityPropertyList = <String>[].obs;
+  RxString resellerPossessionStatus = "".obs;
+  RxList<String> propertyTypeList = <String>[].obs;
+
+  /////////////====================================================
 
   // Categories
   final RxList<String> categories =
@@ -697,6 +730,8 @@ class DashboardController extends GetxController {
 
   var selectedMonth = Rx<DateTime?>(null);
   var selectedStatus = 'Published'.obs;
+
+
   var rating = 5.0.obs;
   var imageFile = Rx<File?>(null);
 
@@ -730,6 +765,34 @@ class DashboardController extends GetxController {
       imageFile.value = File(picked.path);
     }
   }
+  RxMap<String, dynamic> priceRangeSeller = <String, dynamic>{}.obs;
+
+
+
+
+  void buyerPriceRange(RangeValues value) {
+    final clampedStart = value.start.clamp(resellerMinPrice.value, resellerMaxPrice.value);
+    final clampedEnd = value.end.clamp(resellerMinPrice.value, resellerMaxPrice.value);
+    _rangeValues.value = RangeValues(clampedStart, clampedEnd);
+
+    // update observable map with strings
+    priceRangeSeller.value = priceRange(_rangeValues.value.start, _rangeValues.value.end);
+  }
+
+  Map<String, dynamic> priceRange(double min, double max) {
+    return {
+      'min': min.toString(),
+      'max': max.toString(),
+    };
+  }
+
+
+
+
+  void setValue<T>(Rx<T> target, T value) {
+    target.value = value;
+
+  }
 
   Future<Rxn<ResellerInsightsModel>> fetchResellerDashboardDataFromApi() async {
     final user = await SecureStorage.getUserData();
@@ -758,7 +821,6 @@ class DashboardController extends GetxController {
       deleteSuccessStory.value = false;
     }
   }
-
 
   Future<void> fetchReferralService() async {
     try {
@@ -794,8 +856,273 @@ class DashboardController extends GetxController {
 
       itemData.clear();
       itemData.assignAll(validData);
+      // getPropertyState('');
     }
   }
+  void getPropertyType() {
+    print('🔍 Running getPropertyType...');
+    print('======================================');
+    print('📊 Total properties: ${propertyController.items.length}');
+    print('🧩 Active filters:');
+    print('  • Category: "${resellerPropertyCategory.value}"');
+    print('  • Listing: "${resellerListingType.value}"');
+    print('  • Furnishing: "${resellerFurnishingType.value}"');
+    print('  • Verified: "${resellerVerified.value}"');
+    print('  • State: "${resellerSelectedState.value}"');
+    print('  • City: "${resellerSelectedCity.value}"');
+    print('======================================\n');
+    final matchFurnishing =
+        matchFurnishType(
+          resellerFurnishingType.value
+        );
+
+    print('  • City: "${matchFurnishing}"');
+  }
+  String matchFurnishType(String filterValue) {
+
+
+    // Map UI display values to API expected values
+    const furnishMap = {
+      'Fully': 'fully-furnished',
+      'Semi': 'semi-furnished',
+      'Unfurnished': 'unfurnished',
+    };
+
+    final expectedApiValue =
+        furnishMap[filterValue] ?? filterValue.toLowerCase();
+
+    // Compare normalized lowercase strings
+    return expectedApiValue;
+  }
+
+  /*void getPropertyType() {
+    print('🔍 Running getPropertyType...');
+    print('----------------------------------------------');
+    print('🧩 Current filter values:');
+    print('  • resellerPropertyCategory: ${resellerPropertyCategory.value}');
+    print('  • resellerListingType: ${resellerListingType.value}');
+    print('  • resellerPropertyType: ${resellerPropertyType.value}');
+    print('  • resellerFurnishingType: ${resellerFurnishingType.value}');
+    print('  • resellerVerified: ${resellerVerified.value}');
+    print('  • resellerPossessionStatus: ${resellerPossessionStatus.value}');
+    print('  • resellerSelectedState: ${resellerSelectedState.value}');
+    print('  • resellerSelectedCity: ${resellerSelectedCity.value}');
+    print('----------------------------------------------');
+
+    final filteredItems = propertyController.items.where((e) {
+      // Category filter - handle null and case
+      final matchCategory = resellerPropertyCategory.value.isEmpty ||
+          resellerPropertyCategory.value.toLowerCase() == (e.type?.toLowerCase() ?? '');
+
+      if (!matchCategory) {
+        print('❌ Failed matchCategory: "${resellerPropertyCategory.value}" != "${e.type}"');
+      }
+
+      // Listing type filter - handle null and case
+      final matchListingType = resellerListingType.value.isEmpty ||
+          resellerListingType.value.toLowerCase() == (e.listingType?.toLowerCase() ?? '');
+
+      if (!matchListingType) {
+        print('❌ Failed matchListingType: "${resellerListingType.value}" != "${e.listingType}"');
+      }
+
+      // Furnishing filter - handle null and case
+      final propertyFurnishType = e.propertyDetails?.furnishInfo?.furnishType?.toLowerCase() ?? '';
+      final matchFurnishing = resellerFurnishingType.value.isEmpty ||
+          resellerFurnishingType.value.toLowerCase() == propertyFurnishType;
+
+      if (!matchFurnishing) {
+        print('❌ Failed matchFurnishing: "${resellerFurnishingType.value}" != "$propertyFurnishType"');
+      }
+
+      // Verified filter
+      final matchVerified = resellerVerified.value.isEmpty ||
+          (resellerVerified.value == 'Verified' ? e.isVerified == true : e.isVerified == false);
+
+      if (!matchVerified) {
+        print('❌ Failed matchVerified: "${resellerVerified.value}" but isVerified=${e.isVerified}');
+      }
+
+      // State filter - handle null and case
+      final matchState = resellerSelectedState.value.isEmpty ||
+          resellerSelectedState.value.toLowerCase() == (e.state?.toLowerCase() ?? '');
+
+      if (!matchState) {
+        print('❌ Failed matchState: "${resellerSelectedState.value}" != "${e.state}"');
+      }
+
+      // City filter - handle null and case
+      final matchCity = resellerSelectedCity.value.isEmpty ||
+          resellerSelectedCity.value.toLowerCase() == (e.city?.toLowerCase() ?? '');
+
+      if (!matchCity) {
+        print('❌ Failed matchCity: "${resellerSelectedCity.value}" != "${e.city}"');
+      }
+
+      final matches = matchCategory &&
+          matchListingType &&
+          matchFurnishing &&
+          matchVerified &&
+          matchState &&
+          matchCity;
+
+      if (matches) {
+        print('✅ MATCHED Property: ${e.id} - ${e.propertyType}');
+      }
+
+      return matches;
+    }).toList();
+
+    print('----------------------------------------------');
+    print('📊 Filtered items count: ${filteredItems.length}');
+
+    // Extract property types
+    final types = filteredItems
+        .map((e) => e.propertyType)
+        .where((type) => type != null && type!.isNotEmpty)
+        .map((type) => type!)
+        .toSet()
+        .toList();
+
+    propertyTypeList.value = types;
+
+    print('----------------------------------------------');
+    print('🏷️ Extracted property types: $types');
+    print('✅ propertyTypeList updated with ${propertyTypeList.length} types');
+    print('----------------------------------------------');
+  }*/
+
+
+
+  //////////////////////////////////////////////////////////////////////////
+//
+//   void getPropertyType() {
+//     print('🔍 Running getPropertyType...');
+//     print('----------------------------------------------');
+//     print('🧩 Current filter values:');
+//     print('  • resellerPropertyCategory: ${resellerPropertyCategory.value}');
+//     print('  • resellerListingType: ${resellerListingType.value}');
+//     print('  • resellerPropertyType: ${resellerPropertyType.value}');
+//     print('  • resellerFurnishingType: ${resellerFurnishingType.value}');
+//     print('  • resellerVerified: ${resellerVerified.value}');
+//     print('  • resellerPossessionStatus: ${resellerPossessionStatus.value}');
+//     print('  • resellerStatePropertyList: ${resellerStatePropertyList}');
+//     print('  • resellerCityPropertyList: ${resellerCityPropertyList}');
+//     print('----------------------------------------------');
+//     final filteredItems =
+//         propertyController.items.where((e) {
+//           final matchCategory =
+//               resellerPropertyCategory.value.isEmpty ||
+//               e.type?.toLowerCase() ==
+//                   resellerPropertyCategory.value.toLowerCase();
+//
+//           final matchListingType =
+//               resellerListingType.value.isEmpty ||
+//               e.listingType == resellerListingType.value;
+//
+//           // final matchPropertyType = resellerPropertyType.value.isEmpty ||
+//           //     e.propertyType == resellerPropertyType.value;
+//
+//           final matchFurnishing =
+//               resellerFurnishingType.value.isEmpty ||
+//               e.propertyDetails?.furnishInfo?.furnishType ==
+//                   resellerFurnishingType.value;
+//
+//           final bool isVerified = resellerVerified.value == 'Verified';
+//           final matchVerified =
+//               resellerVerified.value.isEmpty || e.isVerified == isVerified;
+//
+//           // final matchPossession = resellerPossessionStatus.value.isEmpty ||
+//           //     e.propertyDetails?.possessionInfo?.possessionDate ==
+//           //         resellerPossessionStatus.value;
+//
+//           final matchState =
+//               resellerStatePropertyList.isEmpty ||
+//               resellerStatePropertyList.contains(e.state);
+//
+//           final matchCity =
+//               resellerCityPropertyList.isEmpty ||
+//               resellerCityPropertyList.contains(e.city);
+//
+//           final matches =
+//               matchCategory &&
+//               matchListingType &&
+//               // matchPropertyType &&
+//               matchFurnishing &&
+//               matchVerified &&
+//               // matchPossession &&
+//               matchState &&
+//               matchCity;
+//           print('''
+// ----------------------------------------------
+// 🏠 Property Debug Info:
+// • ID: ${e.id}
+// • Type: ${e.type}
+// • ListingType: ${e.listingType}
+// • PropertyType: ${e.propertyType}
+// • Furnishing: ${e.propertyDetails?.furnishInfo?.furnishType}
+// • Verified: ${e.isVerified}
+// • State: ${e.state}
+// • City: ${e.city}
+//
+// 🔎 Match Results:
+//   - matchCategory: $matchCategory
+//   - matchListingType: $matchListingType
+//   - matchFurnishing: $matchFurnishing
+//   - matchVerified: $matchVerified
+//   - matchState: $matchState
+//   - matchCity: $matchCity
+//   - ✅ Final matches: $matches
+// ----------------------------------------------
+// ''');
+//           // Detailed per-item debug log
+//           print('-------------------------------------------------');
+//           print('🏠 Item:');
+//           print('  • ID: ${e.id}');
+//           print('  • Type: ${e.type}');
+//           print('  • ListingType: ${e.listingType}');
+//           print('  • PropertyType: ${e.propertyType}');
+//           print(
+//             '  • Furnishing: ${e.propertyDetails?.furnishInfo?.furnishType}',
+//           );
+//           print('  • Verified: ${e.isVerified}');
+//           print(
+//             '  • PossessionDate: ${e.propertyDetails?.possessionInfo?.possessionDate}',
+//           );
+//           print('  • State: ${e.state}');
+//           print('  • City: ${e.city}');
+//           print('  • Matches filters: $matches');
+//
+//           if (matches) {
+//             print('✅ MATCHED ✅');
+//           } else {
+//             print('🚫 SKIPPED 🚫');
+//           }
+//
+//           return matches;
+//         }).toList();
+//
+//     print('----------------------------------------------');
+//     print('📊 Filtered items count: ${filteredItems.length}');
+//
+//     // Step 2: Extract property types
+//     final types =
+//         filteredItems
+//             .map((e) => e.propertyType)
+//             .where((type) => type != null && type!.isNotEmpty)
+//             .map((type) => type!)
+//             .toSet()
+//             .toList();
+//
+//     // Step 3: Assign to observable list
+//     propertyTypeList.value = types;
+//
+//     // Step 4: Print final debug summary
+//     print('----------------------------------------------');
+//     print('🏷️ Extracted property types: $types');
+//     print('✅ propertyTypeList updated with ${propertyTypeList.length} types');
+//     print('----------------------------------------------');
+//   }
 
   Future<void> getCurrentUserData() async {
     userModel.value = await SecureStorage.getUserData();

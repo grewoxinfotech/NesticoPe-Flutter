@@ -1191,7 +1191,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         return Column(
                           children: [
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 8),
                             // const SizedBox(height: 20),
 
                             // TitleWithViewAll(title: "Commercial offerings"),

@@ -104,10 +104,10 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                         const SizedBox(height: 16),
         
                       // Account Information Section (Read-only)
-                      if (!profileController.isEditing.value)
-                        _buildAccountInfoSection(profileController),
-                      if (!profileController.isEditing.value)
-                        const SizedBox(height: 16),
+                      // if (!profileController.isEditing.value)
+                      //   _buildAccountInfoSection(profileController),
+                      // if (!profileController.isEditing.value)
+                      //   const SizedBox(height: 16),
         
                       // Profile Options
                       if (!profileController.isEditing.value) ...[
@@ -300,9 +300,10 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 150,
+                  width: 140,
                   child: Text(
                     ' ${controller.profileData.value?.user?.username ?? ''}',
+                    maxLines: 1,
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.bold,
@@ -512,25 +513,25 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: ColorRes.blueColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.contacts_outlined,
-                  color: ColorRes.blueColor[700],
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
+              // Container(
+              //   padding: const EdgeInsets.all(8),
+              //   decoration: BoxDecoration(
+              //     color: ColorRes.blueColor.withOpacity(0.1),
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Icon(
+              //     Icons.contacts_outlined,
+              //     color: ColorRes.blueColor[700],
+              //     size: 20,
+              //   ),
+              // ),
+              // const SizedBox(width: 12),
               Text(
-                'Contact Info',
+                'Personal Info',
                 style: TextStyle(
                   fontSize: AppFontSizes.bodyMedium,
-                  color: ColorRes.homeBlackFade,
-                  fontWeight: AppFontWeights.medium,
+                  fontWeight: AppFontWeights.bold,
+                  color: ColorRes.textPrimary,
                 ),
               ),
             ],
@@ -858,31 +859,38 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          _buildDetailRow(
-            'SELLER TYPE',
-            controller.resellerProfile.value?.sellerType.toUpperCase() ?? 'N/A',
-          ),
-          const SizedBox(height: 12),
-          _buildDetailRow(
-            'COMPANY NAME',
-            controller.resellerProfile.value?.companyName ?? 'N/A',
-          ),
-          const SizedBox(height: 12),
-          _buildDetailRow(
-            'RERA NUMBER',
-            controller.resellerProfile.value?.reraNumber ?? 'N/A',
-          ),
-          const SizedBox(height: 12),
-          _buildDetailRow(
-            'GST NUMBER',
-            controller.resellerProfile.value?.gstNumber ?? 'N/A',
-          ),
-          const SizedBox(height: 12),
-          _buildDetailRow(
-            'NUMBER OF PROPERTIES',
-            controller.resellerProfile.value?.numberOfProperties.toString() ??
-                '0',
-          ),
+         Row(
+           mainAxisAlignment: MainAxisAlignment.start,
+           children: [
+             const SizedBox(height: 16),
+             _buildDetailRow(
+               'SELLER TYPE',
+               controller.resellerProfile.value?.sellerType.toUpperCase() ?? 'N/A',
+             ),
+             const SizedBox(height: 12),
+             Spacer(),
+             // _buildDetailRow(
+             //   'COMPANY NAME',
+             //   controller.resellerProfile.value?.companyName ?? 'N/A',
+             // ),
+             // const SizedBox(height: 12),
+             // _buildDetailRow(
+             //   'RERA NUMBER',
+             //   controller.resellerProfile.value?.reraNumber ?? 'N/A',
+             // ),
+             // const SizedBox(height: 12),
+             // _buildDetailRow(
+             //   'GST NUMBER',
+             //   controller.resellerProfile.value?.gstNumber ?? 'N/A',
+             // ),
+             // const SizedBox(height: 12),
+             _buildDetailRow(
+               'NUMBER OF PROPERTIES',
+               controller.resellerProfile.value?.numberOfProperties.toString() ??
+                   '0',
+             ),
+           ],
+         )
         ],
       ),
     );

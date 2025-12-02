@@ -446,9 +446,10 @@ class ResellerProfileScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 150,
+                  width: 140,
                   child: Text(
                     ' ${controller.profileData.value?.user?.username ?? ''}',
+                    maxLines: 1,
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.bold,
@@ -1101,25 +1102,28 @@ class ResellerProfileScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: ColorRes.blueColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.person_outline,
-                    color: ColorRes.blueColor[700],
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
+                // Container(
+                //   padding: const EdgeInsets.all(8),
+                //   decoration: BoxDecoration(
+                //     color: ColorRes.blueColor.withOpacity(0.1),
+                //     borderRadius: BorderRadius.circular(8),
+                //   ),
+                //   child: Icon(
+                //     Icons.person_outline,
+                //     color: ColorRes.blueColor[700],
+                //     size: 20,
+                //   ),
+                // ),
+                // const SizedBox(width: 12),
                 Text(
                   'Profile Information',
                   style: TextStyle(
+                    // fontSize: AppFontSizes.bodyMedium,
+                    // color: ColorRes.homeBlackFade,
+                    // fontWeight: AppFontWeights.medium,
                     fontSize: AppFontSizes.bodyMedium,
-                    color: ColorRes.homeBlackFade,
-                    fontWeight: AppFontWeights.medium,
+                    fontWeight: AppFontWeights.bold,
+                    color: ColorRes.textPrimary,
                   ),
                 ),
               ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
+import '../../../app/constants/color_res.dart';
 import '../../../app/constants/ic_res.dart';
 import '../../../app/constants/size_manager.dart';
 import '../../display/ic.dart';
@@ -20,6 +21,9 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
   final double? width;
   final bool isMultiSelect;
   final bool showSelectedItems;
+  final double fontsize;
+  final FontWeight fontWight;
+  final bool darkText;
   final VoidCallback? onMenuOpened;
 
   const NesticoPeDropdownField({
@@ -30,6 +34,7 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
     required this.onChanged,
     this.isRequired = false,
     this.hintText,
+
     this.prefixIcon,
     this.validator,
     this.enabled = true,
@@ -37,7 +42,7 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
     this.width,
     this.isMultiSelect = false,
     this.showSelectedItems = true,
-    this.onMenuOpened,
+    this.onMenuOpened,  this.fontsize=AppFontSizes.medium,  this.fontWight=AppFontWeights.bold,  this.darkText=false,
   });
 
   @override
@@ -51,9 +56,9 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
             Text(
               title!,
               style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                color: Get.theme.colorScheme.onSecondary,
-                fontWeight: AppFontWeights.bold,
+                fontSize: fontsize,
+                color:darkText?ColorRes.textColor: Get.theme.colorScheme.onSecondary,
+                fontWeight: fontWight,
               ),
             ),
             if (isRequired)

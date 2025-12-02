@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -16,8 +17,11 @@ import '../../../../app/manager/property/property_name_manager.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
+import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../../propert_detail/view/property_details.dart';
 import '../../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
 import '../../model/dashboard/dashboard_model.dart';
+import '../../widget/reseller_filter/resseller_property_filter.dart';
 import '../lead/lead_screen.dart';
 import '../lead_overview/lead_detail.dart';
 import '../property_share/reseller_property_share.dart';
@@ -42,12 +46,18 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
   // Multi-select state
   final RxBool isSelectionMode = false.obs;
   final RxList<String> selectedPropertyIds = <String>[].obs;
+  final RxMap<String, String> selectedFilters = <String, String>{}.obs;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await fetchResellerAssignProperty();
     });
+    // controller.resellerPropertyList.value = propertyController.items.value
+    //     .map((e) => e.state ?? '')
+    //     .toSet()
+    //     .toList();
+
     super.initState();
   }
 
@@ -58,6 +68,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
       if (userId != null && userId.isNotEmpty) {
         final filter = {"assignedTo": userId};
+
         await propertyController.applyFilters(filter);
 
         // Then load initial data
@@ -195,36 +206,41 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 const SizedBox(width: 8),
               ] else ...[
                 GestureDetector(
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: ColorRes.transparentColor,
-                      builder: (_) => FilterPanel(),
-                    );
+                  onTap: () async { // FocusScope.of(context).unfocus();
+                    // showModalBottomSheet(
+                    //   context: context,
+                    //   isScrollControlled: true,
+                    //   backgroundColor: ColorRes.transparentColor,
+                    //   builder: (_) => FilterPanel(),
+                    // );
+
+                    // When navigating to the filter screen
+                    final result = await Get.to(() => ResellerPropertyFilter());
+
+                    if (result != null) {
+                      // Use the filter result
+                      final newFilter=convertFiltersToString(result);
+                      final user = await SecureStorage.getUserData();
+                      final userId = user?.user?.id;
+
+                      if (userId != null && userId.isNotEmpty) {
+                        newFilter["assignedTo"] = userId;
+                        log("New Filter ${newFilter}");
+                      await propertyController.applyFilters(newFilter);
+                        selectedFilters
+                          ..clear()
+                          ..addAll(newFilter);
+
+                        propertyController.applyFilters(Map<String, String>.from(selectedFilters));
+                      print("Filter applied: $result   t   ${selectedFilters.value}");
+                      // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
+                    }
+
+                    }
+
+
                   },
-                  child: Container(
-                    height: 35,
-                    margin: EdgeInsets.only(right: 8),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: ColorRes.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: ColorRes.primary.withOpacity(0.3),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: Text(
-                      'Filter',
-                      style: TextStyle(
-                        color: ColorRes.primary,
-                        fontSize: AppFontSizes.bodySmall,
-                        fontWeight: AppFontWeights.semiBold,
-                      ),
-                    ),
-                  ),
+                  child: Icon(Icons.filter_list,),
                 ),
 
                 // Sort Button
@@ -288,6 +304,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 //         ],
                 //   ),
                 // ),
+                const SizedBox(width: 8),
                 IconButton(
                   onPressed: toggleSelectionMode,
                   icon: const Icon(Icons.share_outlined),
@@ -351,178 +368,194 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
           //     ),
           //   ),
           // ),
-
-          // Active Filters Display
           Obx(() {
-            bool hasPriceFilter =
-                controller.filterMinPrice.value > controller.minPrice.value ||
-                controller.filterMaxPrice.value < controller.maxPrice.value;
-
-            bool hasCategoryFilter =
-                controller.selectedProductCategories.isNotEmpty;
-
-            bool hasActiveFilters = hasCategoryFilter || hasPriceFilter;
-
-            return hasActiveFilters
-                ? Container(
-                  color: ColorRes.white,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: getResponsivePadding(context),
-                    vertical: 8,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            'Active Filters:',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.leadGreyColor[700],
-                            ),
-                          ),
-                          const Spacer(),
-                          TextButton.icon(
-                            onPressed: () {
-                              controller.clearFilters();
-                              controller.selectedProductCategories.addAll([]);
-                            },
-                            label: Text(
-                              'Clear All',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.primary,
-                                fontWeight: AppFontWeights.medium,
-                              ),
-                            ),
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        height: 36,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            // Category filters
-                            ...controller.selectedProductCategories.map((
-                              category,
-                            ) {
-                              return Container(
-                                margin: EdgeInsets.only(right: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: ColorRes.primary.withOpacity(0.1),
-                                  border: Border.all(
-                                    color: ColorRes.primary.withOpacity(0.3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        category,
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color: ColorRes.primary,
-                                          fontWeight: AppFontWeights.semiBold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.selectedProductCategories
-                                              .remove(category);
-                                          controller.applyFilters();
-                                        },
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(2),
-                                          child: Icon(
-                                            Icons.close,
-                                            size: 14,
-                                            color: ColorRes.primary,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-
-                            // Price filter
-                            if (hasPriceFilter)
-                              Container(
-                                margin: EdgeInsets.only(right: 8),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: ColorRes.primary.withOpacity(0.3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        '${Formatter.formatPrice(controller.filterMinPrice.value)} - ${Formatter.formatPrice(controller.filterMaxPrice.value)}',
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color: ColorRes.primary,
-                                          fontWeight: AppFontWeights.semiBold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.updatePriceRange(
-                                            controller.minPrice.value,
-                                            controller.maxPrice.value,
-                                          );
-                                          controller.applyFilters();
-                                        },
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(2),
-                                          child: Icon(
-                                            Icons.close,
-                                            size: 14,
-                                            color: ColorRes.primary,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-                : SizedBox.shrink();
+            return FilterChipsBar(
+              filters: selectedFilters.value,
+              onClearAll: () {
+                selectedFilters.clear();
+                propertyController.applyFilters(<String, String>{});
+              },
+              onRemoveFilter: (key) {
+                selectedFilters.remove(key);
+                propertyController.applyFilters(
+                  Map<String, String>.from(selectedFilters),
+                );
+              },
+              priceRangeFormatter:
+                  (min, max) => formatPriceRange(min, max),
+            );
           }),
+          // Active Filters Display
+          // Obx(() {
+          //   bool hasPriceFilter =
+          //       controller.filterMinPrice.value > controller.minPrice.value ||
+          //       controller.filterMaxPrice.value < controller.maxPrice.value;
+          //
+          //   bool hasCategoryFilter =
+          //       controller.selectedProductCategories.isNotEmpty;
+          //
+          //   bool hasActiveFilters = hasCategoryFilter || hasPriceFilter;
+          //
+          //   return hasActiveFilters
+          //       ? Container(
+          //         color: ColorRes.white,
+          //         padding: EdgeInsets.symmetric(
+          //           horizontal: getResponsivePadding(context),
+          //           vertical: 8,
+          //         ),
+          //         child: Column(
+          //           crossAxisAlignment: CrossAxisAlignment.start,
+          //           children: [
+          //             Row(
+          //               children: [
+          //                 Text(
+          //                   'Active Filters:',
+          //                   style: TextStyle(
+          //                     fontSize: AppFontSizes.small,
+          //                     fontWeight: AppFontWeights.semiBold,
+          //                     color: ColorRes.leadGreyColor[700],
+          //                   ),
+          //                 ),
+          //                 const Spacer(),
+          //                 TextButton.icon(
+          //                   onPressed: () {
+          //                     controller.clearFilters();
+          //                     controller.selectedProductCategories.addAll([]);
+          //                   },
+          //                   label: Text(
+          //                     'Clear All',
+          //                     style: TextStyle(
+          //                       fontSize: AppFontSizes.small,
+          //                       color: ColorRes.primary,
+          //                       fontWeight: AppFontWeights.medium,
+          //                     ),
+          //                   ),
+          //                   style: TextButton.styleFrom(
+          //                     padding: EdgeInsets.zero,
+          //                     minimumSize: Size.zero,
+          //                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //             const SizedBox(height: 8),
+          //             SizedBox(
+          //               height: 36,
+          //               child: ListView(
+          //                 scrollDirection: Axis.horizontal,
+          //                 children: [
+          //                   // Category filters
+          //                   ...controller.selectedProductCategories.map((
+          //                     category,
+          //                   ) {
+          //                     return Container(
+          //                       margin: EdgeInsets.only(right: 8),
+          //                       decoration: BoxDecoration(
+          //                         borderRadius: BorderRadius.circular(12),
+          //                         color: ColorRes.primary.withOpacity(0.1),
+          //                         border: Border.all(
+          //                           color: ColorRes.primary.withOpacity(0.3),
+          //                           width: 1,
+          //                         ),
+          //                       ),
+          //                       child: Padding(
+          //                         padding: const EdgeInsets.symmetric(
+          //                           horizontal: 12,
+          //                           vertical: 6,
+          //                         ),
+          //                         child: Row(
+          //                           mainAxisSize: MainAxisSize.min,
+          //                           children: [
+          //                             Text(
+          //                               category,
+          //                               style: TextStyle(
+          //                                 fontSize: AppFontSizes.small,
+          //                                 color: ColorRes.primary,
+          //                                 fontWeight: AppFontWeights.semiBold,
+          //                               ),
+          //                             ),
+          //                             const SizedBox(width: 6),
+          //                             InkWell(
+          //                               onTap: () {
+          //                                 controller.selectedProductCategories
+          //                                     .remove(category);
+          //                                 controller.applyFilters();
+          //                               },
+          //                               borderRadius: BorderRadius.circular(12),
+          //                               child: Container(
+          //                                 padding: const EdgeInsets.all(2),
+          //                                 child: Icon(
+          //                                   Icons.close,
+          //                                   size: 14,
+          //                                   color: ColorRes.primary,
+          //                                 ),
+          //                               ),
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     );
+          //                   }).toList(),
+          //
+          //                   // Price filter
+          //                   if (hasPriceFilter)
+          //                     Container(
+          //                       margin: EdgeInsets.only(right: 8),
+          //                       decoration: BoxDecoration(
+          //                         color: ColorRes.primary.withOpacity(0.1),
+          //                         borderRadius: BorderRadius.circular(20),
+          //                         border: Border.all(
+          //                           color: ColorRes.primary.withOpacity(0.3),
+          //                           width: 1,
+          //                         ),
+          //                       ),
+          //                       child: Padding(
+          //                         padding: const EdgeInsets.symmetric(
+          //                           horizontal: 12,
+          //                           vertical: 6,
+          //                         ),
+          //                         child: Row(
+          //                           mainAxisSize: MainAxisSize.min,
+          //                           children: [
+          //                             Text(
+          //                               '${Formatter.formatPrice(controller.filterMinPrice.value)} - ${Formatter.formatPrice(controller.filterMaxPrice.value)}',
+          //                               style: TextStyle(
+          //                                 fontSize: AppFontSizes.small,
+          //                                 color: ColorRes.primary,
+          //                                 fontWeight: AppFontWeights.semiBold,
+          //                               ),
+          //                             ),
+          //                             const SizedBox(width: 6),
+          //                             InkWell(
+          //                               onTap: () {
+          //                                 controller.updatePriceRange(
+          //                                   controller.minPrice.value,
+          //                                   controller.maxPrice.value,
+          //                                 );
+          //                                 controller.applyFilters();
+          //                               },
+          //                               borderRadius: BorderRadius.circular(12),
+          //                               child: Container(
+          //                                 padding: const EdgeInsets.all(2),
+          //                                 child: Icon(
+          //                                   Icons.close,
+          //                                   size: 14,
+          //                                   color: ColorRes.primary,
+          //                                 ),
+          //                               ),
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ),
+          //                 ],
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       )
+          //       : SizedBox.shrink();
+          // }),
 
           // Products Grid
           Expanded(
@@ -1449,4 +1482,27 @@ class EmptyStateWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+Map<String, String> convertFiltersToString(Map<String, dynamic> filters) {
+  final Map<String, String> result = {};
+
+  filters.forEach((key, value) {
+    if (value == null) return;
+
+    // 🔁 Rename rentRangeValues → priceRange for backend compatibility
+    String mappedKey = key == 'rentRangeValues' ? 'priceRange' : key;
+
+    if (value is Map || value is List) {
+      if (value.isEmpty) return;
+      // ✅ Proper JSON encoding instead of toString()
+      result[mappedKey] = jsonEncode(value);
+    } else {
+      // ✅ Skip empty strings or invalid values
+      if (value.toString().trim().isEmpty) return;
+      result[mappedKey] = value.toString();
+    }
+  });
+
+  return result;
 }

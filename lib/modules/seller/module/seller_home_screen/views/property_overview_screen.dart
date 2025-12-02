@@ -1,20 +1,72 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/property_overview_seller.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../../app/manager/property_highlight_manager.dart';
 import '../../../../../app/utils/svg_widget.dart';
+import '../../../../../data/database/secure_storage_service.dart';
 import '../../../../../data/network/property/models/property_model.dart';
+import '../../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../../../propert_detail/view/property_details.dart';
 import '../../../../reseller/view/lead_overview/lead_detail.dart';
+import '../../../../reseller/view/listing/property_listing.dart';
+import '../../../../reseller/widget/reseller_filter/resseller_property_filter.dart';
 
-class PropertyOverviewScreen extends StatelessWidget {
+class PropertyOverviewScreen extends StatefulWidget {
   final List<Items> properties;
 
   const PropertyOverviewScreen({super.key, required this.properties});
+
+  @override
+  State<PropertyOverviewScreen> createState() => _PropertyOverviewScreenState();
+}
+
+class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
+  final RxBool isSelectionMode = false.obs;
+  PropertyController propertyController=Get.find<PropertyController>();
+  final RxList<String> selectedPropertyIds = <String>[].obs;
+  final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+  // @override
+  // void initState() {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //     await fetchResellerAssignProperty();
+  //   });
+  //   // controller.resellerPropertyList.value = propertyController.items.value
+  //   //     .map((e) => e.state ?? '')
+  //   //     .toSet()
+  //   //     .toList();
+  //
+  //   super.initState();
+  // }
+  //
+  // Future<void> fetchResellerAssignProperty() async {
+  //   try {
+  //     final user = await SecureStorage.getUserData();
+  //     final userId = user?.user?.id;
+  //
+  //     if (userId != null && userId.isNotEmpty) {
+  //       final filter = {"created_by": userId};
+  //
+  //       await propertyController.applyFilters(filter);
+  //
+  //       // Then load initial data
+  //       log("=============$filter");
+  //       await propertyController.loadInitial();
+  //       log("=======Apply======$filter");
+  //     } else {
+  //       print("Warning: User ID is null or empty");
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching reseller properties: $e");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +83,77 @@ class PropertyOverviewScreen extends StatelessWidget {
             fontSize: AppFontSizes.subtitle,
           ),
         ),
+        actions: [
+          GestureDetector(
+            onTap: () async { // FocusScope.of(context).unfocus();
+              // showModalBottomSheet(
+              //   context: context,
+              //   isScrollControlled: true,
+              //   backgroundColor: ColorRes.transparentColor,
+              //   builder: (_) => FilterPanel(),
+              // );
+
+              // When navigating to the filter screen
+              final result = await Get.to(() => ResellerPropertyFilter());
+
+              if (result != null) {
+                // Use the filter result
+                final newFilter=convertFiltersToString(result);
+                final user = await SecureStorage.getUserData();
+                final userId = user?.user?.id;
+
+                if (userId != null && userId.isNotEmpty) {
+                  newFilter["created_by"] = userId;
+                  log("New Filter ${newFilter}");
+                  await propertyController.applyFilters(newFilter);
+                  selectedFilters
+                    ..clear()
+                    ..addAll(newFilter);
+
+                  propertyController.applyFilters(Map<String, String>.from(selectedFilters));
+                  print("Filter applied: $result   t   ${selectedFilters.value}");
+                  // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
+                }
+
+              }
+
+
+            },
+            child: Icon(Icons.filter_list,),
+          ),
+          SizedBox(width: 16,)
+        ],
       ),
-      body: SafeArea(
-        child: ListView.builder(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          itemCount: properties.length,
-          itemBuilder: (context, index) {
-            final property = properties[index];
-            return _buildPropertyCard(property);
-          },
-        ),
+      body: Column(
+        children: [
+          Obx(() {
+            return FilterChipsBar(
+              filters: selectedFilters.value,
+              onClearAll: () {
+                selectedFilters.clear();
+                propertyController.applyFilters(<String, String>{});
+              },
+              onRemoveFilter: (key) {
+                selectedFilters.remove(key);
+                propertyController.applyFilters(
+                  Map<String, String>.from(selectedFilters),
+                );
+              },
+              priceRangeFormatter:
+                  (min, max) => formatPriceRange(min, max),
+            );
+          }),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: widget.properties.length,
+              itemBuilder: (context, index) {
+                final property = widget.properties[index];
+                return _buildPropertyCard(property);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
