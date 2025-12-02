@@ -74,7 +74,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   late final ReviewController reviewController;
   final RxBool canAddReview = true.obs;
 
-
   final Rxn<Items> _property = Rxn<Items>();
 
   final RxBool _isLoading = true.obs;
@@ -391,10 +390,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       final hasData = mapController.allCategoriesData.values
                           .any((places) => places.isNotEmpty);
 
+                      print('hasData: $hasData');
+
                       if (!hasData ||
                           mapController.propertyLatLng.value == null) {
+                        print('No data found');
                         return const SizedBox.shrink();
                       }
+                      print('Data found');
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

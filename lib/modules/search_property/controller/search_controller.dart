@@ -11,12 +11,11 @@ class GoogleMapController extends GetxController {
   /// Reactive variables
   var isLoading = false.obs;
   var predictions = <Prediction>[].obs;
-PropertyService _propertyService = PropertyService();
+  PropertyService _propertyService = PropertyService();
   BuilderService _builderService = BuilderService();
   var nearbyLandmarks = <Map<String, dynamic>>[].obs;
 
   RxList<Map<String, String?>> cityStateList = <Map<String, String?>>[].obs;
-
 
   /// Fetch predictions from Google API or Properties for BHK search
   ///
@@ -105,7 +104,7 @@ PropertyService _propertyService = PropertyService();
   //    }
   //  }
   // }
-///================================OLD CODE Fresh END=============================
+  ///================================OLD CODE Fresh END=============================
   // Future<void> fetchPredictionsCity(String city) async {
   //   if (city.trim().isEmpty) {
   //     predictions.clear();
@@ -221,7 +220,6 @@ PropertyService _propertyService = PropertyService();
   //   }
   // }
 
-
   Future<void> fetchPredictionsCity(String city) async {
     if (city.trim().isEmpty) {
       predictions.clear();
@@ -250,22 +248,26 @@ PropertyService _propertyService = PropertyService();
           filters: {'bhk': bhkNumber},
         );
 
-        print("✅ BHK Properties Response: ${response.items.length} items found");
+        print(
+          "✅ BHK Properties Response: ${response.items.length} items found",
+        );
 
         if (response.items.isNotEmpty) {
-          predictions.value = response.items.map((property) {
-            return Prediction(
-              description:
-              "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''} in ${property.city ?? ''}",
-              placeId: property.id ?? '',
-              structuredFormatting: StructuredFormatting(
-                mainText:
-                "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''}",
-                secondaryText: "${property.address ?? ''}, ${property.city ?? ''}",
-              ),
-              items: property,
-            );
-          }).toList();
+          predictions.value =
+              response.items.map((property) {
+                return Prediction(
+                  description:
+                      "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''} in ${property.city ?? ''}",
+                  placeId: property.id ?? '',
+                  structuredFormatting: StructuredFormatting(
+                    mainText:
+                        "${property.propertyDetails?.bhk ?? ''} BHK ${property.propertyType ?? ''}",
+                    secondaryText:
+                        "${property.address ?? ''}, ${property.city ?? ''}",
+                  ),
+                  items: property,
+                );
+              }).toList();
         } else {
           predictions.clear();
         }
@@ -285,30 +287,35 @@ PropertyService _propertyService = PropertyService();
           if (projectResponse.items.isNotEmpty) {
             final searchQuery = city.toLowerCase();
 
-            final filteredProjects = projectResponse.items.where((project) {
-              final projectName = project.projectName?.toLowerCase() ?? '';
-              return projectName.contains(searchQuery);
-            }).toList();
+            final filteredProjects =
+                projectResponse.items.where((project) {
+                  final projectName = project.projectName?.toLowerCase() ?? '';
+                  return projectName.contains(searchQuery);
+                }).toList();
 
-            print("✅ Filtered Projects: ${filteredProjects.length} matching projects for '$city'");
+            print(
+              "✅ Filtered Projects: ${filteredProjects.length} matching projects for '$city'",
+            );
 
             if (filteredProjects.isNotEmpty) {
-              final projectPredictions = filteredProjects.map((project) {
-                return Prediction(
-                  description: project.projectName ?? '',
-                  placeId: project.id ?? '',
-                  structuredFormatting: StructuredFormatting(
-                    mainText: project.projectName ?? '',
-                    secondaryText:
-                    "Project • ${project.city ?? ''}, ${project.state ?? ''} • ${project.projectContactInfo?.name ?? 'Builder'}",
-                  ),
-                  projectItem: project,
-                );
-              }).toList();
+              final projectPredictions =
+                  filteredProjects.map((project) {
+                    return Prediction(
+                      description: project.projectName ?? '',
+                      placeId: project.id ?? '',
+                      structuredFormatting: StructuredFormatting(
+                        mainText: project.projectName ?? '',
+                        secondaryText:
+                            "Project • ${project.city ?? ''}, ${project.state ?? ''} • ${project.projectContactInfo?.name ?? 'Builder'}",
+                      ),
+                      projectItem: project,
+                    );
+                  }).toList();
 
               combinedPredictions.addAll(projectPredictions);
             }
-          } }catch (e) {
+          }
+        } catch (e) {
           print("❌ Error fetching projects: $e");
         }
 
@@ -323,7 +330,8 @@ PropertyService _propertyService = PropertyService();
             print("Google Places model ===== ${model.toJson()}");
 
             final predictionsList = model.predictions ?? [];
-            final parsedList = predictionsList.map((p) => p.toLocationMap).toList();
+            final parsedList =
+                predictionsList.map((p) => p.toLocationMap).toList();
 
             print("Parsed location list ===== $parsedList");
 
@@ -331,14 +339,17 @@ PropertyService _propertyService = PropertyService();
               combinedPredictions.addAll(predictionsList);
               cityStateList.assignAll(parsedList);
             }
-          }} catch (e) {
+          }
+        } catch (e) {
           print("❌ Error fetching Google Places: $e");
         }
 
         // 🔸 3. Update predictions with combined results
         if (combinedPredictions.isNotEmpty) {
           predictions.value = combinedPredictions;
-          print("✅ Total Predictions: ${combinedPredictions.length} (Projects + Locations)");
+          print(
+            "✅ Total Predictions: ${combinedPredictions.length} (Projects + Locations)",
+          );
         } else {
           predictions.clear();
           print("ℹ️ No results found for '$city'");
@@ -352,6 +363,7 @@ PropertyService _propertyService = PropertyService();
       isLoading.value = false;
     }
   }
+
   Future<void> fetchGooglePlaces(String city) async {
     try {
       final response = await GoogleMapApi.instance.searchCities(city);
@@ -374,8 +386,8 @@ PropertyService _propertyService = PropertyService();
     } catch (e) {
       print("❌ Error fetching Google Places: $e");
       predictions.clear();
-    }}
-
+    }
+  }
 
   Future<void> fetchPredictionsState(String state) async {
     try {
@@ -423,11 +435,14 @@ PropertyService _propertyService = PropertyService();
     }
   }
 
-  Future<void> fetchPredictionsLocality(String locality,String city) async {
+  Future<void> fetchPredictionsLocality(String locality, String city) async {
     try {
       isLoading.value = true;
 
-      final response = await GoogleMapApi.instance.searchLocalities(locality,cityFilter: city);
+      final response = await GoogleMapApi.instance.searchLocalities(
+        locality,
+        cityFilter: city,
+      );
 
       print("resposne ===== $response");
 
@@ -485,10 +500,7 @@ PropertyService _propertyService = PropertyService();
     'Entertainment': 'movie_theater',
   };
 
-  Future<void> fetchNearbyPlacesByCategory(
-    String address,
-    String type,
-  ) async {
+  Future<void> fetchNearbyPlacesByCategory(String address, String type) async {
     try {
       isCategoryLoading.value = true;
       selectedCategory.value = type;
@@ -545,11 +557,12 @@ PropertyService _propertyService = PropertyService();
 
       // Fetch data for all categories in parallel
       final futures = categoryTypes.entries.map((entry) async {
-        final response = await GoogleMapApi.instance.getNearbyPlacesByCategoryWithCoords(
-          address,
-          entry.value,
-          radius: 3000, // Increase radius to 3km
-        );
+        final response = await GoogleMapApi.instance
+            .getNearbyPlacesByCategoryWithCoords(
+              address,
+              entry.value,
+              radius: 3000, // Increase radius to 3km
+            );
 
         // Extract coordinates from first successful API call
         if (!coordinatesSet && response['propertyCoords'] != null) {
@@ -559,29 +572,30 @@ PropertyService _propertyService = PropertyService();
             'lng': coords['lng'] as double,
           };
           coordinatesSet = true;
-          print('✅ Property coordinates set: ${ propertyLatLng.value}');
+          print('✅ Property coordinates set: ${propertyLatLng.value}');
         }
 
         final places = response['places'] as List<Map<String, dynamic>>;
 
         if (places.isNotEmpty && propertyLatLng.value != null) {
           // Calculate distance for each place
-          final placesWithDistance = places.map((place) {
-            final distance = calculateDistance(
-              propertyLatLng.value!['lat']!,
-              propertyLatLng.value!['lng']!,
-              place['lat'],
-              place['lng'],
-            );
-            place['distance'] = distance;
-            place['distanceText'] = formatDistance(distance);
-            place['walkTime'] = calculateWalkTime(distance);
-            return place;
-          }).toList();
+          final placesWithDistance =
+              places.map((place) {
+                final distance = calculateDistance(
+                  propertyLatLng.value!['lat']!,
+                  propertyLatLng.value!['lng']!,
+                  place['lat'],
+                  place['lng'],
+                );
+                place['distance'] = distance;
+                place['distanceText'] = formatDistance(distance);
+                place['walkTime'] = calculateWalkTime(distance);
+                return place;
+              }).toList();
 
           // Sort by distance
-          placesWithDistance.sort((a, b) =>
-            a['distance'].compareTo(b['distance'])
+          placesWithDistance.sort(
+            (a, b) => a['distance'].compareTo(b['distance']),
           );
 
           return MapEntry(entry.value, placesWithDistance);
@@ -591,6 +605,8 @@ PropertyService _propertyService = PropertyService();
 
       final results = await Future.wait(futures);
       allCategoriesData.value = Map.fromEntries(results);
+
+      print("All categories data fetched ${allCategoriesData.value}");
 
       // Set first category as selected if available
       if (allCategoriesData.isNotEmpty) {
@@ -619,7 +635,8 @@ PropertyService _propertyService = PropertyService();
   /// Calculate distance between two lat/lng points (in meters)
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     const p = 0.017453292519943295; // Math.PI / 180
-    final a = 0.5 -
+    final a =
+        0.5 -
         cos((lat2 - lat1) * p) / 2 +
         cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
     return 12742000 * asin(sqrt(a)); // 2 * R * asin... R = 6371 km
@@ -657,8 +674,6 @@ PropertyService _propertyService = PropertyService();
     super.onClose();
   }
 }
-
-
 
 /*Future<void> fetchPredictionsCity(String city) async {
   if (city.trim().isEmpty) {

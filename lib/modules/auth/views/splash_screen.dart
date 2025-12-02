@@ -72,7 +72,8 @@ class _SplashScreenState extends State<SplashScreen>
       // 🔹 City selection logic
       if (selectedCity == null || selectedCity.isEmpty) {
         // Ask user to select city before going to dashboard
-        final selected = await Get.to(() => SelectCityScreen());
+        final selected = "Surat";
+        // final selected = await Get.to(() => SelectCityScreen());
         print("Selected city: ${selected}");
 
         if (selected != null) {

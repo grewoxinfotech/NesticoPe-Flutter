@@ -6,14 +6,17 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/property_overview_seller.dart';
+import 'package:housing_flutter_app/utils/property_mapper/property_mapper.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../../app/manager/property_highlight_manager.dart';
 import '../../../../../app/utils/svg_widget.dart';
 import '../../../../../data/database/secure_storage_service.dart';
+import '../../../../../data/network/auth/model/user_model.dart';
 import '../../../../../data/network/property/models/property_model.dart';
 import '../../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../../../add_property/view/create_property.dart';
 import '../../../../propert_detail/view/property_details.dart';
 import '../../../../reseller/view/lead_overview/lead_detail.dart';
 import '../../../../reseller/view/listing/property_listing.dart';
@@ -30,7 +33,7 @@ class PropertyOverviewScreen extends StatefulWidget {
 
 class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
   final RxBool isSelectionMode = false.obs;
-  PropertyController propertyController=Get.find<PropertyController>();
+  PropertyController propertyController = Get.find<PropertyController>();
   final RxList<String> selectedPropertyIds = <String>[].obs;
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
   // @override
@@ -85,7 +88,8 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
         ),
         actions: [
           GestureDetector(
-            onTap: () async { // FocusScope.of(context).unfocus();
+            onTap: () async {
+              // FocusScope.of(context).unfocus();
               // showModalBottomSheet(
               //   context: context,
               //   isScrollControlled: true,
@@ -98,7 +102,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
 
               if (result != null) {
                 // Use the filter result
-                final newFilter=convertFiltersToString(result);
+                final newFilter = convertFiltersToString(result);
                 final user = await SecureStorage.getUserData();
                 final userId = user?.user?.id;
 
@@ -110,18 +114,19 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                     ..clear()
                     ..addAll(newFilter);
 
-                  propertyController.applyFilters(Map<String, String>.from(selectedFilters));
-                  print("Filter applied: $result   t   ${selectedFilters.value}");
+                  propertyController.applyFilters(
+                    Map<String, String>.from(selectedFilters),
+                  );
+                  print(
+                    "Filter applied: $result   t   ${selectedFilters.value}",
+                  );
                   // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
                 }
-
               }
-
-
             },
-            child: Icon(Icons.filter_list,),
+            child: Icon(Icons.filter_list),
           ),
-          SizedBox(width: 16,)
+          SizedBox(width: 16),
         ],
       ),
       body: Column(
@@ -139,8 +144,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                   Map<String, String>.from(selectedFilters),
                 );
               },
-              priceRangeFormatter:
-                  (min, max) => formatPriceRange(min, max),
+              priceRangeFormatter: (min, max) => formatPriceRange(min, max),
             );
           }),
           Expanded(
@@ -167,210 +171,236 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
 
     // final bool isFeatured = property['featured'] ?? false;
 
-    return GestureDetector(
-      onTap: () {
-        Get.to(
-          () => PropertyOverviewSellerScreen(propertyId: property.id ?? ''),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: ColorRes.black.withOpacity(0.08),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Material(
-            color: ColorRes.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Property Image with Status Badge
-                Stack(
-                  children: [
-                    Container(
-                      height: 200,
-                      width: double.infinity,
-                      child: CustomImage(
-                        type: CustomImageType.network,
-                        src: property.propertyMedia?.images?.first ?? '',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    // Status Badge
-                    Positioned(
-                      top: 12,
-                      left: 12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSold ? ColorRes.error : ColorRes.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          property.propertyStatus?.capitalize ?? 'Available',
-                          style: TextStyle(
-                            color: isSold ? ColorRes.white : ColorRes.primary,
-                            fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.semiBold,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    if (property.listingType != null)
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            property.listingType!.capitalize.toString(),
-                            style: TextStyle(
-                              color: ColorRes.white,
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    // Featured Badge
-                  ],
-                ),
-
-                // Property Details
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Title and Price
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  property.propertyType ?? 'Property Title',
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.body,
-                                    fontWeight: AppFontWeights.semiBold,
-                                    color: ColorRes.textPrimary,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      size: 14,
-                                      color: ColorRes.leadGreyColor,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Expanded(
-                                      child: Text(
-                                        property.location ?? 'Location',
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.medium,
-                                          color: ColorRes.leadGreyColor[600],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorRes.blueColor[50],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              priceManager.displayPrice,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.blueColor[700],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      Facilities(property: property),
-
-                      const SizedBox(height: 16),
-
-                      // Divider
-                      Container(height: 1, color: ColorRes.leadGreyColor[200]),
-
-                      const SizedBox(height: 16),
-
-                      // Analytics Overview
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildAnalyticsItem(
-                            Icons.visibility,
-                            _formatNumber(property.totalViews ?? 0),
-                            'Views',
-                            ColorRes.primary,
-                          ),
-                          _buildAnalyticsItem(
-                            Icons.favorite,
-                            _formatNumber(property.totalFavorites ?? 0),
-                            'Likes',
-                            ColorRes.primary,
-                          ),
-                          _buildAnalyticsItem(
-                            Icons.share,
-                            _formatNumber(property.totalShares ?? 0),
-                            'Shares',
-                            ColorRes.primary,
-                          ),
-                          _buildAnalyticsItem(
-                            Icons.people,
-                            _formatNumber(property.totalVisits ?? 0),
-                            'Visits',
-                            ColorRes.primary,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: () {
+            Get.to(
+              () => PropertyOverviewSellerScreen(propertyId: property.id ?? ''),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: ColorRes.black.withOpacity(0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Material(
+                color: ColorRes.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Property Image with Status Badge
+                    Stack(
+                      children: [
+                        Container(
+                          height: 200,
+                          width: double.infinity,
+                          child: CustomImage(
+                            type: CustomImageType.network,
+                            src: property.propertyMedia?.images?.first ?? '',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        // Status Badge
+                        Positioned(
+                          top: 12,
+                          left: 12,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSold ? ColorRes.error : ColorRes.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              property.propertyStatus?.capitalize ??
+                                  'Available',
+                              style: TextStyle(
+                                color:
+                                    isSold ? ColorRes.white : ColorRes.primary,
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        if (property.listingType != null)
+                          Positioned(
+                            top: 12,
+                            right: 12,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.primary,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                property.listingType!.capitalize.toString(),
+                                style: TextStyle(
+                                  color: ColorRes.white,
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        // Featured Badge
+                      ],
+                    ),
+
+                    // Property Details
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Title and Price
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      property.propertyType ?? 'Property Title',
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.body,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.location_on,
+                                          size: 14,
+                                          color: ColorRes.leadGreyColor,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Expanded(
+                                          child: Text(
+                                            property.location ?? 'Location',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.medium,
+                                              color:
+                                                  ColorRes.leadGreyColor[600],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.blueColor[50],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  priceManager.displayPrice,
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.small,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    color: ColorRes.blueColor[700],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          Facilities(property: property),
+
+                          const SizedBox(height: 16),
+
+                          // Divider
+                          Container(
+                            height: 1,
+                            color: ColorRes.leadGreyColor[200],
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Analytics Overview
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildAnalyticsItem(
+                                Icons.visibility,
+                                _formatNumber(property.totalViews ?? 0),
+                                'Views',
+                                ColorRes.primary,
+                              ),
+                              _buildAnalyticsItem(
+                                Icons.favorite,
+                                _formatNumber(property.totalFavorites ?? 0),
+                                'Likes',
+                                ColorRes.primary,
+                              ),
+                              _buildAnalyticsItem(
+                                Icons.share,
+                                _formatNumber(property.totalShares ?? 0),
+                                'Shares',
+                                ColorRes.primary,
+                              ),
+                              _buildAnalyticsItem(
+                                Icons.people,
+                                _formatNumber(property.totalVisits ?? 0),
+                                'Visits',
+                                ColorRes.primary,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
-      ),
+        Positioned(
+          top: 10,
+          left: 10,
+          child: IconButton(
+            onPressed: () {
+              Get.to(
+                () => CreatePropertyScreen(
+                  isLogin: true,
+                  isEdit: true,
+                  property: property.toAddPropertyModel(),
+                ),
+              );
+            },
+            icon: Icon(Icons.edit_outlined),
+          ),
+        ),
+      ],
     );
   }
 

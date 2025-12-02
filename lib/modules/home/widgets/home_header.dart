@@ -303,9 +303,9 @@ class _HomeHeaderState extends State<HomeHeader> {
                         if (UserHelper.isSellerOwner) {
                           Get.to(
                             () => CreatePropertyScreen(
-                              sellerType: mapUserRoleToSellerType(
-                                UserRole.seller,
-                              ),
+                              // sellerType: mapUserRoleToSellerType(
+                              //   UserRole.seller,
+                              // ),
                               isLogin: true,
                             ),
                           );

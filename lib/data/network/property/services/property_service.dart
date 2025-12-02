@@ -16,12 +16,9 @@ import '../../reseller/reseller_dashboard/model/reseller_dashboard_model.dart';
 import '../models/top_property_model.dart';
 
 class PropertyService {
-
-
   final String baseUrl = ApiConstants.property;
-  final String topPropertyUrl=ApiConstants.topProperties;
-  final String recommendedPropertyUrl=ApiConstants.recommmendedPorperties;
-
+  final String topPropertyUrl = ApiConstants.topProperties;
+  final String recommendedPropertyUrl = ApiConstants.recommmendedPorperties;
 
   /// Common headers
   static Future<Map<String, String>> headersWithoutToken() async {
@@ -68,9 +65,6 @@ class PropertyService {
     }
   }
 
-
-
-
   Future<PaginationResponse<Items>> fetchTopProperties({
     int page = 1,
     Map<String, String>? filters,
@@ -81,7 +75,9 @@ class PropertyService {
         if (filters != null) ...filters,
       };
 
-      final uri = Uri.parse(topPropertyUrl).replace(queryParameters: queryParameters);
+      final uri = Uri.parse(
+        topPropertyUrl,
+      ).replace(queryParameters: queryParameters);
       print("uri: $uri");
       final response = await http.get(uri, headers: await headers());
 
@@ -94,7 +90,7 @@ class PropertyService {
 
         return PaginationResponse<Items>.fromJson(
           data,
-              (json) => Items.fromJson(json),
+          (json) => Items.fromJson(json),
         );
       } else {
         print("Failed to load properties: ${response.statusCode}");
@@ -106,8 +102,6 @@ class PropertyService {
       rethrow; // Let controller handle error
     }
   }
-
-
 
   /// Get single property by ID
   Future<Items?> getPropertyById(String id) async {
@@ -221,14 +215,107 @@ class PropertyService {
   }
 
   /// Update property
-  Future<bool> updateProperty(String id, Items property) async {
+  Future<bool> updateProperty(
+    String id,
+    Map<String, dynamic> property,
+    List<File>? images,
+    List<File>? videos,
+    List<File>? documents,
+  ) async {
     try {
-      final response = await http.put(
-        Uri.parse("$baseUrl/$id"),
-        headers: await headers(),
-        body: jsonEncode(property.toJson()),
-      );
-      return response.statusCode == 200;
+      final url = Uri.parse('$baseUrl/$id');
+      print("url: $url");
+      debugPrint("Property JSON: ${jsonEncode(property)}");
+
+      var request = http.MultipartRequest("PUT", url);
+
+      // Add headers
+      request.headers.addAll(await headers());
+
+      property.forEach((key, value) {
+        if (value is Map || value is List) {
+          request.fields[key] = jsonEncode(
+            value,
+          ); // nested objects/lists as JSON string
+        } else {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // ==== Attach Images ====
+      if (images != null && images.isNotEmpty) {
+        for (var image in images) {
+          if (isNetworkFile(image.path)) {
+            print("Skipping network image: ${image.path}");
+            continue; // Skip upload
+          }
+
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'property_images',
+              image.path,
+              contentType: MediaType('image', 'jpeg'),
+            ),
+          );
+        }
+      }
+
+      // ==== Attach Videos ====
+      if (videos != null && videos.isNotEmpty) {
+        for (var video in videos) {
+          if (isNetworkFile(video.path)) {
+            print("Skipping network video: ${video.path}");
+            continue; // Skip upload
+          }
+
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'property_videos',
+              video.path,
+              contentType: MediaType('video', 'mp4'),
+            ),
+          );
+        }
+      }
+
+      // ==== Attach Documents ====
+      if (documents != null && documents.isNotEmpty) {
+        for (var document in documents) {
+          if (isNetworkFile(document.path)) {
+            print("Skipping network document: ${document.path}");
+            continue; // Skip upload
+          }
+
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'property_documents',
+              document.path,
+              contentType: MediaType('application', 'pdf'),
+            ),
+          );
+        }
+      }
+
+      // Send request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      debugPrint("Create property response: ${response.body}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomSnackBar.show(
+          Get.overlayContext!,
+          message: "Create Property Successful",
+          type: SnackBarType.success,
+        );
+      } else {
+        CustomSnackBar.show(
+          Get.overlayContext!,
+          message: "Failed to create property. Please try again.",
+          type: SnackBarType.error,
+        );
+      }
+
+      return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
       print("Update property exception: $e");
       return false;
@@ -266,9 +353,6 @@ class PropertyService {
     }
   }
 
-
-
-
   Future<bool> addView(String id) async {
     try {
       print("baseUrl : ${baseUrl}/${id}");
@@ -283,8 +367,10 @@ class PropertyService {
       return false;
     }
   }
-  Future<List<Map<String, dynamic>>> getRecommendedPropertyById(String id) async {
 
+  Future<List<Map<String, dynamic>>> getRecommendedPropertyById(
+    String id,
+  ) async {
     try {
       final response = await http.get(
         Uri.parse("$recommendedPropertyUrl/$id"),
@@ -293,8 +379,11 @@ class PropertyService {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        if (jsonData['data'] != null && jsonData['data']['properties'] != null) {
-          return List<Map<String, dynamic>>.from(jsonData['data']['properties']);
+        if (jsonData['data'] != null &&
+            jsonData['data']['properties'] != null) {
+          return List<Map<String, dynamic>>.from(
+            jsonData['data']['properties'],
+          );
         }
       }
     } catch (e) {
@@ -302,6 +391,7 @@ class PropertyService {
     }
     return [];
   }
+
   //
   // Future<Map<String,dynamic>> getRecommendedPropertyById(String id) async {
   //   try {
@@ -323,5 +413,7 @@ class PropertyService {
   //   }
   //   return {};
   // }
-
+  bool isNetworkFile(String path) {
+    return path.startsWith("http://") || path.startsWith("https://");
+  }
 }

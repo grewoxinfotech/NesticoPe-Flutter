@@ -1449,6 +1449,8 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:housing_flutter_app/modules/add_property/model/add_property_model.dart';
+import 'package:housing_flutter_app/modules/add_property/payloads/edit_property/load_edit_property.dart';
 import 'package:housing_flutter_app/modules/add_property/view/widget/basic_detail.dart';
 import 'package:housing_flutter_app/modules/add_property/view/widget/photo_upload.dart';
 import 'package:housing_flutter_app/modules/add_property/view/widget/post_property.dart';
@@ -1468,17 +1470,30 @@ import '../../../data/network/auth/model/user_model.dart';
 import '../../auth/controllers/auth_controller.dart';
 
 class CreatePropertyScreen extends StatelessWidget {
-  final SellerType sellerType;
+  // final SellerType sellerType;
+  final bool isEdit;
+  final AddPropertyModel? property;
   final bool isLogin;
   const CreatePropertyScreen({
     super.key,
-    required this.sellerType,
+    // required this.sellerType,
     this.isLogin = false,
+    this.isEdit = false,
+    this.property,
   });
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CreatePropertyController());
+
+    if (isEdit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final editController = Get.put(LoadEditPropertyPayload());
+        if (property != null) {
+          editController.onLoad(controller, property!);
+        }
+      });
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isLogin) {
         controller.isLogin.value = isLogin;
@@ -1708,7 +1723,6 @@ class CreatePropertyScreen extends StatelessWidget {
                                             controller.propertyType.value ==
                                                 "Residential") {
                                           switch (step) {
-
                                             case 1:
                                               return PostProperty(
                                                 controller: controller,
@@ -1806,12 +1820,9 @@ class CreatePropertyScreen extends StatelessWidget {
                           ? null
                           : () async {
                             final step = controller.stepperSelectedIndex.value;
-                            log('hgd $step ${controller.propertyType.value} ${controller.lookingTo.value} ${controller.rent_propertyType.value}    ${(controller.lookingTo.value == 'Rent' ||
-                                controller.lookingTo.value == 'Sell') &&
-                                controller.propertyType.value ==
-                                    'Residential' &&
-                                step == 1 &&
-                                controller.rent_propertyType.value.isEmpty}');
+                            log(
+                              'hgd $step ${controller.propertyType.value} ${controller.lookingTo.value} ${controller.rent_propertyType.value}    ${(controller.lookingTo.value == 'Rent' || controller.lookingTo.value == 'Sell') && controller.propertyType.value == 'Residential' && step == 1 && controller.rent_propertyType.value.isEmpty}',
+                            );
 
                             // Property type validation
                             if (step == 0 &&
@@ -1821,7 +1832,9 @@ class CreatePropertyScreen extends StatelessWidget {
                             } else {
                               controller.showBasicPropertyType.value = false;
                             }
-                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
+                            log(
+                              'hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}',
+                            );
                             if (step == 0 &&
                                 controller.lookingTo.value.isEmpty) {
                               controller.showBasicLookingTo.value = true;
@@ -1829,7 +1842,9 @@ class CreatePropertyScreen extends StatelessWidget {
                             } else {
                               controller.showBasicLookingTo.value = false;
                             }
-                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
+                            log(
+                              'hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}',
+                            );
                             if (step == 0 &&
                                 controller.selectedIndex.value.isEmpty &&
                                 controller.propertyType.value == 'Commercial') {
@@ -1840,7 +1855,9 @@ class CreatePropertyScreen extends StatelessWidget {
                               controller.hasShownCommercialCategory.value =
                                   false;
                             }
-                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
+                            log(
+                              'hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}',
+                            );
                             // Rent property type validation
                             if ((controller.lookingTo.value == 'Rent' ||
                                     controller.lookingTo.value == 'Sell') &&
@@ -1853,8 +1870,12 @@ class CreatePropertyScreen extends StatelessWidget {
                             } else {
                               controller.showPropertyTypeError.value = false;
                             }
-                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
-                            log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
+                            log(
+                              'hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}',
+                            );
+                            log(
+                              'hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}',
+                            );
                             if (controller.lookingTo.value == 'Sell' &&
                                 controller.propertyType.value ==
                                     'Residential' &&
@@ -1865,7 +1886,9 @@ class CreatePropertyScreen extends StatelessWidget {
                                     .isEmpty) {
                               controller.selectedSellFromPriceDetail.value =
                                   true;
-                              log('hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}');
+                              log(
+                                'hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}',
+                              );
                               return;
                             } else {
                               controller.selectedSellFromPriceDetail.value =
@@ -1945,7 +1968,6 @@ class CreatePropertyScreen extends StatelessWidget {
                                   .value = false;
                             }
 
-
                             // BHK validation
                             // if ((controller.lookingTo.value == 'Rent' ||
                             //         controller.lookingTo.value == 'Sell') &&
@@ -1973,7 +1995,11 @@ class CreatePropertyScreen extends StatelessWidget {
                                   controller.stepsList.length - 1) {
                                 controller.nextStep();
                               } else {
-                                await controller.addProperty();
+                                isEdit
+                                    ? await controller.updateProperty(
+                                      property?.id ?? '',
+                                    )
+                                    : await controller.addProperty();
                               }
                             }
                           },
@@ -1988,7 +2014,11 @@ class CreatePropertyScreen extends StatelessWidget {
                     elevation: 2,
                   ),
                   child: Text(
-                    controller.isLoading.value
+                    isEdit
+                        ? controller.isLoading.value
+                            ? "Updating... Wait"
+                            : "Next"
+                        : controller.isLoading.value
                         ? "Adding Property... Wait"
                         : "Next",
                     style: TextStyle(

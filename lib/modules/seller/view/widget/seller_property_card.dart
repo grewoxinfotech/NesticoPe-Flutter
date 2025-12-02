@@ -468,7 +468,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                               const SizedBox(height: 8),
 
                               // Chips Row
-                              if (widget.property.propertyDetails != null)...[
+                              if (widget.property.propertyDetails != null) ...[
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
@@ -515,16 +515,16 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                                     ],
                                   ),
                                 ),
-                  ]else... [
-                Text(
-                "No details available",
-                style:  TextStyle(
-                  fontSize: AppFontSizes.extraSmall,
-                  fontWeight: AppFontWeights.medium,
-                  color: ColorRes.grey,
-                ),
-              ),
-            ],
+                              ] else ...[
+                                Text(
+                                  "No details available",
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.extraSmall,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: ColorRes.grey,
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -551,7 +551,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
                                   ?.price ??
                               0,
                         ),
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: AppFontSizes.bodyMedium,
                           color: ColorRes.textColor,
@@ -627,7 +627,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
     ),
     child: Text(
       text,
-      style:  TextStyle(
+      style: TextStyle(
         fontSize: AppFontSizes.extraSmall,
         fontWeight: AppFontWeights.semiBold,
         color: ColorRes.primary,
@@ -643,7 +643,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
     ),
     child: Text(
       text,
-      style:  TextStyle(
+      style: TextStyle(
         color: ColorRes.white,
         fontSize: AppFontSizes.mini,
         fontWeight: AppFontWeights.medium,
@@ -659,7 +659,7 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
         const SizedBox(width: 3),
         Text(
           text,
-          style:  TextStyle(
+          style: TextStyle(
             fontSize: AppFontSizes.extraSmall,
             fontWeight: AppFontWeights.medium,
             color: ColorRes.grey,

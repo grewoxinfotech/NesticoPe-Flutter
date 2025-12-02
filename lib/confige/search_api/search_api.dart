@@ -64,7 +64,6 @@ import '../helper/api_helper.dart';
 //     return _fetchPredictions(query, 'locality');
 //   }
 
-
 class GoogleMapApi {
   GoogleMapApi._();
 
@@ -75,10 +74,10 @@ class GoogleMapApi {
 
   /// Common method to call the API
   Future<Map<String, dynamic>> _fetchPredictions(
-      String input,
-      String types, {
-        String? cityFilter, // optional city name for filtering
-      }) async {
+    String input,
+    String types, {
+    String? cityFilter, // optional city name for filtering
+  }) async {
     // Build components parameter
     String components = 'country:in';
 
@@ -114,10 +113,7 @@ class GoogleMapApi {
         final data = json.decode(response.body);
         if (data['status'] == 'OK' && data['results'].isNotEmpty) {
           final location = data['results'][0]['geometry']['location'];
-          return {
-            'lat': location['lat'],
-            'lng': location['lng'],
-          };
+          return {'lat': location['lat'], 'lng': location['lng']};
         }
       }
       return null;
@@ -144,14 +140,14 @@ class GoogleMapApi {
 
   /// ✅ Search localities filtered by a specific city
   Future<Map<String, dynamic>> searchLocalities(
-      String query, {
-        String? cityFilter,
-      }) async {
+    String query, {
+    String? cityFilter,
+  }) async {
     try {
       // If city filter is provided, get coordinates and use location bias
       if (cityFilter != null && cityFilter.isNotEmpty) {
         final coords = await _getCityCoordinates(cityFilter);
-        
+
         if (coords != null) {
           // Use location bias to prioritize results near the city
           // Radius: 30km from city center (stricter boundary)
@@ -168,53 +164,96 @@ class GoogleMapApi {
           if (response.statusCode == 200) {
             print('Locality search with location bias: ${response.body}');
             final data = json.decode(response.body);
-            
+
             if (data['status'] == 'OK') {
               // Additional filtering: only return results that contain city name
               final predictions = data['predictions'] as List;
               final cityLower = cityFilter.toLowerCase();
-              
-              final filteredPredictions = predictions.where((pred) {
-                // Check main description
-                final description = pred['description']?.toString().toLowerCase() ?? '';
-                
-                // Check structured formatting for more accurate filtering
-                final secondaryText = pred['structured_formatting']?['secondary_text']?.toString().toLowerCase() ?? '';
-                final mainText = pred['structured_formatting']?['main_text']?.toString().toLowerCase() ?? '';
-                
-                // Result should contain city name in description OR secondary text
-                // This ensures the locality is actually in the selected city
-                bool matchesCity = description.contains(cityLower) || 
-                                   secondaryText.contains(cityLower);
-                
-                // Additional check: if the result is from a different city, reject it
-                // Common other cities to filter out
-                List<String> otherMajorCities = [
-                  'mumbai', 'delhi', 'bangalore', 'bengaluru', 'chennai', 'kolkata', 
-                  'hyderabad', 'pune', 'ahmedabad', 'jaipur', 'lucknow', 'kanpur',
-                  'madurai', 'coimbatore', 'trichy', 'tiruchirappalli', 'trivandrum', 
-                  'thiruvananthapuram', 'kochi', 'cochin', 'mysore', 'mysuru',
-                  'vadodara', 'baroda', 'rajkot', 'nashik', 'nagpur', 'indore',
-                  'thane', 'bhopal', 'visakhapatnam', 'vizag', 'pimpri-chinchwad',
-                  'patna', 'ludhiana', 'agra', 'chandigarh', 'faridabad',
-                  'ghaziabad', 'noida', 'greater noida'
-                ];
-                
-                // Remove the selected city from the exclusion list
-                otherMajorCities.remove(cityLower);
-                
-                // Check if result contains any other major city name
-                bool containsOtherCity = otherMajorCities.any((city) => 
-                  description.contains(city) || secondaryText.contains(city)
-                );
-                
-                return matchesCity && !containsOtherCity;
-              }).toList();
-              
-              return {
-                'status': 'OK',
-                'predictions': filteredPredictions,
-              };
+
+              final filteredPredictions =
+                  predictions.where((pred) {
+                    // Check main description
+                    final description =
+                        pred['description']?.toString().toLowerCase() ?? '';
+
+                    // Check structured formatting for more accurate filtering
+                    final secondaryText =
+                        pred['structured_formatting']?['secondary_text']
+                            ?.toString()
+                            .toLowerCase() ??
+                        '';
+                    final mainText =
+                        pred['structured_formatting']?['main_text']
+                            ?.toString()
+                            .toLowerCase() ??
+                        '';
+
+                    // Result should contain city name in description OR secondary text
+                    // This ensures the locality is actually in the selected city
+                    bool matchesCity =
+                        description.contains(cityLower) ||
+                        secondaryText.contains(cityLower);
+
+                    // Additional check: if the result is from a different city, reject it
+                    // Common other cities to filter out
+                    List<String> otherMajorCities = [
+                      'mumbai',
+                      'delhi',
+                      'bangalore',
+                      'bengaluru',
+                      'chennai',
+                      'kolkata',
+                      'hyderabad',
+                      'pune',
+                      'ahmedabad',
+                      'jaipur',
+                      'lucknow',
+                      'kanpur',
+                      'madurai',
+                      'coimbatore',
+                      'trichy',
+                      'tiruchirappalli',
+                      'trivandrum',
+                      'thiruvananthapuram',
+                      'kochi',
+                      'cochin',
+                      'mysore',
+                      'mysuru',
+                      'vadodara',
+                      'baroda',
+                      'rajkot',
+                      'nashik',
+                      'nagpur',
+                      'indore',
+                      'thane',
+                      'bhopal',
+                      'visakhapatnam',
+                      'vizag',
+                      'pimpri-chinchwad',
+                      'patna',
+                      'ludhiana',
+                      'agra',
+                      'chandigarh',
+                      'faridabad',
+                      'ghaziabad',
+                      'noida',
+                      'greater noida',
+                    ];
+
+                    // Remove the selected city from the exclusion list
+                    otherMajorCities.remove(cityLower);
+
+                    // Check if result contains any other major city name
+                    bool containsOtherCity = otherMajorCities.any(
+                      (city) =>
+                          description.contains(city) ||
+                          secondaryText.contains(city),
+                    );
+
+                    return matchesCity && !containsOtherCity;
+                  }).toList();
+
+              return {'status': 'OK', 'predictions': filteredPredictions};
             } else {
               return data;
             }
@@ -223,7 +262,7 @@ class GoogleMapApi {
           }
         }
       }
-      
+
       // Fallback: search without city filter
       return _fetchPredictions(query, 'geocode');
     } catch (e) {
@@ -231,7 +270,6 @@ class GoogleMapApi {
       return _fetchPredictions(query, 'geocode');
     }
   }
-
 
   /// Get Near By LandMarks of address
   // Future<List<Map<String, dynamic>>> getNearbyLandmarks(String address) async {
@@ -355,7 +393,11 @@ class GoogleMapApi {
     String type, {
     int radius = 2000,
   }) async {
-    final result = await getNearbyPlacesByCategoryWithCoords(address, type, radius: radius);
+    final result = await getNearbyPlacesByCategoryWithCoords(
+      address,
+      type,
+      radius: radius,
+    );
     return result['places'] as List<Map<String, dynamic>>;
   }
 
@@ -366,6 +408,7 @@ class GoogleMapApi {
     String type, {
     int radius = 2000,
   }) async {
+    print('Address in API: $address');
     try {
       // Step 1: Geocode the address to get lat/lng
       final geoUri = Uri.parse(
@@ -379,6 +422,8 @@ class GoogleMapApi {
       }
 
       final geoData = json.decode(geoResponse.body);
+
+      print('Geocoding Response: $geoData');
 
       if (geoData['status'] != 'OK' || geoData['results'].isEmpty) {
         throw Exception('No coordinates found for address');
@@ -414,17 +459,18 @@ class GoogleMapApi {
       // Step 3: Parse and return results with property coordinates
       final results = placesData['results'] as List<dynamic>;
 
-      final places = results.take(10).map((place) {
-        return {
-          'name': place['name'] ?? 'Unknown',
-          'address': place['vicinity'] ?? '',
-          'types': place['types'] ?? [],
-          'lat': place['geometry']['location']['lat'],
-          'lng': place['geometry']['location']['lng'],
-          'rating': place['rating'] ?? 0.0,
-          'distance': '', // Distance can be calculated separately if needed
-        };
-      }).toList();
+      final places =
+          results.take(10).map((place) {
+            return {
+              'name': place['name'] ?? 'Unknown',
+              'address': place['vicinity'] ?? '',
+              'types': place['types'] ?? [],
+              'lat': place['geometry']['location']['lat'],
+              'lng': place['geometry']['location']['lng'],
+              'rating': place['rating'] ?? 0.0,
+              'distance': '', // Distance can be calculated separately if needed
+            };
+          }).toList();
 
       return {
         'propertyCoords': {'lat': lat, 'lng': lng},
@@ -432,10 +478,7 @@ class GoogleMapApi {
       };
     } catch (e) {
       print('❌ Error in getNearbyPlacesByCategory: $e');
-      return {
-        'propertyCoords': null,
-        'places': <Map<String, dynamic>>[],
-      };
+      return {'propertyCoords': null, 'places': <Map<String, dynamic>>[]};
     }
   }
 }

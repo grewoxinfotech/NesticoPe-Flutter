@@ -332,23 +332,23 @@ class PropertyController extends PaginatedController<Items> {
     }
   }
 
-  /// Update property
-  Future<bool> updateProperty(String id, Items updatedProperty) async {
-    try {
-      final success = await _service.updateProperty(id, updatedProperty);
-      if (success) {
-        int index = items.indexWhere((item) => item.id == id);
-        if (index != -1) {
-          items[index] = updatedProperty;
-          items.refresh();
-        }
-      }
-      return success;
-    } catch (e) {
-      print("Update property error: $e");
-      return false;
-    }
-  }
+  // /// Update property
+  //  Future<bool> updateProperty(String id, Items updatedProperty) async {
+  //    try {
+  //      final success = await _service.updateProperty(id, updatedProperty);
+  //      if (success) {
+  //        int index = items.indexWhere((item) => item.id == id);
+  //        if (index != -1) {
+  //          items[index] = updatedProperty;
+  //          items.refresh();
+  //        }
+  //      }
+  //      return success;
+  //    } catch (e) {
+  //      print("Update property error: $e");
+  //      return false;
+  //    }
+  //  }
 
   /// Delete property
   Future<bool> deleteProperty(String id) async {
@@ -490,8 +490,7 @@ class PropertyController extends PaginatedController<Items> {
     maxBudget.clear();
   }
 
-  void resetTheForm()
-  {
+  void resetTheForm() {
     Get.back();
     selectedPropertyType.value = null;
     selectedBhk.value = null;
@@ -501,6 +500,7 @@ class PropertyController extends PaginatedController<Items> {
     minBudget.clear();
     maxBudget.clear();
   }
+
   @override
   void onClose() {
     // selectedCityZ.dispose();
