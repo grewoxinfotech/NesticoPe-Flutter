@@ -1813,7 +1813,10 @@ class CreatePropertyController extends GetxController {
             );
             break;
           case "pg/co-living":
-            success = await _addPropertyResidentialPg();
+            success = await _addPropertyResidentialPg(
+              isEdit: true,
+              propertyId: propertyId,
+            );
             break;
           default:
             print("Error: Invalid residential action");
@@ -1821,10 +1824,18 @@ class CreatePropertyController extends GetxController {
       } else if (type == "commercial") {
         switch (action) {
           case "rent":
-            success = await _addPropertyCommercialRent(subtype);
+            success = await _editPropertyCommercialRent(
+              subtype,
+              isEdit: true,
+              propertyId: propertyId,
+            );
             break;
           case "sell":
-            success = await _addPropertyCommercialSell(subtype);
+            success = await _editPropertyCommercialSell(
+              subtype,
+              isEdit: true,
+              propertyId: propertyId,
+            );
             break;
           default:
             print("Error: Invalid commercial action");
@@ -2068,7 +2079,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyResidentialPg() async {
+  Future<bool> _addPropertyResidentialPg({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2122,12 +2136,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadResidentialPG();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2138,7 +2161,11 @@ class CreatePropertyController extends GetxController {
   //
   // ---------- COMMERCIAL RENT ----------
   //
-  Future<bool> _addPropertyCommercialRent(String subtype) async {
+  Future<bool> _addPropertyCommercialRent(
+    String subtype, {
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       switch (subtype) {
         case "plot":
@@ -2175,7 +2202,69 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialRentPlot() async {
+  Future<bool> _editPropertyCommercialRent(
+    String subtype, {
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
+    try {
+      switch (subtype) {
+        case "plot":
+          print("Adding Commercial Rent → Plot");
+          return await _addPropertyCommercialRentPlot(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        case "other":
+          print("Adding Commercial Rent → Other");
+          return await _addPropertyCommercialRentOther(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        case "office":
+          print("Adding Commercial Rent → Office");
+          return await _addPropertyCommercialRentOffice(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        case "showroom":
+          print("Adding Commercial Rent → Showroom");
+          return await _addPropertyCommercialRentShowRoom(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        case "shop":
+          print("Adding Commercial Rent → Shop");
+          return await _addPropertyCommercialRentShop(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        case "warehouse":
+          print("Adding Commercial Rent → Warehouse");
+          return await _addPropertyCommercialRentWarehouse(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        default:
+          print("Error: Invalid commercial rent subtype");
+          return false;
+      }
+    } catch (e) {
+      print("Error adding commercial rent: $e");
+      return false;
+    }
+  }
+
+  Future<bool> _addPropertyCommercialRentPlot({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2199,12 +2288,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialRentPlot();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2212,7 +2310,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialRentOther() async {
+  Future<bool> _addPropertyCommercialRentOther({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2244,12 +2345,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialRentOther();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2257,7 +2367,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialRentOffice() async {
+  Future<bool> _addPropertyCommercialRentOffice({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2304,12 +2417,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialRentOffice();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2317,7 +2439,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialRentShowRoom() async {
+  Future<bool> _addPropertyCommercialRentShowRoom({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2349,12 +2474,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialRentShowRoom();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2362,7 +2496,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialRentShop() async {
+  Future<bool> _addPropertyCommercialRentShop({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2394,12 +2531,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialRentShop();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2407,7 +2553,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialRentWarehouse() async {
+  Future<bool> _addPropertyCommercialRentWarehouse({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2440,12 +2589,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialRentWarehouse();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2493,7 +2651,66 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialSellPlot() async {
+  Future<bool> _editPropertyCommercialSell(
+    String subtype, {
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
+    try {
+      switch (subtype) {
+        case "plot":
+          print("Adding Commercial Sell → Plot");
+          return await _addPropertyCommercialSellPlot(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        case "other":
+          print("Adding Commercial Sell → Other");
+          return await _addPropertyCommercialSellOther();
+          break;
+        case "office":
+          print("Adding Commercial Sell → Office");
+          return await _addPropertyCommercialSellOffice(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        case "showroom":
+          print("Adding Commercial Sell → Showroom");
+          return await _addPropertyCommercialSellShowRoom(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        case "shop":
+          print("Adding Commercial Sell → Shop");
+          return await _addPropertyCommercialSellShop(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        case "warehouse":
+          print("Adding Commercial Sell → Warehouse");
+          return await _addPropertyCommercialSellWarehouse(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+          break;
+        default:
+          print("Error: Invalid commercial sell subtype");
+          return false;
+      }
+    } catch (e) {
+      print("Error adding commercial sell: $e");
+      return false;
+    }
+  }
+
+  Future<bool> _addPropertyCommercialSellPlot({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2523,12 +2740,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialSellPlot();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2591,7 +2817,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialSellOffice() async {
+  Future<bool> _addPropertyCommercialSellOffice({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2639,12 +2868,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialSellOffice();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2652,7 +2890,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialSellShowRoom() async {
+  Future<bool> _addPropertyCommercialSellShowRoom({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2686,12 +2927,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialSellShowRoom();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2699,7 +2949,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialSellShop() async {
+  Future<bool> _addPropertyCommercialSellShop({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2733,12 +2986,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialSellShop();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2746,7 +3008,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialSellWarehouse() async {
+  Future<bool> _addPropertyCommercialSellWarehouse({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2781,12 +3046,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialSellWarehouse();
       debugPrint("Payload : ${payload.toJson()}");
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -2888,13 +3162,13 @@ class CreatePropertyController extends GetxController {
                       negotiablePriceOrNot.value.toLowerCase() == 'yes'
                           ? true
                           : false,
-                  noticePeriod:
-                      noticPeriodController.text.trim().isNotEmpty
-                          ? int.tryParse(noticPeriodController.text.trim())
-                          : null,
                   lockInPeriod:
-                      lockPeriodController.text.trim().isNotEmpty
+                      lockPeriodController.text.isNotEmpty
                           ? int.tryParse(lockPeriodController.text.trim())
+                          : null,
+                  noticePeriod:
+                      noticPeriodController.text.isNotEmpty
+                          ? int.tryParse(noticPeriodController.text.trim())
                           : null,
                   brokerCommission:
                       doYouWantBrokerage.value.toLowerCase() == 'yes'
@@ -2968,14 +3242,7 @@ class CreatePropertyController extends GetxController {
           localityController.text.trim().isNotEmpty
               ? localityController.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       city:
           cityController.text.trim().isNotEmpty
@@ -3211,7 +3478,7 @@ class CreatePropertyController extends GetxController {
           pgSuitedFor: bestSuitedList.value.join(", "),
           pgMealOffered:
               mealAvailable.value.toLowerCase() == 'yes'
-                  ? mealAvailableList.value.join(", ")
+                  ? mealAvailableList.value.first
                   : null,
           mealChargesPerMonth:
               mealCharges.value.toLowerCase() == 'separate'
@@ -3353,14 +3620,7 @@ class CreatePropertyController extends GetxController {
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
       address:
           localityController.text.trim().isNotEmpty
               ? localityController.text.trim()
@@ -3441,14 +3701,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -3466,7 +3719,7 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building,available from, floor, rent, location hub, possession status, ownership
+      // TODO: Building,available from, floor, rent, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -3524,6 +3777,10 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
+          monthlyRent:
+              commercial_rent_cost.text.trim().isNotEmpty
+                  ? double.tryParse(commercial_rent_cost.text.trim())
+                  : null,
           // propertyPrice:
           //     commercial_rent_cost.text.trim().isNotEmpty
           //         ? double.tryParse(commercial_rent_cost.text.trim())
@@ -3534,14 +3791,7 @@ class CreatePropertyController extends GetxController {
         //   int.tryParse(commercial_total_floor.text.trim()):null,
         // )
       ),
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       city:
           cityController.text.trim().isNotEmpty
@@ -3693,14 +3943,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
       ownerName:
@@ -3791,14 +4034,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -3890,14 +4126,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -3996,14 +4225,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -4049,18 +4271,18 @@ class CreatePropertyController extends GetxController {
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
           // TODO: Lease Year
-          propertyRentPerMonth:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
-          monthlyRent:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
+          // propertyRentPerMonth:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          // monthlyRent:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
           // TODO: R.O.I
         ),
         plotInfo: PlotInfo(
@@ -4088,14 +4310,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4207,14 +4422,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4368,14 +4576,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4487,14 +4688,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4603,14 +4797,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4725,14 +4912,7 @@ class CreatePropertyController extends GetxController {
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state:
-          localityController.text
-              .trim()
-              .split(',')
-              .map((e) => e.trim())
-              .toList()
-              .reversed
-              .toList()[1],
+      state: extractState(localityController.text.trim()),
 
       address:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty

@@ -2,14 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/modules/add_property/model/add_property_model.dart';
+import 'package:housing_flutter_app/modules/add_property/model/furnishing_,model.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../data/network/property/models/property_model.dart';
+import '../../../../data/network/property/models/property_model.dart'
+    hide RoomFacilityInfo;
 import '../../../../utils/logger/app_logger.dart';
 import '../../../dashboard/views/dashboard_screen.dart';
 import '../../controller/create_property_controller.dart';
 import '../../model/photo_model.dart';
+import '../../model/room_detail_model.dart';
 
 class LoadEditPropertyPayload extends GetxController {
   Rxn<AddPropertyModel> property = Rxn<AddPropertyModel>(null);
@@ -22,8 +26,23 @@ class LoadEditPropertyPayload extends GetxController {
             : "";
     controller.lookingTo.value =
         (property.listingType != null && property.listingType!.isNotEmpty)
-            ? property.listingType!
+            ? property.listingType!.toLowerCase() == 'pg'
+                ? 'PG/Co-Living'
+                : property.listingType!
             : "";
+
+    controller.selectedIndex.value =
+        (property.propertyType != null && property.propertyType!.isNotEmpty)
+            ? property.propertyType!.toLowerCase() == 'others'
+                ? 'Other'
+                : property.propertyType!.toLowerCase() == 'retail_shop'
+                ? 'Shop'
+                : property.propertyType!
+                    .replaceAll("_", " ")
+                    .capitalize
+                    .toString()
+            : "";
+
     controller.rent_propertyType.value =
         (property.propertyType != null && property.propertyType!.isNotEmpty)
             ? property.propertyType!.replaceAll("_", " ").capitalize.toString()
@@ -130,18 +149,146 @@ class LoadEditPropertyPayload extends GetxController {
                 .toString()
             : "Resale";
 
+    controller.lift_info.value =
+        (property.propertyDetails?.lifInfo?.serviceLift != null &&
+                property.propertyDetails!.lifInfo!.serviceLift!)
+            ? 'Yes'
+            : 'No';
+
     loadFinancialData(controller, property);
     loadPossessionInfo(controller, property);
     loadMedia(controller, property);
     loadFloorInfo(controller, property);
     loadFurnishingInfo(controller, property);
-    loadAmenities(controller, property);
+    if (property.type!.toLowerCase() == 'commercial') {
+      loadCommercialAmenities(controller, property);
+    } else {
+      loadAmenities(controller, property);
+    }
+    loadPgInfo(controller, property);
+    loadCommercialInfo(controller, property);
+  }
+
+  void loadCommercialInfo(
+    CreatePropertyController controller,
+    AddPropertyModel property,
+  ) {
+    controller.commercial_rent_building_Name.text =
+        (property.location != null && property.location!.isNotEmpty)
+            ? property.location!
+            : '';
+
+    controller.commercial_rent_Loaclity_Name.text =
+        (property.address != null && property.address!.isNotEmpty)
+            ? property.address!
+            : '';
+
+    controller.commercial_ZoneType.value =
+        (property.propertyDetails?.zoneType != null &&
+                property.propertyDetails!.zoneType!.isNotEmpty)
+            ? property.propertyDetails!.zoneType!
+            : '';
+
+    // TODO: OwnerShip
+
+    loadPlotInfo(controller, property);
+    loadPropertyCondition(controller, property);
+    loadOfficeInfo(controller, property);
+  }
+
+  void loadPropertyCondition(
+    CreatePropertyController controller,
+    AddPropertyModel property,
+  ) {
+    controller.commercial_property_condition.value =
+        (property.propertyDetails?.propertyCondition != null &&
+                property.propertyDetails!.propertyCondition!.isNotEmpty)
+            ? property.propertyDetails!.propertyCondition!.toLowerCase() ==
+                    'ready_to_use'
+                ? 'Ready to use'
+                : 'Bare Shell'
+            : '';
+    controller.commercial_Square_BuildArea.text =
+        (property.propertyDetails?.propertyBuiltUpArea != null &&
+                property.propertyDetails!.propertyBuiltUpArea != 0)
+            ? property.propertyDetails!.propertyBuiltUpArea!.toStringAsFixed(0)
+            : '0';
+
+    controller.commercial_Square_CarpetArea.text =
+        (property.propertyDetails?.propertyCarpetArea != null &&
+                property.propertyDetails!.propertyCarpetArea != 0)
+            ? property.propertyDetails!.propertyCarpetArea!.toStringAsFixed(0)
+            : '0';
+
+    controller.commercial_Square_AreaUnti_Build.value =
+        (property.propertyDetails?.propertyBuiltUpAreaUnit != null &&
+                property.propertyDetails!.propertyBuiltUpAreaUnit!.isNotEmpty)
+            ? addDotAfterEveryTwoCharacters(
+              property.propertyDetails!.propertyBuiltUpAreaUnit!,
+            )
+            : 'sq.yd.';
+
+    controller.commercial_Square_AreaUnti_Carpet.value =
+        (property.propertyDetails?.propertyCarpetAreaUnit != null &&
+                property.propertyDetails!.propertyCarpetAreaUnit!.isNotEmpty)
+            ? addDotAfterEveryTwoCharacters(
+              property.propertyDetails!.propertyCarpetAreaUnit!,
+            )
+            : 'sq.yd.';
+  }
+
+  void loadOfficeInfo(
+    CreatePropertyController controller,
+    AddPropertyModel property,
+  ) {
+    controller.commercial_seats.text =
+        (property.propertyDetails?.facilitiesInfo?.minSeats != null &&
+                property.propertyDetails!.facilitiesInfo!.minSeats != 0)
+            ? property.propertyDetails!.facilitiesInfo!.minSeats.toString()
+            : '0';
+
+    controller.commercial_cabins.text =
+        (property.propertyDetails?.facilitiesInfo?.numberOfCabins != null &&
+                property.propertyDetails!.facilitiesInfo!.numberOfCabins != 0)
+            ? property.propertyDetails!.facilitiesInfo!.numberOfCabins
+                .toString()
+            : '0';
+
+    controller.commercial_meeting_room.text =
+        (property.propertyDetails?.facilitiesInfo?.numberOfMeetingRooms !=
+                    null &&
+                property
+                        .propertyDetails!
+                        .facilitiesInfo!
+                        .numberOfMeetingRooms !=
+                    0)
+            ? property.propertyDetails!.facilitiesInfo!.numberOfMeetingRooms
+                .toString()
+            : '0';
+  }
+
+  void loadPlotInfo(
+    CreatePropertyController controller,
+    AddPropertyModel property,
+  ) {
+    controller.commercial_plot.text =
+        (property.propertyDetails?.plotInfo?.plotArea != null &&
+                property.propertyDetails!.plotInfo!.plotArea != 0)
+            ? property.propertyDetails!.plotInfo!.plotArea!.toStringAsFixed(0)
+            : '0';
   }
 
   void loadFinancialData(
     CreatePropertyController controller,
     AddPropertyModel property,
   ) {
+    controller.commercial_rent_cost.text =
+        (property.propertyDetails?.financialInfo?.propertyPrice != null &&
+                property.propertyDetails!.financialInfo!.propertyPrice != 0)
+            ? property.propertyDetails!.financialInfo!.propertyPrice!
+                .toStringAsFixed(0)
+            : '0';
+
     /// Rent
     controller.rent_MonthilyRent.text = (pickFirstValid<double>([
               property.propertyDetails?.financialInfo?.monthlyRent,
@@ -226,72 +373,130 @@ class LoadEditPropertyPayload extends GetxController {
     CreatePropertyController controller,
     AddPropertyModel property,
   ) {
-    controller.ageOfPropertyController.text =
-        (property.propertyDetails?.possessionInfo?.propertyAgeInYear != null &&
-                property
-                    .propertyDetails!
-                    .possessionInfo!
-                    .propertyAgeInYear!
-                    .isNotEmpty)
-            ? property.propertyDetails!.possessionInfo!.propertyAgeInYear!
-                .toString()
-            : '0';
-
-    if (property.listingType != null &&
-        property.listingType!.toLowerCase() == 'rent') {
-      controller.rent_AvailableFrom.text =
-          (property.propertyDetails?.possessionInfo?.possessionDate != null &&
+    if (property.type!.toLowerCase() == 'commercial') {
+      controller.commercial_rent_AgeOfPropertInYear.text =
+          (property.propertyDetails?.possessionInfo?.propertyAgeInYear !=
+                      null &&
                   property
                       .propertyDetails!
                       .possessionInfo!
-                      .possessionDate!
+                      .propertyAgeInYear!
                       .isNotEmpty)
-              ? DateFormat('dd/MM/yyyy').format(
-                DateTime.tryParse(
-                  property.propertyDetails!.possessionInfo!.possessionDate!
-                      .toString(),
-                )!,
-              )
+              ? property.propertyDetails!.possessionInfo!.propertyAgeInYear!
+                  .toString()
               : '0';
+
+      if (property.listingType != null &&
+          property.listingType!.toLowerCase() == 'rent') {
+        controller.commercial_rent_AvailableFrom.text =
+            (property.propertyDetails?.possessionInfo?.possessionDate != null &&
+                    property
+                        .propertyDetails!
+                        .possessionInfo!
+                        .possessionDate!
+                        .isNotEmpty)
+                ? DateFormat('dd/MM/yyyy').format(
+                  DateTime.tryParse(
+                    property.propertyDetails!.possessionInfo!.possessionDate!
+                        .toString(),
+                  )!,
+                )
+                : '0';
+      } else {
+        controller.commercial_rent_AvailableFrom.text =
+            (property.propertyDetails?.possessionInfo?.possessionDate != null &&
+                    property
+                        .propertyDetails!
+                        .possessionInfo!
+                        .possessionDate!
+                        .isNotEmpty)
+                ? DateFormat('dd/MM/yyyy').format(
+                  DateTime.tryParse(
+                    property.propertyDetails!.possessionInfo!.possessionDate!
+                        .toString(),
+                  )!,
+                )
+                : '0';
+      }
+
+      controller.commercial_rent_posessionStatus.value =
+          (property.propertyDetails?.possessionInfo?.possessionStatus != null &&
+                  property
+                      .propertyDetails!
+                      .possessionInfo!
+                      .possessionStatus!
+                      .isNotEmpty)
+              ? property.propertyDetails!.possessionInfo!.possessionStatus! ==
+                      'ready_to_move'
+                  ? 'Ready to move'
+                  : 'Under Construction'
+              : " ";
     } else {
-      controller.sell_AvailableFrom.text =
-          (property.propertyDetails?.possessionInfo?.possessionDate != null &&
+      controller.ageOfPropertyController.text =
+          (property.propertyDetails?.possessionInfo?.propertyAgeInYear !=
+                      null &&
                   property
                       .propertyDetails!
                       .possessionInfo!
-                      .possessionDate!
+                      .propertyAgeInYear!
                       .isNotEmpty)
-              ? DateFormat('dd/MM/yyyy').format(
-                DateTime.tryParse(
-                  property.propertyDetails!.possessionInfo!.possessionDate!
-                      .toString(),
-                )!,
-              )
+              ? property.propertyDetails!.possessionInfo!.propertyAgeInYear!
+                  .toString()
               : '0';
-    }
 
-    controller.sell_constructionStatus.value =
-        (property.propertyDetails?.possessionInfo?.possessionStatus != null &&
-                property
-                    .propertyDetails!
-                    .possessionInfo!
-                    .possessionStatus!
-                    .isNotEmpty)
-            ? property.propertyDetails!.possessionInfo!.possessionStatus!
-                .replaceAll("_", " ")
-                .capitalize
-                .toString()
-            : " ";
+      if (property.listingType != null &&
+          property.listingType!.toLowerCase() == 'rent') {
+        controller.rent_AvailableFrom.text =
+            (property.propertyDetails?.possessionInfo?.possessionDate != null &&
+                    property
+                        .propertyDetails!
+                        .possessionInfo!
+                        .possessionDate!
+                        .isNotEmpty)
+                ? DateFormat('dd/MM/yyyy').format(
+                  DateTime.tryParse(
+                    property.propertyDetails!.possessionInfo!.possessionDate!
+                        .toString(),
+                  )!,
+                )
+                : '0';
+      } else {
+        controller.sell_AvailableFrom.text =
+            (property.propertyDetails?.possessionInfo?.possessionDate != null &&
+                    property
+                        .propertyDetails!
+                        .possessionInfo!
+                        .possessionDate!
+                        .isNotEmpty)
+                ? DateFormat('dd/MM/yyyy').format(
+                  DateTime.tryParse(
+                    property.propertyDetails!.possessionInfo!.possessionDate!
+                        .toString(),
+                  )!,
+                )
+                : '0';
+      }
+
+      controller.sell_constructionStatus.value =
+          (property.propertyDetails?.possessionInfo?.possessionStatus != null &&
+                  property
+                      .propertyDetails!
+                      .possessionInfo!
+                      .possessionStatus!
+                      .isNotEmpty)
+              ? property.propertyDetails!.possessionInfo!.possessionStatus!
+                  .replaceAll("_", " ")
+                  .capitalize
+                  .toString()
+              : " ";
+    }
   }
 
   void loadMedia(
     CreatePropertyController controller,
     AddPropertyModel property,
   ) {
-    print("loadMedia called");
-    print("loadMedia called : ${property.propertyMedia?.toJson()}");
     if (property.propertyMedia != null) {
-      print("property.propertyMedia != null");
       if (property.propertyMedia!.images != null) {
         controller.imageList.value = property.propertyMedia!.images!;
         controller.imageList.map((element) => File(element)).toList();
@@ -304,10 +509,6 @@ class LoadEditPropertyPayload extends GetxController {
         controller.documentList.value = property.propertyMedia!.documents!;
         controller.documentList.map((element) => File(element)).toList();
       }
-
-      print("imageList: ${controller.imageList}");
-      print("videoList: ${controller.videoList}");
-      print("documentList: ${controller.documentList}");
     }
   }
 
@@ -315,19 +516,85 @@ class LoadEditPropertyPayload extends GetxController {
     CreatePropertyController controller,
     AddPropertyModel property,
   ) {
-    controller.sell_rent_Total_Floor.text =
-        (property.propertyDetails?.floorInfo?.totalFloors != null &&
-                property.propertyDetails!.floorInfo!.totalFloors != 0)
-            ? property.propertyDetails!.floorInfo!.totalFloors!.toString()
-            : '0';
+    if (property.type!.toLowerCase() == 'commercial') {
+      controller.commercial_total_floor.text =
+          (property.propertyDetails?.floorInfo?.totalFloors != null &&
+                  property.propertyDetails!.floorInfo!.totalFloors != 0)
+              ? property.propertyDetails!.floorInfo!.totalFloors!.toString()
+              : '0';
 
-    controller.sell_rent_Floor_No.text =
-        (property.propertyDetails?.floorInfo?.floorNumber != null &&
-                property.propertyDetails!.floorInfo!.floorNumber != 0)
-            ? property.propertyDetails!.floorInfo!.floorNumber!.toString()
-            : '0';
+      controller.commercial_your_floor.text =
+          (property.propertyDetails?.floorInfo?.floorNumber != null &&
+                  property.propertyDetails!.floorInfo!.floorNumber != 0)
+              ? property.propertyDetails!.floorInfo!.floorNumber!.toString()
+              : '0';
+    } else {
+      controller.sell_rent_Total_Floor.text =
+          (property.propertyDetails?.floorInfo?.totalFloors != null &&
+                  property.propertyDetails!.floorInfo!.totalFloors != 0)
+              ? property.propertyDetails!.floorInfo!.totalFloors!.toString()
+              : '0';
+
+      controller.sell_rent_Floor_No.text =
+          (property.propertyDetails?.floorInfo?.floorNumber != null &&
+                  property.propertyDetails!.floorInfo!.floorNumber != 0)
+              ? property.propertyDetails!.floorInfo!.floorNumber!.toString()
+              : '0';
+    }
   }
 
+  // void loadFurnishingInfo(
+  //   CreatePropertyController controller,
+  //   AddPropertyModel property,
+  // ) {
+  //   controller.furnishingType.value =
+  //       (property.propertyDetails?.furnishInfo?.furnishType != null &&
+  //               property.propertyDetails!.furnishInfo!.furnishType!.isNotEmpty)
+  //           ? property.propertyDetails!.furnishInfo!.furnishType!
+  //               .replaceAll("-", " ")
+  //               .capitalize
+  //               .toString()
+  //           : "";
+  //
+  //   if (property.propertyDetails?.furnishInfo?.furnishDetails != null) {
+  //     final furnishingDetails =
+  //         property.propertyDetails!.furnishInfo!.furnishDetails!;
+  //     print('Furnish Info:${furnishingDetails.toJson()}');
+  //     controller.selectedFurnishing.value['ac']?.quantity =
+  //         furnishingDetails.ac ?? 0;
+  //     controller.selectedFurnishing.value['bed']?.quantity =
+  //         furnishingDetails.bed ?? 0;
+  //     controller.selectedFurnishing.value['geyser']?.quantity =
+  //         furnishingDetails.geyser ?? 0;
+  //     controller.selectedFurnishing.value['washing_machine']?.quantity =
+  //         (furnishingDetails.washingMachine != null &&
+  //                 furnishingDetails.washingMachine!)
+  //             ? 1
+  //             : 0;
+  //     controller.selectedFurnishing.value['cupboard']?.quantity =
+  //         (furnishingDetails.cupboard != null && furnishingDetails.cupboard!)
+  //             ? 1
+  //             : 0;
+  //     controller.selectedFurnishing.value['stove']?.quantity =
+  //         (furnishingDetails.stove != null && furnishingDetails.stove!) ? 1 : 0;
+  //     controller.selectedFurnishing.value['fridge']?.quantity =
+  //         (furnishingDetails.fridge != null && furnishingDetails.fridge!)
+  //             ? 1
+  //             : 0;
+  //     controller.selectedFurnishing.value['water_purifier']?.quantity =
+  //         (furnishingDetails.waterPurifier != null &&
+  //                 furnishingDetails.waterPurifier!)
+  //             ? 1
+  //             : 0;
+  //     controller.selectedFurnishing.value['modular_kitchen']?.quantity =
+  //         (furnishingDetails.modularKitchen != null &&
+  //                 furnishingDetails.modularKitchen!)
+  //             ? 1
+  //             : 0;
+  //   }
+  // }
+
+  // TODO: Remain to Implement
   void loadFurnishingInfo(
     CreatePropertyController controller,
     AddPropertyModel property,
@@ -344,37 +611,70 @@ class LoadEditPropertyPayload extends GetxController {
     if (property.propertyDetails?.furnishInfo?.furnishDetails != null) {
       final furnishingDetails =
           property.propertyDetails!.furnishInfo!.furnishDetails!;
-      controller.selectedFurnishing.value['ac']?.quantity =
+      final f = property.propertyDetails!.furnishInfo!.furnishDetails!;
+      controller.selectedFurnishing['ac']?.quantity =
           furnishingDetails.ac == true ? furnishingDetails.ac! : 0;
-      controller.selectedFurnishing.value['bed']?.quantity =
+      // loadItemByTitle(controller, "AC", f.ac);
+      // loadItemByTitle(controller, "Washing Machine", f.washingMachine);
+      // loadItemByTitle(controller, "Cupboard", f.cupboard);
+      // loadItemByTitle(controller, "Stove", f.stove);
+      // loadItemByTitle(controller, "Fridge", f.fridge);
+      // loadItemByTitle(controller, "Water Purifier", f.waterPurifier);
+      // loadItemByTitle(controller, "Modular Kitchen", f.modularKitchen);
+
+      controller.selectedFurnishing['bed']?.quantity =
           furnishingDetails.bed == true ? furnishingDetails.bed! : 0;
-      controller.selectedFurnishing.value['geyser']?.quantity =
+      controller.selectedFurnishing['geyser']?.quantity =
           furnishingDetails.geyser == true ? furnishingDetails.geyser! : 0;
-      controller.selectedFurnishing.value['washing_machine']?.quantity =
+      controller.selectedFurnishing['washing_machine']?.quantity =
           (furnishingDetails.washingMachine != null &&
                   furnishingDetails.washingMachine!)
               ? 1
               : 0;
-      controller.selectedFurnishing.value['cupboard']?.quantity =
+      controller.selectedFurnishing['cupboard']?.quantity =
           (furnishingDetails.cupboard != null && furnishingDetails.cupboard!)
               ? 1
               : 0;
-      controller.selectedFurnishing.value['stove']?.quantity =
+      controller.selectedFurnishing['stove']?.quantity =
           (furnishingDetails.stove != null && furnishingDetails.stove!) ? 1 : 0;
-      controller.selectedFurnishing.value['fridge']?.quantity =
+      controller.selectedFurnishing['fridge']?.quantity =
           (furnishingDetails.fridge != null && furnishingDetails.fridge!)
               ? 1
               : 0;
-      controller.selectedFurnishing.value['water_purifier']?.quantity =
+      controller.selectedFurnishing['water_purifier']?.quantity =
           (furnishingDetails.waterPurifier != null &&
                   furnishingDetails.waterPurifier!)
               ? 1
               : 0;
-      controller.selectedFurnishing.value['modular_kitchen']?.quantity =
+      controller.selectedFurnishing['modular_kitchen']?.quantity =
           (furnishingDetails.modularKitchen != null &&
                   furnishingDetails.modularKitchen!)
               ? 1
               : 0;
+    }
+
+    print('Furnish Info:${controller.selectedFurnishing.value}');
+  }
+
+  void loadItemByTitle(
+    CreatePropertyController controller,
+    String title,
+    dynamic count,
+  ) {
+    final icon = IconManager.furnitureItems.firstWhereOrNull(
+      (i) => i.title == title,
+    );
+
+    if (icon == null) return;
+
+    final qty = (count is int ? count : (count == true ? 1 : 0));
+
+    if (qty > 0) {
+      controller.selectedFurnishing[icon.key] = FurnishingItemModel(
+        key: icon.key,
+        title: icon.title,
+        quantity: qty,
+      );
     }
   }
 
@@ -387,6 +687,230 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDetails!.amenities!.isNotEmpty)
             ? property.propertyDetails!.amenities!
             : [];
+  }
+
+  void loadCommercialAmenities(
+    CreatePropertyController controller,
+    AddPropertyModel property,
+  ) {
+    controller.selectedCommercialAmenities.value =
+        (property.propertyDetails?.amenities != null &&
+                property.propertyDetails!.amenities!.isNotEmpty)
+            ? property.propertyDetails!.amenities!
+            : [];
+  }
+
+  void loadPgInfo(
+    CreatePropertyController controller,
+    AddPropertyModel property,
+  ) {
+    /// pg name
+    controller.pgNameController.text =
+        (property.propertyDetails?.pgInfo?.pgName != null &&
+                property.propertyDetails!.pgInfo!.pgName!.isNotEmpty)
+            ? property.propertyDetails!.pgInfo!.pgName!
+            : '';
+
+    /// pg common area
+    controller.commonAreasList.value =
+        (property.propertyDetails?.pgInfo?.pgCommonArea != null &&
+                property.propertyDetails!.pgInfo!.pgCommonArea!.isNotEmpty)
+            ? property.propertyDetails!.pgInfo!.pgCommonArea!
+                .split(',')
+                .map((e) => e.trim())
+                .toList()
+            : [];
+
+    /// pg total bed
+    controller.totalRoomsController.text =
+        (property.propertyDetails?.pgInfo?.totalBed != null &&
+                property.propertyDetails!.pgInfo!.totalBed != 0)
+            ? property.propertyDetails!.pgInfo!.totalBed!.toString()
+            : '0';
+
+    /// Pg For
+    controller.pgFor.value =
+        (property.propertyDetails?.pgInfo?.pgFor != null &&
+                property.propertyDetails!.pgInfo!.pgFor!.isNotEmpty)
+            ? property.propertyDetails!.pgInfo!.pgFor!
+            : '';
+
+    /// pg best suited for
+    controller.bestSuitedList.value =
+        (property.propertyDetails?.pgInfo?.pgSuitedFor != null &&
+                property.propertyDetails!.pgInfo!.pgSuitedFor!.isNotEmpty)
+            ? property.propertyDetails!.pgInfo!.pgSuitedFor!.split(',')
+            : [];
+
+    /// pg mea setails
+    controller.mealAvailable.value =
+        (property.propertyDetails?.pgInfo?.pgMealOffered != null &&
+                property.propertyDetails!.pgInfo!.pgMealOffered!.isNotEmpty)
+            ? 'Yes'
+            : 'No';
+
+    controller.mealAvailableList.value =
+        (property.propertyDetails?.pgInfo?.pgMealOffered != null &&
+                property.propertyDetails!.pgInfo!.pgMealOffered!.isNotEmpty)
+            ? property.propertyDetails!.pgInfo!.pgMealOffered!
+                .split(',')
+                .map((e) => e.trim())
+                .toList()
+            : [];
+
+    if ((property.propertyDetails?.pgInfo?.mealChargesPerMonth != null &&
+        property.propertyDetails!.pgInfo!.mealChargesPerMonth != 0)) {
+      controller.mealCharges.value = 'Separate';
+
+      controller.mealChargesTextFiled.text = property
+          .propertyDetails!
+          .pgInfo!
+          .mealChargesPerMonth!
+          .toStringAsFixed(0);
+    } else {
+      controller.mealCharges.value = 'Included in rent';
+    }
+
+    /// electricity charge
+    if ((property.propertyDetails?.pgInfo?.electricityChargesPerMonth != null &&
+        property.propertyDetails!.pgInfo!.electricityChargesPerMonth != 0)) {
+      controller.electricityCharges.value = 'Separate';
+
+      controller.electricityChargesTextFiled.text = property
+          .propertyDetails!
+          .pgInfo!
+          .electricityChargesPerMonth!
+          .toStringAsFixed(0);
+    } else {
+      controller.electricityCharges.value = 'Included in rent';
+    }
+
+    /// PG Rules
+    controller.pgRulesAvailable.value =
+        (property.propertyDetails?.pgInfo?.pgRules != null &&
+                (property.propertyDetails!.pgInfo!.pgRules!.visitorAllowed! ==
+                        true ||
+                    property.propertyDetails!.pgInfo!.pgRules!.petsAllowed! ==
+                        true ||
+                    property
+                            .propertyDetails!
+                            .pgInfo!
+                            .pgRules!
+                            .drinkingAllowed! ==
+                        true ||
+                    property
+                            .propertyDetails!
+                            .pgInfo!
+                            .pgRules!
+                            .smokingAllowed! ==
+                        true ||
+                    property.propertyDetails!.pgInfo!.pgRules!.nonVegAllowed! ==
+                        true ||
+                    property
+                            .propertyDetails!
+                            .pgInfo!
+                            .pgRules!
+                            .lateEntryAllowed! ==
+                        true))
+            ? 'Yes'
+            : 'No';
+
+    controller.visitorsAllowed.value =
+        (property.propertyDetails?.pgInfo?.pgRules?.visitorAllowed != null &&
+                property.propertyDetails!.pgInfo!.pgRules!.visitorAllowed!)
+            ? 'Yes'
+            : 'No';
+    controller.petAllowed.value =
+        (property.propertyDetails?.pgInfo?.pgRules?.petsAllowed != null &&
+                property.propertyDetails!.pgInfo!.pgRules!.petsAllowed!)
+            ? 'Yes'
+            : 'No';
+    controller.drinkingAllowed.value =
+        (property.propertyDetails?.pgInfo?.pgRules?.drinkingAllowed != null &&
+                property.propertyDetails!.pgInfo!.pgRules!.drinkingAllowed!)
+            ? 'Yes'
+            : 'No';
+    controller.smokingAllowed.value =
+        (property.propertyDetails?.pgInfo?.pgRules?.smokingAllowed != null &&
+                property.propertyDetails!.pgInfo!.pgRules!.smokingAllowed!)
+            ? 'Yes'
+            : 'No';
+    controller.nonVegAllowed.value =
+        (property.propertyDetails?.pgInfo?.pgRules?.nonVegAllowed != null &&
+                property.propertyDetails!.pgInfo!.pgRules!.nonVegAllowed!)
+            ? 'Yes'
+            : 'No';
+    controller.letEntryAllowed.value =
+        (property.propertyDetails?.pgInfo?.pgRules?.lateEntryAllowed != null &&
+                property.propertyDetails!.pgInfo!.pgRules!.lateEntryAllowed!)
+            ? 'Yes'
+            : 'No';
+
+    /// Pg managed by
+    controller.propertyManagedBy.value =
+        (property.propertyDetails?.pgInfo?.pgManageBy != null &&
+                property.propertyDetails!.pgInfo!.pgManageBy!.isNotEmpty)
+            ? property.propertyDetails!.pgInfo!.pgManageBy!.toLowerCase() ==
+                    "other"
+                ? "Professional"
+                : property.propertyDetails!.pgInfo!.pgManageBy!.capitalize
+                    .toString()
+            : '';
+
+    controller.managerStaysAtProperty.value =
+        (property.propertyDetails?.pgInfo?.pgManageBy != null &&
+                property.propertyDetails!.pgInfo!.pgManageBy!.isNotEmpty)
+            ? 'Yes'
+            : 'No';
+
+    final pgRooms = property.propertyDetails?.pgInfo?.pgRoomInfo;
+
+    controller.rooms.value =
+        pgRooms?.map((e) {
+          controller.roomFacilityAvailableOrNot.value = 'Yes';
+          return RoomModel(
+            monthlyRent:
+                (e.rent != null && e.rent != 0)
+                    ? e.rent!.toStringAsFixed(0)
+                    : '0',
+            deposit:
+                (e.securityDeposit != null && e.securityDeposit != 0)
+                    ? e.securityDeposit!.toStringAsFixed(0)
+                    : '0',
+            roomType:
+                (e.roomType != null && e.roomType!.isNotEmpty)
+                    ? e.roomType!.toString()
+                    : '',
+            amenities:
+                (e.roomFacilityInfo != null)
+                    ? _mapPgAmenities(e.roomFacilityInfo)
+                    : [],
+            // amenities: _mapAmenities(e.roomFacilityInfo),
+            other: e.roomFacilityInfo?.other ?? '',
+          );
+        }).toList() ??
+        [];
+  }
+
+  List<String> _mapPgAmenities(RoomFacilityInfo? info) {
+    if (info == null) return [];
+
+    final amenityMap = {
+      'wifi': info.wifi,
+      'ac': info.ac,
+      'tv': info.tv,
+      'geyser': info.geyser,
+      'fridge': info.fridge,
+      'cupboard': info.cupboard,
+    };
+
+    final List<String> data =
+        amenityMap.entries
+            .where((element) => element.value == true)
+            .map((e) => e.key)
+            .toList();
+
+    return data;
   }
 
   String addDotAfterEveryTwoCharacters(String input) {

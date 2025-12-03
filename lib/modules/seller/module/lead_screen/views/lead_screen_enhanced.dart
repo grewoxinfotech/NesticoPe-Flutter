@@ -3974,81 +3974,86 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
 
             Expanded(
               child:
-                  leads.isEmpty
-                      ? Center(
-                        child: Text(
-                          'No leads available.',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            color: ColorRes.leadGreyColor[600],
-                          ),
-                        ),
-                      )
-                      : RefreshIndicator(
-                        onRefresh: () async {
-                          // Same logic on pull-to-refresh
-                          leadController.items.clear();
-                          leadController.leadPropertiesList.clear();
+              // leads.isEmpty
+              //     ? Center(
+              //       child: Text(
+              //         'No leads available.',
+              //         style: TextStyle(
+              //           fontSize: AppFontSizes.medium,
+              //           color: ColorRes.leadGreyColor[600],
+              //         ),
+              //       ),
+              //     )
+              //     :
+              NotificationListener<ScrollEndNotification>(
+                onNotification: (notification) {
+                  final metrics = notification.metrics;
+                  if (metrics.pixels >= metrics.maxScrollExtent) {
+                    leadController.loadMore();
+                  }
+                  return true;
+                },
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    // Same logic on pull-to-refresh
+                    leadController.items.clear();
+                    leadController.leadPropertiesList.clear();
 
-                          await leadController.refreshList();
-                          if (widget.propertyId != null) {
-                            _applyPropertyFilter(leadController);
-                          }
-                        },
-                        child: ListView.separated(
-                          padding: EdgeInsets.all(
-                            getResponsivePadding(context),
-                          ),
-                          itemCount: leads.length,
-                          separatorBuilder:
-                              (_, __) => SizedBox(
-                                height: getResponsiveSpacing(context),
+                    await leadController.refreshList();
+                    if (widget.propertyId != null) {
+                      _applyPropertyFilter(leadController);
+                    }
+                  },
+                  child: ListView.separated(
+                    padding: EdgeInsets.all(getResponsivePadding(context)),
+                    itemCount: leads.length,
+                    separatorBuilder:
+                        (_, __) =>
+                            SizedBox(height: getResponsiveSpacing(context)),
+                    itemBuilder: (context, index) {
+                      final lead = leads[index];
+
+                      String? propertyPrice;
+                      if (lead.propertyId != null) {
+                        final matchingProperty = leadController
+                            .leadPropertiesList
+                            .firstWhereOrNull((p) => p.id == lead.propertyId);
+
+                        if (matchingProperty
+                                ?.propertyDetails
+                                ?.financialInfo
+                                ?.price !=
+                            null) {
+                          propertyPrice =
+                              PropertyPriceManager(
+                                listingType:
+                                    matchingProperty?.listingType ?? '',
+                                financialInfo:
+                                    matchingProperty
+                                        ?.propertyDetails
+                                        ?.financialInfo,
+                              ).displayPrice;
+                        }
+                      }
+
+                      return GestureDetector(
+                        onTap:
+                            () => Get.to(
+                              () => LeadDetailScreen(
+                                lead: lead,
+                                isFromLead: true,
                               ),
-                          itemBuilder: (context, index) {
-                            final lead = leads[index];
-
-                            String? propertyPrice;
-                            if (lead.propertyId != null) {
-                              final matchingProperty = leadController
-                                  .leadPropertiesList
-                                  .firstWhereOrNull(
-                                    (p) => p.id == lead.propertyId,
-                                  );
-
-                              if (matchingProperty
-                                      ?.propertyDetails
-                                      ?.financialInfo
-                                      ?.price !=
-                                  null) {
-                                propertyPrice =
-                                    PropertyPriceManager(
-                                      listingType:
-                                          matchingProperty?.listingType ?? '',
-                                      financialInfo:
-                                          matchingProperty
-                                              ?.propertyDetails
-                                              ?.financialInfo,
-                                    ).displayPrice;
-                              }
-                            }
-
-                            return GestureDetector(
-                              onTap:
-                                  () => Get.to(
-                                    () => LeadDetailScreen(
-                                      lead: lead,
-                                      isFromLead: true,
-                                    ),
-                                  ),
-                              child: buildLeadCard(
-                                context,
-                                lead,
-                                propertyPrice ?? '',
-                              ),
-                            );
-                          },
+                            ),
+                        child: buildLeadCard(
+                          context,
+                          lead,
+                          propertyPrice ?? '',
                         ),
-                      ),
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
           ],
         );

@@ -165,6 +165,17 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
     }
   }
 
+  Future<void> refreshPropertyBySeller() async {
+    final user = await SecureStorage.getUserData();
+    if (user != null) {
+      controller.applyFilter(
+        "created_by",
+        user.user?.id.toString() ?? "",
+        includeCity: false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final navigationController = Get.put(NavigationController());
@@ -270,7 +281,19 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                 return const Center(child: Text("No Property found."));
               }
 
-              return PropertyOverviewScreen(properties: controller.items);
+              return NotificationListener<ScrollEndNotification>(
+                onNotification: (notification) {
+                  final metrics = notification.metrics;
+                  if (metrics.pixels >= metrics.maxScrollExtent) {
+                    controller.loadMore();
+                  }
+                  return true;
+                },
+                child: RefreshIndicator(
+                  onRefresh: refreshPropertyBySeller,
+                  child: PropertyOverviewScreen(properties: controller.items),
+                ),
+              );
             });
           // return SellerListingView();
           case 3:

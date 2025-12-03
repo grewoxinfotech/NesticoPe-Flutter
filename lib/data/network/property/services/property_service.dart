@@ -300,17 +300,17 @@ class PropertyService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      debugPrint("Create property response: ${response.body}");
+      debugPrint("Update property response: ${response.body}");
       if (response.statusCode == 200 || response.statusCode == 201) {
         CustomSnackBar.show(
           Get.overlayContext!,
-          message: "Create Property Successful",
+          message: "Update Property Successful",
           type: SnackBarType.success,
         );
       } else {
         CustomSnackBar.show(
           Get.overlayContext!,
-          message: "Failed to create property. Please try again.",
+          message: "Failed to Update property. Please try again.",
           type: SnackBarType.error,
         );
       }

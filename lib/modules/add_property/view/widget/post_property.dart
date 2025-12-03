@@ -1006,9 +1006,9 @@ class PostProperty extends StatelessWidget {
                         ),
               ),
 
-              if (controller.rent_propertyType.value == "Plot" ||
-                  controller.rent_propertyType.value ==
-                      "Agricultural Land") ...[
+              if ((controller.rent_propertyType.value == "Plot") ||
+                  (controller.rent_propertyType.value ==
+                      "Agricultural Land")) ...[
                 SizedBox(height: 16),
                 Text("Plot Area"),
                 SizedBox(height: 6),
@@ -1139,7 +1139,6 @@ class PostProperty extends StatelessWidget {
                           )
                           : const SizedBox.shrink(),
                 ),
-
               ] else ...[
                 Obx(
                   () =>
@@ -1446,7 +1445,7 @@ class PostProperty extends StatelessWidget {
                     ],
                   ),
                 ),
-                if(controller.lookingTo.value=="Rent")...[
+                if (controller.lookingTo.value == "Rent") ...[
                   const SizedBox(height: 16),
 
                   // PG Details
