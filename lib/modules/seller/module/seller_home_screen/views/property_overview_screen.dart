@@ -114,12 +114,8 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                     ..clear()
                     ..addAll(newFilter);
 
-                  propertyController.applyFilters(
-                    Map<String, String>.from(selectedFilters),
-                  );
-                  print(
-                    "Filter applied: $result   t   ${selectedFilters.value}",
-                  );
+                  propertyController.applyFilters(Map<String, String>.from(selectedFilters));
+                  print("Filter Project applied: $result   t   ${selectedFilters.value}");
                   // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
                 }
               }

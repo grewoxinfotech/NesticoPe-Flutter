@@ -22,6 +22,7 @@ class ReviewService {
       final queryParams = {
         'page': page.toString(),
         if (filters != null) ...filters,
+
       };
 
       final uri = Uri.parse("$baseUrl").replace(queryParameters: queryParams);

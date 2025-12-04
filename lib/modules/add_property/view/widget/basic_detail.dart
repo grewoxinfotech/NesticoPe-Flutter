@@ -171,6 +171,7 @@ class BasicDetail extends StatelessWidget {
                   MaterialPageRoute(
                     builder:
                         (context) => CommonSearchField(
+                          onlySearchCity: true,
                           onCitySelected: (city) {
                             Navigator.pop(context, city);
                           },

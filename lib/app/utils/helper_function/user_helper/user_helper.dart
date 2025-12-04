@@ -1,6 +1,6 @@
 import '../../../../data/database/secure_storage_service.dart';
 
-enum UserType { reseller, seller, buyer }
+enum UserType { reseller, seller, buyer,contractor }
 
 enum SellerType { owner, builder }
 
@@ -50,6 +50,8 @@ class UserHelper {
         return UserType.seller;
       case 'buyer':
         return UserType.buyer;
+        case 'contractor':
+        return UserType.contractor;
       default:
         return null;
     }
@@ -86,7 +88,8 @@ class UserHelper {
       case UserType.seller:
         return "seller";
       case UserType.buyer:
-        return "buyer";
+        return "buyer";  case UserType.contractor:
+        return "contractor";
       default:
         return null;
     }
@@ -112,6 +115,7 @@ class UserHelper {
   static bool get isReseller => _cachedUserType == UserType.reseller;
   static bool get isBuyer => _cachedUserType == UserType.buyer;
   static bool get isGuest => _cachedUserType == null;
+  static bool get isContractor=>_cachedUserType==UserType.contractor;
 
   static bool get isSellerOwner =>
       _cachedUserType == UserType.seller &&

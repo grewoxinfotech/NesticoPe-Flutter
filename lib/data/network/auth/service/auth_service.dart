@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
@@ -228,6 +229,22 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
+    if (response.statusCode == 200 && data['success'] == true) {
+      return true;
+    } else {
+      throw Exception(data["message"] ?? "Failed to convert buyer to reseller");
+    }
+  }
+  Future<bool> convertBuyerToContractor() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? '';
+    final response = await http.post(
+      Uri.parse('${ApiConstants.convertToContractor}/$userId'),
+      headers: await headers(),
+    );
+    print("Convert to Url Contractor ${Uri.parse('${ApiConstants.convertToContractor}/$userId')}");
+    final data = jsonDecode(response.body);
+    print("Convert to Api Contractor ${response.body}");
     if (response.statusCode == 200 && data['success'] == true) {
       return true;
     } else {

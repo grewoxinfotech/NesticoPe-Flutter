@@ -53,6 +53,7 @@ dependencies:
   open_filex:
   flutter_rating_bar: ^4.0.1
   web_socket:
+  timeago: ^3.7.1
 
 
 dev_dependencies:

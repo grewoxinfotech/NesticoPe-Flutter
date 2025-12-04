@@ -492,6 +492,7 @@ class CommonSearchField extends StatefulWidget {
   final Function(Prediction)? onCitySelected;
   final bool isFromAddProperty;
   final String? initialSearchText;
+  final bool onlySearchCity;
   final String hintText;
   final Function(String city)? onTap;
   final bool isNavigate;
@@ -502,6 +503,7 @@ class CommonSearchField extends StatefulWidget {
     super.key,
     this.onCitySelected,
     this.isFromAddProperty = false,
+    this.onlySearchCity=false,
     this.initialSearchText,
     this.isNavigate = false,
     this.hintText = 'Change City...',
@@ -535,7 +537,13 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
           widget.selectedCity ?? '',
         );
       } else {
-        controller.fetchPredictionsCity(widget.initialSearchText!);
+        if(!widget.onlySearchCity)
+          {
+            controller.fetchPredictionsCity(widget.initialSearchText!);
+          }
+        else{
+          controller.fetchGooglePlaces(widget.initialSearchText!);
+        }
       }
     }
 
@@ -547,7 +555,14 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
           widget.selectedCity ?? '',
         );
       } else {
-        controller.fetchPredictionsCity(micController.searchText.value.text);
+        if(!widget.onlySearchCity)
+        {
+          controller.fetchPredictionsCity(micController.searchText.value.text);
+        }
+        else{
+          controller.fetchGooglePlaces(micController.searchText.value.text);
+        }
+        // controller.fetchPredictionsCity(micController.searchText.value.text);
       }
     });
   }
@@ -731,6 +746,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
             ),
             AppSpacing.verticalMedium,
             Obx(() {
+              print("Prediction LIst ${controller.predictions.map((e) => e.toJson(),)}");
               if (controller.isLoading.value) {
                 return const Center(child: SizedBox.shrink());
               }
@@ -763,6 +779,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                       ),
                   itemBuilder: (context, index) {
                     final Prediction item = controller.predictions[index];
+                    
                     return InkWell(
                       // onTap:(widget.isNavigate)? () async {
                       //

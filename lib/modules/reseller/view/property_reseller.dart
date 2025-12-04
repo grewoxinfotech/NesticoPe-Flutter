@@ -2463,7 +2463,7 @@ class MonthlyLineChart extends StatelessWidget {
     final minValue = 0.0;
 
     // ✅ Ensure minimum graph height (Y-axis at least up to 50)
-    final effectiveMax = maxValue < 50 ? 50 : maxValue;
+    final effectiveMax = maxValue < 20 ? 20 : maxValue;
     final yRange = effectiveMax - minValue;
 
     // ✅ Make exactly 6 Y-axis steps (0, 1/5, 2/5, ... max)

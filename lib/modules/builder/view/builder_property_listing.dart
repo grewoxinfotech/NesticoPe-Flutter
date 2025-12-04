@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -14,13 +16,25 @@ import '../../../app/manager/property/property_pricemanager.dart';
 import '../../../app/manager/property_highlight_manager.dart';
 
 // import '../../../data/network/builder/model/builder_projectModel.dart';
+import '../../../data/database/secure_storage_service.dart';
+import '../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../propert_detail/view/property_details.dart';
+import '../../reseller/view/listing/property_listing.dart';
+import '../../reseller/widget/reseller_filter/resseller_property_filter.dart';
 import '../../saved_property/controllers/property_favorite_controller.dart';
 import '../controller/builder_form_controller.dart';
 import 'builder_form_screen.dart';
 
-class BuilderPropertyListing extends StatelessWidget {
+class BuilderPropertyListing extends StatefulWidget {
   const BuilderPropertyListing({Key? key}) : super(key: key);
 
+  @override
+  State<BuilderPropertyListing> createState() => _BuilderPropertyListingState();
+}
+
+class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
+  final RxList<String> selectedPropertyIds = <String>[].obs;
+  final RxMap<String, String> selectedFilters = <String, String>{}.obs;
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ProjectWizardController>(tag: "builder");
@@ -39,7 +53,29 @@ class BuilderPropertyListing extends StatelessWidget {
           IconButton(icon: const Icon(Icons.search_rounded), onPressed: () {}),
           IconButton(
             icon: const Icon(Icons.filter_list_rounded),
-            onPressed: () {},
+            onPressed: () async {
+              final result = await Get.to(() => ResellerPropertyFilter());
+
+              if (result != null) {
+                // Use the filter result
+                final newFilter = convertFiltersToString(result);
+                final user = await SecureStorage.getUserData();
+                final userId = user?.user?.id;
+
+                if (userId != null && userId.isNotEmpty) {
+                  newFilter["created_by"] = userId;
+                  log("New Filter ${newFilter}");
+                  await controller.applyFilters(newFilter);
+                  selectedFilters
+                    ..clear()
+                    ..addAll(newFilter);
+
+                  controller.applyFilters(Map<String, String>.from(selectedFilters));
+                  print("Filter Project applied: $result   t   ${selectedFilters.value}");
+                  // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
+                }
+              }
+            },
           ),
         ],
       ),
@@ -90,6 +126,23 @@ class BuilderPropertyListing extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            Obx(() {
+              return FilterChipsBar(
+                filters: selectedFilters.value,
+                onClearAll: () {
+                  selectedFilters.clear();
+                  controller.applyFilters(<String, String>{});
+                },
+                onRemoveFilter: (key) {
+                  selectedFilters.remove(key);
+                  controller.applyFilters(
+                    Map<String, String>.from(selectedFilters),
+                  );
+                },
+                priceRangeFormatter:
+                    (min, max) => formatPriceRange(min, max),
+              );
+            }),
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value && controller.items.isEmpty) {

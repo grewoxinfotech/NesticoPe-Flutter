@@ -1,9 +1,7 @@
 class ApiConfig {
-  // static const String mapkey='AIzaSyDf3m2Riy9RKDuAocail0y1RzMxxpVoIcw';
-  // static const String mapkey = 'AIzaSyCGEPHINeyNmgffpaVbGkNZU0SPbtvWuXg';
-  static const String mapkey = 'AIzaSyB2IH_Qm4eUKOPIN08NgvZ2tDtXKNAEpSs';
-  static const String googleMapApi =
-      'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=$mapkey';
+  static const String mapkey='AIzaSyB2IH_Qm4eUKOPIN08NgvZ2tDtXKNAEpSs';
+static const String googleMapApi='https://maps.googleapis.com/maps/api/place/autocomplete/json?key=$mapkey';
+
 
   static String token = '';
 

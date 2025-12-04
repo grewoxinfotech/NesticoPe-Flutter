@@ -217,9 +217,11 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                     // When navigating to the filter screen
                     final result = await Get.to(() => ResellerPropertyFilter());
 
+
                     if (result != null) {
                       // Use the filter result
                       final newFilter=convertFiltersToString(result);
+                      log("skfjudfh ${newFilter['priceRange']} ${newFilter['createdAtFrom']}");
                       final user = await SecureStorage.getUserData();
                       final userId = user?.user?.id;
 

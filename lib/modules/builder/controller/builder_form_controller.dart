@@ -717,7 +717,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<PaginationResponse<ProjectItem>> fetchItems(int page) async {
     try {
-      log("hguthtuhlkjhojvgcdvf $filters");
+      log("dkvjcvifj $filters");
       final response = await _builderService.fetchProjects(
         page: page,
         filters: filters,

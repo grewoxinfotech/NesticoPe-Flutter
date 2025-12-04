@@ -1,0 +1,121 @@
+class ContractorServiceCategoryResponse {
+  bool success;
+  String message;
+  ContractorServiceCategoryData data;
+
+  ContractorServiceCategoryResponse({
+    required this.success,
+    required this.message,
+    required this.data,
+  });
+
+  factory ContractorServiceCategoryResponse.fromMap(Map<String, dynamic> map) {
+    return ContractorServiceCategoryResponse(
+      success: map['success'] ?? false,
+      message: map['message'] ?? '',
+      data: ContractorServiceCategoryData.fromMap(map['data'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'success': success,
+      'message': message,
+      'data': data.toMap(),
+    };
+  }
+}
+
+class ContractorServiceCategoryData {
+  List<ContractorServiceCategory> items;
+  int total;
+  int currentPage;
+  int totalPages;
+  bool hasMore;
+  bool fetchedAll;
+
+  ContractorServiceCategoryData({
+    required this.items,
+    required this.total,
+    required this.currentPage,
+    required this.totalPages,
+    required this.hasMore,
+    required this.fetchedAll,
+  });
+
+  factory ContractorServiceCategoryData.fromMap(Map<String, dynamic> map) {
+    return ContractorServiceCategoryData(
+      items: List<ContractorServiceCategory>.from(
+        (map['items'] ?? []).map((x) => ContractorServiceCategory.fromMap(x)),
+      ),
+      total: map['total'] ?? 0,
+      currentPage: map['currentPage'] ?? 1,
+      totalPages: map['totalPages'] ?? 1,
+      hasMore: map['hasMore'] ?? false,
+      fetchedAll: map['fetchedAll'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'items': items.map((x) => x.toMap()).toList(),
+      'total': total,
+      'currentPage': currentPage,
+      'totalPages': totalPages,
+      'hasMore': hasMore,
+      'fetchedAll': fetchedAll,
+    };
+  }
+}
+
+class ContractorServiceCategory {
+  String id;
+  String createdBy;
+  String? updatedBy;
+  String name;
+  String description;
+  bool isActive;
+  int displayOrder;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  ContractorServiceCategory({
+    required this.id,
+    required this.createdBy,
+    this.updatedBy,
+    required this.name,
+    required this.description,
+    required this.isActive,
+    required this.displayOrder,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory ContractorServiceCategory.fromMap(Map<String, dynamic> map) {
+    return ContractorServiceCategory(
+      id: map['id'] ?? '',
+      createdBy: map['created_by'] ?? '',
+      updatedBy: map['updated_by'],
+      name: map['name'] ?? '',
+      description: map['description'] ?? '',
+      isActive: map['isActive'] ?? false,
+      displayOrder: map['displayOrder'] ?? 0,
+      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(map['updatedAt'] ?? DateTime.now().toIso8601String()),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'created_by': createdBy,
+      'updated_by': updatedBy,
+      'name': name,
+      'description': description,
+      'isActive': isActive,
+      'displayOrder': displayOrder,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+}

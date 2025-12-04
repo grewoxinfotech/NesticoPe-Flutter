@@ -319,32 +319,252 @@ class RentPriceDetail extends StatelessWidget {
             children: [
               SizedBox(height: 24),
               Text("Financial"),
-              SizedBox(height: 8),
-              buildSectionTitle('Excepted Rent'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Enter Cost',
+              if (controller.selectedIndex.value != "Office" &&
+                  controller.selectedIndex.value != "Shop" &&
+                  controller.selectedIndex.value != "Showroom"&&
+                  controller.selectedIndex.value != "Warehouse") ...[
+                SizedBox(height: 8),
+                buildSectionTitle('Excepted Rent'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter rent',
 
-                Icons.currency_rupee_outlined,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter Excepted area';
-                  }
-                  final rent = int.tryParse(value); // parse once
-                  if (rent == null) {
-                    return 'Please enter a valid amount';
-                  }
-                  if (rent > 1500000 || rent < 20000) {
-                    return 'Please enter rent between  20000 to 1500000';
-                  }
+                  Icons.currency_rupee_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter Excepted rent';
+                    }
+                    final rent = int.tryParse(value); // parse once
+                    if (rent == null) {
+                      return 'Please enter a valid amount';
+                    }
+                    if (rent > 1500000 || rent < 20000) {
+                      return 'Please enter rent between  20000 to 1500000';
+                    }
 
-                  return null;
-                },
+                    return null;
+                  },
 
-                controller.commercial_rent_cost,
+                  controller.commercial_rent_cost,
 
-                isPhoneKey: true,
-              ),
+                  isPhoneKey: true,
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle('Security Deposit'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter deposit',
+
+                  Icons.currency_rupee_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter Excepted deposit';
+                    }
+                    final rent = int.tryParse(value); // parse once
+                    if (rent == null) {
+                      return 'Please enter a valid amount';
+                    }
+                    if (rent > 1500000 || rent < 20000) {
+                      return 'Please enter rent between  20000 to 1500000';
+                    }
+
+                    return null;
+                  },
+
+                  controller.commercial_rent_security_deposite,
+
+                  isPhoneKey: true,
+                ),
+              ] else ...[
+                SizedBox(height: 8),
+                buildSectionTitle('Monthly Rent'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter rent',
+
+                  Icons.currency_rupee_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter Excepted rent';
+                    }
+                    final rent = int.tryParse(value); // parse once
+                    if (rent == null) {
+                      return 'Please enter a valid amount';
+                    }
+                    if (rent > 1500000 || rent < 20000) {
+                      return 'Please enter rent between  20000 to 1500000';
+                    }
+
+                    return null;
+                  },
+
+                  controller.commercial_rent_cost,
+
+                  isPhoneKey: true,
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle('Price Negotiable'),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                      ["Yes", "No"]
+                          .map(
+                            (type) => buildChoice(
+                              title: type,
+                              selected:
+                                  controller
+                                      .commercial_rent_price_negotiable
+                                      .value ==
+                                  type,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.commercial_rent_price_negotiable,
+                                  type,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle('Brokerage'),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                      ["Yes", "No"]
+                          .map(
+                            (type) => buildChoice(
+                              title: type,
+                              selected:
+                                  controller.commercial_rent_brokage.value ==
+                                  type,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.commercial_rent_brokage,
+                                  type,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+                if (controller.commercial_rent_brokage.value == 'Yes') ...[
+                  SizedBox(height: 16),
+                  buildSectionTitle('Brokerage Amount'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    'Enter brokerage amount',
+
+                    Icons.currency_rupee_outlined,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter brokrage rent';
+                      }
+                      final rent = int.tryParse(value); // parse once
+                      if (rent == null) {
+                        return 'Please enter a valid amount';
+                      }
+                      if (rent > 1500000 || rent < 20000) {
+                        return 'Please enter rent between  20000 to 1500000';
+                      }
+
+                      return null;
+                    },
+
+                    controller.commercial_rent_brokerage,
+
+                    isPhoneKey: true,
+                  ),
+                  SizedBox(height: 16),
+                  buildSectionTitle('Brokerage Negotiable'),
+                  SizedBox(height: 8),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
+                        ["Yes", "No"]
+                            .map(
+                              (type) => buildChoice(
+                                title: type,
+                                selected:
+                                    controller
+                                        .commercial_rent_brokage_negotiable
+                                        .value ==
+                                    type,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller
+                                        .commercial_rent_brokage_negotiable,
+                                    type,
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
+                  ),
+                ],
+                SizedBox(height: 16),
+                buildSectionTitle('Maintenance Charges'),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                      ["Included in Rent", "Separate"]
+                          .map(
+                            (type) => buildChoice(
+                              title: type,
+                              selected:
+                                  controller
+                                      .commercial_rent_maintainance_charge
+                                      .value ==
+                                  type,
+                              onTap: () {
+                                controller.setValue(
+                                  controller
+                                      .commercial_rent_maintainance_charge,
+                                  type,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+
+                if (controller.commercial_rent_maintainance_charge.value ==
+                    "Separate") ...[
+                  SizedBox(height: 16),
+                  buildSectionTitle('Maintenance Amount'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    'Enter maintenance amount',
+
+                    Icons.currency_rupee_outlined,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter Excepted rent';
+                      }
+                      final rent = int.tryParse(value); // parse once
+                      if (rent == null) {
+                        return 'Please enter a valid amount';
+                      }
+                      if (rent > 1500000 || rent < 20000) {
+                        return 'Please enter rent between  20000 to 1500000';
+                      }
+
+                      return null;
+                    },
+
+                    controller.commercial_rent_mainatainance_charge,
+
+                    isPhoneKey: true,
+                  ),
+                ],
+              ],
             ],
           ),
         );
@@ -358,81 +578,20 @@ class RentPriceDetail extends StatelessWidget {
             children: [
               SizedBox(height: 24),
               Text("Financial"),
-              SizedBox(height: 8),
-              buildSectionTitle('Excepted Cost'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Enter Cost',
-                Icons.currency_rupee_outlined,
-                controller.commercial_rent_cost,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter Excepted cost';
-                  }
-                  final rent = int.tryParse(value); // parse once
-                  if (rent == null) {
-                    return 'Please enter a valid amount';
-                  }
-                  if (rent > 5000000000 || rent < 2000000) {
-                    return 'Please enter rent between  2000000 to 5000000000';
-                  }
-
-                  return null;
-                },
-                isPhoneKey: true,
-              ),
-
-              SizedBox(height: 16),
-              Text('Other Details'),
-              SizedBox(height: 8),
-              buildSectionTitle("Is it pre-leased?/pre-rented? "),
-              SizedBox(height: 8),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children:
-                    ["Yes", "No"]
-                        .map(
-                          (type) => buildChoice(
-                            title: type,
-                            selected:
-                                controller.commercial_isPreLeased.value == type,
-                            onTap: () {
-                              controller.setValue(
-                                controller.commercial_isPreLeased,
-                                type,
-                              );
-                            },
-                          ),
-                        )
-                        .toList(),
-              ),
-              Obx(
-                () =>
-                    controller.selectedChoiceAnyoneInPriceSection.value
-                        ? Padding(
-                          padding: const EdgeInsets.only(top: 8, left: 4),
-                          child: Text(
-                            'Please select Pre-leased/Pre-rented',
-                            style: TextStyle(
-                              color: ColorRes.error.shade700,
-                              fontSize: AppFontSizes.small,
-                              // fontSize: 12,
-                            ),
-                          ),
-                        )
-                        : const SizedBox.shrink(),
-              ),
-              if (controller.commercial_isPreLeased.value == "Yes") ...[
-                SizedBox(height: 16),
-                Text("Current Rent per month"),
+              if (controller.selectedIndex.value != "Office" &&
+                  controller.selectedIndex.value != "Shop" &&
+                  controller.selectedIndex.value != "Showroom"&&
+                  controller.selectedIndex.value != "Warehouse") ...[
+                SizedBox(height: 8),
+                buildSectionTitle('Excepted Rent'),
                 SizedBox(height: 8),
                 buildTextField(
-                  'Enter Rent per month',
+                  'Enter rent',
+
                   Icons.currency_rupee_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter current rent';
+                      return 'Please enter Excepted rent';
                     }
                     final rent = int.tryParse(value); // parse once
                     if (rent == null) {
@@ -444,53 +603,226 @@ class RentPriceDetail extends StatelessWidget {
 
                     return null;
                   },
-                  controller.commercial_current_rent_preLeasedTill,
+
+                  controller.commercial_rent_cost,
+
                   isPhoneKey: true,
                 ),
-                SizedBox(height: 16),
-                Text("Lease years"),
+                // SizedBox(height: 16),
+                // buildSectionTitle('Security Deposit'),
+                // SizedBox(height: 8),
+                // buildTextField(
+                //   'Enter deposit',
+                //
+                //   Icons.currency_rupee_outlined,
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter Excepted deposit';
+                //     }
+                //     final rent = int.tryParse(value); // parse once
+                //     if (rent == null) {
+                //       return 'Please enter a valid amount';
+                //     }
+                //     if (rent > 1500000 || rent < 20000) {
+                //       return 'Please enter rent between  20000 to 1500000';
+                //     }
+                //
+                //     return null;
+                //   },
+                //
+                //   controller.commercial_rent_security_deposite,
+                //
+                //   isPhoneKey: true,
+                // ),
+              ] else ...[
+                SizedBox(height: 8),
+                buildSectionTitle('Property Price'),
                 SizedBox(height: 8),
                 buildTextField(
-                  'Enter year',
+                  'Enter price',
 
-                  Icons.timelapse_outlined,
+                  Icons.currency_rupee_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter lease years';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Please enter a valid amount';
-                    }
-
-                    return null;
-                  },
-                  controller.commercial_lease_years,
-                  isPhoneKey: true,
-                ),
-              ] else if (controller.commercial_isPreLeased.value == "No") ...[
-                SizedBox(height: 16),
-                Text("Expected R.O.I %"),
-                SizedBox(height: 8),
-                buildTextField(
-                  'Enter R.O.I %',
-                  Icons.timelapse_outlined,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter expected R.O.I %';
+                      return 'Please enter Excepted price';
                     }
                     final rent = int.tryParse(value); // parse once
                     if (rent == null) {
                       return 'Please enter a valid amount';
                     }
-                    if (rent > 100 || rent < 1) {
-                      return 'Please enter R.O.I % between 1 to 100';
+                    if (rent > 1500000 || rent < 20000) {
+                      return 'Please enter rent between  20000 to 1500000';
                     }
 
                     return null;
                   },
-                  controller.commercial_returned_RIO,
+
+                  controller.commercial_rent_cost,
+
                   isPhoneKey: true,
                 ),
+                SizedBox(height: 16),
+                buildSectionTitle('Price Negotiable'),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                  ["Yes", "No"]
+                      .map(
+                        (type) => buildChoice(
+                      title: type,
+                      selected:
+                      controller
+                          .commercial_rent_price_negotiable
+                          .value ==
+                          type,
+                      onTap: () {
+                        controller.setValue(
+                          controller.commercial_rent_price_negotiable,
+                          type,
+                        );
+                      },
+                    ),
+                  )
+                      .toList(),
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle('Brokerage'),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                  ["Yes", "No"]
+                      .map(
+                        (type) => buildChoice(
+                      title: type,
+                      selected:
+                      controller.commercial_rent_brokage.value ==
+                          type,
+                      onTap: () {
+                        controller.setValue(
+                          controller.commercial_rent_brokage,
+                          type,
+                        );
+                      },
+                    ),
+                  )
+                      .toList(),
+                ),
+                if (controller.commercial_rent_brokage.value == 'Yes') ...[
+                  SizedBox(height: 16),
+                  buildSectionTitle('Brokerage Amount'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    'Enter brokerage amount',
+
+                    Icons.currency_rupee_outlined,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter brokerage';
+                      }
+                      final rent = int.tryParse(value); // parse once
+                      if (rent == null) {
+                        return 'Please enter a valid amount';
+                      }
+                      if (rent > 1500000 || rent < 20000) {
+                        return 'Please enter rent between  20000 to 1500000';
+                      }
+
+                      return null;
+                    },
+
+                    controller.commercial_rent_brokerage,
+
+                    isPhoneKey: true,
+                  ),
+                  SizedBox(height: 16),
+                  buildSectionTitle('Brokerage Negotiable'),
+                  SizedBox(height: 8),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
+                    ["Yes", "No"]
+                        .map(
+                          (type) => buildChoice(
+                        title: type,
+                        selected:
+                        controller
+                            .commercial_rent_brokage_negotiable
+                            .value ==
+                            type,
+                        onTap: () {
+                          controller.setValue(
+                            controller
+                                .commercial_rent_brokage_negotiable,
+                            type,
+                          );
+                        },
+                      ),
+                    )
+                        .toList(),
+                  ),
+                ],
+                // SizedBox(height: 16),
+                // buildSectionTitle('Maintenance Charges'),
+                // SizedBox(height: 8),
+                // Wrap(
+                //   spacing: 12,
+                //   runSpacing: 12,
+                //   children:
+                //   ["Included in Rent", "Separate"]
+                //       .map(
+                //         (type) => buildChoice(
+                //       title: type,
+                //       selected:
+                //       controller
+                //           .commercial_rent_maintainance_charge
+                //           .value ==
+                //           type,
+                //       onTap: () {
+                //         controller.setValue(
+                //           controller
+                //               .commercial_rent_maintainance_charge,
+                //           type,
+                //         );
+                //       },
+                //     ),
+                //   )
+                //       .toList(),
+                // ),
+                //
+                // if (controller.commercial_rent_maintainance_charge.value ==
+                //     "Separate") ...[
+                //   SizedBox(height: 16),
+                //   buildSectionTitle('Maintenance Amount'),
+                //   SizedBox(height: 8),
+                //   buildTextField(
+                //     'Enter maintenance amount',
+                //
+                //     Icons.currency_rupee_outlined,
+                //     validator: (value) {
+                //       if (value == null || value.isEmpty) {
+                //         return 'Please enter Excepted rent';
+                //       }
+                //       final rent = int.tryParse(value); // parse once
+                //       if (rent == null) {
+                //         return 'Please enter a valid amount';
+                //       }
+                //       if (rent > 1500000 || rent < 20000) {
+                //         return 'Please enter rent between  20000 to 1500000';
+                //       }
+                //
+                //       return null;
+                //     },
+                //
+                //     controller.commercial_rent_mainatainance_charge,
+                //
+                //     isPhoneKey: true,
+                //   ),
+                // ],
               ],
             ],
           ),

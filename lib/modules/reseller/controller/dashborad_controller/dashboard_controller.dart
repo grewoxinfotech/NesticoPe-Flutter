@@ -704,6 +704,12 @@ class DashboardController extends GetxController {
   RxString resellerPossessionStatus = "".obs;
   RxList<String> propertyTypeList = <String>[].obs;
 
+  ///////===Builder -===.
+  RxString builderProjectStatus="".obs;
+  final txtBuilderProjectName = TextEditingController();
+  final txtBuilderRERAID = TextEditingController();
+
+
   /////////////====================================================
 
   // Categories
@@ -771,21 +777,41 @@ class DashboardController extends GetxController {
 
 
   void buyerPriceRange(RangeValues value) {
-    final clampedStart = value.start.clamp(resellerMinPrice.value, resellerMaxPrice.value);
-    final clampedEnd = value.end.clamp(resellerMinPrice.value, resellerMaxPrice.value);
+    // Ensure valid range — prevent lowerBound > upperBound
+    final lower = resellerMinPrice.value < resellerMaxPrice.value
+        ? resellerMinPrice.value
+        : resellerMaxPrice.value;
+    final upper = resellerMaxPrice.value > resellerMinPrice.value
+        ? resellerMaxPrice.value
+        : resellerMinPrice.value;
+
+    final clampedStart = value.start.clamp(lower, upper);
+    final clampedEnd = value.end.clamp(lower, upper);
     _rangeValues.value = RangeValues(clampedStart, clampedEnd);
 
-    // update observable map with strings
+    // Update observable map
     priceRangeSeller.value = priceRange(_rangeValues.value.start, _rangeValues.value.end);
+
+    // 🧩 Log for debugging
+    log('📊 buyerPriceRange called');
+    log('   ▶ Original values: start=${value.start}, end=${value.end}');
+    log('   ▶ Clamped with bounds: lower=$lower, upper=$upper');
+    log('   ▶ Result: start=$clampedStart, end=$clampedEnd');
+    log('   ▶ priceRangeSeller: ${priceRangeSeller.value}');
   }
+
 
   Map<String, dynamic> priceRange(double min, double max) {
-    return {
-      'min': min.toString(),
-      'max': max.toString(),
+    final rangeMap = {
+      'min': min.toInt(),
+      'max': max.toInt(),
     };
-  }
 
+    // 🧩 Log the computed range
+    log('💰 priceRange() → $rangeMap');
+
+    return rangeMap;
+  }
 
 
 

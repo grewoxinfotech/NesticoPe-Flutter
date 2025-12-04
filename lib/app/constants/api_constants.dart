@@ -23,6 +23,8 @@ class ApiConstants {
   static String get covertToSeller => "$auth/convert-buyer-to-seller";
 
   static String get convertToReseller => "$auth/convert-buyer-to-reseller";
+  static String get convertToContractor => "$auth/convert-buyer-to-contractor";
+
 
   static String get referralGet => "$baseURL/referral/my-stats";
 
@@ -88,6 +90,10 @@ class ApiConstants {
   static String get calendarCategory => "$baseURL/calendarCategory";
 
   static String get ticket => "$baseURL/ticket";
+  ///-----------------------------Contractor----------------------------------//
+  static String get contractorDashboard=> "$baseURL/insight/contractor";
+  static String get contractorService=> "$baseURL/contractorService";
+  static String get contractorServiceCategory=> "$baseURL/contractorServiceCategory";
 
   //---------------------------------other-----------------------------//
 

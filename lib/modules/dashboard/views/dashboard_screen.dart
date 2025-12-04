@@ -17,6 +17,8 @@ import 'package:get/get.dart';
 
 import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dart';
 import '../../builder/view/builder_main_screen.dart';
+import '../../contractor/view/contractor_main.dart';
+import '../../contractor/view/widget/convert_to_contractor.dart';
 import '../../feedback/views/feedback_and_report.dart';
 import '../../home/views/compare_screen/comapre_screen.dart';
 import '../../home/views/home_screen/home_screen.dart';
@@ -92,10 +94,10 @@ class DashboardScreen extends StatelessWidget {
                 // if (UserHelper.isReseller) ...[
                 ElevatedButton(
                   onPressed: () {
-                    Get.to(() => ResellerSuccessStoryScreen());
+                    Get.to(() => ContractorMainScreen());
                   },
 
-                  child: Text("Reseller Stories"),
+                  child: Text("Contractor"),
                 ),
                 SizedBox(height: 16),
                 // ],
@@ -141,10 +143,10 @@ class DashboardScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    Get.to(() => CalendarScreen());
+                    Get.to(() => ConvertToContractorConversionScreen());
                   },
 
-                  child: Text("Calender"),
+                  child: Text("Convert To Contractor"),
                 ),
                 SizedBox(height: 16),
                 ElevatedButton(

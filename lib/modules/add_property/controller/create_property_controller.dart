@@ -391,6 +391,15 @@ class CreatePropertyController extends GetxController {
   var commercial_rent_posessionStatus = "".obs;
   var commercial_rent_building_Name = TextEditingController();
   var commercial_rent_Loaclity_Name = TextEditingController();
+  var commercial_rent_security_deposite=TextEditingController();
+  var commercial_rent_description=TextEditingController();
+  var commercial_rent_price_negotiable="".obs;
+  var commercial_rent_brokage="".obs;
+  var commercial_rent_brokerage=TextEditingController();
+  var commercial_rent_brokage_negotiable="".obs;
+  var commercial_rent_maintainance_charge="".obs;
+  var commercial_rent_mainatainance_charge=TextEditingController();
+
 
   final tempRoomType = ''.obs;
   final tempMonthlyRent = TextEditingController();

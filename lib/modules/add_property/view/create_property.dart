@@ -1833,7 +1833,7 @@ class CreatePropertyScreen extends StatelessWidget {
                               controller.showBasicPropertyType.value = false;
                             }
                             log(
-                              'hgdvcgytdvcfhgdvcgytdvcf $step ${controller.propertyType.value}',
+                              'hgdvcgytdvcfhgdvcgytdvcf vbv$step ${controller.propertyType.value}',
                             );
                             if (step == 0 &&
                                 controller.lookingTo.value.isEmpty) {

@@ -441,6 +441,31 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
   }
+  Future<void> convertBuyerToContractor() async {
+    try {
+      isLoading.value = true;
+      final user = await authService.convertBuyerToContractor();
+      if (user) {
+        Get.offAll(() => LoginScreen());
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Conversion Failed",
+          message: "Failed to Convert Buyer to Contractor",
+          contentType: ContentType.failure,
+        );
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Conversion Failed",
+        message: e.toString(),
+        contentType: ContentType.failure,
+      );
+      print("[Debug]-> Error: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   Future<void> resetPassword() async {
     try {

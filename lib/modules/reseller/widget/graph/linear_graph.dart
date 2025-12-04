@@ -168,7 +168,7 @@ class MonthlyBarChart extends StatelessWidget {
     final minValue = 0.0;
 
     // ✅ Ensure minimum visible range up to 50
-    final effectiveMax = maxValue < 50 ? 50 : maxValue;
+    final effectiveMax = maxValue < 20 ? 20 : maxValue;
     final yRange = effectiveMax - minValue;
 
     // ✅ Always create 6 Y steps (0 to max)

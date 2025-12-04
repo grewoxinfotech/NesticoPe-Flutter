@@ -671,7 +671,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
 
-                // const SizedBox(height: 10),
+                const SizedBox(height: 10),
                 NesticoPeTextField(
                   title: "Email Address",
                   controller: _emailController,
