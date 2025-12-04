@@ -1,18 +1,14 @@
 import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/modules/add_property/model/add_property_model.dart';
 import 'package:housing_flutter_app/modules/add_property/model/furnishing_,model.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../data/network/property/models/property_model.dart'
-    hide RoomFacilityInfo;
 import '../../../../utils/logger/app_logger.dart';
-import '../../../dashboard/views/dashboard_screen.dart';
+
 import '../../controller/create_property_controller.dart';
-import '../../model/photo_model.dart';
+
 import '../../model/room_detail_model.dart';
 
 class LoadEditPropertyPayload extends GetxController {
@@ -162,11 +158,11 @@ class LoadEditPropertyPayload extends GetxController {
     loadFurnishingInfo(controller, property);
     if (property.type!.toLowerCase() == 'commercial') {
       loadCommercialAmenities(controller, property);
+      loadCommercialInfo(controller, property);
     } else {
       loadAmenities(controller, property);
     }
     loadPgInfo(controller, property);
-    loadCommercialInfo(controller, property);
   }
 
   void loadCommercialInfo(
@@ -188,8 +184,6 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDetails!.zoneType!.isNotEmpty)
             ? property.propertyDetails!.zoneType!
             : '';
-
-    // TODO: OwnerShip
 
     loadPlotInfo(controller, property);
     loadPropertyCondition(controller, property);
@@ -543,58 +537,6 @@ class LoadEditPropertyPayload extends GetxController {
     }
   }
 
-  // void loadFurnishingInfo(
-  //   CreatePropertyController controller,
-  //   AddPropertyModel property,
-  // ) {
-  //   controller.furnishingType.value =
-  //       (property.propertyDetails?.furnishInfo?.furnishType != null &&
-  //               property.propertyDetails!.furnishInfo!.furnishType!.isNotEmpty)
-  //           ? property.propertyDetails!.furnishInfo!.furnishType!
-  //               .replaceAll("-", " ")
-  //               .capitalize
-  //               .toString()
-  //           : "";
-  //
-  //   if (property.propertyDetails?.furnishInfo?.furnishDetails != null) {
-  //     final furnishingDetails =
-  //         property.propertyDetails!.furnishInfo!.furnishDetails!;
-  //     print('Furnish Info:${furnishingDetails.toJson()}');
-  //     controller.selectedFurnishing.value['ac']?.quantity =
-  //         furnishingDetails.ac ?? 0;
-  //     controller.selectedFurnishing.value['bed']?.quantity =
-  //         furnishingDetails.bed ?? 0;
-  //     controller.selectedFurnishing.value['geyser']?.quantity =
-  //         furnishingDetails.geyser ?? 0;
-  //     controller.selectedFurnishing.value['washing_machine']?.quantity =
-  //         (furnishingDetails.washingMachine != null &&
-  //                 furnishingDetails.washingMachine!)
-  //             ? 1
-  //             : 0;
-  //     controller.selectedFurnishing.value['cupboard']?.quantity =
-  //         (furnishingDetails.cupboard != null && furnishingDetails.cupboard!)
-  //             ? 1
-  //             : 0;
-  //     controller.selectedFurnishing.value['stove']?.quantity =
-  //         (furnishingDetails.stove != null && furnishingDetails.stove!) ? 1 : 0;
-  //     controller.selectedFurnishing.value['fridge']?.quantity =
-  //         (furnishingDetails.fridge != null && furnishingDetails.fridge!)
-  //             ? 1
-  //             : 0;
-  //     controller.selectedFurnishing.value['water_purifier']?.quantity =
-  //         (furnishingDetails.waterPurifier != null &&
-  //                 furnishingDetails.waterPurifier!)
-  //             ? 1
-  //             : 0;
-  //     controller.selectedFurnishing.value['modular_kitchen']?.quantity =
-  //         (furnishingDetails.modularKitchen != null &&
-  //                 furnishingDetails.modularKitchen!)
-  //             ? 1
-  //             : 0;
-  //   }
-  // }
-
-  // TODO: Remain to Implement
   void loadFurnishingInfo(
     CreatePropertyController controller,
     AddPropertyModel property,
@@ -612,45 +554,59 @@ class LoadEditPropertyPayload extends GetxController {
       final furnishingDetails =
           property.propertyDetails!.furnishInfo!.furnishDetails!;
       final f = property.propertyDetails!.furnishInfo!.furnishDetails!;
-      controller.selectedFurnishing['ac']?.quantity =
-          furnishingDetails.ac == true ? furnishingDetails.ac! : 0;
-      // loadItemByTitle(controller, "AC", f.ac);
-      // loadItemByTitle(controller, "Washing Machine", f.washingMachine);
-      // loadItemByTitle(controller, "Cupboard", f.cupboard);
-      // loadItemByTitle(controller, "Stove", f.stove);
-      // loadItemByTitle(controller, "Fridge", f.fridge);
-      // loadItemByTitle(controller, "Water Purifier", f.waterPurifier);
-      // loadItemByTitle(controller, "Modular Kitchen", f.modularKitchen);
+      // controller.selectedFurnishing['ac']?.quantity =
+      //     furnishingDetails.ac == true ? furnishingDetails.ac! : 0;
+      // ---------- Boolean Furnishings ----------
+      loadItemByTitle(controller, "Dining Table", f.diningTable);
+      loadItemByTitle(controller, "Washing Machine", f.washingMachine);
+      loadItemByTitle(controller, "Cupboard", f.cupboard);
+      loadItemByTitle(controller, "Sofa", f.sofa);
+      loadItemByTitle(controller, "Microwave", f.microwave);
+      loadItemByTitle(controller, "Stove", f.stove);
+      loadItemByTitle(controller, "Fridge", f.fridge);
+      loadItemByTitle(controller, "Water Purifier", f.waterPurifier);
+      loadItemByTitle(controller, "Gas Pipeline", f.gasPipeline);
+      loadItemByTitle(controller, "Chimney", f.chimney);
+      loadItemByTitle(controller, "Modular Kitchen", f.modularKitchen);
 
-      controller.selectedFurnishing['bed']?.quantity =
-          furnishingDetails.bed == true ? furnishingDetails.bed! : 0;
-      controller.selectedFurnishing['geyser']?.quantity =
-          furnishingDetails.geyser == true ? furnishingDetails.geyser! : 0;
-      controller.selectedFurnishing['washing_machine']?.quantity =
-          (furnishingDetails.washingMachine != null &&
-                  furnishingDetails.washingMachine!)
-              ? 1
-              : 0;
-      controller.selectedFurnishing['cupboard']?.quantity =
-          (furnishingDetails.cupboard != null && furnishingDetails.cupboard!)
-              ? 1
-              : 0;
-      controller.selectedFurnishing['stove']?.quantity =
-          (furnishingDetails.stove != null && furnishingDetails.stove!) ? 1 : 0;
-      controller.selectedFurnishing['fridge']?.quantity =
-          (furnishingDetails.fridge != null && furnishingDetails.fridge!)
-              ? 1
-              : 0;
-      controller.selectedFurnishing['water_purifier']?.quantity =
-          (furnishingDetails.waterPurifier != null &&
-                  furnishingDetails.waterPurifier!)
-              ? 1
-              : 0;
-      controller.selectedFurnishing['modular_kitchen']?.quantity =
-          (furnishingDetails.modularKitchen != null &&
-                  furnishingDetails.modularKitchen!)
-              ? 1
-              : 0;
+      // ---------- Multi-choice Furnishings ----------
+      loadItemByTitle(controller, "Fan", f.fan);
+      loadItemByTitle(controller, "Light", f.light);
+      loadItemByTitle(controller, "AC", f.ac);
+      loadItemByTitle(controller, "Wardrobe", f.wardrobe);
+      loadItemByTitle(controller, "TV", f.tv);
+      loadItemByTitle(controller, "Bed", f.bed);
+      loadItemByTitle(controller, "Geyser", f.geyser);
+
+      // controller.selectedFurnishing['bed']?.quantity =
+      //     furnishingDetails.bed == true ? furnishingDetails.bed! : 0;
+      // controller.selectedFurnishing['geyser']?.quantity =
+      //     furnishingDetails.geyser == true ? furnishingDetails.geyser! : 0;
+      // controller.selectedFurnishing['washing_machine']?.quantity =
+      //     (furnishingDetails.washingMachine != null &&
+      //             furnishingDetails.washingMachine!)
+      //         ? 1
+      //         : 0;
+      // controller.selectedFurnishing['cupboard']?.quantity =
+      //     (furnishingDetails.cupboard != null && furnishingDetails.cupboard!)
+      //         ? 1
+      //         : 0;
+      // controller.selectedFurnishing['stove']?.quantity =
+      //     (furnishingDetails.stove != null && furnishingDetails.stove!) ? 1 : 0;
+      // controller.selectedFurnishing['fridge']?.quantity =
+      //     (furnishingDetails.fridge != null && furnishingDetails.fridge!)
+      //         ? 1
+      //         : 0;
+      // controller.selectedFurnishing['water_purifier']?.quantity =
+      //     (furnishingDetails.waterPurifier != null &&
+      //             furnishingDetails.waterPurifier!)
+      //         ? 1
+      //         : 0;
+      // controller.selectedFurnishing['modular_kitchen']?.quantity =
+      //     (furnishingDetails.modularKitchen != null &&
+      //             furnishingDetails.modularKitchen!)
+      //         ? 1
+      //         : 0;
     }
 
     print('Furnish Info:${controller.selectedFurnishing.value}');
@@ -868,6 +824,15 @@ class LoadEditPropertyPayload extends GetxController {
     controller.rooms.value =
         pgRooms?.map((e) {
           controller.roomFacilityAvailableOrNot.value = 'Yes';
+          if (e.roomFacilityInfo != null) {
+            controller.selectedRoomAmenitiesDataForPG.value = _mapPgAmenities(
+              e.roomFacilityInfo,
+            );
+            print(
+              '=========== ${controller.selectedRoomAmenitiesDataForPG.value}',
+            );
+            print('=========== ${_mapPgAmenities(e.roomFacilityInfo)}');
+          }
           return RoomModel(
             monthlyRent:
                 (e.rent != null && e.rent != 0)
@@ -900,7 +865,7 @@ class LoadEditPropertyPayload extends GetxController {
       'ac': info.ac,
       'tv': info.tv,
       'geyser': info.geyser,
-      'fridge': info.fridge,
+      'refrigerate': info.fridge,
       'cupboard': info.cupboard,
     };
 

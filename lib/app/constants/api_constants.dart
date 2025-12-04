@@ -87,6 +87,8 @@ class ApiConstants {
 
   static String get calendarCategory => "$baseURL/calendarCategory";
 
+  static String get ticket => "$baseURL/ticket";
+
   //---------------------------------other-----------------------------//
 
   static String get cityInsights => "$baseURL/cityInsights/existing/city";

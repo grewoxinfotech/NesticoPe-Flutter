@@ -52,6 +52,7 @@ dependencies:
   pdfx:
   open_filex:
   flutter_rating_bar: ^4.0.1
+  web_socket:
 
 
 dev_dependencies:

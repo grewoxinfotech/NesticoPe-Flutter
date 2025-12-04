@@ -2135,7 +2135,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadResidentialPG();
-      debugPrint("Payload : ${payload.toJson()}");
+      debugPrint("Payload : ${payload.propertyDetails?.furnishInfo?.toJson()}");
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -3196,8 +3196,25 @@ class CreatePropertyController extends GetxController {
                 ? PropertyFurnishInfo(
                   furnishType: furnishingType.value,
                   furnishDetails: FurnishDetails(
+                    // ---------- Multi-choice (int) ----------
+                    fan: int.tryParse(
+                      selectedFurnishing.value['fan']?.quantity.toString() ??
+                          '',
+                    ),
+                    light: int.tryParse(
+                      selectedFurnishing.value['light']?.quantity.toString() ??
+                          '',
+                    ),
                     ac: int.tryParse(
                       selectedFurnishing.value['ac']?.quantity.toString() ?? '',
+                    ),
+                    wardrobe: int.tryParse(
+                      selectedFurnishing.value['wardrobe']?.quantity
+                              .toString() ??
+                          '',
+                    ),
+                    tv: int.tryParse(
+                      selectedFurnishing.value['tv']?.quantity.toString() ?? '',
                     ),
                     bed: int.tryParse(
                       selectedFurnishing.value['bed']?.quantity.toString() ??
@@ -3207,13 +3224,26 @@ class CreatePropertyController extends GetxController {
                       selectedFurnishing.value['geyser']?.quantity.toString() ??
                           '',
                     ),
+
+                    // ---------- Boolean Furnishings ----------
+                    diningTable:
+                        selectedFurnishing.value['table']?.quantity == 1
+                            ? true
+                            : false,
                     washingMachine:
-                        selectedFurnishing.value['washing_machine']?.quantity ==
-                                1
+                        selectedFurnishing.value['washing']?.quantity == 1
                             ? true
                             : false,
                     cupboard:
                         selectedFurnishing.value['cupboard']?.quantity == 1
+                            ? true
+                            : false,
+                    sofa:
+                        selectedFurnishing.value['sofa']?.quantity == 1
+                            ? true
+                            : false,
+                    microwave:
+                        selectedFurnishing.value['microwave']?.quantity == 1
                             ? true
                             : false,
                     stove:
@@ -3221,16 +3251,24 @@ class CreatePropertyController extends GetxController {
                             ? true
                             : false,
                     fridge:
-                        selectedFurnishing.value['fridge']?.quantity == 1
+                        selectedFurnishing.value['refrigerate']?.quantity == 1
                             ? true
                             : false,
                     waterPurifier:
-                        selectedFurnishing.value['water_purifier']?.quantity ==
+                        selectedFurnishing.value['water-purifier']?.quantity ==
                                 1
                             ? true
                             : false,
+                    gasPipeline:
+                        selectedFurnishing.value['gas-pipline']?.quantity == 1
+                            ? true
+                            : false,
+                    chimney:
+                        selectedFurnishing.value['chimeny']?.quantity == 1
+                            ? true
+                            : false,
                     modularKitchen:
-                        selectedFurnishing.value['modular_kitchen']?.quantity ==
+                        selectedFurnishing.value['modular-kitchen']?.quantity ==
                                 1
                             ? true
                             : false,
@@ -3384,8 +3422,25 @@ class CreatePropertyController extends GetxController {
                 ? PropertyFurnishInfo(
                   furnishType: furnishingType.value,
                   furnishDetails: FurnishDetails(
+                    // ---------- Multi-choice (int) ----------
+                    fan: int.tryParse(
+                      selectedFurnishing.value['fan']?.quantity.toString() ??
+                          '',
+                    ),
+                    light: int.tryParse(
+                      selectedFurnishing.value['light']?.quantity.toString() ??
+                          '',
+                    ),
                     ac: int.tryParse(
                       selectedFurnishing.value['ac']?.quantity.toString() ?? '',
+                    ),
+                    wardrobe: int.tryParse(
+                      selectedFurnishing.value['wardrobe']?.quantity
+                              .toString() ??
+                          '',
+                    ),
+                    tv: int.tryParse(
+                      selectedFurnishing.value['tv']?.quantity.toString() ?? '',
                     ),
                     bed: int.tryParse(
                       selectedFurnishing.value['bed']?.quantity.toString() ??
@@ -3395,13 +3450,26 @@ class CreatePropertyController extends GetxController {
                       selectedFurnishing.value['geyser']?.quantity.toString() ??
                           '',
                     ),
+
+                    // ---------- Boolean Furnishings ----------
+                    diningTable:
+                        selectedFurnishing.value['table']?.quantity == 1
+                            ? true
+                            : false,
                     washingMachine:
-                        selectedFurnishing.value['washing_machine']?.quantity ==
-                                1
+                        selectedFurnishing.value['washing']?.quantity == 1
                             ? true
                             : false,
                     cupboard:
                         selectedFurnishing.value['cupboard']?.quantity == 1
+                            ? true
+                            : false,
+                    sofa:
+                        selectedFurnishing.value['sofa']?.quantity == 1
+                            ? true
+                            : false,
+                    microwave:
+                        selectedFurnishing.value['microwave']?.quantity == 1
                             ? true
                             : false,
                     stove:
@@ -3409,16 +3477,24 @@ class CreatePropertyController extends GetxController {
                             ? true
                             : false,
                     fridge:
-                        selectedFurnishing.value['fridge']?.quantity == 1
+                        selectedFurnishing.value['refrigerate']?.quantity == 1
                             ? true
                             : false,
                     waterPurifier:
-                        selectedFurnishing.value['water_purifier']?.quantity ==
+                        selectedFurnishing.value['water-purifier']?.quantity ==
                                 1
                             ? true
                             : false,
+                    gasPipeline:
+                        selectedFurnishing.value['gas-pipline']?.quantity == 1
+                            ? true
+                            : false,
+                    chimney:
+                        selectedFurnishing.value['chimeny']?.quantity == 1
+                            ? true
+                            : false,
                     modularKitchen:
-                        selectedFurnishing.value['modular_kitchen']?.quantity ==
+                        selectedFurnishing.value['modular-kitchen']?.quantity ==
                                 1
                             ? true
                             : false,
@@ -3525,7 +3601,6 @@ class CreatePropertyController extends GetxController {
               managerStaysAtProperty.value.toLowerCase() == 'yes'
                   ? true
                   : false,
-          // TODO: Notice Period and lock in period
           pgRoomInfo:
               rooms.isNotEmpty
                   ? rooms
@@ -3574,11 +3649,24 @@ class CreatePropertyController extends GetxController {
         furnishInfo: PropertyFurnishInfo(
           furnishType:
               furnishingType.value.isNotEmpty
-                  ? furnishingType.value.toLowerCase().replaceAll(" ", "_")
+                  ? furnishingType.value.toLowerCase().replaceAll(" ", "-")
                   : null,
           furnishDetails: FurnishDetails(
+            // ---------- Multi-choice (int) ----------
+            fan: int.tryParse(
+              selectedFurnishing.value['fan']?.quantity.toString() ?? '',
+            ),
+            light: int.tryParse(
+              selectedFurnishing.value['light']?.quantity.toString() ?? '',
+            ),
             ac: int.tryParse(
               selectedFurnishing.value['ac']?.quantity.toString() ?? '',
+            ),
+            wardrobe: int.tryParse(
+              selectedFurnishing.value['wardrobe']?.quantity.toString() ?? '',
+            ),
+            tv: int.tryParse(
+              selectedFurnishing.value['tv']?.quantity.toString() ?? '',
             ),
             bed: int.tryParse(
               selectedFurnishing.value['bed']?.quantity.toString() ?? '',
@@ -3586,26 +3674,44 @@ class CreatePropertyController extends GetxController {
             geyser: int.tryParse(
               selectedFurnishing.value['geyser']?.quantity.toString() ?? '',
             ),
+
+            // ---------- Boolean Furnishings ----------
+            diningTable:
+                selectedFurnishing.value['table']?.quantity == 1 ? true : false,
             washingMachine:
-                selectedFurnishing.value['washing_machine']?.quantity == 1
+                selectedFurnishing.value['washing']?.quantity == 1
                     ? true
                     : false,
             cupboard:
                 selectedFurnishing.value['cupboard']?.quantity == 1
                     ? true
                     : false,
+            sofa:
+                selectedFurnishing.value['sofa']?.quantity == 1 ? true : false,
+            microwave:
+                selectedFurnishing.value['microwave']?.quantity == 1
+                    ? true
+                    : false,
             stove:
                 selectedFurnishing.value['stove']?.quantity == 1 ? true : false,
             fridge:
-                selectedFurnishing.value['fridge']?.quantity == 1
+                selectedFurnishing.value['refrigerate']?.quantity == 1
                     ? true
                     : false,
             waterPurifier:
-                selectedFurnishing.value['water_purifier']?.quantity == 1
+                selectedFurnishing.value['water-purifier']?.quantity == 1
+                    ? true
+                    : false,
+            gasPipeline:
+                selectedFurnishing.value['gas-pipline']?.quantity == 1
+                    ? true
+                    : false,
+            chimney:
+                selectedFurnishing.value['chimeny']?.quantity == 1
                     ? true
                     : false,
             modularKitchen:
-                selectedFurnishing.value['modular_kitchen']?.quantity == 1
+                selectedFurnishing.value['modular-kitchen']?.quantity == 1
                     ? true
                     : false,
           ),

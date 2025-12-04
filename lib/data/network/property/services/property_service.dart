@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' as io;
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
@@ -127,9 +129,9 @@ class PropertyService {
   /// Create new property
   Future<bool> createProperty(
     Map<String, dynamic> property,
-    List<File>? images,
-    List<File>? videos,
-    List<File>? documents,
+    List<io.File>? images,
+    List<io.File>? videos,
+    List<io.File>? documents,
   ) async {
     try {
       final url = Uri.parse(baseUrl);
@@ -194,16 +196,16 @@ class PropertyService {
 
       debugPrint("Create property response: ${response.body}");
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackBar.show(
-          Get.overlayContext!,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
           message: "Create Property Successful",
-          type: SnackBarType.success,
+          contentType: ContentType.success,
         );
       } else {
-        CustomSnackBar.show(
-          Get.overlayContext!,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
           message: "Failed to create property. Please try again.",
-          type: SnackBarType.error,
+          contentType: ContentType.success,
         );
       }
 
@@ -218,9 +220,9 @@ class PropertyService {
   Future<bool> updateProperty(
     String id,
     Map<String, dynamic> property,
-    List<File>? images,
-    List<File>? videos,
-    List<File>? documents,
+    List<io.File>? images,
+    List<io.File>? videos,
+    List<io.File>? documents,
   ) async {
     try {
       final url = Uri.parse('$baseUrl/$id');
@@ -302,16 +304,16 @@ class PropertyService {
 
       debugPrint("Update property response: ${response.body}");
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackBar.show(
-          Get.overlayContext!,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
           message: "Update Property Successful",
-          type: SnackBarType.success,
+          contentType: ContentType.success,
         );
       } else {
-        CustomSnackBar.show(
-          Get.overlayContext!,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
           message: "Failed to Update property. Please try again.",
-          type: SnackBarType.error,
+          contentType: ContentType.success,
         );
       }
 

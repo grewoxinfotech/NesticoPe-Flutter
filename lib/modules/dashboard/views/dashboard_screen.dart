@@ -29,6 +29,7 @@ import '../../referral/view/referral_dashboard.dart';
 import '../../reseller/view/reseller_success_stories/reseller_success_stories.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import '../../seller/seller_listing/view/seller_listing_view.dart';
+import '../../support_ticket/views/support_ticket_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -144,6 +145,14 @@ class DashboardScreen extends StatelessWidget {
                   },
 
                   child: Text("Calender"),
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => SupportTicketScreen());
+                  },
+
+                  child: Text("Support Ticket"),
                 ),
               ],
             ),

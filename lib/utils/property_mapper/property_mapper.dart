@@ -159,13 +159,25 @@ extension ItemsMapper on Items.Items {
     Items.FurnishDetails source,
   ) {
     return AddPropertyModel.FurnishDetails(
+      // ---------- Boolean Furnishings ----------
+      diningTable: source.diningTable,
       washingMachine: source.washingMachine,
       cupboard: source.cupboard,
+      sofa: source.sofa,
+      microwave: source.microwave,
       stove: source.stove,
       fridge: source.fridge,
       waterPurifier: source.waterPurifier,
+      gasPipeline: source.gasPipeline,
+      chimney: source.chimney,
       modularKitchen: source.modularKitchen,
+
+      // ---------- Multi-choice Furnishings ----------
+      fan: source.fan,
+      light: source.light,
       ac: source.ac,
+      wardrobe: source.wardrobe,
+      tv: source.tv,
       bed: source.bed,
       geyser: source.geyser,
     );

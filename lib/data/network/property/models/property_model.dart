@@ -691,55 +691,152 @@ class FurnishInfo {
   }
 }
 
+// class FurnishDetails {
+//   final bool? washingMachine;
+//   final bool? cupboard;
+//   final bool? stove;
+//   final bool? fridge;
+//   final bool? waterPurifier;
+//   final bool? modularKitchen;
+//   final int? ac;
+//   final int? bed;
+//   final int? geyser;
+//
+//   FurnishDetails({
+//     this.washingMachine,
+//     this.cupboard,
+//     this.stove,
+//     this.fridge,
+//     this.waterPurifier,
+//     this.modularKitchen,
+//     this.ac,
+//     this.bed,
+//     this.geyser,
+//   });
+//
+//   factory FurnishDetails.fromJson(Map<String, dynamic> json) {
+//     return FurnishDetails(
+//       washingMachine: json['washing_machine'],
+//       cupboard: json['cupboard'],
+//       stove: json['stove'],
+//       fridge: json['fridge'],
+//       waterPurifier: json['water_purifier'],
+//       modularKitchen: json['modular_kitchen'],
+//       ac: json['ac'],
+//       bed: json['bed'],
+//       geyser: json['geyser'],
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'washing_machine': washingMachine,
+//       'cupboard': cupboard,
+//       'stove': stove,
+//       'fridge': fridge,
+//       'water_purifier': waterPurifier,
+//       'modular_kitchen': modularKitchen,
+//       'ac': ac,
+//       'bed': bed,
+//       'geyser': geyser,
+//     };
+//   }
+// }
+
 class FurnishDetails {
+  // ---------- Boolean Furnishings ----------
+  final bool? diningTable;
   final bool? washingMachine;
   final bool? cupboard;
+  final bool? sofa;
+  final bool? microwave;
   final bool? stove;
   final bool? fridge;
   final bool? waterPurifier;
+  final bool? gasPipeline;
+  final bool? chimney;
   final bool? modularKitchen;
+
+  // ---------- Multi-choice (Numeric) Furnishings ----------
+  final int? fan;
+  final int? light;
   final int? ac;
+  final int? wardrobe;
+  final int? tv;
   final int? bed;
   final int? geyser;
 
   FurnishDetails({
+    this.diningTable,
     this.washingMachine,
     this.cupboard,
+    this.sofa,
+    this.microwave,
     this.stove,
     this.fridge,
     this.waterPurifier,
+    this.gasPipeline,
+    this.chimney,
     this.modularKitchen,
+    this.fan,
+    this.light,
     this.ac,
+    this.wardrobe,
+    this.tv,
     this.bed,
     this.geyser,
   });
 
   factory FurnishDetails.fromJson(Map<String, dynamic> json) {
     return FurnishDetails(
+      diningTable: json['dining_table'],
       washingMachine: json['washing_machine'],
       cupboard: json['cupboard'],
+      sofa: json['sofa'],
+      microwave: json['microwave'],
       stove: json['stove'],
       fridge: json['fridge'],
       waterPurifier: json['water_purifier'],
+      gasPipeline: json['gas_pipeline'],
+      chimney: json['chimney'],
       modularKitchen: json['modular_kitchen'],
+
+      fan: json['fan'],
+      light: json['light'],
       ac: json['ac'],
+      wardrobe: json['wardrobe'],
+      tv: json['tv'],
       bed: json['bed'],
       geyser: json['geyser'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'washing_machine': washingMachine,
-      'cupboard': cupboard,
-      'stove': stove,
-      'fridge': fridge,
-      'water_purifier': waterPurifier,
-      'modular_kitchen': modularKitchen,
-      'ac': ac,
-      'bed': bed,
-      'geyser': geyser,
-    };
+    final data = <String, dynamic>{};
+
+    // Boolean
+    if (diningTable != null) data['dining_table'] = diningTable;
+    if (washingMachine != null) data['washing_machine'] = washingMachine;
+    if (cupboard != null) data['cupboard'] = cupboard;
+    if (sofa != null) data['sofa'] = sofa;
+    if (microwave != null) data['microwave'] = microwave;
+    if (stove != null) data['stove'] = stove;
+    if (fridge != null) data['fridge'] = fridge;
+    if (waterPurifier != null) data['water_purifier'] = waterPurifier;
+    if (gasPipeline != null) data['gas_pipeline'] = gasPipeline;
+    if (chimney != null) data['chimney'] = chimney;
+    if (modularKitchen != null) data['modular_kitchen'] = modularKitchen;
+
+    // Multi-choice
+    if (fan != null) data['fan'] = fan;
+    if (light != null) data['light'] = light;
+    if (ac != null) data['ac'] = ac;
+    if (wardrobe != null) data['wardrobe'] = wardrobe;
+    if (tv != null) data['tv'] = tv;
+    if (bed != null) data['bed'] = bed;
+    if (geyser != null) data['geyser'] = geyser;
+
+    return data;
   }
 }
 

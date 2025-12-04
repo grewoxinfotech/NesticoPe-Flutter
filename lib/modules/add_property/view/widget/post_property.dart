@@ -28,7 +28,7 @@ class PostProperty extends StatelessWidget {
       "Family",
       "Other",
     ];
-    final List<String> mealList = ['breakfast', 'lunch', 'dinner', 'all meals'];
+    final List<String> mealList = ['breakfast', 'lunch', 'dinner'];
     final List<String> furnishingList = [
       'Fully Furnished',
       'Semi Furnished',

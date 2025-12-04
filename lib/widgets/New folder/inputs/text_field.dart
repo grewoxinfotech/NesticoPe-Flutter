@@ -36,8 +36,8 @@ class NesticoPeTextField extends StatelessWidget {
     this.obscureText = false,
     this.style = const TextStyle(
       fontSize: AppFontSizes.medium,
-      color: ColorRes.black,
-      fontWeight: AppFontWeights.semiBold,
+      color: ColorRes.textSecondary,
+      fontWeight: AppFontWeights.bold,
     ),
     this.suffixIcon,
     this.prefixIcon,
@@ -62,11 +62,7 @@ class NesticoPeTextField extends StatelessWidget {
       children: [
         Row(
           children: [
-            if (title != null)
-              Text(
-                title!,
-                style: style,
-              ),
+            if (title != null) Text(title!, style: style),
             if (isRequired)
               Text(
                 ' *',
