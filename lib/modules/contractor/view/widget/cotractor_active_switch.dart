@@ -30,7 +30,7 @@ class CustomSwitch extends StatelessWidget {
               : inactiveColor.withOpacity(0.5),width: 1 ),
           color: value
               ? activeColor.withOpacity(0.4)
-              : inactiveColor.withOpacity(0.3),
+              : inactiveColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: AnimatedAlign(

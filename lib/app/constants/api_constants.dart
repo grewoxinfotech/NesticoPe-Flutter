@@ -94,12 +94,14 @@ class ApiConstants {
   static String get ticket => "$baseURL/ticket";
 
   ///-----------------------------Contractor----------------------------------//
-  static String get contractorDashboard => "$baseURL/insight/contractor";
 
-  static String get contractorService => "$baseURL/contractorService";
+  static String get contractorDashboard=> "$baseURL/insight/contractor";
+  static String get contractorService=> "$baseURL/contractorService";
+  static String get contractorServiceCategory=> "$baseURL/contractorServiceCategory";
+  static String get contractorInquiry=> "$baseURL/contractorInquiry";
+  static String get contractorProject=> "$baseURL/contractorProjects";
+  static String get contractorLeadFollowUp=> "$baseURL/followup";
 
-  static String get contractorServiceCategory =>
-      "$baseURL/contractorServiceCategory";
 
   //---------------------------------other-----------------------------//
 

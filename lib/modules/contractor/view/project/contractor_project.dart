@@ -309,12 +309,13 @@ class ContractorProject extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ContractorMyServiceController());
+    final controller = Get.find<ContractorMyServiceController>();
 
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         backgroundColor: ColorRes.surface,
+        automaticallyImplyLeading: false,
         elevation: 0,
         title: Text(
           'My Services',
@@ -332,6 +333,7 @@ class ContractorProject extends StatelessWidget {
               size: 28,
             ),
             onPressed: () {
+              controller.clearForm();
              Get.to(()=>AddServiceScreen());
             },
           )
@@ -386,11 +388,29 @@ class ServiceCard extends StatefulWidget {
 
 class _ServiceCardState extends State<ServiceCard> {
   bool expanded = false;
+  String categoryName = "";
+  bool isCategoryLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    loadCategory();
+  }
 
+  void loadCategory() async {
+    final id = widget.item.category ?? "";
+    if (id.isEmpty) return;
+
+    final name = await widget.controller.getTheContractorByID(id);
+    setState(() {
+      categoryName = name;
+      isCategoryLoading = false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final meta = widget.item.meta;
     final acceptedPayments = meta.acceptedPaymentModes;
+
 
     return GestureDetector(
         onTap: () => setState(() => expanded = !expanded),
@@ -413,10 +433,10 @@ class _ServiceCardState extends State<ServiceCard> {
                     child: Text(
                       widget.item.serviceName,
                       maxLines: 1,
-
+overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: AppFontSizes.body,
-                        fontWeight: AppFontWeights.bold,
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.textPrimary,
                       ),
                     ),
@@ -459,7 +479,7 @@ class _ServiceCardState extends State<ServiceCard> {
                   Text(
                     "${_getPriceModel(meta.priceModel)} • ${Formatter.formatPrice(meta.price)}",
                     style: TextStyle(
-                      fontSize: AppFontSizes.bodySmall,
+                      fontSize: AppFontSizes.small,
                       color: ColorRes.textSecondary,
                       fontWeight: AppFontWeights.medium,
                     ),
@@ -504,7 +524,7 @@ class _ServiceCardState extends State<ServiceCard> {
               ),
               const SizedBox(height: 8),
               Text(
-                "Renovation & Remodeling",
+                "${categoryName}",
                 style: TextStyle(
                   fontSize: AppFontSizes.bodySmall,
                   color: ColorRes.primary,
@@ -535,7 +555,8 @@ class _ServiceCardState extends State<ServiceCard> {
                         IconButton(
                           icon: Icon(Icons.edit, color: ColorRes.primary, size: 22),
                           onPressed: () {
-
+                            widget.controller.clearForm();
+                            Get.to(() => AddServiceScreen(serviceToEdit: widget.item));
                           },
                         ),
                         IconButton(
@@ -564,7 +585,8 @@ class _ServiceCardState extends State<ServiceCard> {
                                         backgroundColor: ColorRes.error,
                                       ),
                                       onPressed: () {
-                                        Navigator.pop(context); // close dialog first
+                                        Get.back();
+                                         // close dialog first
                                         widget.controller.deleteService(widget.item.id ?? '');
                                       },
                                       child: const Text("Yes"),
@@ -586,7 +608,8 @@ class _ServiceCardState extends State<ServiceCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _infoTile("Starting Range", meta.startingPriceRange),
+                    _infoTile("Minimum Range", meta.minPriceRange.toString()),
+                    _infoTile("Maximum Range", meta.maxPriceRange.toString()),
                     _infoTile("Advance", "${meta.advanceRequiredPercentage}%"),
                   ],
                 ),
@@ -661,6 +684,8 @@ class _ServiceCardState extends State<ServiceCard> {
                     widget.item.description.isEmpty
                         ? "No description provided"
                         : widget.item.description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       color: ColorRes.textPrimary,
@@ -683,7 +708,7 @@ class _ServiceCardState extends State<ServiceCard> {
     return CustomSwitch(
       value: isActive,
       activeColor: ColorRes.primary,
-      inactiveColor: ColorRes.border,
+      inactiveColor: ColorRes.leadGreyColor.shade400,
       onChanged: (val) {
         // Call controller toggle
         controller.toggle(widget.item, val);

@@ -162,7 +162,8 @@ class ContractorServiceItem {
 class ContractorMetaData {
    double price;
    String priceModel;
-   String startingPriceRange;
+   int minPriceRange;
+   int maxPriceRange;
    String workAvailability;
    bool provideMaterials;
    String brandsUsed;
@@ -175,7 +176,8 @@ class ContractorMetaData {
    ContractorMetaData({
     required this.price,
     required this.priceModel,
-    required this.startingPriceRange,
+    required this.minPriceRange,
+    required this.maxPriceRange,
     required this.workAvailability,
     required this.provideMaterials,
     required this.brandsUsed,
@@ -190,7 +192,8 @@ class ContractorMetaData {
     return ContractorMetaData(
       price: (json['price'] ?? 0).toDouble(),
       priceModel: json['priceModel'] ?? '',
-      startingPriceRange: json['startingPriceRange'] ?? '',
+      minPriceRange: json['minPrice'] ?? 0,
+      maxPriceRange: json['maxPrice'] ?? 0,
       workAvailability: json['workAvailability'] ?? '',
       provideMaterials: json['provideMaterials'] ?? false,
       brandsUsed: json['brandsUsed'] ?? '',
@@ -206,7 +209,8 @@ class ContractorMetaData {
     return {
       'price': price,
       'priceModel': priceModel,
-      'startingPriceRange': startingPriceRange,
+      'minPrice': minPriceRange,
+      'maxPrice': maxPriceRange,
       'workAvailability': workAvailability,
       'provideMaterials': provideMaterials,
       'brandsUsed': brandsUsed,

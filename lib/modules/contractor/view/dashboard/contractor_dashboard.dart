@@ -9,6 +9,7 @@ import '../../../../app/utils/formater/formater.dart';
 import '../../../dashboard/views/dashboard_screen.dart';
 import '../../../reseller/view/property_reseller.dart';
 import '../../../reseller/widget/graph/linear_graph.dart';
+import '../../controller/contractor_my_service_controller.dart';
 
 class ContractorDashboard extends StatefulWidget {
   const ContractorDashboard({super.key});
@@ -21,6 +22,7 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
   final contractorDashboardController = Get.put(
     ContractorDashboardController(),
   );
+  final controller = Get.put(ContractorMyServiceController());
 
   @override
   Widget build(BuildContext context) {
@@ -584,6 +586,7 @@ Widget buildTopRatedService({
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                              SizedBox(width: 10,),
                               Container(
                                 padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
                                 decoration: BoxDecoration(

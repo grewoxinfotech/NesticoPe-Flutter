@@ -297,22 +297,32 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
+import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../controller/contractor_my_service_controller.dart';
 
 class AddServiceScreen extends StatelessWidget {
-   AddServiceScreen({super.key});
+  final ContractorServiceItem? serviceToEdit;
+   AddServiceScreen({super.key, this.serviceToEdit});
 
   GlobalKey<FormState> formKey=GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ContractorMyServiceController());
-
+    final controller = Get.find<ContractorMyServiceController>();
+    if (serviceToEdit != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (serviceToEdit != null) {
+          controller.populateFormForEdit(serviceToEdit!);
+        } else {
+          controller.clearForm(); // Clear form for new service
+        }
+      });
+    }
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
-        title: const Text(
-          "Add New Service",
+        title:  Text(
+          serviceToEdit == null ? "Add New Service" : "Edit Service",
           style: TextStyle(
             color: ColorRes.textPrimary,
             fontWeight: AppFontWeights.semiBold,
@@ -397,13 +407,46 @@ class AddServiceScreen extends StatelessWidget {
                  ),
                ],
                 SizedBox(height: 16),
-                buildSectionTitle("Starting Range"),
+                buildSectionTitle("Minimum Price"),
                 SizedBox(height: 8),
                 buildTextField(
-                  "e.g., From = 100",
+                  "e.g., 1000",
                   Icons.price_change,
-                  controller.startingRangeController,
+                  controller.minRangeController,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter minimum price";
+                    }
+                    final min = double.tryParse(value);
+                    if (min == null || min < 0) {
+                      return "Enter a valid number";
+                    }
+                    return null;
+                  },
                 ),
+                SizedBox(height: 16),
+                buildSectionTitle("Maximum Price"),
+                SizedBox(height: 8),
+                buildTextField(
+                  "e.g., 5000",
+                  Icons.price_change,
+                  controller.maxRangeController,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter maximum price";
+                    }
+                    final max = double.tryParse(value);
+                    final min = double.tryParse(controller.minRangeController.text);
+                    if (max == null || max < 0) {
+                      return "Enter a valid number";
+                    }
+                    if (min != null && max < min) {
+                      return "Maximum price must be greater than minimum price";
+                    }
+                    return null;
+                  },
+                ),
+
                 SizedBox(height: 16),
                 buildSectionTitle("Work Availability"),
                 // SizedBox(height: 8,),
@@ -522,7 +565,11 @@ class AddServiceScreen extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             if (formKey.currentState?.validate()??false) {
-                              controller.createService();
+                              if (controller.editingService.value != null) {
+                                controller.updateService();
+                              } else {
+                                controller.createService();
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -542,8 +589,10 @@ class AddServiceScreen extends StatelessWidget {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                  : const Text(
-                                    "Create Service",
+                                  :  Text(
+                                controller.editingService.value != null
+                                    ? "Update Service"
+                                    : "Create Service",
                                     style: TextStyle(
                                       color: ColorRes.white,
                                       fontWeight: AppFontWeights.semiBold,
@@ -582,7 +631,7 @@ class AddServiceScreen extends StatelessWidget {
             value: observable.value,
             activeColor: ColorRes.primary,
 
-            inactiveColor: ColorRes.border,
+            inactiveColor: ColorRes.leadGreyColor.shade400,
             onChanged: (val) {
               // Call controller toggle
               observable.value = val;
