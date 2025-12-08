@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
+import 'package:housing_flutter_app/modules/support_ticket/views/widgets/ticket_detail.dart';
 
 import '../../../../app/constants/color_res.dart';
 
 class ChatScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const ChatScreenAppBar({super.key});
+  final TicketItem ticket;
+  const ChatScreenAppBar({super.key, required this.ticket});
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +26,21 @@ class ChatScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Support Team',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
                 Text(
-                  'Ticket #12345',
+                  'Support Team',
                   style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white.withOpacity(0.9),
+                    fontSize: AppFontSizes.body,
+                    fontWeight: AppFontWeights.bold,
+                    color: ColorRes.white,
                   ),
                 ),
+                // Text(
+                //   'Ticket #12345',
+                //   style: TextStyle(
+                //     fontSize: 12,
+                //     color: Colors.white.withOpacity(0.9),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -67,7 +75,9 @@ class ChatScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ListTile(
                   leading: const Icon(Icons.info_outline),
                   title: const Text('Ticket Details'),
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    TicketDetailsBottomSheet.show(context, ticket);
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.file_copy),

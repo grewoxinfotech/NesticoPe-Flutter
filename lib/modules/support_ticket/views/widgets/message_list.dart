@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/modules/support_ticket/views/support_ticket_chat_screen.dart';
 
 import '../../../../app/constants/color_res.dart';
+import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/support_ticket/models/chat_model/chat_model.dart';
 import 'chat_message_bubble.dart';
 
 class MessageList extends StatelessWidget {
   final ScrollController scrollController;
+  final String userId;
   final List<ChatMessage> message;
   final bool isTyping;
   const MessageList({
@@ -14,22 +16,23 @@ class MessageList extends StatelessWidget {
     required this.scrollController,
     required this.message,
     this.isTyping = false,
+    required this.userId,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-        controller: scrollController,
-        padding: const EdgeInsets.all(16),
-        itemCount: message.length + (isTyping ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == message.length && isTyping) {
-            return _buildTypingIndicator();
-          }
-          return ChatMessageBubble(message: message[index]);
-        },
-      ),
+    return ListView.builder(
+      controller: scrollController,
+      padding: const EdgeInsets.all(16),
+      itemCount: message.length + (isTyping ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index == message.length && isTyping) {
+          return _buildTypingIndicator();
+        }
+
+        final isUser = message[index].senderId == userId;
+        return ChatMessageBubble(message: message[index], isUser: isUser);
+      },
     );
   }
 

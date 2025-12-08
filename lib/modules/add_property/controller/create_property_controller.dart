@@ -391,15 +391,14 @@ class CreatePropertyController extends GetxController {
   var commercial_rent_posessionStatus = "".obs;
   var commercial_rent_building_Name = TextEditingController();
   var commercial_rent_Loaclity_Name = TextEditingController();
-  var commercial_rent_security_deposite=TextEditingController();
-  var commercial_rent_description=TextEditingController();
-  var commercial_rent_price_negotiable="".obs;
-  var commercial_rent_brokage="".obs;
-  var commercial_rent_brokerage=TextEditingController();
-  var commercial_rent_brokage_negotiable="".obs;
-  var commercial_rent_maintainance_charge="".obs;
-  var commercial_rent_mainatainance_charge=TextEditingController();
-
+  var commercial_rent_security_deposite = TextEditingController();
+  var commercial_rent_description = TextEditingController();
+  var commercial_rent_price_negotiable = "".obs;
+  var commercial_rent_brokage = "".obs;
+  var commercial_rent_brokerage = TextEditingController();
+  var commercial_rent_brokage_negotiable = "".obs;
+  var commercial_rent_maintainance_charge = "".obs;
+  var commercial_rent_mainatainance_charge = TextEditingController();
 
   final tempRoomType = ''.obs;
   final tempMonthlyRent = TextEditingController();
@@ -3795,8 +3794,14 @@ class CreatePropertyController extends GetxController {
         ),
         plotInfo: PlotInfo(
           // TODO: Dynamic
-          plotLength: 500,
-          plotWidth: 400,
+          plotLength:
+              plotLength.text.trim().isNotEmpty
+                  ? double.tryParse(plotLength.text.trim())
+                  : null,
+          plotWidth:
+              plotWidth.text.trim().isNotEmpty
+                  ? double.tryParse(plotWidth.text.trim())
+                  : null,
           possessionStatus: "In Future",
           plotArea:
               commercial_plot.text.trim().isNotEmpty
@@ -4045,6 +4050,25 @@ class CreatePropertyController extends GetxController {
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
+                  : null,
+          negotiable:
+              commercial_rent_price_negotiable.value.toLowerCase() == 'yes'
+                  ? true
+                  : false,
+          brokerNegotiable:
+              commercial_rent_brokage_negotiable.value.toLowerCase() == 'yes'
+                  ? true
+                  : false,
+          brokerCommission:
+              commercial_rent_brokage.value.toLowerCase() == 'yes'
+                  ? double.tryParse(commercial_rent_brokerage.text.trim())
+                  : null,
+          maintenanceCharges:
+              commercial_rent_maintainance_charge.value.toLowerCase() ==
+                      'separate'
+                  ? double.tryParse(
+                    commercial_rent_mainatainance_charge.text.trim(),
+                  )
                   : null,
         ),
       ),
@@ -4403,8 +4427,14 @@ class CreatePropertyController extends GetxController {
         plotInfo: PlotInfo(
           // TODO: Dynamic
           // TODO: possession date Available From
-          plotLength: 500,
-          plotWidth: 400,
+          plotLength:
+              plotLength.text.trim().isNotEmpty
+                  ? double.tryParse(plotLength.text.trim())
+                  : null,
+          plotWidth:
+              plotWidth.text.trim().isNotEmpty
+                  ? double.tryParse(plotWidth.text.trim())
+                  : null,
           possessionStatus: "In Future",
           plotArea:
               commercial_plot.text.trim().isNotEmpty
@@ -4670,6 +4700,7 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
+
           // TODO: Lease Year
           propertyRentPerMonth:
               (commercial_isPreLeased.value.toLowerCase() == "yes")

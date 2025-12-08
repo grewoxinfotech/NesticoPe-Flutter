@@ -92,6 +92,7 @@ class SupportTicketController extends PaginatedController<TicketItem> {
       final success = await _service.createTicket(ticket, pickedImages.value);
       if (success) {
         resetFormField();
+        refreshList();
         Get.back();
       }
     } catch (e) {

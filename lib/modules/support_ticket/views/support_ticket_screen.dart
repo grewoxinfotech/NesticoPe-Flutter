@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/modules/support_ticket/views/widgets/support
 import 'package:intl/intl.dart';
 
 import '../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
+import '../controllers/chat_socket_controller.dart';
 import '../controllers/support_ticket_controller.dart';
 
 class SupportTicketScreen extends StatelessWidget {
@@ -131,7 +132,18 @@ class SupportTicketScreen extends StatelessWidget {
                       //     child: Text(ticket.title.toString()),
                       //   ),
                       // );
-                      return SupportTicketCard(ticket: ticket);
+                      return GestureDetector(
+                        onTap: () {
+                          Get.lazyPut(() => SocketController());
+                          Get.to(
+                            () => SupportTicketChatScreen(
+                              ticketId: ticket.id ?? '',
+                              ticket: ticket,
+                            ),
+                          );
+                        },
+                        child: SupportTicketCard(ticket: ticket),
+                      );
                     },
                   ),
                 ),

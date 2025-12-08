@@ -6,18 +6,24 @@ import '../support_ticket_chat_screen.dart';
 
 class ChatMessageBubble extends StatelessWidget {
   final ChatMessage message;
-  const ChatMessageBubble({super.key, required this.message});
+  final bool isUser;
+  const ChatMessageBubble({
+    super.key,
+    required this.message,
+    required this.isUser,
+  });
 
   @override
   Widget build(BuildContext context) {
+    print("Message: ${message.toJson()}");
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment:
-            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (!message.isUser) ...[
+          if (!isUser) ...[
             CircleAvatar(
               radius: 16,
               backgroundColor: ColorRes.primary.withOpacity(0.3),
@@ -32,28 +38,26 @@ class ChatMessageBubble extends StatelessWidget {
           Flexible(
             child: Column(
               crossAxisAlignment:
-                  message.isUser
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
+                  isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color:
-                        message.isUser
+                        isUser
                             ? ColorRes.primary
                             : ColorRes.leadGreyColor.withOpacity(0.3),
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(16),
                       topRight: const Radius.circular(16),
-                      bottomLeft: Radius.circular(message.isUser ? 16 : 4),
-                      bottomRight: Radius.circular(message.isUser ? 4 : 16),
+                      bottomLeft: Radius.circular(isUser ? 16 : 4),
+                      bottomRight: Radius.circular(isUser ? 4 : 16),
                     ),
                   ),
                   child: Text(
                     message.message,
                     style: TextStyle(
-                      color: message.isUser ? Colors.white : Colors.black87,
+                      color: isUser ? Colors.white : Colors.black87,
                       fontSize: 15,
                     ),
                   ),
@@ -63,7 +67,7 @@ class ChatMessageBubble extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      _formatTime(message.timestamp),
+                      _formatTime(message.createdAt),
                       style: TextStyle(
                         fontSize: 11,
                         color: Colors.grey.shade600,
@@ -78,7 +82,7 @@ class ChatMessageBubble extends StatelessWidget {
               ],
             ),
           ),
-          if (message.isUser) ...[
+          if (isUser) ...[
             const SizedBox(width: 8),
             CircleAvatar(
               radius: 16,

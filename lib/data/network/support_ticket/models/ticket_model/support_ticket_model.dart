@@ -120,6 +120,47 @@ class TicketItem {
   }
 }
 
+class CreatedBy {
+  final String? id;
+  final String? username;
+  final String? userType;
+
+  CreatedBy({this.id, this.username, this.userType});
+
+  factory CreatedBy.fromJson(Map<String, dynamic> json) {
+    return CreatedBy(
+      id: json['id'],
+      username: json['username'],
+      userType: json['userType'],
+    );
+  }
+}
+
+/// Create ticket model
+class TicketCreateRequest {
+  final String title;
+  final String description;
+  final String category;
+  final String ticketType;
+  final String priority;
+
+  TicketCreateRequest({
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.ticketType,
+    required this.priority,
+  });
+
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "description": description,
+    "category": category,
+    "ticketType": ticketType,
+    "priority": priority,
+  };
+}
+
 // ========================= MESSAGE MODEL =========================
 
 // class TicketMessage {
@@ -162,44 +203,3 @@ class TicketItem {
 // }
 
 // ========================= CREATED BY MODEL =========================
-
-class CreatedBy {
-  final String? id;
-  final String? username;
-  final String? userType;
-
-  CreatedBy({this.id, this.username, this.userType});
-
-  factory CreatedBy.fromJson(Map<String, dynamic> json) {
-    return CreatedBy(
-      id: json['id'],
-      username: json['username'],
-      userType: json['userType'],
-    );
-  }
-}
-
-/// Create ticket model
-class TicketCreateRequest {
-  final String title;
-  final String description;
-  final String category;
-  final String ticketType;
-  final String priority;
-
-  TicketCreateRequest({
-    required this.title,
-    required this.description,
-    required this.category,
-    required this.ticketType,
-    required this.priority,
-  });
-
-  Map<String, dynamic> toJson() => {
-    "title": title,
-    "description": description,
-    "category": category,
-    "ticketType": ticketType,
-    "priority": priority,
-  };
-}

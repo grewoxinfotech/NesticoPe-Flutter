@@ -52,7 +52,7 @@ dependencies:
   pdfx:
   open_filex:
   flutter_rating_bar: ^4.0.1
-  web_socket:
+  socket_io_client:
   timeago: ^3.7.1
 
 

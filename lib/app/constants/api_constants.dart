@@ -4,8 +4,9 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
-  static const String baseURL =
-      "http://192.168.1.2:19725/api/v1"; // Real Device (WiFi)
+  static const String url = "http://192.168.1.3:19725";
+  static const String baseURL = "$url/api/v1"; // Real Device (WiFi)
+  static const String ticketChat = url; // Real Device (WiFi)
 
   // Auth Endpoints
   static String get auth => "$baseURL/auth";
@@ -23,8 +24,8 @@ class ApiConstants {
   static String get covertToSeller => "$auth/convert-buyer-to-seller";
 
   static String get convertToReseller => "$auth/convert-buyer-to-reseller";
-  static String get convertToContractor => "$auth/convert-buyer-to-contractor";
 
+  static String get convertToContractor => "$auth/convert-buyer-to-contractor";
 
   static String get referralGet => "$baseURL/referral/my-stats";
 
@@ -63,6 +64,7 @@ class ApiConstants {
   static String get review => "$baseURL/review";
 
   static String get overAllRating => "$baseURL/review/property";
+
   static String get sharePropertyLink => "$baseURL/propertyShare/simple";
 
   static String get user => "$baseURL/user";
@@ -90,10 +92,14 @@ class ApiConstants {
   static String get calendarCategory => "$baseURL/calendarCategory";
 
   static String get ticket => "$baseURL/ticket";
+
   ///-----------------------------Contractor----------------------------------//
-  static String get contractorDashboard=> "$baseURL/insight/contractor";
-  static String get contractorService=> "$baseURL/contractorService";
-  static String get contractorServiceCategory=> "$baseURL/contractorServiceCategory";
+  static String get contractorDashboard => "$baseURL/insight/contractor";
+
+  static String get contractorService => "$baseURL/contractorService";
+
+  static String get contractorServiceCategory =>
+      "$baseURL/contractorServiceCategory";
 
   //---------------------------------other-----------------------------//
 

@@ -270,16 +270,81 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDetails!.plotInfo!.plotArea != 0)
             ? property.propertyDetails!.plotInfo!.plotArea!.toStringAsFixed(0)
             : '0';
+
+    controller.plotLength.text =
+        (property.propertyDetails?.plotInfo?.plotLength != null &&
+                property.propertyDetails!.plotInfo!.plotLength != 0)
+            ? property.propertyDetails!.plotInfo!.plotLength!.toStringAsFixed(0)
+            : '0';
+
+    controller.plotWidth.text =
+        (property.propertyDetails?.plotInfo?.plotWidth != null &&
+                property.propertyDetails!.plotInfo!.plotWidth != 0)
+            ? property.propertyDetails!.plotInfo!.plotWidth!.toStringAsFixed(0)
+            : '0';
   }
 
   void loadFinancialData(
     CreatePropertyController controller,
     AddPropertyModel property,
   ) {
+    /// commercial financial info
     controller.commercial_rent_cost.text =
         (property.propertyDetails?.financialInfo?.propertyPrice != null &&
                 property.propertyDetails!.financialInfo!.propertyPrice != 0)
             ? property.propertyDetails!.financialInfo!.propertyPrice!
+                .toStringAsFixed(0)
+            : '0';
+
+    controller.commercial_rent_security_deposite.text =
+        (property.propertyDetails?.financialInfo?.propertySecurityDeposit !=
+                    null &&
+                property
+                        .propertyDetails!
+                        .financialInfo!
+                        .propertySecurityDeposit !=
+                    0)
+            ? property.propertyDetails!.financialInfo!.propertySecurityDeposit!
+                .toStringAsFixed(0)
+            : '0';
+
+    controller.commercial_rent_price_negotiable.value =
+        (property.propertyDetails?.financialInfo?.negotiable != null &&
+                property.propertyDetails!.financialInfo!.negotiable!)
+            ? 'Yes'
+            : 'No';
+
+    controller.commercial_rent_brokage_negotiable.value =
+        (property.propertyDetails?.financialInfo?.brokerNegotiable != null &&
+                property.propertyDetails!.financialInfo!.brokerNegotiable!)
+            ? 'Yes'
+            : 'No';
+
+    controller.commercial_rent_brokage.value =
+        (property.propertyDetails?.financialInfo?.brokerCommission != null &&
+                property.propertyDetails!.financialInfo!.brokerCommission != 0)
+            ? 'Yes'
+            : 'No';
+
+    controller.commercial_rent_brokerage.text =
+        (property.propertyDetails?.financialInfo?.brokerCommission != null &&
+                property.propertyDetails!.financialInfo!.brokerCommission != 0)
+            ? property.propertyDetails!.financialInfo!.brokerCommission!
+                .toStringAsFixed(0)
+            : '0';
+
+    controller.commercial_rent_maintainance_charge.value =
+        (property.propertyDetails?.financialInfo?.maintenanceCharges != null &&
+                property.propertyDetails!.financialInfo!.maintenanceCharges !=
+                    0)
+            ? 'Yes'
+            : 'No';
+
+    controller.commercial_rent_mainatainance_charge.text =
+        (property.propertyDetails?.financialInfo?.maintenanceCharges != null &&
+                property.propertyDetails!.financialInfo!.maintenanceCharges !=
+                    0)
+            ? property.propertyDetails!.financialInfo!.maintenanceCharges!
                 .toStringAsFixed(0)
             : '0';
 

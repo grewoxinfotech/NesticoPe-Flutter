@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/support_ticket/views/widgets/chat_screen_appbar.dart';
 import 'package:housing_flutter_app/modules/support_ticket/views/widgets/chat_text_field.dart';
 import 'package:housing_flutter_app/modules/support_ticket/views/widgets/message_list.dart';
 
 import '../../../data/network/support_ticket/models/chat_model/chat_model.dart';
+import '../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
+import '../controllers/chat_socket_controller.dart';
 
 enum MessageStatus { sending, sent, delivered, read, failed }
 
 class SupportTicketChatScreen extends StatefulWidget {
-  const SupportTicketChatScreen({super.key});
+  final String ticketId;
+  final TicketItem ticket;
+  const SupportTicketChatScreen({
+    super.key,
+    required this.ticketId,
+    required this.ticket,
+  });
 
   @override
   State<SupportTicketChatScreen> createState() =>
@@ -18,13 +28,39 @@ class SupportTicketChatScreen extends StatefulWidget {
 class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final List<ChatMessage> _messages = [];
+  final SocketController _socketController = Get.put(SocketController());
+  late final String roomId;
+  final RxString currentUser = ''.obs;
+
+  // final List<ChatMessage> _messages = [];
   bool _isTyping = false;
 
   @override
   void initState() {
     super.initState();
+    // _socketController = ;
+    // roomId = "ticket_${widget.ticketId}";
+    roomId = "${widget.ticketId}";
+    _socketController.connect(roomId);
+    ever(_socketController.messages, (_) => _scrollToBottom());
+    // _socketController.joinTicket(widget.ticketId);
+
+    loadUserId();
     // _loadInitialMessages();
+  }
+
+  Future<void> loadUserId() async {
+    // final user = await SecureStorage.getUserData();
+    currentUser.value = await getUserId() ?? '';
+  }
+
+  Future<String?> getUserId() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id;
+    if (userId != null) {
+      return userId;
+    }
+    return null;
   }
 
   // void _loadInitialMessages() {
@@ -54,59 +90,58 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
   //   });
   // }
   //
-  // void _sendMessage() {
-  //   if (_messageController.text.trim().isEmpty) return;
-  //
-  //   final message = ChatMessage(
-  //     id: DateTime.now().millisecondsSinceEpoch.toString(),
-  //     text: _messageController.text.trim(),
-  //     isUser: true,
-  //     timestamp: DateTime.now(),
-  //     status: MessageStatus.sending,
-  //   );
-  //
-  //   setState(() {
-  //     _messages.add(message);
-  //     _messageController.clear();
-  //   });
-  //
-  //   _scrollToBottom();
-  //
-  //   // Simulate message sent
-  //   Future.delayed(const Duration(milliseconds: 500), () {
-  //     setState(() {
-  //       _messages.last = ChatMessage(
-  //         id: message.id,
-  //         text: message.text,
-  //         isUser: message.isUser,
-  //         timestamp: message.timestamp,
-  //         status: MessageStatus.sent,
-  //       );
-  //     });
-  //   });
-  //
-  //   // Simulate support agent typing
-  //   Future.delayed(const Duration(seconds: 2), () {
-  //     setState(() => _isTyping = true);
-  //   });
-  //
-  //   // Simulate support agent response
-  //   Future.delayed(const Duration(seconds: 4), () {
-  //     setState(() {
-  //       _isTyping = false;
-  //       _messages.add(
-  //         ChatMessage(
-  //           id: DateTime.now().millisecondsSinceEpoch.toString(),
-  //           text:
-  //               'Thank you for providing that information. I\'ll look into this right away.',
-  //           isUser: false,
-  //           timestamp: DateTime.now(),
-  //         ),
-  //       );
-  //     });
-  //     _scrollToBottom();
-  //   });
-  // }
+  Future<void> _sendMessage() async {
+    if (_messageController.text.trim().isEmpty) return;
+
+    final message = SendChatMessage(
+      ticketId: widget.ticketId,
+      message: _messageController.text.trim(),
+    );
+
+    _socketController.send(message.toJson());
+    _messageController.clear();
+    // setState(() {
+    //   _messages.add(message);
+    //   _messageController.clear();
+    // });
+
+    _scrollToBottom();
+
+    // // Simulate message sent
+    // Future.delayed(const Duration(milliseconds: 500), () {
+    //   setState(() {
+    //     _messages.last = ChatMessage(
+    //       id: message.id,
+    //       text: message.text,
+    //       isUser: message.isUser,
+    //       timestamp: message.timestamp,
+    //       status: MessageStatus.sent,
+    //     );
+    //   });
+    // });
+    //
+    // // Simulate support agent typing
+    // Future.delayed(const Duration(seconds: 2), () {
+    //   setState(() => _isTyping = true);
+    // });
+    //
+    // // Simulate support agent response
+    // Future.delayed(const Duration(seconds: 4), () {
+    //   setState(() {
+    //     _isTyping = false;
+    //     _messages.add(
+    //       ChatMessage(
+    //         id: DateTime.now().millisecondsSinceEpoch.toString(),
+    //         text:
+    //             'Thank you for providing that information. I\'ll look into this right away.',
+    //         isUser: false,
+    //         timestamp: DateTime.now(),
+    //       ),
+    //     );
+    //   });
+    //   _scrollToBottom();
+    // });
+  }
 
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -124,42 +159,59 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    _socketController.leaveTicket(widget.ticketId);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ChatScreenAppBar(),
-      body: Column(
-        children: [
-          // Status Banner
-          // Container(
-          //   width: double.infinity,
-          //   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          //   color: Colors.green.shade50,
-          //   child: Row(
-          //     children: [
-          //       Icon(Icons.check_circle, color: ColorRes.green, size: 16),
-          //       const SizedBox(width: 8),
-          //       Text(
-          //         'Ticket is open - Support agent will respond soon',
-          //         style: TextStyle(
-          //           color: ColorRes.green.shade800,
-          //           fontSize: 12,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
+      appBar: ChatScreenAppBar(ticket: widget.ticket),
+      body: Obx(() {
+        if (currentUser.value.isEmpty && _socketController.isLoading.value) {
+          return Center(child: CircularProgressIndicator());
+        }
+        return Column(
+          children: [
+            // Status Banner
+            // Container(
+            //   width: double.infinity,
+            //   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            //   color: Colors.green.shade50,
+            //   child: Row(
+            //     children: [
+            //       Icon(Icons.check_circle, color: ColorRes.green, size: 16),
+            //       const SizedBox(width: 8),
+            //       Text(
+            //         'Ticket is open - Support agent will respond soon',
+            //         style: TextStyle(
+            //           color: ColorRes.green.shade800,
+            //           fontSize: 12,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
 
-          // Messages List
-          MessageList(scrollController: _scrollController, message: _messages),
-
-          // Input Area
-          ChatMessageInputField(),
-        ],
-      ),
+            // Messages List
+            Expanded(
+              child: MessageList(
+                scrollController: _scrollController,
+                message: _socketController.messages.value,
+                userId: currentUser.value,
+              ),
+            ),
+            // Spacer(),
+            // Input Area
+            ChatMessageInputField(
+              messageController: _messageController,
+              onSendTap: () {
+                _sendMessage();
+              },
+            ),
+          ],
+        );
+      }),
     );
   }
 }

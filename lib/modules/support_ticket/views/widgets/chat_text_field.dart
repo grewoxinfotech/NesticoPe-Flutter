@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 import '../../../../app/constants/color_res.dart';
 
 class ChatMessageInputField extends StatelessWidget {
-  const ChatMessageInputField({super.key});
+  final TextEditingController messageController;
+  final VoidCallback onSendTap;
+  const ChatMessageInputField({
+    super.key,
+    required this.messageController,
+    required this.onSendTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +36,7 @@ class ChatMessageInputField extends StatelessWidget {
               ),
               Expanded(
                 child: TextField(
-                  // controller: _messageController,
+                  controller: messageController,
                   decoration: InputDecoration(
                     hintText: 'Type your message...',
                     border: OutlineInputBorder(
@@ -53,8 +59,8 @@ class ChatMessageInputField extends StatelessWidget {
                 backgroundColor: ColorRes.primary,
                 child: IconButton(
                   icon: const Icon(Icons.send, color: ColorRes.white),
-                  onPressed: () {},
-                  // onPressed: _sendMessage,
+                  // onPressed: () {},
+                  onPressed: onSendTap,
                 ),
               ),
             ],
