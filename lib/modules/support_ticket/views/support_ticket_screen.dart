@@ -134,7 +134,6 @@ class SupportTicketScreen extends StatelessWidget {
                       // );
                       return GestureDetector(
                         onTap: () {
-                          Get.lazyPut(() => SocketController());
                           Get.to(
                             () => SupportTicketChatScreen(
                               ticketId: ticket.id ?? '',

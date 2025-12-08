@@ -31,6 +31,7 @@ import '../../referral/view/referral_dashboard.dart';
 import '../../reseller/view/reseller_success_stories/reseller_success_stories.dart';
 import '../../saved_property/views/saved_property_screen.dart';
 import '../../seller/seller_listing/view/seller_listing_view.dart';
+import '../../support_ticket/controllers/chat_socket_controller.dart';
 import '../../support_ticket/views/support_ticket_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -151,6 +152,7 @@ class DashboardScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
+                    Get.put(SocketController());
                     Get.to(() => SupportTicketScreen());
                   },
 

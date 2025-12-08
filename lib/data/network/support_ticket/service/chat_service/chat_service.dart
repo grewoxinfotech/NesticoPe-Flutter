@@ -159,9 +159,143 @@
 //   }
 // }
 
+// import 'dart:async';
+// import 'dart:convert';
+// import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+// import 'package:socket_io_client/socket_io_client.dart' as IO;
+//
+// import '../../../../../app/constants/api_constants.dart';
+// import '../../../../database/secure_storage_service.dart';
+//
+// class SocketEvent {
+//   final String type;
+//   final dynamic data;
+//   SocketEvent(this.type, this.data);
+// }
+//
+// class WebSocketService {
+//   /// Singleton class
+//   static final WebSocketService _instance = WebSocketService._internal();
+//   factory WebSocketService() => _instance;
+//   WebSocketService._internal();
+//
+//   /// Socket instance
+//   IO.Socket? _socket;
+//
+//   /// Variables to handle socket events
+//   final _eventController = StreamController<SocketEvent>.broadcast();
+//   Stream<SocketEvent> get events => _eventController.stream;
+//   bool _isConnected = false;
+//   // String? _roomId;
+//
+//   /// CONNECT WITH TICKET ID
+//   Future<void> connect() async {
+//     if (_isConnected) return;
+//
+//     try {
+//       final url = ApiConstants.ticketChat;
+//       final token = await SecureStorage.getToken();
+//
+//       _socket = IO.io(
+//         url,
+//         IO.OptionBuilder()
+//             .setTransports(['websocket'])
+//             .setAuth({'token': token}) // ⬅️ REQUIRED for backend
+//             .disableAutoConnect()
+//             .setReconnectionAttempts(999999)
+//             .setReconnectionDelay(1000)
+//             .setTimeout(20000)
+//             .build(),
+//       );
+//
+//       // ===== CONNECT =====
+//       _socket!.onConnect((_) {
+//         _isConnected = true;
+//         print("✅ Socket connected: ${_socket!.id}");
+//
+//         // IMPORTANT FIX
+//         _safeAdd(SocketEvent('connect', {}));
+//       });
+//
+//       // ===== ERROR =====
+//       _socket!.onError((err) {
+//         print("❌ Socket error: $err");
+//         // onError?.call(err);
+//       });
+//
+//       // ===== DISCONNECT =====
+//       _socket!.onDisconnect((_) {
+//         print("❌ Socket disconnected");
+//         _isConnected = false;
+//         // onDisconnect?.call();
+//       });
+//
+//       // ===== ANY EVENT =====
+//       _socket!.onAny((event, data) {
+//         print("📡 $event = ${jsonEncode(data)}");
+//         _safeAdd(SocketEvent(event, data));
+//       });
+//
+//       _socket!.connect();
+//     } catch (e) {
+//       print("❌ Socket initialization error: $e");
+//       _safeAdd(SocketEvent('error', e.toString()));
+//     }
+//   }
+//
+//   /// SEND CHAT MESSAGE
+//   void send(Map<String, dynamic> data) {
+//     if (!_isConnected || _socket == null) return;
+//
+//     print("📤 Sending message: $data");
+//
+//     _socket!.emitWithAck(
+//       'ticket_send_message',
+//       data,
+//
+//       ack: (response) {
+//         print("🎉 Message Sent ACK => $response");
+//       },
+//     );
+//   }
+//
+//   /// JOIN ANY TICKET
+//   void joinTicket(String ticketId) {
+//     if (!_isConnected) return;
+//
+//     print("📡 Joining ticket => $ticketId");
+//     _socket!.emit('join_ticket', {'ticketId': ticketId});
+//   }
+//
+//   void leaveTicket(String ticketId) {
+//     if (!_isConnected) return;
+//
+//     // print("📡 Leaving ticket => $_roomId");
+//     _socket!.emit('leave_ticket', {'ticketId': ticketId});
+//   }
+//
+//   /// DISCONNECT SOCKET
+//   void disconnect() {
+//     if (!_isConnected) return;
+//
+//     print("🔌 Disconnecting socket...");
+//     _socket?.disconnect();
+//     _isConnected = false;
+//     // onDisconnect?.call();
+//   }
+//
+//   bool get isConnected => _isConnected;
+//   // String? get currentRoomId => _roomId;
+//
+//   void _safeAdd(SocketEvent event) {
+//     if (!_eventController.isClosed) {
+//       _eventController.add(event);
+//     }
+//   }
+// }
+
 import 'dart:async';
 import 'dart:convert';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../../../../../app/constants/api_constants.dart';
@@ -174,151 +308,161 @@ class SocketEvent {
 }
 
 class WebSocketService {
-  /// Singleton class
+  /// Singleton Pattern
   static final WebSocketService _instance = WebSocketService._internal();
   factory WebSocketService() => _instance;
   WebSocketService._internal();
 
-  /// Socket instance
   IO.Socket? _socket;
 
-  /// Variables to handle socket events
+  /// Event Stream
   final _eventController = StreamController<SocketEvent>.broadcast();
   Stream<SocketEvent> get events => _eventController.stream;
+
   bool _isConnected = false;
-  String? _roomId;
 
-  /// CONNECT WITH TICKET ID
-  Future<void> connect(String ticketId) async {
-    _roomId = ticketId;
-
-    if (_isConnected) return;
+  // ============================
+  // CONNECT
+  // ============================
+  Future<void> connect() async {
+    if (_socket != null && _isConnected) return;
 
     try {
-      final url = ApiConstants.ticketChat; // "http://localhost:19725"
+      final url = ApiConstants.ticketChat;
       final token = await SecureStorage.getToken();
 
-      print("🔄 Connecting to socket for ticket: $ticketId");
-
+      /// IMPORTANT FIX — Always create new socket only ONCE
       _socket = IO.io(
         url,
         IO.OptionBuilder()
             .setTransports(['websocket'])
-            .setAuth({'token': token}) // ⬅️ REQUIRED for backend
+            .setAuth({'token': token})
             .disableAutoConnect()
-            .setReconnectionAttempts(999999)
+            .setReconnectionAttempts(1000000)
             .setReconnectionDelay(1000)
             .setTimeout(20000)
             .build(),
       );
 
-      _socket!.connect();
-
-      // ===== CONNECT =====
+      // ========== CONNECT ==========
       _socket!.onConnect((_) {
         _isConnected = true;
         print("✅ Socket connected: ${_socket!.id}");
-        // onConnect?.call();
 
-        // join ticket room
-        // print("📡 Joining ticket room => $ticketId");
-        // _socket!.emit('join_ticket', {'ticketId': ticketId});
-        // print("✅ Ticket Joined: ${_socket!.id}");
-        // _socket!.emit('get_ticket_messages', {'ticketId': ticketId});
-        _socket!.emitWithAck(
-          'join_ticket',
-          {'ticketId': ticketId},
-          ack: (data) {
-            print("🎯 Server ACK (join_ticket): $data");
-          },
-        );
-
-        _socket!.emit('get_ticket_messages', {'ticketId': ticketId});
-        print("✅ Ticket Message Received: ${_socket!.id}");
+        // FIX: Notify controller
+        _safeAdd(SocketEvent('connect', {}));
       });
 
-      // ===== MESSAGE EVENT =====
-      // _socket!.on('ticket_new_message', (data) {
-      //   print("📩 New Message: $data");
-      //   // onMessage?.call(data);
-      // });
+      // ========== CONNECT ERROR ==========
+      _socket!.onConnectError((err) {
+        print("❌ Connect Error: $err");
+        _safeAdd(SocketEvent('connect_error', err));
+      });
 
-      // _socket!.on('initial_chat', (data) {
-      //   // print("📩 Initial chat Message: $data");
-      //   // onMessage?.call(data);
-      // });
-
-      // ===== ERROR =====
       _socket!.onError((err) {
-        print("❌ Socket error: $err");
-        // onError?.call(err);
+        print("❌ Socket Error: $err");
+        _safeAdd(SocketEvent('error', err));
       });
 
-      // ===== DISCONNECT =====
+      // ========== DISCONNECT ==========
       _socket!.onDisconnect((_) {
         print("❌ Socket disconnected");
         _isConnected = false;
-        // onDisconnect?.call();
+        _safeAdd(SocketEvent('disconnect', {}));
       });
 
-      // ===== ANY EVENT =====
+      // ========== ANY EVENT ==========
       _socket!.onAny((event, data) {
         print("📡 $event = ${jsonEncode(data)}");
-        _safeAdd(SocketEvent(event, data));
+        _safeAdd(SocketEvent(event.toString(), data));
       });
+
+      // Finally connect
+      _socket!.connect();
     } catch (e) {
-      print("❌ Socket initialization error: $e");
+      print("❌ Initialization Error: $e");
       _safeAdd(SocketEvent('error', e.toString()));
     }
   }
 
-  /// SEND CHAT MESSAGE
+  // ============================
+  // SEND MESSAGE
+  // ============================
   void send(Map<String, dynamic> data) {
-    if (!_isConnected || _socket == null) return;
+    if (!_isConnected || _socket == null) {
+      print("⚠️ Cannot send — Socket not connected");
+      return;
+    }
 
     print("📤 Sending message: $data");
 
     _socket!.emitWithAck(
       'ticket_send_message',
       data,
-
       ack: (response) {
-        print("🎉 Message Sent ACK => $response");
+        print("🎉 Message Sent ACK: $response");
       },
     );
   }
 
-  /// JOIN ANY TICKET
+  // ============================
+  // JOIN TICKET
+  // ============================
   void joinTicket(String ticketId) {
-    if (!_isConnected) return;
+    if (!_isConnected) {
+      print("⚠️ joinTicket blocked — socket not connected yet");
+      return;
+    }
 
     print("📡 Joining ticket => $ticketId");
+
     _socket!.emit('join_ticket', {'ticketId': ticketId});
+    _socket!.emit('get_ticket_messages', {'ticketId': ticketId});
   }
 
+  // ============================
+  // LEAVE TICKET
+  // ============================
   void leaveTicket(String ticketId) {
     if (!_isConnected) return;
 
-    print("📡 Leaving ticket => $_roomId");
+    print("📡 Leaving ticket => $ticketId");
+
     _socket!.emit('leave_ticket', {'ticketId': ticketId});
   }
 
-  /// DISCONNECT SOCKET
+  // ============================
+  // DISCONNECT
+  // ============================
   void disconnect() {
-    if (!_isConnected) return;
+    if (_socket == null) return;
 
     print("🔌 Disconnecting socket...");
-    _socket?.disconnect();
+
+    try {
+      _socket!.dispose(); // FIX: dispose cleans listeners safely
+    } catch (_) {}
+
+    _socket = null;
     _isConnected = false;
-    // onDisconnect?.call();
   }
 
   bool get isConnected => _isConnected;
-  String? get currentRoomId => _roomId;
 
+  // ============================
+  // SAFE STREAM ADD
+  // ============================
   void _safeAdd(SocketEvent event) {
     if (!_eventController.isClosed) {
       _eventController.add(event);
     }
+  }
+
+  // ============================
+  // CLEANUP
+  // ============================
+  void dispose() {
+    disconnect();
+    _eventController.close();
   }
 }

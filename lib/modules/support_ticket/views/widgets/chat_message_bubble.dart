@@ -1,12 +1,139 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
+//
+// import '../../../../app/constants/color_res.dart';
+// import '../../../../data/network/support_ticket/models/chat_model/chat_model.dart';
+// import '../support_ticket_chat_screen.dart';
+//
+// class ChatMessageBubble extends StatelessWidget {
+//   final ChatMessage message;
+//   final bool isUser;
+//   const ChatMessageBubble({
+//     super.key,
+//     required this.message,
+//     required this.isUser,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.only(bottom: 12),
+//       child: Row(
+//         mainAxisAlignment:
+//             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+//         crossAxisAlignment: CrossAxisAlignment.end,
+//         children: [
+//           if (!isUser) ...[
+//             CircleAvatar(
+//               radius: 16,
+//               backgroundColor: ColorRes.primary.withOpacity(0.3),
+//               child: Icon(
+//                 Icons.support_agent,
+//                 size: 16,
+//                 color: ColorRes.primary,
+//               ),
+//             ),
+//             const SizedBox(width: 8),
+//           ],
+//           Flexible(
+//             child: Column(
+//               crossAxisAlignment:
+//                   isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+//               children: [
+//                 Container(
+//                   padding: const EdgeInsets.all(12),
+//                   decoration: BoxDecoration(
+//                     color:
+//                         isUser
+//                             ? ColorRes.primary
+//                             : ColorRes.leadGreyColor.withOpacity(0.3),
+//                     borderRadius: BorderRadius.only(
+//                       topLeft: const Radius.circular(16),
+//                       topRight: const Radius.circular(16),
+//                       bottomLeft: Radius.circular(isUser ? 16 : 4),
+//                       bottomRight: Radius.circular(isUser ? 4 : 16),
+//                     ),
+//                   ),
+//                   child: Text(
+//                     message.message,
+//                     style: TextStyle(
+//                       color: isUser ? Colors.white : Colors.black87,
+//                       fontSize: 15,
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(height: 4),
+//                 Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Text(
+//                       _formatTime(message.createdAt),
+//                       style: TextStyle(
+//                         fontSize: 11,
+//                         color: Colors.grey.shade600,
+//                       ),
+//                     ),
+//                     // if (message.isUser) ...[
+//                     //   const SizedBox(width: 4),
+//                     //   _buildStatusIcon(message.status),
+//                     // ],
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//           if (isUser) ...[
+//             const SizedBox(width: 8),
+//             CircleAvatar(
+//               radius: 16,
+//               backgroundColor: ColorRes.primary.withOpacity(0.7),
+//               child: Icon(Icons.person, size: 16, color: ColorRes.white),
+//             ),
+//           ],
+//         ],
+//       ),
+//     );
+//   }
+//
+//   // Widget _buildStatusIcon(MessageStatus status) {
+//   //   switch (status) {
+//   //     case MessageStatus.sending:
+//   //       return const SizedBox(
+//   //         width: 12,
+//   //         height: 12,
+//   //         child: CircularProgressIndicator(strokeWidth: 2),
+//   //       );
+//   //     case MessageStatus.sent:
+//   //       return Icon(Icons.check, size: 14, color: Colors.grey.shade600);
+//   //     case MessageStatus.delivered:
+//   //       return Icon(Icons.done_all, size: 14, color: Colors.grey.shade600);
+//   //     case MessageStatus.read:
+//   //       return const Icon(Icons.done_all, size: 14, color: ColorRes.primary);
+//   //     case MessageStatus.failed:
+//   //       return const Icon(Icons.error_outline, size: 14, color: ColorRes.error);
+//   //   }
+//   // }
+//
+//   String _formatTime(DateTime time) {
+//     final now = DateTime.now();
+//     final diff = now.difference(time);
+//
+//     if (diff.inMinutes < 1) return 'Just now';
+//     if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+//     if (diff.inHours < 24) return '${diff.inHours}h ago';
+//     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+//   }
+// }
 
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../app/constants/color_res.dart';
+import '../../../../app/utils/file_viewer.dart';
 import '../../../../data/network/support_ticket/models/chat_model/chat_model.dart';
-import '../support_ticket_chat_screen.dart';
 
 class ChatMessageBubble extends StatelessWidget {
   final ChatMessage message;
   final bool isUser;
+
   const ChatMessageBubble({
     super.key,
     required this.message,
@@ -15,7 +142,8 @@ class ChatMessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Message: ${message.toJson()}");
+    final bool hasFile = message.fileUrl != null && message.fileUrl!.isNotEmpty;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -54,13 +182,16 @@ class ChatMessageBubble extends StatelessWidget {
                       bottomRight: Radius.circular(isUser ? 4 : 16),
                     ),
                   ),
-                  child: Text(
-                    message.message,
-                    style: TextStyle(
-                      color: isUser ? Colors.white : Colors.black87,
-                      fontSize: 15,
-                    ),
-                  ),
+                  child:
+                      hasFile
+                          ? _buildFileBubble(context, message)
+                          : Text(
+                            message.message,
+                            style: TextStyle(
+                              color: isUser ? Colors.white : Colors.black87,
+                              fontSize: 15,
+                            ),
+                          ),
                 ),
                 const SizedBox(height: 4),
                 Row(
@@ -73,10 +204,6 @@ class ChatMessageBubble extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                     ),
-                    // if (message.isUser) ...[
-                    //   const SizedBox(width: 4),
-                    //   _buildStatusIcon(message.status),
-                    // ],
                   ],
                 ),
               ],
@@ -95,23 +222,61 @@ class ChatMessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusIcon(MessageStatus status) {
-    switch (status) {
-      case MessageStatus.sending:
-        return const SizedBox(
-          width: 12,
-          height: 12,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        );
-      case MessageStatus.sent:
-        return Icon(Icons.check, size: 14, color: Colors.grey.shade600);
-      case MessageStatus.delivered:
-        return Icon(Icons.done_all, size: 14, color: Colors.grey.shade600);
-      case MessageStatus.read:
-        return const Icon(Icons.done_all, size: 14, color: ColorRes.primary);
-      case MessageStatus.failed:
-        return const Icon(Icons.error_outline, size: 14, color: ColorRes.error);
-    }
+  /// Widget to display file bubble
+  Widget _buildFileBubble(BuildContext context, ChatMessage message) {
+    final fileName = message.fileUrl!.split('/').last;
+
+    return GestureDetector(
+      onTap: () => FileViewer.open(context, message.fileUrl!),
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isUser ? ColorRes.white : ColorRes.leadGreyColor.shade400,
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(12),
+                topRight: const Radius.circular(12),
+                bottomLeft: Radius.circular(isUser ? 12 : 4),
+                bottomRight: Radius.circular(isUser ? 4 : 12),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.insert_drive_file,
+                  size: 24,
+                  color: isUser ? ColorRes.primary : Colors.black87,
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    'Download File',
+                    style: TextStyle(
+                      color: isUser ? ColorRes.primary : Colors.black87,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          if (message.message.isNotEmpty) ...[
+            Text(
+              message.message,
+              style: TextStyle(
+                color: isUser ? Colors.white : Colors.black87,
+                fontSize: 15,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   String _formatTime(DateTime time) {
