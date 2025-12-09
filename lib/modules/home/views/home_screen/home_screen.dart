@@ -21,6 +21,7 @@ import 'package:housing_flutter_app/modules/builder/view/all_project_list_screen
 
 //import 'package:housing_flutter_app/modules/home/controllers/home_controller/home_controller.dart';
 import 'package:housing_flutter_app/modules/home/widgets/city_card.dart';
+import 'package:housing_flutter_app/modules/home/widgets/contractor_profile_card.dart';
 import 'package:housing_flutter_app/modules/home/widgets/home_header.dart';
 import 'package:housing_flutter_app/modules/home/widgets/top_locations.dart';
 import 'package:housing_flutter_app/modules/new_project/view/latest_project.dart';
@@ -56,6 +57,7 @@ import '../../../profile/controllers/buyer_profiledata.dart';
 import '../../../property/controllers/share_property_controller.dart';
 import '../../../search_property/controller/search_controller.dart';
 import '../../../search_property/model/search_model.dart';
+import '../../controllers/contractor_profile_controller/contractor_profile_controller.dart';
 import '../../widgets/unified_comparison_floating_button.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../../data/network/news/news_model.dart';
@@ -262,7 +264,9 @@ class _HomeScreenState extends State<HomeScreen> {
     GoogleMapController(),
   );
   final profileController = Get.put(BuyerProfileDataController());
-  final SharePropertyController propertyShareController=Get.put(SharePropertyController());
+  final SharePropertyController propertyShareController = Get.put(
+    SharePropertyController(),
+  );
   final RecommendedPropertyController _recommendedPropertyController = Get.put(
     RecommendedPropertyController(),
   );
@@ -271,6 +275,9 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   final PlatformServicesController platformServicesController = Get.put(
     PlatformServicesController(),
+  );
+  final TopContractorsController contractorServiceController = Get.put(
+    TopContractorsController(),
   );
   final ProjectWizardController projectController = Get.put(
     ProjectWizardController(isBuilderView: false),
@@ -1422,6 +1429,52 @@ class _HomeScreenState extends State<HomeScreen> {
                       //   );
                       // }),
                       Obx(() {
+                        if (contractorServiceController.isLoading.value &&
+                            contractorServiceController.items.isEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (!contractorServiceController.isLoading.value &&
+                            contractorServiceController.items.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+                        return Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            const TitleWithViewAll(
+                              title: "Top Contractors",
+                              showViewAll: false,
+                            ),
+                            SizedBox(height: 12),
+                            SizedBox(
+                              height: 200,
+                              child: ListView.separated(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                separatorBuilder:
+                                    (context, index) =>
+                                        const SizedBox(width: 12),
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    contractorServiceController.items.length,
+                                itemBuilder: (context, index) {
+                                  final data =
+                                      contractorServiceController.items[index];
+                                  return SizedBox(
+                                    width: 260, // 🔥 MUST SET WIDTH
+                                    child: ContractorCard(contractor: data),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                      const SizedBox(height: 20),
+                      Obx(() {
                         if (platformServicesController.isLoading.value &&
                             platformServicesController.items.isEmpty) {
                           return const Center(
@@ -1525,10 +1578,10 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 Future<void> showFindPropertyDialog(
-    PropertyController controller,
-    GoogleMapController googleMapController,
-    BuildContext context,
-    ) async {
+  PropertyController controller,
+  GoogleMapController googleMapController,
+  BuildContext context,
+) async {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Get.dialog(
     Dialog(
@@ -1603,11 +1656,14 @@ Future<void> showFindPropertyDialog(
                             isRequired: true,
                             prefixIcon: Icons.location_city_outlined,
                             hintText: "Select City",
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             validator: (value) => requiredField(value, 'City'),
                             onChanged: (value) async {
                               if (value.isNotEmpty) {
-                                await googleMapController.fetchGooglePlaces(value);
+                                await googleMapController.fetchGooglePlaces(
+                                  value,
+                                );
                                 log("City input: $value");
                               } else {
                                 googleMapController.predictions.clear();
@@ -1633,7 +1689,9 @@ Future<void> showFindPropertyDialog(
                                 shadowColor: Colors.black26,
                                 borderRadius: BorderRadius.circular(12),
                                 child: Container(
-                                  constraints: const BoxConstraints(maxHeight: 250),
+                                  constraints: const BoxConstraints(
+                                    maxHeight: 250,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
@@ -1644,20 +1702,30 @@ Future<void> showFindPropertyDialog(
                                   ),
                                   child: ListView.separated(
                                     shrinkWrap: true,
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    itemCount: predictions.length > 3 ? 3 : predictions.length,
-                                    separatorBuilder: (context, index) => Divider(
-                                      height: 1,
-                                      thickness: 0.5,
-                                      color: ColorRes.grey.withOpacity(0.2),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4,
                                     ),
+                                    itemCount:
+                                        predictions.length > 3
+                                            ? 3
+                                            : predictions.length,
+                                    separatorBuilder:
+                                        (context, index) => Divider(
+                                          height: 1,
+                                          thickness: 0.5,
+                                          color: ColorRes.grey.withOpacity(0.2),
+                                        ),
                                     itemBuilder: (context, index) {
                                       final city = predictions[index];
                                       return InkWell(
                                         onTap: () {
                                           controller.selectedCityZ.text =
-                                              city.structuredFormatting?.mainText ?? '';
-                                          googleMapController.predictions.clear();
+                                              city
+                                                  .structuredFormatting
+                                                  ?.mainText ??
+                                              '';
+                                          googleMapController.predictions
+                                              .clear();
                                           FocusScope.of(context).unfocus();
                                         },
                                         child: Padding(
@@ -1677,7 +1745,8 @@ Future<void> showFindPropertyDialog(
                                                 child: Text(
                                                   city.description ?? '',
                                                   style: TextStyle(
-                                                    fontSize: AppFontSizes.medium,
+                                                    fontSize:
+                                                        AppFontSizes.medium,
                                                     color: ColorRes.textPrimary,
                                                   ),
                                                 ),
@@ -1704,12 +1773,13 @@ Future<void> showFindPropertyDialog(
                           _buildFieldLabel('Listing Type'),
                           const SizedBox(height: 8),
                           Obx(
-                                () => DropdownButtonFormField<String>(
-                              value: controller.listingTypes.contains(
-                                controller.selectedListingType.value,
-                              )
-                                  ? controller.selectedListingType.value
-                                  : null,
+                            () => DropdownButtonFormField<String>(
+                              value:
+                                  controller.listingTypes.contains(
+                                        controller.selectedListingType.value,
+                                      )
+                                      ? controller.selectedListingType.value
+                                      : null,
                               isDense: true,
                               isExpanded: true,
                               style: TextStyle(
@@ -1719,7 +1789,8 @@ Future<void> showFindPropertyDialog(
                               decoration: InputDecoration(
                                 hintText: 'Select',
                                 hintStyle: TextStyle(
-                                  color: Get.theme.colorScheme.onSurface.withAlpha(128),
+                                  color: Get.theme.colorScheme.onSurface
+                                      .withAlpha(128),
                                   fontSize: AppFontSizes.bodyMedium,
                                   fontWeight: AppFontWeights.regular,
                                 ),
@@ -1760,22 +1831,25 @@ Future<void> showFindPropertyDialog(
                                 Icons.keyboard_arrow_down_rounded,
                                 color: ColorRes.primary,
                               ),
-                              items: controller.listingTypes
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                  value: e,
-                                  child: Text(
-                                    e,
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.medium,
-                                      color: ColorRes.textPrimary,
-                                    ),
-                                  ),
-                                ),
-                              )
-                                  .toList(),
-                              onChanged: (val) =>
-                              controller.selectedListingType.value = val,
+                              items:
+                                  controller.listingTypes
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e,
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.medium,
+                                              color: ColorRes.textPrimary,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged:
+                                  (val) =>
+                                      controller.selectedListingType.value =
+                                          val,
                             ),
                           ),
                         ],
@@ -1790,12 +1864,13 @@ Future<void> showFindPropertyDialog(
                           _buildFieldLabel('BHK'),
                           const SizedBox(height: 8),
                           Obx(
-                                () => DropdownButtonFormField<String>(
-                              value: controller.bhkList.contains(
-                                controller.selectedBhk.value,
-                              )
-                                  ? controller.selectedBhk.value
-                                  : null,
+                            () => DropdownButtonFormField<String>(
+                              value:
+                                  controller.bhkList.contains(
+                                        controller.selectedBhk.value,
+                                      )
+                                      ? controller.selectedBhk.value
+                                      : null,
                               isDense: true,
                               isExpanded: true,
                               style: TextStyle(
@@ -1805,7 +1880,8 @@ Future<void> showFindPropertyDialog(
                               decoration: InputDecoration(
                                 hintText: 'Select',
                                 hintStyle: TextStyle(
-                                  color: Get.theme.colorScheme.onSurface.withAlpha(128),
+                                  color: Get.theme.colorScheme.onSurface
+                                      .withAlpha(128),
                                   fontSize: AppFontSizes.bodyMedium,
                                   fontWeight: AppFontWeights.regular,
                                 ),
@@ -1846,21 +1922,23 @@ Future<void> showFindPropertyDialog(
                                 Icons.keyboard_arrow_down_rounded,
                                 color: ColorRes.primary,
                               ),
-                              items: controller.bhkList
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                  value: e,
-                                  child: Text(
-                                    e,
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.medium,
-                                      color: ColorRes.textPrimary,
-                                    ),
-                                  ),
-                                ),
-                              )
-                                  .toList(),
-                              onChanged: (val) => controller.selectedBhk.value = val,
+                              items:
+                                  controller.bhkList
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(
+                                            e,
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.medium,
+                                              color: ColorRes.textPrimary,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged:
+                                  (val) => controller.selectedBhk.value = val,
                             ),
                           ),
                         ],
@@ -1883,7 +1961,8 @@ Future<void> showFindPropertyDialog(
                               decoration: InputDecoration(
                                 hintText: 'Min',
                                 hintStyle: TextStyle(
-                                  color: Get.theme.colorScheme.onSurface.withAlpha(128),
+                                  color: Get.theme.colorScheme.onSurface
+                                      .withAlpha(128),
                                   fontSize: AppFontSizes.bodyMedium,
                                   fontWeight: AppFontWeights.regular,
                                 ),
@@ -1935,7 +2014,8 @@ Future<void> showFindPropertyDialog(
                               decoration: InputDecoration(
                                 hintText: 'Max',
                                 hintStyle: TextStyle(
-                                  color: Get.theme.colorScheme.onSurface.withAlpha(128),
+                                  color: Get.theme.colorScheme.onSurface
+                                      .withAlpha(128),
                                   fontSize: AppFontSizes.bodyMedium,
                                   fontWeight: AppFontWeights.regular,
                                 ),

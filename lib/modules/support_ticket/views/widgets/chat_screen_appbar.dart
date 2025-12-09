@@ -48,45 +48,46 @@ class ChatScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.more_vert),
-          onPressed: () => _showOptions(context),
+          icon: const Icon(Icons.info_outline),
+          onPressed: () {
+            TicketDetailsBottomSheet.show(context, ticket);
+          },
         ),
       ],
     );
   }
 
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-  void _showOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder:
-          (context) => SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.close),
-                  title: const Text('Close Ticket'),
-                  onTap: () => Navigator.pop(context),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.info_outline),
-                  title: const Text('Ticket Details'),
-                  onTap: () {
-                    TicketDetailsBottomSheet.show(context, ticket);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.file_copy),
-                  title: const Text('Export Chat'),
-                  onTap: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-          ),
-    );
-  }
+  // void _showOptions(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder:
+  //         (context) => SafeArea(
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               ListTile(
+  //                 leading: const Icon(Icons.close),
+  //                 title: const Text('Close Ticket'),
+  //                 onTap: () => Navigator.pop(context),
+  //               ),
+  //               ListTile(
+  //                 leading: const Icon(Icons.info_outline),
+  //                 title: const Text('Ticket Details'),
+  //                 onTap: () {
+  //                   TicketDetailsBottomSheet.show(context, ticket);
+  //                 },
+  //               ),
+  //               ListTile(
+  //                 leading: const Icon(Icons.file_copy),
+  //                 title: const Text('Export Chat'),
+  //                 onTap: () => Navigator.pop(context),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //   );
+  // }
 }

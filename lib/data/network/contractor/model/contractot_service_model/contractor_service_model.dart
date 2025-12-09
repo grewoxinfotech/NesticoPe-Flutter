@@ -18,18 +18,14 @@ class ContractorServiceResponse {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.toJson(),
-    };
+    return {'success': success, 'message': message, 'data': data.toJson()};
   }
 
   Map<String, dynamic> toMap() => toJson();
 }
 
 class ContractorServiceData {
-   List<ContractorServiceItem> items;
+  List<ContractorServiceItem> items;
   final int total;
   final int currentPage;
   final int totalPages;
@@ -47,9 +43,10 @@ class ContractorServiceData {
 
   factory ContractorServiceData.fromJson(Map<String, dynamic> json) {
     return ContractorServiceData(
-      items: (json['items'] as List<dynamic>?)
-          ?.map((e) => ContractorServiceItem.fromJson(e))
-          .toList() ??
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((e) => ContractorServiceItem.fromJson(e))
+              .toList() ??
           [],
       total: json['total'] ?? 0,
       currentPage: json['currentPage'] ?? 1,
@@ -74,39 +71,39 @@ class ContractorServiceData {
 }
 
 class ContractorServiceItem {
-   String? id;
-   String? createdBy;
-   String? updatedBy;
-   String category;
-   String contractorId;
-   String serviceName;
-   String description;
-   int? totalReviews;
-   String? averageRating;
-   int? warningCount;
-   bool isActive;
-   bool? isBlocked;
-   String? blockReason;
-   String? blockedAt;
-   ContractorMetaData meta;
-   String createdAt;
-   String updatedAt;
+  String? id;
+  String? createdBy;
+  String? updatedBy;
+  String category;
+  String contractorId;
+  String serviceName;
+  String description;
+  int? totalReviews;
+  String? averageRating;
+  int? warningCount;
+  bool isActive;
+  bool? isBlocked;
+  String? blockReason;
+  String? blockedAt;
+  ContractorMetaData meta;
+  String createdAt;
+  String updatedAt;
 
   ContractorServiceItem({
-     this.id,
-     this.createdBy,
-     this.updatedBy,
+    this.id,
+    this.createdBy,
+    this.updatedBy,
     required this.category,
     required this.contractorId,
     required this.serviceName,
     required this.description,
-     this.totalReviews,
-     this.averageRating,
-     this.warningCount,
+    this.totalReviews,
+    this.averageRating,
+    this.warningCount,
     required this.isActive,
-     this.isBlocked,
-     this.blockReason,
-     this.blockedAt,
+    this.isBlocked,
+    this.blockReason,
+    this.blockedAt,
     required this.meta,
     required this.createdAt,
     required this.updatedAt,
@@ -160,20 +157,20 @@ class ContractorServiceItem {
 }
 
 class ContractorMetaData {
-   double price;
-   String priceModel;
-   int minPriceRange;
-   int maxPriceRange;
-   String workAvailability;
-   bool provideMaterials;
-   String brandsUsed;
-   bool equipmentProvided;
-   bool insuranceAvailable;
-   List<String> acceptedPaymentModes;
-   int advanceRequiredPercentage;
-   String billingType;
+  double price;
+  String priceModel;
+  int minPriceRange;
+  int maxPriceRange;
+  String workAvailability;
+  bool provideMaterials;
+  String brandsUsed;
+  bool equipmentProvided;
+  bool insuranceAvailable;
+  List<String> acceptedPaymentModes;
+  int advanceRequiredPercentage;
+  String billingType;
 
-   ContractorMetaData({
+  ContractorMetaData({
     required this.price,
     required this.priceModel,
     required this.minPriceRange,
@@ -199,7 +196,9 @@ class ContractorMetaData {
       brandsUsed: json['brandsUsed'] ?? '',
       equipmentProvided: json['equipmentProvided'] ?? false,
       insuranceAvailable: json['insuranceAvailable'] ?? false,
-      acceptedPaymentModes: List<String>.from(json['acceptedPaymentModes'] ?? []),
+      acceptedPaymentModes: List<String>.from(
+        json['acceptedPaymentModes'] ?? [],
+      ),
       advanceRequiredPercentage: json['advanceRequiredPercentage'] ?? 0,
       billingType: json['billingType'] ?? '',
     );
@@ -220,6 +219,18 @@ class ContractorMetaData {
       'advanceRequiredPercentage': advanceRequiredPercentage,
       'billingType': billingType,
     };
+  }
+
+  String get priceRange {
+    if (minPriceRange == 0 && maxPriceRange == 0) {
+      return 'No Price Range';
+    } else if (minPriceRange == 0) {
+      return 'Upto ₹$maxPriceRange';
+    } else if (maxPriceRange == 0) {
+      return 'From ₹$minPriceRange';
+    } else {
+      return '₹$minPriceRange - ₹$maxPriceRange';
+    }
   }
 
   Map<String, dynamic> toMap() => toJson();
