@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
@@ -10,6 +11,24 @@ class ContractorServiceController
   final ContractorMyService _service = ContractorMyService.contractorMyService;
 
   RxList<ContractorServiceItem> selectedItems = <ContractorServiceItem>[].obs;
+
+  /// create Inquiry Form Fields
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  Rx<String> selectedPropertyType = ''.obs;
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController bhkController = TextEditingController();
+  final TextEditingController carpetAreaController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  final List<String> propertyTypes = [
+    'House',
+    'Flat',
+    'Plot',
+    'Other',
+    'Villa',
+    'Office',
+  ];
 
   /// Contractor ID is required to fetch services
   final String contractorId;
@@ -47,6 +66,25 @@ class ContractorServiceController
     } catch (e) {
       print("Exception in fetchItems: $e");
       rethrow;
+    }
+  }
+
+  Future<void> createInquiry() async {
+    try {
+      isLoading.value = true;
+
+      if (formKey.currentState!.validate()) {
+        throw Exception('Form is not valid');
+      }
+
+      final data = <String, dynamic>{};
+
+      final response = await _service.createInquiry(data);
+      print('Inquiry created successfully: $response');
+    } catch (e) {
+      print('Error creating inquiry: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 

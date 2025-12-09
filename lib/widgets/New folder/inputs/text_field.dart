@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
@@ -26,6 +27,8 @@ class NesticoPeTextField extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final int? maxLength;
   final TextStyle style;
+  final List<TextInputFormatter>? formatter;
+
 
   const NesticoPeTextField({
     super.key,
@@ -53,6 +56,7 @@ class NesticoPeTextField extends StatelessWidget {
     this.onTap,
     this.textCapitalization = TextCapitalization.none,
     this.maxLength,
+    this.formatter = const [],
   });
 
   @override
@@ -90,6 +94,7 @@ class NesticoPeTextField extends StatelessWidget {
           textCapitalization: textCapitalization,
           autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
           onTap: onTap,
+          inputFormatters: formatter,
           style: TextStyle(
             fontSize: AppFontSizes.bodySmall,
             color: Get.theme.colorScheme.onSurface,

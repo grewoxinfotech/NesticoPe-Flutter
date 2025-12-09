@@ -200,4 +200,28 @@ class ContractorMyService {
       return false;
     }
   }
+
+  /// Create Inquiry Of Service
+  Future<bool> createInquiry(Map<String, dynamic> data) async {
+    final uri = Uri.parse('$_baseUrl');
+    try {
+      final response = await http.post(
+        uri,
+        headers: await headers(),
+        body: jsonEncode({'data': data}),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        print("Inquiry Created Successfully: $data");
+        return data['success'];
+      } else {
+        print("Failed to create Inquiry: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to create Inquiry");
+      }
+    }catch(e){
+      print("Response body for create Inquiry: ${e}");
+      return false;
+    }
+  }
 }
