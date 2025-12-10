@@ -291,7 +291,7 @@ class MonthlyBarChart extends StatelessWidget {
               width: 6,
               gradient: LinearGradient(
                 colors: [
-                  ColorRes.lightPurpleColor.withOpacity(0.9),
+                  color.withOpacity(0.9),
                   color.withOpacity(0.9),
                 ],
                 begin: Alignment.bottomCenter,

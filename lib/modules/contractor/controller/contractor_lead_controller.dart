@@ -82,7 +82,24 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem>{
 
       print("✅ Lead data populated for edit: ${lead.id}");
     }
+  Future<void> refreshLead() async {
+    try {
+      isRefreshing.value = true;
+      refreshList();
+      await Future.delayed(const Duration(seconds: 1));
 
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
   void resetForm() {
     /// 🟢 Clear all add/edit text controllers
     txtTitle.clear();

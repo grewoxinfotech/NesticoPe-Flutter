@@ -78,10 +78,12 @@ class Contractor {
   final int activeServices;
   final String username;
   final int totalExperience;
+  final String imageUrl;
   final ProjectStats projectStats;
   final Subscription subscription;
 
-  Contractor({
+  Contractor( {
+    required this.imageUrl,
     required this.id,
     required this.userId,
     required this.totalReviews,
@@ -98,6 +100,7 @@ class Contractor {
     return Contractor(
       id: json['id'] ?? '',
       userId: json['userId'] ?? '',
+      imageUrl: json['profilePic']??'',
       totalReviews: json['totalReviews'] ?? 0,
       overallRating: json['overallRating']?.toString() ?? "0",
       totalServices: json['totalServices'] ?? 0,

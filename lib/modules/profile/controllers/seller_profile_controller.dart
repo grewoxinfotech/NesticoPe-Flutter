@@ -130,6 +130,23 @@ class SellerProfileController extends GetxController {
     _populateControllers();
     print("Lok ${resellerProfile.value?.id}");
   }
+  Future<void> refreshProfile() async {
+    try {
+     await getUserProfileData();
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+
+    }
+  }
 
   Future<Map<String, dynamic>> updateResellerProfile(
     UserUpdateProfile userProfile,

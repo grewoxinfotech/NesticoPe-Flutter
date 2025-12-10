@@ -173,6 +173,50 @@ class RentPriceDetail extends StatelessWidget {
                 isPhoneKey: true,
               ),
               SizedBox(height: 16),
+              Text("Past 5 years Price"),
+              SizedBox(height: 8),
+              buildTextField(
+                "Enter Past 5 years Price",
+                Icons.currency_rupee_outlined,
+                controller.pastFiveYearPrice,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter expected price';
+                  }
+                  final rent = int.tryParse(value); // parse once
+                  if (rent == null) {
+                    return 'Please enter a valid amount';
+                  }
+                  if (rent > 5000000000 || rent < 2000000) {
+                    return 'Please enter rent between  2000000 to 500000000';
+                  }
+                  return null;
+                },
+                isPhoneKey: true,
+              ),
+              SizedBox(height: 16),
+              Text("Future 5 years Price (₹)"),
+              SizedBox(height: 8),
+              buildTextField(
+                "Enter Future 5 years Price (₹)",
+                Icons.currency_rupee_outlined,
+                controller.futureFiveYearPrice,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter expected price';
+                  }
+                  final rent = int.tryParse(value); // parse once
+                  if (rent == null) {
+                    return 'Please enter a valid amount';
+                  }
+                  if (rent > 5000000000 || rent < 2000000) {
+                    return 'Please enter rent between  2000000 to 500000000';
+                  }
+                  return null;
+                },
+                isPhoneKey: true,
+              ),
+              SizedBox(height: 16),
               buildSectionTitle('Price  Negotiable'),
               SizedBox(height: 8),
               Wrap(

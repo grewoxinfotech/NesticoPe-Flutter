@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/app/services/network_status_service.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:housing_flutter_app/app/manager/compare_manager.dart';
 import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
+import 'package:housing_flutter_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
 import 'package:housing_flutter_app/modules/no_internet/no_internet_screen.dart';
 
 import 'app/theme/themes.dart' as AppTheme;
@@ -32,6 +33,7 @@ void main() async {
   final networkService = await Get.putAsync(() => NetworkStatusService().init());
   await UserHelper.initUserType();
   Get.put(CompareManager(), permanent: true);
+  Get.put(ContractorCompareManager(), permanent: true);
   Get.put(ProjectCompareManager(), permanent: true);
   
   // Check initial internet connection

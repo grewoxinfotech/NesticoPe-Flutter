@@ -339,8 +339,41 @@ class ContractorService extends StatelessWidget {
           )
         ],
       ),
+      // body: Obx(() {
+      //   final items = controller.items;
+      //   if (controller.isLoading.value) {
+      //     return Center(
+      //       child: CircularProgressIndicator(
+      //         color: ColorRes.primary,
+      //       ),
+      //     );
+      //   }
+      //
+      //   if (items.isEmpty) {
+      //     return Center(
+      //       child: Text(
+      //         "No services available",
+      //         style: TextStyle(
+      //           fontSize: AppFontSizes.body,
+      //           color: ColorRes.textSecondary,
+      //           fontWeight: AppFontWeights.medium,
+      //         ),
+      //       ),
+      //     );
+      //   }
+      //
+      //   return ListView.builder(
+      //     padding: const EdgeInsets.all(12),
+      //     itemCount: items.length,
+      //     itemBuilder: (context, index) {
+      //       final item = items[index];
+      //       return ServiceCard(item: item,controller: controller,);
+      //     },
+      //   );
+      // }),
       body: Obx(() {
         final items = controller.items;
+
         if (controller.isLoading.value) {
           return Center(
             child: CircularProgressIndicator(
@@ -349,28 +382,39 @@ class ContractorService extends StatelessWidget {
           );
         }
 
-        if (items.isEmpty) {
-          return Center(
-            child: Text(
-              "No services available",
-              style: TextStyle(
-                fontSize: AppFontSizes.body,
-                color: ColorRes.textSecondary,
-                fontWeight: AppFontWeights.medium,
+
+        return RefreshIndicator(
+          onRefresh: controller.refreshService,
+          color: ColorRes.primary,
+          child: items.isEmpty
+              ? SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: Center(
+                child: Text(
+                  "No services available",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.body,
+                    color: ColorRes.textSecondary,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                ),
               ),
             ),
-          );
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.all(12),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return ServiceCard(item: item,controller: controller,);
-          },
+          )
+              : ListView.builder(
+            padding: const EdgeInsets.all(12),
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return ServiceCard(item: item, controller: controller);
+            },
+          ),
         );
       }),
+
     );
   }
 }
@@ -610,7 +654,6 @@ overflow: TextOverflow.ellipsis,
                   children: [
                     _infoTile("Min Price", Formatter.formatPrice(meta.minPriceRange)),
                     _infoTile("Max Price",Formatter.formatPrice(meta.maxPriceRange)),
-                    _infoTile("Advance", "${meta.advanceRequiredPercentage}%"),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -618,29 +661,66 @@ overflow: TextOverflow.ellipsis,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _infoTile("Billing", meta.billingType.toUpperCase().split("_").join(" ")),
-                    _infoTile("Brands", meta.brandsUsed),
+                    _infoTile("Advance", "${meta.advanceRequiredPercentage}%"),
+
                   ],
                 ),
                 const SizedBox(height: 16),
+               Text(
+                 "Brands",
+                 style: TextStyle(
+                   fontSize: AppFontSizes.medium,
+                   fontWeight: AppFontWeights.semiBold,
+                   color: ColorRes.textPrimary,
+                 ),
+               ),
+               const SizedBox(height: 8),
+               Container(
+                 width: double.infinity,
+                 padding: const EdgeInsets.all(12),
+                 decoration: BoxDecoration(
+                   color: ColorRes.background,
+                   borderRadius: BorderRadius.circular(12),
+                   border: Border.all(color: ColorRes.border, width: 1),
+                 ),
+                 child: Text(
+                   meta.brandsUsed.isEmpty
+                       ? "No description provided"
+                       : meta.brandsUsed,
+                   maxLines: 3,
+                   overflow: TextOverflow.ellipsis,
+                   style: TextStyle(
+                     fontSize: AppFontSizes.caption,
+                     color: ColorRes.textPrimary,
+                     fontWeight: AppFontWeights.regular,
+                     height: 1.5,
+                   ),
+                 ),
+               ),
 
-                Text(
-                  "Service Includes",
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    if (meta.provideMaterials) _chip("Materials", ColorRes.success),
-                    if (meta.equipmentProvided) _chip("Equipment", ColorRes.success),
-                    if (meta.insuranceAvailable) _chip("Insurance", ColorRes.success),
-                  ],
-                ),
+
+
+               if((meta.provideMaterials)|| (meta.equipmentProvided) ||(meta.insuranceAvailable) )...[
+                 const SizedBox(height: 16),
+                 Text(
+                   "Service Includes",
+                   style: TextStyle(
+                     fontSize: AppFontSizes.medium,
+                     fontWeight: AppFontWeights.semiBold,
+                     color: ColorRes.textPrimary,
+                   ),
+                 ),
+                 const SizedBox(height: 8),
+                 Wrap(
+                   spacing: 8,
+                   runSpacing: 8,
+                   children: [
+                     if (meta.provideMaterials) _chip("Materials", ColorRes.success),
+                     if (meta.equipmentProvided) _chip("Equipment", ColorRes.success),
+                     if (meta.insuranceAvailable) _chip("Insurance", ColorRes.success),
+                   ],
+                 ),
+               ],
 
                 const SizedBox(height: 16),
                 Text(

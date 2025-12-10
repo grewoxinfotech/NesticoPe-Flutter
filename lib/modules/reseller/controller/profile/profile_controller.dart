@@ -98,6 +98,25 @@ class ProfileController extends GetxController {
       return User();
     }
   }
+  Future<void> refreshReseller() async {
+    try {
+
+      await getUserProfileData();
+
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+
+    }
+  }
 
   Future<void> getUserProfileData() async {
     // Fetch user and ensure profileData is initialized before assigning

@@ -69,7 +69,10 @@ class ResellerProfileScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return (UserHelper.isReseller)
+        return RefreshIndicator(
+            onRefresh: profileController.refreshReseller,
+            color: ColorRes.primary,
+            child: (UserHelper.isReseller)
             ? SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -97,7 +100,7 @@ class ResellerProfileScreen extends StatelessWidget {
                 ],
               ),
             )
-            : SizedBox.shrink();
+            : SizedBox.shrink());
       }),
     );
   }

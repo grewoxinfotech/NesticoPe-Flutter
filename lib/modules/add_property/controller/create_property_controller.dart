@@ -75,6 +75,10 @@ class CreatePropertyController extends GetxController {
   var selectedRoomAmenitiesDataForPG = <String>[].obs;
   var roomFacilityAvailableOrNot = "".obs;
   var otherFacility = TextEditingController();
+  var pastFiveYearPrice = TextEditingController();
+  var futureFiveYearPrice = TextEditingController();
+
+
 
   ///=============================Residential Rent apartment===============
   var doYouWantBrokerage = "".obs;
@@ -3318,6 +3322,7 @@ class CreatePropertyController extends GetxController {
               ? propertyType.value.toLowerCase()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
+
       propertyType:
           rent_propertyType.value.isNotEmpty
               ? rent_propertyType.value.toLowerCase().replaceAll(" ", "_")
@@ -3403,6 +3408,8 @@ class CreatePropertyController extends GetxController {
                   propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
+                  futureFiveYearPrice: double.tryParse(futureFiveYearPrice.text.trim()),
+                  pastFiveYearPrice: double.tryParse(pastFiveYearPrice.text.trim()),
                   negotiable:
                       negotiablePriceOrNot.value.toLowerCase() == 'yes'
                           ? true

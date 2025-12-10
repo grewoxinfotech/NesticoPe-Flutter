@@ -76,7 +76,12 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return (UserHelper.isSeller)
+        
+          return RefreshIndicator(
+              onRefresh: profileController.refreshProfile,
+              color: ColorRes.primary,
+              child: (UserHelper.isSeller)
+
               ? SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Form(
@@ -121,7 +126,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                   ),
                 ),
               )
-              : SizedBox.shrink();
+              : SizedBox.shrink());
         }),
       ),
     );

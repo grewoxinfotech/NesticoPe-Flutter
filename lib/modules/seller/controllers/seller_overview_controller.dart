@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/seller/seller_overview_service.dart';
 import '../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
@@ -19,6 +21,24 @@ class SellerOverviewController extends GetxController {
     // TODO: implement onInit
     super.onInit();
     getFetchSellerApi();
+  }
+  Future<void> refreshSellerDashboard() async {
+    try {
+
+      getFetchSellerApi();
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+
+    }
   }
 
   // Future<void> loadOverview(String token) async {

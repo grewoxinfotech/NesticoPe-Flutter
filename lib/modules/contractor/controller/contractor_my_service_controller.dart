@@ -9,6 +9,7 @@ import 'package:housing_flutter_app/data/network/contractor/service/contractor_m
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../app/care/pagination/controller/pagination_controller.dart';
+import '../../../app/constants/color_res.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
 
 class ContractorMyServiceController extends PaginatedController<ContractorServiceItem> {
@@ -73,7 +74,24 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
       rethrow;
     }
   }
+  Future<void> refreshService() async {
+    try {
+      isRefreshing.value = true;
+      refreshList();
+      await Future.delayed(const Duration(seconds: 1));
 
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
   Future<String> getTheContractorByID(String id)
    async {
    final data= await ContractorMyService.contractorMyService.getContractorByIDCategory(

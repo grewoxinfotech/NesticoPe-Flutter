@@ -85,23 +85,42 @@ class ContractorLeadScreen extends StatelessWidget {
             }),
             Expanded(
               child: Obx(() {
+                final items = controller.items;
                 if (controller.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (controller.items.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      "No leads found.",
-                      style: TextStyle(
-                        color: ColorRes.textSecondary,
-                        fontSize: AppFontSizes.body,
-                      ),
-                    ),
-                  );
-                }
+                // if (controller.items.isEmpty) {
+                //   return const Center(
+                //     child: Text(
+                //       "No leads found.",
+                //       style: TextStyle(
+                //         color: ColorRes.textSecondary,
+                //         fontSize: AppFontSizes.body,
+                //       ),
+                //     ),
+                //   );
+                // }
 
-                return ListView.separated(
+                return RefreshIndicator(
+                    onRefresh: controller.refreshLead,
+                    color: ColorRes.primary,
+                    child: items.isEmpty?SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: Center(
+                          child: Text(
+                            "No Lead available",
+                            style: TextStyle(
+                              fontSize: AppFontSizes.body,
+                              color: ColorRes.textSecondary,
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ) :ListView.separated(
                   padding: const EdgeInsets.all(12),
                   separatorBuilder: (_, __) => const SizedBox(height: 2),
                   itemCount: controller.items.length,
@@ -150,7 +169,7 @@ class ContractorLeadScreen extends StatelessWidget {
                       ),
                     );
                   },
-                );
+                ),);
               }),
             ),
           ],

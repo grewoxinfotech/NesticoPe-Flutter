@@ -447,6 +447,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
             }),
             Expanded(
               child: Obx(() {
+                final items = controller.items;
                 if (controller.isLoading.value) {
                   return Center(
                     child: CircularProgressIndicator(color: ColorRes.primary),
@@ -465,7 +466,26 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                   );
                 }
               
-                return ListView.builder(
+                return RefreshIndicator(
+                    onRefresh: controller.refreshInquiry,
+                    color: ColorRes.primary,
+                    child: items.isEmpty
+                        ? SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: Center(
+                          child: Text(
+                            "No services available",
+                            style: TextStyle(
+                              fontSize: AppFontSizes.body,
+                              color: ColorRes.textSecondary,
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ):ListView.builder(
                   padding: const EdgeInsets.all(16),
                   itemCount: controller.itemInquiryList.length,
                   itemBuilder: (context, index) {
@@ -484,6 +504,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                       ),
                     );
                   },
+                    )
                 );
               }),
             ),

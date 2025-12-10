@@ -115,7 +115,41 @@ class ContractorProjectItem {
     required this.createdAt,
     required this.updatedAt,
   });
-
+  ContractorProjectItem copyWith({
+    String? id,
+    String? createdBy,
+    String? updatedBy,
+    String? leadId,
+    String? title,
+    String? status,
+    int? progress,
+    String? deadline,
+    String? startDate,
+    String? completedAt,
+    ContractorProjectClient? client,
+    String? notes,
+    ContractorProjectMeta? meta,
+    String? createdAt,
+    String? updatedAt,
+  }) {
+    return ContractorProjectItem(
+      id: id ?? this.id,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
+      leadId: leadId ?? this.leadId,
+      title: title ?? this.title,
+      status: status ?? this.status,
+      progress: progress ?? this.progress,
+      deadline: deadline ?? this.deadline,
+      startDate: startDate ?? this.startDate,
+      completedAt: completedAt ?? this.completedAt,
+      client: client ?? this.client,
+      notes: notes ?? this.notes,
+      meta: meta ?? this.meta,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
   factory ContractorProjectItem.fromJson(Map<String, dynamic> json) {
     return ContractorProjectItem(
       id: json['id'] ?? '',
@@ -156,6 +190,7 @@ class ContractorProjectItem {
 
   Map<String, dynamic> toMap() => toJson();
 }
+
 
 class ContractorProjectClient {
   final String name;

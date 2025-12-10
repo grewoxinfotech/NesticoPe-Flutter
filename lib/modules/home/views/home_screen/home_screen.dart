@@ -1447,9 +1447,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: "Top Contractors",
                               showViewAll: false,
                             ),
-                            SizedBox(height: 12),
+                            SizedBox(height: 6),
                             SizedBox(
-                              height: 200,
+                              height: 250,
                               child: ListView.separated(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12,
@@ -1464,7 +1464,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   final data =
                                       contractorServiceController.items[index];
                                   return SizedBox(
-                                    width: 260, // 🔥 MUST SET WIDTH
+                                    width: 300, // 🔥 MUST SET WIDTH
                                     child: ContractorCard(contractor: data),
                                   );
                                 },
@@ -1473,7 +1473,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         );
                       }),
-                      const SizedBox(height: 20),
                       Obx(() {
                         if (platformServicesController.isLoading.value &&
                             platformServicesController.items.isEmpty) {
@@ -1488,7 +1487,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                         return Column(
                           children: [
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 12),
                             const TitleWithViewAll(
                               title: "Platform Services",
                               showViewAll: false,

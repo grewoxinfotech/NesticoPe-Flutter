@@ -41,6 +41,24 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
     statusChange.value = '';
     // update();
   }
+  Future<void> refreshProject() async {
+    try {
+      isRefreshing.value = true;
+      refreshList();
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
     log("Apply Filter in Inquiry Contractor Section ${filters} ");
@@ -109,6 +127,7 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
             style: ElevatedButton.styleFrom(backgroundColor: ColorRes.error),
             onPressed: () {
               Get.back();
+              Get.back();
               deleteFollowUpByID(id);
               Get.snackbar(
                 'Deleted',
@@ -117,6 +136,7 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
                 backgroundColor: ColorRes.error,
                 colorText: ColorRes.white,
               );
+
             },
             child: const Text("Delete"),
           ),
@@ -125,21 +145,55 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
     );
   }
 
-  Future<void> updateChangeStatus(String id,String status,String dateUpdate)
-  async {
-    log("dgfysgfysdgfysd ${dateUpdate}");
-    // 🟦 Prepare payload with only non-null, non-empty values
+  // Future<void> updateChangeStatus(String id,String status,String dateUpdate)
+  // async {
+  //   log("dgfysgfysdgfysd ${dateUpdate}");
+  //   // 🟦 Prepare payload with only non-null, non-empty values
+  //   final Map<String, dynamic> payload = {};
+  //
+  //   if (status != null && status.trim().isNotEmpty) {
+  //     payload['status'] = status.trim().toLowerCase().replaceAll(" ", "_");
+  //   }
+  //   if (dateUpdate != null && dateUpdate.isNotEmpty) {
+  //     payload['deadline'] = dateUpdate;
+  //   }
+  //
+  //   if (payload.isEmpty) {
+  //     print("⚠️ No valid status or date provided to update.");
+  //     Get.snackbar(
+  //       "Warning",
+  //       "Please select at least one value to update.",
+  //       backgroundColor: Colors.orange.shade100,
+  //       colorText: Colors.black87,
+  //     );
+  //     return;
+  //   }
+  //
+  //   print("🟩 Payload ready for update: $payload");
+  //
+  //   final date=await ContractorProjectService.contractorProjectService.updateStatus(payload, id);
+  //   if(date){
+  //     refreshList();
+  //   }
+  // }
+  // In ContractorProjectController
+  Future<void> updateChangeStatus(
+      String id,
+      String status,
+      String dateUpdate
+      ) async {
+    log("Updating project: $dateUpdate");
+
     final Map<String, dynamic> payload = {};
 
-    if (status != null && status.trim().isNotEmpty) {
+    if (status.trim().isNotEmpty) {
       payload['status'] = status.trim().toLowerCase().replaceAll(" ", "_");
     }
-    if (dateUpdate != null && dateUpdate.isNotEmpty) {
+    if (dateUpdate.isNotEmpty) {
       payload['deadline'] = dateUpdate;
     }
 
     if (payload.isEmpty) {
-      print("⚠️ No valid status or date provided to update.");
       Get.snackbar(
         "Warning",
         "Please select at least one value to update.",
@@ -149,11 +203,32 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
       return;
     }
 
-    print("🟩 Payload ready for update: $payload");
+    final success = await ContractorProjectService
+        .contractorProjectService
+        .updateStatus(payload, id);
 
-    final date=await ContractorProjectService.contractorProjectService.updateStatus(payload, id);
-    if(date){
-      refreshList();
+    if (success) {
+      // Option A: Refresh entire list
+      await refreshList();
+
+      // Option B: Update specific item locally (faster UI update)
+      final index = items.indexWhere((item) => item.id == id);
+      if (index != -1) {
+        // Create updated project object
+        final updatedProject = items[index].copyWith(
+          status: payload['status'],
+          deadline: payload['deadline'],
+        );
+        items[index] = updatedProject;
+        items.refresh(); // Trigger Obx update
+      }
+
+      Get.snackbar(
+        "Success",
+        "Project updated successfully",
+        backgroundColor: ColorRes.green.shade100,
+        colorText: ColorRes.green.shade700,
+      );
     }
   }
 

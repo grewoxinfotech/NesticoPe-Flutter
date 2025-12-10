@@ -460,6 +460,8 @@ class FinancialInfo {
   final int? noticePeriod;
   final bool? negotiable;
   final double? maintenanceCharges;
+  final double? pastFiveYearPrice;
+  final double? futureFiveYearPrice;
   final dynamic parkingCharges; // can be string or number
 
   FinancialInfo({
@@ -473,6 +475,7 @@ class FinancialInfo {
     this.lockInPeriod,
     this.noticePeriod,
     this.negotiable,
+    this.futureFiveYearPrice,this.pastFiveYearPrice,
     this.maintenanceCharges,
     this.parkingCharges,
   });
@@ -485,6 +488,8 @@ class FinancialInfo {
       monthlyRent: (json['monthlyRent'] as num?)?.toDouble(),
       pricePerSqft: (json['price_per_sqft'] as num?)?.toDouble(),
       brokerCommission: (json['broker_commission'] as num?)?.toDouble(),
+      futureFiveYearPrice:json['property_price_future'] ??0.0,
+      pastFiveYearPrice:json['property_price_past'] ??0.0,
       brokerNegotiable:
           json['broker_negotiable'] is bool
               ? json['broker_negotiable']

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_filter.dart';
+import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_overview_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
@@ -96,31 +97,54 @@ class ContractorProjectScreen extends StatelessWidget {
                     child: CircularProgressIndicator(color: ColorRes.primary),
                   );
                 }
-                return ListView.separated(
+                return RefreshIndicator(
+                    onRefresh: controller.refreshProject,
+                    color: ColorRes.primary,
+                    child: projects.isEmpty
+                        ? SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: Center(
+                          child: Text(
+                            "No Project available",
+                            style: TextStyle(
+                              fontSize: AppFontSizes.body,
+                              color: ColorRes.textSecondary,
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ): ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   itemCount: projects.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 2),
                   itemBuilder: (context, index) {
                     final project = projects[index];
-                    return Obx(
-                      () => ProjectCard(
-                        project: project,
-                        onDelete: () {
-                          controller.deleteLead(
-                            project.id,project.title
-                          );
+                    return GestureDetector(
+                        onTap: () {
+                          Get.to(()=>ContractorProjectOverviewScreen( projectId: project.id,controller: controller,));
                         },
-                        isExpanded: controller.isExpanded(project.id),
-                        onChangeStatus: () {
-                          log("Data of String ${project.toMap()}");
-                          controller.populatedProjectData(project);
-                          _showStatusDialog(context, controller, project);
-                        },
-                        onChangeTime: () {},
-                        onPress: () => controller.toggleCard(project.id),
-                      ),
+                        child: ProjectCard(
+                          project: project,
+                          onDelete: () {
+                            controller.deleteLead(
+                              project.id,project.title
+                            );
+                          },
+                          onChangeStatus: () {
+                            log("Data of String ${project.toMap()}");
+                            controller.populatedProjectData(project);
+                            showStatusDialog(context, controller, project);
+                          },
+                          onChangeTime: () {},
+
+                        ),
+
                     );
                   },
+                    )
                 );
               }),
             ),
@@ -133,8 +157,8 @@ class ContractorProjectScreen extends StatelessWidget {
 
 class ProjectCard extends StatelessWidget {
   final ContractorProjectItem project;
-  final bool isExpanded;
-  final VoidCallback onPress;
+
+
   final VoidCallback onChangeTime;
   final VoidCallback onChangeStatus;
   final VoidCallback onDelete;
@@ -142,8 +166,8 @@ class ProjectCard extends StatelessWidget {
   const ProjectCard({
     super.key,
     required this.project,
-    required this.isExpanded,
-    required this.onPress,
+
+
     required this.onChangeTime,
     required this.onChangeStatus,
     required this.onDelete,
@@ -179,187 +203,155 @@ class ProjectCard extends StatelessWidget {
         border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onPress,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// ---------------- HEADER ----------------
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      p.title,
-                      style: const TextStyle(
-                        fontWeight: AppFontWeights.semiBold,
-                        fontSize: AppFontSizes.medium,
-                        color: ColorRes.textPrimary,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      capitalizeEachWord(p.status) ?? "",
-
-                      style: TextStyle(
-                        color: statusColor,
-                        fontSize: AppFontSizes.caption,
-                        fontWeight: AppFontWeights.medium,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-
-              /// Deadline
-              Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_month,
-                    size: 16,
-                    color: ColorRes.primary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    p.deadline != null
-                        ? _formatDate(p.deadline!)
-                        : "No Deadline",
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// ---------------- HEADER ----------------
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    p.title,
                     style: const TextStyle(
-                      fontSize: AppFontSizes.caption,
-                      color: ColorRes.textSecondary,
+                      fontWeight: AppFontWeights.semiBold,
+                      fontSize: AppFontSizes.medium,
+                      color: ColorRes.textPrimary,
                     ),
                   ),
-                ],
-              ),
-
-              const SizedBox(height: 8),
-
-              /// Progress
-              // const Text(
-              //   "Progress",
-              //   style: TextStyle(
-              //     fontSize: AppFontSizes.small,
-              //     color: ColorRes.textSecondary,
-              //   ),
-              // ),
-              // const SizedBox(height: 4),
-              // LinearProgressIndicator(
-              //   value: p.progress / 100,
-              //   color: statusColor,
-              //   backgroundColor: ColorRes.divider,
-              //   minHeight: 5,
-              //   borderRadius: BorderRadius.circular(4),
-              // ),
-              // const SizedBox(height: 4),
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: Text(
-              //     "${p.progress}%",
-              //     style: const TextStyle(
-              //       fontSize: AppFontSizes.caption,
-              //       color: ColorRes.textSecondary,
-              //     ),
-              //   ),
-              // ),
-
-              /// ---------------- EXPANDED DETAILS ----------------
-              if (isExpanded) ...[
-                const SizedBox(height: 12),
-                const Divider(height: 1, color: ColorRes.divider),
-                const SizedBox(height: 12),
-
-                _sectionTitle("Client Information"),
-                _infoRow(
-                  "Name",
-                  client.name,
-                  "Property",
-                  "${client.bhk ?? '-'} BHK ${client.propertyType}",
                 ),
-                _infoRow(
-                  "Email",
-                  client.email,
-                  "Area",
-                  "${client.carpetArea ?? '-'} sqft",
-                ),
-                _infoRow(
-                  "Phone",
-                  client.phone,
-                  "Location",
-                  "${client.city}, ${client.state}",
-                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    capitalizeEachWord(p.status) ?? "",
 
-                const SizedBox(height: 10),
-                _sectionTitle("Meta Information"),
-                _infoRow(
-                  "Service",
-                  meta.serviceName,
-                  "Inquiry ID",
-                  meta.inquiryId,
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: AppFontSizes.caption,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 8),
 
-                const SizedBox(height: 10),
-                _sectionTitle("Notes"),
+            /// Deadline
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_month,
+                  size: 16,
+                  color: ColorRes.primary,
+                ),
+                const SizedBox(width: 4),
                 Text(
-                  p.notes ?? 'No notes available',
+                  p.deadline != null
+                      ? _formatDate(p.deadline!)
+                      : "No Deadline",
                   style: const TextStyle(
-                    fontSize: AppFontSizes.bodySmall,
+                    fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
                   ),
                 ),
-
-                const SizedBox(height: 10),
-                _sectionTitle("Key Dates"),
-                _infoRow(
-                  "Start",
-                  _formatDate(p.startDate),
-                  "Deadline",
-                  _formatDate(p.deadline),
-                ),
-                // _infoRow("Completed", _formatDate(p.completedAt), "", ""),
-
-                const SizedBox(height: 12),
-                const Divider(height: 1, color: ColorRes.divider),
-                const SizedBox(height: 12),
-
-                /// ACTION BUTTONS
-                Row(
-                  children: [
-                    Expanded(
-                      child: _actionButton(
-                        Icons.check_circle,
-                        "Update",
-                        ColorRes.green,
-                        onTap: onChangeStatus,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _actionButton(
-                        Icons.delete,
-                        "Delete",
-                        ColorRes.error,
-                        isDelete: true,
-                        onTap: onDelete,
-                      ),
-                    ),
-                  ],
-                ),
               ],
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 8),
+
+            /// ---------------- EXPANDED DETAILS ----------------
+            // if (isExpanded) ...[
+            //   const SizedBox(height: 12),
+            //   const Divider(height: 1, color: ColorRes.divider),
+            //   const SizedBox(height: 12),
+            //
+            //   _sectionTitle("Client Information"),
+            //   _infoRow(
+            //     "Name",
+            //     client.name,
+            //     "Property",
+            //     "${client.bhk ?? '-'} BHK ${client.propertyType}",
+            //   ),
+            //   _infoRow(
+            //     "Email",
+            //     client.email,
+            //     "Area",
+            //     "${client.carpetArea ?? '-'} sqft",
+            //   ),
+            //   _infoRow(
+            //     "Phone",
+            //     client.phone,
+            //     "Location",
+            //     "${client.city}, ${client.state}",
+            //   ),
+            //
+            //   const SizedBox(height: 10),
+            //   _sectionTitle("Meta Information"),
+            //   _infoRow(
+            //     "Service",
+            //     meta.serviceName,
+            //     "Inquiry ID",
+            //     meta.inquiryId,
+            //   ),
+            //
+            //   const SizedBox(height: 10),
+            //   _sectionTitle("Notes"),
+            //   Text(
+            //     p.notes ?? 'No notes available',
+            //     style: const TextStyle(
+            //       fontSize: AppFontSizes.bodySmall,
+            //       color: ColorRes.textSecondary,
+            //     ),
+            //   ),
+            //
+            //   const SizedBox(height: 10),
+            //   _sectionTitle("Key Dates"),
+            //   _infoRow(
+            //     "Start",
+            //     _formatDate(p.startDate),
+            //     "Deadline",
+            //     _formatDate(p.deadline),
+            //   ),
+            //   // _infoRow("Completed", _formatDate(p.completedAt), "", ""),
+            //
+            //   const SizedBox(height: 12),
+            //   const Divider(height: 1, color: ColorRes.divider),
+            //   const SizedBox(height: 12),
+            //
+            //   /// ACTION BUTTONS
+            //   Row(
+            //     children: [
+            //       Expanded(
+            //         child: _actionButton(
+            //           Icons.check_circle,
+            //           "Update",
+            //           ColorRes.green,
+            //           onTap: onChangeStatus,
+            //         ),
+            //       ),
+            //       const SizedBox(width: 8),
+            //       Expanded(
+            //         child: _actionButton(
+            //           Icons.delete,
+            //           "Delete",
+            //           ColorRes.error,
+            //           isDelete: true,
+            //           onTap: onDelete,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ],
+          ],
         ),
       ),
     );
@@ -538,7 +530,7 @@ class ProjectCard extends StatelessWidget {
   }
 }
 
-void _showStatusDialog(
+void showStatusDialog(
   BuildContext context,
   ContractorProjectController controller,
   ContractorProjectItem inquiry,

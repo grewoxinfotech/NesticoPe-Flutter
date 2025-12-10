@@ -233,7 +233,7 @@ Widget buildContractorLeadGraph(ContractorDashboardController controller) {
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyLineChart(monthlyData: monthlyData, months: months,),
+          child: MonthlyBarChart(monthlyData: monthlyData, months: months,color: ColorRes.green,isAmount: false,),
         ),
       ],
     ),

@@ -194,6 +194,24 @@ class ContractorLeadFollowupController
       ),
     );
   }
+  Future<void> refreshFollowUp() async {
+    try {
+      isRefreshing.value = true;
+      refreshList();
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
 
 // Open dialog
   void openAddFollowUpDialog() {

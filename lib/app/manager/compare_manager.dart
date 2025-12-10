@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 
 import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
+import 'package:housing_flutter_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
 
 class CompareManager extends GetxController {
   static CompareManager get to => Get.find<CompareManager>();
@@ -34,6 +35,13 @@ class CompareManager extends GetxController {
         ProjectCompareManager.to.clear();
       } catch (e) {
         print('Error clearing project comparison: $e');
+      }
+    }
+    if (_selected.isEmpty && Get.isRegistered<ContractorCompareManager>()) {
+      try {
+        ContractorCompareManager.to.clear();
+      } catch (e) {
+        print('Error clearing Contractor comparison: $e');
       }
     }
     

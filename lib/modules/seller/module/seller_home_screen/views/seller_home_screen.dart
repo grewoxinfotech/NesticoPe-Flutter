@@ -422,7 +422,26 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                               return const SizedBox.shrink(); // or a loader/empty state
                             }
 
-                            return Column(
+                            return RefreshIndicator(
+                                onRefresh: overviewController.refreshSellerDashboard,
+                                color: ColorRes.primary,
+                                child: overview==null
+                                    ? SingleChildScrollView(
+                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  child: SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.7,
+                                    child: Center(
+                                      child: Text(
+                                        "No Dashboard Data available",
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.body,
+                                          color: ColorRes.textSecondary,
+                                          fontWeight: AppFontWeights.medium,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ):Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
@@ -464,7 +483,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                                 ),
                                 const SizedBox(height: 20),
                               ],
-                            );
+                            ));
                           }),
 
                           Padding(
@@ -474,172 +493,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                             ),
                             child: Column(
                               children: [
-                                // buildMonthlyPerformance(
-                                //   title: 'Monthly Performance',
-                                //   levelName: 'Pro Level',
-                                //   levelIcon: Icons.star,
-                                //   levelIconColor: ColorRes.orangeColor,
-                                //   benefits: [
-                                //     'Priority Support',
-                                //     'Access to Premium Listings',
-                                //   ],
-                                //   progressValue: 0.65,
-                                //   currentAmount: '₹65K',
-                                //   targetAmount: '₹1L',
-                                //   unlockMessage:
-                                //       '₹35K more to unlock next level!',
-                                //   streakDays: 7,
-                                //   commissionCurrent: '₹2.9L',
-                                //   commissionPrevious: '₹2.3L',
-                                //   commissionChange: '25% increase',
-                                //   commissionPositive: true,
-                                //   leadsCurrent: '12',
-                                //   leadsPrevious: '9',
-                                //   leadsChange: '33% increase',
-                                //   leadsPositive: true,
-                                // ),
 
-                                // const SizedBox(height: 20),
-                                // buildDailyGoals(
-                                //   title: 'Daily Goal',
-                                //   goalText: 'Try to generate 5 leads today',
-                                //   date: '27 Oct 2025',
-                                //   currentStep: 3,
-                                //   totalSteps: 5,
-                                //   currentStreak: 2,
-                                //   primaryColor: ColorRes.purpleColor.shade500,
-                                //   accentColor: ColorRes.homeAmber.shade800,
-                                //   context: context,
-                                // ),
-                                // const SizedBox(height: 20),
-                                // buildBestResellerOnTheMonth(
-                                //   month: "October",
-                                //   year: "2025",
-                                //   totalCommission: "₹2.9L",
-                                //   commissionSubtitle:
-                                //       "2,85,000 earned this month",
-                                //   level: "Noob",
-                                //   levelSubtitle: 0.0,
-                                //   totalLeads: "8",
-                                //   leadsSubtitle: "Generated this month",
-                                //   commissionColor: ColorRes.success,
-                                //   levelColor: ColorRes.purpleColor.shade800,
-                                //   leadsColor: ColorRes.blueColor,
-                                // ),
-                                // const SizedBox(height: 20),
-                                // resellerLeaderBoard(
-                                //   title: 'Leaderboard',
-                                //   bannerTitle: 'Top 10 (Overall)',
-                                //   bannerSubtitle: 'Gets Extra Rewards',
-                                //   leaderboardData: [],
-                                // ),
-                                // const SizedBox(height: 20),
-                                // buildLeaderBoardRanking(
-                                //   title: 'Leaderboard Rankings',
-                                //   subtitle: 'Top performers across regions',
-                                //   filters: ['All', 'City-wise', 'Monthly'],
-                                //   leaderboardData: [
-                                //     {
-                                //       'rank': 1,
-                                //       'name': 'Rajesh Kumar',
-                                //       'level': 'Platinum Level',
-                                //       'city': 'Ahmedabad',
-                                //       'sales': '₹35L',
-                                //       'deals': '70',
-                                //       'color': ColorRes.orangeColor.withOpacity(
-                                //         0.05,
-                                //       ),
-                                //       'borderColor': ColorRes.orangeColor
-                                //           .withOpacity(0.3),
-                                //       'medalIcon': Icons.emoji_events,
-                                //     },
-                                //     {
-                                //       'rank': 2,
-                                //       'name': 'Priya Sharma',
-                                //       'level': 'Platinum Level',
-                                //       'city': 'Ahmedabad',
-                                //       'sales': '₹32L',
-                                //       'deals': '64',
-                                //       'color': ColorRes.orangeColor.withOpacity(
-                                //         0.05,
-                                //       ),
-                                //       'borderColor': ColorRes.orangeColor
-                                //           .withOpacity(0.3),
-                                //       'medalIcon': Icons.emoji_events,
-                                //     },
-                                //     {
-                                //       'rank': 3,
-                                //       'name': 'You',
-                                //       'level': 'Gold Level',
-                                //       'city': 'Ahmedabad',
-                                //       'sales': '₹29L',
-                                //       'deals': '57',
-                                //       'color': ColorRes.green.withOpacity(0.05),
-                                //       'borderColor': ColorRes.green.withOpacity(
-                                //         0.3,
-                                //       ),
-                                //       'medalIcon': Icons.emoji_events,
-                                //       'isCurrentUser': true,
-                                //     },
-                                //     {
-                                //       'rank': 4,
-                                //       'name': 'Amit Patel',
-                                //       'level': 'Gold Level',
-                                //       'city': 'Ahmedabad',
-                                //       'sales': '₹24L',
-                                //       'deals': '48',
-                                //       'color': ColorRes.leadGreyColor
-                                //           .withOpacity(0.05),
-                                //       'borderColor': ColorRes.leadGreyColor
-                                //           .withOpacity(0.3),
-                                //       'medalIcon': null,
-                                //     },
-                                //     {
-                                //       'rank': 5,
-                                //       'name': 'Neha Desai',
-                                //       'level': 'Silver Level',
-                                //       'city': 'Ahmedabad',
-                                //       'sales': '₹21L',
-                                //       'deals': '42',
-                                //       'color': ColorRes.blueColor.withOpacity(
-                                //         0.05,
-                                //       ),
-                                //       'borderColor': ColorRes.blueColor
-                                //           .withOpacity(0.3),
-                                //       'medalIcon': null,
-                                //     },
-                                //   ],
-                                // ),
-                                // const SizedBox(height: 20),
-                                // buildReferralProgram(
-                                //   controller: DashboardController(),
-                                //   context: context,
-                                //   bonus: 5000,
-                                //   currentProgress: 4,
-                                //   targetProgress: 10,
-                                //   title: 'Referral Program',
-                                //   subtitle:
-                                //       'Get ₹5000 for every new active reseller',
-                                //   pointsEarned: '2400',
-                                //   totalEarnings: '₹4K',
-                                //   earningSubtitle: '8 x ₹5000 each',
-                                //   referralCode: 'REF12345',
-                                //   leftIcon: Icons.card_giftcard_rounded,
-                                //   iconColor: ColorRes.textPrimary,
-                                //   iconBackground: ColorRes.textPrimary
-                                //       .withOpacity(0.08),
-                                //   card1BorderColor: ColorRes.homeAmber
-                                //       .withOpacity(0.3),
-                                //   card1BgColor: ColorRes.homeAmber.withOpacity(
-                                //     0.08,
-                                //   ),
-                                //   card2BorderColor: ColorRes.green.withOpacity(
-                                //     0.3,
-                                //   ),
-                                //   card2BgColor: ColorRes.green.withOpacity(
-                                //     0.08,
-                                //   ),
-                                // ),
                                 Obx(() =>  buildSellerLeadGraph(overviewController)),
                                 const SizedBox(height: 20),
                                 Obx(() =>  buildSellerCommissionGraph(overviewController)),
@@ -648,45 +502,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                             ),
                           ),
 
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(
-                          //     horizontal: 4,
-                          //   ),
-                          //   child: TitleWithViewAll(
-                          //     title: "Choose Your Plan",
-                          //     showViewAll: false,
-                          //   ),
-                          // ),
-                          // const SizedBox(height: 12),
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(
-                          //     horizontal: 16,
-                          //   ),
-                          //   child: PricingWidgetDemo(),
-                          // ),
-                          // SizedBox(height: 20),
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(
-                          //     horizontal: 4,
-                          //   ),
-                          //   child: TitleWithViewAll(
-                          //     title: "Add-ons to attract more buyers",
-                          //     showViewAll: false,
-                          //   ),
-                          // ),
-                          // const SizedBox(height: 12),
-                          // AddOnsForBuyer(),
-                          // const SizedBox(height: 20),
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(
-                          //     horizontal: 4,
-                          //   ),
-                          //   child: TitleWithViewAll(
-                          //     title: "Customer Support",
-                          //     showViewAll: false,
-                          //   ),
-                          // ),
-                          // const SizedBox(height: 12),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: const CustomerSupportCard(

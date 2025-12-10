@@ -77,7 +77,10 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return (UserHelper.isContractor)
+          return RefreshIndicator(
+              onRefresh: profileController.refreshFollowUp,
+              color: ColorRes.primary,
+              child:(UserHelper.isContractor)
               ? SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Form(
@@ -111,16 +114,17 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                       // if (!profileController.isEditing.value)
                       //   const SizedBox(height: 16),
 
-                      // Profile Options
-                      if (!profileController.isEditing.value) ...[
-                        // _buildProfileOptionsSection(),
-                        const SizedBox(height: 16),
-                      ],
-                    ],
-                  ),
-                ),
-              )
-              : SizedBox.shrink();
+                  // Profile Options
+                  if (!profileController.isEditing.value) ...[
+                    // _buildProfileOptionsSection(),
+                    const SizedBox(height: 16),
+                  ],
+                ],
+              ),
+            ),
+          )
+              : SizedBox.shrink());
+
         }),
       ),
     );

@@ -383,7 +383,23 @@ class ContractorProfileController extends GetxController {
       duration: const Duration(seconds: 2),
     );
   }
+  Future<void> refreshFollowUp() async {
+    try {
 
+      await getUserProfileData();
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+    }
+  }
   Future<String?> _uploadImage(File imageFile) async {
     try {
       isUploadingImage.value = true;

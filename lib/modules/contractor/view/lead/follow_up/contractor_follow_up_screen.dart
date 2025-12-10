@@ -103,6 +103,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
           // ),
           Expanded(
             child: Obx(() {
+              final items = controller.items;
               if (controller.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -119,13 +120,33 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                 );
               }
 
-              return ListView.builder(
+              return RefreshIndicator(
+                  onRefresh: controller.refreshFollowUp,
+                  color: ColorRes.primary,
+                  child: items.isEmpty
+                      ? SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: Center(
+                        child: Text(
+                          "No FollowUp available",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            color: ColorRes.textSecondary,
+                            fontWeight: AppFontWeights.medium,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ) :ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: controller.items.length,
                 itemBuilder: (context, index) {
                   final item = controller.items[index];
                   return _buildFollowUpCard(item, controller);
                 },
+                  )
               );
             }),
           ),

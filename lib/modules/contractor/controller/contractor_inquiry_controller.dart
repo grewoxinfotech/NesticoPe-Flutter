@@ -43,6 +43,24 @@ class ContractorInquiryController
     // await loadInitial();
     refreshList();
   }
+  Future<void> refreshInquiry() async {
+    try {
+      isRefreshing.value = true;
+      refreshList();
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
   void resetFilters() {
     txtStartDate.clear();
     txtEndDate.clear();
