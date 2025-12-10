@@ -140,6 +140,7 @@ class Items {
   String? createdAt;
   String? updatedAt;
   ScoreBreakdownModel? scoreBreakdown;
+  InvestmentInsight? investmentInsight;
 
   Items({
     this.propertyMedia,
@@ -200,6 +201,7 @@ class Items {
     this.createdAt,
     this.updatedAt,
     this.scoreBreakdown,
+    this.investmentInsight,
   });
 
   Items.fromJson(Map<String, dynamic> json) {
@@ -287,6 +289,12 @@ class Items {
               json['scoreBreakdown'] as Map<String, dynamic>,
             )
             : null;
+    investmentInsight =
+        json['investment_insight'] != null
+            ? InvestmentInsight.fromJson(
+              json['investment_insight'] as Map<String, dynamic>,
+            )
+            : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -362,6 +370,11 @@ class Items {
       final score = scoreBreakdown!.toJson();
       score.removeWhere((key, value) => value == null);
       data['scoreBreakdown'] = score;
+    }
+    if (investmentInsight != null) {
+      final investment = investmentInsight!.toJson();
+      investment.removeWhere((key, value) => value == null);
+      data['investment_insight'] = investment;
     }
 
     return data;
@@ -1399,6 +1412,103 @@ class PremiumComponent {
       "max": max,
       "isPremium": isPremium,
       "description": description,
+    };
+  }
+}
+
+class InvestmentInsight {
+  final PriceTrend? priceTrend;
+  final FutureProjection? futureProjection;
+
+  InvestmentInsight({this.priceTrend, this.futureProjection});
+
+  /// Checks if any section contains useful insight data
+  bool get isNotEmpty =>
+      (priceTrend?.isNotEmpty ?? false) ||
+      (futureProjection?.isNotEmpty ?? false);
+
+  factory InvestmentInsight.fromJson(Map<String, dynamic> json) {
+    return InvestmentInsight(
+      priceTrend:
+          json['price_trend'] != null
+              ? PriceTrend.fromJson(json['price_trend'])
+              : null,
+      futureProjection:
+          json['future_projection'] != null
+              ? FutureProjection.fromJson(json['future_projection'])
+              : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'price_trend': priceTrend?.toJson(),
+      'future_projection': futureProjection?.toJson(),
+    };
+  }
+}
+
+class PriceTrend {
+  final num? currentPrice;
+  final num? past5yrPrice;
+  final num? growthPercentage5yr;
+  final num? cagrPercentage;
+
+  PriceTrend({
+    this.currentPrice,
+    this.past5yrPrice,
+    this.growthPercentage5yr,
+    this.cagrPercentage,
+  });
+
+  /// True only if at least *one valid value* is present
+  bool get isNotEmpty =>
+      (currentPrice != null && currentPrice! > 0) ||
+      (past5yrPrice != null && past5yrPrice! > 0) ||
+      (growthPercentage5yr != null) ||
+      (cagrPercentage != null);
+
+  factory PriceTrend.fromJson(Map<String, dynamic> json) {
+    return PriceTrend(
+      currentPrice: json['current_price'],
+      past5yrPrice: json['past_5yr_price'],
+      growthPercentage5yr: json['growth_percentage_5yr'],
+      cagrPercentage: json['cagr_percentage'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'current_price': currentPrice,
+      'past_5yr_price': past5yrPrice,
+      'growth_percentage_5yr': growthPercentage5yr,
+      'cagr_percentage': cagrPercentage,
+    };
+  }
+}
+
+class FutureProjection {
+  final num? projectedPrice5yr;
+  final num? roiPercentage5yr;
+
+  FutureProjection({this.projectedPrice5yr, this.roiPercentage5yr});
+
+  /// True if any future projection value exists
+  bool get isNotEmpty =>
+      (projectedPrice5yr != null && projectedPrice5yr! > 0) ||
+      (roiPercentage5yr != null);
+
+  factory FutureProjection.fromJson(Map<String, dynamic> json) {
+    return FutureProjection(
+      projectedPrice5yr: json['projected_price_5yr'],
+      roiPercentage5yr: json['roi_percentage_5yr'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'projected_price_5yr': projectedPrice5yr,
+      'roi_percentage_5yr': roiPercentage5yr,
     };
   }
 }

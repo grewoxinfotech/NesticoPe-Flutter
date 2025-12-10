@@ -227,7 +227,6 @@ class PropertyController extends PaginatedController<Items> {
         page: page,
         filters: filters,
       );
-      print("hbufhfyb filter ${filters}");
 
       print("Fetched items: ${response.items.length}");
       return response;

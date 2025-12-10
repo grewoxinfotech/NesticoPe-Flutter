@@ -22,6 +22,7 @@ import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/controllers/share_property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/recommended_property.dart';
+import 'package:housing_flutter_app/modules/property/views/widgets/investment_insigths_graph.dart';
 import 'package:housing_flutter_app/modules/property/views/widgets/overall_rating_widget.dart';
 import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
@@ -366,6 +367,18 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         endIndent: 18,
                         color: ColorRes.leadGreyColor.shade300,
                       ),
+                    ],
+
+                    if (property!.listingType!.toLowerCase() == 'sell') ...[
+                      if (property?.investmentInsight != null) ...[
+                        const SizedBox(height: 12),
+                        const TitleWithViewAll(title: 'Investment Insight'),
+                        const SizedBox(height: 8),
+                        InvestmentInsightChart(
+                          insight: property!.investmentInsight!,
+                        ),
+                        const SizedBox(height: 12),
+                      ],
                     ],
 
                     if (property?.location?.isNotEmpty ?? false) ...[

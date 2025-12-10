@@ -356,6 +356,22 @@ class LoadEditPropertyPayload extends GetxController {
             0.0)
         .toStringAsFixed(0);
 
+    controller.pastFiveYearPrice.text =
+        (property.propertyDetails?.financialInfo?.pastFiveYearPrice != null &&
+                property.propertyDetails!.financialInfo!.pastFiveYearPrice! !=
+                    0)
+            ? property.propertyDetails!.financialInfo!.pastFiveYearPrice!
+                .toStringAsFixed(0)
+            : '0';
+
+    controller.futureFiveYearPrice.text =
+        (property.propertyDetails?.financialInfo?.futureFiveYearPrice != null &&
+                property.propertyDetails!.financialInfo!.futureFiveYearPrice! !=
+                    0)
+            ? property.propertyDetails!.financialInfo!.futureFiveYearPrice!
+                .toStringAsFixed(0)
+            : '0';
+
     /// Security Deposit
     controller.rent_SecurityDeposit.text =
         (property.propertyDetails?.financialInfo?.propertySecurityDeposit !=
