@@ -117,7 +117,6 @@ class ContractorLeadScreen extends StatelessWidget {
                         description: '',
                         isActive: false,
                         meta: ContractorMetaData(
-                          price: 0,
                           priceModel: '',
                           maxPriceRange: 0,
                           minPriceRange: 0,

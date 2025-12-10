@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
+import '../project/contractor_project.dart';
 import '../widget/contractor_inquiry_screen.dart';
 import '../widget/my_service_screen.dart';
 import 'contractor_lead_screen.dart';
@@ -58,9 +59,9 @@ class ContractorLead extends StatelessWidget {
               ElevatedButton(
 
                 onPressed: () {
-                  // Navigator.pushNamed(context, '/screen4');
+                  Get.to(()=>ContractorProjectScreen());
                 },
-                child: const Text('Go to Screen 4'),
+                child: const Text('Contractor Project'),
               ),
               const SizedBox(height: 12),
               ElevatedButton(

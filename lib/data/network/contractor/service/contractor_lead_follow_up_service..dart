@@ -58,6 +58,56 @@ class ContractorLeadFollowUpService{
     }
   }
 
+
+  Future<bool>createFollowUp(Map<String,dynamic> followUp ) async {
+    try{
+      final uri = Uri.parse("$_baseUrl");
+
+      log("Contractor Lead Add Follow Up Url $uri");
+      final response = await http.post(uri, headers: await headers(),body: jsonEncode(followUp));
+
+    if (response.statusCode == 200||response.statusCode == 201) {
+    final data = jsonDecode(response.body);
+    print("Contractor Lead ADD Follow Up data: $data");
+    return data['success'];
+    } else {
+    print("Failed to load Lead ADD Follow Up: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    throw Exception("Failed to load Lead ADD Follow Up");
+
+    }
+    }catch(e){
+      print("Exception in Lead ADD Follow Up: $e");
+      return false;
+
+    }
+  }
+  Future<bool>updateFollowUp(Map<String,dynamic> followUp,String id ) async {
+    try{
+      final uri = Uri.parse("$_baseUrl/$id");
+
+      log("Contractor Lead Update Follow Up Url $uri");
+      final response = await http.put(uri, headers: await headers(),body: jsonEncode(followUp));
+
+      if (response.statusCode == 200||response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        print("Contractor Lead Update Follow Up data: $data");
+        return data['success'];
+      } else {
+        print("Failed to load Lead Update Follow Up: ${response.statusCode}");
+        print("Response body: ${response.body}");
+
+        throw Exception("Failed to load Lead Update Follow Up");
+
+      }
+    }catch(e){
+      print("Exception in Lead Update Follow Up: $e");
+      return false;
+
+    }
+  }
+
   // Future<bool> updateStatusOfInquiry(String id,String status)
   // async {
   //   try{
@@ -83,30 +133,30 @@ class ContractorLeadFollowUpService{
   // }
   //
   //
-  // Future<bool> deleteInquiry(String id)
-  // async {
-  //   try{
-  //     final response=await http.delete(Uri.parse('$_baseUrl/$id'),headers:await headers(),);
-  //
-  //     if(response.statusCode==200)
-  //     {
-  //       final data =jsonDecode(response.body);
-  //       print("Contractor Inquiry Deleted : $data");
-  //       return data['success'];
-  //     }
-  //     else{
-  //       print("Failed to Delete Inquiry: ${response.statusCode}");
-  //       print("Response body: ${response.body}");
-  //       throw Exception("Failed to Delete Inquiry");
-  //     }
-  //   }
-  //   catch(e)
-  //   {
-  //     print("Exception in Delete Inquiry: $e");
-  //     return false;
-  //   }
-  // }
-  //
+  Future<bool> deleteFollowUp(String id)
+  async {
+    try{
+      final response=await http.delete(Uri.parse('$_baseUrl/$id'),headers:await headers(),);
+
+      if(response.statusCode==200)
+      {
+        final data =jsonDecode(response.body);
+        print("Contractor Lead Follow Up Deleted : $data");
+        return data['success'];
+      }
+      else{
+        print("Failed to Delete Follow Up: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to Delete Follow Up");
+      }
+    }
+    catch(e)
+    {
+      print("Exception in Delete Follow Up: $e");
+      return false;
+    }
+  }
+
   // Future<bool> convertInquiryIntoLead(Map<String,dynamic> lead)
   // async {
   //   try{

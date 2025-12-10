@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
 import 'package:housing_flutter_app/data/network/contractor/service/contractor_lead_follow_up_service..dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:intl/intl.dart';
 
 import '../../../app/care/pagination/controller/pagination_controller.dart';
 import '../../../app/constants/app_font_sizes.dart';
@@ -30,13 +34,22 @@ class ContractorLeadFollowupController
     loadInitial();
   }
   // Add inside ContractorLeadFollowupController
-
+//---------------------------------------Add followUp variable ------------------------------------------------//
   final RxString selectedType = ''.obs;
+  final RxString followUpId=''.obs;
   final TextEditingController txtDate = TextEditingController();
+  final TextEditingController txtLocation = TextEditingController();
   final TextEditingController txtTime = TextEditingController();
   final RxBool reminder = false.obs;
   final TextEditingController txtNotes = TextEditingController();
-
+  final RxString statusFollow=''.obs;
+  final RxList<String> statusFollowList=<String>[
+    'Pending',
+    'Completed',
+    'Cancelled'
+  ].obs;
+  RxBool isEditModel=false.obs;
+//---------------------------------------Add followUp variable ------------------------------------------------//
 // Sample follow-up types
   final List<String> followUpTypes = ['Call', 'Meeting', 'Email', 'Visit'];
 
@@ -49,6 +62,138 @@ class ContractorLeadFollowupController
     txtNotes.clear();
   }
 
+  void changeTheStatus(bool value,){
+    isEditModel.value=value;
+    log(" is EditModel ${isEditModel.value}");
+  }
+
+  void populatedFollowUpData(ContractorLeadFollowUpItem item)
+  {
+
+   if(isEditModel.value){
+     followUpId.value=item.id;
+     selectedType.value=capitalizeEachWord(item.type);
+     txtTime.text=item.time??'';
+
+     txtDate.text=item.date??'';
+     reminder.value=item.reminder;
+     statusFollow.value=capitalizeEachWord(item.status);
+     txtLocation.text=item.location??'';
+     txtNotes.text=item.notes??'';
+   }
+  }
+
+  Future<void> payloadMethod()
+  async {
+    Map<String, dynamic> payload = {
+      "isEditMode": isEditModel.value,
+      "related_id": leadId.value, // from your model or controller
+      "section": "lead",
+      "type": selectedType.value.toLowerCase(),
+      "date": txtDate.text.trim(), // e.g., 2025-12-16
+      "time": txtTime.text.trim(), // e.g., 05:06
+      "reminder": reminder.value,
+      "notes": txtNotes.text.trim(),
+      if (selectedType.value.toLowerCase() == 'meeting')
+        "location": txtLocation.text.trim(),
+    };
+    print("Follow Up Data ${payload}");
+
+    final response= await ContractorLeadFollowUpService.contractorInquiryService.createFollowUp(payload);
+    if(response)
+      {
+
+        refreshList();
+        Get.snackbar('Success',
+            'Follow-up added successfully!');
+      }
+  }
+
+  Future<void> payloadEditMethod() async {
+    try {
+      final String type = selectedType.value.toLowerCase();
+
+      final Map<String, dynamic> payload = {
+        "isEditMode": isEditModel.value,
+        "related_id": leadId.value,
+        "section": "lead",
+        "type": type,
+        "date": txtDate.text.trim(),
+        "time": txtTime.text.trim(),
+        "reminder": reminder.value,
+        "status": statusFollow.value.toLowerCase(),
+        "notes": txtNotes.text.trim(),
+      };
+
+      // Add location only for meetings
+      if (type == 'meeting') {
+        payload["location"] = txtLocation.text.trim();
+      }
+      else{
+        // payload["location"] = null;
+      }
+
+      print("Follow Up Data Edit: $payload");
+
+      final response = await ContractorLeadFollowUpService
+          .contractorInquiryService
+          .updateFollowUp(payload, followUpId.value);
+
+      if (response) {
+        refreshList();
+        Get.snackbar('Success', 'Follow-up updated successfully!');
+      } else {
+        Get.snackbar('Error', 'Failed to update follow-up. Please try again.');
+      }
+    } catch (e) {
+      print("Error in payloadEditMethod: $e");
+      Get.snackbar('Error', 'Something went wrong. Please try again.');
+    }
+  }
+
+
+
+  Future<void> deleteFollowUpByID(String id) async {
+    final response=await ContractorLeadFollowUpService.contractorInquiryService.deleteFollowUp(id);
+    if(response){
+      refreshList();
+    }
+  }
+
+  void deleteLead(String id, String name) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: ColorRes.white,
+        title: const Text(
+          'Delete Follow Up',
+          style: TextStyle(
+            fontSize: AppFontSizes.large,
+            fontWeight: AppFontWeights.semiBold,
+            color: ColorRes.textColor,
+          ),
+        ),
+        content: Text('Are you sure you want to delete Follow for $name?'),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: ColorRes.error),
+            onPressed: () {
+              Get.back();
+              deleteFollowUpByID(id);
+              Get.snackbar(
+                'Deleted',
+                'Follow Up deleted successfully',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: ColorRes.error,
+                colorText: ColorRes.white,
+              );
+            },
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+  }
 
 // Open dialog
   void openAddFollowUpDialog() {
@@ -78,10 +223,10 @@ class ContractorLeadFollowupController
                 ),
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        "Add Follow-up",
-                        style: TextStyle(
+                        "${isEditModel.value?'Edit Follow-up':'Add Follow-up'}",
+                        style: const TextStyle(
                           fontSize: AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.white,
@@ -89,7 +234,8 @@ class ContractorLeadFollowupController
                       ),
                     ),
                     InkWell(
-                      onTap: () => Get.back(),
+                      onTap: ()  {Get.back();
+                        resetFollowUpForm();},
                       borderRadius: BorderRadius.circular(50),
                       child: const Icon(Icons.close_rounded,
                           color: ColorRes.white, size: 20),
@@ -142,6 +288,7 @@ class ContractorLeadFollowupController
                               .toList(),
                           onChanged: (val){
                            selectedType.value=val;
+                           log("Message ${selectedType.value}");
                           } ,
                           darkText: true,
                         );
@@ -198,28 +345,67 @@ class ContractorLeadFollowupController
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: buildTextField('Time', Icons.timelapse_rounded, txtTime, validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter valid Time';
-                              }
-                              return null;
-                            },
+                            child: buildTextField(
+                              'Time',
+                              Icons.timelapse_rounded,
+                              txtTime,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter valid Time';
+                                }
+                                return null;
+                              },
                               isEnable: false,
-                            onTap: () async {
-                          final picked = await showTimePicker(
-                          context: Get.context!,
-                          initialTime: TimeOfDay.now(),
-                          );
-                          if (picked != null) {
-                          txtTime.text = picked.format(Get.context!);
-                          }
-                          },
-                            )
-                          ),
+                              onTap: () async {
+                                final picked = await showTimePicker(
+                                  context: Get.context!,
+                                  initialTime: TimeOfDay.now(),
+                                );
+                                if (picked != null) {
+                                  // Convert TimeOfDay to 24-hour formatted string (HH:mm)
+                                  final now = DateTime.now();
+                                  final formattedTime = DateFormat('HH:mm').format(
+                                    DateTime(now.year, now.month, now.day, picked.hour, picked.minute),
+                                  );
+
+                                  txtTime.text = formattedTime;
+                                  log("Picked time: $formattedTime");
+                                }
+                              },
+                            ),
+                          )
+
                         ],
                       ),
                       const SizedBox(height: 16),
 
+                      Obx(() {
+                        if(isEditModel.value)
+                          {
+                            return Column(
+                              children: [
+                                Obx(() {
+                                  return NesticoPeDropdownField<String>(
+                                    isRequired: true,
+                                    value: statusFollow.value,
+                                    prefixIcon: Icons.settings_input_composite_outlined,
+                                    items:
+                                    statusFollowList.value
+                                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                                        .toList(),
+                                    onChanged: (val){
+                                      statusFollow.value=val;
+                                      log("Message Status ${statusFollow.value}");
+                                    } ,
+                                    darkText: true,
+                                  );
+                                },),
+                                const SizedBox(height: 16),
+                              ],
+                            );
+                          }
+                        return SizedBox.shrink();
+                      },),
                       // Reminder
                      Row(
                         children: [
@@ -239,11 +425,38 @@ class ContractorLeadFollowupController
 
                         ],
                       ),
-
+                      Obx(() {
+                        if (selectedType.value.toLowerCase() == 'meeting') {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16),
+                              Text(
+                                'Location',
+                                style: TextStyle(
+                                  color: ColorRes.textSecondary,
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              buildTextField(
+                                'Location',
+                                Icons.location_on_outlined,
+                                txtLocation,
+                                maxLines: 3,
+                                minLines: 1,
+                              ),
+                            ],
+                          );
+                        } else {
+                          return const SizedBox.shrink(); // return empty widget if condition false
+                        }
+                      }),
                       const SizedBox(height: 16),
 
                       // Notes
-                      const Text('Notes',
+                      Text('Notes',
                           style: TextStyle(
                               color: ColorRes.textSecondary,
                               fontSize: AppFontSizes.small,
@@ -264,7 +477,10 @@ class ContractorLeadFollowupController
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(
-                            onPressed: () => Get.back(),
+                            onPressed: () {
+                              Get.back();
+                              resetFollowUpForm();
+                            },
                             child: const Text('Cancel'),
                           ),
                           const SizedBox(width: 12),
@@ -276,12 +492,18 @@ class ContractorLeadFollowupController
                               ),
                             ),
                             onPressed: () {
-                              // Add follow-up submit logic here
-                              Get.back();
-                              Get.snackbar('Success',
-                                  'Follow-up added successfully!');
+                             if(isEditModel.value)
+                               {
+                                 payloadEditMethod();
+                               }else{
+                               payloadMethod();
+
+                             }
+                             resetFollowUpForm();
+                             Get.back();
+
                             },
-                            child: const Text('Add Follow-up'),
+                            child: (isEditModel.value)?Text('Update Follow-up'): Text('Add Follow-up'),
                           ),
                         ],
                       ),
@@ -322,15 +544,6 @@ class ContractorLeadFollowupController
   void editFollowUp(String id) {
     // Implement edit functionality
     Get.snackbar('Edit', 'Edit follow-up: $id');
-  }
-
-
-
-  void deleteFollowUp(String id) {
-    // Implement delete functionality
-    // allFollowUps.removeWhere((item) => item.id == id);
-
-    Get.snackbar('Delete', 'Follow-up deleted successfully');
   }
 
   void addNewFollowUp() {

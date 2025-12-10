@@ -31,6 +31,9 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.initFollowups(widget.lead.id ?? "");
+    });
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
@@ -50,61 +53,61 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
             fontWeight: AppFontWeights.semiBold,
           ),
         ),
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
-            onSelected: (value) {
-              controller.selectedFilter.value = value;
-              controller.setFilter(value);
-              log("Contractor_status $value");
-            },
-            itemBuilder:
-                (context) => [
-                  const PopupMenuItem(value: 'All', child: Text('All')),
-                  const PopupMenuItem(value: 'Pending', child: Text('Pending')),
-                  const PopupMenuItem(value: 'Cancel', child: Text('Cancel')),
-                  const PopupMenuItem(
-                    value: 'Completed',
-                    child: Text('Completed'),
-                  ),
-                ],
-          ),
-        ],
+        // actions: [
+        //   PopupMenuButton<String>(
+        //     icon: const Icon(Icons.more_vert),
+        //     onSelected: (value) {
+        //       controller.selectedFilter.value = value;
+        //       controller.setFilter(value);
+        //       log("Contractor_status $value");
+        //     },
+        //     itemBuilder:
+        //         (context) => [
+        //           const PopupMenuItem(value: 'All', child: Text('All')),
+        //           const PopupMenuItem(value: 'Pending', child: Text('Pending')),
+        //           const PopupMenuItem(value: 'Cancel', child: Text('Cancel')),
+        //           const PopupMenuItem(
+        //             value: 'Completed',
+        //             child: Text('Completed'),
+        //           ),
+        //         ],
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
-          Container(
-            color: ColorRes.white,
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              onChanged: controller.setSearchQuery,
-              decoration: InputDecoration(
-                hintText: 'Search follow-ups...',
-                hintStyle: TextStyle(
-                  color: ColorRes.textSecondary,
-                  fontSize: AppFontSizes.medium,
-                ),
-                prefixIcon: const Icon(
-                  Icons.search,
-                  color: ColorRes.textSecondary,
-                ),
-                filled: true,
-                fillColor: ColorRes.background,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-          ),
+          // Container(
+          //   color: ColorRes.white,
+          //   padding: const EdgeInsets.all(16),
+          //   child: TextField(
+          //     onChanged: controller.setSearchQuery,
+          //     decoration: InputDecoration(
+          //       hintText: 'Search follow-ups...',
+          //       hintStyle: TextStyle(
+          //         color: ColorRes.textSecondary,
+          //         fontSize: AppFontSizes.medium,
+          //       ),
+          //       prefixIcon: const Icon(
+          //         Icons.search,
+          //         color: ColorRes.textSecondary,
+          //       ),
+          //       filled: true,
+          //       fillColor: ColorRes.background,
+          //       border: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(12),
+          //         borderSide: BorderSide.none,
+          //       ),
+          //       contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (controller.items.isEmpty) {
+              if (controller.items.isEmpty && (!controller.isLoading.value)) {
                 return Center(
                   child: Text(
                     'No follow-ups found',
@@ -130,7 +133,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorRes.primary,
-        onPressed:() {controller.openAddFollowUpDialog();},
+        onPressed:() {controller.changeTheStatus(false);controller.openAddFollowUpDialog();},
         child: const Icon(Icons.add, color: ColorRes.white),
       ),
     );
@@ -186,7 +189,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                                   '${getTitle(item.type)}',
                                   style: TextStyle(
                                     color: ColorRes.textPrimary,
-                                    fontSize: AppFontSizes.body,
+                                    fontSize: AppFontSizes.medium,
                                     fontWeight: AppFontWeights.semiBold,
                                   ),
                                   maxLines: 1,
@@ -194,15 +197,15 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                                 ),
                               ),
 
-                              _buildStatusChip(item.status),
+                              _buildStatusChip(item.status??''),
                             ],
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            controller.formatDateTime(item.date, item.time),
+                            controller.formatDateTime(item.date??'', item.time??''),
                             style: TextStyle(
                               color: ColorRes.textSecondary,
-                              fontSize: AppFontSizes.small,
+                              fontSize: AppFontSizes.caption,
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -222,7 +225,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (item.notes.isNotEmpty) ...[
+                    if (item.notes?.isNotEmpty??false) ...[
                       Text(
                         'Notes',
 
@@ -234,7 +237,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        item.notes,
+                        item.notes??'',
                         style: TextStyle(
                           color: ColorRes.textSecondary,
                           fontSize: AppFontSizes.small,
@@ -263,7 +266,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                     ),
                     const SizedBox(height: 12),
 
-                    if (item.location != null) ...[
+                    if (item.type != 'call') ...[
                       Text(
                         'Location',
                         style: TextStyle(
@@ -292,7 +295,10 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              controller.editFollowUp(item.id);
+
+                              controller.changeTheStatus(true);
+                              controller.populatedFollowUpData(item);
+                             controller.openAddFollowUpDialog();
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),
@@ -312,137 +318,129 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                             Get.dialog( Dialog(
-                               backgroundColor: ColorRes.white,
-                               shape: RoundedRectangleBorder(
-                                 borderRadius: BorderRadius.circular(20),
-                               ),
-                               insetPadding: const EdgeInsets.symmetric(
-                                 horizontal: 18,
-                                 vertical: 24,
-                               ),
-                               child: Container(
-                                 constraints: const BoxConstraints(
-                                   maxWidth: 600,
-                                   maxHeight: 700,
-                                 ),
-                                 decoration: BoxDecoration(
-                                   color: ColorRes.white,
-                                   borderRadius: BorderRadius.circular(20),
-                                 ),
-                                 child: Column(
-                                   mainAxisSize: MainAxisSize.min,
-                                   children: [
-                                     Container(
-                                       padding: const EdgeInsets.symmetric(
-                                         horizontal: 16,
-                                         vertical: 10,
-                                       ),
-                                       decoration: const BoxDecoration(
-                                         color: ColorRes.primary,
-                                         borderRadius: BorderRadius.only(
-                                           topLeft: Radius.circular(20),
-                                           topRight: Radius.circular(20),
-                                         ),
-                                       ),
-                                       child: Row(
-                                         children: [
-                                           const Expanded(
-                                             child: Text(
-                                               "Lead Details",
-                                               style: TextStyle(
-                                                 fontSize: AppFontSizes.body,
-                                                 fontWeight:
-                                                 AppFontWeights.semiBold,
-                                                 color: ColorRes.white,
-                                               ),
-                                             ),
-                                           ),
-                                           InkWell(
-                                             onTap: () {
-                                               Get.back();
-                                             },
-                                             borderRadius:
-                                             BorderRadius.circular(50),
-                                             child: const Icon(
-                                               Icons.close_rounded,
-                                               color: ColorRes.white,
-                                               size: 20,
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                     ),
+                              Get.dialog(
+                                Dialog(
+                                  backgroundColor: ColorRes.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  insetPadding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                    vertical: 24,
+                                  ),
+                                  child: Container(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 600,
+                                      maxHeight: 700,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // ---------- HEADER ----------
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 10,
+                                          ),
+                                          decoration: const BoxDecoration(
+                                            color: ColorRes.primary,
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20),
+                                              topRight: Radius.circular(20),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Expanded(
+                                                child: Text(
+                                                  "Lead Details",
+                                                  style: TextStyle(
+                                                    fontSize: AppFontSizes.body,
+                                                    fontWeight: AppFontWeights.semiBold,
+                                                    color: ColorRes.white,
+                                                  ),
+                                                ),
+                                              ),
+                                              InkWell(
+                                                onTap: () => Get.back(),
+                                                borderRadius: BorderRadius.circular(50),
+                                                child: const Icon(
+                                                  Icons.close_rounded,
+                                                  color: ColorRes.white,
+                                                  size: 20,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
 
-                                     Flexible(
-                                       child: SingleChildScrollView(
-                                         padding: const EdgeInsets.symmetric(
-                                           horizontal: 20,
-                                           vertical: 16,
-                                         ),
-                                         child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-                                           Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Text('Type',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
-                                               Text('${capitalizeEachWord(item.type)}',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)
-                                             ],
-                                           ),
-                                           Divider(height: 20,color: ColorRes.leadGreyColor.shade300,),
-                                           Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Text('Date',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
-                                               Text('${capitalizeEachWord(item.date)}',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)
-                                             ],
-                                           ),
-                                           Divider(height: 20,color: ColorRes.leadGreyColor.shade300,),
-                                           Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Text('Remainder',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
-                                               Text('${capitalizeEachWord(item.reminder?'Yes':'No')}',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)
-                                             ],
-                                           ),
-                                           Divider(height: 20,color: ColorRes.leadGreyColor.shade300,),
-                                           Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Text('Time',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
-                                               Text('${item.time}',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)
-                                             ],
-                                           ),
-                                           Divider(height: 20,color: ColorRes.leadGreyColor.shade300,),
-                                           Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Text('Status',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
-                                               Text('${capitalizeEachWord(item.status)}',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)
-                                             ],
-                                           ),
-                                           Divider(height: 20,color: ColorRes.leadGreyColor.shade300,),
-                                           Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Text('Location',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
-                                               Text('${item.location}',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)
-                                             ],
-                                           ),
-                                           Divider(height: 20,color: ColorRes.leadGreyColor.shade300,),
-                                           Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Text('Note',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
-                                               Text('${item.notes}',style: TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)
-                                             ],
-                                           )
-                                         ]),
-                                       ),
-                                     ),
-                                   ],
-                                 ),
-                               ),
-                             ),barrierDismissible: true);
+                                        // ---------- BODY ----------
+                                        Flexible(
+                                          child: SingleChildScrollView(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 20,
+                                              vertical: 16,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // TYPE
+                                                if ((item.type ?? '').toString().trim().isNotEmpty) ...[
+                                                  _buildDetailRow('Type', capitalizeEachWord(item.type)),
+                                                  _buildDivider(),
+                                                ],
+
+                                                // DATE
+                                                if ((item.date ?? '').toString().trim().isNotEmpty) ...[
+                                                  _buildDetailRow('Date', item.date??''),
+                                                  _buildDivider(),
+                                                ],
+
+                                                // REMINDER
+                                                if (item.reminder != null) ...[
+                                                  _buildDetailRow(
+                                                    'Reminder',
+                                                    item.reminder ? 'Yes' : 'No',
+                                                  ),
+                                                  _buildDivider(),
+                                                ],
+
+                                                // TIME
+                                                if ((item.time ?? '').toString().trim().isNotEmpty) ...[
+                                                  _buildDetailRow('Time', item.time??''),
+                                                  _buildDivider(),
+                                                ],
+
+                                                // STATUS
+                                                if ((item.status ?? '').toString().trim().isNotEmpty) ...[
+                                                  _buildDetailRow('Status', capitalizeEachWord(item.status)),
+                                                  _buildDivider(),
+                                                ],
+
+                                                // LOCATION
+                                                if ((item.location ?? '').toString().trim().isNotEmpty) ...[
+                                                  _buildDetailRow('Location', item.location??''),
+                                                  _buildDivider(),
+                                                ],
+
+                                                // NOTE
+                                                if ((item.notes ?? '').toString().trim().isNotEmpty) ...[
+                                                  _buildDetailRow('Note', item.notes??''),
+                                                ],
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                barrierDismissible: true,
+                              );
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),
@@ -458,10 +456,11 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                             ),
                           ),
                         ),
+
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              controller.deleteFollowUp(item.id);
+                              controller.deleteLead(item.id,item.type);
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),
@@ -487,6 +486,40 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
         ),
       );
     });
+  }
+  Widget _buildDetailRow(String title, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: ColorRes.textSecondary,
+              fontSize: AppFontSizes.small,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: ColorRes.textSecondary,
+              fontSize: AppFontSizes.small,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      height: 20,
+      color: ColorRes.leadGreyColor.shade300,
+    );
   }
 
   Widget _buildStatusChip(String status) {
@@ -522,7 +555,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
         displayText,
         style: TextStyle(
           color: textColor,
-          fontSize: AppFontSizes.small,
+          fontSize: AppFontSizes.caption,
           fontWeight: AppFontWeights.medium,
         ),
       ),

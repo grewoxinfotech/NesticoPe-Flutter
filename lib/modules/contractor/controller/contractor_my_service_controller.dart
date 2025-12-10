@@ -151,7 +151,7 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
         isActive: true,
 
         meta: ContractorMetaData(
-          price: double.tryParse(priceController.text.trim()) ?? 0.0,
+
           priceModel: selectedPriceModel.value.toLowerCase(),
           minPriceRange: int.tryParse(minRangeController.text.trim())??0,
           maxPriceRange: int.tryParse(maxRangeController.text.trim())??0,
@@ -216,7 +216,7 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
 
     serviceNameController.text = service.serviceName ?? '';
     descriptionController.text = service.description ?? '';
-    priceController.text = service.meta?.price?.toString() ?? '0';
+
     minRangeController.text = service.meta?.minPriceRange.toString()??'';
     maxRangeController.text = service.meta?.maxPriceRange.toString()??'';
     brandController.text = service.meta?.brandsUsed ?? '';
@@ -319,7 +319,6 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
         description: descriptionController.text.trim(),
         isActive: editingService.value!.isActive, // Preserve active status
         meta: ContractorMetaData(
-          price: double.tryParse(priceController.text.trim()) ?? 0.0,
           priceModel: selectedPriceModel.value.toLowerCase(),
           minPriceRange: int.tryParse(minRangeController.text.trim())??0,
           maxPriceRange: int.tryParse(maxRangeController.text.trim())??0,

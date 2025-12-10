@@ -65,7 +65,7 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
               Text(
                 ' *',
                 style: TextStyle(
-                  color: Get.theme.colorScheme.error,
+                  color: ColorRes.error,
                   fontSize: AppFontSizes.medium,
                   fontWeight: AppFontWeights.bold,
                 ),

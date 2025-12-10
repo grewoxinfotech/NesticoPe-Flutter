@@ -1,700 +1,363 @@
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-//
-// import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
-// import '../../controller/contractor_my_service_controller.dart';
-//
-//
-// class ContractorProject extends StatelessWidget {
-//   const ContractorProject({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final controller = Get.put(ContractorMyServiceController());
-//
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('My Services'),
-//         actions: [
-//           IconButton(
-//             icon: const Icon(Icons.add_circle_outline_rounded),
-//             onPressed: () {
-//               // TODO: open Add Service Form
-//             },
-//           )
-//         ],
-//       ),
-//       body: Obx(() {
-//         final items = controller.items;
-//         if (controller.isLoading.value) {
-//           return const Center(child: CircularProgressIndicator());
-//         }
-//
-//         if (items.isEmpty) {
-//           return const Center(child: Text("No services available"));
-//         }
-//
-//         return ListView.builder(
-//           padding: const EdgeInsets.all(12),
-//           itemCount: items.length,
-//           itemBuilder: (context, index) {
-//             final item = items[index];
-//             return ServiceCard(item: item);
-//           },
-//         );
-//       }),
-//     );
-//   }
-// }
-//
-// class ServiceCard extends StatefulWidget {
-//   final ContractorServiceItem item;
-//
-//   const ServiceCard({super.key, required this.item});
-//
-//   @override
-//   State<ServiceCard> createState() => _ServiceCardState();
-// }
-//
-// class _ServiceCardState extends State<ServiceCard> {
-//   bool expanded = false;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final meta = widget.item.meta;
-//     final acceptedPayments = meta.acceptedPaymentModes;
-//
-//     return Card(
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-//       margin: const EdgeInsets.only(bottom: 16),
-//       elevation: 1,
-//       child: Padding(
-//         padding: const EdgeInsets.all(12),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             /// Header Row
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 Expanded(
-//                   child: Text(
-//                     widget.item.serviceName,
-//                     style: const TextStyle(
-//                       fontSize: 16,
-//                       fontWeight: FontWeight.bold,
-//                     ),
-//                   ),
-//                 ),
-//                 Row(
-//                   children: [
-//                     _buildStatusBadge(widget.item.isActive ? "Active" : "Inactive"),
-//                     IconButton(
-//                       icon: const Icon(Icons.edit, color: Colors.blueAccent),
-//                       onPressed: () {
-//                         // TODO: Edit logic
-//                       },
-//                     ),
-//                     IconButton(
-//                       icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-//                       onPressed: () {
-//                         // TODO: Delete logic
-//                       },
-//                     ),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//
-//             const SizedBox(height: 4),
-//             Text(
-//               "${_getPriceModel(meta.priceModel)} • ₹${meta.price.toStringAsFixed(0)}",
-//               style: const TextStyle(fontSize: 14, color: Colors.black54),
-//             ),
-//             const SizedBox(height: 4),
-//             Row(
-//               children: [
-//                 const Icon(Icons.star, size: 16, color: Colors.amber),
-//                 const SizedBox(width: 4),
-//                 Text("${widget.item.averageRating} (${widget.item.totalReviews})",
-//                     style: const TextStyle(fontSize: 14, color: Colors.black54)),
-//               ],
-//             ),
-//             const SizedBox(height: 4),
-//             Text(
-//               "Renovation & Remodeling",
-//               style: TextStyle(
-//                 color: Colors.blue.shade700,
-//                 decoration: TextDecoration.underline,
-//               ),
-//             ),
-//
-//             /// Expand/Collapse Button
-//             InkWell(
-//               onTap: () => setState(() => expanded = !expanded),
-//               child: Padding(
-//                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     Icon(expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-//                         color: Colors.grey),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//
-//             /// Expanded Section
-//             if (expanded) ...[
-//               _buildTag(meta.workAvailability.capitalizeFirst ?? "Immediate",
-//                   Colors.green.shade100, Colors.green),
-//               const SizedBox(height: 8),
-//
-//               /// Range + Advance
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: [
-//                   _infoTile("Starting Range", meta.startingPriceRange),
-//                   _infoTile("Advance", "${meta.advanceRequiredPercentage}%"),
-//                 ],
-//               ),
-//               const SizedBox(height: 8),
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: [
-//                   _infoTile("Billing", meta.billingType.toUpperCase()),
-//                   _infoTile("Brands", meta.brandsUsed),
-//                 ],
-//               ),
-//               const SizedBox(height: 12),
-//
-//               const Text("Service Includes",
-//                   style: TextStyle(fontWeight: FontWeight.w600)),
-//               const SizedBox(height: 6),
-//               Wrap(
-//                 spacing: 8,
-//                 children: [
-//                   if (meta.provideMaterials) _chip("Materials", Colors.green),
-//                   if (meta.equipmentProvided) _chip("Equipment", Colors.green),
-//                   if (meta.insuranceAvailable) _chip("Insurance", Colors.green),
-//                 ],
-//               ),
-//
-//               const SizedBox(height: 12),
-//               const Text("Payment Methods",
-//                   style: TextStyle(fontWeight: FontWeight.w600)),
-//               const SizedBox(height: 6),
-//               Wrap(
-//                 spacing: 8,
-//                 children: acceptedPayments
-//                     .map((e) => _chip(e.toUpperCase(), Colors.blueAccent))
-//                     .toList(),
-//               ),
-//
-//               const SizedBox(height: 12),
-//               const Text("Description",
-//                   style: TextStyle(fontWeight: FontWeight.w600)),
-//               const SizedBox(height: 4),
-//               Container(
-//                 width: double.infinity,
-//                 padding: const EdgeInsets.all(10),
-//                 decoration: BoxDecoration(
-//                   color: Colors.grey.shade100,
-//                   borderRadius: BorderRadius.circular(12),
-//                 ),
-//                 child: Text(
-//                   widget.item.description.isEmpty
-//                       ? "No description provided"
-//                       : widget.item.description,
-//                   style: const TextStyle(color: Colors.black87),
-//                 ),
-//               ),
-//             ]
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _buildStatusBadge(String text) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-//       margin: const EdgeInsets.only(right: 4),
-//       decoration: BoxDecoration(
-//         color: text == "Active" ? Colors.blue.shade100 : Colors.grey.shade300,
-//         borderRadius: BorderRadius.circular(12),
-//       ),
-//       child: Text(
-//         text,
-//         style: TextStyle(
-//           fontSize: 12,
-//           color: text == "Active" ? Colors.blue : Colors.grey.shade700,
-//           fontWeight: FontWeight.w500,
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _infoTile(String title, String value) {
-//     return Expanded(
-//       child: Container(
-//         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-//         padding: const EdgeInsets.all(10),
-//         decoration: BoxDecoration(
-//           color: Colors.grey.shade100,
-//           borderRadius: BorderRadius.circular(12),
-//         ),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text(title,
-//                 style: const TextStyle(
-//                     color: Colors.black54, fontSize: 12, fontWeight: FontWeight.w500)),
-//             const SizedBox(height: 4),
-//             Text(value.isEmpty ? "-" : value,
-//                 style:
-//                 const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _chip(String label, Color color) {
-//     return Chip(
-//       label: Text(label, style: const TextStyle(color: Colors.white)),
-//       backgroundColor: color,
-//       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-//       visualDensity: VisualDensity.compact,
-//     );
-//   }
-//
-//   Widget _buildTag(String label, Color bgColor, Color textColor) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-//       decoration:
-//       BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(10)),
-//       child: Text(label,
-//           style: TextStyle(color: textColor, fontWeight: FontWeight.w600, fontSize: 12)),
-//     );
-//   }
-//
-//   String _getPriceModel(String model) {
-//     switch (model) {
-//       case 'fixed':
-//         return 'Fixed';
-//       case 'hourly':
-//         return 'Hourly';
-//       case 'per_sq_ft':
-//         return 'Per Sq Ft';
-//       default:
-//         return model.capitalizeFirst ?? '';
-//     }
-//   }
-// }
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
+import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_filter.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
-import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
-import '../../controller/contractor_my_service_controller.dart';
-import '../widget/cotractor_active_switch.dart';
-import '../widget/create_service_from.dart';
+import '../../../../widgets/New folder/inputs/dropdown_field.dart';
+import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../../add_property/view/create_property.dart';
+import '../../controller/contractor_project_controller.dart';
 
-class ContractorProject extends StatelessWidget {
-  const ContractorProject({super.key});
+class ContractorProjectScreen extends StatelessWidget {
+  const ContractorProjectScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ContractorMyServiceController>();
+    final ContractorProjectController controller = Get.put(
+      ContractorProjectController(),
+    );
+    RxMap<String, String> selectedFilters = <String, String>{}.obs;
 
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
-        backgroundColor: ColorRes.surface,
-        automaticallyImplyLeading: false,
         elevation: 0,
+        backgroundColor: ColorRes.surface,
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         title: Text(
-          'My Services',
+          "Contractor Projects",
           style: TextStyle(
-            // fontSize: AppFontSizes.title,
             fontWeight: AppFontWeights.semiBold,
-            color: ColorRes.textPrimary,
+            // fontSize: AppFontSizes.medium,
+            color: ColorRes.textColor,
           ),
         ),
         actions: [
+          // IconButton(onPressed: () {
+          //   Get.to(()=>ContractorInquiryFilter());
+          // }, icon: Icon(Icons.filter_list))
           IconButton(
-            icon: Icon(
-              Icons.add_circle_outline_rounded,
-              color: ColorRes.primary,
-              size: 28,
-            ),
-            onPressed: () {
-              controller.clearForm();
-             Get.to(()=>AddServiceScreen());
+            onPressed: () async {
+              final result = await Get.dialog<Map<String, String>>(
+                const ContractorProjectFilter(),
+                barrierDismissible: true,
+              );
+
+              if (result != null) {
+                log("Selected Filters → $result");
+                if (result != null) {
+                  selectedFilters.value = result;
+                  controller.applyFilters(result);
+                }
+                // You can now apply filters to your list, API call, etc.
+                // controller.fetchFilteredInquiries(result);
+              }
             },
+            icon: const Icon(Icons.filter_list),
           )
+
         ],
       ),
-      body: Obx(() {
-        final items = controller.items;
-        if (controller.isLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: ColorRes.primary,
-            ),
-          );
-        }
+      body: SafeArea(
 
-        if (items.isEmpty) {
-          return Center(
-            child: Text(
-              "No services available",
-              style: TextStyle(
-                fontSize: AppFontSizes.body,
-                color: ColorRes.textSecondary,
-                fontWeight: AppFontWeights.medium,
-              ),
+        child: Column(
+          children: [
+            Obx(() {
+              return FilterChipsBar(
+                filters: selectedFilters.value,
+                onClearAll: () {
+                  selectedFilters.clear();
+                  controller.applyFilters(<String, String>{});
+                },
+                onRemoveFilter: (key) {
+                  selectedFilters.remove(key);
+                  controller.applyFilters(
+                    Map<String, String>.from(selectedFilters),
+                  );
+                },
+              );
+            }),
+            Expanded(
+              child: Obx(() {
+                final projects = controller.items;
+                if (projects.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: ColorRes.primary),
+                  );
+                }
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  itemCount: projects.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 2),
+                  itemBuilder: (context, index) {
+                    final project = projects[index];
+                    return Obx(
+                      () => ProjectCard(
+                        project: project,
+                        onDelete: () {
+                          controller.deleteLead(
+                            project.id,project.title
+                          );
+                        },
+                        isExpanded: controller.isExpanded(project.id),
+                        onChangeStatus: () {
+                          log("Data of String ${project.toMap()}");
+                          controller.populatedProjectData(project);
+                          _showStatusDialog(context, controller, project);
+                        },
+                        onChangeTime: () {},
+                        onPress: () => controller.toggleCard(project.id),
+                      ),
+                    );
+                  },
+                );
+              }),
             ),
-          );
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.all(12),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return ServiceCard(item: item,controller: controller,);
-          },
-        );
-      }),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class ServiceCard extends StatefulWidget {
-  final ContractorServiceItem item;
+class ProjectCard extends StatelessWidget {
+  final ContractorProjectItem project;
+  final bool isExpanded;
+  final VoidCallback onPress;
+  final VoidCallback onChangeTime;
+  final VoidCallback onChangeStatus;
+  final VoidCallback onDelete;
 
-  final ContractorMyServiceController controller;
+  const ProjectCard({
+    super.key,
+    required this.project,
+    required this.isExpanded,
+    required this.onPress,
+    required this.onChangeTime,
+    required this.onChangeStatus,
+    required this.onDelete,
+  });
 
-  const ServiceCard({super.key, required this.item,required this.controller});
-
-  @override
-  State<ServiceCard> createState() => _ServiceCardState();
-}
-
-class _ServiceCardState extends State<ServiceCard> {
-  bool expanded = false;
-  String categoryName = "";
-  bool isCategoryLoading = true;
-  @override
-  void initState() {
-    super.initState();
-    loadCategory();
-  }
-
-  void loadCategory() async {
-    final id = widget.item.category ?? "";
-    if (id.isEmpty) return;
-
-    final name = await widget.controller.getTheContractorByID(id);
-    setState(() {
-      categoryName = name;
-      isCategoryLoading = false;
-    });
-  }
   @override
   Widget build(BuildContext context) {
-    final meta = widget.item.meta;
-    final acceptedPayments = meta.acceptedPaymentModes;
+    final p = project;
+    final client = p.client;
+    final meta = p.meta;
 
+    Color statusColor;
+    switch (p.status.toLowerCase()) {
+      case 'completed':
+        statusColor = Colors.green;
+        break;
+      case 'pending':
+        statusColor = ColorRes.grey;
+        break;
+      case 'in_progress':
+        statusColor = ColorRes.orangeColor;
+        break;
+      default:
+        statusColor = ColorRes.error;
+    }
 
-    return GestureDetector(
-        onTap: () => setState(() => expanded = !expanded),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),side: BorderSide(color: ColorRes.leadGreyColor.shade300,width: 1)),
-        margin: const EdgeInsets.only(bottom: 16),
-        elevation: 2,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
         color: ColorRes.surface,
-        shadowColor: ColorRes.shadow,
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onPress,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Header Row
+              /// ---------------- HEADER ----------------
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Text(
-                      widget.item.serviceName,
-                      maxLines: 1,
-overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: AppFontSizes.medium,
+                      p.title,
+                      style: const TextStyle(
                         fontWeight: AppFontWeights.semiBold,
+                        fontSize: AppFontSizes.medium,
                         color: ColorRes.textPrimary,
                       ),
                     ),
                   ),
-                  SizedBox(width:10,),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: widget.item.isActive
-                          ? ColorRes.primary.withOpacity(0.1)
-                          : ColorRes.disabled.withOpacity(0.2),
+                      color: statusColor.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: widget.item.isActive
-                            ? ColorRes.primary.withOpacity(0.3)
-                            : ColorRes.border,
-                        width: 1,
-                      ),
                     ),
                     child: Text(
-                      widget.item.isActive ? "Active" : "Inactive",
+                      capitalizeEachWord(p.status) ?? "",
+
                       style: TextStyle(
-                        fontSize: AppFontSizes.mini,
-                        color: widget.item.isActive ? ColorRes.primary : ColorRes.textSecondary,
-                        fontWeight: AppFontWeights.semiBold,
+                        color: statusColor,
+                        fontSize: AppFontSizes.caption,
+                        fontWeight: AppFontWeights.medium,
                       ),
                     ),
                   ),
-                  _buildStatusBadge(widget.item.isActive,(value) {
-
-                  },),
                 ],
               ),
-
               const SizedBox(height: 8),
+
+              /// Deadline
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  const Icon(
+                    Icons.calendar_month,
+                    size: 16,
+                    color: ColorRes.primary,
+                  ),
+                  const SizedBox(width: 4),
                   Text(
-                    "${_getPriceModel(meta.priceModel)} • ${Formatter.formatPrice(meta.price)}",
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
+                    p.deadline != null
+                        ? _formatDate(p.deadline!)
+                        : "No Deadline",
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.caption,
                       color: ColorRes.textSecondary,
-                      fontWeight: AppFontWeights.medium,
                     ),
                   ),
-
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: ColorRes.homeAmber.withOpacity(0.08), // soft amber background
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: ColorRes.homeAmber.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.star, size: 14, color: ColorRes.homeAmber),
-                        const SizedBox(width: 4),
-                        Text(
-                          "${widget.item.averageRating} ",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            color: ColorRes.textPrimary,
-                            fontWeight: AppFontWeights.medium,
-                          ),
-                        ),
-                        Text(
-                          "(${widget.item.totalReviews})",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.mini,
-                            color: ColorRes.textSecondary.withOpacity(0.9),
-                            fontWeight: AppFontWeights.regular,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-
                 ],
               ),
+
               const SizedBox(height: 8),
-              Text(
-                "${categoryName}",
-                style: TextStyle(
-                  fontSize: AppFontSizes.bodySmall,
-                  color: ColorRes.primary,
-                  fontWeight: AppFontWeights.medium,
-                ),
-              ),
 
+              /// Progress
+              // const Text(
+              //   "Progress",
+              //   style: TextStyle(
+              //     fontSize: AppFontSizes.small,
+              //     color: ColorRes.textSecondary,
+              //   ),
+              // ),
+              // const SizedBox(height: 4),
+              // LinearProgressIndicator(
+              //   value: p.progress / 100,
+              //   color: statusColor,
+              //   backgroundColor: ColorRes.divider,
+              //   minHeight: 5,
+              //   borderRadius: BorderRadius.circular(4),
+              // ),
+              // const SizedBox(height: 4),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: Text(
+              //     "${p.progress}%",
+              //     style: const TextStyle(
+              //       fontSize: AppFontSizes.caption,
+              //       color: ColorRes.textSecondary,
+              //     ),
+              //   ),
+              // ),
 
-
-              /// Expanded Section
-              if (expanded) ...[
-                const SizedBox(height: 8),
-                Divider(
-                  color: ColorRes.leadGreyColor.withOpacity(0.3),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    _buildTag(
-                      meta.workAvailability.capitalizeFirst?.split("_").join(" ") ?? "Immediate",
-                      ColorRes.success.withOpacity(0.1),
-                      ColorRes.success,
-                    ),
-                    Spacer(),
-                    Row(
-                      children: [
-
-                        IconButton(
-                          icon: Icon(Icons.edit, color: ColorRes.primary, size: 22),
-                          onPressed: () {
-                            widget.controller.clearForm();
-                            Get.to(() => AddServiceScreen(serviceToEdit: widget.item));
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete_outline, color: ColorRes.error, size: 22),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-
-                                  backgroundColor: ColorRes.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  title:  Text("Delete Service",style: TextStyle(fontSize: AppFontSizes.large,fontWeight: AppFontWeights.semiBold,color: ColorRes.textColor),),
-                                  content: const Text("Are you sure you want to delete this service?"),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context); // close dialog
-                                      },
-                                      child: const Text("No"),
-                                    ),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: ColorRes.error,
-                                      ),
-                                      onPressed: () {
-                                        Get.back();
-                                         // close dialog first
-                                        widget.controller.deleteService(widget.item.id ?? '');
-                                      },
-                                      child: const Text("Yes"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-
-                      ],
-                    ),
-                  ],
-                ),
+              /// ---------------- EXPANDED DETAILS ----------------
+              if (isExpanded) ...[
+                const SizedBox(height: 12),
+                const Divider(height: 1, color: ColorRes.divider),
                 const SizedBox(height: 12),
 
-                /// Range + Advance
+                _sectionTitle("Client Information"),
+                _infoRow(
+                  "Name",
+                  client.name,
+                  "Property",
+                  "${client.bhk ?? '-'} BHK ${client.propertyType}",
+                ),
+                _infoRow(
+                  "Email",
+                  client.email,
+                  "Area",
+                  "${client.carpetArea ?? '-'} sqft",
+                ),
+                _infoRow(
+                  "Phone",
+                  client.phone,
+                  "Location",
+                  "${client.city}, ${client.state}",
+                ),
+
+                const SizedBox(height: 10),
+                _sectionTitle("Meta Information"),
+                _infoRow(
+                  "Service",
+                  meta.serviceName,
+                  "Inquiry ID",
+                  meta.inquiryId,
+                ),
+
+                const SizedBox(height: 10),
+                _sectionTitle("Notes"),
+                Text(
+                  p.notes ?? 'No notes available',
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.bodySmall,
+                    color: ColorRes.textSecondary,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+                _sectionTitle("Key Dates"),
+                _infoRow(
+                  "Start",
+                  _formatDate(p.startDate),
+                  "Deadline",
+                  _formatDate(p.deadline),
+                ),
+                // _infoRow("Completed", _formatDate(p.completedAt), "", ""),
+
+                const SizedBox(height: 12),
+                const Divider(height: 1, color: ColorRes.divider),
+                const SizedBox(height: 12),
+
+                /// ACTION BUTTONS
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _infoTile("Minimum Range", meta.minPriceRange.toString()),
-                    _infoTile("Maximum Range", meta.maxPriceRange.toString()),
-                    _infoTile("Advance", "${meta.advanceRequiredPercentage}%"),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _infoTile("Billing", meta.billingType.toUpperCase().split("_").join(" ")),
-                    _infoTile("Brands", meta.brandsUsed),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                Text(
-                  "Service Includes",
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    if (meta.provideMaterials) _chip("Materials", ColorRes.success),
-                    if (meta.equipmentProvided) _chip("Equipment", ColorRes.success),
-                    if (meta.insuranceAvailable) _chip("Insurance", ColorRes.success),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-                Text(
-                  "Payment Methods",
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: acceptedPayments
-                      .map((e) => _chip(e.toUpperCase().split("_").join(" "), ColorRes.primary))
-                      .toList(),
-                ),
-
-                const SizedBox(height: 16),
-                Text(
-                  "Description",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: ColorRes.background,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: ColorRes.border, width: 1),
-                  ),
-                  child: Text(
-                    widget.item.description.isEmpty
-                        ? "No description provided"
-                        : widget.item.description,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.caption,
-                      color: ColorRes.textPrimary,
-                      fontWeight: AppFontWeights.regular,
-                      height: 1.5,
+                    Expanded(
+                      child: _actionButton(
+                        Icons.check_circle,
+                        "Update",
+                        ColorRes.green,
+                        onTap: onChangeStatus,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _actionButton(
+                        Icons.delete,
+                        "Delete",
+                        ColorRes.error,
+                        isDelete: true,
+                        onTap: onDelete,
+                      ),
+                    ),
+                  ],
                 ),
-              ]
+              ],
             ],
           ),
         ),
@@ -702,51 +365,145 @@ overflow: TextOverflow.ellipsis,
     );
   }
 
-  Widget _buildStatusBadge(bool isActive, ValueChanged<bool> onChanged) {
-    final controller = Get.find<ContractorMyServiceController>();
+  Widget _sectionTitle(String text) => Padding(
+    padding: const EdgeInsets.only(bottom: 6, top: 6),
+    child: Text(
+      text,
+      style: const TextStyle(
+        fontWeight: AppFontWeights.semiBold,
+        fontSize: AppFontSizes.medium,
+        color: ColorRes.textPrimary,
+      ),
+    ),
+  );
 
-    return CustomSwitch(
-      value: isActive,
-      activeColor: ColorRes.primary,
-      inactiveColor: ColorRes.leadGreyColor.shade400,
-      onChanged: (val) {
-        // Call controller toggle
-        controller.toggle(widget.item, val);
-      },
+  Widget _infoRow(
+    String label1,
+    String? value1,
+    String label2,
+    String? value2,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label1,
+                style: const TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  fontWeight: AppFontWeights.medium,
+                  color: ColorRes.textColor,
+                ),
+              ),
+              Text(
+                value1 ?? "-",
+                style: const TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  fontWeight: AppFontWeights.regular,
+                  color: ColorRes.textSecondary,
+                ),
+              ),
+              // Row(
+              //   children: [
+              //     const SizedBox(height: 4),
+              //     Text(
+              //       label2,
+              //       style: const TextStyle(
+              //         fontSize: AppFontSizes.caption,
+              //         fontWeight: AppFontWeights.medium,
+              //         color: ColorRes.textColor,
+              //       ),
+              //     ),
+              //     Text(
+              //       value2 ?? "-",
+              //       style: const TextStyle(
+              //         fontSize: AppFontSizes.small,
+              //         fontWeight: AppFontWeights.regular,
+              //         color: ColorRes.textSecondary,
+              //       ),
+              //     ),
+              //   ],
+              // )
+            ],
+          ),
+          SizedBox(height: 6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label2,
+                style: const TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  fontWeight: AppFontWeights.medium,
+                  color: ColorRes.textColor,
+                ),
+              ),
+              Text(
+                value2 ?? "-",
+                style: const TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  fontWeight: AppFontWeights.regular,
+                  color: ColorRes.textSecondary,
+                ),
+              ),
+              // Row(
+              //   children: [
+              //     const SizedBox(height: 4),
+              //     Text(
+              //       label2,
+              //       style: const TextStyle(
+              //         fontSize: AppFontSizes.caption,
+              //         fontWeight: AppFontWeights.medium,
+              //         color: ColorRes.textColor,
+              //       ),
+              //     ),
+              //     Text(
+              //       value2 ?? "-",
+              //       style: const TextStyle(
+              //         fontSize: AppFontSizes.small,
+              //         fontWeight: AppFontWeights.regular,
+              //         color: ColorRes.textSecondary,
+              //       ),
+              //     ),
+              //   ],
+              // )
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-
-
-  Widget _infoTile(String title, String value) {
-    return Expanded(
+  Widget _actionButton(
+    IconData icon,
+    String label,
+    Color color, {
+    bool isDelete = false,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
         decoration: BoxDecoration(
-          color: ColorRes.background,
+          color:
+              isDelete ? Colors.red.withOpacity(0.2) : color.withOpacity(0.2),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ColorRes.border, width: 1),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              title,
+              label,
               style: TextStyle(
-                color: ColorRes.textSecondary,
-                fontSize: AppFontSizes.extraSmall,
+                color: isDelete ? Colors.red : color,
+                fontSize: AppFontSizes.bodySmall,
                 fontWeight: AppFontWeights.medium,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              value.isEmpty ? "-" : value,
-              maxLines: 1,
-              style: TextStyle(
-                color: ColorRes.textPrimary,
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.semiBold,
               ),
             ),
           ],
@@ -755,53 +512,286 @@ overflow: TextOverflow.ellipsis,
     );
   }
 
-  Widget _chip(String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return '-';
+    final date = DateTime.tryParse(dateStr);
+    if (date == null) return '-';
+    return "${date.day.toString().padLeft(2, '0')} ${_monthName(date.month)} ${date.year}";
+  }
+
+  String _monthName(int month) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return months[month - 1];
+  }
+}
+
+void _showStatusDialog(
+  BuildContext context,
+  ContractorProjectController controller,
+  ContractorProjectItem inquiry,
+) {
+  const List<String> leadStatuses = [
+    'Pending',
+    'In Progress',
+    'Completed',
+    'Cancelled',
+  ];
+
+  Get.dialog(
+    Dialog(
+      backgroundColor: ColorRes.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 400),
+        decoration: BoxDecoration(
           color: ColorRes.white,
-          fontSize: AppFontSizes.caption,
-          fontWeight: AppFontWeights.medium,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ---------------- HEADER ----------------
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: const BoxDecoration(
+                color: ColorRes.primary,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      "Change Status",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.body,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.white,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => Get.back(),
+                    borderRadius: BorderRadius.circular(50),
+                    child: const Icon(
+                      Icons.close_rounded,
+                      color: ColorRes.white,
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ---------------- BODY ----------------
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    buildSectionTitle('Change Status'),
+                    const SizedBox(height: 8),
+                    Obx(() {
+                      return NesticoPeDropdownField<String>(
+                        isRequired: true,
+                        value: controller.changeStatus.value,
+                        hintText: "Select status",
+                        prefixIcon: Icons.emoji_flags_rounded,
+                        items:
+                            leadStatuses
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (val) {
+                          controller.setValue(controller.changeStatus, val);
+                          log(
+                            "Contractor_status ${controller.changeStatus.value}",
+                          );
+                        },
+                        darkText: true,
+                      );
+                    }),
+
+                    const SizedBox(height: 20),
+                    buildSectionTitle('Change Stage'),
+                    const SizedBox(height: 8),
+                    buildTextField(
+                      'Start Date',
+                      Icons.calendar_month_outlined,
+                      controller.txtTime,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter valid date';
+                        }
+                        return null;
+                      },
+                      isEnable: false,
+                      onTap: () async {
+                        DateTime? picked = await showDatePicker(
+                          context: Get.context!,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: const ColorScheme.light(
+                                  primary: ColorRes.primary,
+                                  onPrimary: ColorRes.white,
+                                  onSurface: ColorRes.black,
+                                ),
+                                textButtonTheme: TextButtonThemeData(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: ColorRes.primary,
+                                  ),
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+
+                        if (picked != null) {
+                          // 👇 Save picked date for submission
+                          controller.selectedDate = picked;
+
+                          // 👇 Show formatted date in TextField
+                          controller.txtTime.text =
+                              "${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                        }
+                      },
+                      isPhoneKey: true,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // ---------------- FOOTER BUTTONS ----------------
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        side: const BorderSide(color: ColorRes.primary),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final status = controller.changeStatus.value;
+
+                        if (status.isEmpty && (controller.selectedDate == null)) {
+                          Get.snackbar(
+                            "Error",
+                            "Please select at least one value",
+                            backgroundColor: ColorRes.error.shade100,
+                            colorText: ColorRes.error.shade700,
+                          );
+                          return;
+                        }
+
+                        // 👇 Convert to ISO UTC format for backend
+                        String? deadlineIso =
+                        controller.selectedDate != null
+                            ? DateTime.utc(
+                          controller.selectedDate!.year,
+                          controller.selectedDate!.month,
+                          controller.selectedDate!.day,
+                          controller.selectedDate!.hour,
+                          controller.selectedDate!.minute,
+                        ).toIso8601String()
+                            : null;
+
+                        log("Deadline to send → $deadlineIso");
+                        log("Display date → ${controller.txtTime.text}");
+
+
+                        log("Deadline to send → $deadlineIso");
+                        log("Display date → ${controller.txtTime.text}");
+
+                        // Example of passing to API
+                        // controller.updateTheStatusAndStage(
+                        //   leadId: inquiry.id ?? "",
+                        //   status: status,
+                        //   deadline: deadlineIso,
+                        // );
+                        controller.updateChangeStatus(
+                          inquiry.id,
+                          status,
+                          deadlineIso??'',
+
+                        );
+                        Get.back();
+                      },
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorRes.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Submit',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTag(String label, Color bgColor, Color textColor) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: textColor.withOpacity(0.3), width: 1),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: textColor,
-          fontWeight: AppFontWeights.semiBold,
-          fontSize: AppFontSizes.caption,
-        ),
-      ),
-    );
-  }
-
-  String _getPriceModel(String model) {
-    switch (model) {
-      case 'fixed':
-        return 'Fixed';
-      case 'hourly':
-        return 'Hourly';
-      case 'per_sq_ft':
-        return 'Per Sq Ft';
-      default:
-        return model.capitalizeFirst ?? '';
-    }
-  }
+    ),
+    barrierDismissible: true,
+  );
 }

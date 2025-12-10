@@ -149,12 +149,14 @@ class User {
   String? currentSubscriptionId;
   bool? isPremium;
   String? subscriptionStatus;
+  int? totalExperience;
   String? createdAt;
   String? updatedAt;
 
   User({
     this.id,
     this.createdBy,
+    this.totalExperience,
     this.updatedBy,
     this.username,
     this.password,
@@ -192,6 +194,7 @@ class User {
     userType = json['userType'];
     sellerType = json['sellerType'];
     roleId = json['role_id'];
+    totalExperience = json['totalExperience'];
     profilePic = json['profilePic'];
     firstName = json['firstName'];
     lastName = json['lastName'];
@@ -226,6 +229,7 @@ class User {
     data['profilePic'] = profilePic;
     data['firstName'] = firstName;
     data['lastName'] = lastName;
+    data['totalExperience'] = totalExperience;
     data['phone'] = phone;
     data['otp'] = otp;
     data['otpExpiry'] = otpExpiry;

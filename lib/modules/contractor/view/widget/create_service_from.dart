@@ -395,17 +395,17 @@ class AddServiceScreen extends StatelessWidget {
                   darkText: true,
                 ),
 
-               if(controller.selectedPriceModel.value!="Custom")...[
-                 SizedBox(height: 16),
-                 buildSectionTitle("Price (₹) *"),
-                 SizedBox(height: 8),
-                 buildTextField(
-                   "0",
-                   Icons.currency_rupee,
-                   controller.priceController,
-                   isPhoneKey: true,
-                 ),
-               ],
+               // if(controller.selectedPriceModel.value!="Custom")...[
+               //   SizedBox(height: 16),
+               //   buildSectionTitle("Price (₹) *"),
+               //   SizedBox(height: 8),
+               //   buildTextField(
+               //     "0",
+               //     Icons.currency_rupee,
+               //     controller.priceController,
+               //     isPhoneKey: true,
+               //   ),
+               // ],
                 SizedBox(height: 16),
                 buildSectionTitle("Minimum Price"),
                 SizedBox(height: 8),

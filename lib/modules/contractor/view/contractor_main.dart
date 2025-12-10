@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:housing_flutter_app/modules/contractor/view/profile/contractot_profile.dart';
-import 'package:housing_flutter_app/modules/contractor/view/project/contractor_project.dart';
+import 'package:housing_flutter_app/modules/contractor/view/project/contractor_service.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
@@ -24,9 +24,9 @@ class ContractorMainScreen extends StatelessWidget {
 
     final screens = [
       ContractorDashboard(),
-      ContractorProject(),
+      ContractorService(),
       ContractorLead(),
-      ContractorProfile()
+      ContractorProfileScreen()
       // BuilderSubscriptionPlanScreen(),
       // SellerProfileScreen(),
     ];

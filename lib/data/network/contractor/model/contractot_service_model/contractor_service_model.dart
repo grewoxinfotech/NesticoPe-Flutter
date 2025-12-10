@@ -157,21 +157,21 @@ class ContractorServiceItem {
 }
 
 class ContractorMetaData {
-  double price;
-  String priceModel;
-  int minPriceRange;
-  int maxPriceRange;
-  String workAvailability;
-  bool provideMaterials;
-  String brandsUsed;
-  bool equipmentProvided;
-  bool insuranceAvailable;
-  List<String> acceptedPaymentModes;
-  int advanceRequiredPercentage;
-  String billingType;
 
-  ContractorMetaData({
-    required this.price,
+   String priceModel;
+   int minPriceRange;
+   int maxPriceRange;
+   String workAvailability;
+   bool provideMaterials;
+   String brandsUsed;
+   bool equipmentProvided;
+   bool insuranceAvailable;
+   List<String> acceptedPaymentModes;
+   int advanceRequiredPercentage;
+   String billingType;
+
+   ContractorMetaData({
+
     required this.priceModel,
     required this.minPriceRange,
     required this.maxPriceRange,
@@ -187,7 +187,7 @@ class ContractorMetaData {
 
   factory ContractorMetaData.fromJson(Map<String, dynamic> json) {
     return ContractorMetaData(
-      price: (json['price'] ?? 0).toDouble(),
+
       priceModel: json['priceModel'] ?? '',
       minPriceRange: json['minPrice'] ?? 0,
       maxPriceRange: json['maxPrice'] ?? 0,
@@ -206,7 +206,7 @@ class ContractorMetaData {
 
   Map<String, dynamic> toJson() {
     return {
-      'price': price,
+
       'priceModel': priceModel,
       'minPrice': minPriceRange,
       'maxPrice': maxPriceRange,

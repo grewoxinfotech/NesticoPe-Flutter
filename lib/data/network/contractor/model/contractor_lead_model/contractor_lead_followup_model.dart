@@ -53,43 +53,41 @@ class ContractorLeadFollowUpData {
 class ContractorLeadFollowUpItem {
   final String id;
   final String type;
-  final String date;
-  final String time;
-  final String notes;
-  final String status;
+  final String? date;
+  final String? time;
+  final String? notes;
+  final String? status;
   final bool reminder;
   final String? location;
-  final String createdAt;
+  final String? createdAt;
 
   ContractorLeadFollowUpItem({
     required this.id,
     required this.type,
-    required this.date,
-    required this.time,
-    required this.notes,
-    required this.status,
+    this.date,
+    this.time,
+    this.notes,
+    this.status,
     required this.reminder,
     this.location,
-    required this.createdAt,
+    this.createdAt,
   });
 
   factory ContractorLeadFollowUpItem.fromJson(Map<String, dynamic> json) {
     return ContractorLeadFollowUpItem(
-      id: json['id'],
-      type: json['type'],
+      id: json['id'] ?? '',
+      type: json['type'] ?? '',
       date: json['date'],
       time: json['time'],
       notes: json['notes'],
       status: json['status'],
-      reminder: json['reminder'],
+      reminder: json['reminder'] ?? false,
       location: json['location'],
       createdAt: json['createdAt'],
     );
   }
-
-
-
 }
+
 
 // followup_controller.dart
 
