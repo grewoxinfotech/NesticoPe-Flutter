@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+
 import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
+import '../../../../app/widgets/snackbar/snackbar.dart';
 import '../model/contractot_service_model/contractor_category_model.dart';
 import '../model/contractot_service_model/contractor_service_model.dart';
 
@@ -193,7 +196,6 @@ class ContractorMyService {
         print("Failed to update service: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to update service");
-
       }
     } catch (e) {
       print("Response body for update service: ${e}");
@@ -203,23 +205,29 @@ class ContractorMyService {
 
   /// Create Inquiry Of Service
   Future<bool> createInquiry(Map<String, dynamic> data) async {
-    final uri = Uri.parse('$_baseUrl');
+    final uri = Uri.parse('${ApiConstants.contractorInquiry}');
     try {
       final response = await http.post(
         uri,
         headers: await headers(),
-        body: jsonEncode({'data': data}),
+        body: jsonEncode(data),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         print("Inquiry Created Successfully: $data");
         return data['success'];
       } else {
+        final data = jsonDecode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
+          message: data['message'] ?? 'Something went wrong',
+          contentType: ContentType.failure,
+        );
         print("Failed to create Inquiry: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to create Inquiry");
       }
-    }catch(e){
+    } catch (e) {
       print("Response body for create Inquiry: ${e}");
       return false;
     }

@@ -12,6 +12,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 
 import 'package:get/get.dart';
 
+import '../../../widgets/input/city_selection_widget.dart';
 import '../../home/views/home_screen/home_screen.dart';
 import '../../reseller/controller/profile/profile_controller.dart';
 import '../controllers/seller_profile_controller.dart';
@@ -74,7 +75,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           if (profileController.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           }
-        
+
           return (UserHelper.isSeller)
               ? SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -86,29 +87,31 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                       // Profile Header
                       _buildProfileHeader(profileController),
                       const SizedBox(height: 16),
-        
+
                       // Contact Info Section (Editable)
                       Obx(() => _buildContactInfoSection(profileController)),
                       const SizedBox(height: 16),
-        
+
                       // Business Details Section (Editable)
-                   if(UserHelper.isSellerBuilder)...[
-                     Obx(() => _buildBusinessDetailsSection(profileController)),
-                     const SizedBox(height: 16),
-                   ],
-        
+                      if (UserHelper.isSellerBuilder) ...[
+                        Obx(
+                          () => _buildBusinessDetailsSection(profileController),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
                       // Seller Details Section (Read-only)
                       if (!profileController.isEditing.value)
                         _buildSellerDetailsSection(profileController),
                       if (!profileController.isEditing.value)
                         const SizedBox(height: 16),
-        
+
                       // Account Information Section (Read-only)
                       // if (!profileController.isEditing.value)
                       //   _buildAccountInfoSection(profileController),
                       // if (!profileController.isEditing.value)
                       //   const SizedBox(height: 16),
-        
+
                       // Profile Options
                       if (!profileController.isEditing.value) ...[
                         // _buildProfileOptionsSection(),
@@ -142,7 +145,8 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             children: [
               Obx(() {
                 ImageProvider? imageProvider;
-                final profilePic = controller.profileData.value?.user?.profilePic;
+                final profilePic =
+                    controller.profileData.value?.user?.profilePic;
                 final selectedImage = controller.selectedImage.value;
 
                 // 🔹 Show loader if image upload in progress
@@ -162,10 +166,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                     imageProvider = NetworkImage(imageUrl);
                     isNetworkImage = true;
                   }
-                }
-
-
-                else if (profilePic != null && profilePic.isNotEmpty) {
+                } else if (profilePic != null && profilePic.isNotEmpty) {
                   if (profilePic.startsWith('http')) {
                     imageUrl = profilePic;
                     imageProvider = NetworkImage(profilePic);
@@ -186,33 +187,50 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                       child: SizedBox(
                         width: 70,
                         height: 70,
-                        child: imageProvider != null
-                            ? (isNetworkImage
-                            ? Image.network(
-                          imageUrl!,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, progress) {
-                            if (progress == null) return child;
-                            return const Center(
-                              child: SizedBox(
-                                width: 25,
-                                height: 25,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 30),
-                        )
-                            : Image(image: imageProvider, fit: BoxFit.cover))
-                            : CircleAvatar(
-                          radius: 35,
-                          backgroundColor: ColorRes.primary.withOpacity(0.1),
-                          child: Icon(
-                            Icons.person,
-                            size: 25,
-                            color: ColorRes.primary.withOpacity(0.8),
-                          ),
-                        ),
+                        child:
+                            imageProvider != null
+                                ? (isNetworkImage
+                                    ? Image.network(
+                                      imageUrl!,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (
+                                        context,
+                                        child,
+                                        progress,
+                                      ) {
+                                        if (progress == null) return child;
+                                        return const Center(
+                                          child: SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              const Icon(
+                                                Icons.person,
+                                                size: 30,
+                                              ),
+                                    )
+                                    : Image(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ))
+                                : CircleAvatar(
+                                  radius: 35,
+                                  backgroundColor: ColorRes.primary.withOpacity(
+                                    0.1,
+                                  ),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 25,
+                                    color: ColorRes.primary.withOpacity(0.8),
+                                  ),
+                                ),
                       ),
                     ),
                   ),
@@ -266,8 +284,6 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               //     ),
               //   );
               // }),
-
-
               if (controller.isEditing.value)
                 Positioned(
                   bottom: -2,
@@ -537,55 +553,55 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             ],
           ),
           const SizedBox(height: 20),
-         // if (controller.isEditing.value) ...[
-            // Editable form fields
-            _buildFormField(
-              controller: controller.nameController,
-              label: 'First Name',
-              icon: Icons.person_outline,
-              enabled: controller.isEditing.value,
-              validator:
-                  (value) =>
-                      value?.isEmpty ?? true ? 'First name is required' : null,
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.lastNameController,
-              label: 'Last Name',
-              icon: Icons.person_outline,
-              enabled: controller.isEditing.value,
-              validator:
-                  (value) =>
-                      value?.isEmpty ?? true ? 'Last name is required' : null,
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.emailController,
-              label: 'Email',
-              icon: Icons.email_outlined,
-              enabled: controller.isEditing.value,
-              keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value?.isEmpty ?? true) return 'Email is required';
-                if (!GetUtils.isEmail(value!)) return 'Enter a valid email';
-                return null;
-              },
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.phoneController,
-              label: 'Phone',
-              icon: Icons.phone_outlined,
-              enabled: controller.isEditing.value,
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(height: 14),
-            // _buildFormField(
-            //   controller: controller.positionController,
-            //   label: 'City',
-            //   icon: Icons.location_city_outlined,
-            //   enabled: controller.isEditing.value,
-            // ),
+          // if (controller.isEditing.value) ...[
+          // Editable form fields
+          _buildFormField(
+            controller: controller.nameController,
+            label: 'First Name',
+            icon: Icons.person_outline,
+            enabled: controller.isEditing.value,
+            validator:
+                (value) =>
+                    value?.isEmpty ?? true ? 'First name is required' : null,
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.lastNameController,
+            label: 'Last Name',
+            icon: Icons.person_outline,
+            enabled: controller.isEditing.value,
+            validator:
+                (value) =>
+                    value?.isEmpty ?? true ? 'Last name is required' : null,
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.emailController,
+            label: 'Email',
+            icon: Icons.email_outlined,
+            enabled: controller.isEditing.value,
+            keyboardType: TextInputType.emailAddress,
+            validator: (value) {
+              if (value?.isEmpty ?? true) return 'Email is required';
+              if (!GetUtils.isEmail(value!)) return 'Enter a valid email';
+              return null;
+            },
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.phoneController,
+            label: 'Phone',
+            icon: Icons.phone_outlined,
+            enabled: controller.isEditing.value,
+            keyboardType: TextInputType.phone,
+          ),
+          const SizedBox(height: 14),
+          // _buildFormField(
+          //   controller: controller.positionController,
+          //   label: 'City',
+          //   icon: Icons.location_city_outlined,
+          //   enabled: controller.isEditing.value,
+          // ),
           CitySelectionWidget(
             isEditing: controller.isEditing.value,
             controller: controller.positionController,
@@ -593,18 +609,17 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               print("✅ Selected city: ${selectedCity.description}");
               controller.positionController.text =
                   selectedCity.description ?? '';
-              controller.companyController.text =
-                  selectedCity.reference ?? '';
+              controller.companyController.text = selectedCity.reference ?? '';
               // You can also store city details in your controller here
             },
           ),
-            const SizedBox(height: 14),
-            // _buildFormField(
-            //   controller: controller.companyController,
-            //   label: 'State',
-            //   icon: Icons.location_on_outlined,
-            //   enabled: true,
-            // ),
+          const SizedBox(height: 14),
+          // _buildFormField(
+          //   controller: controller.companyController,
+          //   label: 'State',
+          //   icon: Icons.location_on_outlined,
+          //   enabled: true,
+          // ),
           StateSelectionWidget(
             isEditing: false,
             controller: controller.companyController,
@@ -617,14 +632,13 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           ),
 
           const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.addressController,
-              label: 'Address',
-              icon: Icons.location_city_outlined,
-              enabled: controller.isEditing.value,
-            ),
-
-          ] /*else ...[
+          _buildFormField(
+            controller: controller.addressController,
+            label: 'Address',
+            icon: Icons.location_city_outlined,
+            enabled: controller.isEditing.value,
+          ),
+        ] /*else ...[
             // Read-only display
             _buildInfoRow(
               Icons.person,
@@ -651,8 +665,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               '${controller.profileData.value?.user?.address ?? ''}',
             ),
 
-          ],*/
-     //   ],
+          ],*/, //   ],
       ),
     );
   }
@@ -698,44 +711,44 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             ],
           ),
           const SizedBox(height: 20),
-         // if (controller.isEditing.value) ...[
-            // Editable form fields
-            _buildFormField(
-              controller: controller.contactPersonController,
-              label: 'Contact Person',
-              icon: Icons.person_outline,
-              enabled: controller.isEditing.value,
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.contactPhoneController,
-              label: 'Contact Phone',
-              icon: Icons.phone_outlined,
-              enabled: controller.isEditing.value,
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.companyNameController,
-              label: 'Company Name',
-              icon: Icons.business,
-              enabled: controller.isEditing.value,
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.reraNumberController,
-              label: 'RERA Number',
-              icon: Icons.assignment,
-              enabled: controller.isEditing.value,
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.gstNumberController,
-              label: 'GST Number',
-              icon: Icons.receipt_long,
-              enabled: controller.isEditing.value,
-            ),
-           /*else ...[
+          // if (controller.isEditing.value) ...[
+          // Editable form fields
+          _buildFormField(
+            controller: controller.contactPersonController,
+            label: 'Contact Person',
+            icon: Icons.person_outline,
+            enabled: controller.isEditing.value,
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.contactPhoneController,
+            label: 'Contact Phone',
+            icon: Icons.phone_outlined,
+            enabled: controller.isEditing.value,
+            keyboardType: TextInputType.phone,
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.companyNameController,
+            label: 'Company Name',
+            icon: Icons.business,
+            enabled: controller.isEditing.value,
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.reraNumberController,
+            label: 'RERA Number',
+            icon: Icons.assignment,
+            enabled: controller.isEditing.value,
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.gstNumberController,
+            label: 'GST Number',
+            icon: Icons.receipt_long,
+            enabled: controller.isEditing.value,
+          ),
+          /*else ...[
             // Read-only display
             _buildInfoRow(
               Icons.person_outline,
@@ -859,38 +872,40 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             ),
           ),
           const SizedBox(height: 16),
-         Row(
-           mainAxisAlignment: MainAxisAlignment.start,
-           children: [
-             const SizedBox(height: 16),
-             _buildDetailRow(
-               'SELLER TYPE',
-               controller.resellerProfile.value?.sellerType.toUpperCase() ?? 'N/A',
-             ),
-             const SizedBox(height: 12),
-             Spacer(),
-             // _buildDetailRow(
-             //   'COMPANY NAME',
-             //   controller.resellerProfile.value?.companyName ?? 'N/A',
-             // ),
-             // const SizedBox(height: 12),
-             // _buildDetailRow(
-             //   'RERA NUMBER',
-             //   controller.resellerProfile.value?.reraNumber ?? 'N/A',
-             // ),
-             // const SizedBox(height: 12),
-             // _buildDetailRow(
-             //   'GST NUMBER',
-             //   controller.resellerProfile.value?.gstNumber ?? 'N/A',
-             // ),
-             // const SizedBox(height: 12),
-             _buildDetailRow(
-               'NUMBER OF PROPERTIES',
-               controller.resellerProfile.value?.numberOfProperties.toString() ??
-                   '0',
-             ),
-           ],
-         )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                'SELLER TYPE',
+                controller.resellerProfile.value?.sellerType.toUpperCase() ??
+                    'N/A',
+              ),
+              const SizedBox(height: 12),
+              Spacer(),
+              // _buildDetailRow(
+              //   'COMPANY NAME',
+              //   controller.resellerProfile.value?.companyName ?? 'N/A',
+              // ),
+              // const SizedBox(height: 12),
+              // _buildDetailRow(
+              //   'RERA NUMBER',
+              //   controller.resellerProfile.value?.reraNumber ?? 'N/A',
+              // ),
+              // const SizedBox(height: 12),
+              // _buildDetailRow(
+              //   'GST NUMBER',
+              //   controller.resellerProfile.value?.gstNumber ?? 'N/A',
+              // ),
+              // const SizedBox(height: 12),
+              _buildDetailRow(
+                'NUMBER OF PROPERTIES',
+                controller.resellerProfile.value?.numberOfProperties
+                        .toString() ??
+                    '0',
+              ),
+            ],
+          ),
         ],
       ),
     );

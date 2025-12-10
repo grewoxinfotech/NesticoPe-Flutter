@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_inquiry_screen.dart';
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../controllers/contractor_profile_service_controller/contractor_profile_service_controller.dart';
+import 'contractor_add_inuiry_screen.dart';
 
 class ContractorProfileScreen extends StatelessWidget {
   final Contractor contractor;
@@ -15,8 +17,23 @@ class ContractorProfileScreen extends StatelessWidget {
   // Make this an instance variable accessible to the controller
   final RxBool isListSelectable = false.obs;
 
-  void contactContractor() {
-    // Your contact logic here
+  Future<void> contactContractor() async {
+    final contractorServiceController = Get.find<ContractorServiceController>();
+
+    print("Selected Services: ${contractorServiceController.selectedItems}");
+
+    final bool result = await Get.to(
+      () => ContractorAddInquiryScreen(
+        services: contractorServiceController.selectedItems.value,
+        contractor: contractor,
+      ),
+    );
+
+    // After navigation reset back
+    isListSelectable.value = false;
+    if (result) {
+      contractorServiceController.clearSelection();
+    }
   }
 
   @override
@@ -122,23 +139,31 @@ class ContractorProfileScreen extends StatelessWidget {
                         onPressed: () {
                           if (UserHelper.isGuest) {
                             Get.to(() => LoginScreen());
-                          } else {
+                          }
+
+                          // If user is selecting services
+                          if (isListSelectable.value) {
                             if (contractorServiceController
                                 .selectedItems
-                                .isNotEmpty) {
-                              contactContractor();
+                                .isEmpty) {
+                              Get.snackbar(
+                                "No Service Selected",
+                                "Please select at least one service to continue",
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                              return;
                             }
+
+                            // Proceed to contact with selected services
+                            contactContractor();
+                            return;
                           }
+
+                          // If user is not selecting → enable service selection mode
+                          isListSelectable.value = true;
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              UserHelper.isGuest
-                                  ? ColorRes.primary
-                                  : contractorServiceController
-                                      .selectedItems
-                                      .isEmpty
-                                  ? ColorRes.leadGreyColor.shade500
-                                  : ColorRes.primary,
+                          backgroundColor: ColorRes.primary,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -147,7 +172,9 @@ class ContractorProfileScreen extends StatelessWidget {
                         child: Text(
                           UserHelper.isGuest
                               ? "Login to Contact"
-                              : 'Contact Now',
+                              : isListSelectable.value
+                              ? "Contact Now"
+                              : "Select Services",
                           style: TextStyle(
                             fontSize: AppFontSizes.bodySmall,
                             fontWeight: AppFontWeights.semiBold,
@@ -200,38 +227,6 @@ class ContractorProfileScreen extends StatelessWidget {
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textPrimary,
-                    ),
-                  ),
-                ),
-                Obx(
-                  () => ElevatedButton(
-                    onPressed: () {
-                      isListSelectable.value = !isListSelectable.value;
-                      // Clear selections when toggling off
-                      if (!isListSelectable.value) {
-                        contactContractor();
-                        // contractorServiceController.clearSelection();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          isListSelectable.value
-                              ? ColorRes.green
-                              : ColorRes.primary,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: Text(
-                      isListSelectable.value ? "Done" : "Select Services",
-                      style: TextStyle(
-                        fontSize: AppFontSizes.bodySmall,
-                        fontWeight: AppFontWeights.semiBold,
-                      ),
                     ),
                   ),
                 ),

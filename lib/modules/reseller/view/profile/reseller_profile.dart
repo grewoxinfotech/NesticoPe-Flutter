@@ -10,6 +10,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../home/views/home_screen/home_screen.dart';
 import '../../controller/fack_lead_controller/fack_lead_controller.dart';
 import '../../controller/profile/profile_controller.dart';
@@ -291,7 +292,8 @@ class ResellerProfileScreen extends StatelessWidget {
               // }),
               Obx(() {
                 ImageProvider? imageProvider;
-                final profilePic = controller.profileData.value?.user?.profilePic;
+                final profilePic =
+                    controller.profileData.value?.user?.profilePic;
                 final selectedImage = controller.selectedImage.value;
 
                 // 🔹 Show loader if image upload in progress
@@ -311,10 +313,7 @@ class ResellerProfileScreen extends StatelessWidget {
                     imageProvider = NetworkImage(imageUrl);
                     isNetworkImage = true;
                   }
-                }
-
-
-                else if (profilePic != null && profilePic.isNotEmpty) {
+                } else if (profilePic != null && profilePic.isNotEmpty) {
                   if (profilePic.startsWith('http')) {
                     imageUrl = profilePic;
                     imageProvider = NetworkImage(profilePic);
@@ -335,33 +334,50 @@ class ResellerProfileScreen extends StatelessWidget {
                       child: SizedBox(
                         width: 70,
                         height: 70,
-                        child: imageProvider != null
-                            ? (isNetworkImage
-                            ? Image.network(
-                          imageUrl!,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, progress) {
-                            if (progress == null) return child;
-                            return const Center(
-                              child: SizedBox(
-                                width: 25,
-                                height: 25,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 30),
-                        )
-                            : Image(image: imageProvider, fit: BoxFit.cover))
-                            : CircleAvatar(
-                          radius: 35,
-                          backgroundColor: ColorRes.primary.withOpacity(0.1),
-                          child: Icon(
-                            Icons.person,
-                            size: 25,
-                            color: ColorRes.primary.withOpacity(0.8),
-                          ),
-                        ),
+                        child:
+                            imageProvider != null
+                                ? (isNetworkImage
+                                    ? Image.network(
+                                      imageUrl!,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (
+                                        context,
+                                        child,
+                                        progress,
+                                      ) {
+                                        if (progress == null) return child;
+                                        return const Center(
+                                          child: SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              const Icon(
+                                                Icons.person,
+                                                size: 30,
+                                              ),
+                                    )
+                                    : Image(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ))
+                                : CircleAvatar(
+                                  radius: 35,
+                                  backgroundColor: ColorRes.primary.withOpacity(
+                                    0.1,
+                                  ),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 25,
+                                    color: ColorRes.primary.withOpacity(0.8),
+                                  ),
+                                ),
                       ),
                     ),
                   ),

@@ -1,7 +1,10 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../../data/network/contractor/service/contractor_my_service.dart';
@@ -16,18 +19,22 @@ class ContractorServiceController
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   Rx<String> selectedPropertyType = ''.obs;
   final TextEditingController cityController = TextEditingController();
+  final TextEditingController statController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController bhkController = TextEditingController();
   final TextEditingController carpetAreaController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
   final List<String> propertyTypes = [
-    'House',
-    'Flat',
+    'Apartment', // BHK
+    'House', //
+    'Villa', //
     'Plot',
-    'Other',
-    'Villa',
     'Office',
+    'Shop',
+    'Showroom',
+    'Warehouse',
+    'Other', //
   ];
 
   /// Contractor ID is required to fetch services
@@ -69,20 +76,66 @@ class ContractorServiceController
     }
   }
 
-  Future<void> createInquiry() async {
+  Future<void> createInquiry(
+    String contractorId,
+    List<ContractorServiceItem> services,
+  ) async {
     try {
       isLoading.value = true;
 
-      if (formKey.currentState!.validate()) {
-        throw Exception('Form is not valid');
+      // Validate Form
+      if (!formKey.currentState!.validate()) {
+        print("❌ Form validation failed");
+        return;
       }
 
-      final data = <String, dynamic>{};
+      // Get logged-in user info
+      final user = await SecureStorage.getUserData();
+      final email = user?.user?.email ?? '';
+      final username = user?.user?.username ?? '';
+      final phone = user?.user?.phone ?? '';
 
+      // Extracting state (if user entered "City, State")
+
+      // Prepare request body
+      final data = {
+        'contractorId': contractorId,
+        'email': email,
+        'name': username,
+        'phone': phone,
+
+        'services': services.map((e) => e.id).toList(),
+
+        'meta': {
+          if (bhkController.text.trim().isNotEmpty)
+            'bhk': bhkController.text.trim(),
+
+          'carpetArea': carpetAreaController.text.trim(),
+          'city': cityController.text.trim(),
+          'location': locationController.text.trim(),
+          'propertyType': selectedPropertyType.value,
+          'serviceDescription': descriptionController.text.trim(),
+          'state': statController.text.trim(),
+        },
+      };
+
+      print("Request Body: $data");
+
+      // API Call
       final response = await _service.createInquiry(data);
-      print('Inquiry created successfully: $response');
+      print('✅ Inquiry created successfully: $response');
+
+      if (response) {
+        Get.back(result: true); // optional redirect
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
+          message: "Inquiry submitted successfully",
+          contentType: ContentType.success,
+        );
+      }
     } catch (e) {
-      print('Error creating inquiry: $e');
+      print('❌ Error creating inquiry: $e');
+      Get.snackbar("Error", e.toString());
     } finally {
       isLoading.value = false;
     }

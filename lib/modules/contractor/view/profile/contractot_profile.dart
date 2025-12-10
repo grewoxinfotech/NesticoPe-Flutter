@@ -13,16 +13,16 @@ import '../../../../app/constants/app_font_sizes.dart';
 
 import 'package:get/get.dart';
 
+import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../home/views/home_screen/home_screen.dart';
 import '../../controller/contractor_profile_controller.dart';
-
-
 
 class ContractorProfileScreen extends StatefulWidget {
   const ContractorProfileScreen({Key? key}) : super(key: key);
 
   @override
-  State<ContractorProfileScreen> createState() => _ContractorProfileScreenState();
+  State<ContractorProfileScreen> createState() =>
+      _ContractorProfileScreenState();
 }
 
 class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
@@ -43,7 +43,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
         centerTitle: false,
         actions: [
           Obx(
-                () => Container(
+            () => Container(
               margin: const EdgeInsets.only(right: 12),
               child: IconButton(
                 icon: Icon(
@@ -53,18 +53,18 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                   size: 22,
                 ),
                 onPressed:
-                profileController.isEditing.value
-                    ? () => profileController.saveProfile()
-                    : () => profileController.toggleEdit(),
+                    profileController.isEditing.value
+                        ? () => profileController.saveProfile()
+                        : () => profileController.toggleEdit(),
                 style: IconButton.styleFrom(
                   backgroundColor:
-                  profileController.isEditing.value
-                      ? ColorRes.blueColor.withOpacity(0.1)
-                      : ColorRes.leadGreyColor.withOpacity(0.1),
+                      profileController.isEditing.value
+                          ? ColorRes.blueColor.withOpacity(0.1)
+                          : ColorRes.leadGreyColor.withOpacity(0.1),
                   foregroundColor:
-                  profileController.isEditing.value
-                      ? ColorRes.blueColor
-                      : ColorRes.leadGreyColor[700],
+                      profileController.isEditing.value
+                          ? ColorRes.blueColor
+                          : ColorRes.leadGreyColor[700],
                 ),
               ),
             ),
@@ -79,45 +79,47 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
 
           return (UserHelper.isContractor)
               ? SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: profileController.formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Profile Header
-                  _buildProfileHeader(profileController),
-                  const SizedBox(height: 16),
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: profileController.formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Profile Header
+                      _buildProfileHeader(profileController),
+                      const SizedBox(height: 16),
 
-                  // Contact Info Section (Editable)
-                  Obx(() => _buildContactInfoSection(profileController)),
-                  const SizedBox(height: 16),
+                      // Contact Info Section (Editable)
+                      Obx(() => _buildContactInfoSection(profileController)),
+                      const SizedBox(height: 16),
 
-                  // Business Details Section (Editable)
-                  if(UserHelper.isSellerBuilder)...[
-                    Obx(() => _buildBusinessDetailsSection(profileController)),
-                    const SizedBox(height: 16),
-                  ],
+                      // Business Details Section (Editable)
+                      if (UserHelper.isSellerBuilder) ...[
+                        Obx(
+                          () => _buildBusinessDetailsSection(profileController),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
 
-                  // Seller Details Section (Read-only)
-                  if (!profileController.isEditing.value)
-                    _buildPerformanceInfoSection(profileController),
+                      // Seller Details Section (Read-only)
+                      if (!profileController.isEditing.value)
+                        _buildPerformanceInfoSection(profileController),
 
-                  // Account Information Section (Read-only)
-                  if (!profileController.isEditing.value)
-                    _buildAccountInfoSection(profileController),
-                  // if (!profileController.isEditing.value)
-                  //   const SizedBox(height: 16),
+                      // Account Information Section (Read-only)
+                      if (!profileController.isEditing.value)
+                        _buildAccountInfoSection(profileController),
+                      // if (!profileController.isEditing.value)
+                      //   const SizedBox(height: 16),
 
-                  // Profile Options
-                  if (!profileController.isEditing.value) ...[
-                    // _buildProfileOptionsSection(),
-                    const SizedBox(height: 16),
-                  ],
-                ],
-              ),
-            ),
-          )
+                      // Profile Options
+                      if (!profileController.isEditing.value) ...[
+                        // _buildProfileOptionsSection(),
+                        const SizedBox(height: 16),
+                      ],
+                    ],
+                  ),
+                ),
+              )
               : SizedBox.shrink();
         }),
       ),
@@ -142,7 +144,8 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             children: [
               Obx(() {
                 ImageProvider? imageProvider;
-                final profilePic = controller.profileData.value?.user?.profilePic;
+                final profilePic =
+                    controller.profileData.value?.user?.profilePic;
                 final selectedImage = controller.selectedImage.value;
 
                 // 🔹 Show loader if image upload in progress
@@ -162,10 +165,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                     imageProvider = NetworkImage(imageUrl);
                     isNetworkImage = true;
                   }
-                }
-
-
-                else if (profilePic != null && profilePic.isNotEmpty) {
+                } else if (profilePic != null && profilePic.isNotEmpty) {
                   if (profilePic.startsWith('http')) {
                     imageUrl = profilePic;
                     imageProvider = NetworkImage(profilePic);
@@ -186,33 +186,50 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                       child: SizedBox(
                         width: 70,
                         height: 70,
-                        child: imageProvider != null
-                            ? (isNetworkImage
-                            ? Image.network(
-                          imageUrl!,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, progress) {
-                            if (progress == null) return child;
-                            return const Center(
-                              child: SizedBox(
-                                width: 25,
-                                height: 25,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 30),
-                        )
-                            : Image(image: imageProvider, fit: BoxFit.cover))
-                            : CircleAvatar(
-                          radius: 35,
-                          backgroundColor: ColorRes.primary.withOpacity(0.1),
-                          child: Icon(
-                            Icons.person,
-                            size: 25,
-                            color: ColorRes.primary.withOpacity(0.8),
-                          ),
-                        ),
+                        child:
+                            imageProvider != null
+                                ? (isNetworkImage
+                                    ? Image.network(
+                                      imageUrl!,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (
+                                        context,
+                                        child,
+                                        progress,
+                                      ) {
+                                        if (progress == null) return child;
+                                        return const Center(
+                                          child: SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              const Icon(
+                                                Icons.person,
+                                                size: 30,
+                                              ),
+                                    )
+                                    : Image(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ))
+                                : CircleAvatar(
+                                  radius: 35,
+                                  backgroundColor: ColorRes.primary.withOpacity(
+                                    0.1,
+                                  ),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 25,
+                                    color: ColorRes.primary.withOpacity(0.8),
+                                  ),
+                                ),
                       ),
                     ),
                   ),
@@ -266,8 +283,6 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               //     ),
               //   );
               // }),
-
-
               if (controller.isEditing.value)
                 Positioned(
                   bottom: -2,
@@ -363,11 +378,11 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
   // Widget _buildAccountHealthCard() {
 
   Widget _buildStatCard(
-      String title,
-      String value,
-      IconData icon,
-      Color color,
-      ) {
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -443,9 +458,9 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
         labelStyle: TextStyle(
           fontSize: AppFontSizes.small,
           color:
-          enabled
-              ? ColorRes.leadGreyColor[700]
-              : ColorRes.leadGreyColor[500],
+              enabled
+                  ? ColorRes.leadGreyColor[700]
+                  : ColorRes.leadGreyColor[500],
         ),
         prefixIcon: Icon(icon, size: 20, color: ColorRes.leadGreyColor[600]),
         border: OutlineInputBorder(
@@ -480,7 +495,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
         ),
         filled: true,
         fillColor:
-        enabled ? ColorRes.leadGreyColor[50] : ColorRes.leadGreyColor[100],
+            enabled ? ColorRes.leadGreyColor[50] : ColorRes.leadGreyColor[100],
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
@@ -509,184 +524,182 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
         ),
       ),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              // Container(
+              //   padding: const EdgeInsets.all(8),
+              //   decoration: BoxDecoration(
+              //     color: ColorRes.blueColor.withOpacity(0.1),
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Icon(
+              //     Icons.contacts_outlined,
+              //     color: ColorRes.blueColor[700],
+              //     size: 20,
+              //   ),
+              // ),
+              // const SizedBox(width: 12),
+              Text(
+                'Personal Info',
+                style: TextStyle(
+                  fontSize: AppFontSizes.bodyMedium,
+                  fontWeight: AppFontWeights.bold,
+                  color: ColorRes.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // if (controller.isEditing.value) ...[
+          // Editable form fields
+          _buildFormField(
+            controller: controller.nameController,
+            label: 'First Name',
+            icon: Icons.person_outline,
+            enabled: controller.isEditing.value,
+            validator:
+                (value) =>
+                    value?.isEmpty ?? true ? 'First name is required' : null,
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.lastNameController,
+            label: 'Last Name',
+            icon: Icons.person_outline,
+            enabled: controller.isEditing.value,
+            validator:
+                (value) =>
+                    value?.isEmpty ?? true ? 'Last name is required' : null,
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.emailController,
+            label: 'Email',
+            icon: Icons.email_outlined,
+            enabled: controller.isEditing.value,
+            keyboardType: TextInputType.emailAddress,
+            validator: (value) {
+              if (value?.isEmpty ?? true) return 'Email is required';
+              if (!GetUtils.isEmail(value!)) return 'Enter a valid email';
+              return null;
+            },
+          ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.phoneController,
+            label: 'Phone',
+            icon: Icons.phone_outlined,
+            enabled: controller.isEditing.value,
+            keyboardType: TextInputType.phone,
+          ),
+          const SizedBox(height: 14),
+          // _buildFormField(
+          //   controller: controller.positionController,
+          //   label: 'City',
+          //   icon: Icons.location_city_outlined,
+          //   enabled: controller.isEditing.value,
+          // ),
+          CitySelectionWidget(
+            isEditing: controller.isEditing.value,
+            controller: controller.positionController,
+            onCitySelected: (selectedCity) {
+              print("✅ Selected city: ${selectedCity.description}");
+              controller.positionController.text =
+                  selectedCity.description ?? '';
+              controller.companyController.text = selectedCity.reference ?? '';
+              // You can also store city details in your controller here
+            },
+          ),
+          const SizedBox(height: 14),
+          // _buildFormField(
+          //   controller: controller.companyController,
+          //   label: 'State',
+          //   icon: Icons.location_on_outlined,
+          //   enabled: true,
+          // ),
+          StateSelectionWidget(
+            isEditing: false,
+            controller: controller.companyController,
+            onCitySelected: (selectedCity) {
+              print("✅ Selected city: ${selectedCity.description}");
+              controller.companyController.text =
+                  selectedCity.description ?? '';
+              // You can also store city details in your controller here
+            },
+          ),
+
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.experienceController,
+            label: 'Total Experience',
+            icon: Icons.star_outline,
+            enabled: controller.isEditing.value,
+            keyboardType: TextInputType.phone,
+          ),
+          if (controller.isEditing.value) ...[
+            const SizedBox(height: 24),
             Row(
               children: [
-                // Container(
-                //   padding: const EdgeInsets.all(8),
-                //   decoration: BoxDecoration(
-                //     color: ColorRes.blueColor.withOpacity(0.1),
-                //     borderRadius: BorderRadius.circular(8),
-                //   ),
-                //   child: Icon(
-                //     Icons.contacts_outlined,
-                //     color: ColorRes.blueColor[700],
-                //     size: 20,
-                //   ),
-                // ),
-                // const SizedBox(width: 12),
-                Text(
-                  'Personal Info',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.bodyMedium,
-                    fontWeight: AppFontWeights.bold,
-                    color: ColorRes.textPrimary,
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: controller.saveProfile,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.blueColor,
+                      foregroundColor: ColorRes.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child:
+                        controller.isSaving.value
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: ColorRes.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : Text(
+                              'Save Changes',
+                              style: TextStyle(
+                                fontWeight: AppFontWeights.semiBold,
+                                fontSize: AppFontSizes.bodyMedium,
+                              ),
+                            ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: controller.cancelEdit,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: ColorRes.leadGreyColor[700],
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: BorderSide(
+                        color: ColorRes.leadGreyColor.withOpacity(0.3),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.bodyMedium,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            // if (controller.isEditing.value) ...[
-            // Editable form fields
-            _buildFormField(
-              controller: controller.nameController,
-              label: 'First Name',
-              icon: Icons.person_outline,
-              enabled: controller.isEditing.value,
-              validator:
-                  (value) =>
-              value?.isEmpty ?? true ? 'First name is required' : null,
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.lastNameController,
-              label: 'Last Name',
-              icon: Icons.person_outline,
-              enabled: controller.isEditing.value,
-              validator:
-                  (value) =>
-              value?.isEmpty ?? true ? 'Last name is required' : null,
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.emailController,
-              label: 'Email',
-              icon: Icons.email_outlined,
-              enabled: controller.isEditing.value,
-              keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value?.isEmpty ?? true) return 'Email is required';
-                if (!GetUtils.isEmail(value!)) return 'Enter a valid email';
-                return null;
-              },
-            ),
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.phoneController,
-              label: 'Phone',
-              icon: Icons.phone_outlined,
-              enabled: controller.isEditing.value,
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(height: 14),
-            // _buildFormField(
-            //   controller: controller.positionController,
-            //   label: 'City',
-            //   icon: Icons.location_city_outlined,
-            //   enabled: controller.isEditing.value,
-            // ),
-            CitySelectionWidget(
-              isEditing: controller.isEditing.value,
-              controller: controller.positionController,
-              onCitySelected: (selectedCity) {
-                print("✅ Selected city: ${selectedCity.description}");
-                controller.positionController.text =
-                    selectedCity.description ?? '';
-                controller.companyController.text =
-                    selectedCity.reference ?? '';
-                // You can also store city details in your controller here
-              },
-            ),
-            const SizedBox(height: 14),
-            // _buildFormField(
-            //   controller: controller.companyController,
-            //   label: 'State',
-            //   icon: Icons.location_on_outlined,
-            //   enabled: true,
-            // ),
-            StateSelectionWidget(
-              isEditing: false,
-              controller: controller.companyController,
-              onCitySelected: (selectedCity) {
-                print("✅ Selected city: ${selectedCity.description}");
-                controller.companyController.text =
-                    selectedCity.description ?? '';
-                // You can also store city details in your controller here
-              },
-            ),
-
-            const SizedBox(height: 14),
-            _buildFormField(
-              controller: controller.experienceController,
-              label: 'Total Experience',
-              icon: Icons.star_outline,
-              enabled: controller.isEditing.value,
-              keyboardType: TextInputType.phone,
-            ),
-            if (controller.isEditing.value) ...[
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: controller.saveProfile,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorRes.blueColor,
-                        foregroundColor: ColorRes.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child:
-                      controller.isSaving.value
-                          ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: ColorRes.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                          : Text(
-                        'Save Changes',
-                        style: TextStyle(
-                          fontWeight: AppFontWeights.semiBold,
-                          fontSize: AppFontSizes.bodyMedium,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: controller.cancelEdit,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: ColorRes.leadGreyColor[700],
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: BorderSide(
-                          color: ColorRes.leadGreyColor.withOpacity(0.3),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.bodyMedium,
-                          fontWeight: AppFontWeights.semiBold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-
-          ] /*else ...[
+          ],
+        ] /*else ...[
             // Read-only display
             _buildInfoRow(
               Icons.person,
@@ -713,8 +726,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               '${controller.profileData.value?.user?.address ?? ''}',
             ),
 
-          ],*/
-        //   ],
+          ],*/, //   ],
       ),
     );
   }
@@ -847,22 +859,22 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                       ),
                     ),
                     child:
-                    controller.isSaving.value
-                        ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: ColorRes.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                        : Text(
-                      'Save Changes',
-                      style: TextStyle(
-                        fontWeight: AppFontWeights.semiBold,
-                        fontSize: AppFontSizes.bodyMedium,
-                      ),
-                    ),
+                        controller.isSaving.value
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: ColorRes.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : Text(
+                              'Save Changes',
+                              style: TextStyle(
+                                fontWeight: AppFontWeights.semiBold,
+                                fontSize: AppFontSizes.bodyMedium,
+                              ),
+                            ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -897,7 +909,6 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
   }
 
   // Seller Details Section (Read-only)
-
 
   // Account Information Section (Read-only)
   Widget _buildAccountInfoSection(ContractorProfileController controller) {
@@ -942,6 +953,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
       ),
     );
   }
+
   Widget _buildPerformanceInfoSection(ContractorProfileController controller) {
     return Container(
       width: double.infinity,
@@ -971,11 +983,11 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             children: [
               _buildDetailRow(
                 'Overall Rating',
-                controller.resellerProfile.value?.overallRating??'',
+                controller.resellerProfile.value?.overallRating ?? '',
               ),
               _buildDetailRow(
                 'Total Reviews',
-                controller.resellerProfile.value?.totalReviews.toString()??'',
+                controller.resellerProfile.value?.totalReviews.toString() ?? '',
               ),
             ],
           ),
@@ -986,10 +998,13 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               _buildDetailRow(
                 'Total Services',
 
-                controller.resellerProfile.value?.totalServices.toString()??'',
-              ),  _buildDetailRow(
+                controller.resellerProfile.value?.totalServices.toString() ??
+                    '',
+              ),
+              _buildDetailRow(
                 'Active Services',
-                controller.resellerProfile.value?.activeServices.toString()??'',
+                controller.resellerProfile.value?.activeServices.toString() ??
+                    '',
               ),
             ],
           ),
@@ -1000,10 +1015,13 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               _buildDetailRow(
                 'Warnings',
 
-                controller.resellerProfile.value?.warningCount.toString()??'',
-              ),  _buildDetailRow(
+                controller.resellerProfile.value?.warningCount.toString() ?? '',
+              ),
+              _buildDetailRow(
                 'Account Status',
-                (controller.resellerProfile.value?.isBlocked??false)?'Inactive':'Active',
+                (controller.resellerProfile.value?.isBlocked ?? false)
+                    ? 'Inactive'
+                    : 'Active',
               ),
             ],
           ),
@@ -1016,6 +1034,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
       ),
     );
   }
+
   String formatDate(String? dateString) {
     if (dateString == null || dateString.isEmpty) return 'N/A';
     try {
@@ -1123,25 +1142,25 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
           _buildProfileOption(
             Icons.notifications_outlined,
             'Notifications',
-                () {},
+            () {},
             showDivider: true,
           ),
           _buildProfileOption(
             Icons.security_outlined,
             'Security',
-                () {},
+            () {},
             showDivider: true,
           ),
           _buildProfileOption(
             Icons.help_outline,
             'Help & Support',
-                () {},
+            () {},
             showDivider: true,
           ),
           _buildProfileOption(
             Icons.logout,
             'Logout',
-                () => _showLogoutDialog(Get.context!),
+            () => _showLogoutDialog(Get.context!),
             isLogout: true,
           ),
         ],
@@ -1150,12 +1169,12 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
   }
 
   Widget _buildProfileOption(
-      IconData icon,
-      String title,
-      VoidCallback onTap, {
-        bool isLogout = false,
-        bool showDivider = false,
-      }) {
+    IconData icon,
+    String title,
+    VoidCallback onTap, {
+    bool isLogout = false,
+    bool showDivider = false,
+  }) {
     return Column(
       children: [
         ListTile(
@@ -1167,9 +1186,9 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color:
-              isLogout
-                  ? ColorRes.error.withOpacity(0.1)
-                  : ColorRes.leadGreyColor.withOpacity(0.1),
+                  isLogout
+                      ? ColorRes.error.withOpacity(0.1)
+                      : ColorRes.leadGreyColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
