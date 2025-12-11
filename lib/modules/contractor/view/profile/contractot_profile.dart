@@ -16,6 +16,9 @@ import 'package:get/get.dart';
 import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../home/views/home_screen/home_screen.dart';
 import '../../controller/contractor_profile_controller.dart';
+import '../contractor_plan/contractor_plan_screen.dart';
+import '../project/contractor_service.dart';
+import '../widget/my_service_screen.dart';
 
 class ContractorProfileScreen extends StatefulWidget {
   const ContractorProfileScreen({Key? key}) : super(key: key);
@@ -77,6 +80,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
+
           return RefreshIndicator(
               onRefresh: profileController.refreshFollowUp,
               color: ColorRes.primary,
@@ -108,8 +112,10 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                       if (!profileController.isEditing.value)
                         _buildPerformanceInfoSection(profileController),
 
+
                       // Account Information Section (Read-only)
                       if (!profileController.isEditing.value)
+                        const SizedBox(height: 16),
                         _buildAccountInfoSection(profileController),
                       // if (!profileController.isEditing.value)
                       //   const SizedBox(height: 16),
@@ -119,6 +125,36 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                     // _buildProfileOptionsSection(),
                     const SizedBox(height: 16),
                   ],
+                      _buildActionButton(
+                        icon: Icons.dashboard_outlined,
+                        label: "My Service",
+
+                        onTap: () {
+                          Get.to(
+                                () => MyServiceScreen(),
+                          );
+                        },
+                      ),
+                      _buildActionButton(
+                        icon: Icons.dashboard_outlined,
+                        label: "Contractor Services",
+
+                        onTap: () {
+                          Get.to(
+                                () => ContractorService(),
+                          );
+                        },
+                      ),
+                      _buildActionButton(
+                        icon: Icons.dashboard_outlined,
+                        label: "Plan & Subscription",
+
+                        onTap: () {
+                          Get.to(
+                                () => ContractorPlanScreen(),
+                          );
+                        },
+                      ),
                 ],
               ),
             ),
@@ -129,7 +165,26 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
       ),
     );
   }
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
 
+    required VoidCallback onTap,
+    Widget? trailing
+  }) {
+    return ListTile(
+      leading: Icon(icon, size: 28, color: ColorRes.primary),
+      title: Text(
+        label,
+        style: TextStyle(
+          fontSize: AppFontSizes.medium,
+          fontWeight: AppFontWeights.semiBold,
+        ),
+      ),
+      trailing: trailing ?? const Icon(Icons.chevron_right),
+      onTap: onTap,
+    );
+  }
   Widget _buildProfileHeader(ContractorProfileController controller) {
     return Container(
       padding: const EdgeInsets.all(16),

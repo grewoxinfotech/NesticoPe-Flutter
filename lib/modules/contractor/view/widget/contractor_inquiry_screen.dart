@@ -391,6 +391,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         backgroundColor: ColorRes.surface,
+        automaticallyImplyLeading: false,
         elevation: 0,
         title: const Text(
           'Contractor Inquiries',

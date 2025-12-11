@@ -207,6 +207,8 @@ import 'package:housing_flutter_app/modules/home/views/compare_screen/project_co
 // import 'package:housing_flutter_app/modules/home/views/compare_screen/contractor_compare_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 
+import 'contractor_comparison_screen.dart';
+
 class UnifiedComparisonFloatingButton extends StatelessWidget {
   final double? top;
   final double? bottom;
@@ -286,7 +288,7 @@ class UnifiedComparisonFloatingButton extends StatelessWidget {
                   } else if (isProjectComparison) {
                     Get.to(() => const ProjectCompareScreen());
                   } else if (isContractorComparison) {
-                    // Get.to(() => const ContractorCompareScreen());
+                    Get.to(() => const ContractorComparisonScreen());
                   }
                 } catch (e) {
                   print('Error navigating to comparison: $e');

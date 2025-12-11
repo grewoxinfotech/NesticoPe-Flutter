@@ -35,229 +35,253 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: ColorRes.white,
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Header Section
-              Container(
-                padding: const EdgeInsets.only(
-                  top: 60,
-                  bottom: 20,
-                  left: 16,
-                  right: 16,
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      ColorRes.primary,
-                      ColorRes.primary.withOpacity(0.85),
-                    ],
-                  ),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Welcome",
-                      style: TextStyle(
-                        // fontFamily: 'Exo',
-                        color: ColorRes.whiteShade.withOpacity(0.9),
-                        fontSize: AppFontSizes.bodyMedium,
-                        fontWeight: AppFontWeights.regular,
-                        // letterSpacing: 0.5,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Header Section
+                  Container(
+                    padding: const EdgeInsets.only(
+                      top: 60,
+                      bottom: 20,
+                      left: 16,
+                      right: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          ColorRes.primary,
+                          ColorRes.primary.withOpacity(0.85),
+                        ],
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Find Your Perfect Luxury Home",
-                      style: TextStyle(
-                        // fontFamily: 'Exo',
-                        color: ColorRes.white,
-                        fontWeight: AppFontWeights.semiBold,
-                        fontSize: AppFontSizes.large,
-                        // letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    Text(
-                      "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
-                      style: TextStyle(
-                        fontFamily: 'Exo',
-                        color: ColorRes.whiteShade.withOpacity(0.85),
-                        fontWeight: AppFontWeights.regular,
-                        fontSize: AppFontSizes.small,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Content Section
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                decoration: const BoxDecoration(
-                  color: ColorRes.white,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(16),
-                    bottomRight: Radius.circular(16),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    const SizedBox(height: 4),
-                    Text(
-                      "Become a Contractor",
-                      style: TextStyle(
-                        fontFamily: 'Exo',
-                        color: ColorRes.primary,
-                        fontWeight: AppFontWeights.bold,
-                        fontSize: AppFontSizes.large,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-
-                    // Subtitle
-                    Text(
-                      "You're just one step away from becoming a contractor!",
-                      style: TextStyle(
-                        fontFamily: 'Exo',
-                        color: ColorRes.blackShade54,
-                        fontSize: AppFontSizes.small,
-                        fontWeight: AppFontWeights.regular,
-
-                        // letterSpacing: 0.1,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // What happens next section
-                    buildContentContainer("What happens next?", options),
-                    const SizedBox(height: 32),
-
-                    // Convert Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: Obx(
-                            () => ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                            controller.isLoading.value
-                                ? ColorRes.primary.withOpacity(0.5)
-                                : ColorRes.primary,
-                            foregroundColor: ColorRes.white,
-                            elevation: controller.isLoading.value ? 0 : 2,
-                            shadowColor: ColorRes.primary.withOpacity(0.3),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                          ),
-                          onPressed:
-                          controller.isLoading.value
-                              ? null
-                              : () {
-                            controller.convertBuyerToContractor();
-                          },
-                          child:
-                          controller.isLoading.value
-                              ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  valueColor:
-                                  AlwaysStoppedAnimation<Color>(
-                                    ColorRes.white.withOpacity(0.7),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                "Converting...",
-                                style: TextStyle(
-                                  fontFamily: 'Exo',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                            ],
-                          )
-                              : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Confirm - Convert to Contractor  ",
-                                style: TextStyle(
-                                  fontFamily: 'Exo',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Icon(Icons.arrow_forward, size: 20),
-                            ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Welcome",
+                          style: TextStyle(
+                            // fontFamily: 'Exo',
+                            color: ColorRes.whiteShade.withOpacity(0.9),
+                            fontSize: AppFontSizes.bodyMedium,
+                            fontWeight: AppFontWeights.regular,
+                            // letterSpacing: 0.5,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Find Your Perfect Luxury Home",
+                          style: TextStyle(
+                            // fontFamily: 'Exo',
+                            color: ColorRes.white,
+                            fontWeight: AppFontWeights.semiBold,
+                            fontSize: AppFontSizes.large,
+                            // letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
 
-                    // Login Link
-                    SizedBox(
-                      width: double.infinity,
-                      child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          text: "Already have an account? ",
+                        Text(
+                          "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
                           style: TextStyle(
                             fontFamily: 'Exo',
-                            color: ColorRes.blackShade87,
-                            fontSize: AppFontSizes.bodySmall,
+                            color: ColorRes.whiteShade.withOpacity(0.85),
+                            fontWeight: AppFontWeights.regular,
+                            fontSize: AppFontSizes.small,
                           ),
-                          children: [
-                            TextSpan(
-                              text: "Login here",
-                              style: TextStyle(
-                                fontFamily: 'Exo',
-                                color: ColorRes.primary,
-                                decoration: TextDecoration.underline,
-                                decorationColor: ColorRes.primary,
-                                fontWeight: AppFontWeights.semiBold,
-                                // letterSpacing: 0.2,
-                              ),
-                              recognizer:
-                              TapGestureRecognizer()
-                                ..onTap = () {
-                                  Get.to(() => const LoginScreen());
-                                },
-                            ),
-                          ],
                         ),
+                      ],
+                    ),
+                  ),
+
+                  // Content Section
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    decoration: const BoxDecoration(
+                      color: ColorRes.white,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
                       ),
                     ),
-                  ],
-                ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title
+                        const SizedBox(height: 4),
+                        Text(
+                          "Become a Contractor",
+                          style: TextStyle(
+                            fontFamily: 'Exo',
+                            color: ColorRes.primary,
+                            fontWeight: AppFontWeights.bold,
+                            fontSize: AppFontSizes.large,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+
+                        // Subtitle
+                        Text(
+                          "You're just one step away from becoming a contractor!",
+                          style: TextStyle(
+                            fontFamily: 'Exo',
+                            color: ColorRes.blackShade54,
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.regular,
+
+                            // letterSpacing: 0.1,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // What happens next section
+                        buildContentContainer("What happens next?", options),
+                        const SizedBox(height: 32),
+
+                        // Convert Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: Obx(
+                                () => ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                controller.isLoading.value
+                                    ? ColorRes.primary.withOpacity(0.5)
+                                    : ColorRes.primary,
+                                foregroundColor: ColorRes.white,
+                                elevation: controller.isLoading.value ? 0 : 2,
+                                shadowColor: ColorRes.primary.withOpacity(0.3),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 18),
+                              ),
+                              onPressed:
+                              controller.isLoading.value
+                                  ? null
+                                  : () {
+                                controller.convertBuyerToContractor();
+                              },
+                              child:
+                              controller.isLoading.value
+                                  ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      valueColor:
+                                      AlwaysStoppedAnimation<Color>(
+                                        ColorRes.white.withOpacity(0.7),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    "Converting...",
+                                    style: TextStyle(
+                                      fontFamily: 'Exo',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                                ],
+                              )
+                                  : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Confirm - Convert to Contractor  ",
+                                    style: TextStyle(
+                                      fontFamily: 'Exo',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(Icons.arrow_forward, size: 20),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Login Link
+                        SizedBox(
+                          width: double.infinity,
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              text: "Already have an account? ",
+                              style: TextStyle(
+                                fontFamily: 'Exo',
+                                color: ColorRes.blackShade87,
+                                fontSize: AppFontSizes.bodySmall,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: "Login here",
+                                  style: TextStyle(
+                                    fontFamily: 'Exo',
+                                    color: ColorRes.primary,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: ColorRes.primary,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    // letterSpacing: 0.2,
+                                  ),
+                                  recognizer:
+                                  TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Get.to(() => const LoginScreen());
+                                    },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 16,
+                    child: SafeArea(
+                      child: IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Get.back(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            top: 0,
+            right: 16,
+            child: SafeArea(
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Get.back(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

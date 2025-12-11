@@ -643,6 +643,67 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             icon: Icons.location_city_outlined,
             enabled: controller.isEditing.value,
           ),
+          if (controller.isEditing.value && UserHelper.isSellerOwner) ...[
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: controller.saveProfile,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.blueColor,
+                      foregroundColor: ColorRes.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child:
+                    controller.isSaving.value
+                        ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: ColorRes.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                        : Text(
+                      'Save Changes',
+                      style: TextStyle(
+                        fontWeight: AppFontWeights.semiBold,
+                        fontSize: AppFontSizes.bodyMedium,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: controller.cancelEdit,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: ColorRes.leadGreyColor[700],
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: BorderSide(
+                        color: ColorRes.leadGreyColor.withOpacity(0.3),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.bodyMedium,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ] /*else ...[
             // Read-only display
             _buildInfoRow(

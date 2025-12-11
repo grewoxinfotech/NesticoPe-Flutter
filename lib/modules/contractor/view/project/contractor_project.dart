@@ -30,12 +30,13 @@ class ContractorProjectScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: ColorRes.surface,
-        leading: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
+        // leading: IconButton(
+        //   onPressed: () {
+        //     Get.back();
+        //   },
+        //   icon: Icon(Icons.arrow_back),
+        // ),
+        automaticallyImplyLeading: false,
         title: Text(
           "Contractor Projects",
           style: TextStyle(
@@ -92,9 +93,20 @@ class ContractorProjectScreen extends StatelessWidget {
             Expanded(
               child: Obx(() {
                 final projects = controller.items;
-                if (projects.isEmpty) {
+                if (controller.isLoading.value) {
                   return const Center(
                     child: CircularProgressIndicator(color: ColorRes.primary),
+                  );
+                }
+                if (controller.items.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No project found.",
+                      style: TextStyle(
+                        color: ColorRes.textSecondary,
+                        fontSize: AppFontSizes.body,
+                      ),
+                    ),
                   );
                 }
                 return RefreshIndicator(

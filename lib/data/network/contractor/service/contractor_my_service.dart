@@ -28,11 +28,6 @@ class ContractorMyService {
     required String fields,
   }) async {
     try {
-      // Build query parameters
-      // final queryParams = {
-      //   'fields': fields, // Will be URL encoded automatically by Uri
-      // };
-
       final uri = Uri.parse('$_baseCategory/$fields');
 
       print("Category API URI: $uri");

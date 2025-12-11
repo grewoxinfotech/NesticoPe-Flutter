@@ -45,6 +45,7 @@ class ContractorLead extends StatelessWidget {
 
                   // Navigator.pushNamed(context, '/screen2');
                 },
+
                 child: const Text('Inquiry'),
               ),
               const SizedBox(height: 12),

@@ -105,6 +105,7 @@ class ApiConstants {
   static String get contractorProject => "$baseURL/contractorProjects";
   static String get contractorLeadFollowUp => "$baseURL/followup";
   static String get contractorCompare => "$baseURL/contractorService/contractor";
+  static String get contractorUserProfile => "$baseURL/user/profiles";
 
   //---------------------------------other-----------------------------//
 

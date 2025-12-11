@@ -30,6 +30,7 @@ class ContractorLeadScreen extends StatelessWidget {
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         backgroundColor: ColorRes.surface,
+        automaticallyImplyLeading: false,
         title: const Text(
           "Contractor Leads",
           style: TextStyle(
@@ -90,17 +91,17 @@ class ContractorLeadScreen extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                // if (controller.items.isEmpty) {
-                //   return const Center(
-                //     child: Text(
-                //       "No leads found.",
-                //       style: TextStyle(
-                //         color: ColorRes.textSecondary,
-                //         fontSize: AppFontSizes.body,
-                //       ),
-                //     ),
-                //   );
-                // }
+                if (controller.items.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No leads found.",
+                      style: TextStyle(
+                        color: ColorRes.textSecondary,
+                        fontSize: AppFontSizes.body,
+                      ),
+                    ),
+                  );
+                }
 
                 return RefreshIndicator(
                     onRefresh: controller.refreshLead,

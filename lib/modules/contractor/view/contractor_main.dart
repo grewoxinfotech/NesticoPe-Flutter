@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/modules/contractor/view/lead/contractor_lead_screen.dart';
 
 import 'package:housing_flutter_app/modules/contractor/view/profile/contractot_profile.dart';
+import 'package:housing_flutter_app/modules/contractor/view/project/contractor_project.dart';
 import 'package:housing_flutter_app/modules/contractor/view/project/contractor_service.dart';
+import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_inquiry_screen.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
@@ -10,6 +13,7 @@ import '../../../app/constants/color_res.dart';
 import 'package:get/get.dart';
 
 import '../controller/contractor_navigate_controller.dart';
+import 'contractor_plan/contractor_plan_screen.dart';
 import 'dashboard/contractor_dashboard.dart';
 import 'lead/contractor_lead.dart';
 
@@ -24,8 +28,10 @@ class ContractorMainScreen extends StatelessWidget {
 
     final screens = [
       ContractorDashboard(),
-      ContractorService(),
-      ContractorLead(),
+      ContractorProjectScreen(),
+      // ContractorService(),
+      ContractorLeadScreen(),
+      ContractorInquiryScreen(),
       ContractorProfileScreen()
       // BuilderSubscriptionPlanScreen(),
       // SellerProfileScreen(),
@@ -38,26 +44,7 @@ class ContractorMainScreen extends StatelessWidget {
           children: screens,
         ),
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () {
-      //     final controller = Get.put(
-      //       ProjectWizardController(isBuilderView: false),
-      //       tag: "builder",
-      //     );
-      //     controller.resetForm();
-      //     Get.to(CreateProjectScreen());
-      //     // Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
-      //     //     Get.put(ProjectWizardController());
-      //     //   },));
-      //   },
-      //   label: Text(
-      //     '+ Add Project',
-      //     style: TextStyle(
-      //       color: ColorRes.white,
-      //       fontWeight: AppFontWeights.semiBold,
-      //     ),
-      //   ),
-      // ),
+
 
       bottomNavigationBar: Obx(
             () => SafeArea(
@@ -99,13 +86,13 @@ class ContractorMainScreen extends StatelessWidget {
                 ),
                 label: 'Leads',
               ),
-              // BottomNavigationBarItem(
-              //   icon: Padding(
-              //     padding: EdgeInsets.only(bottom: 4),
-              //     child: Icon(Icons.card_giftcard_outlined, size: 22),
-              //   ),
-              //   label: 'Plans',
-              // ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.disc_full_rounded, size: 22),
+                ),
+                label: 'Inquiry',
+              ),
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(bottom: 4),

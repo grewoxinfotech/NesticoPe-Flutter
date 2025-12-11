@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
 
@@ -10,6 +9,7 @@ class ListScreenAppbar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBack;
   final VoidCallback? onFilterTap;
   final bool showFilter;
+  final bool isFormScreen;
 
   const ListScreenAppbar({
     super.key,
@@ -18,6 +18,7 @@ class ListScreenAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.onBack,
     this.onFilterTap,
     this.showFilter = true,
+    this.isFormScreen = false,
   });
 
   @override
@@ -27,11 +28,18 @@ class ListScreenAppbar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       elevation: 0,
       backgroundColor: ColorRes.white,
+      automaticallyImplyLeading: !isFormScreen, // ✅ don’t reserve space
+      leadingWidth: isFormScreen ? 0 : null, // ✅ remove left padding space
 
-      leading: GestureDetector(
+      // ✅ Conditionally show back icon
+      leading: isFormScreen
+          ? null // no space at all
+          : GestureDetector(
         onTap: onBack ?? Get.back,
         child: const Icon(Icons.arrow_back, color: ColorRes.textColor),
       ),
+
+     // ✅ center title if no back icon
 
       title: Text(
         title,
@@ -41,21 +49,21 @@ class ListScreenAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
 
-      actions:
-          showFilter
-              ? [
-                Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: GestureDetector(
-                    onTap: onFilterTap,
-                    child: const Icon(
-                      Icons.filter_list,
-                      color: ColorRes.textColor,
-                    ),
-                  ),
-                ),
-              ]
-              : [],
+      // ✅ Filter icon (optional)
+      actions: showFilter
+          ? [
+        Padding(
+          padding: const EdgeInsets.only(right: 12.0),
+          child: GestureDetector(
+            onTap: onFilterTap,
+            child: const Icon(
+              Icons.filter_list,
+              color: ColorRes.textColor,
+            ),
+          ),
+        ),
+      ]
+          : [],
     );
   }
 

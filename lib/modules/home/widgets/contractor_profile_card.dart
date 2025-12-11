@@ -99,7 +99,7 @@ class ContractorCard extends StatelessWidget {
                             },
                             child: Obx(() {
                               final selected = compare.isSelected(
-                                contractor.id,
+                                contractor.userId,
                               );
                               return Container(
                                 height: 32,

@@ -56,17 +56,17 @@ class NesticoPeNavigationBar extends StatelessWidget {
 
               SalomonBottomBarItem(
                 icon: Icon(FontAwesomeIcons.safari, size: iconSize),
-                title: Text("Explore", style: style),
+                title: Text("Property", style: style),
               ),
 
               SalomonBottomBarItem(
                 icon: Icon(FontAwesomeIcons.heart, size: iconSize),
-                title: Text("Wishlist", style: style),
+                title: Text("Project", style: style),
               ),
 
               SalomonBottomBarItem(
-                icon: Icon(FontAwesomeIcons.message, size: iconSize),
-                title: Text("Message", style: style),
+                icon: Icon(FontAwesomeIcons.gift, size: iconSize),
+                title: Text("Plans", style: style),
               ),
 
               SalomonBottomBarItem(

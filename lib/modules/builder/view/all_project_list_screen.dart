@@ -18,11 +18,12 @@ import 'builder_property_listing.dart';
 class AllProjectListScreen extends StatefulWidget {
   final List<Map<String, String>>? filters;
   final bool isAppBarShow;
+  final bool isFromSeeAll;
 
   const AllProjectListScreen({
     super.key,
     this.filters,
-    this.isAppBarShow = true,
+    this.isAppBarShow = true,  this.isFromSeeAll=false,
   });
 
   @override
@@ -81,25 +82,11 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
       // ),
       appBar: ListScreenAppbar(
         showAppBar: widget.isAppBarShow,
+        isFormScreen: widget.isFromSeeAll,
         title: "Project List",
         onBack: () {
           Get.back();
         },
-        // onFilterTap: () async {
-        //   var filters = await Get.to(
-        //     () => ProjectFilterScreen(
-        //       initialFilters: selectedFilters.value,
-        //       onApply: (filterData) {
-        //         Get.back(result: filterData);
-        //       },
-        //     ),
-        //   );
-        //
-        //   if (filters != null) {
-        //     selectedFilters.value = filters;
-        //     controller.applyFilters(filters);
-        //   }
-        // },
         onFilterTap: () async {
           var filters = await showModalBottomSheet<Map<String, String>>(
             context: Get.context!, // or use your BuildContext if available

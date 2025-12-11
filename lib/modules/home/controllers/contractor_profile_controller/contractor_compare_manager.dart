@@ -17,7 +17,7 @@ class ContractorCompareManager extends GetxController {
   bool isSelected(String? id) => id != null && _selected.containsKey(id);
 
   void toggle(Contractor contractor, {int max = 2}) {
-    final id = contractor.id;
+    final id = contractor.userId;
     if (id.isEmpty) return;
 
     if (_selected.containsKey(id)) {

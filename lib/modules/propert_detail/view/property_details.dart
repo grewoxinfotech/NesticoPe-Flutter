@@ -27,12 +27,14 @@ class PropertyDetail extends StatefulWidget {
   final List<Map<String, String>>? filters;
   final bool isAppBarShow;
   final Color backgroundColor;
+  final bool isFromSeeAll;
 
   PropertyDetail({
     super.key,
     this.isAppBarShow = true,
     this.backgroundColor = ColorRes.white,
     this.filters,
+    this.isFromSeeAll=false,
   });
 
   @override
@@ -66,74 +68,10 @@ class _PropertyDetailState extends State<PropertyDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: widget.backgroundColor,
-      // appBar:
-      //     widget.isAppBarShow
-      //         ? AppBar(
-      //           elevation: 0,
-      //           backgroundColor: ColorRes.white,
-      //           leading: GestureDetector(
-      //             onTap: () {
-      //               // Clear filters and reload initial list
-      //               // controller.filters = {};
-      //               // controller.loadInitial();
-      //               // Navigate back
-      //               log("Selected City foback ${controller.selectedCity.value}");
-      //               controller.filters={'city':controller.selectedCity.value};
-      //
-      //               Get.back();
-      //
-      //             },
-      //             child: const Icon(
-      //               Icons.arrow_back,
-      //               color: ColorRes.textColor,
-      //             ),
-      //           ),
-      //           title: const Text(
-      //             "Property List",
-      //             style: TextStyle(
-      //               fontWeight: AppFontWeights.semiBold,
-      //               color: ColorRes.textColor,
-      //             ),
-      //           ),
-      //       actions: [
-      //         Padding(
-      //           padding: const EdgeInsets.only(right: 12.0),
-      //           child: Stack(
-      //             alignment: Alignment.center,
-      //             children: [
-      //               GestureDetector(
-      //                 onTap: () async {
-      //                   final result = await Get.to<Map<String, String>>(
-      //                         () => RealEstateFilterScreen(
-      //                       initialFilters: Map<String, String>.from(selectedFilters),
-      //                     ),
-      //                     transition: Transition.rightToLeft,
-      //                   );
-      //
-      //                   if (result != null) {
-      //                     selectedFilters
-      //                       ..clear()
-      //                       ..addAll(result);
-      //                     controller.applyFilters(
-      //                       Map<String, String>.from(selectedFilters),
-      //                     );
-      //                   }
-      //                 },
-      //                 child: const Icon(
-      //                   Icons.filter_list,
-      //                   color: ColorRes.textColor,
-      //                 ),
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //       ],
-      //
-      //     )
-      //         : null,
       appBar: ListScreenAppbar(
         showAppBar: widget.isAppBarShow,
         title: "Property List",
+        isFormScreen: widget.isFromSeeAll,
         onBack: () {
           log("Selected City foback ${controller.selectedCity.value}");
           controller.filters = {'city': controller.selectedCity.value};
