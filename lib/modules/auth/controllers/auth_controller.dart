@@ -441,6 +441,7 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
   }
+
   Future<void> convertBuyerToContractor() async {
     try {
       isLoading.value = true;
@@ -493,6 +494,25 @@ class AuthController extends GetxController {
         message: e.toString().replaceAll('Exception:', '').trim(),
         contentType: ContentType.failure,
       );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<bool> deleteAccount(String reason) async {
+    try {
+      isLoading.value = true;
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id ?? '';
+      final success = await authService.deleteAccount(userId, reason);
+      if (success) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("[Debug]-> Error: $e");
+
+      return false;
     } finally {
       isLoading.value = false;
     }

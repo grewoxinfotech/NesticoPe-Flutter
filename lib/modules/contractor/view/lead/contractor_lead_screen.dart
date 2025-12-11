@@ -24,7 +24,7 @@ class ContractorLeadScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(ContractorLeadController());
     RxMap<String, String> selectedFilters = <String, String>{}.obs;
-    final serviceController=Get.find<ContractorMyServiceController>();
+    final serviceController = Get.find<ContractorMyServiceController>();
 
     return Scaffold(
       backgroundColor: ColorRes.background,
@@ -61,8 +61,7 @@ class ContractorLeadScreen extends StatelessWidget {
               }
             },
             icon: const Icon(Icons.filter_list),
-          )
-
+          ),
         ],
       ),
 
@@ -104,73 +103,106 @@ class ContractorLeadScreen extends StatelessWidget {
                 }
 
                 return RefreshIndicator(
-                    onRefresh: controller.refreshLead,
-                    color: ColorRes.primary,
-                    child: items.isEmpty?SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.7,
-                        child: Center(
-                          child: Text(
-                            "No Lead available",
-                            style: TextStyle(
-                              fontSize: AppFontSizes.body,
-                              color: ColorRes.textSecondary,
-                              fontWeight: AppFontWeights.medium,
+                  onRefresh: controller.refreshLead,
+                  color: ColorRes.primary,
+                  child:
+                      items.isEmpty
+                          ? SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.7,
+                              child: Center(
+                                child: Text(
+                                  "No Lead available",
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.body,
+                                    color: ColorRes.textSecondary,
+                                    fontWeight: AppFontWeights.medium,
+                                  ),
+                                ),
+                              ),
                             ),
+                          )
+                          : ListView.separated(
+                            padding: const EdgeInsets.all(12),
+                            separatorBuilder:
+                                (_, __) => const SizedBox(height: 2),
+                            itemCount: controller.items.length,
+                            itemBuilder: (context, index) {
+                              final item = controller.items[index];
+                              ContractorServiceItem? serviceData =
+                                  serviceController.items.value.firstWhere(
+                                    (e) => e.id == item.customFields?.serviceId,
+                                    orElse:
+                                        () => ContractorServiceItem(
+                                          id: '',
+                                          category: '',
+                                          contractorId: '',
+                                          serviceName: '',
+                                          description: '',
+                                          isActive: false,
+                                          meta: ContractorMetaData(
+                                            priceModel: '',
+                                            maxPriceRange: 0,
+                                            minPriceRange: 0,
+                                            workAvailability: '',
+                                            provideMaterials: false,
+                                            brandsUsed: '',
+                                            equipmentProvided: false,
+                                            insuranceAvailable: false,
+                                            acceptedPaymentModes: [],
+                                            advanceRequiredPercentage: 0,
+                                            billingType: '',
+                                          ),
+                                          createdAt: '',
+                                          updatedAt: '',
+                                        ),
+                                  );
+
+                              return Obx(
+                                () => ContractorLeadCard(
+                                  item: item,
+                                  isExpanded: controller.isExpanded(
+                                    item.id ?? '',
+                                  ),
+                                  onPress:
+                                      () =>
+                                          controller.toggleCard(item.id ?? ""),
+                                  onConvert:
+                                      () => Get.to(
+                                        () => AddProjectScreen(item: item),
+                                      ),
+                                  onOverview:
+                                      () => Get.to(
+                                        () => ContractorLeadOverview(
+                                          leadItem: item,
+                                          serviceItem: serviceData,
+                                        ),
+                                      ),
+
+                                  // onConvert: () => controller.showConvertDialog(item),
+                                  onDelete:
+                                      () => controller.deleteLead(
+                                        item.id ?? '',
+                                        item.name ?? '',
+                                      ),
+                                  onAction:
+                                      () => _showStatusDialog(
+                                        context,
+                                        controller,
+                                        item,
+                                      ),
+                                  onEdit:
+                                      () => Get.to(
+                                        () => ContractorLeadEditScreen(
+                                          lead: item,
+                                        ),
+                                      ),
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                      ),
-                    ) :ListView.separated(
-                  padding: const EdgeInsets.all(12),
-                  separatorBuilder: (_, __) => const SizedBox(height: 2),
-                  itemCount: controller.items.length,
-                  itemBuilder: (context, index) {
-                    final item = controller.items[index];
-                    ContractorServiceItem? serviceData = serviceController.items.value.firstWhere(
-                          (e) => e.id == item.customFields?.serviceId,
-                      orElse: () => ContractorServiceItem(
-                        id: '',
-                        category: '',
-                        contractorId: '',
-                        serviceName: '',
-                        description: '',
-                        isActive: false,
-                        meta: ContractorMetaData(
-                          priceModel: '',
-                          maxPriceRange: 0,
-                          minPriceRange: 0,
-                          workAvailability: '',
-                          provideMaterials: false,
-                          brandsUsed: '',
-                          equipmentProvided: false,
-                          insuranceAvailable: false,
-                          acceptedPaymentModes: [],
-                          advanceRequiredPercentage: 0,
-                          billingType: '',
-                        ),
-                        createdAt: '',
-                        updatedAt: '',
-                      ),
-                    );
-
-
-                    return Obx(
-                      () => ContractorLeadCard(
-                        item: item,
-                        isExpanded: controller.isExpanded(item.id ?? ''),
-                        onPress: () => controller.toggleCard(item.id ?? ""),
-                        onConvert:()=> Get.to(()=>AddProjectScreen(item: item,)),
-                        onOverview: () => Get.to(()=>ContractorLeadOverview(leadItem: item,serviceItem: serviceData,)),
-                        // onConvert: () => controller.showConvertDialog(item),
-
-                        onDelete: ()=> controller.deleteLead(item.id??'',item.name??''),
-                        onAction: ()=>_showStatusDialog(context,controller,item),
-                        onEdit: () => Get.to(()=>ContractorLeadEditScreen(lead: item,)),
-                      ),
-                    );
-                  },
-                ),);
+                );
               }),
             ),
           ],
@@ -198,7 +230,10 @@ class ContractorLeadCard extends StatelessWidget {
     required this.item,
     required this.isExpanded,
     required this.onPress,
-    required this.onConvert, required this.onDelete, required this.onAction, required this.onOverview,
+    required this.onConvert,
+    required this.onDelete,
+    required this.onAction,
+    required this.onOverview,
     required this.onEdit,
   });
 
@@ -254,22 +289,27 @@ class ContractorLeadCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: (item.customFields?.isConvertedToProject ?? false)
-                            ? null // 👈 Disable tap when converted
-                            : onEdit,
+                        onTap:
+                            (item.customFields?.isConvertedToProject ?? false)
+                                ? null // 👈 Disable tap when converted
+                                : onEdit,
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: (item.customFields?.isConvertedToProject ?? false)
-                                ? ColorRes.leadGreyColor.withOpacity(0.15)
-                                : ColorRes.blueColor.withOpacity(0.15),
+                            color:
+                                (item.customFields?.isConvertedToProject ??
+                                        false)
+                                    ? ColorRes.leadGreyColor.withOpacity(0.15)
+                                    : ColorRes.blueColor.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
                             Icons.edit,
-                            color: (item.customFields?.isConvertedToProject ?? false)
-                                ? ColorRes.grey
-                                : ColorRes.blueColor,
+                            color:
+                                (item.customFields?.isConvertedToProject ??
+                                        false)
+                                    ? ColorRes.grey
+                                    : ColorRes.blueColor,
                             size: 20,
                           ),
                         ),
@@ -280,12 +320,12 @@ class ContractorLeadCard extends StatelessWidget {
                     // Delete Icon
                     Expanded(
                       child: GestureDetector(
-                        onTap:onDelete,
+                        onTap: onDelete,
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: ColorRes.error.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(8)
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(
                             Icons.delete,
@@ -299,13 +339,12 @@ class ContractorLeadCard extends StatelessWidget {
                     // Visibility Icon
                     Expanded(
                       child: GestureDetector(
-                        onTap:
-                           onOverview,
+                        onTap: onOverview,
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: ColorRes.grey.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(8)
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(
                             Icons.visibility,
@@ -432,13 +471,15 @@ class ContractorLeadCard extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: (item.customFields?.isConvertedToProject ?? false)
-                        ? null // 👈 disables button when converted
-                        : onAction,
+                    onPressed:
+                        (item.customFields?.isConvertedToProject ?? false)
+                            ? null // 👈 disables button when converted
+                            : onAction,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: (item.customFields?.isConvertedToProject ?? false)
-                          ? ColorRes.grey.withOpacity(0.4)
-                          : ColorRes.primary,
+                      backgroundColor:
+                          (item.customFields?.isConvertedToProject ?? false)
+                              ? ColorRes.grey.withOpacity(0.4)
+                              : ColorRes.primary,
                       disabledBackgroundColor: ColorRes.grey.withOpacity(0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -449,9 +490,10 @@ class ContractorLeadCard extends StatelessWidget {
                           ? "Action Disabled"
                           : "Action",
                       style: TextStyle(
-                        color: (item.customFields?.isConvertedToProject ?? false)
-                            ? ColorRes.textSecondary
-                            : ColorRes.white,
+                        color:
+                            (item.customFields?.isConvertedToProject ?? false)
+                                ? ColorRes.textSecondary
+                                : ColorRes.white,
                         fontSize: AppFontSizes.bodySmall,
                         fontWeight: AppFontWeights.semiBold,
                       ),
@@ -657,10 +699,10 @@ Widget _buildStageBadge(String stage) {
 }
 
 void _showStatusDialog(
-    BuildContext context,
-    ContractorLeadController controller,
-    ContractorLeadItem inquiry,
-    ) {
+  BuildContext context,
+  ContractorLeadController controller,
+  ContractorLeadItem inquiry,
+) {
   const List<String> leadStatuses = [
     'New',
     'Contacted',
@@ -718,8 +760,11 @@ void _showStatusDialog(
                   InkWell(
                     onTap: () => Get.back(),
                     borderRadius: BorderRadius.circular(50),
-                    child: const Icon(Icons.close_rounded,
-                        color: ColorRes.white, size: 20),
+                    child: const Icon(
+                      Icons.close_rounded,
+                      color: ColorRes.white,
+                      size: 20,
+                    ),
                   ),
                 ],
               ),
@@ -728,8 +773,10 @@ void _showStatusDialog(
             // ---------------- BODY ----------------
             Flexible(
               child: SingleChildScrollView(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -742,13 +789,20 @@ void _showStatusDialog(
                         value: controller.changeStatus.value,
                         hintText: "Select status",
                         prefixIcon: Icons.emoji_flags_rounded,
-                        items: leadStatuses
-                            .map((e) =>
-                            DropdownMenuItem(value: e, child: Text(e)))
-                            .toList(),
+                        items:
+                            leadStatuses
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e),
+                                  ),
+                                )
+                                .toList(),
                         onChanged: (val) {
                           controller.setValue(controller.changeStatus, val);
-                          log("Contractor_status ${controller.changeStatus.value}");
+                          log(
+                            "Contractor_status ${controller.changeStatus.value}",
+                          );
                         },
                         darkText: true,
                       );
@@ -763,13 +817,20 @@ void _showStatusDialog(
                         value: controller.changeStage.value,
                         hintText: "Select stage",
                         prefixIcon: Icons.stacked_bar_chart_outlined,
-                        items: leadStages
-                            .map((e) =>
-                            DropdownMenuItem(value: e, child: Text(e)))
-                            .toList(),
+                        items:
+                            leadStages
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(e),
+                                  ),
+                                )
+                                .toList(),
                         onChanged: (val) {
                           controller.setValue(controller.changeStage, val);
-                          log("Contractor_stage ${controller.changeStage.value}");
+                          log(
+                            "Contractor_stage ${controller.changeStage.value}",
+                          );
                         },
                         darkText: true,
                       );
@@ -781,8 +842,7 @@ void _showStatusDialog(
 
             // ---------------- FOOTER BUTTONS ----------------
             Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
                   Expanded(
@@ -822,14 +882,14 @@ void _showStatusDialog(
                           return;
                         }
 
-                         controller.updateTheStatusAndStage(
+                        controller.updateTheStatusAndStage(
                           leadId: inquiry.id ?? "",
                           status: status,
                           stage: stage,
                         );
                         Get.back(); // close dialog
-                        controller.changeStatus.value='';
-                        controller.changeStage.value='';
+                        controller.changeStatus.value = '';
+                        controller.changeStage.value = '';
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorRes.primary,

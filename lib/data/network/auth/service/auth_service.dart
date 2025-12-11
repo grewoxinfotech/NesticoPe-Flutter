@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
@@ -7,6 +8,8 @@ import 'package:http/http.dart' as http;
 import '../../../../app/constants/api_constants.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:get/get.dart';
+
+import '../../../../app/widgets/snackbar/snackbar.dart';
 
 class AuthService {
   final String url = ApiConstants.auth;
@@ -235,6 +238,7 @@ class AuthService {
       throw Exception(data["message"] ?? "Failed to convert buyer to reseller");
     }
   }
+
   Future<bool> convertBuyerToContractor() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? '';
@@ -242,7 +246,9 @@ class AuthService {
       Uri.parse('${ApiConstants.convertToContractor}/$userId'),
       headers: await headers(),
     );
-    print("Convert to Url Contractor ${Uri.parse('${ApiConstants.convertToContractor}/$userId')}");
+    print(
+      "Convert to Url Contractor ${Uri.parse('${ApiConstants.convertToContractor}/$userId')}",
+    );
     final data = jsonDecode(response.body);
     print("Convert to Api Contractor ${response.body}");
     if (response.statusCode == 200 && data['success'] == true) {
@@ -284,5 +290,26 @@ class AuthService {
   Future<void> logout() async {
     await SecureStorage.clearAll();
     Get.offAll(const LoginScreen());
+  }
+
+  Future<bool> deleteAccount(String userId, String reason) async {
+    final response = await http.post(
+      Uri.parse(ApiConstants.deleteAccount),
+      headers: await headers(),
+      body: jsonEncode({'userId': userId, 'reason': reason}),
+    );
+
+    final data = jsonDecode(response.body);
+    print("[DEBUG]=> Delete Account ${response.body}");
+    if (response.statusCode == 200 && data['success'] == true) {
+      return true;
+    } else {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: data['message'] ?? 'Failed to delete account',
+        contentType: ContentType.failure,
+      );
+      return false;
+    }
   }
 }

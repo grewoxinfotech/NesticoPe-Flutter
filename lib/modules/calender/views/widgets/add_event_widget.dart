@@ -334,12 +334,15 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
                         style: TextStyle(
                           fontSize: AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.white
+                          color: ColorRes.white,
                         ),
                       ),
                     ),
                     Spacer(),
-                    InkWell(onTap: () => Get.back(),child: Icon(Icons.close, color: ColorRes.white, size: 20)),
+                    InkWell(
+                      onTap: () => Get.back(),
+                      child: Icon(Icons.close, color: ColorRes.white, size: 20),
+                    ),
                   ],
                 ),
               ),
@@ -348,7 +351,7 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
             // Scrollable Form
             Flexible(
               child: SingleChildScrollView(
-                padding:  EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -527,7 +530,14 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
                         final newEvent = CalenderEventModel(
                           id: event?.id ?? '', // keep id for edit
                           title: titleCtrl.text.trim(),
-                          date: selectedDate.value.toString(),
+                          date:
+                              DateTime.utc(
+                                selectedDate.value.year,
+                                selectedDate.value.month,
+                                selectedDate.value.day,
+                                selectedDate.value.hour,
+                                selectedDate.value.minute,
+                              ).toIso8601String(),
                           categoryId: selectedCategory.value?.id,
                           details: detailsCtrl.text.trim(),
                         );
@@ -552,6 +562,7 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
     barrierDismissible: false,
   );
 }
+
 Future<String?> openAddCategoryDialog({
   String? initialText,
   bool isEdit = false,
@@ -564,9 +575,7 @@ Future<String?> openAddCategoryDialog({
   return await Get.dialog<String?>(
     Dialog(
       backgroundColor: ColorRes.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         constraints: BoxConstraints(maxWidth: 400),
         child: Form(
@@ -578,7 +587,10 @@ Future<String?> openAddCategoryDialog({
               // Title
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: const BorderRadius.only(
@@ -602,21 +614,26 @@ Future<String?> openAddCategoryDialog({
 
               // Text Field
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 child: NesticoPeTextField(
                   title: "Category Name",
                   hintText: "Enter category name...",
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) => requiredField(value, 'Category'),
                   controller: textCtrl,
-
                 ),
               ),
               // SizedBox(height: 24),
 
               // Action Buttons
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -624,7 +641,10 @@ Future<String?> openAddCategoryDialog({
                     TextButton(
                       onPressed: () => Get.back(result: null),
                       style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -653,7 +673,10 @@ Future<String?> openAddCategoryDialog({
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorRes.primary,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -678,6 +701,7 @@ Future<String?> openAddCategoryDialog({
     barrierDismissible: false,
   );
 }
+
 // Future<String?> openAddCategoryDialog({
 //   String? initialText,
 //   bool isEdit = false,
@@ -770,7 +794,7 @@ class DatePickerTextField extends StatelessWidget {
                   style: TextStyle(
                     fontSize: AppFontSizes.medium,
                     fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textColor
+                    color: ColorRes.textColor,
                   ),
                 ),
               ),
@@ -1070,11 +1094,11 @@ class _CustomDropdownWithAddState<T> extends State<CustomDropdownWithAdd<T>> {
                         color:
                             widget.value == null
                                 ? Colors.grey.shade500
-                                :  Get.theme.colorScheme.onSurface,
+                                : Get.theme.colorScheme.onSurface,
                         fontSize: AppFontSizes.bodySmall,
                         fontWeight:
                             widget.value == null
-                                ?  AppFontWeights.medium
+                                ? AppFontWeights.medium
                                 : AppFontWeights.medium,
                       ),
                     ),

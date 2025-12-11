@@ -11,6 +11,8 @@ class ApiConstants {
   // Auth Endpoints
   static String get auth => "$baseURL/auth";
 
+  static String get deleteAccount => "$baseURL/deleteAccount";
+
   static String get loginEndpoint => "$auth/login";
 
   static String get registerEndpoint => "$auth/signup";
@@ -104,7 +106,8 @@ class ApiConstants {
   static String get contractorInquiry => "$baseURL/contractorInquiry";
   static String get contractorProject => "$baseURL/contractorProjects";
   static String get contractorLeadFollowUp => "$baseURL/followup";
-  static String get contractorCompare => "$baseURL/contractorService/contractor";
+  static String get contractorCompare =>
+      "$baseURL/contractorService/contractor";
   static String get contractorUserProfile => "$baseURL/user/profiles";
 
   //---------------------------------other-----------------------------//

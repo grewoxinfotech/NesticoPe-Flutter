@@ -13,10 +13,9 @@ import '../../../../app/constants/app_font_sizes.dart';
 
 import 'package:get/get.dart';
 
+import '../../../auth/views/delete_account.dart';
 import '../../../reseller/controller/profile/profile_controller.dart';
 import '../../controllers/seller_profile_controller.dart';
-
-
 
 class BuyerProfileScreen extends StatelessWidget {
   const BuyerProfileScreen({Key? key}) : super(key: key);
@@ -28,9 +27,12 @@ class BuyerProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
-leading: IconButton(onPressed: () {
-  Get.back();
-}, icon: Icon(Icons.arrow_back, color: ColorRes.black,),),
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: Icon(Icons.arrow_back, color: ColorRes.black),
+        ),
         title: const Text(
           'Profile',
           style: TextStyle(fontWeight: AppFontWeights.bold),
@@ -39,15 +41,13 @@ leading: IconButton(onPressed: () {
         backgroundColor: ColorRes.white,
         elevation: 0,
         centerTitle: false,
-
       ),
       body: Obx(() {
         if (profileController.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return
-          SingleChildScrollView(
+        return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,9 +63,9 @@ leading: IconButton(onPressed: () {
               // Business Details Section (Editable)
               // Profile Options
 
-                // _buildProfileOptionsSection(),
-                const SizedBox(height: 16),
-
+              // _buildProfileOptionsSection(),
+              RequestDeleteAccount(),
+              const SizedBox(height: 16),
             ],
           ),
         );
@@ -97,7 +97,8 @@ leading: IconButton(onPressed: () {
 
                 if (profilePic != null && profilePic.isNotEmpty) {
                   // ✅ If it's a network URL
-                  if (profilePic.startsWith('http') || profilePic.startsWith('https')) {
+                  if (profilePic.startsWith('http') ||
+                      profilePic.startsWith('https')) {
                     imageProvider = NetworkImage(profilePic);
                     isNetworkImage = true;
                   }
@@ -118,52 +119,61 @@ leading: IconButton(onPressed: () {
                       child: SizedBox(
                         width: 70,
                         height: 70,
-                        child: imageProvider != null
-                            ? (isNetworkImage
-                            ? Image.network(
-                          profilePic!,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: SizedBox(
-                                width: 25,
-                                height: 25,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: ColorRes.primary,
+                        child:
+                            imageProvider != null
+                                ? (isNetworkImage
+                                    ? Image.network(
+                                      profilePic!,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (
+                                        context,
+                                        child,
+                                        loadingProgress,
+                                      ) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return Center(
+                                          child: SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: ColorRes.primary,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Center(
+                                                child: Icon(
+                                                  Icons.person,
+                                                  size: 30,
+                                                  color: ColorRes.primary
+                                                      .withOpacity(0.8),
+                                                ),
+                                              ),
+                                    )
+                                    : Image.file(
+                                      File(profilePic!),
+                                      fit: BoxFit.cover,
+                                    ))
+                                : CircleAvatar(
+                                  radius: 35,
+                                  backgroundColor: ColorRes.primary.withOpacity(
+                                    0.1,
+                                  ),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 25,
+                                    color: ColorRes.primary.withOpacity(0.8),
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) => Center(
-                            child: Icon(
-                              Icons.person,
-                              size: 30,
-                              color: ColorRes.primary.withOpacity(0.8),
-                            ),
-                          ),
-                        )
-                            : Image.file(
-                          File(profilePic!),
-                          fit: BoxFit.cover,
-                        ))
-                            : CircleAvatar(
-                          radius: 35,
-                          backgroundColor: ColorRes.primary.withOpacity(0.1),
-                          child: Icon(
-                            Icons.person,
-                            size: 25,
-                            color: ColorRes.primary.withOpacity(0.8),
-                          ),
-                        ),
                       ),
                     ),
                   ),
                 );
-              })
-
-
+              }),
             ],
           ),
           const SizedBox(width: 16),
@@ -409,11 +419,11 @@ leading: IconButton(onPressed: () {
   }
 
   Widget _buildStatCard(
-      String title,
-      String value,
-      IconData icon,
-      Color color,
-      ) {
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -489,9 +499,9 @@ leading: IconButton(onPressed: () {
         labelStyle: TextStyle(
           fontSize: AppFontSizes.small,
           color:
-          enabled
-              ? ColorRes.leadGreyColor[700]
-              : ColorRes.leadGreyColor[500],
+              enabled
+                  ? ColorRes.leadGreyColor[700]
+                  : ColorRes.leadGreyColor[500],
         ),
         prefixIcon: Icon(icon, size: 20, color: ColorRes.leadGreyColor[600]),
         border: OutlineInputBorder(
@@ -526,7 +536,7 @@ leading: IconButton(onPressed: () {
         ),
         filled: true,
         fillColor:
-        enabled ? ColorRes.leadGreyColor[50] : ColorRes.leadGreyColor[100],
+            enabled ? ColorRes.leadGreyColor[50] : ColorRes.leadGreyColor[100],
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
@@ -587,28 +597,28 @@ leading: IconButton(onPressed: () {
           ),
           const SizedBox(height: 20),
 
-            // Read-only display
-            _buildInfoRow(
-              Icons.person_outline,
-              '${controller.userProfile.value?.firstName ?? ''} ${controller.userProfile.value?.lastName ?? ''}',
-            ),
-            const SizedBox(height: 12),
-            _buildInfoRow(
-              Icons.email_outlined,
-              controller.userProfile.value?.email ?? '',
-            ),
-            const SizedBox(height: 12),
-            _buildInfoRow(
-              Icons.phone_outlined,
-              controller.userProfile.value?.phone ?? '',
-            ),
-            const SizedBox(height: 12),
-            _buildInfoRow(
-              Icons.location_on_outlined,
+          // Read-only display
+          _buildInfoRow(
+            Icons.person_outline,
+            '${controller.userProfile.value?.firstName ?? ''} ${controller.userProfile.value?.lastName ?? ''}',
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow(
+            Icons.email_outlined,
+            controller.userProfile.value?.email ?? '',
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow(
+            Icons.phone_outlined,
+            controller.userProfile.value?.phone ?? '',
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow(
+            Icons.location_on_outlined,
 
-              '${controller.userProfile.value?.city ?? ''}, ${controller.userProfile.value?.state ?? ''}',
-            ),
-            const SizedBox(height: 12),
+            '${controller.userProfile.value?.city ?? ''}, ${controller.userProfile.value?.state ?? ''}',
+          ),
+          const SizedBox(height: 12),
         ],
       ),
     );
@@ -742,22 +752,22 @@ leading: IconButton(onPressed: () {
                       ),
                     ),
                     child:
-                    controller.isSaving.value
-                        ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: ColorRes.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                        : Text(
-                      'Save Changes',
-                      style: TextStyle(
-                        fontWeight: AppFontWeights.semiBold,
-                        fontSize: AppFontSizes.bodyMedium,
-                      ),
-                    ),
+                        controller.isSaving.value
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: ColorRes.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : Text(
+                              'Save Changes',
+                              style: TextStyle(
+                                fontWeight: AppFontWeights.semiBold,
+                                fontSize: AppFontSizes.bodyMedium,
+                              ),
+                            ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -1002,25 +1012,25 @@ leading: IconButton(onPressed: () {
           _buildProfileOption(
             Icons.notifications_outlined,
             'Notifications',
-                () {},
+            () {},
             showDivider: true,
           ),
           _buildProfileOption(
             Icons.security_outlined,
             'Security',
-                () {},
+            () {},
             showDivider: true,
           ),
           _buildProfileOption(
             Icons.help_outline,
             'Help & Support',
-                () {},
+            () {},
             showDivider: true,
           ),
           _buildProfileOption(
             Icons.logout,
             'Logout',
-                () => _showLogoutDialog(Get.context!),
+            () => _showLogoutDialog(Get.context!),
             isLogout: true,
           ),
         ],
@@ -1029,12 +1039,12 @@ leading: IconButton(onPressed: () {
   }
 
   Widget _buildProfileOption(
-      IconData icon,
-      String title,
-      VoidCallback onTap, {
-        bool isLogout = false,
-        bool showDivider = false,
-      }) {
+    IconData icon,
+    String title,
+    VoidCallback onTap, {
+    bool isLogout = false,
+    bool showDivider = false,
+  }) {
     return Column(
       children: [
         ListTile(
@@ -1046,9 +1056,9 @@ leading: IconButton(onPressed: () {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color:
-              isLogout
-                  ? ColorRes.error.withOpacity(0.1)
-                  : ColorRes.leadGreyColor.withOpacity(0.1),
+                  isLogout
+                      ? ColorRes.error.withOpacity(0.1)
+                      : ColorRes.leadGreyColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(

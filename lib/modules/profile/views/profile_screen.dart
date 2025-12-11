@@ -569,7 +569,6 @@
 //   }
 // }
 
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -632,180 +631,182 @@ class ProfileScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(_defaultPadding),
-          child: UserHelper.isGuest
-              ? Column(
-            children: [
-              _buildProfileCard(BuyerProfileDataController(), imageUrl),
-              SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.to(() => LoginScreen());
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorRes.success,
-                  ),
-                  child: Text('Login'),
-                ),
-              ),
-              SizedBox(height: 12),
-              Center(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+          child:
+              UserHelper.isGuest
+                  ? Column(
                     children: [
-                      Text(
-                        "Don't have an account?",
-                        style: TextStyle(
-                          color: ColorRes.leadGreyColor.shade700,
-                          fontFamily: FontRes.nuNunitoSans,
+                      _buildProfileCard(BuyerProfileDataController(), imageUrl),
+                      SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Get.to(() => LoginScreen());
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorRes.success,
+                          ),
+                          child: Text('Login'),
                         ),
                       ),
-                      TextButton(
-                        onPressed: () => Get.to(
-                              () => RegisterScreen(role: UserRole.buyer),
-                        ),
-                        child: Text(
-                          'Sign Up here',
-                          style: TextStyle(
-                            color: ColorRes.success,
-                            fontWeight: AppFontWeights.extraBold,
-                            fontFamily: FontRes.nuNunitoSans,
+                      SizedBox(height: 12),
+                      Center(
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account?",
+                                style: TextStyle(
+                                  color: ColorRes.leadGreyColor.shade700,
+                                  fontFamily: FontRes.nuNunitoSans,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed:
+                                    () => Get.to(
+                                      () =>
+                                          RegisterScreen(role: UserRole.buyer),
+                                    ),
+                                child: Text(
+                                  'Sign Up here',
+                                  style: TextStyle(
+                                    color: ColorRes.success,
+                                    fontWeight: AppFontWeights.extraBold,
+                                    fontFamily: FontRes.nuNunitoSans,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ],
+                  )
+                  : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildProfileCard(profileController, imageUrl),
+                      const SizedBox(height: 20),
+
+                      // 🎯 Role-Based Action Buttons Section
+                      _buildRoleBasedActions(),
+
+                      // Existing Menu Items
+                      SettingsMenuTile(
+                        icon: Icons.monitor_heart_outlined,
+                        title: "My Activity",
+                        subTitle: "Track your interactions",
+                        onTap: () => Get.to(() => SavedPropertyScreen()),
+                      ),
+                      if (!UserHelper.isGuest) ...[
+                        SettingsMenuTile(
+                          icon: Icons.card_giftcard,
+                          title: "Referral",
+                          subTitle: "Refer And Earn",
+                          onTap: () => Get.to(() => ReferralProgramScreen()),
+                        ),
+                      ],
+                      if (UserHelper.isSeller) ...[
+                        Obx(() {
+                          final controller = Get.put(ReviewController());
+                          final review = controller.appReview.value;
+
+                          if (review == null) {
+                            return SettingsMenuTile(
+                              icon: Icons.reviews_outlined,
+                              title: "Reviews and Ratings",
+                              subTitle: "Add your review",
+                              onTap: () {
+                                Get.dialog(AddAppReviewDialog()).then((_) {
+                                  controller.getAppReview();
+                                });
+                              },
+                            );
+                          } else {
+                            return _buildReviewSection(review);
+                          }
+                        }),
+                      ],
+                      if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
+                        SettingsMenuTile(
+                          icon: Icons.event_available,
+                          title: "Events",
+                          subTitle: "Upcoming events",
+                          onTap: () => Get.to(() => CalendarScreen()),
+                        ),
+                      ],
+
+                      // SettingsMenuTile(
+                      //   icon: Icons.diamond_outlined,
+                      //   title: "Zero Brokerage Properties",
+                      //   subTitle: "Browse properties without brokerage",
+                      //   onTap: () => _navigateToZeroBrokerage(),
+                      // ),
+                      // SettingsMenuTile(
+                      //   icon: Icons.save_outlined,
+                      //   title: "Saved Search",
+                      //   subTitle: "Access your saved filters",
+                      //   onTap: () => _navigateToSavedSearch(),
+                      // ),
+                      // _buildQuickLinksSection(),
+                      // _buildHomeSearchSection(),
+                      // _buildResidentialPackagesSection(),
+                      // _buildToolsAndAdviceSection(),
+                      // SettingsMenuTile(
+                      //   icon: Icons.art_track_outlined,
+                      //   title: "Housing News",
+                      //   subTitle: "Latest property updates",
+                      //   onTap: () => _navigateToNews(),
+                      // ),
+                      // SettingsMenuTile(
+                      //   icon: Icons.home_repair_service_outlined,
+                      //   title: "Housing Edge Services",
+                      //   subTitle: "Premium home services",
+                      //   onTap: () => _navigateToServices(),
+                      // ),
+                      // SettingsMenuTile(
+                      //   icon: Icons.star_border_rounded,
+                      //   title: "Recommended Properties (10)",
+                      //   subTitle: "Curated for you",
+                      //   onTap: () => _navigateToRecommended(),
+                      // ),
+                      // SettingsMenuTile(
+                      //   icon: Icons.warning_amber_rounded,
+                      //   title: "Report a fraud",
+                      //   subTitle: "Stay safe from scams",
+                      //   onTap: () => _navigateToReportFraud(),
+                      // ),
+                      // const SizedBox(height: 20),
+                      // _buildHelpCenter(),
+                      const SizedBox(height: 20),
+
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   child: TextButton(
+                      //     onPressed: () {
+                      //       Get.lazyPut(() => AuthController());
+                      //       final controller = Get.find<AuthController>();
+                      //       controller.logout();
+                      //     },
+                      //     child: Text('Logout', style: TextStyle(fontSize: 14)),
+                      //   ),
+                      // ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: NesticoPeButton(
+                          width: double.infinity,
+                          onTap: () {
+                            Get.lazyPut(() => AuthController());
+                            final controller = Get.find<AuthController>();
+                            controller.logout();
+                          },
+                          title: 'Logout',
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ],
-          )
-              : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildProfileCard(profileController, imageUrl),
-              const SizedBox(height: 20),
-
-              // 🎯 Role-Based Action Buttons Section
-              _buildRoleBasedActions(),
-
-
-              // Existing Menu Items
-              SettingsMenuTile(
-                icon: Icons.monitor_heart_outlined,
-                title: "My Activity",
-                subTitle: "Track your interactions",
-                onTap: () => Get.to(() => SavedPropertyScreen()),
-              ),
-              if (!UserHelper.isGuest) ...[
-                SettingsMenuTile(
-                  icon: Icons.card_giftcard,
-                  title: "Referral",
-                  subTitle: "Refer And Earn",
-                  onTap: () => Get.to(() => ReferralProgramScreen()),
-                ),
-              ],
-              if (UserHelper.isSeller) ...[
-                Obx(() {
-                  final controller = Get.put(ReviewController());
-                  final review = controller.appReview.value;
-
-                  if (review == null) {
-                    return SettingsMenuTile(
-                      icon: Icons.reviews_outlined,
-                      title: "Reviews and Ratings",
-                      subTitle: "Add your review",
-                      onTap: () {
-                        Get.dialog(AddAppReviewDialog()).then((_) {
-                          controller.getAppReview();
-                        });
-                      },
-                    );
-                  } else {
-                    return _buildReviewSection(review);
-                  }
-                }),
-              ],
-              if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
-                SettingsMenuTile(
-                  icon: Icons.event_available,
-                  title: "Events",
-                  subTitle: "Upcoming events",
-                  onTap: () => Get.to(() => CalendarScreen()),
-                ),
-              ],
-              // SettingsMenuTile(
-              //   icon: Icons.diamond_outlined,
-              //   title: "Zero Brokerage Properties",
-              //   subTitle: "Browse properties without brokerage",
-              //   onTap: () => _navigateToZeroBrokerage(),
-              // ),
-              // SettingsMenuTile(
-              //   icon: Icons.save_outlined,
-              //   title: "Saved Search",
-              //   subTitle: "Access your saved filters",
-              //   onTap: () => _navigateToSavedSearch(),
-              // ),
-              // _buildQuickLinksSection(),
-              // _buildHomeSearchSection(),
-              // _buildResidentialPackagesSection(),
-              // _buildToolsAndAdviceSection(),
-              // SettingsMenuTile(
-              //   icon: Icons.art_track_outlined,
-              //   title: "Housing News",
-              //   subTitle: "Latest property updates",
-              //   onTap: () => _navigateToNews(),
-              // ),
-              // SettingsMenuTile(
-              //   icon: Icons.home_repair_service_outlined,
-              //   title: "Housing Edge Services",
-              //   subTitle: "Premium home services",
-              //   onTap: () => _navigateToServices(),
-              // ),
-              // SettingsMenuTile(
-              //   icon: Icons.star_border_rounded,
-              //   title: "Recommended Properties (10)",
-              //   subTitle: "Curated for you",
-              //   onTap: () => _navigateToRecommended(),
-              // ),
-              // SettingsMenuTile(
-              //   icon: Icons.warning_amber_rounded,
-              //   title: "Report a fraud",
-              //   subTitle: "Stay safe from scams",
-              //   onTap: () => _navigateToReportFraud(),
-              // ),
-              // const SizedBox(height: 20),
-              // _buildHelpCenter(),
-
-              const SizedBox(height: 20),
-              // SizedBox(
-              //   width: double.infinity,
-              //   child: TextButton(
-              //     onPressed: () {
-              //       Get.lazyPut(() => AuthController());
-              //       final controller = Get.find<AuthController>();
-              //       controller.logout();
-              //     },
-              //     child: Text('Logout', style: TextStyle(fontSize: 14)),
-              //   ),
-              // ),
-
-              SizedBox(
-                width: double.infinity,
-                child: NesticoPeButton(
-                  width: double.infinity,
-                  onTap: () {
-                    Get.lazyPut(() => AuthController());
-                    final controller = Get.find<AuthController>();
-                    controller.logout();
-                  },
-                  title: 'Logout',
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -816,7 +817,6 @@ class ProfileScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         // 👤 BUYER ACTIONS
         if (UserHelper.isBuyer) ...[
           SettingsMenuTile(
@@ -846,24 +846,24 @@ class ProfileScreen extends StatelessWidget {
             subTitle: "Hire top contractors",
             onTap: () => Get.to(() => HireContractorScreen()),
           ),
-
         ],
 
         // 🏠 SELLER ACTIONS
         if (UserHelper.isSeller) ...[
-          _buildActionButton(
-            icon: Icons.dashboard_outlined,
-            label: "Seller Dashboard",
-            subtitle: 'Navigate to Seller Panel',
-            onTap: () {
-              Get.to(
-                    () => SellerDashboardScreen(),
-                binding: BindingsBuilder(() {
-                  Get.lazyPut<PropertyController>(() => PropertyController());
-                }),
-              );
-            },
-          ),
+          if (UserHelper.isSellerOwner)
+            _buildActionButton(
+              icon: Icons.dashboard_outlined,
+              label: "Seller Dashboard",
+              subtitle: 'Navigate to Seller Panel',
+              onTap: () {
+                Get.to(
+                  () => SellerDashboardScreen(),
+                  binding: BindingsBuilder(() {
+                    Get.lazyPut<PropertyController>(() => PropertyController());
+                  }),
+                );
+              },
+            ),
 
           _buildActionButton(
             icon: Icons.engineering_outlined,
@@ -881,7 +881,6 @@ class ProfileScreen extends StatelessWidget {
               Get.to(() => SupportTicketScreen());
             },
           ),
-
         ],
 
         // 🔄 RESELLER ACTIONS
@@ -971,7 +970,7 @@ class ProfileScreen extends StatelessWidget {
     required String label,
     required String subtitle,
     required VoidCallback onTap,
-    Widget? trailing
+    Widget? trailing,
   }) {
     return ListTile(
       leading: Icon(icon, size: 28, color: ColorRes.primary),
@@ -1008,7 +1007,10 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard(BuyerProfileDataController? profileController, String image) {
+  Widget _buildProfileCard(
+    BuyerProfileDataController? profileController,
+    String image,
+  ) {
     return Container(
       padding: const EdgeInsets.all(_defaultPadding),
       decoration: BoxDecoration(
@@ -1030,7 +1032,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: Obx(
-                      () => _ProfileWelcomeSection(
+                  () => _ProfileWelcomeSection(
                     name: profileController?.userProfile.value?.username ?? '',
                   ),
                 ),
@@ -1112,11 +1114,7 @@ class ProfileScreen extends StatelessWidget {
       return CircleAvatar(
         radius: _profileRadius,
         backgroundColor: ColorRes.primary,
-        child: const Icon(
-          Icons.person,
-          color: ColorRes.white,
-          size: 32,
-        ),
+        child: const Icon(Icons.person, color: ColorRes.white, size: 32),
       );
     }
   }
