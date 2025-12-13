@@ -10,12 +10,17 @@ import '../../controllers/seller_property_approval_history_controller.dart';
 
 class SellerPropertyApprovalHistory extends StatelessWidget {
   final String propertyId;
+  final bool isProject;
 
-  const SellerPropertyApprovalHistory({super.key, required this.propertyId});
+  const SellerPropertyApprovalHistory({
+    super.key,
+    required this.propertyId,
+    this.isProject = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ApprovalHistoryController());
+    final controller = Get.put(ApprovalHistoryController(isProject: isProject));
 
     // Load data on screen open
     controller.loadApprovalHistory(propertyId);
@@ -116,15 +121,10 @@ class SellerPropertyApprovalHistory extends StatelessWidget {
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
             children: [
-              // STATUS TAG
-              _buildAdmin(item.adminName),
-
-              Spacer(),
-
+              Expanded(child: _buildAdmin(item.adminName)),
+              const SizedBox(width: 8),
               _buildStatusTag(item.action),
-              // ACTION DATE (right side)
             ],
           ),
           const SizedBox(height: 12),
@@ -205,9 +205,13 @@ class SellerPropertyApprovalHistory extends StatelessWidget {
       children: [
         const Icon(Icons.person, size: 16),
         const SizedBox(width: 6),
-        Text(
-          name,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        Expanded(
+          child: Text(
+            name,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

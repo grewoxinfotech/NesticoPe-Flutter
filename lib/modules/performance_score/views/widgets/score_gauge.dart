@@ -5,14 +5,16 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 class ScoreGauge extends StatelessWidget {
   final double totalScore;
   final double maxScore;
+  final Color? color;
 
-  ScoreGauge({required this.totalScore, required this.maxScore});
+  ScoreGauge({required this.totalScore, required this.maxScore, this.color});
 
   @override
   Widget build(BuildContext context) {
     final percentage = (totalScore / maxScore);
 
     return Container(
+      color: color,
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

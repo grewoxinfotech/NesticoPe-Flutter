@@ -3,12 +3,13 @@ import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../data/network/property/models/analytics_model.dart';
 import '../../../../data/network/property/models/property_model.dart';
 
 class ScoreBarChart extends StatelessWidget {
   final ScoreComponents components;
-
-  ScoreBarChart({required this.components});
+  final Color? color;
+  const ScoreBarChart({super.key, required this.components, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +53,7 @@ class ScoreBarChart extends StatelessWidget {
     ];
 
     return Container(
+      color: color,
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

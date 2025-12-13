@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
+import '../../../../data/network/property/models/analytics_model.dart';
 import '../../../../data/network/property/models/property_model.dart';
 
 // class MediaBreakdownTile extends StatelessWidget {
@@ -84,11 +85,13 @@ import 'package:flutter/material.dart';
 class BreakdownColumnChart extends StatelessWidget {
   final String title;
   final Map<String, SubBreakdown> breakdown;
+  final Color? color;
 
   const BreakdownColumnChart({
     super.key,
     required this.title,
     required this.breakdown,
+    this.color,
   });
 
   @override
@@ -96,90 +99,93 @@ class BreakdownColumnChart extends StatelessWidget {
     final items = breakdown.entries.toList();
     final maxY = _getMaxY(items);
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Title
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: AppFontSizes.body,
-              fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.leadGreyColor[800],
+    return Container(
+      color: color,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Title
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: AppFontSizes.body,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.leadGreyColor[800],
+              ),
             ),
-          ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          SizedBox(
-            height: 280,
-            child: BarChart(
-              BarChartData(
-                maxY: maxY,
-                barGroups: _buildBars(items),
+            SizedBox(
+              height: 280,
+              child: BarChart(
+                BarChartData(
+                  maxY: maxY,
+                  barGroups: _buildBars(items),
 
-                /// Draw left and bottom axis lines
-                borderData: FlBorderData(
-                  show: true,
-                  border: const Border(
-                    left: BorderSide(color: Colors.black, width: 1),
-                    bottom: BorderSide(color: Colors.black, width: 1),
-                    right: BorderSide(color: Colors.transparent),
-                    top: BorderSide(color: Colors.transparent),
-                  ),
-                ),
-
-                gridData: FlGridData(show: false),
-
-                /// Bottom (X-axis)
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, _) {
-                        if (value < 0 || value >= items.length)
-                          return const SizedBox.shrink();
-                        final label = items[value.toInt()].key;
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            _short(label),
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        );
-                      },
+                  /// Draw left and bottom axis lines
+                  borderData: FlBorderData(
+                    show: true,
+                    border: const Border(
+                      left: BorderSide(color: Colors.black, width: 1),
+                      bottom: BorderSide(color: Colors.black, width: 1),
+                      right: BorderSide(color: Colors.transparent),
+                      top: BorderSide(color: Colors.transparent),
                     ),
                   ),
 
-                  /// Left (Y-axis)
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 36,
-                      interval: (maxY / 5).roundToDouble(),
-                      getTitlesWidget: (value, _) {
-                        return Text(
-                          value.toInt().toString(),
-                          style: const TextStyle(fontSize: 10),
-                        );
-                      },
-                    ),
-                  ),
+                  gridData: FlGridData(show: false),
 
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                  /// Bottom (X-axis)
+                  titlesData: FlTitlesData(
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        getTitlesWidget: (value, _) {
+                          if (value < 0 || value >= items.length)
+                            return const SizedBox.shrink();
+                          final label = items[value.toInt()].key;
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              _short(label),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    /// Left (Y-axis)
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 36,
+                        interval: (maxY / 5).roundToDouble(),
+                        getTitlesWidget: (value, _) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: const TextStyle(fontSize: 10),
+                          );
+                        },
+                      ),
+                    ),
+
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -31,25 +31,34 @@ import '../../../../widgets/map/address_and_map_detail.dart';
 import '../../../../widgets/map/near_by_location_map_section.dart';
 import '../../../auth/views/login_screen.dart';
 import '../../../home/widgets/unified_comparison_floating_button.dart';
+import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/views/property_detail_screen.dart';
 import '../../../property/views/widgets/overall_rating_widget.dart';
 import '../../../review/controllers/review_controller.dart';
 import '../../../review/views/widget/property_project_review_section.dart';
 import '../../../review/views/widget/property_review_card.dart';
 import '../../../search_property/controller/search_controller.dart';
+import '../../../seller/view/widget/seller_property_approval_history.dart';
 import '../../controller/builder_form_controller.dart';
 import '../../controller/project_controller.dart';
 import 'package:get/get.dart';
 
+import '../builder_leads.dart';
+
 class ProjectDetailsScreen extends StatefulWidget {
   final ProjectItem? projectItem;
   final String? projectId;
+  final bool isBuilder;
 
-  const ProjectDetailsScreen({super.key, this.projectItem, this.projectId})
-    : assert(
-        projectItem != null || projectId != null,
-        'Either projectItem or projectId must be provided',
-      );
+  const ProjectDetailsScreen({
+    super.key,
+    this.projectItem,
+    this.projectId,
+    this.isBuilder = false,
+  }) : assert(
+         projectItem != null || projectId != null,
+         'Either projectItem or projectId must be provided',
+       );
 
   @override
   State<ProjectDetailsScreen> createState() => _ProjectDetailsScreenState();
@@ -85,10 +94,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     reviewController = Get.put(ReviewController(), tag: 'review_$projectId');
 
     // Set project if provided
-    if (widget.projectItem != null) {
-      _project.value = widget.projectItem;
-      _isLoading.value = false;
-    }
+    // if (widget.projectItem != null) {
+    //   _project.value = widget.projectItem;
+    //   _isLoading.value = false;
+    // }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
@@ -107,29 +116,27 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   Future<void> _loadData() async {
     try {
       _isLoading.value = true;
+      final projectId = widget.projectItem?.id ?? widget.projectId ?? '';
       await projectController.getAllInQuireData(
         widget.projectItem?.id ?? widget.projectId ?? '',
       );
 
       // Fetch project if only ID was provided
-      if (widget.projectItem == null && widget.projectId != null) {
-        final fetchedProject = await wizardController.getProjectById(
-          widget.projectId!,
-        );
-        if (fetchedProject == null) {
-          // Show error and go back
-          if (mounted) {
-            Get.snackbar(
-              'Error',
-              'Project not found',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-            Get.back();
-          }
-          return;
+
+      final fetchedProject = await wizardController.getProjectById(projectId);
+      if (fetchedProject == null) {
+        // Show error and go back
+        if (mounted) {
+          Get.snackbar(
+            'Error',
+            'Project not found',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          Get.back();
         }
-        _project.value = fetchedProject;
+        return;
       }
+      _project.value = fetchedProject;
 
       final currentProject = _project.value;
       if (currentProject == null) return;
@@ -215,10 +222,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       _buildProjectDetails(project!),
                       _buildMediaGallery(project!),
                       _buildConfigurations(controller, project!),
-                      SizedBox(height: 12),
+                      SizedBox(height: 8),
                       _buildMapSection(controller, project!),
                       _buildAmenities(project!),
-                      SizedBox(height: 12),
+                      SizedBox(height: 8),
                       _buildReviewSection(
                         canAddReview: canAddReview,
                         overallRatingController: _overallRatingController,
@@ -229,7 +236,59 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         _buildDocuments(controller, project!),
                       ],
                       _buildContactSection(controller, project!),
-                      const SizedBox(height: 24),
+                      if (project?.scoreBreakdown != null) ...[
+                        PerformanceScoreWidget(
+                          score: project!.scoreBreakdown!,
+                          showDivider: false,
+                          color: ColorRes.white,
+                          margin: 8,
+                        ),
+                      ],
+                      SizedBox(height: 8),
+
+                      ListTile(
+                        tileColor: ColorRes.white,
+                        title: Text(
+                          'Approval History',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                          ),
+                        ),
+                        leading: Icon(Icons.history, color: ColorRes.primary),
+                        trailing: Icon(Icons.arrow_forward_ios_rounded),
+                        onTap: () {
+                          Get.to(
+                            () => SellerPropertyApprovalHistory(
+                              propertyId: project?.id ?? '',
+                              isProject: true,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+
+                      ListTile(
+                        tileColor: ColorRes.white,
+                        title: Text(
+                          'Leads',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                          ),
+                        ),
+                        leading: Icon(
+                          Icons.leaderboard_outlined,
+                          color: ColorRes.primary,
+                        ),
+                        trailing: Icon(Icons.arrow_forward_ios_rounded),
+                        onTap: () {
+                          Get.to(
+                            () => BuilderLeads(projectId: project?.id ?? ''),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
                     ],
                   ),
                 ),
@@ -508,7 +567,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     }
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 12),
+      margin: EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: ColorRes.white,
       child: Column(

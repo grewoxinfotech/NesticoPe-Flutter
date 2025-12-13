@@ -6,6 +6,9 @@ import '../../../data/network/property_approval_history/service/property_appriva
 class ApprovalHistoryController extends GetxController {
   final ApprovalHistoryService _service = ApprovalHistoryService();
 
+  ApprovalHistoryController({this.isProject = false});
+  final bool isProject;
+
   var isLoading = false.obs;
   var approvalHistory = <ApprovalHistory>[].obs;
 
@@ -14,7 +17,10 @@ class ApprovalHistoryController extends GetxController {
     try {
       isLoading.value = true;
 
-      final result = await _service.fetchApprovalHistory(propertyId);
+      final result = await _service.fetchApprovalHistory(
+        propertyId,
+        isProject: isProject,
+      );
 
       approvalHistory.assignAll(result);
     } catch (e) {

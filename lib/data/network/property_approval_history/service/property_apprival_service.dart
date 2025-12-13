@@ -9,7 +9,8 @@ import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import '../model/property_approval_history.dart';
 
 class ApprovalHistoryService {
-  final String baseUrl = ApiConstants.property;
+  final String baseUrlProperty = ApiConstants.property;
+  final String baseUrlProject = ApiConstants.builderProject;
   final String approval = "approval-history";
 
   static Future<Map<String, String>> headers() async {
@@ -17,9 +18,15 @@ class ApprovalHistoryService {
   }
 
   /// ==================== Fetch Approval History ====================
-  Future<List<ApprovalHistory>> fetchApprovalHistory(String propertyId) async {
+  Future<List<ApprovalHistory>> fetchApprovalHistory(
+    String propertyId, {
+    bool isProject = false,
+  }) async {
     try {
-      final uri = Uri.parse("$baseUrl/$propertyId/$approval");
+      final uri =
+          isProject
+              ? Uri.parse("$baseUrlProject/$propertyId/$approval")
+              : Uri.parse("$baseUrlProperty/$propertyId/$approval");
       debugPrint("Fetching Approval History: $uri");
 
       final response = await http.get(uri, headers: await headers());

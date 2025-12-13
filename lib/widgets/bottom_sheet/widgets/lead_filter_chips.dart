@@ -9,8 +9,9 @@ import '../../../modules/seller/module/lead_screen/controllers/lead_controller.d
 Widget buildSelectedFiltersChips(
   BuildContext context,
   LeadController controller,
-  Function() onClearAll,
-) {
+  Function() onClearAll, {
+  String? propertyId,
+}) {
   return Obx(() {
     final filters = controller.filters;
 
@@ -109,7 +110,11 @@ Widget buildSelectedFiltersChips(
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                filterType.capitalizeFirst ?? '',
+                                filterType
+                                        .replaceAll("_", " ")
+                                        .capitalize
+                                        .toString() ??
+                                    '',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.extraSmall,
                                   color: ColorRes.white,
@@ -140,7 +145,14 @@ Widget buildSelectedFiltersChips(
                                   controller.filters,
                                 );
                                 updatedFilters.remove(filterType);
-                                await controller.applyFilters(updatedFilters);
+                                if (propertyId != null) {
+                                  await controller.applyFilters(
+                                    updatedFilters,
+                                    propertyId: propertyId,
+                                  );
+                                } else {
+                                  await controller.applyFilters(updatedFilters);
+                                }
                               },
                               borderRadius: BorderRadius.circular(12),
                               child: const Padding(

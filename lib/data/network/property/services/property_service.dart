@@ -14,6 +14,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
 import '../../../../modules/add_property/model/photo_model.dart';
+import '../../../../utils/logger/app_logger.dart';
 import '../../reseller/reseller_dashboard/model/reseller_dashboard_model.dart';
 import '../models/top_property_model.dart';
 
@@ -116,7 +117,7 @@ class PropertyService {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        print("hubdshbds ${Items.fromJson(jsonData['data']).toJson()}");
+        AppLogger.structured('Property Response By Id:', jsonData);
 
         return Items.fromJson(jsonData['data']);
       }

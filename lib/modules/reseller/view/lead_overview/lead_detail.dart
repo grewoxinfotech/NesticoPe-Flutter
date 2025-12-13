@@ -15,7 +15,10 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../data/network/property/models/property_model.dart';
+import '../../../builder/view/builder_leads.dart';
+import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/views/widgets/property_media_gallery.dart';
+import '../../../seller/view/widget/seller_property_approval_history.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 import '../report/report_screen.dart';
@@ -47,8 +50,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
 
   @override
   void initState() {
-    if (widget.isFromLead && widget.lead?.propertyId != null) {
-      _initializeProperty(widget.lead!.propertyId ?? '');
+    final propertyId = widget.property?.id ?? widget.lead!.propertyId;
+    if (propertyId != null) {
+      _initializeProperty(propertyId);
     }
     // else {
     //   _initializeProperty(widget.property!.id ?? '');
@@ -61,21 +65,27 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
 
   void _initializeProperty(String propertyId) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!Get.isRegistered<PropertyController>()) {
-        Get.put(PropertyController());
-      }
-      final propertyController = Get.find<PropertyController>();
+      //   if (!Get.isRegistered<PropertyController>()) {
+      //     Get.put(PropertyController());
+      //   }
+      final propertyController = Get.put(
+        PropertyController(),
+        tag: 'property_$propertyId',
+      );
       isLoadingProperty.value = true;
       print('propertyId: $propertyId');
       leadProperty.value = await propertyController.getPropertyById(propertyId);
-      print('leadProperty: ${leadProperty.value?.id ?? ''}');
+      print(
+        'leadProperty: ${leadProperty.value?.scoreBreakdown?.toJson() ?? ''}',
+      );
       isLoadingProperty.value = false;
     });
   }
 
   // Helper getters to access data from either lead or property
-  Items get propertyData =>
-      widget.isFromLead ? leadProperty.value ?? Items() : widget.property!;
+  // Items get propertyData =>
+  //     widget.isFromLead ? leadProperty.value ?? Items() : widget.property!;
+  Items get propertyData => leadProperty.value!;
 
   String get propertyTitle =>
       widget.isFromLead
@@ -174,7 +184,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 _buildContactSection(context, isCompact),
                 Divider(thickness: 8, color: Colors.grey[100]),
               ],
-        
+
               // 2. Property Image Gallery (Always Visible)
               // _buildPropertyImageGallery(context),
               Obx(() {
@@ -193,7 +203,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     ),
                   );
                 }
-        
+
                 return PropertyMediaGallery(
                   images: propertyImages,
                   videos: propertyVideos,
@@ -202,25 +212,23 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   showBackButton: false,
                 );
               }),
-        
+
               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        
+
               // 3. Property Overview (Always Visible)
-              widget.isFromLead
-                  ? Obx(() {
-                    if (leadProperty.value == null && isLoadingProperty.value) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-        
-                    if (!isLoadingProperty.value && leadProperty.value == null) {
-                      return SizedBox.shrink();
-                    }
-                    return _buildPropertyOverviewSection(context, isCompact);
-                  })
-                  : _buildPropertyOverviewSection(context, isCompact),
-        
+              Obx(() {
+                if (leadProperty.value == null && isLoadingProperty.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (!isLoadingProperty.value && leadProperty.value == null) {
+                  return SizedBox.shrink();
+                }
+                return _buildPropertyOverviewSection(context, isCompact);
+              }),
+
               // Expand/Collapse Button
-        
+
               // Conditional Sections (Show when expanded)
               Obx(
                 () =>
@@ -231,32 +239,32 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                               thickness: 8,
                               color: ColorRes.leadGreyColor[100],
                             ),
-        
+
                             // 4. Property Details
                             _buildPropertyDetailsSection(context, isCompact),
-        
+
                             Divider(
                               thickness: 8,
                               color: ColorRes.leadGreyColor[100],
                             ),
-        
+
                             // 5. Amenities
                             _buildAmenitiesSection(context, isCompact),
-        
+
                             Obx(() => _buildExpandButton(context)),
                           ],
                         )
                         : Obx(() => _buildExpandButton(context)),
               ),
               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        
+
               // 6. Financial Information
               if (widget.isFromLead)
                 Obx(() {
                   if (leadProperty.value == null && isLoadingProperty.value) {
                     return Center(child: CircularProgressIndicator());
                   }
-        
+
                   if (!isLoadingProperty.value && leadProperty.value == null) {
                     return SizedBox.shrink();
                   }
@@ -264,7 +272,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 })
               else
                 _buildFinancialSection(context, isCompact),
-        
+
               // if (widget.isFromLead) ...[
               //   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
               //
@@ -277,12 +285,13 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 child:
                     widget.lead != null
                         ? Obx(
-                          () =>
-                              PropertyOverviewCard(property: leadProperty.value),
+                          () => PropertyOverviewCard(
+                            property: leadProperty.value,
+                          ),
                         )
                         : PropertyOverviewCard(property: widget.property),
               ),
-        
+
               if (widget.property != null) ...[
                 Divider(thickness: 8, color: Colors.grey[100]),
                 Padding(
@@ -298,21 +307,83 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 ),
                 ReportPropertyCard(propertyId: widget.property!.id!),
               ],
-        
+
               // 8. Notes Section (Only for Leads)
               if (widget.isFromLead && widget.lead?.notes != null) ...[
                 Divider(thickness: 8, color: Colors.grey[100]),
                 _buildNotesSection(context, isCompact),
               ],
-        
+
               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        
+              Obx(() {
+                if (leadProperty.value == null && isLoadingProperty.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (!isLoadingProperty.value && leadProperty.value == null) {
+                  return SizedBox.shrink();
+                }
+                return _buildAnalyticsSection(context, propertyData);
+              }),
+
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+
               // 9. Action Buttons
               // _buildActionButtons(context, isCompact),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAnalyticsSection(BuildContext context, Items property) {
+    return Column(
+      children: [
+        /// Analytics
+        if (property.scoreBreakdown != null) ...[
+          PerformanceScoreWidget(score: property.scoreBreakdown!),
+        ],
+
+        /// Approval History
+        ListTile(
+          tileColor: ColorRes.white,
+          title: Text(
+            'Approval History',
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+          leading: Icon(Icons.history, color: ColorRes.primary),
+          trailing: Icon(Icons.arrow_forward_ios_rounded),
+          onTap: () {
+            Get.to(
+              () =>
+                  SellerPropertyApprovalHistory(propertyId: property.id ?? ''),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+
+        /// Lead Details
+        ListTile(
+          tileColor: ColorRes.white,
+          title: Text(
+            'Leads',
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+          leading: Icon(Icons.leaderboard_outlined, color: ColorRes.primary),
+          trailing: Icon(Icons.arrow_forward_ios_rounded),
+          onTap: () {
+            Get.to(() => BuilderLeads(projectId: property.id ?? ''));
+          },
+        ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 

@@ -5,7 +5,11 @@ import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 import '../../modules/seller/module/lead_screen/controllers/lead_controller.dart';
 
-void showFilterBottomSheet(BuildContext context, LeadController controller) {
+void showFilterBottomSheet(
+  BuildContext context,
+  LeadController controller, {
+  String? propertyId,
+}) {
   // Temporary copy of current filters
   final RxMap<String, String> tempFilters =
       Map<String, String>.from(controller.filters).obs;
@@ -133,10 +137,18 @@ void showFilterBottomSheet(BuildContext context, LeadController controller) {
                         () => ElevatedButton(
                           onPressed: () async {
                             // Apply selected filters
-                            await controller.applyFilters(
-                              Map<String, String>.from(tempFilters),
-                            );
-                            Navigator.pop(context);
+                            if (propertyId != null) {
+                              await controller.applyFilters(
+                                Map<String, String>.from(tempFilters),
+                                propertyId: propertyId,
+                              );
+                            } else {
+                              await controller.applyFilters(
+                                Map<String, String>.from(tempFilters),
+                              );
+                            }
+
+                            Get.back();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: ColorRes.primary,

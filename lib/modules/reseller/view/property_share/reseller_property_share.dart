@@ -533,6 +533,6 @@ class _ReSellerPropertyShareState extends State<ReSellerPropertyShare> {
             ? '${(price / 1000).toStringAsFixed(0)}K'
             : price.toString();
 
-    return '\$$formattedPrice${pricePerMonth ? '/month' : ''}';
+    return '₹$formattedPrice${pricePerMonth ? '/month' : ''}';
   }
 }

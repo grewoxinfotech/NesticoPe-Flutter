@@ -558,9 +558,15 @@ class LeadController extends PaginatedController<LeadItem> {
   }
 
   // --- Filters ---
-  Future<void> applyFilters(Map<String, String> newFilters) async {
+  Future<void> applyFilters(
+    Map<String, String> newFilters, {
+    String? propertyId,
+  }) async {
     filters.value = newFilters;
     await refreshList();
+    if (propertyId != null) {
+      await getLeadsByProperty(propertyId);
+    }
   }
 
   void loadVariables() {
@@ -665,5 +671,93 @@ class LeadController extends PaginatedController<LeadItem> {
     } else {
       selectedProperty.value = null;
     }
+  }
+
+  // Add these properties to your LeadController class
+
+  // ============ Property-Specific Lead Pagination ============
+  RxList<LeadItem> propertyLeads = <LeadItem>[].obs;
+  var isLoadingPropertyLeads = false.obs;
+  var propertyLeadsCurrentPage = 1.obs;
+  var propertyLeadsTotalPages = 1.obs;
+  var propertyLeadsHasMore = true.obs;
+
+  /// Get leads by property with pagination and filters
+  Future<void> getLeadsByProperty(
+    String propertyId, {
+    bool loadMore = false,
+  }) async {
+    await getLeadsByPropertyWithFilters(propertyId, loadMore: loadMore);
+  }
+
+  /// Get leads by property with pagination and optional filters
+  Future<void> getLeadsByPropertyWithFilters(
+    String propertyId, {
+    bool loadMore = false,
+  }) async {
+    try {
+      if (loadMore) {
+        propertyLeadsCurrentPage.value += 1;
+      } else {
+        propertyLeadsCurrentPage.value = 1;
+        propertyLeads.clear();
+      }
+
+      isLoadingPropertyLeads.value = true;
+
+      final response = await _service.getLeadsByProperty(
+        page: propertyLeadsCurrentPage.value,
+        propertyId: propertyId,
+        filters: filters ?? {}, // Pass filters to API
+      );
+
+      // Fetch property details for each lead if needed
+      if (response.items.isNotEmpty) {
+        for (var item in response.items) {
+          if (item.propertyId != null && item.propertyId!.isNotEmpty) {
+            await fetchPropertyById(item.propertyId!);
+          }
+        }
+      }
+
+      if (loadMore) {
+        propertyLeads.addAll(response.items);
+      } else {
+        propertyLeads.assignAll(response.items);
+      }
+
+      propertyLeadsTotalPages.value = response.meta.totalPages;
+      propertyLeadsHasMore.value = response.meta.hasMore;
+
+      print(
+        "Property leads loaded: ${response.items.length}, Page: ${propertyLeadsCurrentPage.value}",
+      );
+      print("Applied filters: $filters");
+    } catch (e) {
+      print("Error loading property leads: $e");
+    } finally {
+      isLoadingPropertyLeads.value = false;
+    }
+  }
+
+  /// Load more property leads (for scroll pagination)
+  Future<void> loadMorePropertyLeads(String propertyId) async {
+    if (propertyLeadsHasMore.value && !isLoadingPropertyLeads.value) {
+      await getLeadsByProperty(propertyId, loadMore: true);
+    }
+  }
+
+  /// Refresh property leads (for pull-to-refresh)
+  Future<void> refreshPropertyLeads(String propertyId) async {
+    await getLeadsByProperty(propertyId, loadMore: false);
+  }
+
+  /// Reset property leads state (call when navigating away)
+  void resetPropertyLeads() {
+    propertyLeads.clear();
+    propertyLeadsCurrentPage.value = 1;
+    propertyLeadsTotalPages.value = 1;
+    propertyLeadsHasMore.value = true;
+    isLoadingPropertyLeads.value = false;
   }
 }

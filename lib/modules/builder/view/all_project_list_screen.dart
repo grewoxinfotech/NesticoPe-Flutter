@@ -169,7 +169,10 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                             return GestureDetector(
                               onTap: () {
                                 Get.to(
-                                  () => ProjectDetailsScreen(projectItem: data),
+                                  () => ProjectDetailsScreen(
+                                    projectItem: data,
+                                    isBuilder: true,
+                                  ),
                                 );
                               },
                               child: BuilderProjectCard(

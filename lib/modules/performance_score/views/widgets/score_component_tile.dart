@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
+import '../../../../data/network/property/models/analytics_model.dart';
 import '../../../../data/network/property/models/property_model.dart';
 
 class ScoreComponentTile extends StatelessWidget {
   final ScoreComponents components;
+  final Color? color;
 
-  ScoreComponentTile({required this.components});
+  ScoreComponentTile({super.key, required this.components, this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: color,
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

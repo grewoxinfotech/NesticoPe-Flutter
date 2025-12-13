@@ -8,11 +8,21 @@ import 'package:housing_flutter_app/modules/performance_score/views/widgets/scor
 import 'package:housing_flutter_app/modules/performance_score/views/widgets/score_gauge.dart';
 
 import '../../../app/constants/color_res.dart';
+import '../../../data/network/property/models/analytics_model.dart';
 
 class PerformanceScoreWidget extends StatelessWidget {
   final ScoreBreakdownModel score;
+  final bool showDivider;
+  final Color? color;
+  final double? margin;
 
-  const PerformanceScoreWidget({super.key, required this.score});
+  const PerformanceScoreWidget({
+    super.key,
+    required this.score,
+    this.showDivider = true,
+    this.color,
+    this.margin,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +31,25 @@ class PerformanceScoreWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 12),
+        SizedBox(height: margin ?? 12),
 
         // Overall Gauge
-        ScoreGauge(totalScore: score.totalScore, maxScore: score.maxScore),
+        ScoreGauge(
+          totalScore: score.totalScore,
+          maxScore: score.maxScore,
+          color: color,
+        ),
 
-        Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        SizedBox(height: 12),
+        if (showDivider)
+          Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        SizedBox(height: margin ?? 12),
 
         // Components Overview
-        ScoreComponentTile(components: components),
+        ScoreComponentTile(components: components, color: color),
 
-        Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        SizedBox(height: 12),
+        if (showDivider)
+          Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        SizedBox(height: margin ?? 12),
 
         /// ================== Not Display ================== ///
 
@@ -63,14 +79,19 @@ class PerformanceScoreWidget extends StatelessWidget {
                 components.mediaQuality.breakdown['documents'] ??
                 SubBreakdown(count: 0, score: 0, max: 0, maxCount: 10),
           },
+          color: color,
         ),
 
-        Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        SizedBox(height: 12),
+        if (showDivider)
+          Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        SizedBox(height: margin ?? 12),
 
         //  Engagement Breakdown
         // EngagementTile(breakdown: components.engagement.breakdown),
-        EngagementPieChart(breakdown: components.engagement.breakdown),
+        EngagementPieChart(
+          breakdown: components.engagement.breakdown,
+          color: color,
+        ),
       ],
     );
   }

@@ -91,15 +91,26 @@ class MultiShareData {
   });
 
   factory MultiShareData.fromJson(Map<String, dynamic> json) {
+    final rawPropertyIds = json['propertyIds'];
+
     return MultiShareData(
-      id: json['id'] ?? '',
-      slug: json['slug'] ?? '',
-      url: json['url'] ?? '',
-      propertyIds: List<String>.from(json['propertyIds'] ?? []),
+      id: json['id']?.toString() ?? '',
+      slug: json['slug']?.toString() ?? '',
+      url: json['url']?.toString() ?? '',
+
+      propertyIds:
+          rawPropertyIds is List
+              ? rawPropertyIds.map((e) => e.toString()).toList()
+              : rawPropertyIds is String && rawPropertyIds.isNotEmpty
+              ? [rawPropertyIds]
+              : [],
+
       items:
-          (json['items'] as List<dynamic>? ?? [])
-              .map((e) => MultiShareItem.fromJson(e))
-              .toList(),
+          json['items'] is List
+              ? (json['items'] as List)
+                  .map((e) => MultiShareItem.fromJson(e))
+                  .toList()
+              : [],
     );
   }
 

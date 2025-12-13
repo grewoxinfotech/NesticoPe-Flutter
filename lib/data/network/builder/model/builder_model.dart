@@ -470,6 +470,7 @@
 import 'dart:io';
 
 import '../../../../app/utils/formater/formater.dart';
+import '../../property/models/analytics_model.dart';
 
 class AddProjectModel {
   String? id;
@@ -1016,6 +1017,7 @@ class ProjectItem {
   final List<Brochure> brochures;
   final bool isVerified;
   final bool isActive;
+  ScoreBreakdownModel? scoreBreakdown;
   final String? createdAt;
   final String? updatedAt;
 
@@ -1091,6 +1093,7 @@ class ProjectItem {
     this.lastReportedAt,
     this.advancedScore,
     this.scoreDetails,
+    this.scoreBreakdown,
   });
 
   factory ProjectItem.fromJson(Map<String, dynamic> json) => ProjectItem(
@@ -1166,6 +1169,10 @@ class ProjectItem {
         json['scoreDetails'] != null
             ? ScoreDetails.fromJson(json['scoreDetails'])
             : null,
+    scoreBreakdown:
+        json['scoreBreakdown'] != null
+            ? ScoreBreakdownModel.fromJson(json['scoreBreakdown'])
+            : null,
   );
 
   /// ✅ Added complete toJson method
@@ -1218,6 +1225,7 @@ class ProjectItem {
     'lastReportedAt': lastReportedAt,
     'advancedScore': advancedScore,
     'scoreDetails': scoreDetails?.toJson(),
+    'scoreBreakdown': scoreBreakdown?.toJson(),
   };
 }
 

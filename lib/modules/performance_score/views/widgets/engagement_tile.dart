@@ -93,12 +93,14 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../data/network/property/models/analytics_model.dart';
 import '../../../../data/network/property/models/property_model.dart';
 
 class EngagementPieChart extends StatelessWidget {
   final Map<String, SubBreakdown> breakdown;
+  final Color? color;
 
-  const EngagementPieChart({super.key, required this.breakdown});
+  const EngagementPieChart({super.key, required this.breakdown, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -170,6 +172,7 @@ class EngagementPieChart extends StatelessWidget {
     }
 
     return Container(
+      color: color,
       padding: EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

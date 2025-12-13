@@ -21,7 +21,7 @@ class LeadService {
     return await ApiConstants.getHeaders();
   }
 
-  /// Fetch paginated leads
+  /// Fetch paginated leads with property_id filter support
   Future<PaginationResponse<LeadItem>> fetchLeads({
     int page = 1,
     String? userId,
@@ -30,37 +30,37 @@ class LeadService {
   }) async {
     final user = await SecureStorage.getUserData();
     try {
-      Map<String, String> queryParameters;
+      Map<String, String> queryParameters = {};
 
       if (page == 1) {
-        // First page: ignore filters
+        // First page: include all filters including property_id
         queryParameters = {
           'page': page.toString(),
           if (userId != null) 'created_by': userId,
           if (filters != null) ...filters,
         };
       } else {
-        // Subsequent pages: include filters if any
-
+        // Subsequent pages: include all filters including property_id
         queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
       }
-      // print('$baseUrl/sellerleads/${user?.user?.id ?? ''}');
-      print('from reseller :${fromReseller}');
-      final uri = Uri.parse(
-        fromReseller
-            ? "$baseUrl"
-            : "$baseUrl/sellerleads/${user?.user?.id ?? ''}",
-      ).replace(queryParameters: queryParameters);
+
+      // Build the base URL
+      final baseUri =
+          fromReseller
+              ? baseUrl
+              : "$baseUrl/sellerleads/${user?.user?.id ?? ''}";
+
+      final uri = Uri.parse(baseUri).replace(queryParameters: queryParameters);
+
       print("Leads API URL: $uri");
+      print("Query Parameters: $queryParameters");
+
       final response = await http.get(uri, headers: await headers());
-      print("Leads API response: ${response.body}");
+      print("Leads API response status: ${response.statusCode}");
+      print("Leads API response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // LeadItem lead=LeadItem.fromJson(data);
-        // print("Leads API data: ${lead.toJson()}");
-
-
 
         return PaginationResponse<LeadItem>.fromJson(
           data,
@@ -119,6 +119,41 @@ class LeadService {
     } catch (e) {
       print("Delete lead exception: $e");
       return false;
+    }
+  }
+
+  /// get Lead By Property Id
+  Future<PaginationResponse<LeadItem>> getLeadsByProperty({
+    int page = 1,
+    String? userId,
+    Map<String, String>? filters,
+    required String propertyId,
+  }) async {
+    try {
+      final queryParameters = {
+        'page': page.toString(),
+        'property_id': propertyId,
+        if (filters != null) ...filters,
+      };
+      final response = await http.get(
+        Uri.parse(baseUrl).replace(queryParameters: queryParameters),
+        headers: await headers(),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        return PaginationResponse<LeadItem>.fromJson(
+          data,
+          (json) => LeadItem.fromJson(json),
+        );
+      } else {
+        print("Failed to load leads: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to load leads");
+      }
+    } catch (e) {
+      print("Exception in fetchLeads: $e");
+      rethrow;
     }
   }
 }

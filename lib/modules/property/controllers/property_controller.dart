@@ -255,8 +255,8 @@ class PropertyController extends PaginatedController<Items> {
   /// Get single property by ID (returns cached one if found)
   Future<Items?> getPropertyById(String id) async {
     try {
-      final existing = items.firstWhereOrNull((item) => item.id == id);
-      if (existing != null) return existing;
+      // final existing = items.firstWhereOrNull((item) => item.id == id);
+      // if (existing != null) return existing;
 
       final property = await _service.getPropertyById(id);
       if (property != null) {
