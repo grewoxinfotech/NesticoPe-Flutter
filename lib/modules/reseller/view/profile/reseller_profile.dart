@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../widgets/input/city_selection_widget.dart';
+import '../../../auth/views/delete_account.dart';
 import '../../../home/views/home_screen/home_screen.dart';
 import '../../controller/fack_lead_controller/fack_lead_controller.dart';
 import '../../controller/profile/profile_controller.dart';
@@ -70,37 +71,40 @@ class ResellerProfileScreen extends StatelessWidget {
         }
 
         return RefreshIndicator(
-            onRefresh: profileController.refreshReseller,
-            color: ColorRes.primary,
-            child: (UserHelper.isReseller)
-            ? SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Profile Header
-                  _buildProfileHeader(profileController),
-                  const SizedBox(height: 16),
+          onRefresh: profileController.refreshReseller,
+          color: ColorRes.primary,
+          child:
+              (UserHelper.isReseller)
+                  ? SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        // Profile Header
+                        _buildProfileHeader(profileController),
+                        const SizedBox(height: 16),
 
-                  // Statistics Cards
-                  _buildStatisticsCards(profileController),
-                  const SizedBox(height: 16),
+                        // Statistics Cards
+                        _buildStatisticsCards(profileController),
+                        const SizedBox(height: 16),
 
-                  _buildLeadOverView(),
-                  const SizedBox(height: 16),
+                        _buildLeadOverView(),
+                        const SizedBox(height: 16),
 
-                  // Profile Information Form
-                  Obx(() => _buildProfileForm(profileController)),
-                  const SizedBox(height: 16),
+                        // Profile Information Form
+                        Obx(() => _buildProfileForm(profileController)),
+                        const SizedBox(height: 16),
 
-                  // Profile Options
-                  if (!profileController.isEditing.value) ...[
-                    // _buildProfileOptionsSection(),
-                    const SizedBox(height: 16),
-                  ],
-                ],
-              ),
-            )
-            : SizedBox.shrink());
+                        // Profile Options
+                        if (!profileController.isEditing.value) ...[
+                          // _buildProfileOptionsSection(),
+                          const SizedBox(height: 16),
+                          RequestDeleteAccount(),
+                        ],
+                      ],
+                    ),
+                  )
+                  : SizedBox.shrink(),
+        );
       }),
     );
   }

@@ -14,6 +14,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import 'package:get/get.dart';
 
 import '../../../../widgets/input/city_selection_widget.dart';
+import '../../../auth/views/delete_account.dart';
 import '../../../home/views/home_screen/home_screen.dart';
 import '../../controller/contractor_profile_controller.dart';
 import '../contractor_plan/contractor_plan_screen.dart';
@@ -80,97 +81,95 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-
           return RefreshIndicator(
-              onRefresh: profileController.refreshFollowUp,
-              color: ColorRes.primary,
-              child:(UserHelper.isContractor)
-              ? SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: profileController.formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Profile Header
-                      _buildProfileHeader(profileController),
-                      const SizedBox(height: 16),
+            onRefresh: profileController.refreshFollowUp,
+            color: ColorRes.primary,
+            child:
+                (UserHelper.isContractor)
+                    ? SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Form(
+                        key: profileController.formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Profile Header
+                            _buildProfileHeader(profileController),
+                            const SizedBox(height: 16),
 
-                      // Contact Info Section (Editable)
-                      Obx(() => _buildContactInfoSection(profileController)),
-                      const SizedBox(height: 16),
+                            // Contact Info Section (Editable)
+                            Obx(
+                              () => _buildContactInfoSection(profileController),
+                            ),
+                            const SizedBox(height: 16),
 
-                      // Business Details Section (Editable)
-                      if (UserHelper.isSellerBuilder) ...[
-                        Obx(
-                          () => _buildBusinessDetailsSection(profileController),
+                            // Business Details Section (Editable)
+                            if (UserHelper.isSellerBuilder) ...[
+                              Obx(
+                                () => _buildBusinessDetailsSection(
+                                  profileController,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+
+                            // Seller Details Section (Read-only)
+                            if (!profileController.isEditing.value)
+                              _buildPerformanceInfoSection(profileController),
+
+                            // Account Information Section (Read-only)
+                            if (!profileController.isEditing.value)
+                              const SizedBox(height: 16),
+                            _buildAccountInfoSection(profileController),
+                            // if (!profileController.isEditing.value)
+                            //   const SizedBox(height: 16),
+
+                            // Profile Options
+                            if (!profileController.isEditing.value) ...[
+                              // _buildProfileOptionsSection(),
+                              const SizedBox(height: 16),
+                            ],
+                            _buildActionButton(
+                              icon: Icons.dashboard_outlined,
+                              label: "My Service",
+
+                              onTap: () {
+                                Get.to(() => MyServiceScreen());
+                              },
+                            ),
+                            _buildActionButton(
+                              icon: Icons.dashboard_outlined,
+                              label: "Contractor Services",
+
+                              onTap: () {
+                                Get.to(() => ContractorService());
+                              },
+                            ),
+                            _buildActionButton(
+                              icon: Icons.dashboard_outlined,
+                              label: "Plan & Subscription",
+
+                              onTap: () {
+                                Get.to(() => ContractorPlanScreen());
+                              },
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                      ],
-
-                      // Seller Details Section (Read-only)
-                      if (!profileController.isEditing.value)
-                        _buildPerformanceInfoSection(profileController),
-
-
-                      // Account Information Section (Read-only)
-                      if (!profileController.isEditing.value)
-                        const SizedBox(height: 16),
-                        _buildAccountInfoSection(profileController),
-                      // if (!profileController.isEditing.value)
-                      //   const SizedBox(height: 16),
-
-                  // Profile Options
-                  if (!profileController.isEditing.value) ...[
-                    // _buildProfileOptionsSection(),
-                    const SizedBox(height: 16),
-                  ],
-                      _buildActionButton(
-                        icon: Icons.dashboard_outlined,
-                        label: "My Service",
-
-                        onTap: () {
-                          Get.to(
-                                () => MyServiceScreen(),
-                          );
-                        },
                       ),
-                      _buildActionButton(
-                        icon: Icons.dashboard_outlined,
-                        label: "Contractor Services",
-
-                        onTap: () {
-                          Get.to(
-                                () => ContractorService(),
-                          );
-                        },
-                      ),
-                      _buildActionButton(
-                        icon: Icons.dashboard_outlined,
-                        label: "Plan & Subscription",
-
-                        onTap: () {
-                          Get.to(
-                                () => ContractorPlanScreen(),
-                          );
-                        },
-                      ),
-                ],
-              ),
-            ),
-          )
-              : SizedBox.shrink());
-
+                    )
+                    : SizedBox.shrink(),
+          );
         }),
       ),
     );
   }
+
   Widget _buildActionButton({
     required IconData icon,
     required String label,
 
     required VoidCallback onTap,
-    Widget? trailing
+    Widget? trailing,
   }) {
     return ListTile(
       leading: Icon(icon, size: 28, color: ColorRes.primary),
@@ -185,6 +184,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
       onTap: onTap,
     );
   }
+
   Widget _buildProfileHeader(ContractorProfileController controller) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -994,20 +994,27 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          _buildDetailRow(
-            'CREATED AT',
-            formatDate(controller.profileData.value?.user?.createdAt),
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailRow(
+                  'CREATED AT',
+                  formatDate(controller.profileData.value?.user?.createdAt),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildDetailRow(
+                  'LAST UPDATED',
+                  formatDate(controller.profileData.value?.user?.updatedAt),
+                ),
+              ),
+            ],
           ),
+
           const SizedBox(height: 12),
-          _buildDetailRow(
-            'LAST UPDATED',
-            formatDate(controller.profileData.value?.user?.updatedAt),
-          ),
-          const SizedBox(height: 12),
-          _buildDetailRow(
-            'USER ID',
-            controller.resellerProfile.value?.userId ?? 'N/A',
-          ),
+
+          RequestDeleteAccount(),
         ],
       ),
     );
@@ -1083,11 +1090,6 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                     : 'Active',
               ),
             ],
-          ),
-          const SizedBox(height: 12),
-          _buildDetailRow(
-            'USER ID',
-            controller.resellerProfile.value?.userId ?? 'N/A',
           ),
         ],
       ),

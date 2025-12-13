@@ -70,8 +70,12 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                     ..clear()
                     ..addAll(newFilter);
 
-                  controller.applyFilters(Map<String, String>.from(selectedFilters));
-                  print("Filter Project applied: $result   t   ${selectedFilters.value}");
+                  controller.applyFilters(
+                    Map<String, String>.from(selectedFilters),
+                  );
+                  print(
+                    "Filter Project applied: $result   t   ${selectedFilters.value}",
+                  );
                   // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
                 }
               }
@@ -139,8 +143,7 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                     Map<String, String>.from(selectedFilters),
                   );
                 },
-                priceRangeFormatter:
-                    (min, max) => formatPriceRange(min, max),
+                priceRangeFormatter: (min, max) => formatPriceRange(min, max),
               );
             }),
             Expanded(
@@ -326,6 +329,7 @@ class BuilderProjectCard extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 // Status Badge
                 Positioned(
                   top: 10,

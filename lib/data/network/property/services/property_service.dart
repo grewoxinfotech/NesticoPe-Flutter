@@ -331,6 +331,7 @@ class PropertyService {
         Uri.parse("$baseUrl/$id"),
         headers: await headers(),
       );
+      print("Delete property response: ${response.body}");
       return response.statusCode == 200 || response.statusCode == 204;
     } catch (e) {
       print("Delete property exception: $e");

@@ -4,10 +4,13 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/seller_property_approval_history.dart';
+import 'package:housing_flutter_app/utils/property_mapper/property_mapper.dart';
+import 'package:housing_flutter_app/widgets/dialog/delete_confirmation_dialog.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../data/network/property/models/property_model.dart';
+import '../../../add_property/view/create_property.dart';
 import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/controllers/property_controller.dart';
 import '../../../property/views/property_detail_screen.dart';
@@ -109,9 +112,13 @@ import '../../module/lead_screen/views/lead_screen_enhanced.dart';
 // }
 class PropertyOverviewSellerScreen extends StatefulWidget {
   final String propertyId;
+  final Function() onDelete;
 
-  const PropertyOverviewSellerScreen({Key? key, required this.propertyId})
-    : super(key: key);
+  const PropertyOverviewSellerScreen({
+    Key? key,
+    required this.propertyId,
+    required this.onDelete,
+  }) : super(key: key);
 
   @override
   State<PropertyOverviewSellerScreen> createState() =>
@@ -214,7 +221,6 @@ class _PropertyOverviewSellerScreenState
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
-
       ),
 
       body: Obx(() {
@@ -291,7 +297,12 @@ class _PropertyOverviewSellerScreenState
                 },
               ),
 
-              _buildActionButtons(context, isCompact),
+              _buildActionButtons(
+                context,
+                isCompact,
+                property,
+                widget.onDelete,
+              ),
 
               const SizedBox(height: 20),
             ],
@@ -1064,7 +1075,12 @@ class _PropertyOverviewSellerScreenState
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, bool isCompact) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    bool isCompact,
+    Items property,
+    Function() onDelete,
+  ) {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.all(16),
@@ -1073,7 +1089,13 @@ class _PropertyOverviewSellerScreenState
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // Edit property
+                  Get.to(
+                    () => CreatePropertyScreen(
+                      isLogin: true,
+                      isEdit: true,
+                      property: property.toAddPropertyModel(),
+                    ),
+                  );
                 },
                 icon: Icon(Icons.edit_outlined),
                 label: Text(
@@ -1097,27 +1119,41 @@ class _PropertyOverviewSellerScreenState
             Expanded(
               child: Row(
                 children: [
+                  // Expanded(
+                  //   child: ElevatedButton(
+                  //     onPressed: () {
+                  //       // Share property
+                  //     },
+                  //     child: Icon(Icons.share_outlined),
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: ColorRes.success.shade700,
+                  //       foregroundColor: ColorRes.white,
+                  //       padding: EdgeInsets.symmetric(vertical: 14),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(12),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
                         // Share property
-                      },
-                      child: Icon(Icons.share_outlined),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorRes.success.shade700,
-                        foregroundColor: ColorRes.white,
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Share property
+                        showDeleteConfirmationDialog(
+                          onConfirm: () async {
+                            final success = await controller.deleteProperty(
+                              property.id ?? '',
+                            );
+                            if (success) {
+                              onDelete();
+                              Get.back();
+                            }
+                          },
+                          title: "Delete Property",
+                          message:
+                              "Are you sure you want to delete this property?",
+                        );
                       },
                       child: Icon(Icons.delete_outline),
                       style: ElevatedButton.styleFrom(

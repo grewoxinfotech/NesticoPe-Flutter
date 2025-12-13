@@ -263,7 +263,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                   }
                 }),
               ),
-              if (!UserHelper.isReseller) ...[
+              if (UserHelper.isSeller) ...[
                 SizedBox(width: 8),
                 GestureDetector(
                   onTap: () async {

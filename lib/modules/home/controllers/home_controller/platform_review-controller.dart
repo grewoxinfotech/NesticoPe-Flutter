@@ -178,7 +178,7 @@ class PlatformReviewController extends GetxController {
 
   PlatformReviewController({required this.type});
   // Observables
-  final String type;
+  final List<String> type;
   var isLoading = false.obs;
   var isLoadingMore = false.obs;
 
@@ -200,7 +200,7 @@ class PlatformReviewController extends GetxController {
   var userFetchedAll = false.obs;
   var userTotal = 0.obs;
 
-  Map<String, String> filters = {};
+  Map<String, dynamic> filters = {};
 
   // Scroll controller
   final ScrollController scrollController = ScrollController();
@@ -242,6 +242,10 @@ class PlatformReviewController extends GetxController {
       final response = await _reviewService.fetchReviews(
         page: currentPage.value,
         filters: filters,
+      );
+
+      debugPrint(
+        "Review Controller Response: ${response?.data?.items?.length}",
       );
 
       if (response != null && response.success == true) {

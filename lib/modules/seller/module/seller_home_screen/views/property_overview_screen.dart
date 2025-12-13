@@ -24,8 +24,13 @@ import '../../../../reseller/widget/reseller_filter/resseller_property_filter.da
 
 class PropertyOverviewScreen extends StatefulWidget {
   final List<Items> properties;
+  final Function() onDelete;
 
-  const PropertyOverviewScreen({super.key, required this.properties});
+  const PropertyOverviewScreen({
+    super.key,
+    required this.properties,
+    required this.onDelete,
+  });
 
   @override
   State<PropertyOverviewScreen> createState() => _PropertyOverviewScreenState();
@@ -114,8 +119,12 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                     ..clear()
                     ..addAll(newFilter);
 
-                  propertyController.applyFilters(Map<String, String>.from(selectedFilters));
-                  print("Filter Project applied: $result   t   ${selectedFilters.value}");
+                  propertyController.applyFilters(
+                    Map<String, String>.from(selectedFilters),
+                  );
+                  print(
+                    "Filter Project applied: $result   t   ${selectedFilters.value}",
+                  );
                   // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
                 }
               }
@@ -149,7 +158,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
               itemCount: widget.properties.length,
               itemBuilder: (context, index) {
                 final property = widget.properties[index];
-                return _buildPropertyCard(property);
+                return _buildPropertyCard(property, widget.onDelete);
               },
             ),
           ),
@@ -158,7 +167,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
     );
   }
 
-  Widget _buildPropertyCard(Items property) {
+  Widget _buildPropertyCard(Items property, Function() onDelete) {
     final bool isSold = property.propertyStatus == 'Sold';
     final priceManager = PropertyPriceManager(
       listingType: property.listingType ?? "",
@@ -172,7 +181,10 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
         GestureDetector(
           onTap: () {
             Get.to(
-              () => PropertyOverviewSellerScreen(propertyId: property.id ?? ''),
+              () => PropertyOverviewSellerScreen(
+                propertyId: property.id ?? '',
+                onDelete: onDelete,
+              ),
             );
           },
           child: Container(
@@ -380,22 +392,22 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
             ),
           ),
         ),
-        Positioned(
-          top: 10,
-          left: 10,
-          child: IconButton(
-            onPressed: () {
-              Get.to(
-                () => CreatePropertyScreen(
-                  isLogin: true,
-                  isEdit: true,
-                  property: property.toAddPropertyModel(),
-                ),
-              );
-            },
-            icon: Icon(Icons.edit_outlined),
-          ),
-        ),
+        // Positioned(
+        //   top: 10,
+        //   left: 10,
+        //   child: IconButton(
+        //     onPressed: () {
+        //       Get.to(
+        //         () => CreatePropertyScreen(
+        //           isLogin: true,
+        //           isEdit: true,
+        //           property: property.toAddPropertyModel(),
+        //         ),
+        //       );
+        //     },
+        //     icon: Icon(Icons.edit_outlined),
+        //   ),
+        // ),
       ],
     );
   }

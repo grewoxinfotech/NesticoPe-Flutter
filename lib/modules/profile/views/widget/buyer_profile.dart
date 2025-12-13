@@ -64,7 +64,6 @@ class BuyerProfileScreen extends StatelessWidget {
               // Profile Options
 
               // _buildProfileOptionsSection(),
-              RequestDeleteAccount(),
               const SizedBox(height: 16),
             ],
           ),

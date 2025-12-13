@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
@@ -26,7 +27,7 @@ class ReviewService {
   ///==================== Fetch Reviews (Paginated) ====================
   Future<ReviewResponse?> fetchReviews({
     int page = 1,
-    Map<String, String>? filters,
+    Map<String, dynamic>? filters,
   }) async {
     try {
       final queryParameters = {
@@ -39,7 +40,8 @@ class ReviewService {
 
       final response = await http.get(uri, headers: await headers());
 
-      debugPrint("Reviews API Response: ${response.body}");
+      // debugPrint("Reviews API Response: ${response.body}");
+      AppLogger.structured("Reviews API Response:", response.body);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

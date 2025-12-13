@@ -12,6 +12,7 @@ import 'package:housing_flutter_app/widgets/empty_state/empty_state.dart';
 
 import '../../../app/constants/img_res.dart';
 import '../../filter_property/view/filter_screen.dart';
+import '../../home/widgets/unified_comparison_floating_button.dart';
 import '../controller/project_controller.dart';
 import 'builder_property_listing.dart';
 
@@ -23,7 +24,8 @@ class AllProjectListScreen extends StatefulWidget {
   const AllProjectListScreen({
     super.key,
     this.filters,
-    this.isAppBarShow = true,  this.isFromSeeAll=false,
+    this.isAppBarShow = true,
+    this.isFromSeeAll = false,
   });
 
   @override
@@ -92,13 +94,14 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
             context: Get.context!, // or use your BuildContext if available
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
-            builder: (context) => ProjectFilterSheet(
-              initialFilters: selectedFilters.value,
-              onApply: (filterData) {
-                // ✅ Close sheet and return filters
-                Navigator.pop(context, filterData);
-              },
-            ),
+            builder:
+                (context) => ProjectFilterSheet(
+                  initialFilters: selectedFilters.value,
+                  onApply: (filterData) {
+                    // ✅ Close sheet and return filters
+                    Navigator.pop(context, filterData);
+                  },
+                ),
           );
 
           if (filters != null) {
@@ -106,97 +109,106 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
             controller.applyFilters(filters);
           }
         },
-
       ),
 
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Obx(() {
-              return FilterChipsBar(
-                filters: selectedFilters.value,
-                onClearAll: () {
-                  selectedFilters.clear();
-                  controller.applyFilters(<String, String>{});
-                },
-                onRemoveFilter: (key) {
-                  selectedFilters.remove(key);
-                  controller.applyFilters(
-                    Map<String, String>.from(selectedFilters),
+            Column(
+              children: [
+                Obx(() {
+                  return FilterChipsBar(
+                    filters: selectedFilters.value,
+                    onClearAll: () {
+                      selectedFilters.clear();
+                      controller.applyFilters(<String, String>{});
+                    },
+                    onRemoveFilter: (key) {
+                      selectedFilters.remove(key);
+                      controller.applyFilters(
+                        Map<String, String>.from(selectedFilters),
+                      );
+                    },
                   );
-                },
-              );
-            }),
+                }),
 
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value && controller.items.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (!controller.isLoading.value && controller.items.isEmpty) {
-                  return const EmptyStateWidget(
-                    icon: Icons.search_off_rounded,
-                    title: "No projects found",
-                    subtitle: "Try adjusting your search criteria",
-                  );
-                }
-
-                return NotificationListener<ScrollNotification>(
-                  onNotification: (scrollEnd) {
-                    final metrics = scrollEnd.metrics;
-                    if (metrics.atEdge && metrics.pixels != 0) {
-                      controller.loadMore();
+                Expanded(
+                  child: Obx(() {
+                    if (controller.isLoading.value &&
+                        controller.items.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
                     }
-                    return false;
-                  },
-                  child: RefreshIndicator(
-                    onRefresh: controller.refreshList,
-                    child: ListView.separated(
-                      padding: const EdgeInsets.all(12),
-                      separatorBuilder:
-                          (context, index) => SizedBox(height: 12),
-                      itemCount: controller.items.length,
-                      itemBuilder: (context, index) {
-                        final data = controller.items[index];
 
-                        return GestureDetector(
-                          onTap: () {
-                            Get.to(
-                              () => ProjectDetailsScreen(projectItem: data),
+                    if (!controller.isLoading.value &&
+                        controller.items.isEmpty) {
+                      return const EmptyStateWidget(
+                        icon: Icons.search_off_rounded,
+                        title: "No projects found",
+                        subtitle: "Try adjusting your search criteria",
+                      );
+                    }
+
+                    return NotificationListener<ScrollNotification>(
+                      onNotification: (scrollEnd) {
+                        final metrics = scrollEnd.metrics;
+                        if (metrics.atEdge && metrics.pixels != 0) {
+                          controller.loadMore();
+                        }
+                        return false;
+                      },
+                      child: RefreshIndicator(
+                        onRefresh: controller.refreshList,
+                        child: ListView.separated(
+                          padding: const EdgeInsets.all(12),
+                          separatorBuilder:
+                              (context, index) => SizedBox(height: 12),
+                          itemCount: controller.items.length,
+                          itemBuilder: (context, index) {
+                            final data = controller.items[index];
+
+                            return GestureDetector(
+                              onTap: () {
+                                Get.to(
+                                  () => ProjectDetailsScreen(projectItem: data),
+                                );
+                              },
+                              child: BuilderProjectCard(
+                                forHome: true,
+                                project: data,
+                                width: double.infinity,
+                                height: 150,
+                                // ✅ Explicitly set height
+                                developersName:
+                                    data.projectContactInfo?.name ?? 'Unknown',
+                                imageUrl:
+                                    (data.mediaGallery?.images?.isNotEmpty ??
+                                            false)
+                                        ? data.mediaGallery!.images.first
+                                        : IMGRes.home3,
+                                projectName:
+                                    data.projectName.isNotEmpty
+                                        ? data.projectName
+                                        : 'N/A',
+                                location:
+                                    data.address.isNotEmpty
+                                        ? data.address
+                                        : 'Not specified',
+                                price: data.getPriceRange(),
+                                propertySize:
+                                    data.projectSize?.totalBuildings
+                                        ?.toString() ??
+                                    '—',
+                              ),
                             );
                           },
-                          child: BuilderProjectCard(
-                            project: data,
-                            width: double.infinity,
-                            height: 150,
-                            // ✅ Explicitly set height
-                            developersName:
-                                data.projectContactInfo?.name ?? 'Unknown',
-                            imageUrl:
-                                (data.mediaGallery?.images?.isNotEmpty ?? false)
-                                    ? data.mediaGallery!.images.first
-                                    : IMGRes.home3,
-                            projectName:
-                                data.projectName.isNotEmpty
-                                    ? data.projectName
-                                    : 'N/A',
-                            location:
-                                data.address.isNotEmpty
-                                    ? data.address
-                                    : 'Not specified',
-                            price: data.getPriceRange(),
-                            propertySize:
-                                data.projectSize?.totalBuildings?.toString() ??
-                                '—',
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ],
             ),
+            UnifiedComparisonFloatingButton(bottom: 16),
           ],
         ),
       ),

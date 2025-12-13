@@ -708,7 +708,7 @@ class ProfileScreen extends StatelessWidget {
                           onTap: () => Get.to(() => ReferralProgramScreen()),
                         ),
                       ],
-                      if (UserHelper.isSeller) ...[
+                      if (!UserHelper.isGuest || !UserHelper.isBuyer) ...[
                         Obx(() {
                           final controller = Get.put(ReviewController());
                           final review = controller.appReview.value;

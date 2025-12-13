@@ -13,6 +13,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import 'package:get/get.dart';
 
 import '../../../widgets/input/city_selection_widget.dart';
+import '../../auth/views/delete_account.dart';
 import '../../home/views/home_screen/home_screen.dart';
 import '../../reseller/controller/profile/profile_controller.dart';
 import '../controllers/seller_profile_controller.dart';
@@ -76,57 +77,64 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-        
           return RefreshIndicator(
-              onRefresh: profileController.refreshProfile,
-              color: ColorRes.primary,
-              child: (UserHelper.isSeller)
+            onRefresh: profileController.refreshProfile,
+            color: ColorRes.primary,
+            child:
+                (UserHelper.isSeller)
+                    ? SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Form(
+                        key: profileController.formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Profile Header
+                            _buildProfileHeader(profileController),
+                            const SizedBox(height: 16),
 
-              ? SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: profileController.formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Profile Header
-                      _buildProfileHeader(profileController),
-                      const SizedBox(height: 16),
+                            // Contact Info Section (Editable)
+                            Obx(
+                              () => _buildContactInfoSection(profileController),
+                            ),
+                            const SizedBox(height: 16),
 
-                      // Contact Info Section (Editable)
-                      Obx(() => _buildContactInfoSection(profileController)),
-                      const SizedBox(height: 16),
+                            // Business Details Section (Editable)
+                            if (UserHelper.isSellerBuilder) ...[
+                              Obx(
+                                () => _buildBusinessDetailsSection(
+                                  profileController,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
 
-                      // Business Details Section (Editable)
-                      if (UserHelper.isSellerBuilder) ...[
-                        Obx(
-                          () => _buildBusinessDetailsSection(profileController),
+                            // Seller Details Section (Read-only)
+                            if (!profileController.isEditing.value) ...[
+                              _buildSellerDetailsSection(profileController),
+
+                              const SizedBox(height: 16),
+
+                              RequestDeleteAccount(),
+                            ],
+
+                            // Account Information Section (Read-only)
+                            // if (!profileController.isEditing.value)
+                            //   _buildAccountInfoSection(profileController),
+                            // if (!profileController.isEditing.value)
+                            //   const SizedBox(height: 16),
+
+                            // Profile Options
+                            if (!profileController.isEditing.value) ...[
+                              // _buildProfileOptionsSection(),
+                              const SizedBox(height: 16),
+                            ],
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                      ],
-
-                      // Seller Details Section (Read-only)
-                      if (!profileController.isEditing.value)
-                        _buildSellerDetailsSection(profileController),
-                      if (!profileController.isEditing.value)
-                        const SizedBox(height: 16),
-
-                      // Account Information Section (Read-only)
-                      // if (!profileController.isEditing.value)
-                      //   _buildAccountInfoSection(profileController),
-                      // if (!profileController.isEditing.value)
-                      //   const SizedBox(height: 16),
-
-                      // Profile Options
-                      if (!profileController.isEditing.value) ...[
-                        // _buildProfileOptionsSection(),
-                        const SizedBox(height: 16),
-                      ],
-                    ],
-                  ),
-                ),
-              )
-              : SizedBox.shrink());
+                      ),
+                    )
+                    : SizedBox.shrink(),
+          );
         }),
       ),
     );
@@ -660,22 +668,22 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                       ),
                     ),
                     child:
-                    controller.isSaving.value
-                        ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: ColorRes.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                        : Text(
-                      'Save Changes',
-                      style: TextStyle(
-                        fontWeight: AppFontWeights.semiBold,
-                        fontSize: AppFontSizes.bodyMedium,
-                      ),
-                    ),
+                        controller.isSaving.value
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: ColorRes.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : Text(
+                              'Save Changes',
+                              style: TextStyle(
+                                fontWeight: AppFontWeights.semiBold,
+                                fontSize: AppFontSizes.bodyMedium,
+                              ),
+                            ),
                   ),
                 ),
                 const SizedBox(width: 12),

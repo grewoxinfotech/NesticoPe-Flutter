@@ -352,12 +352,18 @@ class PropertyController extends PaginatedController<Items> {
   /// Delete property
   Future<bool> deleteProperty(String id) async {
     try {
+      isLoading.value = true;
       final success = await _service.deleteProperty(id);
-      if (success) items.removeWhere((item) => item.id == id);
+
+      // items.removeWhere((item) => item.id == id);
+      refreshList();
+
       return success;
     } catch (e) {
       print("Delete property error: $e");
       return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 

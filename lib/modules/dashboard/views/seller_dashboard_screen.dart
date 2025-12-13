@@ -291,7 +291,10 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                 },
                 child: RefreshIndicator(
                   onRefresh: refreshPropertyBySeller,
-                  child: PropertyOverviewScreen(properties: controller.items),
+                  child: PropertyOverviewScreen(
+                    properties: controller.items,
+                    onDelete: () => refreshPropertyBySeller(),
+                  ),
                 ),
               );
             });

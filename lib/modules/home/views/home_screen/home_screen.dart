@@ -2791,7 +2791,11 @@ class ReviewsAndTestimonials extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reviewController = Get.put(PlatformReviewController(type: 'site'));
+    final reviewController = Get.put(
+      PlatformReviewController(
+        type: ['site', 'seller', 'reseller', 'contractor'],
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2841,7 +2845,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
             height: 215,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: reviewController.siteReviewWithUsers.length,
+              itemCount: reviewController.allReviews.length,
               clipBehavior: Clip.none,
               padding: EdgeInsets.symmetric(horizontal: 12),
               separatorBuilder:
@@ -2850,7 +2854,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                 // UserItem userData=reviewController.listOfUser.map((element) => element.toMap(),).toString();
                 return _buildReviewCard(
                   context,
-                  reviewController.siteReviewWithUsers[index],
+                  reviewController.allReviews[index],
                 );
               },
             ),
@@ -2860,14 +2864,12 @@ class ReviewsAndTestimonials extends StatelessWidget {
     );
   }
 
-  Widget _buildReviewCard(BuildContext context, ReviewWithUser review) {
-    final rating = review.review.rating ?? 0.0;
-    final isVerified = review.review.isVerified ?? false;
+  Widget _buildReviewCard(BuildContext context, ReviewItem review) {
+    final rating = review.rating ?? 0.0;
+    final isVerified = review.isVerified ?? false;
 
     return GestureDetector(
-      onTap: () {
-        print("gydfgyg    fghdg ${review.user?.toMap()}");
-      },
+      onTap: () {},
       child: Container(
         width: 280,
         decoration: BoxDecoration(
@@ -2904,8 +2906,8 @@ class ReviewsAndTestimonials extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      (review.review?.entityUser?.username?.isNotEmpty ?? false)
-                          ? review.review!.entityUser!.username![1]
+                      (review?.entityUser?.username?.isNotEmpty ?? false)
+                          ? review!.entityUser!.username![1]
                               .toUpperCase() // ensure uppercase letter
                           : '?', // fallback if username is null/empty
                       style: TextStyle(
@@ -2931,7 +2933,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '${review.review.entityUser?.username}',
+                                      '${review.entityUser?.username}',
                                       maxLines: 1,
 
                                       style: TextStyle(
@@ -2944,7 +2946,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                   ),
                                   SizedBox(width: 8),
                                   Text(
-                                    _formatDate(review.review.createdAt),
+                                    _formatDate(review.createdAt),
                                     style: TextStyle(
                                       fontSize: AppFontSizes.extraSmall,
                                       fontWeight: AppFontWeights.medium,
@@ -2971,6 +2973,17 @@ class ReviewsAndTestimonials extends StatelessWidget {
                               ),
                             ],
                           ],
+                        ),
+                        Text(
+                          '${review.entityType}',
+                          maxLines: 1,
+
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            fontWeight: AppFontWeights.regular,
+                            color: ColorRes.grey,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 2),
 
@@ -3017,12 +3030,11 @@ class ReviewsAndTestimonials extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              if (review.review.title != null &&
-                  review.review.title!.isNotEmpty) ...[
+              if (review.title != null && review.title!.isNotEmpty) ...[
                 SizedBox(
                   width: 280,
                   child: Text(
-                    review.review.title!,
+                    review.title!,
                     style: TextStyle(
                       fontSize: AppFontSizes.bodySmall,
                       fontWeight: AppFontWeights.semiBold,
@@ -3037,7 +3049,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
               SizedBox(
                 width: 280,
                 child: Text(
-                  '"${review.review.content ?? 'No review content'}"',
+                  '"${review.content ?? 'No review content'}"',
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.leadGreyColor.shade700,
@@ -3049,46 +3061,6 @@ class ReviewsAndTestimonials extends StatelessWidget {
               ),
 
               const SizedBox(height: 8),
-              Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
-              const SizedBox(height: 5),
-              Row(
-                children: [
-                  if (review.review.helpfulCount != null) ...[
-                    Icon(
-                      Icons.thumb_up_outlined,
-                      size: 14,
-                      color: ColorRes.leadGreyColor.shade700,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      review.review.helpfulCount != null &&
-                              review.review.helpfulCount! > 0
-                          ? 'Helpful ${review.review.helpfulCount}'
-                          : 'Helpful',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.extraSmall,
-                        color: ColorRes.leadGreyColor.shade700,
-                        fontWeight: AppFontWeights.medium,
-                      ),
-                    ),
-                  ],
-                  Spacer(),
-                  Icon(
-                    Icons.flag_outlined,
-                    size: 14,
-                    color: ColorRes.leadGreyColor.shade700,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Report',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.extraSmall,
-                      color: ColorRes.leadGreyColor.shade700,
-                      fontWeight: AppFontWeights.medium,
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),

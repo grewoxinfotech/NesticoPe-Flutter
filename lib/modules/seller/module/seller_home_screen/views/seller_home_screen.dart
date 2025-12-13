@@ -312,66 +312,83 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                               ),
 
                               // SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(
-                              () => ProfileScreen(
-                            imageUrl: profileController.userProfile.value?.profilePic ??
-                                "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: 45,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: ColorRes.grey.withOpacity(0.2),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Obx(
-                              () => ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              profileController.userProfile.value?.profilePic ??
-                                  "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-                              fit: BoxFit.cover,
+                              GestureDetector(
+                                onTap: () {
+                                  Get.to(
+                                    () => ProfileScreen(
+                                      imageUrl:
+                                          profileController
+                                              .userProfile
+                                              .value
+                                              ?.profilePic ??
+                                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  width: 45,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: ColorRes.grey.withOpacity(0.2),
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Obx(
+                                    () => ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        profileController
+                                                .userProfile
+                                                .value
+                                                ?.profilePic ??
+                                            "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                                        fit: BoxFit.cover,
 
-                              // 🔹 Add loading indicator
-                              loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return const Center(
-                                  child: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: ColorRes.white,
+                                        // 🔹 Add loading indicator
+                                        loadingBuilder: (
+                                          context,
+                                          child,
+                                          loadingProgress,
+                                        ) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return const Center(
+                                            child: SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: ColorRes.white,
+                                              ),
+                                            ),
+                                          );
+                                        },
+
+                                        // 🔹 Fallback if image fails
+                                        errorBuilder: (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) {
+                                          return Container(
+                                            color: ColorRes.grey.withOpacity(
+                                              0.1,
+                                            ),
+                                            child: const Icon(
+                                              Icons.person,
+                                              color: ColorRes.white,
+                                              size: 24,
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
-                                );
-                              },
-
-                              // 🔹 Fallback if image fails
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: ColorRes.grey.withOpacity(0.1),
-                                  child: const Icon(
-                                    Icons.person,
-                                    color: ColorRes.white,
-                                    size: 24,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -423,67 +440,79 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                             }
 
                             return RefreshIndicator(
-                                onRefresh: overviewController.refreshSellerDashboard,
-                                color: ColorRes.primary,
-                                child: overview==null
-                                    ? SingleChildScrollView(
-                                  physics: const AlwaysScrollableScrollPhysics(),
-                                  child: SizedBox(
-                                    height: MediaQuery.of(context).size.height * 0.7,
-                                    child: Center(
-                                      child: Text(
-                                        "No Dashboard Data available",
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.body,
-                                          color: ColorRes.textSecondary,
-                                          fontWeight: AppFontWeights.medium,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ):Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      TitleWithViewAll(
-                                        title: "Overview",
-                                        showViewAll: false,
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Get.to(
-                                            () => PropertyOverviewScreen(
-                                              properties: controller.items,
+                              onRefresh:
+                                  overviewController.refreshSellerDashboard,
+                              color: ColorRes.primary,
+                              child:
+                                  overview == null
+                                      ? SingleChildScrollView(
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        child: SizedBox(
+                                          height:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.height *
+                                              0.7,
+                                          child: Center(
+                                            child: Text(
+                                              "No Dashboard Data available",
+                                              style: TextStyle(
+                                                fontSize: AppFontSizes.body,
+                                                color: ColorRes.textSecondary,
+                                                fontWeight:
+                                                    AppFontWeights.medium,
+                                              ),
                                             ),
-                                          );
-                                        },
-                                        child: Text(
-                                          'Explore',
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.small,
                                           ),
                                         ),
+                                      )
+                                      : Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 4,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                TitleWithViewAll(
+                                                  title: "Overview",
+                                                  showViewAll: false,
+                                                ),
+                                                // TextButton(
+                                                //   onPressed: () {
+                                                //     Get.to(
+                                                //       () => PropertyOverviewScreen(
+                                                //         properties: controller.items,
+                                                //
+                                                //       ),
+                                                //     );
+                                                //   },
+                                                //   child: Text(
+                                                //     'Explore',
+                                                //     style: TextStyle(
+                                                //       fontSize: AppFontSizes.small,
+                                                //     ),
+                                                //   ),
+                                                // ),
+                                              ],
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                            ),
+                                            child: OverViewCard(
+                                              property: controller.items,
+                                              overview: overview,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: OverViewCard(
-                                    property: controller.items,
-                                    overview: overview,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                              ],
-                            ));
+                            );
                           }),
 
                           Padding(
@@ -493,10 +522,16 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                             ),
                             child: Column(
                               children: [
-
-                                Obx(() =>  buildSellerLeadGraph(overviewController)),
+                                Obx(
+                                  () =>
+                                      buildSellerLeadGraph(overviewController),
+                                ),
                                 const SizedBox(height: 20),
-                                Obx(() =>  buildSellerCommissionGraph(overviewController)),
+                                Obx(
+                                  () => buildSellerCommissionGraph(
+                                    overviewController,
+                                  ),
+                                ),
                                 const SizedBox(height: 20),
                               ],
                             ),
@@ -1342,25 +1377,26 @@ class CustomerSupportCard extends StatelessWidget {
     );
   }
 }
+
 Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
   final leadsTrend =
       overviewController.overviewData.value?.data.leadAnalytics.leadsTimeline
           ?.map<Map<String, dynamic>>(
             (e) => {"month": e.month ?? '', "leads": e.count ?? 0},
-      )
+          )
           .toList() ??
-          [];
+      [];
 
   // --- Step 1: Extract all years present in data ---
   final Set<String> yearsInData =
-  leadsTrend.map((e) => e['month'].toString().split('-').first).toSet();
+      leadsTrend.map((e) => e['month'].toString().split('-').first).toSet();
 
   // --- Step 2: Determine which year to display ---
   // Prefer latest available year; fallback to current year
   final String displayYear =
-  yearsInData.isNotEmpty
-      ? (yearsInData.toList()..sort()).last
-      : DateTime.now().year.toString();
+      yearsInData.isNotEmpty
+          ? (yearsInData.toList()..sort()).last
+          : DateTime.now().year.toString();
 
   // --- Step 3: Collect month data for that year ---
   final Map<String, double> monthDataForYear = {};
@@ -1382,10 +1418,10 @@ Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
 
   // --- Step 5: Extract for chart ---
   final List<String> months =
-  mergedData.map((e) => e['month'] as String).toList();
+      mergedData.map((e) => e['month'] as String).toList();
 
   final List<double> monthlyData =
-  mergedData.map((e) => (e['leads'] as num).toDouble()).toList();
+      mergedData.map((e) => (e['leads'] as num).toDouble()).toList();
 
   return Container(
     padding: const EdgeInsets.all(16),
@@ -1442,25 +1478,25 @@ Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
   );
 }
 
-Widget buildSellerCommissionGraph(SellerOverviewController  overviewController) {
+Widget buildSellerCommissionGraph(SellerOverviewController overviewController) {
   final leadsTrend =
       overviewController.overviewData.value?.data.propertyMetrics.viewsHistory
           .map<Map<String, dynamic>>(
             (e) => {"month": e.month ?? '', "views": e.views ?? 0},
-      )
+          )
           .toList() ??
-          [];
+      [];
 
   // --- Step 1: Extract all years present in data ---
   final Set<String> yearsInData =
-  leadsTrend.map((e) => e['month'].toString().split('-').first).toSet();
+      leadsTrend.map((e) => e['month'].toString().split('-').first).toSet();
 
   // --- Step 2: Determine which year to display ---
   // Prefer latest available year; fallback to current year
   final String displayYear =
-  yearsInData.isNotEmpty
-      ? (yearsInData.toList()..sort()).last
-      : DateTime.now().year.toString();
+      yearsInData.isNotEmpty
+          ? (yearsInData.toList()..sort()).last
+          : DateTime.now().year.toString();
 
   // --- Step 3: Collect month data for that year ---
   final Map<String, double> monthDataForYear = {};
@@ -1482,10 +1518,10 @@ Widget buildSellerCommissionGraph(SellerOverviewController  overviewController) 
 
   // --- Step 5: Extract for chart ---
   final List<String> months =
-  mergedData.map((e) => e['month'] as String).toList();
+      mergedData.map((e) => e['month'] as String).toList();
 
   final List<double> monthlyData =
-  mergedData.map((e) => (e['views'] as num).toDouble()).toList();
+      mergedData.map((e) => (e['views'] as num).toDouble()).toList();
 
   return Container(
     padding: const EdgeInsets.all(16),
@@ -1539,7 +1575,12 @@ Widget buildSellerCommissionGraph(SellerOverviewController  overviewController) 
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyBarChart(monthlyData: monthlyData, months: months,color: ColorRes.reportCardblue,isAmount: false,),
+          child: MonthlyBarChart(
+            monthlyData: monthlyData,
+            months: months,
+            color: ColorRes.reportCardblue,
+            isAmount: false,
+          ),
         ),
       ],
     ),

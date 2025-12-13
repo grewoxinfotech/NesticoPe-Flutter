@@ -62,9 +62,9 @@ class DashboardScreen extends StatelessWidget {
           case 0:
             return HomeScreen();
           case 1:
-            return PropertyDetail(isFromSeeAll: true,);
+            return PropertyDetail(isFromSeeAll: true);
           case 2:
-            return AllProjectListScreen(isFromSeeAll: true,);
+            return AllProjectListScreen(isFromSeeAll: true);
           case 3:
             return InsightsScreen();
           case 4:
