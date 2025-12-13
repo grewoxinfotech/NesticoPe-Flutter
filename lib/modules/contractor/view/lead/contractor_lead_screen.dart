@@ -287,6 +287,10 @@ class ContractorLeadCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
+                  if(item.customFields?.isConvertedToProject??false)...[
+
+SizedBox.shrink(),
+                  ]else...[
                     Expanded(
                       child: GestureDetector(
                         onTap:
@@ -317,6 +321,7 @@ class ContractorLeadCard extends StatelessWidget {
                     ),
 
                     const SizedBox(width: 8),
+                  ],
                     // Delete Icon
                     Expanded(
                       child: GestureDetector(

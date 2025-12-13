@@ -19,8 +19,10 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
   final combinedList = <HireContractorUserWithProfile>[].obs;
   RxString selectedCategoryId = ''.obs;
   RxString selectedCategoryName = ''.obs;
-  RxDouble selectedMinRating = 0.0.obs; // new rating filter
+  RxDouble selectedServiceRating = 0.0.obs; // new rating filter
+  RxDouble selectedContractorRating = 0.0.obs; // new rating filter
   RxString selectedCity = ''.obs; // new rating filter
+
 
   RxMap<String, String> filters = <String, String>{}.obs;
   var errorMessage = ''.obs;
@@ -38,6 +40,7 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
   }
 
   Future<void> applyFilters(Map<String, String> filter) async {
+
     filters.assignAll(filter);
     log("Apply Filter in Inquiry Contractor Section ${filters} ");
     // await loadInitial();
@@ -51,7 +54,8 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
   void resetFilters() {
     selectedCategoryId.value = '';
     selectedCategoryName.value = '';
-    selectedMinRating.value = 0.0;
+    selectedContractorRating.value = 0.0;
+    selectedServiceRating.value = 0.0;
     selectedCity.value = '';
   }
 
@@ -120,33 +124,24 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
     }
   }
 
-  Future<void> fetchHireContractorByCategoryID(String categoryId, String categoryName) async {
+
+  Future<void> refreshContractorData() async {
     try {
-      // 🔵 Log start
-      log('🔹 [fetchHireContractorByCategoryID] Started fetching contractors for category: $categoryName (ID: $categoryId)');
+      hireContractorData.refresh();
+    await Future.delayed(const Duration(seconds: 1));
 
-      // 🔸 API call
-      final response = await HireContractorService.contractorMyService
-          .fetchHireContractorService(categoryId);
-
-      // 🟢 Assign data
-      hireContractorData.value = response;
-
-      if (response != null) {
-        log('✅ [fetchHireContractorByCategoryID] Success — '
-            'Fetched ${response.data.contractors.length} contractors for "$categoryName" '
-            '(Total: ${response.data.total}, Category ID: ${response.data.categoryId})');
-      } else {
-        log('⚠️ [fetchHireContractorByCategoryID] No data returned for category: $categoryName');
-      }
-    } catch (e, stack) {
-      // 🔴 Log error
-      log('❌ [fetchHireContractorByCategoryID] Failed for category "$categoryName" (ID: $categoryId): $e');
-      log(stack.toString());
+    // Update metrics with new values
+    } catch (e) {
+    Get.snackbar(
+    'Error',
+    'Failed to refresh ',
+    backgroundColor: Colors.red,
+    colorText: ColorRes.white,
+    );
+    } finally {
+    isRefreshing.value = false;
     }
   }
-
-
   Future<void> refreshService() async {
     try {
       isRefreshing.value = true;
@@ -166,6 +161,9 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
     }
   }
 }
+
+
+
 
 class HireContractorUserWithProfile {
   final User user;

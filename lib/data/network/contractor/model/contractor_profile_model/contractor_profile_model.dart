@@ -68,7 +68,6 @@ class Pagination {
     'fetchedAll': fetchedAll,
   };
 }
-
 class Contractor {
   final String id;
   final String userId;
@@ -76,13 +75,13 @@ class Contractor {
   final String overallRating;
   final int totalServices;
   final int activeServices;
-  final String username;
-  final int totalExperience;
+  String username;
+   int totalExperience;
   final String imageUrl;
-  final ProjectStats projectStats;
+   ProjectStats projectStats;
   final Subscription subscription;
 
-  Contractor( {
+  Contractor({
     required this.imageUrl,
     required this.id,
     required this.userId,
@@ -100,25 +99,41 @@ class Contractor {
     return Contractor(
       id: json['id'] ?? '',
       userId: json['userId'] ?? '',
-      imageUrl: json['profilePic']??'',
+      imageUrl: json['profilePic'] ?? '',
       totalReviews: json['totalReviews'] ?? 0,
       overallRating: json['overallRating']?.toString() ?? "0",
       totalServices: json['totalServices'] ?? 0,
       activeServices: json['activeServices'] ?? 0,
       username: json['username'] ?? '',
       totalExperience: json['totalExperience'] ?? 0,
-      projectStats: ProjectStats.fromJson(json['projectStats'] ?? {}),
+      projectStats: ProjectStats.fromJson(json['projectData'] ?? {}),
       subscription: Subscription.fromJson(json['subscription'] ?? {}),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'profilePic': imageUrl,
+      'totalReviews': totalReviews,
+      'overallRating': overallRating,
+      'totalServices': totalServices,
+      'activeServices': activeServices,
+      'username': username,
+      'totalExperience': totalExperience,
+      'projectData': projectStats.toJson(),
+      'subscription': subscription.toJson(),
+    };
   }
 }
 
 class ProjectStats {
-  final int totalProjects;
-  final int pendingProjects;
-  final int inProgressProjects;
-  final int completedProjects;
-  final int cancelledProjects;
+   int totalProjects;
+   int pendingProjects;
+   int inProgressProjects;
+   int completedProjects;
+   int cancelledProjects;
 
   ProjectStats({
     required this.totalProjects,
@@ -136,6 +151,16 @@ class ProjectStats {
       completedProjects: json['completedProjects'] ?? 0,
       cancelledProjects: json['cancelledProjects'] ?? 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'totalProjects': totalProjects,
+      'pendingProjects': pendingProjects,
+      'inProgressProjects': inProgressProjects,
+      'completedProjects': completedProjects,
+      'cancelledProjects': cancelledProjects,
+    };
   }
 }
 
@@ -157,7 +182,16 @@ class Subscription {
       planName: json['planName'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'hasPremiumPlan': hasPremiumPlan,
+      'planAmount': planAmount,
+      'planName': planName,
+    };
+  }
 }
+
 
 class TypeConverter {
   static int? parseInt(dynamic value) {

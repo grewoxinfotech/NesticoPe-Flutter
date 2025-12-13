@@ -696,7 +696,21 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             icon: Icons.star_outline,
             enabled: controller.isEditing.value,
             keyboardType: TextInputType.phone,
+            validator: (value) {
+              if (value?.isEmpty ?? true) {
+                return 'Experience is required';
+              }
+              final experience = double.tryParse(value!);
+              if (experience == null) {
+                return 'Enter a valid number';
+              }
+              if (experience > 60) {
+                return 'Experience cannot be more than 60 years';
+              }
+              return null;
+            },
           ),
+
           if (controller.isEditing.value) ...[
             const SizedBox(height: 24),
             Row(

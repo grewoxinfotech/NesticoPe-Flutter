@@ -195,38 +195,52 @@ class _ContractorLeadEditScreenState extends State<ContractorLeadEditScreen> {
                 //   value: controller.selectedContractor,
                 //   requiredField: true,
                 // ),
-                Obx(() =>  NesticoPeDropdownField<String>(
-                    isRequired: false,
-                    title: 'Contractor',
-                    enabled: false,
-                    value: controller.selectedContractor.isEmpty ? null : controller.selectedContractor.value,
-                    items: controller.items.value
-                        .map((e) => DropdownMenuItem(value: e.customFields?.contractorId, child: Text(e.customFields?.contractorUsername??'')))
-                        .toList(),
-                    onChanged: (val) {
-                      if (val != null && val.isNotEmpty) {
-                        controller.selectedContractor.value = val;
-                        log("Selected Service:fgfdgfd ${controller.selectedContractorName.value} "
-                            "(${controller.selectedContractor.value})");
+          Obx(() {
+            // Use a Set to track unique contractor IDs
+            final uniqueContractors = <String>{};
 
-                        // safely find matching service name
-                        final selectedItem = controller.items.firstWhereOrNull(
-                              (element) => element.customFields?.contractorId == val,
-                        );
+            // Filter duplicates before creating dropdown items
+            final contractorItems = controller.items.value
+                .where((e) {
+              final id = e.customFields?.contractorId;
+              if (id == null || id.isEmpty) return false;
+              return uniqueContractors.add(id); // only adds if not already present
+            })
+                .toList();
 
-                        controller.selectedContractorName.value =
-                            selectedItem?.customFields?.contractorUsername ?? '';
-                      } else {
-                        controller.selectedContractor.value = '';
-                        controller.selectedContractorName.value = '';
-                      }
+            return NesticoPeDropdownField<String>(
+              isRequired: false,
+              title: 'Contractor',
+              enabled: false,
+              value: controller.selectedContractor.isEmpty
+                  ? null
+                  : controller.selectedContractor.value,
+              items: contractorItems
+                  .map((e) => DropdownMenuItem(
+                value: e.customFields?.contractorId,
+                child: Text(e.customFields?.contractorUsername ?? ''),
+              ))
+                  .toList(),
+              onChanged: (val) {
+                if (val != null && val.isNotEmpty) {
+                  controller.selectedContractor.value = val;
 
-                      // Optional: log or trigger any dependent updates
-                      log("Selected Service: ${controller.selectedContractorName.value} "
-                          "(${controller.selectedContractor.value})");
-                    },
-                  ),
-                ),
+                  final selectedItem = controller.items.firstWhereOrNull(
+                        (element) => element.customFields?.contractorId == val,
+                  );
+
+                  controller.selectedContractorName.value =
+                      selectedItem?.customFields?.contractorUsername ?? '';
+                } else {
+                  controller.selectedContractor.value = '';
+                  controller.selectedContractorName.value = '';
+                }
+
+                log("Selected Contractor: ${controller.selectedContractorName.value} "
+                    "(${controller.selectedContractor.value})");
+              },
+            );
+          }),
                 const SizedBox(height: 16),
 
                 // --- Service + Source ---

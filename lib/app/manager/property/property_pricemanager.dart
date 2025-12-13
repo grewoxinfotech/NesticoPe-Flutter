@@ -97,7 +97,7 @@ class PropertyPriceManager {
       final price = fi.price;
       if (price <= 0) return "Price not available";
       final formatted = Formatter.formatPrice(price);
-      return (fi.negotiable) ? "$formatted (Negotiable)" : "$formatted";
+      return (fi.negotiable) ? "$formatted" : "$formatted";
     }
   }
 

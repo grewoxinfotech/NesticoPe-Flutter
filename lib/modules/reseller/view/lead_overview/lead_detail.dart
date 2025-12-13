@@ -157,158 +157,160 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () => _showMoreOptions(context),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.more_vert),
+        //     onPressed: () => _showMoreOptions(context),
+        //   ),
+        // ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Contact Information (Only for Leads)
-            if (widget.isFromLead) ...[
-              _buildContactSection(context, isCompact),
-              Divider(thickness: 8, color: Colors.grey[100]),
-            ],
-
-            // 2. Property Image Gallery (Always Visible)
-            // _buildPropertyImageGallery(context),
-            Obx(() {
-              if (leadProperty.value == null &&
-                  widget.isFromLead &&
-                  isLoadingProperty.value) {
-                return Container(
-                  height: 280,
-                  color: ColorRes.leadGreyColor[200],
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        ColorRes.primary,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. Contact Information (Only for Leads)
+              if (widget.isFromLead) ...[
+                _buildContactSection(context, isCompact),
+                Divider(thickness: 8, color: Colors.grey[100]),
+              ],
+        
+              // 2. Property Image Gallery (Always Visible)
+              // _buildPropertyImageGallery(context),
+              Obx(() {
+                if (leadProperty.value == null &&
+                    widget.isFromLead &&
+                    isLoadingProperty.value) {
+                  return Container(
+                    height: 280,
+                    color: ColorRes.leadGreyColor[200],
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          ColorRes.primary,
+                        ),
                       ),
                     ),
-                  ),
+                  );
+                }
+        
+                return PropertyMediaGallery(
+                  images: propertyImages,
+                  videos: propertyVideos,
+                  showShare: false,
+                  showFavorite: false,
+                  showBackButton: false,
                 );
-              }
-
-              return PropertyMediaGallery(
-                images: propertyImages,
-                videos: propertyVideos,
-                showShare: false,
-                showFavorite: false,
-                showBackButton: false,
-              );
-            }),
-
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-            // 3. Property Overview (Always Visible)
-            widget.isFromLead
-                ? Obx(() {
+              }),
+        
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        
+              // 3. Property Overview (Always Visible)
+              widget.isFromLead
+                  ? Obx(() {
+                    if (leadProperty.value == null && isLoadingProperty.value) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+        
+                    if (!isLoadingProperty.value && leadProperty.value == null) {
+                      return SizedBox.shrink();
+                    }
+                    return _buildPropertyOverviewSection(context, isCompact);
+                  })
+                  : _buildPropertyOverviewSection(context, isCompact),
+        
+              // Expand/Collapse Button
+        
+              // Conditional Sections (Show when expanded)
+              Obx(
+                () =>
+                    controller.isResellerDetailExpanded.value
+                        ? Column(
+                          children: [
+                            Divider(
+                              thickness: 8,
+                              color: ColorRes.leadGreyColor[100],
+                            ),
+        
+                            // 4. Property Details
+                            _buildPropertyDetailsSection(context, isCompact),
+        
+                            Divider(
+                              thickness: 8,
+                              color: ColorRes.leadGreyColor[100],
+                            ),
+        
+                            // 5. Amenities
+                            _buildAmenitiesSection(context, isCompact),
+        
+                            Obx(() => _buildExpandButton(context)),
+                          ],
+                        )
+                        : Obx(() => _buildExpandButton(context)),
+              ),
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        
+              // 6. Financial Information
+              if (widget.isFromLead)
+                Obx(() {
                   if (leadProperty.value == null && isLoadingProperty.value) {
                     return Center(child: CircularProgressIndicator());
                   }
-
+        
                   if (!isLoadingProperty.value && leadProperty.value == null) {
                     return SizedBox.shrink();
                   }
-                  return _buildPropertyOverviewSection(context, isCompact);
+                  return _buildFinancialSection(context, isCompact);
                 })
-                : _buildPropertyOverviewSection(context, isCompact),
-
-            // Expand/Collapse Button
-
-            // Conditional Sections (Show when expanded)
-            Obx(
-              () =>
-                  controller.isResellerDetailExpanded.value
-                      ? Column(
-                        children: [
-                          Divider(
-                            thickness: 8,
-                            color: ColorRes.leadGreyColor[100],
-                          ),
-
-                          // 4. Property Details
-                          _buildPropertyDetailsSection(context, isCompact),
-
-                          Divider(
-                            thickness: 8,
-                            color: ColorRes.leadGreyColor[100],
-                          ),
-
-                          // 5. Amenities
-                          _buildAmenitiesSection(context, isCompact),
-
-                          Obx(() => _buildExpandButton(context)),
-                        ],
-                      )
-                      : Obx(() => _buildExpandButton(context)),
-            ),
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-            // 6. Financial Information
-            if (widget.isFromLead)
-              Obx(() {
-                if (leadProperty.value == null && isLoadingProperty.value) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                if (!isLoadingProperty.value && leadProperty.value == null) {
-                  return SizedBox.shrink();
-                }
-                return _buildFinancialSection(context, isCompact);
-              })
-            else
-              _buildFinancialSection(context, isCompact),
-
-            // if (widget.isFromLead) ...[
-            //   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-            //
-            //   // 7. Lead Status & Timeline
-            //   _buildStatusTimelineSection(context, isCompact),
-            // ],
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child:
-                  widget.lead != null
-                      ? Obx(
-                        () =>
-                            PropertyOverviewCard(property: leadProperty.value),
-                      )
-                      : PropertyOverviewCard(property: widget.property),
-            ),
-
-            if (widget.property != null) ...[
-              Divider(thickness: 8, color: Colors.grey[100]),
+              else
+                _buildFinancialSection(context, isCompact),
+        
+              // if (widget.isFromLead) ...[
+              //   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+              //
+              //   // 7. Lead Status & Timeline
+              //   _buildStatusTimelineSection(context, isCompact),
+              // ],
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: _buildSectionHeader(
-                  'Report',
-                  Icons.report_gmailerrorred_outlined,
-                  isCompact,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child:
+                    widget.lead != null
+                        ? Obx(
+                          () =>
+                              PropertyOverviewCard(property: leadProperty.value),
+                        )
+                        : PropertyOverviewCard(property: widget.property),
               ),
-              ReportPropertyCard(propertyId: widget.property!.id!),
+        
+              if (widget.property != null) ...[
+                Divider(thickness: 8, color: Colors.grey[100]),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: _buildSectionHeader(
+                    'Report',
+                    Icons.report_gmailerrorred_outlined,
+                    isCompact,
+                  ),
+                ),
+                ReportPropertyCard(propertyId: widget.property!.id!),
+              ],
+        
+              // 8. Notes Section (Only for Leads)
+              if (widget.isFromLead && widget.lead?.notes != null) ...[
+                Divider(thickness: 8, color: Colors.grey[100]),
+                _buildNotesSection(context, isCompact),
+              ],
+        
+              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        
+              // 9. Action Buttons
+              // _buildActionButtons(context, isCompact),
             ],
-
-            // 8. Notes Section (Only for Leads)
-            if (widget.isFromLead && widget.lead?.notes != null) ...[
-              Divider(thickness: 8, color: Colors.grey[100]),
-              _buildNotesSection(context, isCompact),
-            ],
-
-            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-            // 9. Action Buttons
-            // _buildActionButtons(context, isCompact),
-          ],
+          ),
         ),
       ),
     );
@@ -1804,59 +1806,59 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 ),
 
                 // 🔹 Negotiation + Offer Handling (Reactive)
-                Obx(() {
-                  final hasOffer = controller.submittedOfferAmount.value != 0.0;
-
-                  return Column(
-                    children: [
-                      if (hasOffer) ...[
-                        const SizedBox(height: 16),
-                        _buildOfferCard(isCompact),
-                      ],
-
-                      if (financialInfo.negotiable == true) ...[
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed:
-                                !hasOffer
-                                    ? () => _handleNegotiation(context)
-                                    : null,
-                            icon: Icon(
-                              !hasOffer
-                                  ? Icons.chat_bubble_outline
-                                  : Icons.check_circle_outline,
-                              size: 18,
-                            ),
-                            label: Text(
-                              !hasOffer
-                                  ? 'Start Negotiation'
-                                  : 'Offer Submitted',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.medium,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  !hasOffer
-                                      ? ColorRes.success.shade600
-                                      : ColorRes.leadGreyColor.shade400,
-                              foregroundColor: ColorRes.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 0,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  );
-                }),
+                // Obx(() {
+                //   final hasOffer = controller.submittedOfferAmount.value != 0.0;
+                //
+                //   return Column(
+                //     children: [
+                //       if (hasOffer) ...[
+                //         const SizedBox(height: 16),
+                //         _buildOfferCard(isCompact),
+                //       ],
+                //
+                //       if (financialInfo.negotiable == true) ...[
+                //         const SizedBox(height: 16),
+                //         SizedBox(
+                //           width: double.infinity,
+                //           child: ElevatedButton.icon(
+                //             onPressed:
+                //                 !hasOffer
+                //                     ? () => _handleNegotiation(context)
+                //                     : null,
+                //             icon: Icon(
+                //               !hasOffer
+                //                   ? Icons.chat_bubble_outline
+                //                   : Icons.check_circle_outline,
+                //               size: 18,
+                //             ),
+                //             label: Text(
+                //               !hasOffer
+                //                   ? 'Start Negotiation'
+                //                   : 'Offer Submitted',
+                //               style: TextStyle(
+                //                 fontSize: AppFontSizes.medium,
+                //                 fontWeight: FontWeight.bold,
+                //                 letterSpacing: 0.5,
+                //               ),
+                //             ),
+                //             style: ElevatedButton.styleFrom(
+                //               backgroundColor:
+                //                   !hasOffer
+                //                       ? ColorRes.success.shade600
+                //                       : ColorRes.leadGreyColor.shade400,
+                //               foregroundColor: ColorRes.white,
+                //               padding: const EdgeInsets.symmetric(vertical: 14),
+                //               shape: RoundedRectangleBorder(
+                //                 borderRadius: BorderRadius.circular(12),
+                //               ),
+                //               elevation: 0,
+                //             ),
+                //           ),
+                //         ),
+                //       ],
+                //     ],
+                //   );
+                // }),
               ],
             ),
           ),

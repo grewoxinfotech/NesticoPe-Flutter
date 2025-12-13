@@ -123,27 +123,22 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
             ),
             const SizedBox(height: 20),
             Obx(() {
+              final overview = overviewController.overviewData.value;
               if (controller.isLoading.value && controller.items.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
               }
-
-              if (!controller.isLoading.value && controller.items.isEmpty) {
-                return SizedBox.shrink();
-              }
-              final overview = overviewController.overviewData.value;
+           
               if (overviewController.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (overview == null) {
-                return const SizedBox.shrink(); // or a loader/empty state
-              }
+              
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   OverBuilderViewCard(
                     property: controller.items,
-                    overview: overview,
+                    overview: overview??SellerInsightsModel.fromJson({}),
                   ),
                   const SizedBox(height: 20),
                 ],

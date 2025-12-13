@@ -369,6 +369,7 @@ import 'package:get/get.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
+import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../controller/contractor_inquiry_controller.dart';
 import '../filter/contractor_inquiry_filter.dart';
@@ -391,7 +392,9 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         backgroundColor: ColorRes.surface,
-        automaticallyImplyLeading: false,
+        leading: IconButton(onPressed:  () {
+          Get.back();
+        }, icon:Icon(Icons.arrow_back)),
         elevation: 0,
         title: const Text(
           'Contractor Inquiries',
@@ -516,10 +519,10 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
   }
 
   void _showStatusDialog(
-    BuildContext context,
-    ContractorInquiryController controller,
-    ContractorInquiryItem inquiry,
-  ) {
+      BuildContext context,
+      ContractorInquiryController controller,
+      ContractorInquiryItem inquiry,
+      ) {
     final statuses = [
       'Pending',
       'Contacted',
@@ -581,43 +584,36 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                 ),
               ),
 
-              // Status List
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: Column(
-                    children:
-                        statuses.map((status) {
-                          return RadioListTile<String>(
-                            title: Text(
-                              status,
-                              style: const TextStyle(
-                                fontSize: AppFontSizes.medium,
-                                fontWeight: AppFontWeights.medium,
-                                color: ColorRes.textPrimary,
-                              ),
-                            ),
-                            value: status,
-                            groupValue:
-                                controller.selectedStatus[inquiry.id] ??
-                                inquiry.status,
-                            onChanged: (value) {
-                              if (value != null) {
-                                Get.back();
-                                controller.changeStatus(inquiry.id, value);
-                              }
-                            },
-                            activeColor: ColorRes.primary,
-                          );
-                        }).toList(),
-                  ),
-                ),
+              // Dropdown Field (instead of radio buttons)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Obx(() {
+                  return NesticoPeDropdownField<String>(
+                    isRequired: true,
+                    value: controller.selectedStatus[inquiry.id] ??
+                        inquiry.status, // pre-selected value
+                    hintText: "Select Status",
+                    prefixIcon: Icons.schedule,
+                    items: statuses
+                        .map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(e),
+                    ))
+                        .toList(),
+                    onChanged: (val) {
+                      if (val != null) {
+
+                        controller.setValue(
+                            controller.inquiryStatus, val); // reactive update
+                        log("Contractor_status ${controller.inquiryStatus.value}");
+                      }
+                    },
+                    darkText: true,
+                  );
+                }),
               ),
 
-              // Footer Buttons
+              // Footer Button
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -645,6 +641,39 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(width: 12,),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final val = controller.inquiryStatus.value;
+
+                          controller.changeStatus(inquiry.id, val);
+                          Get.back();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorRes.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.filter_alt, size: 18),
+                            SizedBox(width: 8),
+                            Text(
+                              'Change Status',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -655,6 +684,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
       barrierDismissible: true,
     );
   }
+
 }
 
 class InquiryCard extends StatelessWidget {
@@ -828,15 +858,21 @@ class InquiryCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          Expanded(
-                            child: _buildActionButton(
-                              icon: Icons.swap_horiz,
-                              label: 'Change Status',
-                              color: ColorRes.primary,
-                              onPressed: onChangeStatus,
+                          if(!controller.areAllServicesConverted(
+                            inquiry.convertedServices,
+                            inquiry.services,
+                          ))...[
+                            Expanded(
+                              child: _buildActionButton(
+                                icon: Icons.swap_horiz,
+                                label: 'Change Status',
+                                color: ColorRes.primary,
+                                onPressed: onChangeStatus,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
+                            const SizedBox(width: 8),
+                          ],
+
                           Expanded(
                             child: (controller.areAllServicesConverted(
                               inquiry.convertedServices,
@@ -878,6 +914,7 @@ class InquiryCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
+
                       SizedBox(
                         width: double.infinity,
                         child: _buildActionButton(

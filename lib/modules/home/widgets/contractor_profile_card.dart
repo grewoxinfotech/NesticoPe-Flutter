@@ -19,7 +19,7 @@ class ContractorCard extends StatelessWidget {
     final stats = contractor.projectStats;
     return GestureDetector(
       onTap: () {
-        Get.to(() => ContractorProfileScreen(contractor: contractor));
+        Get.to(() => ContractorProfileDetailsScreen(contractor: contractor));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -39,21 +39,21 @@ class ContractorCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 26,
                   backgroundColor: Colors.grey.shade100,
-                  backgroundImage:
-                      contractor.imageUrl.isNotEmpty
-                          ? NetworkImage(contractor.imageUrl)
-                          : null,
-                  child:
-                      contractor.imageUrl.isEmpty
-                          ? const Icon(
-                            Icons.engineering,
-                            color: Colors.orange,
-                            size: 28,
-                          )
-                          : null,
-                  onBackgroundImageError:
-                      (_, __) {}, // Prevent crash on bad URLs
+                  backgroundImage: contractor.imageUrl.isNotEmpty
+                      ? NetworkImage(contractor.imageUrl)
+                      : null,
+                  onBackgroundImageError: contractor.imageUrl.isNotEmpty
+                      ? (_, __) {}
+                      : null, // Only set this when imageUrl is not empty
+                  child: contractor.imageUrl.isEmpty
+                      ? const Icon(
+                    Icons.engineering,
+                    color: Colors.orange,
+                    size: 28,
+                  )
+                      : null,
                 ),
+
 
                 const SizedBox(width: 12),
 

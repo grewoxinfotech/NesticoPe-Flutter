@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
@@ -115,7 +116,7 @@ class FilterChipsBar extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "$key: $displayValue",
+                      "${capitalizeEachWord(key)}: $displayValue",
                       style: const TextStyle(
                         fontSize: AppFontSizes.small,
                         color: ColorRes.primary,

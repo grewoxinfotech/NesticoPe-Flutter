@@ -5,6 +5,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
 import '../controller/hire_contractor_controller.dart';
+import '../controller/hire_contractor_filter_controller.dart';
 import '../controller/hire_contractor_list_of_profile_controller.dart';
 
 class HireContractorScreen extends StatelessWidget {
@@ -14,6 +15,7 @@ class HireContractorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(HireContractorController());
     final controllerProfileData = Get.put(HireContractorListOfProfileController());
+    final controllerFilterData = Get.put(HireContractorFilterProfileController());
 
     return Scaffold(
       backgroundColor: ColorRes.background,
@@ -77,8 +79,9 @@ class HireContractorScreen extends StatelessWidget {
                 return GestureDetector(
                   onTap: () {
                     // _showCategoryDialog(context, category);
+                    controllerFilterData.fetchHireContractorByCategoryID(category.id, category.name);
                     Get.to(()=>HireContractorProfileList());
-                    controllerProfileData.fetchHireContractorByCategoryID(category.id, category.name);
+
                   },
                   child: _buildCategoryCard(category),
                 );

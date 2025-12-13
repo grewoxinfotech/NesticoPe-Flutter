@@ -7,6 +7,7 @@ import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../controller/hire_contractor_controller.dart';
+import '../../controller/hire_contractor_filter_controller.dart';
 import '../../controller/hire_contractor_list_of_profile_controller.dart';
 
 
@@ -23,22 +24,36 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
 
   final HireContractorController controller =
   Get.find<HireContractorController>();
-  final controllerProfileData = Get.find<HireContractorListOfProfileController>();
+  final controllerProfileData = Get.find<HireContractorFilterProfileController>();
 
   final _formKey = GlobalKey<FormState>();
   DateTime? startDate;
   DateTime? endDate;
 
   Map<String, String> _buildFilterResult() {
-    return {
-      // if (controller.leadStatus.value.isNotEmpty)
-      //   'status': controller.leadStatus.value.toLowerCase().replaceAll(" ", "_"),
-      // if (controller.leadStage.value.isNotEmpty)
-      //   'stage': controller.leadStage.value.toLowerCase().replaceAll(" ", "_"),
-      // if (controller.leadSource.value.isNotEmpty)
-      //   'source': controller.leadSource.value.toLowerCase().replaceAll(" ", "_"),
-    };
+    Map<String, String> filters = {};
+
+    // ✅ Add category filter if selected
+
+      filters['isActive'] = true.toString();
+      filters['category_ui'] = controllerProfileData.selectedCategoryName.value;
+
+
+    // ✅ Add contractor rating filter if > 0
+    if (controllerProfileData.selectedContractorRating.value > 0) {
+      filters['contractorMinRating'] = controllerProfileData.selectedContractorRating.value.toInt().toString();
+    }
+
+    // ✅ Add service rating filter if > 0
+    if (controllerProfileData.selectedServiceRating.value > 0) {
+      filters['serviceMinRating'] = controllerProfileData.selectedServiceRating.value.toInt().toString();
+    }
+
+
+
+    return filters;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,40 +121,62 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                         buildSectionTitle('Service Category'),
                         const SizedBox(height: 8),
                         NesticoPeDropdownField<String>(
-                          value: controllerProfileData.selectedCategoryId.value.isEmpty
-                              ? null
-                              : controllerProfileData.selectedCategoryId.value,
+                          value: controllerProfileData.selectedCategoryId.value,
                           hintText: "Select category",
                           prefixIcon: Icons.category,
-                          items: controller.categories
+                          items: controller.items
                               .map((e) => DropdownMenuItem(
-                              value: e.id,
-                              child: Text(e.name ?? 'Unknown Category')))
+                            value: e.id,
+                            child: Text(e.name ?? 'Unknown Category'),
+                          ))
                               .toList(),
                           onChanged: (val) {
                             controllerProfileData.setValue(controllerProfileData.selectedCategoryId, val ?? '');
-                            controllerProfileData.setValue(
-                                controllerProfileData.selectedCategoryName,
-                                controller.categories
-                                    .firstWhereOrNull((c) => c.id == val)
-                                    ?.name ??
-                                    '');
+
+                            // Assign name where id matches
+                            final selectedItem = controller.items.firstWhereOrNull((e) => e.id == val);
+                            if (selectedItem != null) {
+                              controllerProfileData.selectedCategoryName.value = selectedItem.name ?? '';
+                            }
                           },
                           darkText: true,
                         ),
 
                         const SizedBox(height: 20),
-                        buildSectionTitle('Minimum Rating'),
+                        buildSectionTitle('Contractor Rating'),
                         const SizedBox(height: 8),
                         Slider(
                           min: 0,
                           max: 5,
                           divisions: 5,
-                          value: controllerProfileData.selectedMinRating.value,
-                          label: controllerProfileData.selectedMinRating.value.toStringAsFixed(1),
+                          value: controllerProfileData.selectedContractorRating.value,
+                          label: controllerProfileData.selectedContractorRating.value.toStringAsFixed(1),
                           activeColor: ColorRes.primary,
                           onChanged: (val) {
-                            controllerProfileData.setValue(controllerProfileData.selectedMinRating, val);
+                            controllerProfileData.setValue(controllerProfileData.selectedContractorRating, val);
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            Text('0.0'),
+                            Text('5.0'),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+                        buildSectionTitle('Service Rating'),
+                        const SizedBox(height: 8),
+                        Slider(
+                          min: 0,
+                          max: 5,
+                          divisions: 5,
+                          value: controllerProfileData.selectedServiceRating.value,
+                          label: controllerProfileData.selectedServiceRating.value.toStringAsFixed(1),
+                          activeColor: ColorRes.primary,
+                          onChanged: (val) {
+                            controllerProfileData.setValue(controllerProfileData.selectedServiceRating, val);
+
                           },
                         ),
                         Row(
@@ -175,7 +212,7 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                       child: OutlinedButton(
                         onPressed: () {
 
-                          Get.back(result: {});
+                          Get.back();
                           controllerProfileData.resetFilters();
 
                         },
@@ -200,12 +237,20 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                     Expanded(
                       flex: 2,
                       child: ElevatedButton(
+                        // In the Apply Filters button onPressed
                         onPressed: () {
                           final filters = _buildFilterResult();
 
+                          // Call the method and wait for it
+                          controllerProfileData.fetchHireContractorByCategoryID(
+                            controllerProfileData.selectedCategoryId.value,
+                            controllerProfileData.selectedCategoryName.value,
+                          );
+
                           log("Applied Filters: $filters");
                           Get.back(result: filters);
-                          controllerProfileData.resetFilters();
+                          // DON'T reset filters here - remove this line:
+                          // controllerProfileData.resetFilters();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,

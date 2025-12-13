@@ -10,9 +10,9 @@ import '../../../data/network/contractor/model/contractot_service_model/contract
 import '../controllers/contractor_profile_service_controller/contractor_profile_service_controller.dart';
 import 'contractor_add_inuiry_screen.dart';
 
-class ContractorProfileScreen extends StatelessWidget {
+class ContractorProfileDetailsScreen extends StatelessWidget {
   final Contractor contractor;
-  ContractorProfileScreen({super.key, required this.contractor});
+  ContractorProfileDetailsScreen({super.key, required this.contractor});
 
   // Make this an instance variable accessible to the controller
   final RxBool isListSelectable = false.obs;
@@ -28,7 +28,6 @@ class ContractorProfileScreen extends StatelessWidget {
         contractor: contractor,
       ),
     );
-
     // After navigation reset back
     isListSelectable.value = false;
     if (result) {

@@ -63,30 +63,29 @@ class TopContractorsService {
     }
   }
 
+
   ///==================== Fetch Single Contractor (If Required) ====================
-  // Future<Contractor?> fetchContractorById(String contractorId) async {
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse("$baseUrl/$contractorId"),
-  //       headers: await headers(),
-  //     );
-  //
-  //     debugPrint("Get Contractor by ID Response: ${response.body}");
-  //
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //
-  //       final parsed = TopContractorsResponse.fromJson(data);
-  //
-  //       if (parsed.data.contractors.isNotEmpty) {
-  //         return parsed.data.contractors.first;
-  //       }
-  //     } else {
-  //       debugPrint("Failed to get contractor: ${response.statusCode}");
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Exception in fetchContractorById: $e");
-  //   }
-  //   return null;
-  // }
+  Future<Contractor?> fetchContractorById(String contractorId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("${ApiConstants.getUserProfile}/$contractorId"),
+        headers: await headers(),
+      );
+
+      debugPrint("Get Contractor by ID Response: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode ==201) {
+        final data = jsonDecode(response.body);
+
+        final parsed = data['data'];
+
+       return Contractor.fromJson(parsed);
+      } else {
+        debugPrint("Failed to get contractor: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Exception in fetchContractorById: $e");
+    }
+    return null;
+  }
 }

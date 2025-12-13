@@ -28,7 +28,9 @@ class HireContractorController extends PaginatedController<ContractorServiceCate
   }
 
   Future<void> applyFilters(Map<String, String> filter) async {
+
     filters.assignAll(filter);
+
     log("Apply Filter in Inquiry Contractor Section ${filters} ");
     // await loadInitial();
     refreshList();

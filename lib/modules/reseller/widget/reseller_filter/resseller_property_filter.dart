@@ -601,9 +601,11 @@ class ResellerPropertyFilter extends StatefulWidget {
 }
 
 class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
+
   final DashboardController controller = Get.put(DashboardController());
   final PropertyController propertyController = Get.find();
-  final controllerProject = Get.find<ProjectWizardController>(tag: "builder");
+  late final  controllerProject;
+
   double tempMinPrice = 0.0;
   double tempMaxPrice = 0.0;
 
@@ -621,7 +623,8 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
   @override
   void initState() {
     super.initState();
-
+    Get.lazyPut(() => ProjectWizardController(isBuilderView: true), tag: "builder");
+    controllerProject = Get.find<ProjectWizardController>(tag: "builder");
     if (tempMinPrice < controller.resellerMinPrice.value ||
         tempMaxPrice > controller.resellerMaxPrice.value ||
         tempMinPrice > tempMaxPrice) {

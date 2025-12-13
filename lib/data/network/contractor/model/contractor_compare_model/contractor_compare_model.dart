@@ -29,7 +29,7 @@ class ContractorDataResponse {
 
 // Contractor Data Model
 class ContractorData {
-  final Contractor contractor;
+  final ContractorItem contractor;
   final Profile profile;
   final List<ServiceCategory> servicesByCategory;
   final int totalCategories;
@@ -47,7 +47,7 @@ class ContractorData {
 
   factory ContractorData.fromJson(Map<String, dynamic> json) {
     return ContractorData(
-      contractor: Contractor.fromJson(json['contractor'] ?? {}),
+      contractor: ContractorItem.fromJson(json['contractor'] ?? {}),
       profile: Profile.fromJson(json['profile'] ?? {}),
       servicesByCategory: (json['servicesByCategory'] as List<dynamic>?)
           ?.map((e) => ServiceCategory.fromJson(e))
@@ -72,7 +72,7 @@ class ContractorData {
 }
 
 // Contractor Model
-class Contractor {
+class ContractorItem {
   final String id;
   final String username;
   final String email;
@@ -82,7 +82,7 @@ class Contractor {
   final String userType;
   final DateTime memberSince;
 
-  Contractor({
+  ContractorItem({
     required this.id,
     required this.username,
     required this.email,
@@ -93,8 +93,8 @@ class Contractor {
     required this.memberSince,
   });
 
-  factory Contractor.fromJson(Map<String, dynamic> json) {
-    return Contractor(
+  factory ContractorItem.fromJson(Map<String, dynamic> json) {
+    return ContractorItem(
       id: json['id'] ?? '',
       username: json['username'] ?? '',
       email: json['email'] ?? '',
