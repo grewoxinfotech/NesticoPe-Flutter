@@ -11,7 +11,7 @@ import '../../modules/search_property/controller/search_controller.dart';
 
 class NearbyLocationMapSection extends StatefulWidget {
   final String address;
-  final GoogleMapController mapController;
+  final GoogleMapSearchController mapController;
 
   const NearbyLocationMapSection({
     super.key,

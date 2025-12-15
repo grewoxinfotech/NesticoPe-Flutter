@@ -7,7 +7,7 @@ import 'package:housing_flutter_app/modules/search_property/model/search_model.d
 
 import '../../../data/network/builder/service/builder_service.dart';
 
-class GoogleMapController extends GetxController {
+class GoogleMapSearchController extends GetxController {
   /// Reactive variables
   var isLoading = false.obs;
   var predictions = <Prediction>[].obs;

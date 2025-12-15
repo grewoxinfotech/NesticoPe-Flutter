@@ -70,7 +70,7 @@ class PropertyDetailScreen extends StatefulWidget {
 class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   late final PropertyController controller;
   late final PropertyFavoriteController favoriteController;
-  late final GoogleMapController mapController;
+  late final GoogleMapSearchController mapController;
   late final OverallRatingController _overallRatingController;
   late final ReviewController reviewController;
   final RxBool canAddReview = true.obs;
@@ -88,7 +88,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
     // Initialize controllers
     controller = Get.put(PropertyController(), tag: 'property_$propertyId');
-    mapController = Get.put(GoogleMapController(), tag: 'map_$propertyId');
+    mapController = Get.put(GoogleMapSearchController(), tag: 'map_$propertyId');
     _overallRatingController = Get.put(
       OverallRatingController(),
       tag: 'rating_$propertyId',
@@ -114,7 +114,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
     // Clean up controllers
     Get.delete<PropertyController>(tag: 'property_$propertyId');
-    Get.delete<GoogleMapController>(tag: 'map_$propertyId');
+    Get.delete<GoogleMapSearchController>(tag: 'map_$propertyId');
     Get.delete<OverallRatingController>(tag: 'rating_$propertyId');
     Get.delete<ReviewController>(tag: 'review_$propertyId');
 
@@ -191,6 +191,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    log("InvestmentInsight Data ${property!.investmentInsight?.toJson()}");
     final priceManager = PropertyPriceManager(
       financialInfo:
           property?.propertyDetails?.financialInfo ?? FinancialInfo(),

@@ -392,9 +392,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         backgroundColor: ColorRes.surface,
-        leading: IconButton(onPressed:  () {
-          Get.back();
-        }, icon:Icon(Icons.arrow_back)),
+       automaticallyImplyLeading: false,
         elevation: 0,
         title: const Text(
           'Contractor Inquiries',
@@ -738,9 +736,17 @@ class InquiryCard extends StatelessWidget {
                         fontWeight: AppFontWeights.semiBold,
                       ),
                     ),
+
                   ),
                   SizedBox(width: 10,),
                   _buildStatusBadge(inquiry.status),
+                  const SizedBox(width: 12),
+                  Icon(
+                    isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: ColorRes.textSecondary,
+                  ),
                 ],
               ),
               const SizedBox(height: 12),

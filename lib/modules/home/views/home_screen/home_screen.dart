@@ -260,8 +260,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final NewsController newsController = Get.put(NewsController());
   final trendingCityController = Get.put(TrendingCityController());
   final MicController micController = Get.put(MicController());
-  final GoogleMapController googleMapController = Get.put(
-    GoogleMapController(),
+  final GoogleMapSearchController googleMapController = Get.put(
+    GoogleMapSearchController(),
   );
   final profileController = Get.put(BuyerProfileDataController());
   final SharePropertyController propertyShareController = Get.put(
@@ -1578,7 +1578,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 Future<void> showFindPropertyDialog(
   PropertyController controller,
-  GoogleMapController googleMapController,
+    GoogleMapSearchController googleMapController,
   BuildContext context,
 ) async {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -5655,7 +5655,7 @@ class StateSelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final googleMapController = Get.find<GoogleMapController>();
+    final googleMapController = Get.find<GoogleMapSearchController>();
     return Column(
       children: [
         // 🔹 Custom TextField

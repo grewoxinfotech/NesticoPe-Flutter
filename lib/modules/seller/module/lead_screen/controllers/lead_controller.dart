@@ -342,6 +342,8 @@ class LeadController extends PaginatedController<LeadItem> {
     tag: "reseller",
   );
 
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
   // --- Form Controllers ---
   final formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
@@ -349,6 +351,8 @@ class LeadController extends PaginatedController<LeadItem> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
+  final TextEditingController txtStartDate = TextEditingController();
+  final TextEditingController txtEndDate = TextEditingController();
 
   RxString selectedSource = ''.obs;
   RxString selectedStatus = 'New Lead'.obs;

@@ -445,6 +445,15 @@ class CreatePropertyController extends GetxController {
   final selectedPossessionStatus = false.obs;
   final selectedConstructionStatusRent_Commercial = false.obs;
 
+
+
+
+
+  ////////////=============New Varibale -===================================
+
+  var platformFees=TextEditingController();
+  var brokerRageCommission=TextEditingController();
+
   @override
   void onInit() {
     checkSellerAuthentication();

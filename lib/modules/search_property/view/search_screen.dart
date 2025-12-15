@@ -518,7 +518,7 @@ class CommonSearchField extends StatefulWidget {
 
 class _CommonSearchFieldState extends State<CommonSearchField> {
   final MicController micController = Get.find<MicController>();
-  final GoogleMapController controller = Get.find<GoogleMapController>();
+  final GoogleMapSearchController controller = Get.find<GoogleMapSearchController>();
 
   //final trendingArea=Get.put(HomeFeedController());
 
@@ -539,6 +539,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
       } else {
         if(!widget.onlySearchCity)
           {
+            print("jkfhweudfhuiefhwefhuif");
             controller.fetchPredictionsCity(widget.initialSearchText!);
           }
         else{

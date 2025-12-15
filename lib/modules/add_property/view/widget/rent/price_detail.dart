@@ -37,18 +37,54 @@ class RentPriceDetail extends StatelessWidget {
                     return 'Please enter monthly rent';
                   }
 
-                  final rent = int.tryParse(value); // parse once
+
+                  final rent = int.tryParse(value)??0;
+
+                  if (rent > 0) {
+                    // Calculate 5% of rent as Platform Fees
+                    final platformFee = rent * 0.05;
+                    controller.platformFees.text = platformFee.toStringAsFixed(1);
+
+                    // Calculate 2% of platform fees as Broker Commission
+                    final brokerCommission = platformFee * 0.02;
+                    controller.brokerRageCommission.text = brokerCommission.toStringAsFixed(1);
+                  }else {
+
+                    controller.platformFees.text = "0";
+                    controller.brokerRageCommission.text = "0";
+                  }
                   if (rent == null) {
                     return 'Please enter a valid amount';
                   }
 
-                  if (rent > 1500000 || rent < 20000) {
-                    return 'Please enter rent between  20000 to 1500000';
-                  }
+
 
                   return null;
                 },
               ),
+
+              SizedBox(height: 16),
+              Text("Platform Fees (5%)"),
+              SizedBox(height: 8),
+              buildTextField(
+                "Platform Fees",
+                Icons.currency_rupee_outlined,
+                controller.platformFees,
+                isPhoneKey: true,
+                isEnable: false,
+              ),
+
+              SizedBox(height: 16),
+              Text("Broker Commission (2%) of Platform Fees"),
+              SizedBox(height: 8),
+              buildTextField(
+                "Broker Commission",
+                Icons.currency_rupee_outlined,
+                controller.brokerRageCommission,
+                isPhoneKey: true,
+                isEnable: false,
+              ),
+
               SizedBox(height: 16),
               buildSectionTitle('Rent Negotiable'),
               SizedBox(height: 8),

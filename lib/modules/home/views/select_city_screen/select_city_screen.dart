@@ -11,7 +11,7 @@ import '../../../search_property/controller/search_controller.dart';
 class SelectCityScreen extends StatelessWidget {
   SelectCityScreen({super.key});
 
-  final GoogleMapController controller = Get.put(GoogleMapController());
+  final GoogleMapSearchController controller = Get.put(GoogleMapSearchController());
   final TextEditingController searchController = TextEditingController();
 
   @override

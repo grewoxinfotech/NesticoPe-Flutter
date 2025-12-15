@@ -27,7 +27,7 @@ class CitySelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final googleMapController = Get.put(GoogleMapController(), tag: "city");
+    final googleMapController = Get.put(GoogleMapSearchController(), tag: "city");
 
     return Column(
       children: [
@@ -265,7 +265,7 @@ class LocationSelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final googleMapController = Get.put(GoogleMapController(), tag: "location");
+    final googleMapController = Get.put(GoogleMapSearchController(), tag: "location");
 
     return Column(
       children: [

@@ -100,6 +100,11 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
               ? controller.imagePath.value!.path
               : null,
     ); // you can implement API call in controller
+    if(success)
+      {
+
+          await dashboardController.fetchResellerDashboardDataFromApi();
+      }
     if (!success) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",

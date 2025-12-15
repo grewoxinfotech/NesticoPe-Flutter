@@ -72,7 +72,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   late final OverallRatingController _overallRatingController;
   late final ReviewController reviewController;
   final RxBool canAddReview = true.obs;
-  late final GoogleMapController mapController;
+  late final GoogleMapSearchController mapController;
 
   @override
   void initState() {
@@ -86,7 +86,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ProjectWizardController(isBuilderView: false),
       tag: 'project_detail_$projectId',
     );
-    mapController = Get.put(GoogleMapController(), tag: 'map_$projectId');
+    mapController = Get.put(GoogleMapSearchController(), tag: 'map_$projectId');
     _overallRatingController = Get.put(
       OverallRatingController(),
       tag: 'rating_$projectId',
@@ -1572,44 +1572,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     }
   }
 
-  Widget buildVideoThumbnail(String videoUrl, {double? width, double? height}) {
-    return FutureBuilder<Uint8List?>(
-      future: VideoThumbnail.thumbnailData(
-        video: videoUrl,
-        imageFormat: ImageFormat.JPEG,
-        maxWidth: 400, // resize for performance
-        quality: 75,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            width: width,
-            height: height,
-            color: Colors.black12,
-            child: const Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-          );
-        }
 
-        if (snapshot.hasError || snapshot.data == null) {
-          return Container(
-            width: width,
-            height: height,
-            color: Colors.black54,
-            child: const Icon(Icons.videocam, color: Colors.white, size: 36),
-          );
-        }
-
-        return Image.memory(
-          snapshot.data!,
-          width: width,
-          height: height,
-          fit: BoxFit.cover,
-        );
-      },
-    );
-  }
 
   Container _buildMapSection(
     ProjectController controller,
@@ -1703,4 +1666,42 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ),
     );
   }
+}
+Widget buildVideoThumbnail(String videoUrl, {double? width, double? height}) {
+  return FutureBuilder<Uint8List?>(
+    future: VideoThumbnail.thumbnailData(
+      video: videoUrl,
+      imageFormat: ImageFormat.JPEG,
+      maxWidth: 400, // resize for performance
+      quality: 75,
+    ),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Container(
+          width: width,
+          height: height,
+          color: Colors.black12,
+          child: const Center(
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        );
+      }
+
+      if (snapshot.hasError || snapshot.data == null) {
+        return Container(
+          width: width,
+          height: height,
+          color: Colors.black54,
+          child: const Icon(Icons.videocam, color: Colors.white, size: 36),
+        );
+      }
+
+      return Image.memory(
+        snapshot.data!,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+      );
+    },
+  );
 }

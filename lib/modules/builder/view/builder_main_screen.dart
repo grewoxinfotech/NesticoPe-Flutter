@@ -186,7 +186,7 @@ class BuilderMainScreen extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.inventory, size: 22),
                 ),
-                label: 'Property',
+                label: 'Projects',
               ),
               BottomNavigationBarItem(
                 icon: Padding(

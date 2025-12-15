@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
+import '../../modules/add_property/view/create_property.dart';
 import '../../modules/seller/module/lead_screen/controllers/lead_controller.dart';
 
 void showFilterBottomSheet(
@@ -13,6 +14,8 @@ void showFilterBottomSheet(
   // Temporary copy of current filters
   final RxMap<String, String> tempFilters =
       Map<String, String>.from(controller.filters).obs;
+  DateTime? startDate;
+  DateTime? endDate;
 
   showModalBottomSheet(
     context: context,
@@ -29,6 +32,7 @@ void showFilterBottomSheet(
               ),
               child: Column(
                 children: [
+
                   // Handle bar
                   Container(
                     width: 40,
@@ -83,6 +87,44 @@ void showFilterBottomSheet(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            spacing: 12,
+                            children: [
+                              buildFilterSection(
+                                context: context,
+                                title: 'Start Date',
+                                icon: Icons.calendar_month_outlined,
+                                filterType: 'start_date',
+                                type: 'date',
+                                tempFilters: tempFilters,
+                                setState: setState,
+                                startDate: startDate,
+                                endDate: endDate,
+                                onDatePicked: (picked) {
+                                  startDate = picked;
+                                  controller.startDate = picked;
+                                },
+                              ),
+                              const SizedBox(height: 12),
+                              buildFilterSection(
+                                context: context,
+                                title: 'End Date',
+                                icon: Icons.calendar_month_outlined,
+                                filterType: '',
+                                type: 'date',
+                                tempFilters: tempFilters,
+                                setState: setState,
+                                startDate: startDate,
+                                endDate: endDate,
+                                onDatePicked: (picked) {
+                                  endDate = picked;
+                                  controller.endDate = picked;
+                                },
+                              ),
+
+                            ],
+                          ),
+                          SizedBox(height: 10,),
                           // Stage Section
                           buildFilterSection(
                             context: context,
@@ -183,10 +225,16 @@ Widget buildFilterSection({
   required String title,
   required IconData icon,
   required String filterType,
-  required List<String> options,
+  String? type, // 'select' or 'date'
+  List<String>? options,
   required RxMap<String, String> tempFilters,
   required void Function(void Function()) setState,
+  DateTime? startDate,
+  DateTime? endDate,
+  Function(DateTime picked)? onDatePicked,
 }) {
+  final isDateType = type == 'date';
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -205,61 +253,115 @@ Widget buildFilterSection({
         ],
       ),
       const SizedBox(height: 8),
-      Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children:
-            options.map((option) {
-              final isSelected =
-                  tempFilters[filterType] ==
-                  option.toLowerCase().replaceAll(" ", "_");
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      tempFilters.remove(filterType);
-                    } else {
-                      tempFilters[filterType] = option.toLowerCase().replaceAll(
-                        " ",
-                        "_",
-                      );
-                    }
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color:
-                        isSelected
-                            ? ColorRes.primary.withOpacity(0.1)
-                            : ColorRes.white,
-                    border: Border.all(
-                      color:
-                          isSelected
-                              ? ColorRes.primary
-                              : ColorRes.leadGreyColor[300]!,
-                      width: 1,
+
+      if (isDateType) // 👇 Date picker style
+        GestureDetector(
+          onTap: () async {
+            FocusScope.of(context).unfocus();
+            DateTime initialDate = DateTime.now();
+
+            if (filterType == 'start_date' && startDate != null) {
+              initialDate = startDate;
+            } else if (filterType == 'end_date' && endDate != null) {
+              initialDate = endDate;
+            }
+
+            DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: initialDate,
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+              builder: (context, child) {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: ColorScheme.light(
+                      primary: ColorRes.primary,
+                      onPrimary: ColorRes.white,
+                      onSurface: ColorRes.black,
                     ),
-                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
-                    option,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      color:
-                          isSelected
-                              ? ColorRes.primary
-                              : ColorRes.leadGreyColor[700],
-                      fontWeight: AppFontWeights.medium,
-                    ),
+                  child: child!,
+                );
+              },
+            );
+
+            if (picked != null) {
+              setState(() {
+                tempFilters[filterType] =
+                "${picked.year}-${picked.month}-${picked.day}";
+              });
+              if (onDatePicked != null) onDatePicked(picked);
+            }
+          },
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            decoration: BoxDecoration(
+              border: Border.all(color: ColorRes.leadGreyColor[300]!),
+              borderRadius: BorderRadius.circular(8),
+              color: ColorRes.white,
+            ),
+            child: Text(
+              tempFilters[filterType] ?? 'Select $title',
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                color: tempFilters[filterType] != null
+                    ? ColorRes.black
+                    : ColorRes.leadGreyColor[600],
+              ),
+            ),
+          ),
+        )
+      else
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: options!
+              .map((option) {
+            final isSelected =
+                tempFilters[filterType] ==
+                    option.toLowerCase().replaceAll(" ", "_");
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    tempFilters.remove(filterType);
+                  } else {
+                    tempFilters[filterType] =
+                        option.toLowerCase().replaceAll(" ", "_");
+                  }
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? ColorRes.primary.withOpacity(0.1)
+                      : ColorRes.white,
+                  border: Border.all(
+                    color: isSelected
+                        ? ColorRes.primary
+                        : ColorRes.leadGreyColor[300]!,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  option,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.small,
+                    color: isSelected
+                        ? ColorRes.primary
+                        : ColorRes.leadGreyColor[700],
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
-              );
-            }).toList(),
-      ),
+              ),
+            );
+          })
+              .toList(),
+        ),
     ],
   );
 }
+

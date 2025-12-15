@@ -164,9 +164,14 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                       padding: const EdgeInsets.all(12),
                       child: GestureDetector(
                         onTap:
-                            () => Get.to(
+                            () {
+                          log("Project Item Tapped: ${data.toJson()}");
+
+                          Get.to(
                               () => ProjectDetailsScreen(projectItem: data),
-                            ),
+                            );
+
+                            },
                         child: BuilderProjectCard(
                           project: data,
                           developersName:

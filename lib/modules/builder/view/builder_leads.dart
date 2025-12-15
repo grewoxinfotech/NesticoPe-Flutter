@@ -248,10 +248,13 @@
 //   }
 // }
 
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
+import 'package:housing_flutter_app/modules/builder/view/widget/builder_lead_over_view.dart';
 import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
 import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
 
@@ -260,6 +263,7 @@ import '../../../widgets/bottom_sheet/lead_filter_bottomsheet.dart';
 import '../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
 import '../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../seller/module/lead_screen/model/lead_model.dart';
+import '../controller/builder_form_controller.dart';
 
 class BuilderLeads extends StatefulWidget {
   final bool isViewAll;
@@ -277,6 +281,7 @@ class _BuilderLeadsState extends State<BuilderLeads> {
   RxBool isLoadingLead = false.obs;
   String searchQuery = '';
   final RxList<String> selectedFilters = <String>[].obs;
+  final controller = Get.find<ProjectWizardController>(tag: "builder");
   bool isLoading = false;
 
   // Determine if we're showing property-specific leads
@@ -469,6 +474,18 @@ class _BuilderLeadsState extends State<BuilderLeads> {
                             final lead = currentLeads[index];
                             return LeadCardWidget(
                               lead: lead,
+                              onTap: () {
+                                log("String builderLead Data ${lead.toJson()}");
+                                final project = controller.items
+                                    .firstWhere(
+                                      (prop) => prop.id == lead.propertyId,
+
+                                    );
+                                Get.to(()=>BuilderLeadOverView(
+                                  lead: lead,
+                                  project: project,
+                                ));
+                              },
                               isCompact:
                                   MediaQuery.of(context).size.width < 600,
                               showDataMasking: false,

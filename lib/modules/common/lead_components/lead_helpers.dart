@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:intl/intl.dart';
 
 import '../../reseller/model/dashboard/dashboard_model.dart';
 
@@ -22,6 +23,17 @@ Color getStatusColor(LeadStatus status) {
     case LeadStatus.all:
     default:
       return ColorRes.leadGreyColor;
+  }
+}
+
+
+String formatDateForGlobal(String dateString) {
+  try {
+    final dateTime = DateTime.parse(dateString).toLocal(); // Convert to local time
+    final formattedDate = DateFormat('MMM dd yyyy').format(dateTime);
+    return formattedDate;
+  } catch (e) {
+    return ''; // return empty if parsing fails
   }
 }
 

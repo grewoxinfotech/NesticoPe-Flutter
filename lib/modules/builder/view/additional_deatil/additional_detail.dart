@@ -755,19 +755,19 @@ class StepAdditional extends GetView<ProjectWizardController> {
               buildBuilderDefaultHeaderText('Additional Details'),
               const SizedBox(height: 20),
 
-              // Property Type & Status Card
-              _buildCard(
-                theme: theme,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildBuilderDefaultText('Property Type'),
-                    const SizedBox(height: 16),
-                    builderPropertyType(controller),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
+              // // Property Type & Status Card
+              // _buildCard(
+              //   theme: theme,
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       buildBuilderDefaultText('Property Type'),
+              //       const SizedBox(height: 16),
+              //       builderPropertyType(controller),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
 
               // Amenities Card
               _buildCard(
