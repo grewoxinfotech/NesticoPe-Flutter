@@ -42,12 +42,15 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
             onPressed: () {
               Get.offAll(() => DashboardScreen());
             },
-            child: Text('Back'),
+            child: Text('Switch To Buyer'),
           ),
         ],
       ),
       body: FutureBuilder(
-        future: contractorDashboardController.getContractorDashboard(inquiriesYear: contractorDashboardController.selectedGraphYear.value,leadsYear:  contractorDashboardController.selectedGraphYear.value),
+        future: contractorDashboardController.getContractorDashboard(
+          inquiriesYear: contractorDashboardController.selectedGraphYear.value,
+          leadsYear: contractorDashboardController.selectedGraphYear.value,
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -63,7 +66,8 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
             contractorDashboardController.contractorInsights = snapshot.data!;
 
             // Check if data exists before building
-            if (contractorDashboardController.contractorInsights.value == null) {
+            if (contractorDashboardController.contractorInsights.value ==
+                null) {
               return const Center(child: CircularProgressIndicator());
             }
 
@@ -76,63 +80,123 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                   vertical: 12,
                 ),
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                       buildOverviewCards(contractorDashboardController),
-                      const SizedBox(height: 20),
-                      Obx(() =>  buildContractorLeadGraph(contractorDashboardController)),
-                      const SizedBox(height: 20),
-                      Obx(() =>  buildContractorInquiryGraph(contractorDashboardController)),
-                      const SizedBox(height: 12),
-                      Obx(
-                        () =>  buildRatingsDistribution(
-                          averageRating: contractorDashboardController.contractorInsights.value?.data?.reviews.averageRating??0.0,
-                          totalRatings: contractorDashboardController.contractorInsights.value?.data?.reviews.totalReviews??0,
-                          ratingCounts: contractorDashboardController.contractorInsights.value?.data?.services.ratingsDistribution??{},
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildOverviewCards(contractorDashboardController),
+                    const SizedBox(height: 20),
+                    Obx(
+                      () => buildContractorLeadGraph(
+                        contractorDashboardController,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Obx(
+                      () => buildContractorInquiryGraph(
+                        contractorDashboardController,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Obx(
+                      () => buildRatingsDistribution(
+                        averageRating:
+                            contractorDashboardController
+                                .contractorInsights
+                                .value
+                                ?.data
+                                ?.reviews
+                                .averageRating ??
+                            0.0,
+                        totalRatings:
+                            contractorDashboardController
+                                .contractorInsights
+                                .value
+                                ?.data
+                                ?.reviews
+                                .totalReviews ??
+                            0,
+                        ratingCounts:
+                            contractorDashboardController
+                                .contractorInsights
+                                .value
+                                ?.data
+                                ?.services
+                                .ratingsDistribution ??
+                            {},
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Fixed horizontal scrolling section
+                    Obx(
+                      () => SizedBox(
+                        height: 170,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount:
+                              contractorDashboardController
+                                  .contractorInsights
+                                  .value
+                                  ?.data
+                                  ?.services
+                                  .topRatedServices
+                                  .length ??
+                              0,
+                          itemBuilder: (context, index) {
+                            final data =
+                                contractorDashboardController
+                                    .contractorInsights
+                                    .value
+                                    ?.data
+                                    ?.services
+                                    .topRatedServices[index];
+                            return buildTopRatedService(
+                              title: data?.serviceName ?? '',
+                              context: context,
+                              totalReview: data?.totalReviews ?? 0,
+                              description: data?.description ?? '',
+                              rating: data?.averageRating ?? 0,
+                              status:
+                                  data?.isActive ?? false
+                                      ? "Active"
+                                      : "Not Active",
+                            );
+                          },
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      // Fixed horizontal scrolling section
-                      Obx(
-                        () =>  SizedBox(
-                          height: 170,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: contractorDashboardController.contractorInsights.value?.data?.services.topRatedServices.length??0,
-                            itemBuilder: (context, index) {
-                              final data = contractorDashboardController.contractorInsights.value?.data?.services.topRatedServices[index];
-                              return buildTopRatedService(
-                                title: data?.serviceName??'',
-                                context: context,
-totalReview: data?.totalReviews??0,
-                                description: data?.description??'',
-                                rating: data?.averageRating??0,
-                                status: data?.isActive??false ? "Active" : "Not Active",
-                              );
-                            },
-                          ),
+                    ),
+                    const SizedBox(height: 12),
+                    Obx(
+                      () => SizedBox(
+                        height: 150,
+                        child: ListView.builder(
+                          itemCount:
+                              contractorDashboardController
+                                  .contractorInsights
+                                  .value
+                                  ?.data
+                                  ?.reviews
+                                  .recentReviews
+                                  .length ??
+                              0,
+                          itemBuilder: (context, index) {
+                            final data =
+                                contractorDashboardController
+                                    .contractorInsights
+                                    .value
+                                    ?.data
+                                    ?.reviews
+                                    .recentReviews[index];
+                            return buildRecentReview(
+                              userName: data?.reviewerName ?? '',
+                              timeAgo: getTimeAgo(data?.createdAt ?? ''),
+                              rating: data?.rating ?? 0.0,
+                              review: data?.content ?? '',
+                            );
+                          },
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      Obx(
-                        () =>  SizedBox(
-                          height: 150,
-                          child: ListView.builder(
-                            itemCount: contractorDashboardController.contractorInsights.value?.data?.reviews.recentReviews.length??0,
-                            itemBuilder: (context, index) {
-                              final data = contractorDashboardController.contractorInsights.value?.data?.reviews.recentReviews[index];
-                              return buildRecentReview(
-                                userName: data?.reviewerName??'',
-                                timeAgo: getTimeAgo(data?.createdAt ?? ''),
-                                rating: data?.rating??0.0,
-                                review: data?.content??'',
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-
-                    ]),
+                    ),
+                  ],
+                ),
               ),
             );
           });
@@ -147,17 +211,17 @@ Widget buildContractorLeadGraph(ContractorDashboardController controller) {
       controller.contractorInsights.value?.data?.leadsTrend
           ?.map<Map<String, dynamic>>(
             (e) => {"name": e.month ?? '', "leads": e.leads ?? 0},
-      )
+          )
           .toList() ??
-          [];
+      [];
 
   final Set<String> yearsInData =
-  leadsTrend.map((e) => e['name'].toString().split('-').first).toSet();
+      leadsTrend.map((e) => e['name'].toString().split('-').first).toSet();
 
   final String displayYear =
-  yearsInData.isNotEmpty
-      ? (yearsInData.toList()..sort()).last
-      : DateTime.now().year.toString();
+      yearsInData.isNotEmpty
+          ? (yearsInData.toList()..sort()).last
+          : DateTime.now().year.toString();
 
   final Map<String, double> monthDataForYear = {};
   for (var e in leadsTrend) {
@@ -176,10 +240,10 @@ Widget buildContractorLeadGraph(ContractorDashboardController controller) {
   });
 
   final List<String> months =
-  mergedData.map((e) => e['name'] as String).toList();
+      mergedData.map((e) => e['name'] as String).toList();
 
   final List<double> monthlyData =
-  mergedData.map((e) => (e['leads'] as num).toDouble()).toList();
+      mergedData.map((e) => (e['leads'] as num).toDouble()).toList();
 
   return Container(
     padding: const EdgeInsets.all(16),
@@ -233,7 +297,12 @@ Widget buildContractorLeadGraph(ContractorDashboardController controller) {
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyBarChart(monthlyData: monthlyData, months: months,color: ColorRes.green,isAmount: false,),
+          child: MonthlyBarChart(
+            monthlyData: monthlyData,
+            months: months,
+            color: ColorRes.green,
+            isAmount: false,
+          ),
         ),
       ],
     ),
@@ -245,17 +314,17 @@ Widget buildContractorInquiryGraph(ContractorDashboardController controller) {
       controller.contractorInsights.value?.data?.inquiriesTrend
           ?.map<Map<String, dynamic>>(
             (e) => {"name": e.month ?? '', "commission": e.inquiries ?? 0},
-      )
+          )
           .toList() ??
-          [];
+      [];
 
   final Set<String> yearsInData =
-  leadsTrend.map((e) => e['name'].toString().split('-').first).toSet();
+      leadsTrend.map((e) => e['name'].toString().split('-').first).toSet();
 
   final String displayYear =
-  yearsInData.isNotEmpty
-      ? (yearsInData.toList()..sort()).last
-      : DateTime.now().year.toString();
+      yearsInData.isNotEmpty
+          ? (yearsInData.toList()..sort()).last
+          : DateTime.now().year.toString();
 
   final Map<String, double> monthDataForYear = {};
   for (var e in leadsTrend) {
@@ -274,10 +343,10 @@ Widget buildContractorInquiryGraph(ContractorDashboardController controller) {
   });
 
   final List<String> months =
-  mergedData.map((e) => e['name'] as String).toList();
+      mergedData.map((e) => e['name'] as String).toList();
 
   final List<double> monthlyData =
-  mergedData.map((e) => (e['commission'] as num).toDouble()).toList();
+      mergedData.map((e) => (e['commission'] as num).toDouble()).toList();
 
   return Container(
     padding: const EdgeInsets.all(16),
@@ -336,7 +405,11 @@ Widget buildContractorInquiryGraph(ContractorDashboardController controller) {
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyBarChart(monthlyData: monthlyData, months: months, isAmount: false,),
+          child: MonthlyBarChart(
+            monthlyData: monthlyData,
+            months: months,
+            isAmount: false,
+          ),
         ),
       ],
     ),
@@ -362,7 +435,7 @@ Widget buildOverviewCards(ContractorDashboardController controller) {
         ),
         buildMetricCard(
           'Total Inquiries',
-          Formatter.formatNumber(data?.performance.totalInquiries??0),
+          Formatter.formatNumber(data?.performance.totalInquiries ?? 0),
           Icons.question_answer,
           ColorRes.green,
         ),
@@ -374,7 +447,7 @@ Widget buildOverviewCards(ContractorDashboardController controller) {
         ),
         buildMetricCard(
           'Overall Rating',
-          Formatter.formatNumber(data?.performance.overallRating??0),
+          Formatter.formatNumber(data?.performance.overallRating ?? 0),
           Icons.star,
           ColorRes.homeAmber,
         ),
@@ -389,7 +462,10 @@ Widget buildRatingsDistribution({
   required Map<String, int> ratingCounts,
 }) {
   return Card(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: ColorRes.leadGreyColor.shade300,width: 1)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+      side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
+    ),
 
     elevation: 2,
     margin: const EdgeInsets.symmetric(vertical: 8),
@@ -399,8 +475,8 @@ Widget buildRatingsDistribution({
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children:  [
-              Icon(Icons.star, color: ColorRes.orangeColor,size: 24,),
+            children: [
+              Icon(Icons.star, color: ColorRes.orangeColor, size: 24),
               SizedBox(width: 6),
               Text(
                 "Ratings Distribution",
@@ -409,7 +485,8 @@ Widget buildRatingsDistribution({
                 style: TextStyle(
                   color: ColorRes.orangeColor,
                   fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.semiBold,),
+                  fontWeight: AppFontWeights.semiBold,
+                ),
               ),
             ],
           ),
@@ -418,14 +495,14 @@ Widget buildRatingsDistribution({
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: ColorRes.homeAmber.shade50
+              color: ColorRes.homeAmber.shade50,
             ),
             child: Center(
               child: Column(
                 children: [
                   Text(
                     averageRating.toStringAsFixed(1),
-                    style:  TextStyle(
+                    style: TextStyle(
                       fontSize: AppFontSizes.displaySmall,
                       fontWeight: AppFontWeights.semiBold,
                       color: Colors.orange,
@@ -436,18 +513,23 @@ Widget buildRatingsDistribution({
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       5,
-                          (index) => Icon(
+                      (index) => Icon(
                         index < averageRating.round()
                             ? Icons.star
                             : Icons.star_border,
                         color: ColorRes.orangeColor,
-                            size: 20,
+                        size: 20,
                       ),
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text("$totalRatings Ratings",
-                      style:  TextStyle(color: ColorRes.textColor,fontSize: AppFontSizes.small)),
+                  Text(
+                    "$totalRatings Ratings",
+                    style: TextStyle(
+                      color: ColorRes.textColor,
+                      fontSize: AppFontSizes.small,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -463,15 +545,16 @@ Widget buildRatingsDistribution({
                   Row(
                     children: [
                       Text("$star"),
-                      Icon(Icons.star,size: 15,color: ColorRes.orangeColor,)
+                      Icon(Icons.star, size: 15, color: ColorRes.orangeColor),
                     ],
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: LinearProgressIndicator(
-                      value: totalRatings == 0
-                          ? 0
-                          : count / totalRatings.clamp(1, double.infinity),
+                      value:
+                          totalRatings == 0
+                              ? 0
+                              : count / totalRatings.clamp(1, double.infinity),
                       color: Colors.orange,
                       backgroundColor: Colors.grey.shade200,
                     ),
@@ -488,8 +571,6 @@ Widget buildRatingsDistribution({
   );
 }
 
-
-
 Widget buildTopRatedService({
   required String title,
   required String description,
@@ -505,11 +586,12 @@ Widget buildTopRatedService({
   final isSmallScreen = width < 600;
   final isTablet = width >= 600 && width < 1000;
 
-  final cardWidth = isSmallScreen
-      ? width * 0.9
-      : isTablet
-      ? width * 0.45
-      : width * 0.22;
+  final cardWidth =
+      isSmallScreen
+          ? width * 0.9
+          : isTablet
+          ? width * 0.45
+          : width * 0.22;
 
   final padding = isSmallScreen ? 12.0 : 16.0;
   final titleFont = isSmallScreen ? 14.0 : 16.0;
@@ -519,19 +601,21 @@ Widget buildTopRatedService({
 
   return Container(
     width: cardWidth,
-    padding: EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3),width: 1)
-
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
     ),
 
     child: Column(
       children: [
         Row(
           children: [
-            Icon(Icons.star, color: ColorRes.deepPurpleColor,size: 24,),
+            Icon(Icons.star, color: ColorRes.deepPurpleColor, size: 24),
             const SizedBox(width: 6),
             Text(
               "Top Rated Services",
@@ -547,7 +631,13 @@ Widget buildTopRatedService({
         ),
         const SizedBox(height: 12),
         Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.3),width: 1)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: ColorRes.leadGreyColor.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
 
           elevation: 2,
           child: Padding(
@@ -565,7 +655,10 @@ Widget buildTopRatedService({
                         color: ColorRes.deepPurpleColor.shade50,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.build, color: ColorRes.deepPurpleColor),
+                      child: const Icon(
+                        Icons.build,
+                        color: ColorRes.deepPurpleColor,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -580,24 +673,33 @@ Widget buildTopRatedService({
                                   style: TextStyle(
                                     fontWeight: AppFontWeights.semiBold,
                                     fontSize: titleFont,
-                                    color: ColorRes.textColor
+                                    color: ColorRes.textColor,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              SizedBox(width: 10,),
+                              SizedBox(width: 10),
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25),
-                                    color: ColorRes.homeAmber.withOpacity(0.08),
-                                    border: Border.all(color: ColorRes.homeAmber.withOpacity(0.3),width: 1)
+                                  borderRadius: BorderRadius.circular(25),
+                                  color: ColorRes.homeAmber.withOpacity(0.08),
+                                  border: Border.all(
+                                    color: ColorRes.homeAmber.withOpacity(0.3),
+                                    width: 1,
+                                  ),
                                 ),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.star,
-                                        color: Colors.orange, size: 15),
+                                    const Icon(
+                                      Icons.star,
+                                      color: Colors.orange,
+                                      size: 15,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       rating.toStringAsFixed(1),
@@ -634,7 +736,9 @@ Widget buildTopRatedService({
                                 decoration: BoxDecoration(
                                   color: ColorRes.primary.withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: ColorRes.primary.withOpacity(0.3)),
+                                  border: Border.all(
+                                    color: ColorRes.primary.withOpacity(0.3),
+                                  ),
                                 ),
                                 child: Text(
                                   "Review: $totalReview",
@@ -655,7 +759,9 @@ Widget buildTopRatedService({
                                 decoration: BoxDecoration(
                                   color: Colors.green.shade50,
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.green.shade200),
+                                  border: Border.all(
+                                    color: Colors.green.shade200,
+                                  ),
                                 ),
                                 child: Text(
                                   status,
@@ -672,7 +778,7 @@ Widget buildTopRatedService({
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -682,7 +788,6 @@ Widget buildTopRatedService({
   );
 }
 
-
 Widget buildRecentReview({
   required String userName,
   required String timeAgo,
@@ -690,7 +795,13 @@ Widget buildRecentReview({
   required String review,
 }) {
   return Card(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: ColorRes.leadGreyColor.withOpacity(0.3),width: 1)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+      side: BorderSide(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
     elevation: 1,
     margin: const EdgeInsets.symmetric(vertical: 8),
     child: Padding(
@@ -699,7 +810,7 @@ Widget buildRecentReview({
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children:  [
+            children: [
               Icon(Icons.person, color: ColorRes.primary),
               SizedBox(width: 6),
               Text(
@@ -709,7 +820,8 @@ Widget buildRecentReview({
                 style: TextStyle(
                   color: ColorRes.primary,
                   fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.semiBold,),
+                  fontWeight: AppFontWeights.semiBold,
+                ),
               ),
             ],
           ),
@@ -724,15 +836,19 @@ Widget buildRecentReview({
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(userName,
-                      style:  TextStyle(fontWeight: AppFontWeights.semiBold,fontSize: AppFontSizes.medium,color: ColorRes.textColor)),
+                  Text(
+                    userName,
+                    style: TextStyle(
+                      fontWeight: AppFontWeights.semiBold,
+                      fontSize: AppFontSizes.medium,
+                      color: ColorRes.textColor,
+                    ),
+                  ),
                   Row(
                     children: List.generate(
                       5,
-                          (index) => Icon(
-                        index < rating.round()
-                            ? Icons.star
-                            : Icons.star_border,
+                      (index) => Icon(
+                        index < rating.round() ? Icons.star : Icons.star_border,
                         color: Colors.orange,
                         size: 14,
                       ),
@@ -742,19 +858,32 @@ Widget buildRecentReview({
               ),
               const Spacer(),
 
-              Text("${timeAgo} ago",
-                  style:  TextStyle(color: ColorRes.leadGreyColor.shade600, fontSize: AppFontSizes.extraSmall,fontWeight: AppFontWeights.medium)),            ],
+              Text(
+                "${timeAgo} ago",
+                style: TextStyle(
+                  color: ColorRes.leadGreyColor.shade600,
+                  fontSize: AppFontSizes.extraSmall,
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 5),
-          Text(review, style:  TextStyle(fontSize: AppFontSizes.caption,fontWeight: AppFontWeights.medium,color: ColorRes.leadGreyColor.shade600)),
+          Text(
+            review,
+            style: TextStyle(
+              fontSize: AppFontSizes.caption,
+              fontWeight: AppFontWeights.medium,
+              color: ColorRes.leadGreyColor.shade600,
+            ),
+          ),
         ],
       ),
     ),
   );
-
 }
-String getTimeAgo(String? createdAt) {
 
+String getTimeAgo(String? createdAt) {
   if (createdAt == null || createdAt.isEmpty) return '';
   try {
     final dateTime = DateTime.parse(createdAt);
@@ -764,6 +893,7 @@ String getTimeAgo(String? createdAt) {
     return '';
   }
 }
+
 Widget buildYearDropdown({
   required String label,
   required int selectedYear,
@@ -772,12 +902,13 @@ Widget buildYearDropdown({
 }) {
   return DropdownButton<int>(
     value: selectedYear,
-    items: controller.getLastThreeYears().map((year) {
-      return DropdownMenuItem<int>(
-        value: year,
-        child: Text(year.toString()),
-      );
-    }).toList(),
+    items:
+        controller.getLastThreeYears().map((year) {
+          return DropdownMenuItem<int>(
+            value: year,
+            child: Text(year.toString()),
+          );
+        }).toList(),
     onChanged: (year) {
       if (year != null) {
         onChanged(year);

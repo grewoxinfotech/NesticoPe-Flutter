@@ -117,7 +117,6 @@ class PropertyService {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        AppLogger.structured('Property Response By Id:', jsonData);
 
         return Items.fromJson(jsonData['data']);
       }

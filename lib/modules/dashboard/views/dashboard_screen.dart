@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
@@ -9,6 +12,7 @@ import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_scr
 import 'package:housing_flutter_app/modules/dashboard/views/widget/favourite_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/view/property_reseller.dart';
+import 'package:housing_flutter_app/modules/saved_property/views/user_activity_screen.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 import '../../../widgets/dialogs/delete_dialog.dart';
@@ -68,9 +72,8 @@ class DashboardScreen extends StatelessWidget {
           case 3:
             return InsightsScreen();
           case 4:
-            return const SavedPropertyScreen();
-          case 5:
-            return const SavedPropertyScreen();
+            return UserActivityScreen();
+
           default:
             return const SizedBox();
         }

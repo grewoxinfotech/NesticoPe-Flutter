@@ -18,8 +18,6 @@ class AddressAndMapDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Address: $address");
-
     // Build dynamic address string based on what is available
     final buffer = StringBuffer();
 

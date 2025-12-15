@@ -16,6 +16,8 @@ import '../../seller/controllers/seller_overview_controller.dart';
 import '../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../seller/module/seller_home_screen/views/property_overview_screen.dart';
 import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
+import '../controller/builder_form_controller.dart';
+import 'builder_form_screen.dart';
 
 class BuilderDashboard extends StatefulWidget {
   const BuilderDashboard({Key? key}) : super(key: key);
@@ -61,7 +63,7 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
             onPressed: () {
               Get.offAll(() => DashboardScreen());
             },
-            child: Text('Back'),
+            child: Text('Switch To Buyer'),
           ),
         ],
       ),
@@ -127,18 +129,17 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
               if (controller.isLoading.value && controller.items.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
               }
-           
+
               if (overviewController.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
               }
-              
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   OverBuilderViewCard(
                     property: controller.items,
-                    overview: overview??SellerInsightsModel.fromJson({}),
+                    overview: overview ?? SellerInsightsModel.fromJson({}),
                   ),
                   const SizedBox(height: 20),
                 ],
@@ -358,6 +359,27 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
 
             // Recent Activities
           ],
+        ),
+      ),
+
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          final controller = Get.put(
+            ProjectWizardController(isBuilderView: false),
+            tag: "builder",
+          );
+          controller.resetForm();
+          Get.to(CreateProjectScreen());
+          // Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
+          //     Get.put(ProjectWizardController());
+          //   },));
+        },
+        label: Text(
+          '+ Add Project',
+          style: TextStyle(
+            color: ColorRes.white,
+            fontWeight: AppFontWeights.semiBold,
+          ),
         ),
       ),
     );

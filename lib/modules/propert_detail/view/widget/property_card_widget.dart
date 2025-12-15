@@ -62,7 +62,9 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
     // print('Building PropertyCardWidget for ${widget.role}');
     return GestureDetector(
       onTap: () {
-        Get.to(() => PropertyDetailScreen(property: widget.property));
+        Get.to(
+          () => PropertyDetailScreen(propertyId: widget.property.id ?? ''),
+        );
       },
       child: Card(
         color: ColorRes.white,
@@ -176,7 +178,6 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                       // Compare button
                       GestureDetector(
                         onTap: () {
-
                           compare.toggle(widget.property, max: 2);
                         },
                         child: Obx(() {
@@ -346,15 +347,13 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                                 //             'owner')
                                 //         ? AppFontSizes.body
                                 //         : AppFontSizes.caption,
-                                fontSize
-                                    : AppFontSizes.caption,
+                                fontSize: AppFontSizes.caption,
                                 // fontWeight:
                                 //     (widget.role.trim().toLowerCase() ==
                                 //             'owner')
                                 //         ? AppFontWeights.bold
                                 //         : AppFontWeights.semiBold,
-                                fontWeight
-                                    : AppFontWeights.semiBold,
+                                fontWeight: AppFontWeights.semiBold,
                                 color: ColorRes.textColor,
                               ),
                             ),
@@ -448,7 +447,6 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
             ),
 
             if (widget.isFeedbackEnabled) ...[
-
               const SizedBox(height: AppSpacing.small),
 
               Padding(

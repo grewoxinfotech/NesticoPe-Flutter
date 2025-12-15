@@ -623,7 +623,8 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
               vertical: AppPadding.small,
               horizontal: AppPadding.small,
             ),
-            itemCount: manager.favoriteResponse.value!.data!.favorite.length,
+            itemCount:
+                (manager.favoriteResponse.value?.data?.favorite.length) ?? 0,
             itemBuilder: (context, index) {
               final property =
                   manager.favoriteResponse.value!.data!.favorite[index];

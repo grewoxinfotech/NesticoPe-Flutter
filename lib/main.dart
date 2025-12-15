@@ -30,15 +30,14 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   // Initialize network service
-  final networkService = await Get.putAsync(() => NetworkStatusService().init());
+  final networkService = await Get.putAsync(
+    () => NetworkStatusService().init(),
+  );
   await UserHelper.initUserType();
   Get.put(CompareManager(), permanent: true);
   Get.put(ContractorCompareManager(), permanent: true);
   Get.put(ProjectCompareManager(), permanent: true);
-  
-  // Check initial internet connection
-  final hasInternet = networkService.isConnected;
-  
+
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,

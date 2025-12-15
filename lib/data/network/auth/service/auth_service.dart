@@ -10,6 +10,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:get/get.dart';
 
 import '../../../../app/widgets/snackbar/snackbar.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 
 class AuthService {
   final String url = ApiConstants.auth;

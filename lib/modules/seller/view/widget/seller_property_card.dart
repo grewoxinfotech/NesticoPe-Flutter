@@ -353,7 +353,9 @@ class _SellerPropertyCardState extends State<SellerPropertyCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap:
-          () => Get.to(() => PropertyDetailScreen(property: widget.property)),
+          () => Get.to(
+            () => PropertyDetailScreen(propertyId: widget.property.id),
+          ),
       child: Container(
         // margin: const EdgeInsets.only(bottom: 14),
         decoration: BoxDecoration(

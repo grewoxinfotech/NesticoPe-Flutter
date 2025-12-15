@@ -1199,13 +1199,25 @@ class RoomFacilityInfo {
   }
 }
 
+/// --------------------
+/// Helpers
+/// --------------------
+num? _toNum(dynamic value) {
+  if (value == null) return null;
+  if (value is num) return value;
+  return num.tryParse(value.toString());
+}
+
+/// --------------------
+/// Investment Insight
+/// --------------------
 class InvestmentInsight {
   final PriceTrend? priceTrend;
   final FutureProjection? futureProjection;
 
-  InvestmentInsight({this.priceTrend, this.futureProjection});
+  const InvestmentInsight({this.priceTrend, this.futureProjection});
 
-  /// Checks if any section contains useful insight data
+  /// True if any usable insight exists
   bool get isNotEmpty =>
       (priceTrend?.isNotEmpty ?? false) ||
       (futureProjection?.isNotEmpty ?? false);
@@ -1231,32 +1243,45 @@ class InvestmentInsight {
   }
 }
 
+/// --------------------
+/// Price Trend
+/// --------------------
 class PriceTrend {
   final num? currentPrice;
   final num? past5yrPrice;
   final num? growthPercentage5yr;
   final num? cagrPercentage;
 
-  PriceTrend({
+  const PriceTrend({
     this.currentPrice,
     this.past5yrPrice,
     this.growthPercentage5yr,
     this.cagrPercentage,
   });
 
-  /// True only if at least *one valid value* is present
+  /// True if at least one meaningful value exists
   bool get isNotEmpty =>
       (currentPrice != null && currentPrice! > 0) ||
       (past5yrPrice != null && past5yrPrice! > 0) ||
-      (growthPercentage5yr != null) ||
-      (cagrPercentage != null);
+      (growthPercentage5yr != null && growthPercentage5yr!.isFinite) ||
+      (cagrPercentage != null && cagrPercentage!.isFinite);
+
+  /// Optional sanity check (UI usage)
+  bool get isCagrRealistic => cagrPercentage != null && cagrPercentage! <= 50;
+
+  /// UI helpers
+  String get formattedCurrentPrice =>
+      currentPrice == null ? '--' : '₹${currentPrice!.toStringAsFixed(0)}';
+
+  String get formattedCagr =>
+      cagrPercentage == null ? '--' : '${cagrPercentage!.toStringAsFixed(2)}%';
 
   factory PriceTrend.fromJson(Map<String, dynamic> json) {
     return PriceTrend(
-      currentPrice: json['current_price'],
-      past5yrPrice: json['past_5yr_price'],
-      growthPercentage5yr: json['growth_percentage_5yr'],
-      cagrPercentage: json['cagr_percentage'],
+      currentPrice: _toNum(json['current_price']),
+      past5yrPrice: _toNum(json['past_5yr_price']),
+      growthPercentage5yr: _toNum(json['growth_percentage_5yr']),
+      cagrPercentage: _toNum(json['cagr_percentage']),
     );
   }
 
@@ -1270,21 +1295,35 @@ class PriceTrend {
   }
 }
 
+/// --------------------
+/// Future Projection
+/// --------------------
 class FutureProjection {
   final num? projectedPrice5yr;
   final num? roiPercentage5yr;
 
-  FutureProjection({this.projectedPrice5yr, this.roiPercentage5yr});
+  const FutureProjection({this.projectedPrice5yr, this.roiPercentage5yr});
 
-  /// True if any future projection value exists
+  /// True if future projection exists
   bool get isNotEmpty =>
       (projectedPrice5yr != null && projectedPrice5yr! > 0) ||
-      (roiPercentage5yr != null);
+      (roiPercentage5yr != null && roiPercentage5yr!.isFinite);
+
+  /// UI helpers
+  String get formattedProjectedPrice =>
+      projectedPrice5yr == null
+          ? '--'
+          : '₹${projectedPrice5yr!.toStringAsFixed(0)}';
+
+  String get formattedRoi =>
+      roiPercentage5yr == null
+          ? '--'
+          : '${roiPercentage5yr!.toStringAsFixed(2)}%';
 
   factory FutureProjection.fromJson(Map<String, dynamic> json) {
     return FutureProjection(
-      projectedPrice5yr: json['projected_price_5yr'],
-      roiPercentage5yr: json['roi_percentage_5yr'],
+      projectedPrice5yr: _toNum(json['projected_price_5yr']),
+      roiPercentage5yr: _toNum(json['roi_percentage_5yr']),
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/app/constants/api_constants.dart';
 
 import '../../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../../app/widgets/snackbar/snackbar.dart';
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../models/ticket_model/support_ticket_model.dart';
 
 class TicketService {

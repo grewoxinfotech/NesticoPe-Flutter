@@ -57,7 +57,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
     return GestureDetector(
       onTap:
           () => Get.to(
-            () => PropertyDetailScreen(property: widget.property),
+            () => PropertyDetailScreen(propertyId: widget.property.id),
             routeName: '/property_${widget.property.id}',
           ),
 
@@ -432,7 +432,6 @@ class Facilities extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final highlights = PropertyHighlightManager(property).getHighlights();
-    log('Highkiutjhg ${highlights.map((e) => e.title)}');
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(

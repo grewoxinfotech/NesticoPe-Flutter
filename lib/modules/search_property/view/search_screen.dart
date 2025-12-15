@@ -503,7 +503,7 @@ class CommonSearchField extends StatefulWidget {
     super.key,
     this.onCitySelected,
     this.isFromAddProperty = false,
-    this.onlySearchCity=false,
+    this.onlySearchCity = false,
     this.initialSearchText,
     this.isNavigate = false,
     this.hintText = 'Change City...',
@@ -518,7 +518,8 @@ class CommonSearchField extends StatefulWidget {
 
 class _CommonSearchFieldState extends State<CommonSearchField> {
   final MicController micController = Get.find<MicController>();
-  final GoogleMapSearchController controller = Get.find<GoogleMapSearchController>();
+  final GoogleMapSearchController controller =
+      Get.find<GoogleMapSearchController>();
 
   //final trendingArea=Get.put(HomeFeedController());
 
@@ -537,12 +538,10 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
           widget.selectedCity ?? '',
         );
       } else {
-        if(!widget.onlySearchCity)
-          {
-            print("jkfhweudfhuiefhwefhuif");
-            controller.fetchPredictionsCity(widget.initialSearchText!);
-          }
-        else{
+        if (!widget.onlySearchCity) {
+          print("jkfhweudfhuiefhwefhuif");
+          controller.fetchPredictionsCity(widget.initialSearchText!);
+        } else {
           controller.fetchGooglePlaces(widget.initialSearchText!);
         }
       }
@@ -556,11 +555,9 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
           widget.selectedCity ?? '',
         );
       } else {
-        if(!widget.onlySearchCity)
-        {
+        if (!widget.onlySearchCity) {
           controller.fetchPredictionsCity(micController.searchText.value.text);
-        }
-        else{
+        } else {
           controller.fetchGooglePlaces(micController.searchText.value.text);
         }
         // controller.fetchPredictionsCity(micController.searchText.value.text);
@@ -747,7 +744,9 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
             ),
             AppSpacing.verticalMedium,
             Obx(() {
-              print("Prediction LIst ${controller.predictions.map((e) => e.toJson(),)}");
+              print(
+                "Prediction LIst ${controller.predictions.map((e) => e.toJson())}",
+              );
               if (controller.isLoading.value) {
                 return const Center(child: SizedBox.shrink());
               }
@@ -780,7 +779,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                       ),
                   itemBuilder: (context, index) {
                     final Prediction item = controller.predictions[index];
-                    
+
                     return InkWell(
                       // onTap:(widget.isNavigate)? () async {
                       //
@@ -912,7 +911,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                 if (item.items != null) {
                                   Get.to(
                                     () => PropertyDetailScreen(
-                                      property: item.items!,
+                                      propertyId: item.items!.id ?? '',
                                     ),
                                   );
                                   controller.predictions.clear();

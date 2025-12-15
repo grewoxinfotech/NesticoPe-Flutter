@@ -262,7 +262,6 @@ class PropertyController extends PaginatedController<Items> {
       if (property != null) {
         items.add(property);
         items.refresh();
-        log('husdfhdh ${property.toJson()}');
         return property;
       }
     } catch (e) {

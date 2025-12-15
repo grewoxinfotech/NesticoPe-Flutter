@@ -12,6 +12,7 @@ import '../../../data/network/builder/model/builder_model.dart'
 import '../../../data/network/property/models/inquiry_model.dart';
 import '../../../data/network/property/services/property_contacted_service.dart';
 import '../../../data/network/property/services/property_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class ProjectController extends GetxController {
   // final Rx<ProjectItem?> project = Rx<ProjectItem>();

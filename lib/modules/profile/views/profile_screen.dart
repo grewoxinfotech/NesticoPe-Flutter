@@ -587,6 +587,7 @@ import 'package:housing_flutter_app/modules/profile/views/widget/buyer_profile.d
 import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/add_app_review_screen.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/app_review_card.dart';
+import 'package:housing_flutter_app/modules/saved_property/views/user_activity_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 
@@ -698,7 +699,7 @@ class ProfileScreen extends StatelessWidget {
                         icon: Icons.monitor_heart_outlined,
                         title: "My Activity",
                         subTitle: "Track your interactions",
-                        onTap: () => Get.to(() => SavedPropertyScreen()),
+                        onTap: () => Get.to(() => UserActivityScreen()),
                       ),
                       if (!UserHelper.isGuest) ...[
                         SettingsMenuTile(
@@ -849,21 +850,20 @@ class ProfileScreen extends StatelessWidget {
         ],
 
         // 🏠 SELLER ACTIONS
-        if (UserHelper.isSeller) ...[
-          if (UserHelper.isSellerOwner)
-            _buildActionButton(
-              icon: Icons.dashboard_outlined,
-              label: "Seller Dashboard",
-              subtitle: 'Navigate to Seller Panel',
-              onTap: () {
-                Get.to(
-                  () => SellerDashboardScreen(),
-                  binding: BindingsBuilder(() {
-                    Get.lazyPut<PropertyController>(() => PropertyController());
-                  }),
-                );
-              },
-            ),
+        if (UserHelper.isSellerOwner) ...[
+          _buildActionButton(
+            icon: Icons.dashboard_outlined,
+            label: "Seller Dashboard",
+            subtitle: 'Navigate to Seller Panel',
+            onTap: () {
+              Get.to(
+                () => SellerDashboardScreen(),
+                binding: BindingsBuilder(() {
+                  Get.lazyPut<PropertyController>(() => PropertyController());
+                }),
+              );
+            },
+          ),
 
           _buildActionButton(
             icon: Icons.engineering_outlined,

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/widgets/snackbar/snackbar.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class BuilderLeadOverviewController extends GetxController {
   // Track expanded configurations by index
@@ -16,6 +17,7 @@ class BuilderLeadOverviewController extends GetxController {
   void toggleConfig(int index) {
     isConfigExpanded[index] = !isConfigExpanded[index];
   }
+
   Future<void> downloadDocument(String? path) async {
     if (path != null) {
       await launchUrl(Uri.parse(path), mode: LaunchMode.platformDefault);

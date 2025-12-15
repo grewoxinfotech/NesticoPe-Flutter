@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dar
 import 'package:http/http.dart' as http;
 
 import '../../../app/widgets/snackbar/snackbar.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class EditProfileController extends GetxController {
   final formKey = GlobalKey<FormState>();

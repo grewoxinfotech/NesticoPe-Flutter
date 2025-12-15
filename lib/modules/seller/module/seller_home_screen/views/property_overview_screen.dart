@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/property_overview_seller.dart';
@@ -41,6 +42,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
   PropertyController propertyController = Get.find<PropertyController>();
   final RxList<String> selectedPropertyIds = <String>[].obs;
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+
   // @override
   // void initState() {
   //   WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -214,7 +216,14 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                           width: double.infinity,
                           child: CustomImage(
                             type: CustomImageType.network,
-                            src: property.propertyMedia?.images?.first ?? '',
+                            src:
+                                (property.propertyMedia?.images != null &&
+                                        property
+                                            .propertyMedia!
+                                            .images!
+                                            .isNotEmpty)
+                                    ? property.propertyMedia?.images?.first
+                                    : IMGRes.home1,
                             fit: BoxFit.cover,
                           ),
                         ),

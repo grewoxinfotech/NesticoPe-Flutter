@@ -15,7 +15,7 @@ ThemeData lightTheme = ThemeData(
   disabledColor: ColorRes.disabled,
   shadowColor: ColorRes.shadow,
 
-  appBarTheme:  AppBarTheme(
+  appBarTheme: AppBarTheme(
     backgroundColor: ColorRes.transparentColor,
     surfaceTintColor: ColorRes.transparentColor,
     elevation: 0.0,
@@ -45,22 +45,28 @@ ThemeData lightTheme = ThemeData(
   checkboxTheme: CheckboxThemeData(
     checkColor: WidgetStateProperty.all(ColorRes.white),
     // or any desired color
-  ), dialogTheme: const DialogThemeData(backgroundColor: ColorRes.overlay),
+  ),
+  dialogTheme: const DialogThemeData(backgroundColor: ColorRes.overlay),
 
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: ColorRes.primary,
       foregroundColor: ColorRes.white,
-      textStyle: TextStyle(
-        fontSize: 16,
-        fontWeight: AppFontWeights.semiBold,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      textStyle: TextStyle(fontSize: 16, fontWeight: AppFontWeights.semiBold),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
       elevation: 0,
       shadowColor: ColorRes.transparentColor,
+    ),
+  ),
+
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      foregroundColor: ColorRes.primary,
+      textStyle: TextStyle(fontSize: 16, fontWeight: AppFontWeights.semiBold),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      side: BorderSide(color: ColorRes.primary, width: 1.5),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
     ),
   ),
 );

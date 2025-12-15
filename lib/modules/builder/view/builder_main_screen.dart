@@ -134,26 +134,6 @@ class BuilderMainScreen extends StatelessWidget {
           children: screens,
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          final controller = Get.put(
-            ProjectWizardController(isBuilderView: false),
-            tag: "builder",
-          );
-          controller.resetForm();
-          Get.to(CreateProjectScreen());
-          // Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
-          //     Get.put(ProjectWizardController());
-          //   },));
-        },
-        label: Text(
-          '+ Add Project',
-          style: TextStyle(
-            color: ColorRes.white,
-            fontWeight: AppFontWeights.semiBold,
-          ),
-        ),
-      ),
 
       bottomNavigationBar: Obx(
         () => SafeArea(

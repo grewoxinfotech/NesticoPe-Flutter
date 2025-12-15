@@ -32,7 +32,7 @@ class TopPropertyCard extends StatefulWidget {
 class _TopPropertyCardState extends State<TopPropertyCard> {
   final controller = Get.find<PropertyController>();
   final PropertyFavoriteController favoriteController =
-  Get.find<PropertyFavoriteController>();
+      Get.find<PropertyFavoriteController>();
 
   final CompareManager compare = Get.put(CompareManager(), permanent: true);
   bool isFavorite = false;
@@ -40,7 +40,7 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => PropertyDetailScreen(property: widget.property));
+        Get.to(() => PropertyDetailScreen(propertyId: widget.property.id));
         // TODO: Navigate to property detail screen if needed
         // You might need to convert AreaTopProperty to Items or create a dedicated detail screen
       },
@@ -62,12 +62,16 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
               child: Stack(
                 children: [
                   CustomImage(
-                    type: widget.property.propertyMedia?.images?.isNotEmpty??false
-                        ? CustomImageType.network
-                        : CustomImageType.asset,
-                    src: widget.property.propertyMedia?.images?.isNotEmpty??false
-                        ? widget.property.propertyMedia?.images?.first
-                        : IMGRes.home1,
+                    type:
+                        widget.property.propertyMedia?.images?.isNotEmpty ??
+                                false
+                            ? CustomImageType.network
+                            : CustomImageType.asset,
+                    src:
+                        widget.property.propertyMedia?.images?.isNotEmpty ??
+                                false
+                            ? widget.property.propertyMedia?.images?.first
+                            : IMGRes.home1,
                     fit: BoxFit.cover,
                     height: 170,
                     width: double.infinity,
@@ -77,7 +81,9 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                   Positioned(
                     top: 12,
                     left: 12,
-                    child: _buildTag(widget.property.listingType??'Not Specified'),
+                    child: _buildTag(
+                      widget.property.listingType ?? 'Not Specified',
+                    ),
                   ),
 
                   // 🔹 Top Property Badge
@@ -91,7 +97,7 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                         GestureDetector(
                           onTap: () {
                             compare.toggle(widget.property, max: 2);
-log("gnjignjrkjn");
+                            log("gnjignjrkjn");
                           },
                           child: Obx(() {
                             final selected = compare.isSelected(
@@ -99,15 +105,15 @@ log("gnjignjrkjn");
                             );
                             return CircleAvatar(
                               backgroundColor:
-                              selected ? ColorRes.primary : ColorRes.white,
+                                  selected ? ColorRes.primary : ColorRes.white,
 
                               radius: 18,
                               child: Icon(
                                 Icons.compare_arrows,
                                 color:
-                                selected
-                                    ? ColorRes.white
-                                    : ColorRes.primary,
+                                    selected
+                                        ? ColorRes.white
+                                        : ColorRes.primary,
                                 size: 20,
                               ),
                             );
@@ -132,9 +138,9 @@ log("gnjignjrkjn");
                                     ? Icons.favorite
                                     : Icons.favorite_border,
                                 color:
-                                isFavorite
-                                    ? ColorRes.error
-                                    : ColorRes.leadGreyColor,
+                                    isFavorite
+                                        ? ColorRes.error
+                                        : ColorRes.leadGreyColor,
                                 size: 20,
                               );
                             }),
@@ -191,7 +197,7 @@ log("gnjignjrkjn");
                     children: [
                       Expanded(
                         child: Text(
-                          widget.property.address??'',
+                          widget.property.address ?? '',
                           style: TextStyle(
                             fontSize: AppFontSizes.caption,
                             color: ColorRes.leadGreyColor.shade700,
@@ -214,8 +220,10 @@ log("gnjignjrkjn");
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (widget.property.listingType?.toLowerCase() == "rent" ||
-                          widget.property.listingType?.toLowerCase() == "pg") ...[
+                      if (widget.property.listingType?.toLowerCase() ==
+                              "rent" ||
+                          widget.property.listingType?.toLowerCase() ==
+                              "pg") ...[
                         Flexible(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -310,25 +318,24 @@ class TopPropertyFacilities extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: List.generate(
-          highlights.length > 3 ? 3 : highlights.length,
-              (index) {
-            final item = highlights[index];
-            return Row(
-              children: [
-                if (index != 0) ...[
-                  const Text('  •', style: TextStyle(fontSize: 10)),
-                  const SizedBox(width: 6),
-                ],
-                _buildChip(
-                  item['text'] as String,
-                  16,
-                  icon: item['icon'] as IconData,
-                ),
+        children: List.generate(highlights.length > 3 ? 3 : highlights.length, (
+          index,
+        ) {
+          final item = highlights[index];
+          return Row(
+            children: [
+              if (index != 0) ...[
+                const Text('  •', style: TextStyle(fontSize: 10)),
+                const SizedBox(width: 6),
               ],
-            );
-          },
-        ),
+              _buildChip(
+                item['text'] as String,
+                16,
+                icon: item['icon'] as IconData,
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -343,19 +350,13 @@ class TopPropertyFacilities extends StatelessWidget {
       // 🔹 BHK
       final bhk = details?.bhk ?? 0;
       if (bhk > 0) {
-        highlights.add({
-          'text': '$bhk BHK',
-          'icon': Icons.bed_outlined,
-        });
+        highlights.add({'text': '$bhk BHK', 'icon': Icons.bed_outlined});
       }
 
       // 🔹 Furnishing
       final furnishType = details?.furnishInfo?.furnishType;
       if (furnishType != null && furnishType.isNotEmpty) {
-        highlights.add({
-          'text': furnishType,
-          'icon': Icons.chair_alt_outlined,
-        });
+        highlights.add({'text': furnishType, 'icon': Icons.chair_alt_outlined});
       }
 
       // 🔹 Built-up Area
@@ -379,7 +380,8 @@ class TopPropertyFacilities extends StatelessWidget {
 
       // 🔹 Parking
       final hasParking =
-          details?.parkingInfo?.covered == true || details?.parkingInfo?.open == true;
+          details?.parkingInfo?.covered == true ||
+          details?.parkingInfo?.open == true;
       if (hasParking) {
         highlights.add({
           'text': 'Parking',
@@ -387,7 +389,6 @@ class TopPropertyFacilities extends StatelessWidget {
         });
       }
     }
-
     // 🔹 Commercial Properties
     else if (type == "commercial") {
       final builtUp = details?.propertyBuiltUpArea ?? 0.0;
@@ -407,7 +408,8 @@ class TopPropertyFacilities extends StatelessWidget {
         });
       }
 
-      final hasParking = details?.parkingInfo?.covered == true ||
+      final hasParking =
+          details?.parkingInfo?.covered == true ||
           details?.parkingInfo?.open == true ||
           details?.parkingInfo?.covered == true ||
           details?.parkingInfo?.open == true;
@@ -422,16 +424,11 @@ class TopPropertyFacilities extends StatelessWidget {
     return highlights;
   }
 
-  Widget _buildChip(
-      String text,
-      double size, {
-        IconData? icon,
-      }) {
+  Widget _buildChip(String text, double size, {IconData? icon}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (icon != null)
-          Icon(icon, size: size, color: ColorRes.primary),
+        if (icon != null) Icon(icon, size: size, color: ColorRes.primary),
         const SizedBox(width: 4),
         Text(
           text,

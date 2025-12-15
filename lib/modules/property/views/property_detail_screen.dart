@@ -54,14 +54,10 @@ import '../../search_property/controller/search_controller.dart';
 import '../controllers/overall_rating_controller.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
-  final Items? property;
+  // final Items? property;
   final String? propertyId;
 
-  const PropertyDetailScreen({super.key, this.property, this.propertyId})
-    : assert(
-        property != null || propertyId != null,
-        'Either property or propertyId must be provided',
-      );
+  const PropertyDetailScreen({super.key, this.propertyId});
 
   @override
   State<PropertyDetailScreen> createState() => _PropertyDetailScreenState();
@@ -82,35 +78,129 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   @override
   void initState() {
     super.initState();
+    log('[PropertyDetail] initState called');
 
-    // Get property ID (from object or direct ID)
-    final propertyId = widget.property?.id ?? widget.propertyId ?? '';
+    // Get property ID
+    final propertyId = widget.propertyId ?? '';
+    log('[PropertyDetail] propertyId => $propertyId');
 
     // Initialize controllers
+    log('[PropertyDetail] Initializing PropertyController');
     controller = Get.put(PropertyController(), tag: 'property_$propertyId');
-    mapController = Get.put(GoogleMapSearchController(), tag: 'map_$propertyId');
+
+    log('[PropertyDetail] Initializing GoogleMapSearchController');
+    mapController = Get.put(
+      GoogleMapSearchController(),
+      tag: 'map_$propertyId',
+    );
+
+    log('[PropertyDetail] Initializing OverallRatingController');
     _overallRatingController = Get.put(
       OverallRatingController(),
       tag: 'rating_$propertyId',
     );
+
+    log('[PropertyDetail] Initializing ReviewController');
     reviewController = Get.put(ReviewController(), tag: 'review_$propertyId');
+
+    log('[PropertyDetail] Finding PropertyFavoriteController');
     favoriteController = Get.find<PropertyFavoriteController>();
 
-    // Set property if provided
-    if (widget.property != null) {
-      _property.value = widget.property;
-      _isLoading.value = false;
-    }
-
-    // Load data
+    // Load data after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      log('[PropertyDetail] Post frame callback → calling _loadData()');
       _loadData();
     });
   }
 
+  Future<void> _loadData() async {
+    log('[PropertyDetail] _loadData started');
+
+    try {
+      if (!mounted) return;
+
+      _isLoading.value = true;
+      log('[PropertyDetail] Loading state set to TRUE');
+
+      final propertyId = widget.propertyId ?? '';
+      await controller.getAllInQuireData(propertyId);
+
+      final fetchedProperty = await controller.getPropertyById(
+        widget.propertyId!,
+      );
+
+      if (!mounted) return;
+
+      if (fetchedProperty == null) {
+        log('[PropertyDetail] Property NOT FOUND', level: 1000);
+        _isLoading.value = false;
+
+        if (mounted) {
+          Get.snackbar(
+            'Error',
+            'Property not found',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          Get.back();
+        }
+        return;
+      }
+
+      log(
+        '[PropertyDetail] Property fetched successfully → ID: ${fetchedProperty.id}',
+      );
+
+      // ✅ Set property BEFORE setting loading to false
+      _property.value = fetchedProperty;
+
+      final currentProperty = _property.value!;
+
+      // Set review filter
+      reviewController.filters.value = {"entity_id": currentProperty.id ?? ""};
+      reviewController.filters.refresh();
+
+      // Fetch nearby landmarks
+      if (currentProperty.address?.isNotEmpty ?? false) {
+        await mapController.fetchAllCategoriesData(currentProperty.address!);
+      }
+
+      // Check review permission
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id ?? '';
+
+      if (currentProperty.id != null) {
+        final exists = await reviewController.isReviewExist(
+          entityId: currentProperty.id!,
+          reviewerId: userId,
+        );
+        canAddReview.value = !exists;
+      }
+
+      // Track view
+      controller.addView(currentProperty.id ?? '');
+
+      // Fetch overall rating
+      _overallRatingController.fetchOverallRating(currentProperty.id ?? '');
+    } catch (e, s) {
+      log(
+        '[PropertyDetail] ERROR in _loadData',
+        error: e,
+        stackTrace: s,
+        level: 1000,
+      );
+    } finally {
+      if (mounted) {
+        _isLoading.value = false;
+        log(
+          '[PropertyDetail] Loading state set to FALSE - UI should update now',
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
-    final propertyId = widget.property?.id ?? widget.propertyId ?? '';
+    final propertyId = widget.propertyId ?? '';
 
     // Clean up controllers
     Get.delete<PropertyController>(tag: 'property_$propertyId');
@@ -126,88 +216,31 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     super.dispose();
   }
 
-  Future<void> _loadData() async {
-    try {
-      _isLoading.value = true;
-      await controller.getAllInQuireData(
-        widget.property?.id ?? widget.propertyId ?? '',
-      );
-
-      // Fetch property if only ID was provided
-      if (widget.property == null && widget.propertyId != null) {
-        final fetchedProperty = await controller.getPropertyById(
-          widget.propertyId!,
-        );
-        if (fetchedProperty == null) {
-          // Show error and go back
-          if (mounted) {
-            Get.snackbar(
-              'Error',
-              'Property not found',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-            Get.back();
-          }
-          return;
-        }
-        _property.value = fetchedProperty;
-      }
-
-      final currentProperty = _property.value;
-      if (currentProperty == null) return;
-
-      // Set review filter
-      reviewController.filters.value = {"entity_id": currentProperty.id ?? ""};
-      reviewController.filters.refresh();
-
-      // Fetch nearby landmarks and all categories
-      if (currentProperty.address?.isNotEmpty ?? false) {
-        await mapController.fetchAllCategoriesData(currentProperty.address!);
-      }
-
-      // Check review permission
-      final user = await SecureStorage.getUserData();
-      final userId = user?.user?.id ?? '';
-      if (currentProperty.id != null) {
-        final exists = await reviewController.isReviewExist(
-          entityId: currentProperty.id!,
-          reviewerId: userId,
-        );
-        canAddReview.value = !exists;
-      }
-
-      // Track view
-      controller.addView(currentProperty.id ?? '');
-      _overallRatingController.fetchOverallRating(currentProperty.id ?? '');
-    } finally {
-      _isLoading.value = false;
-    }
-  }
-
   // Convenience getter
-  Items? get property => _property.value ?? widget.property;
+  Items? get property => _property.value;
 
   final CompareManager compare = Get.find<CompareManager>();
 
   @override
   Widget build(BuildContext context) {
-    log("InvestmentInsight Data ${property!.investmentInsight?.toJson()}");
-    final priceManager = PropertyPriceManager(
-      financialInfo:
-          property?.propertyDetails?.financialInfo ?? FinancialInfo(),
-      listingType: property?.listingType ?? '',
-    );
     return Scaffold(
       backgroundColor: ColorRes.white,
       extendBody: true,
       body: Obx(() {
+        log(
+          '[PropertyDetail] 🔄 Obx rebuild - isLoading: ${_isLoading.value}, property: ${_property.value?.id}',
+        );
+
         // Show loading while fetching property
         if (_isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
 
+        // Get current property value
+        final currentProperty = _property.value;
+
         // Show error if property not found
-        if (property == null) {
+        if (currentProperty == null) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -234,12 +267,16 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             ),
           );
         }
-        log(
-          "Furnishing detail ${property?.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}",
+
+        // Create priceManager with fresh data
+        log('[PropertyDetail] 📊 Creating priceManager');
+        final priceManager = PropertyPriceManager(
+          financialInfo:
+              currentProperty.propertyDetails?.financialInfo ?? FinancialInfo(),
+          listingType: currentProperty.listingType ?? '',
         );
-        log(
-          "FacilitInfo detail ${property?.propertyDetails?.facilitiesInfo?.toJson()}",
-        );
+        log('[PropertyDetail] ✅ priceManager created');
+
         return SafeArea(
           child: Stack(
             children: [
@@ -247,26 +284,44 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 padding: const EdgeInsets.only(
                   bottom: kBottomNavigationBarHeight / 2,
                 ),
-                // prevents overlap
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildMediaBanner(
-                      property?.propertyMedia ?? PropertyMedia(),
-                      property?.id ?? '',
+                    Builder(
+                      builder: (context) {
+                        log('[PropertyDetail] 🖼️ Building MediaBanner');
+                        return _buildMediaBanner(
+                          currentProperty.propertyMedia ?? PropertyMedia(),
+                          currentProperty.id ?? '',
+                        );
+                      },
                     ),
-                    _buildTitleSection(property ?? Items()),
+
+                    Builder(
+                      builder: (context) {
+                        log('[PropertyDetail] 📝 Building TitleSection');
+                        return _buildTitleSection(currentProperty);
+                      },
+                    ),
+
                     Divider(
                       indent: 18,
                       endIndent: 18,
                       color: ColorRes.leadGreyColor.shade300,
                     ),
-                    if (property?.propertyDetails?.amenities != null) ...[
+
+                    if (currentProperty.propertyDetails?.amenities != null) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Amenities'),
-                      // const SizedBox(height: 8),
-                      AmenitiesSection(
-                        amenities: property!.propertyDetails!.amenities ?? [],
+                      Builder(
+                        builder: (context) {
+                          log('[PropertyDetail] 🏠 Building AmenitiesSection');
+                          return AmenitiesSection(
+                            amenities:
+                                currentProperty.propertyDetails!.amenities ??
+                                [],
+                          );
+                        },
                       ),
                       const SizedBox(height: 8),
                       Divider(
@@ -276,11 +331,16 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if (property?.propertyDetails != null) ...[
+                    if (currentProperty.propertyDetails != null) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Property Details'),
                       const SizedBox(height: 8),
-                      Details(property: property!),
+                      Builder(
+                        builder: (context) {
+                          log('[PropertyDetail] 📋 Building Details');
+                          return Details(property: currentProperty);
+                        },
+                      ),
                       const SizedBox(height: 12),
                       Divider(
                         indent: 18,
@@ -289,19 +349,24 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if (property
-                            ?.propertyDetails
+                    if (currentProperty
+                            .propertyDetails
                             ?.furnishInfo
                             ?.furnishDetails !=
                         null) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Furnishing'),
-                      // const SizedBox(height: 8),
-                      // Facilities(property: property ?? Items()),
-                      FurnishingDetails(
-                        property: property ?? Items(),
-                        bgColor: ColorRes.propertyBg,
-                        txtColor: ColorRes.propertyText,
+                      Builder(
+                        builder: (context) {
+                          log(
+                            '[PropertyDetail] 🛋️ Building FurnishingDetails',
+                          );
+                          return FurnishingDetails(
+                            property: currentProperty,
+                            bgColor: ColorRes.propertyBg,
+                            txtColor: ColorRes.propertyText,
+                          );
+                        },
                       ),
                       Divider(
                         indent: 18,
@@ -309,14 +374,15 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         color: ColorRes.leadGreyColor.shade300,
                       ),
                     ],
-                    // PG Rules Section (only for PG listing type)
-                    if (property?.listingType?.toUpperCase() == "PG" &&
-                        property?.propertyDetails?.pgInfo?.pgRules != null) ...[
+
+                    if (currentProperty.listingType?.toUpperCase() == "PG" &&
+                        currentProperty.propertyDetails?.pgInfo?.pgRules !=
+                            null) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'PG Rules'),
                       const SizedBox(height: 8),
                       _buildPgRulesSection(
-                        property!.propertyDetails!.pgInfo!.pgRules!,
+                        currentProperty.propertyDetails!.pgInfo!.pgRules!,
                       ),
                       const SizedBox(height: 12),
                       Divider(
@@ -326,10 +392,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    // Room Options & Pricing Section (only for PG listing type)
-                    if (property?.listingType?.toUpperCase() == "PG" &&
-                        property?.propertyDetails?.pgInfo?.pgRoomInfo != null &&
-                        property!
+                    if (currentProperty.listingType?.toUpperCase() == "PG" &&
+                        currentProperty.propertyDetails?.pgInfo?.pgRoomInfo !=
+                            null &&
+                        currentProperty
                             .propertyDetails!
                             .pgInfo!
                             .pgRoomInfo!
@@ -338,7 +404,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       const TitleWithViewAll(title: 'Room Options & Pricing'),
                       const SizedBox(height: 8),
                       _buildRoomOptionsSection(
-                        property!.propertyDetails!.pgInfo!.pgRoomInfo!,
+                        currentProperty.propertyDetails!.pgInfo!.pgRoomInfo!,
                       ),
                       const SizedBox(height: 12),
                       Divider(
@@ -348,14 +414,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if (property?.propertyDescription != null) ...[
+                    if (currentProperty.propertyDescription != null) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Description'),
                       const SizedBox(height: 8),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
-                          property?.propertyDescription ?? '-',
+                          currentProperty.propertyDescription ?? '-',
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
@@ -370,247 +436,133 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if (property!.listingType!.toLowerCase() == 'sell') ...[
-                      if (property?.investmentInsight != null) ...[
-                        const SizedBox(height: 12),
-                        const TitleWithViewAll(title: 'Investment Insight'),
-                        const SizedBox(height: 8),
-                        InvestmentInsightChart(
-                          insight: property!.investmentInsight!,
-                        ),
-                        const SizedBox(height: 12),
-                      ],
+                    if (currentProperty.investmentInsight != null) ...[
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'Investment Insight'),
+                      const SizedBox(height: 8),
+                      Builder(
+                        builder: (context) {
+                          log(
+                            '[PropertyDetail] 📊 Building InvestmentInsightChart',
+                          );
+                          return InvestmentInsightChart(
+                            insight: currentProperty.investmentInsight!,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
                     ],
 
-                    if (property?.location?.isNotEmpty ?? false) ...[
+                    if (currentProperty.location?.isNotEmpty ?? false) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Location'),
                       const SizedBox(height: 8),
-                      AddressAndMapDetails(address: property?.address ?? ''),
+                      Builder(
+                        builder: (context) {
+                          log(
+                            '[PropertyDetail] 🗺️ Building AddressAndMapDetails',
+                          );
+                          return AddressAndMapDetails(
+                            address: currentProperty.address ?? '',
+                          );
+                        },
+                      ),
                       const SizedBox(height: 12),
                     ],
 
-                    Obx(() {
-                      if (mapController.isLoading.value) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
+                    Builder(
+                      builder: (context) {
+                        log('[PropertyDetail] 🗺️ Building Map Section Obx');
+                        return Obx(() {
+                          if (mapController.isLoading.value) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
 
-                      // Check if any category has data
-                      final hasData = mapController.allCategoriesData.values
-                          .any((places) => places.isNotEmpty);
+                          final hasData = mapController.allCategoriesData.values
+                              .any((places) => places.isNotEmpty);
 
-                      print('hasData: $hasData');
+                          if (!hasData ||
+                              mapController.propertyLatLng.value == null) {
+                            print('No data found');
+                            return const SizedBox.shrink();
+                          }
 
-                      if (!hasData ||
-                          mapController.propertyLatLng.value == null) {
-                        print('No data found');
-                        return const SizedBox.shrink();
-                      }
-                      print('Data found');
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Divider(
+                                indent: 18,
+                                endIndent: 18,
+                                color: ColorRes.leadGreyColor.shade300,
+                              ),
+                              const SizedBox(height: 12),
+                              NearbyLocationMapSection(
+                                address: currentProperty.address ?? '',
+                                mapController: mapController,
+                              ),
+                              const SizedBox(height: 12),
+                            ],
+                          );
+                        });
+                      },
+                    ),
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Divider(
-                            indent: 18,
-                            endIndent: 18,
-                            color: ColorRes.leadGreyColor.shade300,
-                          ),
-                          const SizedBox(height: 12),
-
-                          // Embedded Map Preview Section
-                          NearbyLocationMapSection(
-                            address: property?.address ?? '',
-                            mapController: mapController,
-                          ),
-
-                          const SizedBox(height: 12),
-                        ],
-                      );
-                    }),
-
-                    if (property?.ownerName?.isNotEmpty ?? false) ...[
+                    if (currentProperty.ownerName?.isNotEmpty ?? false) ...[
                       Divider(
                         indent: 18,
                         endIndent: 18,
                         color: ColorRes.leadGreyColor.shade300,
                       ),
-
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Owner Details'),
                       const SizedBox(height: 8),
-                      OwnerInformation(
-                        property: property!,
-                        controller: controller,
+                      Builder(
+                        builder: (context) {
+                          log(
+                            '[PropertyDetail] 👤 Building OwnerInformation - START',
+                          );
+                          final widget = OwnerInformation(
+                            property: currentProperty,
+                            controller: controller,
+                          );
+                          log(
+                            '[PropertyDetail] 👤 Building OwnerInformation - END',
+                          );
+                          return widget;
+                        },
                       ),
                       const SizedBox(height: 12),
                     ],
 
-                    // Obx(() {
-                    //   final overallCtrl = _overallRatingController;
-                    //   final reviewCtrl = reviewController;
-                    //
-                    //   final isOverallLoading =
-                    //       overallCtrl.isLoading.value &&
-                    //       overallCtrl.ratingData.value == null;
-                    //   final isReviewLoading =
-                    //       reviewCtrl.isLoading.value &&
-                    //       reviewCtrl.items.isEmpty;
-                    //
-                    //   // 🌀 Show loader if both are still loading
-                    //   if (isOverallLoading && isReviewLoading) {
-                    //     return const Center(child: CircularProgressIndicator());
-                    //   }
-                    //
-                    //   // 🈳 Hide section if both are empty and not loading
-                    //   if (!overallCtrl.isLoading.value &&
-                    //       !reviewCtrl.isLoading.value &&
-                    //       (overallCtrl.ratingData.value == null ||
-                    //           overallCtrl
-                    //                   .ratingData
-                    //                   .value
-                    //                   ?.data
-                    //                   ?.totalReviews ==
-                    //               0) &&
-                    //       reviewCtrl.items.isEmpty) {
-                    //     return const SizedBox.shrink();
-                    //   }
-                    //
-                    //   // 🧩 Extract safe data
-                    //   final overallData = overallCtrl.ratingData.value?.data;
-                    //   final totalReviews = overallData?.totalReviews ?? 0;
-                    //   final overallRating = overallData?.overallRating ?? 0.0;
-                    //   final DetailedRatings detailedRatings =
-                    //       overallData?.detailedRatings ??
-                    //       DetailedRatings(
-                    //         accuracy: 0,
-                    //         amenities: 0,
-                    //         cleanliness: 0,
-                    //         location: 0,
-                    //         value: 0,
-                    //       );
-                    //
-                    //   return Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       Divider(
-                    //         indent: 18,
-                    //         endIndent: 18,
-                    //         color: ColorRes.leadGreyColor.shade300,
-                    //       ),
-                    //       const SizedBox(height: 12),
-                    //       const TitleWithViewAll(
-                    //         title: 'Reviews & Ratings',
-                    //         showViewAll: true,
-                    //       ),
-                    //       // 🟡 Overall Rating Section
-                    //       OverallRatingWidget(
-                    //         totalReviews: totalReviews,
-                    //         overallRating: overallRating,
-                    //         detailedRatings: detailedRatings,
-                    //       ),
-                    //
-                    //       const SizedBox(height: 12),
-                    //
-                    //       // 📋 Review List Section
-                    //       if (reviewCtrl.items.isNotEmpty) ...[
-                    //         SizedBox(
-                    //           height: 220,
-                    //           child: ListView.separated(
-                    //             // shrinkWrap: true,
-                    //             scrollDirection: Axis.horizontal,
-                    //             padding: const EdgeInsets.symmetric(
-                    //               horizontal: 16,
-                    //             ),
-                    //             itemCount: reviewCtrl.items.length,
-                    //             separatorBuilder:
-                    //                 (_, __) => const SizedBox(width: 16),
-                    //             itemBuilder: (context, index) {
-                    //               final review = reviewCtrl.items[index];
-                    //               return PropertyReviewCard(reviewItem: review);
-                    //             },
-                    //           ),
-                    //         ),
-                    //       ] else if (!reviewCtrl.isLoading.value &&
-                    //           totalReviews == 0) ...[
-                    //         const Padding(
-                    //           padding: EdgeInsets.symmetric(
-                    //             horizontal: 16,
-                    //             vertical: 8,
-                    //           ),
-                    //           child: Text(
-                    //             "No reviews yet",
-                    //             style: TextStyle(color: Colors.grey),
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ],
-                    //   );
-                    // }),
-                    //
-                    // Obx(() {
-                    //   if (!canAddReview.value) {
-                    //     return SizedBox.shrink();
-                    //   }
-                    //   return Column(
-                    //     children: [
-                    //       const SizedBox(height: 12),
-                    //       Padding(
-                    //         padding: const EdgeInsets.symmetric(horizontal: 16),
-                    //         child: NesticoPeButton(
-                    //           width: double.infinity,
-                    //           boxShadow: [],
-                    //           onTap: () async {
-                    //             if (UserHelper.isGuest) {
-                    //               Get.to(() => LoginScreen());
-                    //             } else {
-                    //               final result = await Get.to(
-                    //                 () => AddReviewScreen(
-                    //                   entityType: 'property',
-                    //                   entityId: property?.id ?? '',
-                    //                 ),
-                    //               );
-                    //
-                    //               // 👇 Hide button immediately if review was successfully added
-                    //               if (result == true) {
-                    //                 canAddReview.value = false;
-                    //
-                    //                 reviewController.refreshList();
-                    //                 _overallRatingController.fetchOverallRating(
-                    //                   property?.id ?? '',
-                    //                 );
-                    //               }
-                    //             }
-                    //           },
-                    //
-                    //           title: "Add Review",
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   );
-                    // }),
-                    //
-                    // const SizedBox(height: 12),
-                    ReviewSection(
-                      canAddReview: canAddReview,
-                      overallController: _overallRatingController,
-                      reviewController: reviewController,
-                      entityType: "property",
-                      entityId: property?.id ?? '',
-                      reviewCardBuilder:
-                          (context, item) =>
-                              PropertyReviewCard(reviewItem: item),
-                      overallWidgetBuilder: (total, rating, details) {
-                        return OverallRatingWidget(
-                          totalReviews: total,
-                          overallRating: rating,
-                          detailedRatings: details,
+                    Builder(
+                      builder: (context) {
+                        log(
+                          '[PropertyDetail] ⭐ Building ReviewSection - START',
                         );
+                        final widget = ReviewSection(
+                          canAddReview: canAddReview,
+                          overallController: _overallRatingController,
+                          reviewController: reviewController,
+                          entityType: "property",
+                          entityId: currentProperty.id ?? '',
+                          reviewCardBuilder:
+                              (context, item) =>
+                                  PropertyReviewCard(reviewItem: item),
+                          overallWidgetBuilder: (total, rating, details) {
+                            return OverallRatingWidget(
+                              totalReviews: total,
+                              overallRating: rating,
+                              detailedRatings: details,
+                            );
+                          },
+                        );
+                        log('[PropertyDetail] ⭐ Building ReviewSection - END');
+                        return widget;
                       },
                     ),
 
@@ -625,278 +577,55 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       showViewAll: true,
                     ),
                     const SizedBox(height: 12),
-                    const RecommendedProperty(),
+                    Builder(
+                      builder: (context) {
+                        log(
+                          '[PropertyDetail] 🏘️ Building RecommendedProperty - START',
+                        );
+                        const widget = RecommendedProperty();
+                        log(
+                          '[PropertyDetail] 🏘️ Building RecommendedProperty - END',
+                        );
+                        return widget;
+                      },
+                    ),
                     const SizedBox(height: 12),
-                    // Divider(
-                    //   indent: 18,
-                    //   endIndent: 18,
-                    //   color: ColorRes.leadGreyColor.shade300,
-                    // ),
-                    // const SizedBox(height: 12),
-                    // const TitleWithViewAll(
-                    //   title: 'Better Price Property',
-                    //   showViewAll: true,
-                    // ),
-                    // const SizedBox(height: 12),
-                    // const RecommendedProperty(),
-
-                    //SizedBox(height: 12),
-                    //const SizedBox(height: 12), // Extra spacing at bottom
                   ],
                 ),
               ),
-              // Comparison floating button
-              UnifiedComparisonFloatingButton(bottom: 16),
+              Builder(
+                builder: (context) {
+                  log('[PropertyDetail] 🔘 Building ComparisonFloatingButton');
+                  return UnifiedComparisonFloatingButton(bottom: 16);
+                },
+              ),
             ],
           ),
         );
       }),
 
-      // bottomNavigationBar: Obx(() {
-      //   if (_isLoading.value || property == null) {
-      //     return const SizedBox.shrink();
-      //   }
-      //   return SafeArea(
-      //     child: PropertyBottomBar(
-      //       property: property!,
-      //
-      //       // price: '₹ ${property?.propertyDetails?.financialInfo?.price ?? '0'}',
-      //       onCallOwner: () {
-      //         if (UserHelper.isGuest) {
-      //           Get.to(() => LoginScreen());
-      //         } else {
-      //           showModalBottomSheet(
-      //             context: context,
-      //             isScrollControlled: true,
-      //             shape: const RoundedRectangleBorder(
-      //               borderRadius: BorderRadius.vertical(
-      //                 top: Radius.circular(20),
-      //               ),
-      //             ),
-      //             builder:
-      //                 (context) => DraggableScrollableSheet(
-      //               expand: false,
-      //               initialChildSize: 0.85,
-      //               // start with 85% of screen
-      //               minChildSize: 0.5,
-      //               maxChildSize: 0.85,
-      //
-      //               builder:
-      //                   (
-      //                   context,
-      //                   scrollController,
-      //                   ) => SingleChildScrollView(
-      //                 controller: scrollController,
-      //                 child: Padding(
-      //                   padding: EdgeInsets.only(
-      //                     bottom:
-      //                     MediaQuery.of(context).viewInsets.bottom,
-      //                     left: 16,
-      //                     right: 16,
-      //                     top: 16,
-      //                   ),
-      //                   child: ContactOwnerBottom(
-      //                     property: property ?? Items(),
-      //
-      //                     // Optional: Customize texts
-      //                     titleText: "Contact the Owner",
-      //                     chatButtonText: "Chat via WhatsApp",
-      //                     formTitle: "Quick Contact Form",
-      //                     contactButtonText: "Send Request",
-      //
-      //                     // Optional: Customize icons
-      //                     nameIcon: Icons.person,
-      //                     phoneIcon: Icons.phone,
-      //                     emailIcon: Icons.email,
-      //
-      //                     // Optional: Checkbox initial states
-      //                     allowSellerContact: false,
-      //                     negotiable: false,
-      //
-      //                     // Callbacks
-      //                     onChatPressed: () {
-      //                       print("WhatsApp button clicked!");
-      //                     },
-      //                     onContactPressed: (name, phone, email,price,isNegotiable,isAllowAllCondition,planningToBuy) async {
-      //                       final inquiry = {
-      //                         "name": name ?? "",
-      //                         "phone": phone ?? "",
-      //                         "email": email ?? "",
-      //                         "agreeToContact": isAllowAllCondition ?? false,
-      //                         "meta": {
-      //                           if (price != null) "negotiablePrice": price,
-      //                           if (isNegotiable != null) "isNegotiable": isNegotiable,
-      //                           if (planningToBuy != null) "timePeriod": planningToBuy,
-      //                         }
-      //                       };
-      //                       log(" Inquiry  ${inquiry['meta']} ");
-      //
-      //                       final success = await controller.addInquiry(
-      //                         inquiry,
-      //                         property?.id ?? '',
-      //                       );
-      //                       if (success) {
-      //                         CustomSnackBar.show(
-      //                           Get.overlayContext!,
-      //                           message: "Inquiry Added Successfully",
-      //                           type: SnackBarType.success,
-      //                         );
-      //                         Get.back();
-      //                       } else {
-      //                         CustomSnackBar.show(
-      //                           Get.overlayContext!,
-      //                           message: "Failed to Submit Inquiry",
-      //                           type: SnackBarType.error,
-      //                         );
-      //                       }
-      //                     },
-      //                     onAllowSellerContactChanged: (value) {
-      //                       print("Allow sellers changed: $value");
-      //                     },
-      //                     onHomeLoanInterestChanged: (value) {
-      //                       print("Home loan interest changed: $value");
-      //                     },
-      //                   ),
-      //                 ),
-      //               ),
-      //             ),
-      //           );
-      //         }
-      //       },
-      //       onScheduleVisit: () {},
-      //     ),
-      //   );
-      // }),
-
-      // Update in your first document (bottomNavigationBar)
       bottomNavigationBar: Obx(() {
-        if (_isLoading.value || property == null) {
+        log(
+          '[PropertyDetail] 🔄 BottomBar Obx rebuild - isLoading: ${_isLoading.value}',
+        );
+
+        if (_isLoading.value) {
           return const SizedBox.shrink();
         }
+
+        final currentProperty = _property.value;
+        if (currentProperty == null) {
+          return const SizedBox.shrink();
+        }
+
+        log('[PropertyDetail] 📊 Creating BottomBar priceManager');
+        final priceManager = PropertyPriceManager(
+          financialInfo:
+              currentProperty.propertyDetails?.financialInfo ?? FinancialInfo(),
+          listingType: currentProperty.listingType ?? '',
+        );
+
         return SafeArea(
-          // child: PropertyBottomBar(
-          //   property: property!,
-          //   onCallOwner: () {
-          //     if (UserHelper.isGuest) {
-          //       Get.to(() => LoginScreen());
-          //     } else {
-          //       showModalBottomSheet(
-          //         context: context,
-          //         isScrollControlled: true,
-          //         shape: const RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.vertical(
-          //             top: Radius.circular(20),
-          //           ),
-          //         ),
-          //         builder:
-          //             (context) => DraggableScrollableSheet(
-          //               expand: false,
-          //               minChildSize: 0.45,
-          //               initialChildSize:
-          //                   controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
-          //               maxChildSize:
-          //                   controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
-          //               builder:
-          //                   (
-          //                     context,
-          //                     scrollController,
-          //                   ) => SingleChildScrollView(
-          //                     controller: scrollController,
-          //                     child: Padding(
-          //                       padding: EdgeInsets.only(
-          //                         bottom:
-          //                             MediaQuery.of(context).viewInsets.bottom,
-          //                         left: 16,
-          //                         right: 16,
-          //                         top: 16,
-          //                       ),
-          //                       child: ContactOwnerBottom(
-          //                         property: property ?? Items(),
-          //                         // Check if inquiry already submitted
-          //                         inQuireSubmitted:
-          //                             controller.hasSubmittedInquiry.value,
-          //                         titleText: "Contact the Owner",
-          //                         chatButtonText: "Chat via WhatsApp",
-          //                         formTitle: "Quick Contact Form",
-          //                         contactButtonText: "Send Request",
-          //                         nameIcon: Icons.person,
-          //                         phoneIcon: Icons.phone,
-          //                         emailIcon: Icons.email,
-          //                         allowSellerContact: false,
-          //                         negotiable: false,
-          //                         onChatPressed: () {
-          //                           print("WhatsApp button clicked!");
-          //                         },
-          //                         onContactPressed: (
-          //                           name,
-          //                           phone,
-          //                           email,
-          //                           price,
-          //                           isNegotiable,
-          //                           isAllowAllCondition,
-          //                           planningToBuy,
-          //                         ) async {
-          //                           final inquiry = {
-          //                             "name": name ?? "",
-          //                             "phone": phone ?? "",
-          //                             "email": email ?? "",
-          //                             "agreeToContact":
-          //                                 isAllowAllCondition ?? false,
-          //                             "meta": {
-          //                               if (price != null)
-          //                                 "negotiablePrice": price,
-          //                               if (isNegotiable != null)
-          //                                 "isNegotiable": isNegotiable,
-          //                               if (planningToBuy != null)
-          //                                 "timePeriod": planningToBuy,
-          //                             },
-          //                           };
-          //                           log("Inquiry ${inquiry['meta']}");
-          //
-          //                           final success = await controller.addInquiry(
-          //                             inquiry,
-          //                             property?.id ?? '',
-          //                           );
-          //
-          //                           if (success) {
-          //                             // Mark inquiry as submitted
-          //
-          //                             controller.hasSubmittedInquiry.value =
-          //                                 true;
-          //
-          //                             CustomSnackBar.show(
-          //                               Get.overlayContext!,
-          //                               message: "Inquiry Added Successfully",
-          //                               type: SnackBarType.success,
-          //                             );
-          //
-          //                             Get.back();
-          //                             await controller.getAllInQuireData(
-          //                               widget.property?.id ?? '',
-          //                             );
-          //                           } else {
-          //                             CustomSnackBar.show(
-          //                               Get.overlayContext!,
-          //                               message: "Failed to Submit Inquiry",
-          //                               type: SnackBarType.error,
-          //                             );
-          //                           }
-          //                         },
-          //                         onAllowSellerContactChanged: (value) {
-          //                           print("Allow sellers changed: $value");
-          //                         },
-          //                         onHomeLoanInterestChanged: (value) {
-          //                           print("Home loan interest changed: $value");
-          //                         },
-          //                       ),
-          //                     ),
-          //                   ),
-          //             ),
-          //       );
-          //     }
-          //   },
-          //   onScheduleVisit: () {},
-          // ),
           child: ReusableBottomBar(
             mainPriceText: priceManager.totalPriceDisplay,
             priceBreakdown: priceManager.propertyPriceSummary,
@@ -935,7 +664,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   top: 16,
                                 ),
                                 child: ContactOwnerBottom(
-                                  // Check if inquiry already submitted
                                   inQuireSubmitted:
                                       controller.hasSubmittedInquiry.value,
                                   titleText: "Contact the Owner",
@@ -974,28 +702,23 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                           "timePeriod": planningToBuy,
                                       },
                                     };
-                                    log("Inquiry ${inquiry['meta']}");
 
                                     final success = await controller.addInquiry(
                                       inquiry,
-                                      property?.id ?? '',
+                                      currentProperty.id ?? '',
                                     );
 
                                     if (success) {
-                                      // Mark inquiry as submitted
-
                                       controller.hasSubmittedInquiry.value =
                                           true;
-
                                       CustomSnackBar.show(
                                         Get.overlayContext!,
                                         message: "Inquiry Added Successfully",
                                         type: SnackBarType.success,
                                       );
-
                                       Get.back();
                                       await controller.getAllInQuireData(
-                                        widget.property?.id ?? '',
+                                        widget.propertyId ?? '',
                                       );
                                     } else {
                                       CustomSnackBar.show(
@@ -1024,6 +747,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       }),
     );
   }
+
+  // Also remove this getter since we're using _property.value directly
+  // Items? get property => _property.value;
 
   Widget _buildMediaBanner(PropertyMedia media, String id) {
     final PageController pageController = PageController();
@@ -1781,223 +1507,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       ),
     );
   }
-
-  // Widget _buildTitleSection(Items property) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Row(
-  //           crossAxisAlignment: CrossAxisAlignment.baseline,
-  //           textBaseline: TextBaseline.alphabetic,
-  //           children: [
-  //             // Title
-  //             Expanded(
-  //               child: Text(
-  //                 property.title ?? "-",
-  //                 style: TextStyle(
-  //                   fontSize: 17,
-  //                   fontWeight: AppFontWeights.semiBold,
-  //                   color: ColorRes.textPrimary,
-  //                 ),
-  //                 maxLines: 2,
-  //                 overflow: TextOverflow.ellipsis,
-  //               ),
-  //             ),
-
-  //             const SizedBox(width: 8),
-  //             Row(
-  //               children: [
-  //                 Icon(Icons.star, size: 16, color: Colors.amber),
-  //                 const SizedBox(width: 4),
-  //                 Text(
-  //                   "4.5",
-  //                   style: TextStyle(
-  //                     fontSize: 15,
-  //                     fontWeight: AppFontWeights.semiBold,
-  //                     color: Colors.black,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-
-  //         const SizedBox(height: 4),
-  //         Row(
-  //           crossAxisAlignment: CrossAxisAlignment.center,
-  //           children: [
-  //             // Icon(Icons.location_on_rounded, size: 16, color: ColorRes.leadGreyColor[600]),
-  //             // const SizedBox(width: 4),
-  //             Expanded(
-  //               child: Text(
-  //                 '${property.city ?? '-'}, ${property.state ?? "-"}',
-  //                 style: TextStyle(fontSize: 13, color: ColorRes.leadGreyColor[600]),
-  //                 overflow: TextOverflow.ellipsis,
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-
-  //         const SizedBox(height: 4),
-
-  //         // Type + See on Map Row
-  //         Row(
-  //           children: [
-  //             // Type Chip
-  //             if (property.listingType != null)
-  //               Container(
-  //                 padding: const EdgeInsets.symmetric(
-  //                   horizontal: 10,
-  //                   vertical: 4,
-  //                 ),
-  //                 decoration: BoxDecoration(
-  //                   color: ColorRes.primary.withOpacity(0.15),
-  //                   borderRadius: BorderRadius.circular(AppRadius.small),
-  //                 ),
-  //                 child: Text(
-  //                   property.listingType!.toUpperCase(),
-  //                   style: TextStyle(
-  //                     fontSize: 12,
-  //                     fontWeight: AppFontWeights.semiBold,
-  //                     color: ColorRes.primary,
-  //                   ),
-  //                 ),
-  //               ),
-
-  //             const Spacer(),
-
-  //             // See on Map Button
-  //             GestureDetector(
-  //               onTap: () {
-  //                 // TODO: Add map navigation logic
-  //               },
-  //               child: Container(
-  //                 padding: const EdgeInsets.symmetric(
-  //                   horizontal: 10,
-  //                   vertical: 4,
-  //                 ),
-  //                 decoration: BoxDecoration(
-  //                   color: ColorRes.primary.withOpacity(0.1),
-  //                   borderRadius: BorderRadius.circular(AppRadius.small),
-  //                 ),
-  //                 child: Row(
-  //                   mainAxisSize: MainAxisSize.min,
-  //                   children: [
-  //                     Icon(
-  //                       Icons.location_pin,
-  //                       size: 16,
-  //                       color: ColorRes.primary,
-  //                     ),
-  //                     const SizedBox(width: 4),
-  //                     Text(
-  //                       "See on Map",
-  //                       style: TextStyle(
-  //                         fontSize: 12,
-  //                         fontWeight: AppFontWeights.semiBold,
-  //                         color: ColorRes.primary,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildPriceAndType() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //     child: Row(
-  //       children: [
-  //         const Text(
-  //           "₹8.9 Cr",
-  //           style: TextStyle(
-  //             fontSize: AppFontSizes.large,
-  //             fontWeight: AppFontWeights.semiBold,
-  //           ),
-  //         ),
-  //         const SizedBox(width: 16),
-  //         Chip(
-  //           label: const Text("Sell - apartment"),
-  //           backgroundColor: ColorRes.orangeColor.shade50,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildFeatureChips() {
-  //   return const Padding(
-  //     padding: EdgeInsets.all(16),
-  //     child: Wrap(
-  //       spacing: 12,
-  //       runSpacing: 8,
-  //       children: [
-  //         Chip(label: Text("4 BHK")),
-  //         Chip(label: Text("5 Bath")),
-  //         Chip(label: Text("2 Balcony")),
-  //         Chip(label: Text("Floor: 34/34")),
-  //         Chip(label: Text("Area: 3900 sqft")),
-  //         Chip(label: Text("Facing: West")),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildSection(String title, String content) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(16.0),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           title,
-  //           style: const TextStyle(
-  //             fontSize: AppFontSizes.large,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //         const SizedBox(height: 8),
-  //         Text(content),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildAmenitiesSection() {
-  //   final List<String> amenities = [
-  //     "Infinity Pool",
-  //     "Sky Lounge",
-  //     "24x7 Concierge",
-  //     "Private Elevator",
-  //     "Smart Lighting",
-  //     "Solar Panels",
-  //   ];
-  //   return Padding(
-  //     padding: const EdgeInsets.all(16),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         const Text(
-  //           "Amenities",
-  //           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  //         ),
-  //         const SizedBox(height: 8),
-  //         Wrap(
-  //           spacing: 12,
-  //           runSpacing: 8,
-  //           children: amenities.map((e) => Chip(label: Text(e))).toList(),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
 
 class CircularIcon extends StatelessWidget {
@@ -2035,286 +1544,6 @@ class CircularIcon extends StatelessWidget {
     );
   }
 }
-
-// class PropertyBottomBar extends StatelessWidget {
-//   final Items property;
-//
-//   // final String price;
-//   final VoidCallback onCallOwner;
-//   final VoidCallback onScheduleVisit;
-//
-//   const PropertyBottomBar({
-//     super.key,
-//     // required this.price,
-//     required this.onCallOwner,
-//     required this.onScheduleVisit,
-//     required this.property,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final price = PropertyPriceManager(
-//       listingType: property.listingType ?? '',
-//       financialInfo: property.propertyDetails?.financialInfo ?? FinancialInfo(),
-//       pgInfo: property.propertyDetails?.pgInfo, // Added for PG support
-//     );
-//     return Container(
-//       height: 80,
-//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-//       decoration: const BoxDecoration(
-//         color: ColorRes.white,
-//         boxShadow: [
-//           BoxShadow(
-//             color: ColorRes.blackShade12,
-//             blurRadius: 6,
-//             offset: Offset(0, -2),
-//           ),
-//         ],
-//       ),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Text(
-//                 price.totalPriceDisplay,
-//                 style: const TextStyle(
-//                   fontSize: AppFontSizes.large,
-//                   fontWeight: AppFontWeights.semiBold,
-//                   color: ColorRes.black,
-//                 ),
-//                 overflow: TextOverflow.ellipsis,
-//               ),
-//               GestureDetector(
-//                 onTap: () {
-//                   Get.bottomSheet(
-//                     PricingBottomSheet(
-//                       financialInfo:
-//                           property.propertyDetails?.financialInfo ??
-//                           FinancialInfo(),
-//                     ),
-//                   );
-//                 },
-//                 child: const Text(
-//                   'See Pricing in Detail',
-//                   style: TextStyle(
-//                     fontSize: AppFontSizes.extraSmall,
-//                     color: ColorRes.primary,
-//                     fontWeight: AppFontWeights.semiBold,
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.end,
-//             children: [
-//               SizedBox(
-//                 width: 140,
-//                 child: NesticoPeButton(
-//                   onTap: onCallOwner,
-//                   title: "View Contact",
-//                 ),
-//               ),
-//               // const SizedBox(width: 6),
-//               // SizedBox(
-//               //   width: 50,
-//               //   child: ElevatedButton(
-//               //     onPressed: () {},
-//               //     style: ElevatedButton.styleFrom(
-//               //       backgroundColor: ColorRes.propertyBg,
-//               //       shape: RoundedRectangleBorder(
-//               //         borderRadius: BorderRadius.circular(
-//               //           AppRadius.medium,
-//               //         ), // Adjust for more/less curve
-//               //       ),
-//               //       padding: const EdgeInsets.symmetric(
-//               //         vertical: 16,
-//               //       ), // Optional: for better touch target
-//               //     ),
-//               //     child: const Icon(Icons.phone_outlined),
-//               //   ),
-//               // ),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-//
-// class PricingBottomSheet extends StatelessWidget {
-//   final FinancialInfo? financialInfo;
-//
-//   const PricingBottomSheet({super.key, required this.financialInfo});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     if (financialInfo == null) {
-//       return const SizedBox.shrink(); // nothing if null
-//     }
-//
-//     final info = financialInfo!;
-//
-//     // Build a list of rows dynamically
-//     final List<Widget> rows = [];
-//
-//     if (_isValid(info.price)) {
-//       rows.add(_priceRow("Property Price", info.price.toStringAsFixed(2)));
-//     }
-//     if (_isValid(info.maintenance)) {
-//       rows.add(
-//         _priceRow(
-//           "Maintenance (Monthly)",
-//           info.maintenance!.toStringAsFixed(2),
-//         ),
-//       );
-//     }
-//     if (_isValid(info.propertyRentPerMonth)) {
-//       rows.add(
-//         _priceRow("Rent / Month", info.propertyRentPerMonth.toStringAsFixed(2)),
-//       );
-//     }
-//     if (_isValid(info.pricePerSqft)) {
-//       rows.add(
-//         _priceRow("Price per Sqft", info.pricePerSqft.toStringAsFixed(2)),
-//       );
-//     }
-//     if (_isValid(info.brokerCommission)) {
-//       rows.add(
-//         _priceRow(
-//           "Broker Commission",
-//           info.brokerCommission.toStringAsFixed(2),
-//         ),
-//       );
-//     }
-//     if (_isValid(info.propertySecurityDeposit)) {
-//       rows.add(
-//         _priceRow(
-//           "Security Deposit",
-//           _formatCurrency(info.propertySecurityDeposit),
-//         ),
-//       );
-//     }
-//     if (info.negotiable) {
-//       rows.add(_priceRow("Negotiable", "Yes"));
-//     }
-//
-//     // Calculate total only if there are meaningful values
-//     final total = _totalPrice(info);
-//     if (total > 0) {
-//       rows.add(const Divider(height: 28));
-//       rows.add(
-//         _priceRow("Total Price", _formatCurrency(total), isHighlight: true),
-//       );
-//     }
-//
-//     // If no rows, don’t show sheet
-//     if (rows.isEmpty) {
-//       return const SizedBox.shrink();
-//     }
-//
-//     return SafeArea(
-//       child: Container(
-//         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-//         decoration: const BoxDecoration(
-//           color: ColorRes.white,
-//           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-//         ),
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             // Drag Handle
-//             Center(
-//               child: Container(
-//                 width: 40,
-//                 height: 5,
-//                 margin: const EdgeInsets.only(bottom: 12),
-//                 decoration: BoxDecoration(
-//                   color: ColorRes.leadGreyColor.shade400,
-//                   borderRadius: BorderRadius.circular(10),
-//                 ),
-//               ),
-//             ),
-//
-//             const Text(
-//               "Pricing Details",
-//               style: TextStyle(
-//                 fontSize: AppFontSizes.subtitle,
-//                 fontWeight: AppFontWeights.semiBold,
-//                 color: ColorRes.textPrimary,
-//               ),
-//             ),
-//             const SizedBox(height: 16),
-//
-//             ...rows,
-//
-//             const SizedBox(height: 20),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _priceRow(String label, String value, {bool isHighlight = false}) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 6),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Text(
-//             label,
-//             style: TextStyle(
-//               fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
-//               fontWeight:
-//                   isHighlight
-//                       ? AppFontWeights.semiBold
-//                       : AppFontWeights.regular,
-//               color:
-//                   isHighlight
-//                       ? ColorRes.black
-//                       : ColorRes.leadGreyColor.shade700,
-//             ),
-//           ),
-//           Text(
-//             value,
-//             style: TextStyle(
-//               fontSize: isHighlight ? AppFontSizes.body : AppFontSizes.medium,
-//               fontWeight:
-//                   isHighlight
-//                       ? AppFontWeights.extraBold
-//                       : AppFontWeights.medium,
-//               color: isHighlight ? ColorRes.green : ColorRes.black,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   bool _isValid(num? value) {
-//     return value != null && value > 0;
-//   }
-//
-//   int _totalPrice(FinancialInfo info) {
-//     try {
-//       return (info.price +
-//               (info.brokerCommission) +
-//               (info.propertySecurityDeposit))
-//           .toInt();
-//     } catch (_) {
-//       return 0;
-//     }
-//   }
-//
-//   static String _formatCurrency(num? value) {
-//     if (value == null || value == 0) return "—";
-//     return "₹${value.toStringAsFixed(0)}";
-//   }
-// }
 
 class Facilities extends StatelessWidget {
   final Items property;
@@ -2469,34 +1698,6 @@ class Details extends StatelessWidget {
                   }).toList(),
             ),
           ),
-
-          // if (details.length > 4)
-          //   Padding(
-          //     padding: const EdgeInsets.only(top: 16),
-          //     child: GestureDetector(
-          //       onTap: controller.lessOrReadMore,
-          //       child: Row(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           Text(
-          //             isExpanded ? "Read Less" : "Read More",
-          //             style: TextStyle(
-          //               fontSize: AppFontSizes.bodySmall,
-          //               fontWeight: AppFontWeights.semiBold,
-          //               color: ColorRes.blueColor.shade600,
-          //             ),
-          //           ),
-          //           Icon(
-          //             isExpanded
-          //                 ? Icons.keyboard_arrow_up
-          //                 : Icons.keyboard_arrow_down,
-          //             color: ColorRes.blueColor.shade600,
-          //             size: 18,
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
         ],
       );
     });
@@ -2557,36 +1758,6 @@ class AmenitiesSection extends StatelessWidget {
     );
   }
 }
-
-// class AddressAndMapDetails extends StatelessWidget {
-//   final Items property;
-//
-//   const AddressAndMapDetails({super.key, required this.property});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 16),
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           const Icon(Icons.location_on_rounded, size: 16),
-//           const SizedBox(width: 8),
-//           Flexible(
-//             child: Text(
-//               "${property.address ?? ''}, ${property.city ?? ''}, ${property.state ?? ''}, ${property.zipCode ?? ''},",
-//               style: const TextStyle(
-//                 fontSize: AppFontSizes.caption,
-//                 fontWeight: FontWeight.w400,
-//               ),
-//             ),
-//           ),
-//           const SizedBox(width: 8),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class NearbyPropertyDetails extends StatelessWidget {
   final List<NearbyLocations> nearbyLocations;
@@ -2798,12 +1969,6 @@ class OwnerInformation extends StatelessWidget {
                         if (property.ownerEmail != null)
                           Row(
                             children: [
-                              // Icon(
-                              //   Icons.email_outlined,
-                              //   size: 12,
-                              //   color: ColorRes.leadGreyColor,
-                              // ),
-                              // SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   DataMasker.maskEmail(property.ownerEmail),
@@ -2823,220 +1988,11 @@ class OwnerInformation extends StatelessWidget {
               ),
             ),
           ),
-          // const SizedBox(height: 12),
-          // Obx(
-          //   () => ElevatedButton(
-          //     style: ElevatedButton.styleFrom(
-          //       minimumSize: const Size(double.infinity, 40),
-          //       backgroundColor:
-          //           controller.isDeveloper.value
-          //               ? ColorRes.white
-          //               : ColorRes.white,
-          //       padding: const EdgeInsets.symmetric(vertical: 14),
-          //       shape: RoundedRectangleBorder(
-          //         side: BorderSide(
-          //           color:
-          //               controller.isDeveloper.value
-          //                   ? ColorRes.primary
-          //                   : ColorRes.primary,
-          //         ),
-          //         borderRadius: BorderRadius.circular(16),
-          //       ),
-          //     ),
-          //     onPressed: controller.checkTheSellerType,
-          //     child: Text(
-          //       controller.isDeveloper.value
-          //           ? "Chat with Developer"
-          //           : "Chat with Owner",
-          //       style: TextStyle(
-          //         fontSize: AppFontSizes.medium,
-          //         fontWeight: AppFontWeights.semiBold,
-          //         color:
-          //             controller.isDeveloper.value
-          //                 ? ColorRes.primary
-          //                 : ColorRes.primary,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          //
-          // const SizedBox(height: 12),
         ],
       ),
     );
   }
 }
-
-// class ContactSellerCard extends StatelessWidget {
-//   final Items property;
-//   const ContactSellerCard({super.key, required this.property});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 12),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Container(
-//             decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-//             child: Padding(
-//               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-//               child: Row(
-//                 children: [
-//                   CircleAvatar(
-//                     radius: 18,
-//                     backgroundImage: AssetImage(
-//                       IMGRes.home2,
-//                     ), // Use a real image or placeholder
-//                     // backgroundColor: ColorRes.leadGreyColor[300], // fallback if no image
-//                   ),
-//                   const SizedBox(width: 16),
-//                   Expanded(
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Text(
-//                           property.ownerName ?? "-",
-//                           style: const TextStyle(
-//                             fontSize: 12,
-//                             fontWeight: AppFontWeights.semiBold,
-//                           ),
-//                         ),
-//                         SizedBox(height: 4),
-//                         if (property.ownerPhone != null)
-//                           Row(
-//                             children: [
-//                               // Icon(
-//                               //   Icons.phone_outlined,
-//                               //   size: 12,
-//                               //   color: ColorRes.leadGreyColor,
-//                               // ),
-//                               // SizedBox(width: 6),
-//                               Text(
-//                                 "+91 ${property.ownerPhone ?? '-'} ",
-//                                 style: TextStyle(
-//                                   color: ColorRes.grey,
-//                                   fontSize: 10,
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         // if (property.ownerEmail != null)
-//                         //   Row(
-//                         //     children: [
-//                         //       // Icon(
-//                         //       //   Icons.email_outlined,
-//                         //       //   size: 12,
-//                         //       //   color: ColorRes.leadGreyColor,
-//                         //       // ),
-//                         //       // SizedBox(width: 6),
-//                         //       Expanded(
-//                         //         child: Text(
-//                         //           property.ownerEmail ?? '-',
-//                         //           style: TextStyle(
-//                         //             color: ColorRes.grey,
-//                         //             fontSize: 10,
-//                         //           ),
-//                         //           overflow: TextOverflow.ellipsis,
-//                         //         ),
-//                         //       ),
-//                         //     ],
-//                         //   ),
-//                       ],
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//           // Checkboxes
-//           Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               Row(
-//                 children: [
-//                   Checkbox(
-//                     value: true,
-//                     side: BorderSide(color: ColorRes.grey, width: 1),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(4),
-//                     ),
-//                     onChanged: (value) {},
-//                     activeColor: ColorRes.primary,
-//                   ),
-//                   const Expanded(
-//                     child: Text(
-//                       "Allow sellers to get in touch",
-//                       style: TextStyle(fontSize: 11),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//               Row(
-//                 children: [
-//                   Checkbox(
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(4),
-//                     ),
-//                     value: false,
-//                     side: BorderSide(color: ColorRes.grey, width: 1),
-//                     onChanged: (value) {},
-//                     activeColor: ColorRes.primary,
-//                   ),
-//                   const Expanded(
-//                     child: Text(
-//                       "I am interested in Home loans",
-//                       style: TextStyle(fontSize: 11),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ],
-//           ),
-//
-//           const Row(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Icon(Icons.thumb_up, size: 15, color: Colors.black54),
-//               SizedBox(width: 6),
-//               Text(
-//                 "Perfect Choice! Users like you also liked this",
-//                 style: TextStyle(
-//                   fontSize: AppFontSizes.extraSmall,
-//                   color: Colors.black54,
-//                 ),
-//               ),
-//             ],
-//           ),
-//           const SizedBox(height: 12),
-//
-//           // Button
-//           ElevatedButton(
-//             style: ElevatedButton.styleFrom(
-//               minimumSize: const Size(double.infinity, 40),
-//               backgroundColor: ColorRes.primary,
-//               padding: const EdgeInsets.symmetric(vertical: 14),
-//               shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(16),
-//               ),
-//             ),
-//             onPressed: () {},
-//             child: Text(
-//               "Check availability with seller",
-//               style: TextStyle(
-//                 fontSize: 14,
-//                 fontWeight: AppFontWeights.semiBold,
-//                 color: ColorRes.white,
-//               ),
-//             ),
-//           ),
-//           const SizedBox(height: 12),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class ContactSellerCard extends StatelessWidget {
   final Items property;

@@ -65,7 +65,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
             onPressed: () {
               Get.offAll(() => DashboardScreen());
             },
-            child: Text('Back'),
+            child: Text('Switch To Buyer'),
           ),
         ],
       ),
@@ -5201,7 +5201,8 @@ Widget buildMetricCard(String title, String value, IconData icon, Color color) {
 
       final titleFontSize =
           isCompact ? AppFontSizes.extraSmall : AppFontSizes.small;
-      final valueFontSize = isCompact ? AppFontSizes.medium : AppFontSizes.medium;
+      final valueFontSize =
+          isCompact ? AppFontSizes.medium : AppFontSizes.medium;
       final iconSize = isCompact ? 16.0 : 18.0;
       final iconPadding = isCompact ? 6.0 : 8.0;
       final cardPadding = isCompact ? 12.0 : 12.0;

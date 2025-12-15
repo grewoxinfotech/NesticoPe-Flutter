@@ -18,7 +18,6 @@ import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../saved_property/controllers/property_favorite_controller.dart';
 
-
 class PropertyCard extends StatefulWidget {
   final Items property;
 
@@ -53,7 +52,9 @@ class _PropertyCardState extends State<PropertyCard> {
 
     return GestureDetector(
       onTap:
-          () => Get.to(() => PropertyDetailScreen(property: widget.property)),
+          () => Get.to(
+            () => PropertyDetailScreen(propertyId: widget.property.id),
+          ),
       child: Container(
         width: 260,
         // margin: const EdgeInsets.only(right: 12, bottom: 12),
@@ -142,7 +143,6 @@ class _PropertyCardState extends State<PropertyCard> {
                         GestureDetector(
                           onTap: () {
                             compare.toggle(widget.property, max: 2);
-
                           },
                           child: Obx(() {
                             final selected = compare.isSelected(

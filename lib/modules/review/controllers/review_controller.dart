@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/data/network/review/model/review_model.dart'
 import 'package:housing_flutter_app/modules/property/controllers/overall_rating_controller.dart';
 
 import '../../../data/network/review/service/review_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class ReviewController extends PaginatedController<ReviewItem> {
   final ReviewService _service = ReviewService();

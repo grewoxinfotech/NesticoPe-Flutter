@@ -10,6 +10,7 @@ import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
 import 'package:housing_flutter_app/data/network/support_ticket/service/ticket_service/support_ticket_service.dart';
 
 import '../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 // Controller using GetX
 class SupportTicketController extends PaginatedController<TicketItem> {

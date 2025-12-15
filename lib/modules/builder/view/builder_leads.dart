@@ -248,6 +248,7 @@
 //   }
 // }
 
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -476,15 +477,15 @@ class _BuilderLeadsState extends State<BuilderLeads> {
                               lead: lead,
                               onTap: () {
                                 log("String builderLead Data ${lead.toJson()}");
-                                final project = controller.items
-                                    .firstWhere(
-                                      (prop) => prop.id == lead.propertyId,
-
-                                    );
-                                Get.to(()=>BuilderLeadOverView(
-                                  lead: lead,
-                                  project: project,
-                                ));
+                                final project = controller.items.firstWhere(
+                                  (prop) => prop.id == lead.propertyId,
+                                );
+                                Get.to(
+                                  () => BuilderLeadOverView(
+                                    lead: lead,
+                                    project: project,
+                                  ),
+                                );
                               },
                               isCompact:
                                   MediaQuery.of(context).size.width < 600,

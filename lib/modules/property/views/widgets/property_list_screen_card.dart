@@ -14,7 +14,6 @@ import '../../../../widgets/button/button.dart';
 import '../../../../widgets/display/card.dart';
 import '../../../../widgets/bar/navigation_bar/navigation_Bar.dart';
 
-
 class PropertyListScreenCard extends StatelessWidget {
   final Items? items;
 
@@ -23,7 +22,8 @@ class PropertyListScreenCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.to(() => PropertyDetailScreen(property: items)),
+      onTap:
+          () => Get.to(() => PropertyDetailScreen(propertyId: items?.id ?? '')),
       child: NesticoPeCard(
         padding: EdgeInsets.zero,
         child: Column(
@@ -88,7 +88,10 @@ class PropertyListScreenCard extends StatelessWidget {
                       // Compare button
                       Builder(
                         builder: (context) {
-                          final compare = Get.put(CompareManager(), permanent: true);
+                          final compare = Get.put(
+                            CompareManager(),
+                            permanent: true,
+                          );
                           return GestureDetector(
                             onTap: () {
                               final before = compare.count;
@@ -100,32 +103,40 @@ class PropertyListScreenCard extends StatelessWidget {
                                 if (after > before) {
                                   CustomSnackBar.show(
                                     ctx,
-                                    message: after == 2
-                                        ? 'Ready to compare!'
-                                        : 'Added to compare (${after}/2)',
+                                    message:
+                                        after == 2
+                                            ? 'Ready to compare!'
+                                            : 'Added to compare (${after}/2)',
                                     type: SnackBarType.success,
-                                    actionLabel: after == 2 ? 'Compare Now' : null,
-                                    onActionPressed: after == 2
-                                        ? () {
-                                            Get.back(); // Close snackbar first
-                                            if (Get.isRegistered<NavigationController>()) {
-                                              Get.find<NavigationController>().changeIndex(2);
+                                    actionLabel:
+                                        after == 2 ? 'Compare Now' : null,
+                                    onActionPressed:
+                                        after == 2
+                                            ? () {
+                                              Get.back(); // Close snackbar first
+                                              if (Get.isRegistered<
+                                                NavigationController
+                                              >()) {
+                                                Get.find<NavigationController>()
+                                                    .changeIndex(2);
+                                              }
                                             }
-                                          }
-                                        : null,
+                                            : null,
                                   );
                                 } else if (after < before) {
                                   CustomSnackBar.show(
                                     ctx,
-                                    message: after == 0
-                                        ? 'Removed from compare'
-                                        : 'Removed from compare (${after}/2)',
+                                    message:
+                                        after == 0
+                                            ? 'Removed from compare'
+                                            : 'Removed from compare (${after}/2)',
                                     type: SnackBarType.info,
                                   );
                                 } else if (after == before && before >= 2) {
                                   CustomSnackBar.show(
                                     ctx,
-                                    message: 'You can only compare 2 properties',
+                                    message:
+                                        'You can only compare 2 properties',
                                     type: SnackBarType.warning,
                                   );
                                 }
@@ -138,7 +149,10 @@ class PropertyListScreenCard extends StatelessWidget {
                                 radius: 18,
                                 child: Icon(
                                   Icons.compare_arrows,
-                                  color: selected ? ColorRes.primary : ColorRes.leadGreyColor,
+                                  color:
+                                      selected
+                                          ? ColorRes.primary
+                                          : ColorRes.leadGreyColor,
                                   size: 20,
                                 ),
                               );
@@ -164,7 +178,7 @@ class PropertyListScreenCard extends StatelessWidget {
                       Flexible(
                         child: Text(
                           items!.title!,
-                          style:  TextStyle(
+                          style: TextStyle(
                             fontWeight: AppFontWeights.extraBold,
                             color: ColorRes.black,
                             fontSize: AppFontSizes.medium,
@@ -186,7 +200,7 @@ class PropertyListScreenCard extends StatelessWidget {
                             items?.listingType != null
                                 ? Text(
                                   "${items!.listingType}",
-                                  style:  TextStyle(
+                                  style: TextStyle(
                                     fontWeight: AppFontWeights.semiBold,
                                     fontSize: AppFontSizes.small,
                                     color: ColorRes.white,
@@ -214,7 +228,7 @@ class PropertyListScreenCard extends StatelessWidget {
                               child: Text(
                                 items!.propertyDetails!.financialInfo!.price
                                     .toString(),
-                                style:  TextStyle(
+                                style: TextStyle(
                                   fontSize: AppFontSizes.medium,
                                   color: ColorRes.black,
                                   fontWeight: AppFontWeights.extraBold,
@@ -286,7 +300,7 @@ class PropertyListScreenCard extends StatelessWidget {
                             children: [
                               Text(
                                 '${items!.propertyDetails!.bhk ?? '0'} BHK',
-                                style:  TextStyle(
+                                style: TextStyle(
                                   fontSize: AppFontSizes.medium,
                                   color: ColorRes.black,
                                   fontWeight: AppFontWeights.extraBold,
@@ -368,7 +382,7 @@ class PropertyListScreenCard extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               items!.ownerName!,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontWeight: AppFontWeights.extraBold,
                                 fontSize: AppFontSizes.small,
                                 color: ColorRes.black,

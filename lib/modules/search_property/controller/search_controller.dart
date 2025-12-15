@@ -369,7 +369,6 @@ class GoogleMapSearchController extends GetxController {
             'lng': coords['lng'] as double,
           };
           coordinatesSet = true;
-          print('✅ Property coordinates set: ${propertyLatLng.value}');
         }
 
         final places = response['places'] as List<Map<String, dynamic>>;
@@ -402,8 +401,6 @@ class GoogleMapSearchController extends GetxController {
 
       final results = await Future.wait(futures);
       allCategoriesData.value = Map.fromEntries(results);
-
-      print("All categories data fetched ${allCategoriesData.value}");
 
       // Set first category as selected if available
       if (allCategoriesData.isNotEmpty) {

@@ -408,7 +408,6 @@ class GoogleMapApi {
     String type, {
     int radius = 2000,
   }) async {
-    print('Address in API: $address');
     try {
       // Step 1: Geocode the address to get lat/lng
       final geoUri = Uri.parse(
@@ -432,8 +431,6 @@ class GoogleMapApi {
       final location = geoData['results'][0]['geometry']['location'];
       final lat = location['lat'];
       final lng = location['lng'];
-
-      print('📍 Fetching $type near ($lat, $lng)');
 
       // Step 2: Fetch nearby places by type
       final placesUri = Uri.parse(

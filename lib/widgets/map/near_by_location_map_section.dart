@@ -81,8 +81,6 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
 
   @override
   Widget build(BuildContext context) {
-    print('Building NearbyLocationMapSection: ${widget.address}');
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
