@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/home/views/home_screen/home_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
@@ -16,6 +17,8 @@ import '../../../../../app/utils/formater/formater.dart';
 import '../../../../../app/widgets/texts/headline_text.dart';
 import '../../../../../data/network/property/models/property_model.dart';
 import '../../../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
+import '../../../../builder/view/builder_dashboard.dart';
+import '../../../../dashboard/views/widget/dashboard_layout.dart';
 import '../../../../profile/controllers/buyer_profiledata.dart';
 import '../../../../profile/views/profile_screen.dart';
 import '../../../../reseller/view/property_reseller.dart';
@@ -234,326 +237,440 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
     Get.lazyPut(() => SellerOverviewController());
     final overviewController = Get.find<SellerOverviewController>();
-    return Scaffold(
-      body: SafeArea(
-        top: false,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return Stack(
-              children: [
-                // 🔹 Background (header)
-                Container(
-                  width: double.infinity,
-                  // color: const Color(0xff091F48),
-                  color: ColorRes.primary,
-                  padding: const EdgeInsets.only(
-                    top: 30,
-                    left: 12,
-                    right: 12,
-                    bottom: 80, // extra space so overlap looks smooth
-                  ),
-                  child: Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Top Bar
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 12,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Welcome, Seller",
-                                    style: TextStyle(
-                                      color: ColorRes.white,
-                                      fontSize: AppFontSizes.body,
-                                      fontWeight: AppFontWeights.bold,
-                                    ),
-                                  ),
+    // return Scaffold(
+    //   body: SafeArea(
+    //     top: false,
+    //     child: LayoutBuilder(
+    //       builder: (context, constraints) {
+    //         return Stack(
+    //           children: [
+    //             // 🔹 Background (header)
+    //             Container(
+    //               width: double.infinity,
+    //               // color: const Color(0xff091F48),
+    //               color: ColorRes.primary,
+    //               padding: const EdgeInsets.only(
+    //                 top: 30,
+    //                 left: 12,
+    //                 right: 12,
+    //                 bottom: 80, // extra space so overlap looks smooth
+    //               ),
+    //               child: Center(
+    //                 child: Column(
+    //                   crossAxisAlignment: CrossAxisAlignment.start,
+    //                   children: [
+    //                     // Top Bar
+    //                     Container(
+    //                       padding: const EdgeInsets.symmetric(
+    //                         horizontal: 12,
+    //                         vertical: 12,
+    //                       ),
+    //                       child: Row(
+    //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                         crossAxisAlignment: CrossAxisAlignment.start,
+    //                         children: [
+    //                           Column(
+    //                             crossAxisAlignment: CrossAxisAlignment.start,
+    //                             children: [
+    //                               Text(
+    //                                 "Welcome, Seller",
+    //                                 style: TextStyle(
+    //                                   color: ColorRes.white,
+    //                                   fontSize: AppFontSizes.body,
+    //                                   fontWeight: AppFontWeights.bold,
+    //                                 ),
+    //                               ),
+    //
+    //                               Text(
+    //                                 "Sell or rent your property faster",
+    //                                 style: TextStyle(
+    //                                   color: ColorRes.white,
+    //                                   fontSize: AppFontSizes.medium,
+    //                                   fontWeight: AppFontWeights.semiBold,
+    //                                 ),
+    //                               ),
+    //                               SizedBox(height: 8),
+    //                               GestureDetector(
+    //                                 onTap: () {
+    //                                   Get.offAll(() => DashboardScreen());
+    //                                 },
+    //                                 child: Container(
+    //                                   padding: EdgeInsets.symmetric(
+    //                                     horizontal: 20,
+    //                                     vertical: 6,
+    //                                   ),
+    //                                   decoration: BoxDecoration(
+    //                                     borderRadius: BorderRadius.circular(8),
+    //                                     border: Border.all(
+    //                                       color: ColorRes.leadGreyColor[300]!,
+    //                                     ),
+    //                                   ),
+    //                                   child: Text(
+    //                                     "Home",
+    //                                     style: TextStyle(color: ColorRes.white),
+    //                                   ),
+    //                                 ),
+    //                               ),
+    //                             ],
+    //                           ),
+    //
+    //                           // SizedBox(width: 8),
+    //                           GestureDetector(
+    //                             onTap: () {
+    //                               Get.to(
+    //                                 () => ProfileScreen(
+    //                                   imageUrl:
+    //                                       profileController
+    //                                           .userProfile
+    //                                           .value
+    //                                           ?.profilePic ??
+    //                                       "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+    //                                 ),
+    //                               );
+    //                             },
+    //                             child: Container(
+    //                               width: 45,
+    //                               height: 45,
+    //                               decoration: BoxDecoration(
+    //                                 border: Border.all(
+    //                                   color: ColorRes.grey.withOpacity(0.2),
+    //                                   width: 2,
+    //                                 ),
+    //                                 borderRadius: BorderRadius.circular(12),
+    //                               ),
+    //                               child: Obx(
+    //                                 () => ClipRRect(
+    //                                   borderRadius: BorderRadius.circular(10),
+    //                                   child: Image.network(
+    //                                     profileController
+    //                                             .userProfile
+    //                                             .value
+    //                                             ?.profilePic ??
+    //                                         "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+    //                                     fit: BoxFit.cover,
+    //
+    //                                     // 🔹 Add loading indicator
+    //                                     loadingBuilder: (
+    //                                       context,
+    //                                       child,
+    //                                       loadingProgress,
+    //                                     ) {
+    //                                       if (loadingProgress == null)
+    //                                         return child;
+    //                                       return const Center(
+    //                                         child: SizedBox(
+    //                                           width: 20,
+    //                                           height: 20,
+    //                                           child: CircularProgressIndicator(
+    //                                             strokeWidth: 2,
+    //                                             color: ColorRes.white,
+    //                                           ),
+    //                                         ),
+    //                                       );
+    //                                     },
+    //
+    //                                     // 🔹 Fallback if image fails
+    //                                     errorBuilder: (
+    //                                       context,
+    //                                       error,
+    //                                       stackTrace,
+    //                                     ) {
+    //                                       return Container(
+    //                                         color: ColorRes.grey.withOpacity(
+    //                                           0.1,
+    //                                         ),
+    //                                         child: const Icon(
+    //                                           Icons.person,
+    //                                           color: ColorRes.white,
+    //                                           size: 24,
+    //                                         ),
+    //                                       );
+    //                                     },
+    //                                   ),
+    //                                 ),
+    //                               ),
+    //                             ),
+    //                           ),
+    //                         ],
+    //                       ),
+    //                     ),
+    //                     const SizedBox(height: 20),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ),
+    //
+    //             // 🔹 Foreground (overlapping form card)
+    //             Positioned(
+    //               top: 140,
+    //               // adjust overlap distance
+    //               left: 0,
+    //               right: 0,
+    //               bottom: 0,
+    //               child: Container(
+    //                 padding: const EdgeInsets.only(top: 20),
+    //                 decoration: const BoxDecoration(
+    //                   color: ColorRes.white,
+    //                   borderRadius: BorderRadius.only(
+    //                     topLeft: Radius.circular(28),
+    //                     topRight: Radius.circular(28),
+    //                   ),
+    //                 ),
+    //                 child: SingleChildScrollView(
+    //                   child: Column(
+    //                     children: [
+    //                       Obx(() {
+    //                         if (controller.isLoading.value &&
+    //                             controller.items.isEmpty) {
+    //                           return const Center(
+    //                             child: CircularProgressIndicator(),
+    //                           );
+    //                         }
+    //
+    //                         if (!controller.isLoading.value &&
+    //                             controller.items.isEmpty) {
+    //                           return SizedBox.shrink();
+    //                         }
+    //                         final overview =
+    //                             overviewController.overviewData.value;
+    //                         if (overviewController.isLoading.value) {
+    //                           return const Center(
+    //                             child: CircularProgressIndicator(),
+    //                           );
+    //                         }
+    //                         if (overview == null) {
+    //                           return const SizedBox.shrink(); // or a loader/empty state
+    //                         }
+    //
+    //                         return RefreshIndicator(
+    //                           onRefresh:
+    //                               overviewController.refreshSellerDashboard,
+    //                           color: ColorRes.primary,
+    //                           child:
+    //                               overview == null
+    //                                   ? SingleChildScrollView(
+    //                                     physics:
+    //                                         const AlwaysScrollableScrollPhysics(),
+    //                                     child: SizedBox(
+    //                                       height:
+    //                                           MediaQuery.of(
+    //                                             context,
+    //                                           ).size.height *
+    //                                           0.7,
+    //                                       child: Center(
+    //                                         child: Text(
+    //                                           "No Dashboard Data available",
+    //                                           style: TextStyle(
+    //                                             fontSize: AppFontSizes.body,
+    //                                             color: ColorRes.textSecondary,
+    //                                             fontWeight:
+    //                                                 AppFontWeights.medium,
+    //                                           ),
+    //                                         ),
+    //                                       ),
+    //                                     ),
+    //                                   )
+    //                                   : Column(
+    //                                     crossAxisAlignment:
+    //                                         CrossAxisAlignment.start,
+    //                                     children: [
+    //                                       Padding(
+    //                                         padding: const EdgeInsets.symmetric(
+    //                                           horizontal: 4,
+    //                                         ),
+    //                                         child: Row(
+    //                                           children: [
+    //                                             TitleWithViewAll(
+    //                                               title: "Overview",
+    //                                               showViewAll: false,
+    //                                             ),
+    //                                             // TextButton(
+    //                                             //   onPressed: () {
+    //                                             //     Get.to(
+    //                                             //       () => PropertyOverviewScreen(
+    //                                             //         properties: controller.items,
+    //                                             //
+    //                                             //       ),
+    //                                             //     );
+    //                                             //   },
+    //                                             //   child: Text(
+    //                                             //     'Explore',
+    //                                             //     style: TextStyle(
+    //                                             //       fontSize: AppFontSizes.small,
+    //                                             //     ),
+    //                                             //   ),
+    //                                             // ),
+    //                                           ],
+    //                                         ),
+    //                                       ),
+    //                                       Padding(
+    //                                         padding: const EdgeInsets.symmetric(
+    //                                           horizontal: 16,
+    //                                         ),
+    //                                         child: OverViewCard(
+    //                                           property: controller.items,
+    //                                           overview: overview,
+    //                                         ),
+    //                                       ),
+    //                                       const SizedBox(height: 20),
+    //                                     ],
+    //                                   ),
+    //                         );
+    //                       }),
+    //
+    //                       Padding(
+    //                         padding: EdgeInsets.symmetric(
+    //                           horizontal: 16,
+    //                           vertical: 12,
+    //                         ),
+    //                         child: Column(
+    //                           children: [
+    //                             Obx(
+    //                               () =>
+    //                                   buildSellerLeadGraph(overviewController),
+    //                             ),
+    //                             const SizedBox(height: 20),
+    //                             Obx(
+    //                               () => buildSellerCommissionGraph(
+    //                                 overviewController,
+    //                               ),
+    //                             ),
+    //                             const SizedBox(height: 20),
+    //                           ],
+    //                         ),
+    //                       ),
+    //
+    //                       Padding(
+    //                         padding: const EdgeInsets.symmetric(horizontal: 16),
+    //                         child: const CustomerSupportCard(
+    //                           email: "abc@support.com",
+    //                           phone: "+91 234 567 890",
+    //                         ),
+    //                       ),
+    //                       const SizedBox(height: 20),
+    //                     ],
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         );
+    //       },
+    //     ),
+    //   ),
+    // );
+    return DashboardLayout(
+      floatingButton: FloatingActionButton.extended(
+        onPressed: () {
+          Get.to(CreatePropertyScreen());
+        },
+        label: Text(
+          '+ Add Property',
+          style: TextStyle(
+            color: ColorRes.white,
+            fontWeight: AppFontWeights.semiBold,
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          Obx(() {
+            if (controller.isLoading.value && controller.items.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-                                  Text(
-                                    "Sell or rent your property faster",
-                                    style: TextStyle(
-                                      color: ColorRes.white,
-                                      fontSize: AppFontSizes.medium,
-                                      fontWeight: AppFontWeights.semiBold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Get.offAll(() => DashboardScreen());
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: ColorRes.leadGreyColor[300]!,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        "Home",
-                                        style: TextStyle(color: ColorRes.white),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+            if (!controller.isLoading.value && controller.items.isEmpty) {
+              return SizedBox.shrink();
+            }
+            final overview = overviewController.overviewData.value;
+            if (overviewController.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (overview == null) {
+              return const SizedBox.shrink(); // or a loader/empty state
+            }
+
+            return RefreshIndicator(
+              onRefresh: overviewController.refreshSellerDashboard,
+              color: ColorRes.primary,
+              child:
+                  overview == null
+                      ? SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          child: Center(
+                            child: Text(
+                              "No Dashboard Data available",
+                              style: TextStyle(
+                                fontSize: AppFontSizes.body,
+                                color: ColorRes.textSecondary,
+                                fontWeight: AppFontWeights.medium,
                               ),
-
-                              // SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () {
-                                  Get.to(
-                                    () => ProfileScreen(
-                                      imageUrl:
-                                          profileController
-                                              .userProfile
-                                              .value
-                                              ?.profilePic ??
-                                          "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  width: 45,
-                                  height: 45,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: ColorRes.grey.withOpacity(0.2),
-                                      width: 2,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Obx(
-                                    () => ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.network(
-                                        profileController
-                                                .userProfile
-                                                .value
-                                                ?.profilePic ??
-                                            "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-                                        fit: BoxFit.cover,
-
-                                        // 🔹 Add loading indicator
-                                        loadingBuilder: (
-                                          context,
-                                          child,
-                                          loadingProgress,
-                                        ) {
-                                          if (loadingProgress == null)
-                                            return child;
-                                          return const Center(
-                                            child: SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: ColorRes.white,
-                                              ),
-                                            ),
-                                          );
-                                        },
-
-                                        // 🔹 Fallback if image fails
-                                        errorBuilder: (
-                                          context,
-                                          error,
-                                          stackTrace,
-                                        ) {
-                                          return Container(
-                                            color: ColorRes.grey.withOpacity(
-                                              0.1,
-                                            ),
-                                            child: const Icon(
-                                              Icons.person,
-                                              color: ColorRes.white,
-                                              size: 24,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // 🔹 Foreground (overlapping form card)
-                Positioned(
-                  top: 140,
-                  // adjust overlap distance
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    padding: const EdgeInsets.only(top: 20),
-                    decoration: const BoxDecoration(
-                      color: ColorRes.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(28),
-                        topRight: Radius.circular(28),
-                      ),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
+                      )
+                      : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Obx(() {
-                            if (controller.isLoading.value &&
-                                controller.items.isEmpty) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-
-                            if (!controller.isLoading.value &&
-                                controller.items.isEmpty) {
-                              return SizedBox.shrink();
-                            }
-                            final overview =
-                                overviewController.overviewData.value;
-                            if (overviewController.isLoading.value) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            if (overview == null) {
-                              return const SizedBox.shrink(); // or a loader/empty state
-                            }
-
-                            return RefreshIndicator(
-                              onRefresh:
-                                  overviewController.refreshSellerDashboard,
-                              color: ColorRes.primary,
-                              child:
-                                  overview == null
-                                      ? SingleChildScrollView(
-                                        physics:
-                                            const AlwaysScrollableScrollPhysics(),
-                                        child: SizedBox(
-                                          height:
-                                              MediaQuery.of(
-                                                context,
-                                              ).size.height *
-                                              0.7,
-                                          child: Center(
-                                            child: Text(
-                                              "No Dashboard Data available",
-                                              style: TextStyle(
-                                                fontSize: AppFontSizes.body,
-                                                color: ColorRes.textSecondary,
-                                                fontWeight:
-                                                    AppFontWeights.medium,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 4,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                TitleWithViewAll(
-                                                  title: "Overview",
-                                                  showViewAll: false,
-                                                ),
-                                                // TextButton(
-                                                //   onPressed: () {
-                                                //     Get.to(
-                                                //       () => PropertyOverviewScreen(
-                                                //         properties: controller.items,
-                                                //
-                                                //       ),
-                                                //     );
-                                                //   },
-                                                //   child: Text(
-                                                //     'Explore',
-                                                //     style: TextStyle(
-                                                //       fontSize: AppFontSizes.small,
-                                                //     ),
-                                                //   ),
-                                                // ),
-                                              ],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                            ),
-                                            child: OverViewCard(
-                                              property: controller.items,
-                                              overview: overview,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 20),
-                                        ],
-                                      ),
-                            );
-                          }),
-
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            child: Column(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Row(
                               children: [
-                                Obx(
-                                  () =>
-                                      buildSellerLeadGraph(overviewController),
+                                TitleWithViewAll(
+                                  title: "Overview",
+                                  showViewAll: false,
                                 ),
-                                const SizedBox(height: 20),
-                                Obx(
-                                  () => buildSellerCommissionGraph(
-                                    overviewController,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
+                                // TextButton(
+                                //   onPressed: () {
+                                //     Get.to(
+                                //       () => PropertyOverviewScreen(
+                                //         properties: controller.items,
+                                //
+                                //       ),
+                                //     );
+                                //   },
+                                //   child: Text(
+                                //     'Explore',
+                                //     style: TextStyle(
+                                //       fontSize: AppFontSizes.small,
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
-
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: const CustomerSupportCard(
-                              email: "abc@support.com",
-                              phone: "+91 234 567 890",
+                            child: OverViewCard(
+                              property: controller.items,
+                              overview: overview,
                             ),
                           ),
                           const SizedBox(height: 20),
                         ],
                       ),
-                    ),
-                  ),
-                ),
-              ],
             );
-          },
-        ),
+          }),
+
+          Padding(
+            padding: EdgeInsets.symmetric( vertical: 12),
+            child: Column(
+              children: [
+                Obx(() => buildSellerLeadGraph(overviewController)),
+                const SizedBox(height: 12),
+                Obx(() => buildSellerCommissionGraph(overviewController)),
+              ],
+            ),
+          ),
+
+          const CustomerSupportCard(
+            email: "abc@support.com",
+            phone: "+91 234 567 890",
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

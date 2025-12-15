@@ -180,133 +180,106 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
   Widget build(BuildContext context) {
     final navigationController = Get.put(NavigationController());
 
-    TextStyle style = TextStyle(
-      fontSize: AppFontSizes.small,
-      fontWeight: AppFontWeights.extraBold,
-      color: Get.theme.colorScheme.primary,
-    );
-    double iconSize = 20;
+    final screens = [
+      const SellerHomeScreen(),
+      const SellerLeadScreen(),
+      Obx(() {
+        if (controller.isLoading.value && controller.items.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!controller.isLoading.value && controller.items.isEmpty) {
+          return const Center(child: Text("No Property found."));
+        }
+
+        return NotificationListener<ScrollEndNotification>(
+          onNotification: (notification) {
+            final metrics = notification.metrics;
+            if (metrics.pixels >= metrics.maxScrollExtent) {
+              controller.loadMore();
+            }
+            return true;
+          },
+          child: RefreshIndicator(
+            onRefresh: refreshPropertyBySeller,
+            child: PropertyOverviewScreen(
+              properties: controller.items,
+              onDelete: () => refreshPropertyBySeller(),
+            ),
+          ),
+        );
+      }),
+      SellerSubscriptionPlanScreen(),
+      SellerProfileScreen(),
+    ];
 
     return Scaffold(
-      backgroundColor: ColorRes.white,
-      extendBody: true,
 
-      // drawer: NesticoPeDrawer(),
-      bottomNavigationBar: SafeArea(
-        child: Obx(
-          () => Container(
-            decoration: BoxDecoration(
-              color: ColorRes.white,
-              boxShadow: [
-                BoxShadow(
-                  color: ColorRes.blackShade12,
-                  blurRadius: 8,
-                  offset: Offset(0, -2),
-                ),
-              ],
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
+      bottomNavigationBar: Obx(
+            () => SafeArea(
+          child: BottomNavigationBar(
+            currentIndex: navigationController.currentIndex.value,
+            onTap: navigationController.changeIndex,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.grey,
+            selectedLabelStyle: TextStyle(
+              fontSize: AppFontSizes.caption,
+              fontWeight: AppFontWeights.semiBold,
             ),
-            child: BottomNavigationBar(
-              elevation: 5,
-
-              type: BottomNavigationBarType.fixed,
-              currentIndex: navigationController.currentIndex.value,
-              onTap: (i) => navigationController.changeIndex(i),
-              selectedItemColor: Get.theme.colorScheme.primary,
-              unselectedItemColor: ColorRes.leadGreyColor,
-              showSelectedLabels: true,
-              showUnselectedLabels: true,
-              selectedLabelStyle: TextStyle(
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.semiBold,
-              ),
-
-              unselectedLabelStyle: TextStyle(
-                fontSize: AppFontSizes.extraSmall,
-                fontWeight: AppFontWeights.regular,
-              ),
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home_outlined),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.leaderboard_outlined,
-                  ), // optional better icon for leads
-                  label: 'Leads',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.list_alt),
-                  label: 'Listing',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.card_membership),
-                  label: 'Plans',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person_2_outlined),
-                  label: 'Profile',
-                ),
-              ],
+            unselectedLabelStyle: TextStyle(
+              fontSize: AppFontSizes.caption,
+              fontWeight: AppFontWeights.medium,
             ),
+            backgroundColor: ColorRes.white,
+            elevation: 0,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.dashboard, size: 22),
+                ),
+                label: 'Dashboard',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.people, size: 22),
+                ),
+                label: 'Leads',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.list_alt_outlined, size: 22),
+                ),
+                label: 'Property',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.card_giftcard_outlined, size: 22),
+                ),
+                label: 'Plans',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.person, size: 22),
+                ),
+                label: 'Profile',
+              ),
+            ],
           ),
         ),
       ),
 
-      body: Obx(() {
-        switch (navigationController.currentIndex.value) {
-          case 0:
-            return SellerHomeScreen();
-          case 1:
-            return SellerLeadScreen();
-          // return Center(
-          //   child: ElevatedButton(
-          //     onPressed: () {
-          //       Get.offAll(() => DashboardScreen());
-          //     },
-          //     child: const Text("seller"),
-          //   ),
-          // );
-          case 2:
-            return Obx(() {
-              if (controller.isLoading.value && controller.items.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (!controller.isLoading.value && controller.items.isEmpty) {
-                return const Center(child: Text("No Property found."));
-              }
-
-              return NotificationListener<ScrollEndNotification>(
-                onNotification: (notification) {
-                  final metrics = notification.metrics;
-                  if (metrics.pixels >= metrics.maxScrollExtent) {
-                    controller.loadMore();
-                  }
-                  return true;
-                },
-                child: RefreshIndicator(
-                  onRefresh: refreshPropertyBySeller,
-                  child: PropertyOverviewScreen(
-                    properties: controller.items,
-                    onDelete: () => refreshPropertyBySeller(),
-                  ),
-                ),
-              );
-            });
-          // return SellerListingView();
-          case 3:
-            return SellerSubscriptionPlanScreen();
-          case 4:
-            return SellerProfileScreen();
-          default:
-            return const SizedBox();
-        }
-      }),
+      body: Obx(
+            () => IndexedStack(
+          index: navigationController.currentIndex.value,
+          children: screens,
+        ),
+      ),
     );
   }
 }
