@@ -72,6 +72,7 @@ class TopSeller {
   final String? state;
   final String? sellerType;
   final SellerCounts? counts;
+  final bool isPremium;
 
   TopSeller({
     required this.id,
@@ -83,6 +84,7 @@ class TopSeller {
     this.state,
     this.sellerType,
     this.counts,
+    this.isPremium = false,
   });
 
   factory TopSeller.fromJson(Map<String, dynamic> json) {
@@ -97,6 +99,8 @@ class TopSeller {
       sellerType: json['sellerType'],
       counts:
           json['counts'] != null ? SellerCounts.fromJson(json['counts']) : null,
+      isPremium:
+          (json['isPremium'] != null && json['isPremium'] == 1) ? true : false,
     );
   }
 
@@ -111,6 +115,7 @@ class TopSeller {
       'state': state,
       'sellerType': sellerType,
       'counts': counts?.toJson(),
+      'isPremium': isPremium ? 1 : 0,
     };
   }
 }

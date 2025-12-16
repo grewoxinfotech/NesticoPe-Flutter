@@ -38,7 +38,8 @@ import 'package:housing_flutter_app/modules/property/views/property_list_screen.
 import 'package:housing_flutter_app/modules/property_rating/view/top_rated_property.dart';
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
-import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart';
+import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart'
+    hide PropertyCard;
 import 'package:housing_flutter_app/modules/seller/view/widget/seller_list.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
@@ -1578,7 +1579,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 Future<void> showFindPropertyDialog(
   PropertyController controller,
-    GoogleMapSearchController googleMapController,
+  GoogleMapSearchController googleMapController,
   BuildContext context,
 ) async {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

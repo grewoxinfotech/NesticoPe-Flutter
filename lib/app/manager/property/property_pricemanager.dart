@@ -444,4 +444,12 @@ class PropertyPriceManager {
 
     return result;
   }
+
+  double get actualPrice {
+    if (isRent) {
+      return monthRent;
+    } else {
+      return financialInfo?.price ?? 0;
+    }
+  }
 }

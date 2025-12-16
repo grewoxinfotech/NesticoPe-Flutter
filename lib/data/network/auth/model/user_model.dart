@@ -247,5 +247,10 @@ class User {
     data['updatedAt'] = updatedAt;
     return data;
   }
-}
 
+  String get fullName {
+    String fName = firstName ?? '';
+    String lName = lastName ?? '';
+    return '$fName $lName'.trim();
+  }
+}

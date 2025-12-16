@@ -30,49 +30,54 @@ class SellerListWidget extends StatelessWidget {
             width: 140, // reduced card width
             child: GestureDetector(
               onTap: () {
-                // Get.to(
-                //   () => AgentProfilePage(
-                //     agent: AgentProfile(
-                //       name: "Houselink Properties",
-                //       logoUrl:
-                //           "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-                //       badgeText: "HOUSING EXPERT PRO",
-                //       buyersServed: "600+ Buyers Served",
-                //       listings: "Authentic Listing",
-                //       description:
-                //           "Deal with ready-to-move & under-construction Residential or Commercial.",
-                //       infoTiles: [
-                //         InfoTileData(title: "Experience", value: "8 years"),
-                //         InfoTileData(title: "Properties", value: "54"),
-                //         InfoTileData(title: 'Firm Prop', value: 'Firm'),
-                //       ],
-                //       areas: ["Ghatkopar East", "Vikhroli East"],
-                //       categories: [
-                //         {'type': 'Buy', 'number': 17},
-                //         {'type': 'Rent', 'number': 17},
-                //         {'type': 'PG', 'number': 17},
-                //       ],
-                //       tags: [
-                //         AgentTagData(
-                //           icon: Icons.verified,
-                //           text: "Trusted agent",
-                //           color: ColorRes.success,
-                //         ),
-                //         AgentTagData(
-                //           icon: Icons.star,
-                //           text: "Professional Expert",
-                //           color: ColorRes.homeAmber,
-                //         ),
-                //       ],
-                //       showTags: true,
-                //       showAreas: true,
-                //       isOwner: false, // 🔥 hides the Areas section
-                //       showActiveProperties: true,
-                //       showSellertopSeller:
-                //           true, // 🔥 hides SellertopSeller
-                //     ),
-                //   ),
-                // );
+                Get.to(
+                  () => AgentProfilePage(
+                    sellerId: seller.id,
+                    profilePic: seller.profilePic,
+                    isOwner:
+                        seller.sellerType!.toLowerCase() == 'owner'
+                            ? true
+                            : false,
+                    // agent: AgentProfile(
+                    //   name: "Houselink Properties",
+                    //   logoUrl:
+                    //       "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
+                    //   badgeText: "HOUSING EXPERT PRO",
+                    //   buyersServed: "600+ Buyers Served",
+                    //   listings: "Authentic Listing",
+                    //   description:
+                    //       "Deal with ready-to-move & under-construction Residential or Commercial.",
+                    //   infoTiles: [
+                    //     InfoTileData(title: "Experience", value: "8 years"),
+                    //     InfoTileData(title: "Properties", value: "54"),
+                    //     InfoTileData(title: 'Firm Prop', value: 'Firm'),
+                    //   ],
+                    //   areas: ["Ghatkopar East", "Vikhroli East"],
+                    //   categories: [
+                    //     {'type': 'Buy', 'number': 17},
+                    //     {'type': 'Rent', 'number': 17},
+                    //     {'type': 'PG', 'number': 17},
+                    //   ],
+                    //   tags: [
+                    //     AgentTagData(
+                    //       icon: Icons.verified,
+                    //       text: "Trusted agent",
+                    //       color: ColorRes.success,
+                    //     ),
+                    //     AgentTagData(
+                    //       icon: Icons.star,
+                    //       text: "Professional Expert",
+                    //       color: ColorRes.homeAmber,
+                    //     ),
+                    //   ],
+                    //   showTags: true,
+                    //   showAreas: true,
+                    //   isOwner: false,
+                    //   showActiveProperties: true,
+                    //   showSellerPropertyList: true,
+                    // ),
+                  ),
+                );
               },
               child: SellerCard(
                 name: '${seller.firstName} ${seller.lastName}',

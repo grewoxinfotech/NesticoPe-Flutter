@@ -39,6 +39,8 @@ class ApiConstants {
 
   static String get getSellerProfile => "$baseURL/insight/seller";
 
+  static String get getProfile => "$baseURL/user/profile";
+
   static String get recommmendedPorperties => "$baseURL/property/recommended";
 
   static String get subscriptionPlan => "$baseURL/subscriptionPlan";

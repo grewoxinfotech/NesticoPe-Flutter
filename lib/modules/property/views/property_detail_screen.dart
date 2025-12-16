@@ -34,6 +34,7 @@ import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.da
 
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
+import 'package:timeago/timeago.dart' as timeFormatter;
 import 'package:video_player/video_player.dart';
 
 import '../../../app/constants/enum.dart';
@@ -664,6 +665,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   top: 16,
                                 ),
                                 child: ContactOwnerBottom(
+                                  price: priceManager.actualPrice,
                                   inQuireSubmitted:
                                       controller.hasSubmittedInquiry.value,
                                   titleText: "Contact the Owner",
@@ -675,6 +677,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   emailIcon: Icons.email,
                                   allowSellerContact: false,
                                   negotiable: false,
+                                  bookSiteVisit: false,
                                   onChatPressed: () {
                                     print("WhatsApp button clicked!");
                                   },
@@ -685,7 +688,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     price,
                                     isNegotiable,
                                     isAllowAllCondition,
+                                    isBookSiteVisit,
                                     planningToBuy,
+                                    date,
+                                    time,
                                   ) async {
                                     final inquiry = {
                                       "name": name ?? "",
@@ -700,6 +706,13 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                           "isNegotiable": isNegotiable,
                                         if (planningToBuy != null)
                                           "timePeriod": planningToBuy,
+                                        if (date != null)
+                                          "visitDate":
+                                              '${date.day}-${date.month}-${date.year}',
+                                        if (time != null)
+                                          "visitTime":
+                                              '${time.hour.toString().padLeft(2, '0')}:'
+                                              '${time.minute.toString().padLeft(2, '0')}',
                                       },
                                     };
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_dashboard_controller.dart';
+import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -26,27 +27,186 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorRes.bgColor,
-      appBar: AppBar(
-        title: Text(
-          'Dashboard',
-          style: TextStyle(fontWeight: AppFontWeights.bold),
-        ),
-        backgroundColor: ColorRes.bgColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        actions: [
-          TextButton(
-            onPressed: () {
-              Get.offAll(() => DashboardScreen());
-            },
-            child: Text('Switch To Buyer'),
-          ),
-        ],
-      ),
-      body: FutureBuilder(
+    // return Scaffold(
+    //   backgroundColor: ColorRes.bgColor,
+    //   appBar: AppBar(
+    //     title: Text(
+    //       'Dashboard',
+    //       style: TextStyle(fontWeight: AppFontWeights.bold),
+    //     ),
+    //     backgroundColor: ColorRes.bgColor,
+    //     elevation: 0,
+    //     automaticallyImplyLeading: false,
+    //     centerTitle: false,
+    //     actions: [
+    //       TextButton(
+    //         onPressed: () {
+    //           Get.offAll(() => DashboardScreen());
+    //         },
+    //         child: Text('Switch To Buyer'),
+    //       ),
+    //     ],
+    //   ),
+    //   body: FutureBuilder(
+    //     future: contractorDashboardController.getContractorDashboard(
+    //       inquiriesYear: contractorDashboardController.selectedGraphYear.value,
+    //       leadsYear: contractorDashboardController.selectedGraphYear.value,
+    //     ),
+    //     builder: (context, snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return const Center(child: CircularProgressIndicator());
+    //       } else if (snapshot.hasError) {
+    //         return Center(child: Text('Error: ${snapshot.error}'));
+    //       } else if (!snapshot.hasData) {
+    //         return const Center(child: Text('No data found'));
+    //       }
+    //       return Obx(() {
+    //         if (contractorDashboardController.isLoading.value) {
+    //           return const Center(child: CircularProgressIndicator());
+    //         }
+    //         contractorDashboardController.contractorInsights = snapshot.data!;
+    //
+    //         // Check if data exists before building
+    //         if (contractorDashboardController.contractorInsights.value ==
+    //             null) {
+    //           return const Center(child: CircularProgressIndicator());
+    //         }
+    //
+    //         return RefreshIndicator(
+    //           onRefresh: contractorDashboardController.refreshDashboard,
+    //           child: SingleChildScrollView(
+    //             physics: const AlwaysScrollableScrollPhysics(),
+    //             padding: const EdgeInsets.symmetric(
+    //               horizontal: 16,
+    //               vertical: 12,
+    //             ),
+    //             child: Column(
+    //               crossAxisAlignment: CrossAxisAlignment.start,
+    //               children: [
+    //                 buildOverviewCards(contractorDashboardController),
+    //                 const SizedBox(height: 20),
+    //                 Obx(
+    //                   () => buildContractorLeadGraph(
+    //                     contractorDashboardController,
+    //                   ),
+    //                 ),
+    //                 const SizedBox(height: 20),
+    //                 Obx(
+    //                   () => buildContractorInquiryGraph(
+    //                     contractorDashboardController,
+    //                   ),
+    //                 ),
+    //                 const SizedBox(height: 12),
+    //                 Obx(
+    //                   () => buildRatingsDistribution(
+    //                     averageRating:
+    //                         contractorDashboardController
+    //                             .contractorInsights
+    //                             .value
+    //                             ?.data
+    //                             ?.reviews
+    //                             .averageRating ??
+    //                         0.0,
+    //                     totalRatings:
+    //                         contractorDashboardController
+    //                             .contractorInsights
+    //                             .value
+    //                             ?.data
+    //                             ?.reviews
+    //                             .totalReviews ??
+    //                         0,
+    //                     ratingCounts:
+    //                         contractorDashboardController
+    //                             .contractorInsights
+    //                             .value
+    //                             ?.data
+    //                             ?.services
+    //                             .ratingsDistribution ??
+    //                         {},
+    //                   ),
+    //                 ),
+    //                 const SizedBox(height: 12),
+    //                 // Fixed horizontal scrolling section
+    //                 Obx(
+    //                   () => SizedBox(
+    //                     height: 170,
+    //                     child: ListView.builder(
+    //                       scrollDirection: Axis.horizontal,
+    //                       itemCount:
+    //                           contractorDashboardController
+    //                               .contractorInsights
+    //                               .value
+    //                               ?.data
+    //                               ?.services
+    //                               .topRatedServices
+    //                               .length ??
+    //                           0,
+    //                       itemBuilder: (context, index) {
+    //                         final data =
+    //                             contractorDashboardController
+    //                                 .contractorInsights
+    //                                 .value
+    //                                 ?.data
+    //                                 ?.services
+    //                                 .topRatedServices[index];
+    //                         return buildTopRatedService(
+    //                           title: data?.serviceName ?? '',
+    //                           context: context,
+    //                           totalReview: data?.totalReviews ?? 0,
+    //                           description: data?.description ?? '',
+    //                           rating: data?.averageRating ?? 0,
+    //                           status:
+    //                               data?.isActive ?? false
+    //                                   ? "Active"
+    //                                   : "Not Active",
+    //                         );
+    //                       },
+    //                     ),
+    //                   ),
+    //                 ),
+    //                 const SizedBox(height: 12),
+    //                 Obx(
+    //                   () => SizedBox(
+    //                     height: 150,
+    //                     child: ListView.builder(
+    //                       itemCount:
+    //                           contractorDashboardController
+    //                               .contractorInsights
+    //                               .value
+    //                               ?.data
+    //                               ?.reviews
+    //                               .recentReviews
+    //                               .length ??
+    //                           0,
+    //                       itemBuilder: (context, index) {
+    //                         final data =
+    //                             contractorDashboardController
+    //                                 .contractorInsights
+    //                                 .value
+    //                                 ?.data
+    //                                 ?.reviews
+    //                                 .recentReviews[index];
+    //                         return buildRecentReview(
+    //                           userName: data?.reviewerName ?? '',
+    //                           timeAgo: getTimeAgo(data?.createdAt ?? ''),
+    //                           rating: data?.rating ?? 0.0,
+    //                           review: data?.content ?? '',
+    //                         );
+    //                       },
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //         );
+    //       });
+    //     },
+    //   ),
+    // );
+
+    return DashboardLayout(
+      child: FutureBuilder(
         future: contractorDashboardController.getContractorDashboard(
           inquiriesYear: contractorDashboardController.selectedGraphYear.value,
           leadsYear: contractorDashboardController.selectedGraphYear.value,
@@ -74,11 +234,8 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
             return RefreshIndicator(
               onRefresh: contractorDashboardController.refreshDashboard,
               child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                physics: const NeverScrollableScrollPhysics(),
+
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -363,7 +363,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                     price,
                                     isNegotiable,
                                     isAllowAllCondition,
+                                    isBookSiteVisit,
                                     planningToBuy,
+                                    date,
+                                    time,
                                   ) async {
                                     final inquiry = {
                                       "name": name ?? "",
@@ -1572,8 +1575,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     }
   }
 
-
-
   Container _buildMapSection(
     ProjectController controller,
     ProjectItem projectItem,
@@ -1667,6 +1668,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 }
+
 Widget buildVideoThumbnail(String videoUrl, {double? width, double? height}) {
   return FutureBuilder<Uint8List?>(
     future: VideoThumbnail.thumbnailData(
@@ -1681,9 +1683,7 @@ Widget buildVideoThumbnail(String videoUrl, {double? width, double? height}) {
           width: width,
           height: height,
           color: Colors.black12,
-          child: const Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
+          child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
         );
       }
 

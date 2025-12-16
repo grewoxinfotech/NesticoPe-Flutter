@@ -683,40 +683,6 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      _buildActionButton(
-                        icon: Icons.dashboard_outlined,
-                        label: "Seller Dashboard",
-                        subtitle: 'Navigate to Seller Panel',
-                        onTap: () {
-                          Get.to(
-                            () => SellerDashboardScreen(),
-                            binding: BindingsBuilder(() {
-                              Get.lazyPut<PropertyController>(
-                                () => PropertyController(),
-                              );
-                            }),
-                          );
-                        },
-                      ),
-                      _buildActionButton(
-                        icon: Icons.dashboard_outlined,
-                        label: "Reseller Dashboard",
-                        subtitle: 'Navigate to Reseller Panel',
-                        onTap: () => Get.to(() => MainNavigationScreen()),
-                      ),
-                      _buildActionButton(
-                        icon: Icons.dashboard_outlined,
-                        label: "Contractor Dashboard",
-                        subtitle: 'Navigate to Contractor Panel',
-                        onTap: () => Get.to(() => ContractorMainScreen()),
-                      ),
-                      _buildActionButton(
-                        icon: Icons.apartment_outlined,
-                        subtitle: 'Navigate to Builder Panel',
-                        label: "Builder Dashboard",
-
-                        onTap: () => Get.to(() => BuilderMainScreen()),
-                      ),
                     ],
                   )
                   : Column(

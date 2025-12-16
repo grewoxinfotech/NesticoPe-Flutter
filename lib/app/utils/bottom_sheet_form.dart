@@ -7,8 +7,10 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:intl/intl.dart';
 
 import '../../modules/add_property/view/create_property.dart';
+import 'formater/formater.dart';
 
 class ContactOwnerBottom extends StatefulWidget {
   // final Items property;
@@ -24,6 +26,7 @@ class ContactOwnerBottom extends StatefulWidget {
   final String termsText;
   final String termsClickableText;
   final bool inQuireSubmitted;
+  final double? price;
 
   // Button Colors
   final Color chatButtonColor;
@@ -32,6 +35,7 @@ class ContactOwnerBottom extends StatefulWidget {
   // Checkbox states
   final bool allowSellerContact;
   final bool negotiable;
+  final bool bookSiteVisit;
 
   // Callbacks
   final VoidCallback? onChatPressed;
@@ -42,11 +46,15 @@ class ContactOwnerBottom extends StatefulWidget {
     String? price,
     bool isNegotiable,
     bool isAllowAllCondition,
+    bool isBookSiteVisit,
     String planningToBuy,
+    DateTime? selectedDate,
+    TimeOfDay? selectedTime,
   )?
   onContactPressed;
   final ValueChanged<bool?>? onAllowSellerContactChanged;
   final ValueChanged<bool?>? onHomeLoanInterestChanged;
+  final ValueChanged<bool?>? onBookVisitChanged;
 
   // Icons
   final IconData nameIcon;
@@ -57,6 +65,7 @@ class ContactOwnerBottom extends StatefulWidget {
   const ContactOwnerBottom({
     super.key,
     // required this.property,
+    this.price,
     this.titleText = "Contact Property Owner",
     this.chatButtonText = "Chat on WhatsApp",
     this.formTitle = "One Time Contact Form",
@@ -70,11 +79,13 @@ class ContactOwnerBottom extends StatefulWidget {
     this.contactButtonColor = ColorRes.primary,
     this.allowSellerContact = false,
     this.negotiable = false,
+    this.bookSiteVisit = false,
     this.onChatPressed,
     this.inQuireSubmitted = false,
     this.onContactPressed,
     this.onAllowSellerContactChanged,
     this.onHomeLoanInterestChanged,
+    this.onBookVisitChanged,
     this.nameIcon = Icons.person_outline,
     this.phoneIcon = Icons.call,
     this.emailIcon = Icons.email_outlined,
@@ -95,10 +106,13 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
   late TextEditingController _phoneController;
   late TextEditingController _emailController;
   TextEditingController _negotiablePriceController = TextEditingController();
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
 
   // Checkbox states
   late bool _allowSellerContact;
   late bool _negotiable;
+  late bool _bookSiteVisit;
 
   @override
   void initState() {
@@ -110,6 +124,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
 
     _allowSellerContact = widget.allowSellerContact;
     _negotiable = widget.negotiable;
+    _bookSiteVisit = widget.bookSiteVisit;
 
     loadData(); // load actual user data asynchronously
   }
@@ -141,8 +156,11 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
           _emailController.text.trim(),
           _negotiablePriceController.text.trim(),
           _negotiable,
+          _bookSiteVisit,
           _allowSellerContact,
           dropdownValue,
+          _selectedDate,
+          _selectedTime,
         );
       }
     } else {
@@ -220,7 +238,6 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                 fontSize: AppFontSizes.large,
                 fontWeight: AppFontWeights.bold,
                 color: ColorRes.blueGrey,
-
               ),
             ),
 
@@ -548,13 +565,77 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                   ),
                 ),
                 keyboardType: TextInputType.phone,
-                validator:
-                    (value) =>
-                        value == null || value.isEmpty ? "Required" : null,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "Required";
+                  }
+
+                  final enteredPrice = double.tryParse(value);
+                  if (enteredPrice == null) {
+                    return "Enter a valid amount";
+                  }
+
+                  final originalPrice = widget.price!;
+
+                  // Calculate 2% lower limit
+                  final minAllowedPrice = originalPrice * 0.98;
+
+                  if (enteredPrice < minAllowedPrice ||
+                      enteredPrice >= originalPrice) {
+                    return "Price must be between "
+                        "${Formatter.formatPrice(minAllowedPrice)} "
+                        "and ${Formatter.formatPrice(originalPrice)}";
+                  }
+
+                  return null;
+                },
               ),
               const SizedBox(height: 12),
             ],
-
+            Row(
+              children: [
+                Checkbox(
+                  value: _bookSiteVisit,
+                  side: BorderSide(color: ColorRes.grey, width: 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _bookSiteVisit = value ?? false;
+                    });
+                    if (widget.onBookVisitChanged != null) {
+                      widget.onBookVisitChanged!(value);
+                    }
+                  },
+                  activeColor: ColorRes.primary,
+                ),
+                Expanded(
+                  child: Text(
+                    "Book Site Visit",
+                    style: TextStyle(fontSize: 11),
+                  ),
+                ),
+              ],
+            ),
+            if (_bookSiteVisit) ...[
+              DateTimeDropdownExample(
+                onChanged: (value) {
+                  _selectedDate = DateFormat('dd MMM yyyy').parse(value.date);
+                  final timeParts = value.time.split(' ');
+                  final hourMinute = timeParts[0].split(':');
+                  int hour = int.parse(hourMinute[0]);
+                  final minute = int.parse(hourMinute[1]);
+                  if (timeParts[1] == 'PM' && hour != 12) {
+                    hour += 12;
+                  } else if (timeParts[1] == 'AM' && hour == 12) {
+                    hour = 0;
+                  }
+                  _selectedTime = TimeOfDay(hour: hour, minute: minute);
+                },
+              ),
+              SizedBox(height: 8),
+            ],
             Row(
               children: [
                 Checkbox(
@@ -639,4 +720,105 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
       );
     }
   }
+}
+
+class DateTimeDropdownExample extends StatefulWidget {
+  final void Function(SelectedDateTime value)? onChanged;
+
+  const DateTimeDropdownExample({super.key, this.onChanged});
+
+  @override
+  State<DateTimeDropdownExample> createState() =>
+      _DateTimeDropdownExampleState();
+}
+
+class _DateTimeDropdownExampleState extends State<DateTimeDropdownExample> {
+  String? selectedDate;
+  String? selectedTime;
+
+  late List<String> dateList;
+  final List<String> timeList = ['10:00 AM', '04:00 PM'];
+
+  @override
+  void initState() {
+    super.initState();
+    _generateDates();
+  }
+
+  void _generateDates() {
+    final now = DateTime.now();
+
+    dateList = List.generate(2, (index) {
+      final date = now.add(Duration(days: 2 + index));
+      return DateFormat('dd MMM yyyy').format(date);
+    });
+  }
+
+  void _notifyParent() {
+    if (selectedDate != null && selectedTime != null) {
+      widget.onChanged?.call(
+        SelectedDateTime(date: selectedDate!, time: selectedTime!),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        /// DATE DROPDOWN
+        DropdownButtonFormField<String>(
+          value: selectedDate,
+          decoration: InputDecoration(
+            hintText: 'Select date',
+            prefixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          items:
+              dateList
+                  .map(
+                    (date) => DropdownMenuItem(value: date, child: Text(date)),
+                  )
+                  .toList(),
+          onChanged: (value) {
+            setState(() => selectedDate = value);
+            _notifyParent();
+          },
+          validator:
+              (value) => value == null || value.isEmpty ? "Required" : null,
+        ),
+
+        const SizedBox(height: 8),
+
+        /// TIME DROPDOWN
+        DropdownButtonFormField<String>(
+          value: selectedTime,
+          decoration: InputDecoration(
+            hintText: 'Select time',
+            prefixIcon: const Icon(Icons.access_time_outlined, size: 18),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          items:
+              timeList
+                  .map(
+                    (time) => DropdownMenuItem(value: time, child: Text(time)),
+                  )
+                  .toList(),
+          onChanged: (value) {
+            setState(() => selectedTime = value);
+            _notifyParent();
+          },
+          validator:
+              (value) => value == null || value.isEmpty ? "Required" : null,
+        ),
+      ],
+    );
+  }
+}
+
+class SelectedDateTime {
+  final String date;
+  final String time;
+
+  SelectedDateTime({required this.date, required this.time});
 }

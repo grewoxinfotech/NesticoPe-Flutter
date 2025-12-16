@@ -206,7 +206,8 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 const SizedBox(width: 8),
               ] else ...[
                 GestureDetector(
-                  onTap: () async { // FocusScope.of(context).unfocus();
+                  onTap: () async {
+                    // FocusScope.of(context).unfocus();
                     // showModalBottomSheet(
                     //   context: context,
                     //   isScrollControlled: true,
@@ -217,32 +218,34 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                     // When navigating to the filter screen
                     final result = await Get.to(() => ResellerPropertyFilter());
 
-
                     if (result != null) {
                       // Use the filter result
-                      final newFilter=convertFiltersToString(result);
-                      log("skfjudfh ${newFilter['priceRange']} ${newFilter['createdAtFrom']}");
+                      final newFilter = convertFiltersToString(result);
+                      log(
+                        "skfjudfh ${newFilter['priceRange']} ${newFilter['createdAtFrom']}",
+                      );
                       final user = await SecureStorage.getUserData();
                       final userId = user?.user?.id;
 
                       if (userId != null && userId.isNotEmpty) {
                         newFilter["assignedTo"] = userId;
                         log("New Filter ${newFilter}");
-                      await propertyController.applyFilters(newFilter);
+                        await propertyController.applyFilters(newFilter);
                         selectedFilters
                           ..clear()
                           ..addAll(newFilter);
 
-                        propertyController.applyFilters(Map<String, String>.from(selectedFilters));
-                      print("Filter applied: $result   t   ${selectedFilters.value}");
-                      // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
+                        propertyController.applyFilters(
+                          Map<String, String>.from(selectedFilters),
+                        );
+                        print(
+                          "Filter applied: $result   t   ${selectedFilters.value}",
+                        );
+                        // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
+                      }
                     }
-
-                    }
-
-
                   },
-                  child: Icon(Icons.filter_list,),
+                  child: Icon(Icons.filter_list),
                 ),
 
                 // Sort Button
@@ -383,8 +386,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                   Map<String, String>.from(selectedFilters),
                 );
               },
-              priceRangeFormatter:
-                  (min, max) => formatPriceRange(min, max),
+              priceRangeFormatter: (min, max) => formatPriceRange(min, max),
             );
           }),
           // Active Filters Display
@@ -1242,7 +1244,7 @@ class ProductCard extends StatelessWidget {
 
                         Spacer(),
 
-                        Facilities(property: product),
+                        ResellerFacilities(property: product),
                         Spacer(),
 
                         // Price and Visit Button Row
@@ -1298,10 +1300,10 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-class Facilities extends StatelessWidget {
+class ResellerFacilities extends StatelessWidget {
   final Items property;
 
-  const Facilities({super.key, required this.property});
+  const ResellerFacilities({super.key, required this.property});
 
   @override
   Widget build(BuildContext context) {
