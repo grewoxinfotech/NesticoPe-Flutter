@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_project_controller.dart';
+import 'package:housing_flutter_app/modules/contractor/view/project/widget/contactor_project_milestone_screen.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
@@ -12,7 +13,11 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
   final String projectId;
   final ContractorProjectController controller;
 
-  const ContractorProjectOverviewScreen({super.key, required this.projectId, required this.controller});
+  const ContractorProjectOverviewScreen({
+    super.key,
+    required this.projectId,
+    required this.controller,
+  });
 
   Color _getStatusColor(String status) {
     switch (status) {
@@ -35,43 +40,59 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
 
   String _monthName(int month) {
     const months = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
     return months[month - 1];
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
-        title:  Text('Project Overview',style: TextStyle(fontWeight: AppFontWeights.semiBold,color: ColorRes.textColor),),
+        title: Text(
+          'Project Overview',
+          style: TextStyle(
+            fontWeight: AppFontWeights.semiBold,
+            color: ColorRes.textColor,
+          ),
+        ),
         backgroundColor: ColorRes.surface,
         elevation: 0.5,
       ),
-      body: Obx(() {        final project = controller.items.firstWhereOrNull(
-              (p) => p.id == projectId
-      );
-
-      if (project == null) {
-        return Center(
-          child: Text('Project not found'),
+      body: Obx(() {
+        final project = controller.items.firstWhereOrNull(
+          (p) => p.id == projectId,
         );
-      }
 
-      final client = project.client;
-      final meta = project.meta;
+        if (project == null) {
+          return Center(child: Text('Project not found'));
+        }
 
-      return SingleChildScrollView(
+        final client = project.client;
+        final meta = project.meta;
+
+        return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Container(
             decoration: BoxDecoration(
-                color: ColorRes.surface,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+              color: ColorRes.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: ColorRes.leadGreyColor.shade300,
+                width: 1,
+              ),
             ),
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -85,17 +106,21 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                       child: Text(
                         project.title,
                         style: const TextStyle(
-                            fontSize: AppFontSizes.body,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textColor
+                          fontSize: AppFontSizes.body,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textColor,
                         ),
                       ),
                     ),
                     Container(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(project.status).withOpacity(0.15),
+                        color: _getStatusColor(
+                          project.status,
+                        ).withOpacity(0.15),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -112,14 +137,14 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   "ID: ${project.id}",
-                  style:  TextStyle(
-                      fontSize: AppFontSizes.caption,
-                      color: ColorRes.textSecondary,
-                      fontWeight: AppFontWeights.medium
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.textSecondary,
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
                 const SizedBox(height: 8),
-                Divider(color: ColorRes.leadGreyColor.shade300,),
+                Divider(color: ColorRes.leadGreyColor.shade300),
                 // const SizedBox(height: 12),
                 //
                 // // Progress
@@ -158,7 +183,9 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                 _buildTimelineRow("Start Date", _formatDate(project.startDate)),
                 _buildTimelineRow("Deadline", _formatDate(project.deadline)),
                 _buildTimelineRow(
-                    "Completed At", _formatDate(project.completedAt)),
+                  "Completed At",
+                  _formatDate(project.completedAt),
+                ),
                 const SizedBox(height: 10),
 
                 // Client Details
@@ -174,9 +201,19 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 // Notes Section
-                _buildSectionTitle(Icons.note_outlined, "Notes"),
+                if (project.notes != null && project.notes!.isNotEmpty) ...[
+                  _buildSectionTitle(Icons.note_outlined, "Notes"),
+                  const SizedBox(height: 10),
+                  _buildNotes(project.notes),
+                  const SizedBox(height: 20),
+                ],
+
+                _buildSectionTitle(Icons.timeline, "Milestones and Payment"),
                 const SizedBox(height: 10),
-                _buildNotes(project.notes),
+                _buildMilestonesAndPayment(
+                  projectId,
+                  double.parse(project.projectPrice),
+                ),
                 const SizedBox(height: 20),
 
                 // Created and Updated
@@ -243,7 +280,6 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
 
                 // Buttons
                 SafeArea(
-
                   child: Row(
                     children: [
                       Expanded(
@@ -257,14 +293,16 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                             backgroundColor: ColorRes.primary,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           child: const Text(
                             "Update",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: AppFontSizes.bodyMedium,
-                                fontWeight: AppFontWeights.medium),
+                              color: Colors.white,
+                              fontSize: AppFontSizes.bodyMedium,
+                              fontWeight: AppFontWeights.medium,
+                            ),
                           ),
                         ),
                       ),
@@ -272,24 +310,25 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () {
-                            controller.deleteLead(
-                                project.id,project.title
-                            );
-
+                            controller.deleteLead(project.id, project.title);
                           },
                           style: OutlinedButton.styleFrom(
-                            side:
-                            const BorderSide(color: ColorRes.error, width: 1.5),
+                            side: const BorderSide(
+                              color: ColorRes.error,
+                              width: 1.5,
+                            ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           child: const Text(
                             "Delete",
                             style: TextStyle(
-                                color: ColorRes.error,
-                                fontSize: AppFontSizes.bodyMedium,
-                                fontWeight: AppFontWeights.medium),
+                              color: ColorRes.error,
+                              fontSize: AppFontSizes.bodyMedium,
+                              fontWeight: AppFontWeights.medium,
+                            ),
                           ),
                         ),
                       ),
@@ -300,7 +339,7 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
             ),
           ),
         );
-      },)
+      }),
     );
   }
 
@@ -308,24 +347,24 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
   Widget _buildSectionTitle(IconData icon, String title) {
     return Row(
       children: [
-
         Text(
           title,
           style: const TextStyle(
             fontSize: AppFontSizes.medium,
             fontWeight: AppFontWeights.semiBold,
-            color: ColorRes.textColor
+            color: ColorRes.textColor,
           ),
         ),
       ],
     );
   }
+
   Widget _infoRow(
-      String label1,
-      String? value1,
-      String label2,
-      String? value2,
-      ) {
+    String label1,
+    String? value1,
+    String label2,
+    String? value2,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(
@@ -338,7 +377,6 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildLabelValueRow(String label, String? value) {
     return Row(
@@ -358,7 +396,6 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
         const SizedBox(width: 60),
         // Value
         Expanded(
-
           child: Text(
             value?.isNotEmpty == true ? value! : "-",
             textAlign: TextAlign.right,
@@ -375,7 +412,6 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
     );
   }
 
-
   // Timeline item
   Widget _buildTimelineRow(String label, String value) {
     return Padding(
@@ -389,15 +425,21 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label,
-                style: const TextStyle(
-                    fontSize: AppFontSizes.caption,
-                    color: ColorRes.textSecondary)),
-            Text(value,
-                style: const TextStyle(
-                    fontSize: AppFontSizes.small,
-                    color: ColorRes.textPrimary,
-                    fontWeight: AppFontWeights.medium)),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: AppFontSizes.caption,
+                color: ColorRes.textSecondary,
+              ),
+            ),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: AppFontSizes.small,
+                color: ColorRes.textPrimary,
+                fontWeight: AppFontWeights.medium,
+              ),
+            ),
           ],
         ),
       ),
@@ -415,17 +457,21 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _infoRow( "Name", client.name,"Email", client.email),
+          _infoRow("Name", client.name, "Email", client.email),
 
-          _infoRow("Phone", client.phone,"Location",
-              "${client.location}, ${client.city}, ${client.state}"),
-           Divider(
-            color: ColorRes.leadGreyColor.shade300,
+          _infoRow(
+            "Phone",
+            client.phone,
+            "Location",
+            "${client.location}, ${client.city}, ${client.state}",
           ),
-          _infoRow("Property Type",
-              "${client.propertyType}  |  ${client.bhk ?? '-'} BHK","Carpet Area",
-              "${client.carpetArea ?? 0} sq ft"),
-
+          Divider(color: ColorRes.leadGreyColor.shade300),
+          _infoRow(
+            "Property Type",
+            "${client.propertyType}  |  ${client.bhk ?? '-'} BHK",
+            "Carpet Area",
+            "${client.carpetArea ?? 0} sq ft",
+          ),
         ],
       ),
     );
@@ -441,8 +487,13 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _infoRow("Service Name", meta.serviceName,"Service ID", meta.serviceId),
-          SizedBox(height: 4,),
+          _infoRow(
+            "Service Name",
+            meta.serviceName,
+            "Service ID",
+            meta.serviceId,
+          ),
+          SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -474,7 +525,7 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color:  ColorRes.background,
+        color: ColorRes.background,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -487,4 +538,49 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildMilestonesAndPayment(String projectId, double projectPrice) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: ColorRes.background,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Icon(Icons.track_changes, size: 20),
+            title: Text(
+              "Milestones",
+              style: const TextStyle(
+                fontSize: AppFontSizes.caption,
+                color: ColorRes.textColor,
+              ),
+            ),
+            onTap: () {
+              Get.to(
+                () => ContactorProjectMileStoneScreen(
+                  projectId: projectId,
+                  projectPrice: projectPrice,
+                ),
+              );
+            },
+            trailing: Icon(Icons.arrow_forward_ios, size: 15),
+          ),
+          ListTile(
+            leading: Icon(Icons.payment, size: 20),
+            title: Text(
+              "Payment",
+              style: const TextStyle(
+                fontSize: AppFontSizes.caption,
+                color: ColorRes.textColor,
+              ),
+            ),
+            onTap: () {},
+            trailing: Icon(Icons.arrow_forward_ios, size: 15),
+          ),
+        ],
+      ),
+    );
+  }
 }

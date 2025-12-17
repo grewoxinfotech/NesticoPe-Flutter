@@ -50,9 +50,13 @@ class ContractorProjectData {
 
     List<ContractorProjectItem> parsedItems = [];
     if (itemsData is List) {
-      parsedItems = itemsData
-          .map((e) => ContractorProjectItem.fromJson(e as Map<String, dynamic>))
-          .toList();
+      parsedItems =
+          itemsData
+              .map(
+                (e) =>
+                    ContractorProjectItem.fromJson(e as Map<String, dynamic>),
+              )
+              .toList();
     } else if (itemsData is Map<String, dynamic>) {
       parsedItems = [ContractorProjectItem.fromJson(itemsData)];
     } else {
@@ -89,6 +93,7 @@ class ContractorProjectItem {
   final String title;
   final String status;
   final int progress;
+  final String projectPrice;
   final String? deadline;
   final String? startDate;
   final String? completedAt;
@@ -110,6 +115,7 @@ class ContractorProjectItem {
     this.startDate,
     this.completedAt,
     required this.client,
+    required this.projectPrice,
     this.notes,
     required this.meta,
     required this.createdAt,
@@ -146,10 +152,12 @@ class ContractorProjectItem {
       client: client ?? this.client,
       notes: notes ?? this.notes,
       meta: meta ?? this.meta,
+      projectPrice: projectPrice,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
   factory ContractorProjectItem.fromJson(Map<String, dynamic> json) {
     return ContractorProjectItem(
       id: json['id'] ?? '',
@@ -167,6 +175,7 @@ class ContractorProjectItem {
       meta: ContractorProjectMeta.fromJson(json['meta'] ?? {}),
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',
+      projectPrice: json['price'] ?? 0,
     );
   }
 
@@ -186,11 +195,11 @@ class ContractorProjectItem {
     'meta': meta.toJson(),
     'createdAt': createdAt,
     'updatedAt': updatedAt,
+    'price': projectPrice,
   };
 
   Map<String, dynamic> toMap() => toJson();
 }
-
 
 class ContractorProjectClient {
   final String name;

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
@@ -13,7 +14,7 @@ import '../../../../add_property/view/create_property.dart';
 
 class AddProjectScreen extends StatefulWidget {
   ContractorLeadItem item;
-  AddProjectScreen({super.key,required this.item});
+  AddProjectScreen({super.key, required this.item});
 
   @override
   State<AddProjectScreen> createState() => _AddProjectScreenState();
@@ -23,31 +24,32 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
   final formKey = GlobalKey<FormState>();
   final controller = Get.find<ContractorLeadController>();
 
-@override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-   log("Category datra ${ controller.items.value
-       .map((e) => e.customFields?.serviceName??'')
-       .toSet()
-       .toList()}");
+    log(
+      "Category datra ${controller.items.value.map((e) => e.customFields?.serviceName ?? '').toSet().toList()}",
+    );
   }
+
   @override
   Widget build(BuildContext context) {
-
-    final controllerCategory=Get.find<ContractorMyServiceController>();
+    final controllerCategory = Get.find<ContractorMyServiceController>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.populateFormFromItem(widget.item);
     });
 
-
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
-        leading: IconButton(onPressed: () {
-          controller.resetForm();
-          Get.back();
-        }, icon: Icon(Icons.arrow_back)),
+        leading: IconButton(
+          onPressed: () {
+            controller.resetForm();
+            Get.back();
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         title: const Text(
           "Convert To Project",
           style: TextStyle(
@@ -60,7 +62,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
         iconTheme: const IconThemeData(color: ColorRes.textPrimary),
       ),
       body: Obx(
-            () => SingleChildScrollView(
+        () => SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Form(
             key: formKey,
@@ -85,7 +87,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                         "Start Date *",
                         Icons.calendar_today,
                         controller.startDate.value,
-                            () async {
+                        () async {
                           final picked = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
@@ -104,11 +106,12 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                         "Deadline",
                         Icons.date_range,
                         controller.deadline.value,
-                            () async {
+                        () async {
                           final picked = await showDatePicker(
                             context: context,
                             initialDate: controller.startDate.value,
-                            firstDate: controller.startDate.value??DateTime.now(),
+                            firstDate:
+                                controller.startDate.value ?? DateTime.now(),
                             lastDate: DateTime(2100),
                           );
                           if (picked != null) {
@@ -129,19 +132,22 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   value: controller.selectedService.value,
                   hintText: "Select service",
                   prefixIcon: Icons.work,
-                  items: controller.items.value
-                      ?.map((e) => e.customFields?.serviceName)
-                      .where((name) => name != null && name!.isNotEmpty)
-                      .toSet() // ✅ removes duplicate names
-                      .map((name) => DropdownMenuItem(
-                    value: name,
-                    child: Text(name ?? ''),
-                  ))
-                      .toList() ??
+                  items:
+                      controller.items.value
+                          ?.map((e) => e.customFields?.serviceName)
+                          .where((name) => name != null && name!.isNotEmpty)
+                          .toSet() // ✅ removes duplicate names
+                          .map(
+                            (name) => DropdownMenuItem(
+                              value: name,
+                              child: Text(name ?? ''),
+                            ),
+                          )
+                          .toList() ??
                       [],
 
-                  onChanged: (val) =>
-                  controller.selectedService.value = val ?? '',
+                  onChanged:
+                      (val) => controller.selectedService.value = val ?? '',
                   darkText: true,
                 ),
 
@@ -156,22 +162,34 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
 
                 const SizedBox(height: 16),
 
-                    buildSectionTitle("Client Email"),
-                    const SizedBox(height: 8),
-                    buildTextField(
-                      "Enter client email",
-                      Icons.email,
-                      controller.txtClientEmail,
-                    ),
-                    const SizedBox(height: 16),
-                    buildSectionTitle("Client Phone"),
-                    const SizedBox(height: 8),
-                    buildTextField(
-                      "Enter client phone",
-                      Icons.phone,
-                      controller.txtClientPhone,
-                      isPhoneKey: true,
+                buildSectionTitle("Client Email"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Enter client email",
+                  Icons.email,
+                  controller.txtClientEmail,
+                ),
+                const SizedBox(height: 16),
+                buildSectionTitle("Client Phone"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Enter client phone",
+                  Icons.phone,
+                  controller.txtClientPhone,
+                  isPhoneKey: true,
+                ),
 
+                const SizedBox(height: 16),
+                buildSectionTitle("Project Price"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Enter project price",
+                  Icons.currency_rupee_outlined,
+                  controller.txtProjectPrice,
+                  validator:
+                      (v) => v!.isEmpty ? "Please enter project price" : null,
+                  inputType: TextInputType.number,
+                  formatter: [FilteringTextInputFormatter.digitsOnly],
                 ),
 
                 const SizedBox(height: 16),
@@ -208,7 +226,9 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (formKey.currentState?.validate() ?? false) {
-                              controller.convertIntoProject(widget.item.id??'');
+                              controller.convertIntoProject(
+                                widget.item.id ?? '',
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -241,11 +261,11 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
 
   // 📅 Date Picker UI (uses buildTextField style)
   Widget _buildDateField(
-      String label,
-      IconData icon,
-      DateTime? date,
-      VoidCallback onTap,
-      ) {
+    String label,
+    IconData icon,
+    DateTime? date,
+    VoidCallback onTap,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

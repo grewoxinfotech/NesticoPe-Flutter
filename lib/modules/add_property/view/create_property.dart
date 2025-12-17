@@ -1443,6 +1443,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -2719,6 +2720,8 @@ Widget buildTextField(
   bool isEnable = true,
   int maxLines = 1,
   int minLines = 1,
+  TextInputType inputType = TextInputType.text,
+  List<TextInputFormatter>? formatter,
   VoidCallback? onTap,
   String? Function(String?)? validator,
 }) {
@@ -2729,7 +2732,8 @@ Widget buildTextField(
       enabled: isEnable,
       maxLines: maxLines,
       minLines: minLines,
-      keyboardType: isPhoneKey ? TextInputType.phone : TextInputType.text,
+      keyboardType: isPhoneKey ? TextInputType.phone : inputType,
+      inputFormatters: formatter,
       style: TextStyle(
         fontSize: AppFontSizes.medium,
         color: ColorRes.textPrimary,

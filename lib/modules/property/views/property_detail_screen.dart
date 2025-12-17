@@ -716,6 +716,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                       },
                                     };
 
+                                    print('Submitting inquiry: ${inquiry}');
+
                                     final success = await controller.addInquiry(
                                       inquiry,
                                       currentProperty.id ?? '',

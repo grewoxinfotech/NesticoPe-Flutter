@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_filter.dart';
@@ -67,12 +68,10 @@ class ContractorProjectScreen extends StatelessWidget {
               }
             },
             icon: const Icon(Icons.filter_list),
-          )
-
+          ),
         ],
       ),
       body: SafeArea(
-
         child: Column(
           children: [
             Obx(() {
@@ -99,64 +98,85 @@ class ContractorProjectScreen extends StatelessWidget {
                   );
                 }
                 if (controller.items.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      "No project found.",
-                      style: TextStyle(
-                        color: ColorRes.textSecondary,
-                        fontSize: AppFontSizes.body,
+                  return RefreshIndicator(
+                    onRefresh: controller.refreshProject,
+                    child: SizedBox(
+                      height: double.infinity,
+                      width: double.infinity,
+                      child: Center(
+                        child: Text(
+                          "No project found.",
+                          style: TextStyle(
+                            color: ColorRes.textSecondary,
+                            fontSize: AppFontSizes.body,
+                          ),
+                        ),
                       ),
                     ),
                   );
                 }
                 return RefreshIndicator(
-                    onRefresh: controller.refreshProject,
-                    color: ColorRes.primary,
-                    child: projects.isEmpty
-                        ? SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.7,
-                        child: Center(
-                          child: Text(
-                            "No Project available",
-                            style: TextStyle(
-                              fontSize: AppFontSizes.body,
-                              color: ColorRes.textSecondary,
-                              fontWeight: AppFontWeights.medium,
+                  onRefresh: controller.refreshProject,
+                  color: ColorRes.primary,
+                  child:
+                      projects.isEmpty
+                          ? SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.7,
+                              child: Center(
+                                child: Text(
+                                  "No Project available",
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.body,
+                                    color: ColorRes.textSecondary,
+                                    fontWeight: AppFontWeights.medium,
+                                  ),
+                                ),
+                              ),
                             ),
+                          )
+                          : ListView.separated(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            itemCount: projects.length,
+                            separatorBuilder:
+                                (_, __) => const SizedBox(height: 2),
+                            itemBuilder: (context, index) {
+                              final project = projects[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Get.to(
+                                    () => ContractorProjectOverviewScreen(
+                                      projectId: project.id,
+                                      controller: controller,
+                                    ),
+                                  );
+                                },
+                                child: ProjectCard(
+                                  project: project,
+                                  onDelete: () {
+                                    controller.deleteLead(
+                                      project.id,
+                                      project.title,
+                                    );
+                                  },
+                                  onChangeStatus: () {
+                                    log("Data of String ${project.toMap()}");
+                                    controller.populatedProjectData(project);
+                                    showStatusDialog(
+                                      context,
+                                      controller,
+                                      project,
+                                    );
+                                  },
+                                  onChangeTime: () {},
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                      ),
-                    ): ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  itemCount: projects.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 2),
-                  itemBuilder: (context, index) {
-                    final project = projects[index];
-                    return GestureDetector(
-                        onTap: () {
-                          Get.to(()=>ContractorProjectOverviewScreen( projectId: project.id,controller: controller,));
-                        },
-                        child: ProjectCard(
-                          project: project,
-                          onDelete: () {
-                            controller.deleteLead(
-                              project.id,project.title
-                            );
-                          },
-                          onChangeStatus: () {
-                            log("Data of String ${project.toMap()}");
-                            controller.populatedProjectData(project);
-                            showStatusDialog(context, controller, project);
-                          },
-                          onChangeTime: () {},
-
-                        ),
-
-                    );
-                  },
-                    )
                 );
               }),
             ),
@@ -170,7 +190,6 @@ class ContractorProjectScreen extends StatelessWidget {
 class ProjectCard extends StatelessWidget {
   final ContractorProjectItem project;
 
-
   final VoidCallback onChangeTime;
   final VoidCallback onChangeStatus;
   final VoidCallback onDelete;
@@ -178,7 +197,6 @@ class ProjectCard extends StatelessWidget {
   const ProjectCard({
     super.key,
     required this.project,
-
 
     required this.onChangeTime,
     required this.onChangeStatus,
@@ -267,9 +285,7 @@ class ProjectCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  p.deadline != null
-                      ? _formatDate(p.deadline!)
-                      : "No Deadline",
+                  p.deadline != null ? _formatDate(p.deadline!) : "No Deadline",
                   style: const TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
@@ -278,6 +294,26 @@ class ProjectCard extends StatelessWidget {
               ],
             ),
 
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(
+                  Icons.currency_rupee_outlined,
+                  size: 16,
+                  color: ColorRes.primary,
+                ),
+                const SizedBox(width: 4),
+
+                /// print formated price by comma separator
+                Text(
+                  Formatter.formatPrice(double.parse(p.projectPrice)),
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.textSecondary,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 8),
 
             /// ---------------- EXPANDED DETAILS ----------------
@@ -728,7 +764,8 @@ void showStatusDialog(
                       onPressed: () async {
                         final status = controller.changeStatus.value;
 
-                        if (status.isEmpty && (controller.selectedDate == null)) {
+                        if (status.isEmpty &&
+                            (controller.selectedDate == null)) {
                           Get.snackbar(
                             "Error",
                             "Please select at least one value",
@@ -740,19 +777,18 @@ void showStatusDialog(
 
                         // 👇 Convert to ISO UTC format for backend
                         String? deadlineIso =
-                        controller.selectedDate != null
-                            ? DateTime.utc(
-                          controller.selectedDate!.year,
-                          controller.selectedDate!.month,
-                          controller.selectedDate!.day,
-                          controller.selectedDate!.hour,
-                          controller.selectedDate!.minute,
-                        ).toIso8601String()
-                            : null;
+                            controller.selectedDate != null
+                                ? DateTime.utc(
+                                  controller.selectedDate!.year,
+                                  controller.selectedDate!.month,
+                                  controller.selectedDate!.day,
+                                  controller.selectedDate!.hour,
+                                  controller.selectedDate!.minute,
+                                ).toIso8601String()
+                                : null;
 
                         log("Deadline to send → $deadlineIso");
                         log("Display date → ${controller.txtTime.text}");
-
 
                         log("Deadline to send → $deadlineIso");
                         log("Display date → ${controller.txtTime.text}");
@@ -766,8 +802,7 @@ void showStatusDialog(
                         controller.updateChangeStatus(
                           inquiry.id,
                           status,
-                          deadlineIso??'',
-
+                          deadlineIso ?? '',
                         );
                         Get.back();
                       },
