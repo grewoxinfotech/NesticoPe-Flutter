@@ -53,21 +53,27 @@ class _ContactorProjectMileStoneScreenState
             fontWeight: AppFontWeights.semiBold,
             color: ColorRes.textColor,
           ),
+
         ),
+
         backgroundColor: ColorRes.surface,
         elevation: 0.5,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: IconButton(
-              onPressed: () {
-                Get.to(
+              onPressed: () async{
+               final success = await Get.to(
                   () => AddMilestoneScreen(
                     tag: tag, // Controller tag
                     milestone: null, // null = Add mode
                     projectPrice: widget.projectPrice,
                   ),
                 );
+
+               if(success){
+                 controller.loadInitial();
+               }
               },
               icon: Icon(
                 Icons.add_circle_outline_rounded,
@@ -98,15 +104,21 @@ class _ContactorProjectMileStoneScreenState
             itemBuilder: (context, index) {
               return _MilestoneCard(
                 milestone: controller.items[index],
-                onDelete: () {},
-                onEdit: () {
-                  Get.to(
+                onDelete: () {
+                  controller.deleteMilestone(controller.items[index].id!);
+                },
+                onEdit: () async{
+                 final success = await Get.to(
                     () => AddMilestoneScreen(
                       tag: tag,
                       milestone: controller.items[index],
                       projectPrice: widget.projectPrice,
                     ),
                   );
+
+                  if(success){
+                    controller.loadInitial();
+                  }
                 },
               );
             },

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_project_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/project/widget/contactor_project_milestone_screen.dart';
+import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_milestone_payment_screen.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
@@ -576,7 +577,9 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                 color: ColorRes.textColor,
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              Get.to(()=>ContractorProjectMileStonePaymentScreen(projectId: projectId));
+            },
             trailing: Icon(Icons.arrow_forward_ios, size: 15),
           ),
         ],

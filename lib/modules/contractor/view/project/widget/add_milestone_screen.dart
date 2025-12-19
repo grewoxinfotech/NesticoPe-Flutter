@@ -39,7 +39,7 @@
 //         iconTheme: const IconThemeData(color: ColorRes.textPrimary),
 //       ),
 //       body: Obx(
-//         () => SingleChildScrollView(
+//         () => Singleiew(
 //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 //           child: Form(
 //             key: controller.formKey,
@@ -603,6 +603,14 @@ class AddMilestoneScreen extends StatelessWidget {
                             }
                             return null;
                           },
+                          onChanged: (val) {
+                            if(val.isEmpty){
+                              controller.milestoneAmount.value = 0.0;
+                            }
+                            final remainingAmount =  controller.calculateRemainingAmount(projectPrice);
+                            controller.milestoneAmount.value = remainingAmount * (double.parse(val) / 100);
+
+                          },
                         ),
                       ],
                     )
@@ -622,6 +630,13 @@ class AddMilestoneScreen extends StatelessWidget {
                                   double.tryParse(v ?? '') == null
                                       ? "Invalid amount"
                                       : null,
+                          onChanged: (val) {
+                            if(val.isEmpty){
+                              controller.milestoneAmount.value = 0.0;
+                            }
+                            // final remainingAmount =  controller.calculateRemainingAmount(projectPrice);
+                            controller.milestoneAmount.value = double.parse(val);
+                          },
                         ),
                       ],
                     );
@@ -722,6 +737,8 @@ class AddMilestoneScreen extends StatelessWidget {
     ProjectMilestone? currentMilestone,
     double totalProjectPrice,
   ) {
+    final controller = Get.find<ContractorProjectMilestoneController>(tag: tag);
+
     final double totalMilestones = totalProjectPrice;
 
     final double totalPaid = milestones.fold(
@@ -742,7 +759,7 @@ class AddMilestoneScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: ColorRes.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: ColorRes.border),
+            border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3),),
           ),
           child: Column(
             children: [
@@ -763,7 +780,7 @@ class AddMilestoneScreen extends StatelessWidget {
                 valueColor: Colors.green,
               ),
 
-              const Divider(height: 24),
+               Divider(height: 24,color: ColorRes.leadGreyColor.withOpacity(0.3),),
 
               /// Milestone deductions
               if (milestones.isNotEmpty) ...[
@@ -792,19 +809,21 @@ class AddMilestoneScreen extends StatelessWidget {
               ],
 
               /// Current milestone (if editing)
-              if (currentMilestone != null) ...[
-                const Divider(height: 16),
-                _row(
-                  label: "Current Milestone:",
-                  value: _formatAmount(
-                    _toAmount(currentMilestone.milestoneAmount ?? '0'),
+              // if (currentMilestone != null) ...[
+                 Divider(height: 16,color: ColorRes.leadGreyColor.withOpacity(0.3),),
+                Obx(
+                  ()=> _row(
+                    label: "Current Milestone:",
+                    value: _formatAmount(
+                      _toAmount(controller.milestoneAmount.value.toStringAsFixed(0)),
+                    ),
+                    labelColor: ColorRes.primary,
+                    valueColor: ColorRes.primary,
                   ),
-                  labelColor: Colors.blue,
-                  valueColor: Colors.blue,
                 ),
-              ],
+              // ],
 
-              const Divider(height: 24),
+               Divider(height: 24,color: ColorRes.leadGreyColor.withOpacity(0.3),),
 
               /// Remaining budget
               _row(

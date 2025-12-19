@@ -70,6 +70,7 @@ class ContractorProjectMilestoneService {
       );
 
       log("Response body: ${response.body}");
+      log("Response body: ${response.statusCode}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
@@ -85,16 +86,19 @@ class ContractorProjectMilestoneService {
 
   /// 🔹 Update Milestone Status / Amount / Work Status
   Future<bool> updateMilestone(
+
     ProjectMilestone payload,
+    String projectId,
     String milestoneId,
   ) async {
     try {
-      log("Update Milestone Payload => $payload");
-
+      log("Update Milestone Payload => ${payload.toJson()}");
+      final uri = Uri.parse('$_baseUrl/$milestoneId');
+      print('Update Milestone URL: $uri  --- $projectId');
       final response = await http.put(
-        Uri.parse('$_baseUrl/$milestoneId'),
+        uri,
         headers: await header(),
-        body: jsonEncode(payload),
+        body: jsonEncode(payload.toJson()),
       );
 
       log("Response body: ${response.body}");

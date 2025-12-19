@@ -2724,6 +2724,7 @@ Widget buildTextField(
   List<TextInputFormatter>? formatter,
   VoidCallback? onTap,
   String? Function(String?)? validator,
+Function(String)? onChanged,
 }) {
   return GestureDetector(
     onTap: onTap,
@@ -2734,6 +2735,7 @@ Widget buildTextField(
       minLines: minLines,
       keyboardType: isPhoneKey ? TextInputType.phone : inputType,
       inputFormatters: formatter,
+      onChanged: onChanged,
       style: TextStyle(
         fontSize: AppFontSizes.medium,
         color: ColorRes.textPrimary,

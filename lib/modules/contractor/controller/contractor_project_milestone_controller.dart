@@ -121,11 +121,14 @@
 //   void resetForm() {}
 // }
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 
 import '../../../data/network/contractor/model/contractor_project_model/contractor_project_milestone_model.dart';
 import '../../../data/network/contractor/service/project/contactor_project_mileston_service.dart';
@@ -158,6 +161,8 @@ class ContractorProjectMilestoneController
   Rxn<DateTime> completionDate = Rxn<DateTime>();
   RxString selectedWorkStatus = 'Not Started'.obs;
   Rxn<ProjectMilestone> currentMilestone = Rxn<ProjectMilestone>();
+  RxDouble milestoneAmount = 0.0.obs;
+
 
   /// Static data lists
   final List<String> milestoneType = ['Fixed', 'Percentage'];
@@ -207,9 +212,10 @@ class ContractorProjectMilestoneController
     // Populate form with existing data
     titleController.text = milestone.title ?? '';
     descriptionController.text = milestone.description ?? '';
-    selectedMileStoneType.value = milestone.milestoneType ?? 'Percentage';
+    selectedMileStoneType.value =
+        milestone.milestoneType?.capitalize.toString() ?? 'Percentage';
 
-    if (milestone.milestoneType == 'Percentage') {
+    if (milestone.milestoneType?.capitalize.toString() == 'Percentage') {
       percentageController.text = milestone.percentage?.toString() ?? '';
       fixedController.clear();
     } else {
@@ -220,13 +226,15 @@ class ContractorProjectMilestoneController
     startDate.value = milestone.startDate;
     endDate.value = milestone.endDate;
     completionDate.value = milestone.completionDate;
-    selectedWorkStatus.value = milestone.workStatus ?? 'Not Started';
+    selectedWorkStatus.value =
+        milestone.workStatus?.replaceAll("_", " ").capitalize.toString() ??
+        'Not Started';
   }
 
   /// Save milestone (handles both create and update)
   Future<void> saveMilestone(double projectPrice) async {
     if (isEditMode.value) {
-      await updateMilestone();
+      await updateMilestone(projectPrice);
     } else {
       await createMilestone(projectPrice);
     }
@@ -282,12 +290,22 @@ class ContractorProjectMilestoneController
       );
 
       final result = await _service.createMilestone(milestone);
+      print('Result: $result');
 
       if (result) {
-        Get.snackbar('Success', 'Milestone created successfully');
+        Future.delayed(const Duration(milliseconds: 300), () {
+          Get.back(result: true);
+        });
+        print('Milestone created successfully');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Milestone created successfully',
+          contentType: ContentType.success,
+        );
+
+
         resetForm();
-        loadInitial();
-        Get.back();
+        // loadInitial();
       } else {
         Get.snackbar('Error', 'Failed to create milestone');
       }
@@ -299,7 +317,7 @@ class ContractorProjectMilestoneController
   }
 
   /// Update existing milestone
-  Future<void> updateMilestone() async {
+  Future<void> updateMilestone(double projectPrice) async {
     try {
       isLoading.value = true;
 
@@ -321,11 +339,34 @@ class ContractorProjectMilestoneController
         return;
       }
 
+      final remainingAmount = calculateRemainingAmount(projectPrice);
+
+      if (remainingAmount <= 0) {
+        Get.snackbar('Error', 'No remaining budget available');
+        isLoading.value = false;
+        return;
+      }
+
+      double milestoneAmount = 0;
+
+      if (selectedMileStoneType.value == 'Percentage') {
+        final percentage = double.parse(percentageController.text);
+        milestoneAmount = (remainingAmount * percentage) / 100;
+      } else {
+        milestoneAmount = double.parse(fixedController.text);
+      }
+
+      if (milestoneAmount <= 0 || milestoneAmount > remainingAmount) {
+        Get.snackbar('Error', 'Milestone amount exceeds remaining budget');
+        isLoading.value = false;
+        return;
+      }
+
       final milestone = ProjectMilestone(
         id: editingMilestoneId.value,
         title: titleController.text.trim(),
         description: descriptionController.text.trim(),
-        milestoneType: selectedMileStoneType.value,
+        milestoneType: selectedMileStoneType.value.toLowerCase(),
         percentage:
             selectedMileStoneType.value == 'Percentage'
                 ? int.tryParse(percentageController.text)
@@ -334,23 +375,32 @@ class ContractorProjectMilestoneController
             selectedMileStoneType.value == 'Fixed'
                 ? fixedController.text.trim()
                 : null,
+        milestoneAmount: milestoneAmount.toStringAsFixed(0),
         startDate: startDate.value,
         endDate: endDate.value,
         completionDate: completionDate.value,
-        workStatus: selectedWorkStatus.value,
+        workStatus: selectedWorkStatus.value.toLowerCase().replaceAll(" ", "_"),
       );
 
-      await _service.updateMilestone(milestone, projectId);
-
-      Get.snackbar(
-        'Success',
-        'Milestone updated successfully',
-        snackPosition: SnackPosition.BOTTOM,
+      final success = await _service.updateMilestone(
+        milestone,
+        projectId,
+        milestone.id ?? '',
       );
 
-      resetForm();
-      loadInitial();
-      Get.back(); // Close the form screen
+      if (success) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          Get.back(result: true);
+        });
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Milestone updated successfully',
+          contentType: ContentType.success,
+        );
+
+        // resetForm();
+        // loadInitial();
+      }
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -370,6 +420,7 @@ class ContractorProjectMilestoneController
       // Show confirmation dialog
       final confirm = await Get.dialog<bool>(
         AlertDialog(
+          backgroundColor: ColorRes.white,
           title: Text('Delete Milestone'),
           content: Text('Are you sure you want to delete this milestone?'),
           actions: [
@@ -387,7 +438,7 @@ class ContractorProjectMilestoneController
 
       if (confirm == true) {
         // Call delete service
-        // await _service.deleteMilestone(milestoneId, projectId);
+        await _service.deleteMilestone(milestoneId);
 
         Get.snackbar(
           'Success',
