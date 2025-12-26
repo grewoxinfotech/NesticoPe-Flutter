@@ -1,0 +1,159 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+
+import '../../../app/constants/color_res.dart';
+import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
+import '../../../data/network/contractor/service/employee/contractor_employee_services.dart';
+
+class ContractorEmployeeController extends PaginatedController<ContractorEmployeeItem> {
+
+var txtName=TextEditingController();
+var txtPhone=TextEditingController();
+var txtExp=TextEditingController();
+var txtEmail=TextEditingController();
+final addEmployeeFormKey = GlobalKey<FormState>();
+var isEditing = false.obs;
+var employeeId = ''.obs;
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    loadInitial();
+  }
+  @override
+
+  Future<PaginationResponse<ContractorEmployeeItem>> fetchItems(int page) async {
+    try{
+      final user=await SecureStorage.getUserData();
+      final createdBy=user?.user?.id??'';
+      return await ContractorEmployeeServices.instance.fetchContractorEmployees(
+        page: page,
+        createdBy: createdBy,
+      );
+    }catch(e){
+      rethrow;
+    }
+
+  }
+  void populateControllers(ContractorEmployeeItem item,bool editing){
+    txtName.text=item.name??'';
+    txtPhone.text=item.phone??'';
+    txtExp.text=item.experience?.toString()??'';
+    txtEmail.text=item.email??'';
+    employeeId.value=item.id??'';
+    isEditing.value=editing;
+  }
+
+  Future<void> refreshEmployee() async {
+    try {
+      isRefreshing.value = true;
+      refreshList();
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
+Future<void> deletedContractorEmployeeData(String id) async {
+  final response = await ContractorEmployeeServices.instance.deleteContractorEmployee(id);
+  if (response) {
+    refreshList();
+  }
+}
+
+  void updateEmployee() async {
+    try {
+      final employeeData = {
+        'name': txtName.text,
+        'phone': txtPhone.text,
+        'experience': txtExp.text,
+        'email': txtEmail.text,
+      };
+
+      final success = await ContractorEmployeeServices.instance.updateContractorEmployee( employeeData,employeeId.value);
+      if (success) {
+
+        Get.snackbar(
+          'Success',
+          'Employee updated successfully',
+          backgroundColor: Colors.green,
+          colorText: ColorRes.white,
+        );
+        clearControllers();
+        refreshList();
+      } else {
+
+        clearControllers();
+        Get.snackbar(
+          'Error',
+          'Failed to update employee',
+          backgroundColor: Colors.red,
+          colorText: ColorRes.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An error occurred',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    }
+  }
+
+  void addEmployee() async {
+    try {
+      final employeeData = {
+        'name': txtName.text,
+        'phone': txtPhone.text,
+        'experience': txtExp.text,
+        'email': txtEmail.text,
+      };
+
+      final success = await ContractorEmployeeServices.instance.addContractorEmployee(employeeData);
+      if (success) {
+        Get.snackbar(
+          'Success',
+          'Employee added successfully',
+          backgroundColor: Colors.green,
+          colorText: ColorRes.white,
+        );
+        clearControllers();
+        refreshList();
+      } else {
+        clearControllers();
+        Get.snackbar(
+          'Error',
+          'Failed to add employee',
+          backgroundColor: Colors.red,
+          colorText: ColorRes.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An error occurred',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    }
+  }
+  void clearControllers(){
+    txtName.clear();
+    txtPhone.clear();
+    txtExp.clear();
+    txtEmail.clear();
+  }
+
+}

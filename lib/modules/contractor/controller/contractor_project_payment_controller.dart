@@ -89,12 +89,12 @@ class ContractorProjectMilestonePaymentController
     editingPaymentId.value = payment.id ?? '';
 
     // Pre-populate form fields
-    selectedMilestoneId.value = payment.milestoneId;
-    amountController.text = payment.amount;
+    selectedMilestoneId.value = payment.milestoneId??'';
+    amountController.text = payment.amount??'0.00';
 
     // Capitalize first letter for dropdown match
-    selectedPaymentMode.value = payment.paymentMode.replaceAll("_", " ").capitalize.toString();
-    selectedPaymentStatus.value = payment.paymentStatus.replaceAll("_", " ").capitalize.toString();
+    selectedPaymentMode.value = payment.paymentMode?.replaceAll("_", " ").capitalize.toString()??'';
+    selectedPaymentStatus.value = payment.paymentStatus?.replaceAll("_", " ").capitalize.toString()??'';
 
     paidOn.value = payment.paidOn;
     referenceNoteController.text = payment.referenceNote ?? '';
@@ -146,12 +146,12 @@ class ContractorProjectMilestonePaymentController
         isLoading.value = false;
         return;
       }
-
+log("Creating payment for milestone ID: ${selectedPaymentMode.value}");
       final payload = {
         "projectId": projectId,
         "milestoneId": selectedMilestoneId.value,
         "amount": amountController.text.trim(),
-        "paymentMode": selectedPaymentMode.value.toLowerCase(),
+        "paymentMode": selectedPaymentMode.value.toLowerCase().replaceAll(" ", "_"),
         "paymentStatus": selectedPaymentStatus.value.toLowerCase(),
         "paidOn": paidOn.value!.toIso8601String(),
         "referenceNote": referenceNoteController.text.trim(),

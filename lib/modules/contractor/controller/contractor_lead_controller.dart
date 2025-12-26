@@ -12,11 +12,17 @@ import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
+import '../../../data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
+import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
+import '../../../data/network/contractor/service/project/contractor_project_service.dart';
+import 'contractor_project_controller.dart';
+import 'contractot_employee_controller.dart';
 
 class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   final expandedCards = <String, bool>{}.obs;
   RxMap<String, String> filters = <String, String>{}.obs;
   RxString changeStage = ''.obs;
+
   RxString changeStatus = ''.obs;
   RxList<String> sourceList = <String>[].obs;
   final txtTitle = TextEditingController();
@@ -27,9 +33,17 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   final txtNotes = TextEditingController();
   final txtProjectPrice = TextEditingController();
   final txtStartDate = TextEditingController();
+  final selectedPropertyType = ''.obs;
+  final txtClientCity = TextEditingController();
+  final txtClientLocation = TextEditingController();
+  final txtClientState = TextEditingController();
+  final txtCarpetArea = TextEditingController();
+
   final txtEndDate = TextEditingController();
   DateTime startCreate = DateTime.now();
   DateTime endCreate = DateTime.now();
+  final selectedEmployees = <ContractorEmployeeItem>[].obs;
+
   RxString leadStatus = ''.obs;
   RxString leadStage = "".obs;
   RxString leadSource = "".obs;
@@ -84,6 +98,73 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     print("✅ Lead data populated for edit: ${lead.id}");
   }
 
+  void populateProjectForm(ContractorProjectItem item) {
+    try {
+      debugPrint("🟢 Populating project form from project: ${item.id}");
+
+      // ---------------- Basic Text Fields ----------------
+      txtTitle.text = item.title ?? '';
+      txtClientName.text = item.client.name ?? '';
+      txtClientEmail.text = item.client.email ?? '';
+      txtClientPhone.text = item.client.phone ?? '';
+      txtProjectPrice.text = item.projectPrice?.toString() ?? '';
+      txtNotes.text = item.notes ?? '';
+
+      // ---------------- Client Additional Fields ----------------
+      selectedPropertyType.value = item.client.propertyType ?? '';
+      txtClientCity.text = item.client.city ?? '';
+      txtClientLocation.text = item.client.location ?? '';
+      txtClientState.text = item.client.state ?? '';
+      txtCarpetArea.text = item.client.carpetArea?.toString() ?? '';
+      selectedServiceDescription.value = item.client.serviceDescription ?? '';
+
+      // ---------------- Service Info ----------------
+      selectedService.value = item.meta?.serviceName ?? '';
+      selectedServiceId.value = item.meta?.serviceId ?? '';
+      selectedServiceName.value = item.meta?.serviceName ?? '';
+
+      // ---------------- Dates ----------------
+      if (item.startDate != null) {
+        startDate.value = DateTime.tryParse(item.startDate ?? '');
+      }
+      if (item.deadline != null) {
+        deadline.value = DateTime.tryParse(item.deadline ?? '');
+      }
+
+      // ---------------- Employees ----------------
+
+      selectedEmployees.clear();
+      final employeesFromMeta = item.meta?.employees ?? [];
+
+      if (employeesFromMeta.isNotEmpty) {
+        final employeeIds =
+            employeesFromMeta.map((e) => e.id).whereType<String>().toList();
+        final controllerEmployee = Get.find<ContractorEmployeeController>();
+        if (controllerEmployee.items.isNotEmpty) {
+          final matchedEmployees =
+              controllerEmployee.items
+                  .where((emp) => employeeIds.contains(emp.id))
+                  .toList();
+
+          selectedEmployees.assignAll(matchedEmployees);
+          debugPrint(
+            "✅ Populated ${selectedEmployees.length} employees from project meta",
+          );
+        } else {
+          debugPrint(
+            "⚠️ Employee controller list is empty — cannot match IDs yet",
+          );
+        }
+      } else {
+        debugPrint("⚠️ No employees found in project meta");
+      }
+
+      debugPrint("✅ Project form populated successfully for edit.");
+    } catch (e, s) {
+      debugPrint("🚨 Error populating project form: $e\n$s");
+    }
+  }
+
   Future<void> refreshLead() async {
     try {
       isRefreshing.value = true;
@@ -116,6 +197,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     txtPhone.clear();
     txtEmail.clear();
     txtEditNotes.clear();
+    selectedEmployees.clear();
 
     /// 🟢 Reset all date values
     startDate.value = null;
@@ -189,7 +271,48 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     final response = await ContractorLeadService.contractorLeadService
         .convertIntoProject(payload);
     if (response) {
+      items.removeWhere((element) => element.id == id);
+      items.refresh();
+      // refreshList();
+      try {
+        final projectController = Get.find<ContractorProjectController>();
+        await projectController.fetchContractorProjects();
+        items.removeWhere((element) => element.id == id);
+        print("✅ Contractor projects refreshed after conversion");
+      } catch (e) {
+        print("⚠️ Could not refresh projects: $e");
+      }
+      resetForm();
+      Get.back();
+    }
+  }
+
+  Future<void> updateProject(String id) async {
+    debugPrint("📦 Project Payload => $id");
+    if (deadline.value == null || startDate.value == null) {
+      Get.snackbar(
+        "Error",
+        "Please fill required fields",
+        backgroundColor: ColorRes.error.shade100,
+        colorText: ColorRes.error.shade700,
+      );
+      return;
+    }
+
+    final payload = updateProjectPayload();
+    debugPrint("📦 Project Payload => $payload");
+    final response = await ContractorProjectService.contractorProjectService
+        .updateProject(payload, id);
+    if (response) {
+      items.refresh();
       refreshList();
+      try {
+        final projectController = Get.find<ContractorProjectController>();
+        await projectController.fetchContractorProjects();
+        print("✅ Contractor projects refreshed after conversion");
+      } catch (e) {
+        print("⚠️ Could not refresh projects: $e");
+      }
       resetForm();
       Get.back();
     }
@@ -212,14 +335,55 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
       "title": txtTitle.text.trim(),
       "startDate": startDate.value?.toUtc().toIso8601String(),
       "deadline": deadline.value?.toUtc().toIso8601String(),
-      "leadId": leadId ?? "", // optional or set dynamically
+      "leadId": leadId,
+      "price": txtProjectPrice.text.trim(),
       "client": {
         "name": txtClientName.text.trim(),
         "email": txtClientEmail.text.trim(),
         "phone": txtClientPhone.text.trim(),
       },
       "notes": txtNotes.text.trim(),
+      "meta": {
+        "employees":
+            selectedEmployees
+                .map((e) => {"id": e.id})
+                .toList(), // ✅ matches your backend structure
+      },
+    };
+  }
+
+  Map<String, dynamic> updateProjectPayload() {
+
+    debugPrint("🟢 Updating project payload");
+    debugPrint("🟢 Updating $startDate    ------ $deadline");
+
+    return {
+      "title": txtTitle.text.trim(),
+      "startDate": "${startDate.value?.year}-${startDate.value?.month}-${startDate.value?.day}",
+      "deadline": "${deadline.value?.year}-${deadline.value?.month}-${deadline.value?.day}",
+
       "price": txtProjectPrice.text.trim(),
+      "notes": txtNotes.text.trim(),
+      "client": {
+        "name": txtClientName.text.trim(),
+        "email": txtClientEmail.text.trim(),
+        "phone": txtClientPhone.text.trim(),
+        "propertyType": selectedPropertyType.value,
+        // add a reactive dropdown/controller
+        "city": txtClientCity.text.trim(),
+        "location": txtClientLocation.text.trim(),
+        "state": txtClientState.text.trim(),
+        "carpetArea": int.tryParse(txtCarpetArea.text.trim()) ?? 0,
+        "serviceDescription": selectedServiceDescription.value,
+      },
+      "meta": {
+        "employees":
+            selectedEmployees
+                .map((e) => {"id": e.id})
+                .toList(), // your current logic is fine
+        "serviceId": selectedServiceId.value,
+        "serviceName": selectedServiceName.value,
+      },
     };
   }
 
@@ -230,6 +394,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   }
 
   bool isExpanded(String id) => expandedCards[id] ?? false;
+
   @override
   void onInit() {
     super.onInit();

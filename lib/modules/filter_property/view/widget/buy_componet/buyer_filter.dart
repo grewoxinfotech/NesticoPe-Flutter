@@ -8,52 +8,82 @@ import '../common_component/budget_filter.dart';
 import '../common_component/listed_by.dart';
 import 'buy_component.dart';
 
-class BuyFilters extends StatelessWidget {
+class BuyFilters extends StatefulWidget {
   final PropertyFilterControllerForFilter controllerForFilter;
 
   const BuyFilters({super.key, required this.controllerForFilter});
 
   @override
+  State<BuyFilters> createState() => _BuyFiltersState();
+}
+
+class _BuyFiltersState extends State<BuyFilters> {
+  @override
   Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildPropertyFilterHeadingPadding('Budget Range'),
 
+        // Obx(
+        //   () => BudgetFilter(
+        //     maxQuantityLabel: 'Cr+',
+        //     minQuantityLabel: 'L',
+        //     maxLabel: 'Max',
+        //     minLabel: 'Min',
+        //     minValue: controllerForFilter.min.value,
+        //     maxValue: controllerForFilter.max.value,
+        //     values: controllerForFilter.rangeValues,
+        //     // Now this works with the getter
+        //     onChanged: (newValues) {
+        //       controllerForFilter.buyerPriceRange(newValues);
+        //     },
+        //   ),
+        // ),
         Obx(
-          () => BudgetFilter(
-            maxQuantityLabel: 'Cr+',
-            minQuantityLabel: 'L',
-            maxLabel: 'Max',
-            minLabel: 'Min',
-            minValue: controllerForFilter.min.value,
-            maxValue: controllerForFilter.max.value,
-            values: controllerForFilter.rangeValues,
-            // Now this works with the getter
-            onChanged: (newValues) {
-              controllerForFilter.buyerPriceRange(newValues);
+              () => BudgetFilterChange(
+            minSelected: widget.controllerForFilter.min.value,
+            maxSelected: widget.controllerForFilter.max.value,
+            budgetList: widget.controllerForFilter.budgetValues.value,
+            onMinChanged: (val) {
+              if (val != null) {
+                widget.controllerForFilter.min.value = val;
+                print("Main ${widget.controllerForFilter.min.value}");
+              }
             },
+            onMaxChanged: (val) {
+              if (val != null) {
+                widget.controllerForFilter.max.value = val;
+
+                print("mxa ${widget.controllerForFilter.max.value}");
+              }
+            },
+            minLabel: "Min Budget",
+            maxLabel: "Max Budget",
           ),
         ),
+
+
         const SizedBox(height: 7),
 
         buildPropertyFilterHeadingPadding('BHK Type'),
         const SizedBox(height: 7),
         BHKTypes(
-          bHKList: controllerForFilter.bHkType,
+          bHKList: widget.controllerForFilter.bHkType,
           onSelectionChanged: (index) {
             debugPrint('BHK Type $index');
           },
-          controllerForFilter: controllerForFilter,
+          controllerForFilter: widget.controllerForFilter,
         ),
         const SizedBox(height: 7),
 
         buildPropertyFilterHeadingPadding('Property Types'),
         const SizedBox(height: 7),
         FilterPropertyTypesList(
-          items: controllerForFilter.propertyTypesList,
-          controllerForFilter: controllerForFilter,
-          selectedItems: controllerForFilter.subpropertyType,
+          items: widget.controllerForFilter.propertyTypesList,
+          controllerForFilter: widget.controllerForFilter,
+          selectedItems: widget.controllerForFilter.subpropertyType,
           onSelectionChanged: (index) {
             debugPrint('Sub property Type $index');
           },
@@ -69,25 +99,16 @@ class BuyFilters extends StatelessWidget {
         //   },
         // ),
         // const SizedBox(height: 7),
-        buildPropertyFilterHeadingPadding('Construction Status'),
-        const SizedBox(height: 7),
-        ListedBy(
-          listedByList: controllerForFilter.constructionStatus,
-          selectedString: controllerForFilter.constructionStatusInBuy,
-          onTap: (index) {
-            debugPrint('Construction Status $index');
-          },
-          controllerForFilter: controllerForFilter,
-        ),
+
         buildPropertyFilterHeadingPadding('Furnishing Type'),
         const SizedBox(height: 7),
         ListedBy(
-          listedByList: controllerForFilter.furnishingType,
+          listedByList: widget.controllerForFilter.furnishingType,
           onTap: (items) {
             debugPrint('Furnishing $items');
           },
-          controllerForFilter: controllerForFilter,
-          selectedString: controllerForFilter.rentFurnishing,
+          controllerForFilter: widget.controllerForFilter,
+          selectedString: widget.controllerForFilter.rentFurnishing,
         ),
       ],
     );

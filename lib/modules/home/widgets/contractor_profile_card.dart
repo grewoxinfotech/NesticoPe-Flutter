@@ -253,8 +253,8 @@ class ContractorCard extends StatelessWidget {
                 SizedBox(width: 8),
                 Expanded(
                   child: _buildStatContainer(
-                    title: 'Total Projects',
-                    value: contractor.projectStats.totalProjects.toString(),
+                    title: 'Complete Projects',
+                    value: contractor.projectStats.completedProjects.toString(),
                   ),
                 ),
               ],

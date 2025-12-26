@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
 import 'package:http/http.dart' as http;
@@ -6,8 +7,9 @@ import 'package:http/http.dart' as http;
 import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../database/secure_storage_service.dart';
 
-class ReviewService {
+class ReviewUserService {
   final String baseUrl = ApiConstants.review;
+  final String getReviewCheck = ApiConstants.myContractorProfileReview;
 
   /// Headers with token
   static Future<Map<String, String>> headers() async {
@@ -22,7 +24,6 @@ class ReviewService {
       final queryParams = {
         'page': page.toString(),
         if (filters != null) ...filters,
-
       };
 
       final uri = Uri.parse("$baseUrl").replace(queryParameters: queryParams);
@@ -134,6 +135,64 @@ class ReviewService {
       }
     } catch (e) {
       print('❌ Error marking helpful: $e');
+      return false;
+    }
+  }
+
+  Future<bool> getTheBuyerGiveReview(String id) async {
+    try {
+      final uri = Uri.parse("$getReviewCheck/$id");
+      log("🔹 Checking review status: $uri");
+
+      final response = await http.get(uri, headers: await headers());
+
+      log("🔹 Review Check Response: ${response.statusCode}");
+      log("🔹 Review Check Body: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+
+        if (data["success"] == true) {
+          final hasReviewed = data["data"]?["hasReviewed"] ?? false;
+          log("✅ Buyer hasReviewed: $hasReviewed");
+          return hasReviewed is bool ? hasReviewed : false;
+        }
+      }
+
+      log("⚠️ Unexpected response or missing data");
+      return false;
+    } catch (e, st) {
+      log("❌ Error in getTheBuyerGiveReview: $e\n$st");
+      return false;
+    }
+  }
+
+  Future<bool> addReviewForContractor(Map<String, dynamic> review) async {
+    try {
+      final uri = Uri.parse("$baseUrl");
+      log("🔹 Checking review status: $uri");
+
+      final response = await http.post(
+        uri,
+        headers: await headers(),
+        body: jsonEncode(review),
+      );
+
+      log("🔹 Review Check Response: ${response.statusCode}");
+      log("🔹 Review Check Body: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+
+        if (data["success"] == true) {
+          return true;
+        }
+      }
+
+      log("⚠️ Unexpected response or missing data");
+      return false;
+    } catch (e, st) {
+      log("❌ Error in getTheBuyerGiveReview: $e\n$st");
       return false;
     }
   }

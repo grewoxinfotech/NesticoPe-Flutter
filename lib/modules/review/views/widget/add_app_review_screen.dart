@@ -51,8 +51,9 @@ class AddAppReviewDialog extends StatelessWidget {
                       child: Text(
                         "Add App Review",
                         style: TextStyle(
-                          fontSize: AppFontSizes.large,
-                          fontWeight: AppFontWeights.bold,
+                          fontSize: AppFontSizes.body,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textColor
                         ),
                       ),
                     ),

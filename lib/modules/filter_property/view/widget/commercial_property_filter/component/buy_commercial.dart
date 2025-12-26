@@ -58,35 +58,43 @@ class _BuyCommercialState extends State<BuyCommercial> {
         const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Budget'),
         Obx(
-          () => BudgetFilter(
-            minValue: widget.controllerForFilter.commercialMin.value,
-            maxValue: widget.controllerForFilter.commercialMax.value,
-            values: widget.controllerForFilter.commercialRangeValues.value,
-            onChanged: (value) {
-              widget.controllerForFilter.changeTheValueOfCommercial(value);
+              () => BudgetFilterChange(
+            minSelected: widget.controllerForFilter.commercialMin.value,
+            maxSelected: widget.controllerForFilter.commercialMax.value,
+            budgetList: widget.controllerForFilter.commercialBuyBudgetValues.value,
+            onMinChanged: (val) {
+              if (val != null) {
+                widget.controllerForFilter.commercialMin.value = val;
+                print("Main ${widget.controllerForFilter.commercialMin.value}");
+              }
             },
-            minLabel: 'Min',
-            maxLabel: 'Max',
-            minQuantityLabel: 'L',
-            maxQuantityLabel: 'Cr+',
+            onMaxChanged: (val) {
+              if (val != null) {
+                widget.controllerForFilter.commercialMax.value = val;
+
+                print("mxa ${widget.controllerForFilter.commercialMax.value}");
+              }
+            },
+            minLabel: "Min Budget",
+            maxLabel: "Max Budget",
           ),
         ),
 
-        buildPropertyFilterHeadingPadding('Build-up Area'),
-        Obx(
-          () => BudgetFilter(
-            minValue: widget.controllerForFilter.areaMin.value,
-            maxValue: widget.controllerForFilter.areaMax.value,
-            values: widget.controllerForFilter.areaRangeValues.value,
-            onChanged: (value) {
-              widget.controllerForFilter.changeCommercialArea(value);
-            },
-            minLabel: 'Min',
-            maxLabel: 'Max',
-            minQuantityLabel: 'sqft',
-            maxQuantityLabel: 'sqft+',
-          ),
-        ),
+        // buildPropertyFilterHeadingPadding('Build-up Area'),
+        // Obx(
+        //   () => BudgetFilter(
+        //     minValue: widget.controllerForFilter.areaMin.value,
+        //     maxValue: widget.controllerForFilter.areaMax.value,
+        //     values: widget.controllerForFilter.areaRangeValues.value,
+        //     onChanged: (value) {
+        //       widget.controllerForFilter.changeCommercialArea(value);
+        //     },
+        //     minLabel: 'Min',
+        //     maxLabel: 'Max',
+        //     minQuantityLabel: 'sqft',
+        //     maxQuantityLabel: 'sqft+',
+        //   ),
+        // ),
 
         buildPropertyFilterHeadingPadding("Possession"),
         const SizedBox(height: 7),
@@ -102,22 +110,22 @@ class _BuyCommercialState extends State<BuyCommercial> {
         // buildFilterHeadingPadding("Listed By"),
         // const SizedBox(height: 7),
         // ListedBy(listedByList: listedByList),
-        const SizedBox(height: 7),
-        buildPropertyFilterHeadingPadding('Roi % p.a'),
-        Obx(
-          () => BudgetFilter(
-            minValue: widget.controllerForFilter.roiMin.value,
-            maxValue: widget.controllerForFilter.roiMax.value,
-            values: widget.controllerForFilter.roiRangeValue.value,
-            onChanged: (value) {
-              widget.controllerForFilter.changeCommercialRoi(value);
-            },
-            minLabel: 'Min',
-            maxLabel: 'Max',
-            minQuantityLabel: '%',
-            maxQuantityLabel: '%+',
-          ),
-        ),
+        // const SizedBox(height: 7),
+        // buildPropertyFilterHeadingPadding('Roi % p.a'),
+        // Obx(
+        //   () => BudgetFilter(
+        //     minValue: widget.controllerForFilter.roiMin.value,
+        //     maxValue: widget.controllerForFilter.roiMax.value,
+        //     values: widget.controllerForFilter.roiRangeValue.value,
+        //     onChanged: (value) {
+        //       widget.controllerForFilter.changeCommercialRoi(value);
+        //     },
+        //     minLabel: 'Min',
+        //     maxLabel: 'Max',
+        //     minQuantityLabel: '%',
+        //     maxQuantityLabel: '%+',
+        //   ),
+        // ),
         buildPropertyFilterHeadingPadding('Furnishing Type'),
         const SizedBox(height: 7),
         ListedBy(

@@ -13,6 +13,7 @@ import 'package:housing_flutter_app/modules/no_internet/no_internet_screen.dart'
 
 import 'app/theme/themes.dart' as AppTheme;
 import 'app/utils/helper_function/user_helper/user_helper.dart';
+import 'modules/builder/controller/builder_form_controller.dart';
 
 void main() async {
   debugProfileBuildsEnabled = true;
@@ -37,6 +38,8 @@ void main() async {
   Get.put(CompareManager(), permanent: true);
   Get.put(ContractorCompareManager(), permanent: true);
   Get.put(ProjectCompareManager(), permanent: true);
+  //=========================
+  // Get.put(ProjectWizardController(isBuilderView:false ), permanent: true);
 
   runApp(
     GetMaterialApp(

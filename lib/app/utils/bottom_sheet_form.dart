@@ -10,6 +10,7 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
 import 'package:intl/intl.dart';
 
 import '../../modules/add_property/view/create_property.dart';
+import '../../widgets/New folder/inputs/dropdown_field.dart';
 import 'formater/formater.dart';
 
 class ContactOwnerBottom extends StatefulWidget {
@@ -737,7 +738,7 @@ class _DateTimeDropdownExampleState extends State<DateTimeDropdownExample> {
   String? selectedTime;
 
   late List<String> dateList;
-  final List<String> timeList = ['10:00 AM', '04:00 PM'];
+  final List<String> timeList = ['11:00 AM', '05:00 PM'];
 
   @override
   void initState() {
@@ -767,49 +768,92 @@ class _DateTimeDropdownExampleState extends State<DateTimeDropdownExample> {
     return Column(
       children: [
         /// DATE DROPDOWN
-        DropdownButtonFormField<String>(
+        // DropdownButtonFormField<String>(
+        //   value: selectedDate,
+        //   decoration: InputDecoration(
+        //     hintText: 'Select date',
+        //     hintStyle: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),
+        //     prefixIcon: const Icon(Icons.calendar_today_outlined, size: 14),
+        //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),borderSide: BorderSide(color: ColorRes.leadGreyColor.shade300,width: 0.5)),
+        //   ),
+        //   items:
+        //       dateList
+        //           .map(
+        //             (date) => DropdownMenuItem(value: date, child: Text(date,style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)),
+        //
+        //           )
+        //           .toList(),
+        //   onChanged: (value) {
+        //     setState(() => selectedDate = value);
+        //     _notifyParent();
+        //   },
+        //   validator:
+        //       (value) => value == null || value.isEmpty ? "Required" : null,
+        // ),
+        NesticoPeDropdownField<String>(
+
           value: selectedDate,
-          decoration: InputDecoration(
-            hintText: 'Select date',
-            prefixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          ),
+          hintText: "Select date",
+          prefixIcon: Icons.calendar_today_outlined,
           items:
-              dateList
-                  .map(
-                    (date) => DropdownMenuItem(value: date, child: Text(date)),
-                  )
-                  .toList(),
-          onChanged: (value) {
-            setState(() => selectedDate = value);
+          dateList
+              .map(
+                (date) => DropdownMenuItem(value: date, child: Text(date,style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)),
+
+          )
+              .toList(),
+          onChanged: (val) {
+            setState(() => selectedDate = val);
             _notifyParent();
           },
-          validator:
-              (value) => value == null || value.isEmpty ? "Required" : null,
+          darkText: true,
+      validator:
+          (value) => value == null || value.isEmpty ? "Required" : null,
         ),
 
         const SizedBox(height: 8),
 
         /// TIME DROPDOWN
-        DropdownButtonFormField<String>(
+        // DropdownButtonFormField<String>(
+        //   value: selectedTime,
+        //   decoration: InputDecoration(
+        //     hintText: 'Select time',
+        //     hintStyle: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),
+        //     prefixIcon: const Icon(Icons.access_time_outlined, size: 14),
+        //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),borderSide: BorderSide(color: ColorRes.leadGreyColor.shade300,width: 0.5)),
+        //   ),
+        //   items:
+        //       timeList
+        //           .map(
+        //             (time) => DropdownMenuItem(value: time, child: Text(time,style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)),
+        //           )
+        //           .toList(),
+        //   onChanged: (value) {
+        //     setState(() => selectedTime = value);
+        //     _notifyParent();
+        //   },
+        //   validator:
+        //       (value) => value == null || value.isEmpty ? "Required" : null,
+        // ),
+
+        NesticoPeDropdownField<String>(
+
           value: selectedTime,
-          decoration: InputDecoration(
-            hintText: 'Select time',
-            prefixIcon: const Icon(Icons.access_time_outlined, size: 18),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          ),
+          hintText: "Select time",
+          prefixIcon: Icons.access_time_outlined,
           items:
-              timeList
-                  .map(
-                    (time) => DropdownMenuItem(value: time, child: Text(time)),
-                  )
-                  .toList(),
-          onChanged: (value) {
-            setState(() => selectedTime = value);
+          timeList
+              .map(
+                (time) => DropdownMenuItem(value: time, child: Text(time,style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)),
+          )
+              .toList(),
+          onChanged: (val) {
+            setState(() => selectedTime = val);
             _notifyParent();
           },
           validator:
               (value) => value == null || value.isEmpty ? "Required" : null,
+          darkText: true,
         ),
       ],
     );

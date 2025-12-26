@@ -207,18 +207,41 @@ class _PgCoLivingState extends State<PgCoLiving> {
         ),
         const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Budget'),
+        // Obx(
+        //   () => BudgetFilter(
+        //     minValue: widget.controllerForFilter.pgMin.value,
+        //     maxValue: widget.controllerForFilter.pgMax.value,
+        //     values: widget.controllerForFilter.pgRangeValues.value,
+        //     onChanged: (value) {
+        //       widget.controllerForFilter.changePGRent(value);
+        //     },
+        //     minLabel: "Min",
+        //     maxLabel: "Max",
+        //     minQuantityLabel: "L",
+        //     maxQuantityLabel: "Cr+",
+        //   ),
+        // ),
         Obx(
-          () => BudgetFilter(
-            minValue: widget.controllerForFilter.pgMin.value,
-            maxValue: widget.controllerForFilter.pgMax.value,
-            values: widget.controllerForFilter.pgRangeValues.value,
-            onChanged: (value) {
-              widget.controllerForFilter.changePGRent(value);
+              () => BudgetFilterChange(
+            minSelected: widget.controllerForFilter.pgMin.value,
+            maxSelected: widget.controllerForFilter.pgMax.value,
+            budgetList: widget.controllerForFilter.rentBudgetValues.value,
+            onMinChanged: (val) {
+              if (val != null) {
+                widget.controllerForFilter.pgMin.value = val;
+                print("Main ${widget.controllerForFilter.pgMin.value}");
+              }
             },
-            minLabel: "Min",
-            maxLabel: "Max",
-            minQuantityLabel: "L",
-            maxQuantityLabel: "Cr+",
+            onMaxChanged: (val) {
+              if (val != null) {
+                widget.controllerForFilter.pgMax.value = val;
+
+                print("mxa ${widget.controllerForFilter.pgMax.value}");
+              }
+            },
+
+            minLabel: "Min Budget",
+            maxLabel: "Max Budget",
           ),
         ),
         buildPropertyFilterHeadingPadding('Food available'),

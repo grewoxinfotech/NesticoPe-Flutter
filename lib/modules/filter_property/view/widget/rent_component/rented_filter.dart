@@ -28,21 +28,43 @@ class RentFilter extends StatelessWidget {
         ),
         const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Rent Range'),
+        // Obx(
+        //   () => BudgetFilter(
+        //     maxQuantityLabel: 'Cr+',
+        //     minQuantityLabel: 'L',
+        //     maxLabel: 'Max',
+        //     minLabel: 'Min',
+        //     minValue: controllerForFilter.rentMin.value,
+        //     maxValue: controllerForFilter.rentMax.value,
+        //     values: controllerForFilter.rentRangeValues.value,
+        //     onChanged: (newValues) {
+        //       controllerForFilter.dynamicRentChangeValue(newValues);
+        //       print(
+        //         " Rent Range value ${controllerForFilter.rentMin.value}  ${controllerForFilter.rentMax.value} ${controllerForFilter.rentRangeValues.value}",
+        //       );
+        //     },
+        //   ),
+        // ),
         Obx(
-          () => BudgetFilter(
-            maxQuantityLabel: 'Cr+',
-            minQuantityLabel: 'L',
-            maxLabel: 'Max',
-            minLabel: 'Min',
-            minValue: controllerForFilter.rentMin.value,
-            maxValue: controllerForFilter.rentMax.value,
-            values: controllerForFilter.rentRangeValues.value,
-            onChanged: (newValues) {
-              controllerForFilter.dynamicRentChangeValue(newValues);
-              print(
-                " Rent Range value ${controllerForFilter.rentMin.value}  ${controllerForFilter.rentMax.value} ${controllerForFilter.rentRangeValues.value}",
-              );
+              () => BudgetFilterChange(
+            minSelected: controllerForFilter.rentMin.value,
+            maxSelected: controllerForFilter.rentMax.value,
+            budgetList: controllerForFilter.rentBudgetValues.value,
+            onMinChanged: (val) {
+              if (val != null) {
+                controllerForFilter.rentMin.value = val;
+                print("Main ${controllerForFilter.rentMin.value}");
+              }
             },
+            onMaxChanged: (val) {
+              if (val != null) {
+                controllerForFilter.rentMax.value = val;
+
+                print("mxa ${controllerForFilter.rentMax.value}");
+              }
+            },
+            minLabel: "Min Budget",
+            maxLabel: "Max Budget",
           ),
         ),
         const SizedBox(height: 7),

@@ -82,6 +82,34 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
       //     // }
       //   },
       // ),
+      // appBar: ListScreenAppbar(
+      //   showAppBar: widget.isAppBarShow,
+      //   isFormScreen: widget.isFromSeeAll,
+      //   title: "Project List",
+      //   onBack: () {
+      //     Get.back();
+      //   },
+      //   onFilterTap: () async {
+      //     var filters = await showModalBottomSheet<Map<String, String>>(
+      //       context: Get.context!, // or use your BuildContext if available
+      //       isScrollControlled: true,
+      //       backgroundColor: Colors.transparent,
+      //       builder:
+      //           (context) => ProjectFilterSheet(
+      //             initialFilters: selectedFilters.value,
+      //             onApply: (filterData) {
+      //               // ✅ Close sheet and return filters
+      //               Navigator.pop(context, filterData);
+      //             },
+      //           ),
+      //     );
+      //
+      //     if (filters != null) {
+      //       selectedFilters.value = filters;
+      //       controller.applyFilters(filters);
+      //     }
+      //   },
+      // ),
       appBar: ListScreenAppbar(
         showAppBar: widget.isAppBarShow,
         isFormScreen: widget.isFromSeeAll,
@@ -90,20 +118,22 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
           Get.back();
         },
         onFilterTap: () async {
-          var filters = await showModalBottomSheet<Map<String, String>>(
-            context: Get.context!, // or use your BuildContext if available
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder:
-                (context) => ProjectFilterSheet(
-                  initialFilters: selectedFilters.value,
-                  onApply: (filterData) {
-                    // ✅ Close sheet and return filters
-                    Navigator.pop(context, filterData);
-                  },
-                ),
+          // ✅ Navigate using Get.to a
+          // nd await result
+          final filters = await Get.to<Map<String, String>>(
+            () => ProjectFilterScreen(
+              initialFilters: selectedFilters.value,
+              onApply: (filterData) {
+                // Return selected filters to previous screen
+                Get.back(result: filterData);
+              },
+            ),
+            transition: Transition.downToUp,
+            // 👈 optional for sheet-like slide-up effect
+            duration: const Duration(milliseconds: 300),
           );
 
+          // ✅ Apply filters if returned
           if (filters != null) {
             selectedFilters.value = filters;
             controller.applyFilters(filters);

@@ -121,6 +121,8 @@
 //   void resetForm() {}
 // }
 
+import 'dart:developer';
+
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -162,6 +164,7 @@ class ContractorProjectMilestoneController
   RxString selectedWorkStatus = 'Not Started'.obs;
   Rxn<ProjectMilestone> currentMilestone = Rxn<ProjectMilestone>();
   RxDouble milestoneAmount = 0.0.obs;
+  RxDouble currentMilestoneAmount = 0.0.obs;
 
 
   /// Static data lists
@@ -206,15 +209,27 @@ class ContractorProjectMilestoneController
 
   /// Initialize form for editing existing milestone
   void initializeForEdit(ProjectMilestone milestone) {
+    log("=== INITIALIZING EDIT MODE FOR MILESTONE ===");
+    log("Incoming milestone data: ${milestone.toJson()}");
+
+    // Set edit mode
     isEditMode.value = true;
     editingMilestoneId.value = milestone.id ?? '';
-
-    // Populate form with existing data
+    log("isEditMode: ${isEditMode.value}");
+    log("editingMilestoneId: ${editingMilestoneId.value}");
+    milestoneAmount.value= double.tryParse(milestone.milestoneAmount ?? '0') ?? 0.0;
+    // Populate title and description
     titleController.text = milestone.title ?? '';
     descriptionController.text = milestone.description ?? '';
+    log("titleController: ${titleController.text}");
+    log("descriptionController: ${descriptionController.text}");
+
+    // Milestone type
     selectedMileStoneType.value =
         milestone.milestoneType?.capitalize.toString() ?? 'Percentage';
+    log("selectedMileStoneType: ${selectedMileStoneType.value}");
 
+    // Handle amount fields based on type
     if (milestone.milestoneType?.capitalize.toString() == 'Percentage') {
       percentageController.text = milestone.percentage?.toString() ?? '';
       fixedController.clear();
@@ -223,13 +238,53 @@ class ContractorProjectMilestoneController
       percentageController.clear();
     }
 
+    log("percentageController: ${percentageController.text}");
+    log("fixedController: ${fixedController.text}");
+
+    // Dates
     startDate.value = milestone.startDate;
     endDate.value = milestone.endDate;
     completionDate.value = milestone.completionDate;
+    log("startDate: ${startDate.value}");
+    log("endDate: ${endDate.value}");
+    log("completionDate: ${completionDate.value}");
+
+    // Work status
     selectedWorkStatus.value =
         milestone.workStatus?.replaceAll("_", " ").capitalize.toString() ??
-        'Not Started';
+            'Not Started';
+    log("selectedWorkStatus: ${selectedWorkStatus.value}");
+
+    log("=== MILESTONE INITIALIZATION COMPLETE ===");
   }
+
+  // void initializeForEdit(ProjectMilestone milestone) {
+  //   log("Editing Milestone: ${milestone.toJson()}");
+  //
+  //   isEditMode.value = true;
+  //   editingMilestoneId.value = milestone.id ?? '';
+  //
+  //   // Populate form with existing data
+  //   titleController.text = milestone.title ?? '';
+  //   descriptionController.text = milestone.description ?? '';
+  //   selectedMileStoneType.value =
+  //       milestone.milestoneType?.capitalize.toString() ?? 'Percentage';
+  //
+  //   if (milestone.milestoneType?.capitalize.toString() == 'Percentage') {
+  //     percentageController.text = milestone.percentage?.toString() ?? '';
+  //     fixedController.clear();
+  //   } else {
+  //     fixedController.text = milestone.remainingAmount ?? '';
+  //     percentageController.clear();
+  //   }
+  //
+  //   startDate.value = milestone.startDate;
+  //   endDate.value = milestone.endDate;
+  //   completionDate.value = milestone.completionDate;
+  //   selectedWorkStatus.value =
+  //       milestone.workStatus?.replaceAll("_", " ").capitalize.toString() ??
+  //       'Not Started';
+  // }
 
   /// Save milestone (handles both create and update)
   Future<void> saveMilestone(double projectPrice) async {
@@ -289,7 +344,10 @@ class ContractorProjectMilestoneController
         workStatus: selectedWorkStatus.value.toLowerCase().replaceAll(" ", "_"),
       );
 
+
+
       final result = await _service.createMilestone(milestone);
+      log("Creating Milestone: ${milestone.toJson()}");
       print('Result: $result');
 
       if (result) {

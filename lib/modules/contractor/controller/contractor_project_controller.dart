@@ -32,6 +32,29 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
     print("toggle Card $id");
     expandedCards.refresh();
   }
+  Future<void> fetchContractorProjects() async {
+    try {
+      isLoading.value = true;
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id ?? '';
+
+      final response = await ContractorProjectService.contractorProjectService
+          .getContractorProjectData(contractorId: userId, filter: filters);
+
+      if (response.items.isNotEmpty) {
+        items.assignAll(response.items); // ✅ reactive update
+        items.refresh(); // ensure UI rebuild
+        log("✅ Projects list updated: ${items.length} projects loaded");
+      } else {
+        items.clear();
+      }
+    } catch (e, s) {
+      log("❌ Error fetching projects: $e\n$s");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void resetFilters() {
     txtStartDate.clear();
     txtEndDate.clear();

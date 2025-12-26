@@ -53,6 +53,7 @@ import '../../../../app/utils/file_upload_section/file_upload_section.dart';
 import '../../../../app/utils/validation.dart';
 import '../../../../app/widgets/mic_search/search_mic.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
+import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../profile/controllers/buyer_profiledata.dart';
 import '../../../property/controllers/share_property_controller.dart';
@@ -263,6 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final MicController micController = Get.put(MicController());
   final GoogleMapSearchController googleMapController = Get.put(
     GoogleMapSearchController(),
+    tag: 'city'
   );
   final profileController = Get.put(BuyerProfileDataController());
   final SharePropertyController propertyShareController = Get.put(
@@ -282,6 +284,11 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   final ProjectWizardController projectController = Get.put(
     ProjectWizardController(isBuilderView: false),
+  );
+  final reviewController = Get.put(
+    PlatformReviewController(
+      type: ['site', 'seller', 'reseller', 'contractor'],
+    ),
   );
 
   final TopSellerController topSellerController = Get.put(
@@ -1534,14 +1541,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 12),
                       WhyChooseUsSection(),
-                      const SizedBox(height: 20),
-                      const TitleWithViewAll(
-                        title: "Reviews & Testimonials",
-                        showViewAll: false,
-                      ),
-                      SizedBox(height: 12),
-                      ReviewsAndTestimonials(),
-                      SizedBox(height: AppSpacing.medium),
+                     if(reviewController.siteReviewWithUsers.isNotEmpty)...[
+                       const SizedBox(height: 20),
+                       const TitleWithViewAll(
+                         title: "Reviews & Testimonials",
+                         showViewAll: false,
+                       ),
+                       SizedBox(height: 12),
+                       ReviewsAndTestimonials(),
+                       SizedBox(height: AppSpacing.medium),
+                     ]
                     ],
                   ),
                   Padding(
@@ -1648,7 +1657,7 @@ Future<void> showFindPropertyDialog(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // City Field with Dropdown
+
                       Stack(
                         children: [
                           NesticoPeTextField(
@@ -1675,10 +1684,11 @@ Future<void> showFindPropertyDialog(
                           // City Predictions Dropdown - Below TextField
                           Obx(() {
                             final predictions = googleMapController.predictions;
+                            final parsedCities = googleMapController.cityStateList;
+                            final hasParsed = parsedCities.isNotEmpty;
+                            final items = hasParsed ? parsedCities : predictions;
 
-                            if (predictions.isEmpty) {
-                              return const SizedBox();
-                            }
+                            if (items.isEmpty) return const SizedBox();
 
                             return Positioned(
                               top: 90, // Position below the text field
@@ -1706,9 +1716,9 @@ Future<void> showFindPropertyDialog(
                                       vertical: 4,
                                     ),
                                     itemCount:
-                                        predictions.length > 3
+                                    items.length > 3
                                             ? 3
-                                            : predictions.length,
+                                            : items.length,
                                     separatorBuilder:
                                         (context, index) => Divider(
                                           height: 1,
@@ -1716,45 +1726,102 @@ Future<void> showFindPropertyDialog(
                                           color: ColorRes.grey.withOpacity(0.2),
                                         ),
                                     itemBuilder: (context, index) {
-                                      final city = predictions[index];
-                                      return InkWell(
-                                        onTap: () {
-                                          controller.selectedCityZ.text =
-                                              city
-                                                  .structuredFormatting
-                                                  ?.mainText ??
-                                              '';
-                                          googleMapController.predictions
-                                              .clear();
-                                          FocusScope.of(context).unfocus();
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 12,
+                                      if (hasParsed) {
+                                        // ✅ Cast item to Map<String, String?>
+                                        final cityData = items[index] as Map<String, String?>;
+
+                                        log("djhfudfhg ${cityData}");
+
+                                        return ListTile(
+                                          leading: const Icon(
+                                            Icons.location_city_outlined,
+                                            size: 20,
+                                            color: ColorRes.primary,
                                           ),
-                                          child: Row(
-                                            children: [
-                                              const Icon(
-                                                Icons.location_on,
-                                                color: ColorRes.primary,
-                                                size: 20,
-                                              ),
-                                              const SizedBox(width: 12),
-                                              Expanded(
-                                                child: Text(
-                                                  city.description ?? '',
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        AppFontSizes.medium,
-                                                    color: ColorRes.textPrimary,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
+                                          title: Text(
+                                            cityData['city'] ?? '',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.small,
+                                              color: ColorRes.homeBlackFade,
+                                            ),
                                           ),
-                                        ),
-                                      );
+                                          subtitle: Text(
+                                            '${cityData['state'] ?? ''}, ${cityData['country'] ?? ''}',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.small,
+                                              color: ColorRes.leadGreyColor[700],
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            controller.selectedCityZ.text = cityData['city'] ?? '';
+                                            googleMapController.predictions.clear();
+                                            googleMapController.cityStateList.clear();
+                                            FocusScope.of(context).unfocus();
+
+                                          },
+                                        );
+                                      } else {
+                                        final city = items[index] as Prediction;
+                                        return ListTile(
+                                          leading: const Icon(
+                                            Icons.location_city_outlined,
+                                            size: 20,
+                                            color: ColorRes.primary,
+                                          ),
+                                          title: Text(
+                                            city.description ?? '',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.small,
+                                              color: ColorRes.homeBlackFade,
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            controller.selectedCityZ.text = city.description ?? '';
+                                            googleMapController.predictions.clear();
+                                            FocusScope.of(context).unfocus();
+
+                                          },
+                                        );
+                                      }
+
+                                      // return InkWell(
+                                      //   onTap: () {
+                                      //     controller.selectedCityZ.text =
+                                      //         city
+                                      //             .structuredFormatting
+                                      //             ?.mainText ??
+                                      //         '';
+                                      //     googleMapController.predictions
+                                      //         .clear();
+                                      //     FocusScope.of(context).unfocus();
+                                      //   },
+                                      //   child: Padding(
+                                      //     padding: const EdgeInsets.symmetric(
+                                      //       horizontal: 12,
+                                      //       vertical: 12,
+                                      //     ),
+                                      //     child: Row(
+                                      //       children: [
+                                      //         const Icon(
+                                      //           Icons.location_on,
+                                      //           color: ColorRes.primary,
+                                      //           size: 20,
+                                      //         ),
+                                      //         const SizedBox(width: 12),
+                                      //         Expanded(
+                                      //           child: Text(
+                                      //             city.description ?? '',
+                                      //             style: TextStyle(
+                                      //               fontSize:
+                                      //                   AppFontSizes.medium,
+                                      //               color: ColorRes.textPrimary,
+                                      //             ),
+                                      //           ),
+                                      //         ),
+                                      //       ],
+                                      //     ),
+                                      //   ),
+                                      // );
                                     },
                                   ),
                                 ),
@@ -1763,6 +1830,20 @@ Future<void> showFindPropertyDialog(
                           }),
                         ],
                       ),
+//                       buildSectionTitle("City"),
+//                       SizedBox(height: 10,),
+//                       CitySelectionWidget(
+//                         isEditing: true,
+//                         controller: controller.selectedCityZ,
+// color: ColorRes.primary,
+//                         fillColor: ColorRes.white,
+//                         onCitySelected: (selectedCity) {
+//                           print("✅ Selected city: ${selectedCity.description}");
+//                           controller.selectedCityZ.text =
+//                               selectedCity.description ?? '';
+//                           // You can also store city details in your controller here
+//                         },
+//                       ),
 
                       const SizedBox(height: 16),
 
@@ -2792,11 +2873,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reviewController = Get.put(
-      PlatformReviewController(
-        type: ['site', 'seller', 'reseller', 'contractor'],
-      ),
-    );
+    final reviewController = Get.find<PlatformReviewController>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

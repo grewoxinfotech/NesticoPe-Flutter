@@ -15,6 +15,8 @@ class CitySelectionWidget extends StatelessWidget {
   final bool isEditing;
   final Function(Prediction)? onCitySelected; // ✅ callback for selected city
   final InputDecoration? decoration;
+  final Color? color;
+  final Color? fillColor;
 
   const CitySelectionWidget({
     super.key,
@@ -22,7 +24,7 @@ class CitySelectionWidget extends StatelessWidget {
 
     this.onCitySelected,
     this.isEditing = true,
-    this.decoration,
+    this.decoration,  this.color, this.fillColor,
   });
 
   @override
@@ -50,7 +52,8 @@ class CitySelectionWidget extends StatelessWidget {
                 prefixIcon: Icon(
                   Icons.apartment_outlined,
                   size: 20,
-                  color: ColorRes.leadGreyColor[600],
+                  color: color??ColorRes.leadGreyColor[600],
+
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -89,7 +92,7 @@ class CitySelectionWidget extends StatelessWidget {
                   ),
                 ),
                 filled: true,
-                fillColor: ColorRes.leadGreyColor[50],
+                fillColor:fillColor?? ColorRes.leadGreyColor[50],
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 14,

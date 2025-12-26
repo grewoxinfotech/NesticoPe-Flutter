@@ -164,7 +164,7 @@ class ContractorProjectScreen extends StatelessWidget {
                                     );
                                   },
                                   onChangeStatus: () {
-                                    log("Data of String ${project.toMap()}");
+                                    log("Data of String ${project.toJson()}");
                                     controller.populatedProjectData(project);
                                     showStatusDialog(
                                       context,

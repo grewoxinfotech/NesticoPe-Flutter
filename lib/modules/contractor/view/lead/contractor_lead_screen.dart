@@ -16,6 +16,7 @@ import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../controller/contractor_my_service_controller.dart';
+import '../../controller/contractot_employee_controller.dart';
 
 class ContractorLeadScreen extends StatelessWidget {
   const ContractorLeadScreen({super.key});
@@ -23,6 +24,7 @@ class ContractorLeadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ContractorLeadController());
+    var contractorEmployee = Get.put(ContractorEmployeeController());
     RxMap<String, String> selectedFilters = <String, String>{}.obs;
     final serviceController = Get.find<ContractorMyServiceController>();
 
@@ -130,6 +132,10 @@ class ContractorLeadScreen extends StatelessWidget {
                             itemCount: controller.items.length,
                             itemBuilder: (context, index) {
                               final item = controller.items[index];
+                              if (item.customFields?.isConvertedToProject ?? false) {
+                                return const SizedBox.shrink();
+
+                              }
                               ContractorServiceItem? serviceData =
                                   serviceController.items.value.firstWhere(
                                     (e) => e.id == item.customFields?.serviceId,
@@ -170,7 +176,7 @@ class ContractorLeadScreen extends StatelessWidget {
                                           controller.toggleCard(item.id ?? ""),
                                   onConvert:
                                       () => Get.to(
-                                        () => AddProjectScreen(item: item),
+                                        () => AddOrEditProjectScreen(leadItem:  item),
                                       ),
                                   onOverview:
                                       () => Get.to(

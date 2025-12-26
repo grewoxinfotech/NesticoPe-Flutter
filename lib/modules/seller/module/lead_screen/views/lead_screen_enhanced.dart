@@ -3754,6 +3754,9 @@ import '../../../../reseller/controller/dashborad_controller/dashboard_controlle
 import '../../../../reseller/model/dashboard/dashboard_model.dart';
 import '../../../../reseller/view/lead_overview/lead_detail.dart';
 import '../controllers/lead_controller.dart';
+import '../controllers/lead_property_inquiry_controller.dart';
+import '../controllers/lead_property_negotiable_price_controller.dart';
+import '../controllers/lead_visit_controller.dart';
 
 // class SellerLeadScreen extends StatelessWidget {
 //   final bool isViewAll;
@@ -3883,6 +3886,18 @@ class SellerLeadScreen extends StatefulWidget {
 
 class _SellerLeadScreenState extends State<SellerLeadScreen> {
   late final LeadController leadController;
+  final LeadPropertyInquiryController propertyInquiryController = Get.put(
+    LeadPropertyInquiryController(),
+    tag: "seller",
+  );
+  final LeadVisitController leadVisitController = Get.put(
+    LeadVisitController(),
+    tag: "seller",
+  );
+
+  final LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController=Get.put(LeadPropertyNegotiablePriceController(
+
+  ),tag: "seller");
   RxBool isLoadingLead = false.obs;
 
   @override
@@ -4037,13 +4052,107 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                       }
 
                       return GestureDetector(
-                        onTap:
-                            () => Get.to(
+                        onTap: () async {
+                          // Avoid multiple taps
+                          if (isLoadingLead.value) return;
+
+                          // Show loader
+                          isLoadingLead.value = true;
+
+                          try {
+                            log('Fetching lead details for ${lead.id}');
+leadVisitController.getLeadId(lead.id);
+                            // Fetch full lead detail
+                            await leadController.getLeadDetailByID(
+                              lead.id ?? '',
+                            );
+
+                            final newLead =
+                                leadController.newUpdatedLeadModel.value;
+                            if (newLead != null) {
+                              // Set inquiry id
+                              propertyInquiryController.setLeadInquiryId(
+                                int.tryParse(newLead.inquiryId ?? '0') ?? 0,
+                              );
+                              // log(
+                              //   'Inquiry ID set: ${propertyInquiryController.items.map((e) => e.toMap())}',
+                              // );
+                            }
+
+                            // Navigate only after all data loaded
+                            await Get.to(
                               () => LeadDetailScreen(
                                 lead: lead,
                                 isFromLead: true,
+                                leadPropertyInquiryController:
+                                    propertyInquiryController,
+                                leadVisitController: leadVisitController,
+                                leadPropertyNegotiablePriceController: leadPropertyNegotiablePriceController,
                               ),
-                            ),
+                            );
+                          } catch (e, st) {
+                            log('Error while opening lead: $e\n$st');
+                            Get.snackbar(
+                              'Error',
+                              'Failed to open lead details.',
+                            );
+                          } finally {
+                            // Hide loader
+                            isLoadingLead.value = false;
+                          }
+                        },
+
+                        // onTap: () {
+                        //   Get.to(
+                        //         () =>
+                        //         LeadDetailScreen(lead: lead, isFromLead: true),
+                        //   );
+                        //   log(
+                        //     'LeadDetailScreen initState called ${lead?.toJson()}',
+                        //   );
+                        //
+                        //   leadController.getLeadDetailByID(lead?.id ?? '');
+                        //
+                        //   if (leadController?.newUpdatedLeadModel.value !=
+                        //       null) {
+                        //     propertyInquiryController.setLeadInquiryId(
+                        //       int.tryParse(
+                        //             leadController
+                        //                     .newUpdatedLeadModel
+                        //                     .value
+                        //                     ?.inquiryId ??
+                        //                 '0',
+                        //           ) ??
+                        //           0,
+                        //     );
+                        //     log(
+                        //       'LeadDetailScreen initState called inquiry id ${propertyInquiryController.items.map((element) => element.toMap())}',
+                        //     );
+                        //     if (propertyInquiryController
+                        //             .selectedInquiry
+                        //             .value !=
+                        //         null) {
+                        //       log(
+                        //         'LeadDetailScreen initState called selected inquiry ${propertyInquiryController.selectedInquiry.value?.toMap()}',
+                        //       );
+                        //       leadVisitController.setLeadVisitId(
+                        //         propertyInquiryController
+                        //             .selectedInquiry
+                        //             .value
+                        //             ?.userId,
+                        //         propertyInquiryController
+                        //             .selectedInquiry
+                        //             .value
+                        //             ?.propertyId,
+                        //       );
+                        //       log(
+                        //         'LeadDetailScreen initState called visit id ${leadVisitController.items.map((element) => element.toMap())}',
+                        //       );
+                        //     }
+                        //   }
+                        //
+                        //
+                        // },
                         child: buildLeadCard(
                           context,
                           lead,

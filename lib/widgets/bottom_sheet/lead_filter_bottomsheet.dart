@@ -90,36 +90,40 @@ void showFilterBottomSheet(
                           Row(
                             spacing: 12,
                             children: [
-                              buildFilterSection(
-                                context: context,
-                                title: 'Start Date',
-                                icon: Icons.calendar_month_outlined,
-                                filterType: 'start_date',
-                                type: 'date',
-                                tempFilters: tempFilters,
-                                setState: setState,
-                                startDate: startDate,
-                                endDate: endDate,
-                                onDatePicked: (picked) {
-                                  startDate = picked;
-                                  controller.startDate = picked;
-                                },
+                              Expanded(
+                                child: buildFilterSection(
+                                  context: context,
+                                  title: 'Start Date',
+                                  icon: Icons.calendar_month_outlined,
+                                  filterType: 'start_date',
+                                  type: 'date',
+                                  tempFilters: tempFilters,
+                                  setState: setState,
+                                  startDate: startDate,
+                                  endDate: endDate,
+                                  onDatePicked: (picked) {
+                                    startDate = picked;
+                                    controller.startDate = picked;
+                                  },
+                                ),
                               ),
                               const SizedBox(height: 12),
-                              buildFilterSection(
-                                context: context,
-                                title: 'End Date',
-                                icon: Icons.calendar_month_outlined,
-                                filterType: '',
-                                type: 'date',
-                                tempFilters: tempFilters,
-                                setState: setState,
-                                startDate: startDate,
-                                endDate: endDate,
-                                onDatePicked: (picked) {
-                                  endDate = picked;
-                                  controller.endDate = picked;
-                                },
+                              Expanded(
+                                child: buildFilterSection(
+                                  context: context,
+                                  title: 'End Date',
+                                  icon: Icons.calendar_month_outlined,
+                                  filterType: '',
+                                  type: 'date',
+                                  tempFilters: tempFilters,
+                                  setState: setState,
+                                  startDate: startDate,
+                                  endDate: endDate,
+                                  onDatePicked: (picked) {
+                                    endDate = picked;
+                                    controller.endDate = picked;
+                                  },
+                                ),
                               ),
 
                             ],

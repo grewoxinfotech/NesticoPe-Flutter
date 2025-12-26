@@ -37,28 +37,26 @@ class RentPriceDetail extends StatelessWidget {
                     return 'Please enter monthly rent';
                   }
 
-
-                  final rent = int.tryParse(value)??0;
+                  final rent = int.tryParse(value) ?? 0;
 
                   if (rent > 0) {
                     // Calculate 5% of rent as Platform Fees
                     final platformFee = rent * 0.05;
-                    controller.platformFees.text = platformFee.toStringAsFixed(1);
+                    controller.platformFees.text = platformFee.toStringAsFixed(
+                      1,
+                    );
 
                     // Calculate 2% of platform fees as Broker Commission
                     final brokerCommission = platformFee * 0.02;
-                    controller.brokerRageCommission.text = brokerCommission.toStringAsFixed(1);
-                  }else {
-
+                    controller.brokerRageCommission.text = brokerCommission
+                        .toStringAsFixed(1);
+                  } else {
                     controller.platformFees.text = "0";
                     controller.brokerRageCommission.text = "0";
                   }
                   if (rent == null) {
                     return 'Please enter a valid amount';
                   }
-
-
-
                   return null;
                 },
               ),
@@ -401,7 +399,7 @@ class RentPriceDetail extends StatelessWidget {
               Text("Financial"),
               if (controller.selectedIndex.value != "Office" &&
                   controller.selectedIndex.value != "Shop" &&
-                  controller.selectedIndex.value != "Showroom"&&
+                  controller.selectedIndex.value != "Showroom" &&
                   controller.selectedIndex.value != "Warehouse") ...[
                 SizedBox(height: 8),
                 buildSectionTitle('Excepted Rent'),
@@ -660,7 +658,7 @@ class RentPriceDetail extends StatelessWidget {
               Text("Financial"),
               if (controller.selectedIndex.value != "Office" &&
                   controller.selectedIndex.value != "Shop" &&
-                  controller.selectedIndex.value != "Showroom"&&
+                  controller.selectedIndex.value != "Showroom" &&
                   controller.selectedIndex.value != "Warehouse") ...[
                 SizedBox(height: 8),
                 buildSectionTitle('Excepted Rent'),
@@ -748,24 +746,24 @@ class RentPriceDetail extends StatelessWidget {
                   spacing: 12,
                   runSpacing: 12,
                   children:
-                  ["Yes", "No"]
-                      .map(
-                        (type) => buildChoice(
-                      title: type,
-                      selected:
-                      controller
-                          .commercial_rent_price_negotiable
-                          .value ==
-                          type,
-                      onTap: () {
-                        controller.setValue(
-                          controller.commercial_rent_price_negotiable,
-                          type,
-                        );
-                      },
-                    ),
-                  )
-                      .toList(),
+                      ["Yes", "No"]
+                          .map(
+                            (type) => buildChoice(
+                              title: type,
+                              selected:
+                                  controller
+                                      .commercial_rent_price_negotiable
+                                      .value ==
+                                  type,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.commercial_rent_price_negotiable,
+                                  type,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
                 ),
                 SizedBox(height: 16),
                 buildSectionTitle('Brokerage'),
@@ -774,22 +772,22 @@ class RentPriceDetail extends StatelessWidget {
                   spacing: 12,
                   runSpacing: 12,
                   children:
-                  ["Yes", "No"]
-                      .map(
-                        (type) => buildChoice(
-                      title: type,
-                      selected:
-                      controller.commercial_rent_brokage.value ==
-                          type,
-                      onTap: () {
-                        controller.setValue(
-                          controller.commercial_rent_brokage,
-                          type,
-                        );
-                      },
-                    ),
-                  )
-                      .toList(),
+                      ["Yes", "No"]
+                          .map(
+                            (type) => buildChoice(
+                              title: type,
+                              selected:
+                                  controller.commercial_rent_brokage.value ==
+                                  type,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.commercial_rent_brokage,
+                                  type,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
                 ),
                 if (controller.commercial_rent_brokage.value == 'Yes') ...[
                   SizedBox(height: 16),
@@ -825,25 +823,25 @@ class RentPriceDetail extends StatelessWidget {
                     spacing: 12,
                     runSpacing: 12,
                     children:
-                    ["Yes", "No"]
-                        .map(
-                          (type) => buildChoice(
-                        title: type,
-                        selected:
-                        controller
-                            .commercial_rent_brokage_negotiable
-                            .value ==
-                            type,
-                        onTap: () {
-                          controller.setValue(
-                            controller
-                                .commercial_rent_brokage_negotiable,
-                            type,
-                          );
-                        },
-                      ),
-                    )
-                        .toList(),
+                        ["Yes", "No"]
+                            .map(
+                              (type) => buildChoice(
+                                title: type,
+                                selected:
+                                    controller
+                                        .commercial_rent_brokage_negotiable
+                                        .value ==
+                                    type,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller
+                                        .commercial_rent_brokage_negotiable,
+                                    type,
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 ],
                 // SizedBox(height: 16),

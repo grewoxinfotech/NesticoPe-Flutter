@@ -177,6 +177,8 @@ class GoogleMapSearchController extends GetxController {
 
         predictions.value = predictionsList;
         cityStateList.assignAll(parsedList);
+        log("city List from apo ${cityStateList.map((element) => element.toString(),).toList()}");
+        log("prediction List from apo ${predictions.map((element) => element.items?.toJson(),).toList()}");
       } else {
         predictions.clear();
       }

@@ -400,6 +400,8 @@
 //   }
 // }
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -425,6 +427,8 @@ class AddMilestoneScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log("AddMilestoneScreen build called with milestone: $projectPrice");
+
     final controller = Get.find<ContractorProjectMilestoneController>(tag: tag);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -603,13 +607,39 @@ class AddMilestoneScreen extends StatelessWidget {
                             }
                             return null;
                           },
+
+                          // onChanged: (val) {
+                          //   final percent = double.tryParse(val) ?? 0.0;
+                          //   if (percent <= 0) {
+                          //     controller.milestoneAmount.value = 0.0;
+                          //     return;
+                          //   }
+                          //
+                          //   // Calculate total of previous milestones
+                          //   final existingTotal = controller.items.fold<double>(
+                          //     0.0,
+                          //         (sum, m) => sum + (double.tryParse(m.milestoneAmount ?? '0') ?? 0.0),
+                          //   );
+                          //
+                          //   // Remaining before adding current milestone
+                          //   final remainingBefore = projectPrice - existingTotal;
+                          //
+                          //   // Calculate milestone amount
+                          //   final currentAmount = (existingTotal == 0)
+                          //       ? projectPrice * (percent / 100) // Case 1: no previous
+                          //       : remainingBefore * (percent / 100); // Case 2: has previous
+                          //
+                          //   controller.milestoneAmount.value = currentAmount;
+                          // },
                           onChanged: (val) {
-                            if(val.isEmpty){
+                            if (val.isEmpty) {
                               controller.milestoneAmount.value = 0.0;
                             }
-                            final remainingAmount =  controller.calculateRemainingAmount(projectPrice);
-                            controller.milestoneAmount.value = remainingAmount * (double.parse(val) / 100);
-
+                            final remainingAmount = controller
+                                .calculateRemainingAmount(projectPrice);
+                            controller.milestoneAmount.value =
+                                remainingAmount *
+                                ((double.tryParse(val) ?? 0.0) / 100);
                           },
                         ),
                       ],
@@ -631,11 +661,12 @@ class AddMilestoneScreen extends StatelessWidget {
                                       ? "Invalid amount"
                                       : null,
                           onChanged: (val) {
-                            if(val.isEmpty){
+                            if (val.isEmpty) {
                               controller.milestoneAmount.value = 0.0;
                             }
                             // final remainingAmount =  controller.calculateRemainingAmount(projectPrice);
-                            controller.milestoneAmount.value = double.parse(val);
+                            controller.milestoneAmount.value =
+                                double.tryParse(val) ?? 0.0;
                           },
                         ),
                       ],
@@ -737,16 +768,55 @@ class AddMilestoneScreen extends StatelessWidget {
     ProjectMilestone? currentMilestone,
     double totalProjectPrice,
   ) {
+    // final controller = Get.find<ContractorProjectMilestoneController>(tag: tag);
+    //
+    // final double totalMilestones = totalProjectPrice;
+    //
+    // final double totalPaid = milestones.fold(
+    //   0.0,
+    //   (sum, m) => sum + _toAmount(m.paidAmount ?? '0'),
+    // );
+    //
+    // final double remainingBudget = totalMilestones - totalPaid;
+
     final controller = Get.find<ContractorProjectMilestoneController>(tag: tag);
+    final editingId = controller.editingMilestoneId.value;
 
     final double totalMilestones = totalProjectPrice;
 
-    final double totalPaid = milestones.fold(
-      0.0,
-      (sum, m) => sum + _toAmount(m.paidAmount ?? '0'),
+    // ✅ If there’s an edited milestone, skip updating for that one
+
+    final filteredMilestones =
+        milestones.where((m) => m.id != editingId).toList();
+
+    controller.currentMilestoneAmount.value = filteredMilestones.fold(0.0, (
+      sum,
+      m,
+    ) {
+      final val = _toAmount(m.milestoneAmount ?? '0');
+      log(
+        "Milestone ID: ${m.id} | Amount: ${m.milestoneAmount} | Current Sum: $sum | New Sum: ${sum + val}",
+      );
+      return sum + val;
+    });
+
+    // final double totalPaid = milestones.where((element) => element.id==controller.,)
+
+    log("Allocated Total: ${controller.currentMilestoneAmount.value}");
+
+    // Current milestone (typed in but not saved yet)
+    final double currentAmount = controller.milestoneAmount.value;
+
+    log(
+      "Data From ${totalMilestones - (controller.currentMilestoneAmount.value + currentAmount)}       $currentAmount  ${controller.currentMilestoneAmount.value} ",
     );
 
-    final double remainingBudget = totalMilestones - totalPaid;
+    // Remaining unallocated budget
+    final double remainingBudget =
+        totalMilestones -
+        (controller.currentMilestoneAmount.value + currentAmount);
+
+    log("Remaining Budget: $remainingBudget");
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -759,7 +829,7 @@ class AddMilestoneScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: ColorRes.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3),),
+            border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3)),
           ),
           child: Column(
             children: [
@@ -774,13 +844,15 @@ class AddMilestoneScreen extends StatelessWidget {
               const SizedBox(height: 8),
 
               /// Total Paid
-              _row(
-                label: "Total Paid:",
-                value: _formatAmount(totalPaid),
-                valueColor: Colors.green,
+              // _row(
+              //   label: "Total Paid:",
+              //   value: _formatAmount(totalPaid),
+              //   valueColor: Colors.green,
+              // ),
+              Divider(
+                height: 24,
+                color: ColorRes.leadGreyColor.withOpacity(0.3),
               ),
-
-               Divider(height: 24,color: ColorRes.leadGreyColor.withOpacity(0.3),),
 
               /// Milestone deductions
               if (milestones.isNotEmpty) ...[
@@ -793,37 +865,58 @@ class AddMilestoneScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                ...milestones.map(
-                  (m) => Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: _row(
-                      label: m.title ?? 'Untitled',
-                      value:
-                          "₹${_toAmount(m.milestoneAmount ?? '0').toStringAsFixed(0)}",
-                      valueColor: Colors.black87,
-                      labelColor: Colors.grey[700]!,
-                    ),
-                  ),
-                ),
+                // ...milestones.map(
+                //   (m) => Padding(
+                //     padding: const EdgeInsets.only(bottom: 6),
+                //     child: _row(
+                //       label: m.title ?? 'Untitled',
+                //       value:
+                //           "₹${_toAmount(m.milestoneAmount ?? '0').toStringAsFixed(0)}",
+                //       valueColor: Colors.black87,
+                //       labelColor: Colors.grey[700]!,
+                //     ),
+                //   ),
+                // ),
+                ...milestones
+                    // ✅ Skip the milestone being edited
+                    .where((m) => m.id != controller.editingMilestoneId.value)
+                    .map((m) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: _row(
+                          label: m.title ?? 'Untitled',
+                          value:
+                              "- ₹${_toAmount(m.milestoneAmount ?? '0').toStringAsFixed(0)}",
+                          valueColor: ColorRes.error,
+                          labelColor: Colors.grey[700]!,
+                        ),
+                      );
+                    }),
+
                 const SizedBox(height: 8),
               ],
 
               /// Current milestone (if editing)
               // if (currentMilestone != null) ...[
-                 Divider(height: 16,color: ColorRes.leadGreyColor.withOpacity(0.3),),
-                Obx(
-                  ()=> _row(
-                    label: "Current Milestone:",
-                    value: _formatAmount(
-                      _toAmount(controller.milestoneAmount.value.toStringAsFixed(0)),
-                    ),
-                    labelColor: ColorRes.primary,
-                    valueColor: ColorRes.primary,
-                  ),
+              Divider(
+                height: 16,
+                color: ColorRes.leadGreyColor.withOpacity(0.3),
+              ),
+              Obx(
+                () => _row(
+                  label: "Current Milestone:",
+                  labelColor: ColorRes.primary,
+                  valueColor: ColorRes.primary,
+                  value:
+                      '- ${_formatAmount(_toAmount(controller.milestoneAmount.value.toStringAsFixed(0)))}',
                 ),
-              // ],
+              ),
 
-               Divider(height: 24,color: ColorRes.leadGreyColor.withOpacity(0.3),),
+              // ],
+              Divider(
+                height: 24,
+                color: ColorRes.leadGreyColor.withOpacity(0.3),
+              ),
 
               /// Remaining budget
               _row(

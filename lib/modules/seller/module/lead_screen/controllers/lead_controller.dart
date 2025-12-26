@@ -332,6 +332,7 @@ class LeadController extends PaginatedController<LeadItem> {
   final LeadService _service = LeadService();
   final PropertyService _serviceProperty = PropertyService();
 
+
   late final bool fromReseller;
   Items customFields = Items();
   RxList<Items> leadPropertiesList =
@@ -341,6 +342,7 @@ class LeadController extends PaginatedController<LeadItem> {
     PropertyController(),
     tag: "reseller",
   );
+  Rxn<NewUpdatedLeadModel> newUpdatedLeadModel = Rxn<NewUpdatedLeadModel>();
 
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
@@ -518,6 +520,14 @@ class LeadController extends PaginatedController<LeadItem> {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> getLeadDetailByID(String id) async {
+    // log('Lead Details: ${lead.toJson()}');
+    newUpdatedLeadModel.value=await _service.getLeadDataByID(id);
+    newUpdatedLeadModel.refresh();
+
+    log('Lead Details From data : ${newUpdatedLeadModel.value?.toJson()}');
   }
 
   Future<bool> updateLead(String id, LeadItem updatedLead) async {

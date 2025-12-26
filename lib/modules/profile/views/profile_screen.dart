@@ -584,6 +584,7 @@ import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/profile/views/seller_profile_detail.dart';
 import 'package:housing_flutter_app/modules/profile/views/widget/buyer_profile.dart';
+import 'package:housing_flutter_app/modules/profile/views/widget/my_contractor_screen.dart';
 import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/add_app_review_screen.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/app_review_card.dart';
@@ -709,6 +710,12 @@ class ProfileScreen extends StatelessWidget {
                           onTap: () => Get.to(() => ReferralProgramScreen()),
                         ),
                       ],
+                      _buildActionButton(
+                        icon: Icons.engineering_outlined,
+                        label: "My Contractors",
+                        subtitle: "Service contractor",
+                        onTap: () => Get.to(() => MyContractorScreen()),
+                      ),
                       if (!UserHelper.isGuest || !UserHelper.isBuyer) ...[
                         Obx(() {
                           final controller = Get.put(ReviewController());
@@ -950,6 +957,7 @@ class ProfileScreen extends StatelessWidget {
             subtitle: "Hire top contractors",
             onTap: () => Get.to(() => HireContractorScreen()),
           ),
+
           _buildActionButton(
             icon: Icons.support_agent_outlined,
             label: "Support Ticket",

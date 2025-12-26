@@ -2,13 +2,17 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_project_controller.dart';
+import 'package:housing_flutter_app/modules/contractor/controller/contractot_employee_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/project/widget/contactor_project_milestone_screen.dart';
 import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_milestone_payment_screen.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
+import '../../lead/widget/convert_to_project_form.dart';
 import '../contractor_project.dart';
+import 'contractor_project_employee.dart';
 
 class ContractorProjectOverviewScreen extends StatelessWidget {
   final String projectId;
@@ -59,6 +63,8 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var contractorLeadController = Get.put(ContractorLeadController());
+    var contractorEmployee = Get.put(ContractorEmployeeController());
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
@@ -71,6 +77,23 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
         ),
         backgroundColor: ColorRes.surface,
         elevation: 0.5,
+        actions: [
+          TextButton(onPressed: () async {
+            final project = controller.items.firstWhereOrNull(
+                  (p) => p.id == projectId,
+            );
+            await contractorEmployee.loadInitial();
+
+contractorLeadController.populateProjectForm(project??ContractorProjectItem.fromJson({}));
+
+Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.fromJson({}),));
+
+          }, child: Text('Edit',style: TextStyle(
+            fontSize: AppFontSizes.bodyMedium,
+            fontWeight: AppFontWeights.medium,
+            color: ColorRes.primary,
+          ),))
+        ],
       ),
       body: Obx(() {
         final project = controller.items.firstWhereOrNull(
@@ -216,6 +239,11 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                   double.parse(project.projectPrice),
                 ),
                 const SizedBox(height: 20),
+                _buildSectionTitle(Icons.person, "Team Members"),
+                const SizedBox(height: 10),
+                _buildTeamMembers(project.meta.employees),
+
+                const SizedBox(height: 20),
 
                 // Created and Updated
                 Row(
@@ -286,7 +314,7 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            log("Data of String ${project.toMap()}");
+                            log("Data of String ${project.toJson()}");
                             controller.populatedProjectData(project);
                             showStatusDialog(context, controller, project);
                           },
@@ -535,6 +563,36 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
           fontSize: AppFontSizes.caption,
           color: ColorRes.textColor,
         ),
+      ),
+    );
+  }
+  Widget _buildTeamMembers(List<ContractorEmployee> project){
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: ColorRes.background,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child:   ListTile(
+        leading: Icon(Icons.person, size: 20),
+        title: Text(
+          "Team Members",
+          style: const TextStyle(
+            fontSize: AppFontSizes.caption,
+            color: ColorRes.textColor,
+          ),
+        ),
+        onTap: () {
+          Get.to(
+                () => ContractorProjectEmployee(
+                  employeeList: project,
+
+            ),
+          );
+        },
+        trailing: Icon(Icons.arrow_forward_ios, size: 15),
       ),
     );
   }

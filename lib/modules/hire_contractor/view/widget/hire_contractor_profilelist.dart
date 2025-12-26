@@ -29,8 +29,10 @@ class HireContractorProfileList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<HireContractorController>();
-    final controllerProfileData = Get.find<HireContractorListOfProfileController>();
+    final controllerProfileData =
+        Get.find<HireContractorListOfProfileController>();
     final controllerFilter = Get.find<HireContractorFilterProfileController>();
+    TopContractorsController contractor = Get.find<TopContractorsController>();
     RxMap<String, String> selectedFilters = <String, String>{}.obs;
     return Scaffold(
       backgroundColor: ColorRes.background,
@@ -44,8 +46,8 @@ class HireContractorProfileList extends StatelessWidget {
         backgroundColor: ColorRes.white,
         elevation: 0,
         title: Obx(
-          () =>  Text(
-            '${controllerFilter.selectedCategoryName.isEmpty?"All Contractor":controllerFilter.selectedCategoryName}',
+          () => Text(
+            '${controllerFilter.selectedCategoryName.isEmpty ? "All Contractor" : controllerFilter.selectedCategoryName}',
             style: TextStyle(
               color: ColorRes.textPrimary,
               fontWeight: AppFontWeights.semiBold,
@@ -54,32 +56,34 @@ class HireContractorProfileList extends StatelessWidget {
         ),
         centerTitle: false,
         actions: [
-          IconButton(onPressed: () async {
-            final result = await Get.dialog<Map<String, String>>(
-              const HireContractorFilter(),
-              barrierDismissible: true,
-            );
-            if (result != null) {
-              log("Selected Filters → $result");
+          IconButton(
+            onPressed: () async {
+              final result = await Get.dialog<Map<String, String>>(
+                const HireContractorFilter(),
+                barrierDismissible: true,
+              );
               if (result != null) {
-                selectedFilters.value = result;
-                controllerFilter.applyFilters(result);
+                log("Selected Filters → $result");
+                if (result != null) {
+                  selectedFilters.value = result;
+                  controllerFilter.applyFilters(result);
+                }
+                // You can now apply filters to your list, API call, etc.
+                // controller.fetchFilteredInquiries(result);
               }
-              // You can now apply filters to your list, API call, etc.
-              // controller.fetchFilteredInquiries(result);
-            }
-
-          }, icon: Icon(Icons.filter_list))
+            },
+            icon: Icon(Icons.filter_list),
+          ),
         ],
       ),
-
 
       body: SafeArea(
         child: Stack(
           children: [
             Obx(() {
               // Check if filters are applied
-              final hasFilters = controllerFilter.selectedCategoryName.isNotEmpty &&
+              final hasFilters =
+                  controllerFilter.selectedCategoryName.isNotEmpty &&
                   controllerFilter.selectedCategoryId.isNotEmpty;
 
               if (!hasFilters) {
@@ -93,9 +97,14 @@ class HireContractorProfileList extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.category_outlined, size: 64, color: ColorRes.textDisabled),
+                        Icon(
+                          Icons.category_outlined,
+                          size: 64,
+                          color: ColorRes.textDisabled,
+                        ),
                         const SizedBox(height: 16),
-                        Text('No categories available',
+                        Text(
+                          'No categories available',
                           style: TextStyle(
                             fontSize: AppFontSizes.medium,
                             color: ColorRes.textSecondary,
@@ -115,7 +124,10 @@ class HireContractorProfileList extends StatelessWidget {
                       itemCount: controllerProfileData.combinedList.length,
                       itemBuilder: (context, index) {
                         final item = controllerProfileData.combinedList[index];
-                        return AllContractorCard(data: item);
+                        return AllContractorCard(
+                          data: item,
+                          contractor: contractor,
+                        );
                       },
                     ),
                   ),
@@ -136,16 +148,21 @@ class HireContractorProfileList extends StatelessWidget {
                         },
                         onRemoveFilter: (key) {
                           selectedFilters.remove(key);
-                          controllerFilter.applyFilters(Map<String, String>.from(selectedFilters));
+                          controllerFilter.applyFilters(
+                            Map<String, String>.from(selectedFilters),
+                          );
                         },
                       );
                     }),
                     Expanded(
                       child: Obx(() {
-                        final filteredResponse = controllerFilter.filteredData.value;
+                        final filteredResponse =
+                            controllerFilter.filteredData.value;
 
                         if (filteredResponse == null) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
 
                         final contractors = filteredResponse.data.contractors;
@@ -161,17 +178,21 @@ class HireContractorProfileList extends StatelessWidget {
 
                         return RefreshIndicator(
                           onRefresh: () async {
-                            await controllerFilter.fetchHireContractorByCategoryID(
-                              controllerFilter.selectedCategoryId.value,
-                              controllerFilter.selectedCategoryName.value,
-                            );
+                            await controllerFilter
+                                .fetchHireContractorByCategoryID(
+                                  controllerFilter.selectedCategoryId.value,
+                                  controllerFilter.selectedCategoryName.value,
+                                );
                           },
                           child: ListView.builder(
                             padding: const EdgeInsets.all(16),
                             itemCount: contractors.length,
                             itemBuilder: (context, index) {
                               final item = contractors[index];
-                              return HireContractorCard(data: item);
+                              return HireContractorCard(
+                                data: item,
+                                contractor: contractor,
+                              );
                             },
                           ),
                         );
@@ -184,43 +205,66 @@ class HireContractorProfileList extends StatelessWidget {
             UnifiedComparisonFloatingButton(bottom: 16),
           ],
         ),
-      )
-
+      ),
     );
   }
 }
 
-class HireContractorCard extends StatelessWidget {
+class HireContractorCard extends StatefulWidget {
   final HireContractorServiceContractor data;
+  final TopContractorsController contractor;
 
-  const HireContractorCard({super.key, required this.data});
+  HireContractorCard({super.key, required this.data, required this.contractor});
+
+  @override
+  State<HireContractorCard> createState() => _HireContractorCardState();
+}
+
+class _HireContractorCardState extends State<HireContractorCard> {
+  Contractor? contractorProfile;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchUserByID();
+  }
+
+  void _fetchUserByID() async {
+    final userId = widget.data.contractorId;
+
+    contractorProfile = await widget.contractor.getContractorById(userId);
+  }
 
   @override
   Widget build(BuildContext context) {
     final compare = Get.put(ContractorCompareManager(), permanent: true);
-    TopContractorsController contractor=Get.find<TopContractorsController>();
-    ContractorMyServiceController contractorData=Get.put(ContractorMyServiceController());
+
+    ContractorMyServiceController contractorData = Get.put(
+      ContractorMyServiceController(),
+    );
     final controllerFilter = Get.find<HireContractorFilterProfileController>();
 
     return GestureDetector(
       onTap: () async {
-        final  id = data.contractorId;
+        final id = widget.data.contractorId;
 
-        final userData=await controllerFilter.fetchUserByID(id??'');
+        final userData = await controllerFilter.fetchUserByID(id ?? '');
 
+        final contractorProfile = await widget.contractor.getContractorById(
+          id ?? '',
+        );
 
-
-        final contractorProfile = await contractor.getContractorById(id??'');
         log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
-        contractorProfile?.totalExperience = userData.value?.totalExperience??  0;
+        contractorProfile?.totalExperience =
+            userData.value?.totalExperience ?? 0;
 
-
-contractorProfile?.username = data.username;
+        contractorProfile?.username = widget.data.username;
 
         if (contractorProfile != null) {
-          Get.to(() => ContractorProfileDetailsScreen(
-            contractor: contractorProfile,
-          ));
+          Get.to(
+            () => ContractorProfileDetailsScreen(contractor: contractorProfile),
+          );
         } else {
           log('No contractor found for userId: $id');
           Get.snackbar(
@@ -229,7 +273,6 @@ contractorProfile?.username = data.username;
             snackPosition: SnackPosition.BOTTOM,
           );
         }
-
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -249,19 +292,22 @@ contractorProfile?.username = data.username;
                 CircleAvatar(
                   radius: 26,
                   backgroundColor: Colors.grey.shade100,
-                  backgroundImage: (data.profilePic?.isNotEmpty ?? false)
-                      ? NetworkImage(data.profilePic!)
-                      : null,
-                  onBackgroundImageError: (data.profilePic?.isNotEmpty ?? false)
-                      ? (_, __) {} // only active if image is non-null
-                      : null,
-                  child: (data.profilePic?.isEmpty ?? true)
-                      ? const Icon(
-                    Icons.engineering,
-                    color: Colors.orange,
-                    size: 28,
-                  )
-                      : null,
+                  backgroundImage:
+                      (widget.data.profilePic?.isNotEmpty ?? false)
+                          ? NetworkImage(widget.data.profilePic!)
+                          : null,
+                  onBackgroundImageError:
+                      (widget.data.profilePic?.isNotEmpty ?? false)
+                          ? (_, __) {} // only active if image is non-null
+                          : null,
+                  child:
+                      (widget.data.profilePic?.isEmpty ?? true)
+                          ? const Icon(
+                            Icons.engineering,
+                            color: Colors.orange,
+                            size: 28,
+                          )
+                          : null,
                 ),
 
                 const SizedBox(width: 12),
@@ -272,7 +318,7 @@ contractorProfile?.username = data.username;
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        data.username ?? 'Unknown Contractor',
+                        widget.data.username ?? 'Unknown Contractor',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -282,10 +328,11 @@ contractorProfile?.username = data.username;
                         ),
                       ),
                       Text(
-                        'Total Service ${data.contractorProfile.activeServices.toString()}' ?? 'Unknown Contractor',
+                        'Total Service ${widget.data.contractorProfile.activeServices.toString()}' ??
+                            'Unknown Contractor',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: AppFontSizes.small,
                           fontWeight: AppFontWeights.medium,
                           color: ColorRes.leadGreyColor.shade600,
@@ -297,18 +344,20 @@ contractorProfile?.username = data.username;
 
                 /// ===================== COMPARE BUTTON =====================
                 GestureDetector(
-                  onTap: () async {
-                    // final userId = data.contractorId;
-                    //
-                    // final contractorProfile = await contractor.getContractorById(userId);
-                    //
-                    // if (contractorProfile != null) {
-                    //   compare.toggle(contractorProfile, max: 2);
-                    // }
+                  onTap: () {
+                    _fetchUserByID();
 
+                    if (contractorProfile != null) {
+                      compare.toggle(
+                        contractorProfile ?? Contractor.fromJson({}),
+                        max: 2,
+                      );
+                    }
                   },
                   child: Obx(() {
-                    final selected = compare.isSelected(data.contractorId ?? '');
+                    final selected = compare.isSelected(
+                      widget.data.contractorId ?? '',
+                    );
                     return Container(
                       height: 32,
                       width: 32,
@@ -338,19 +387,38 @@ contractorProfile?.username = data.username;
               children: [
                 Row(
                   children: List.generate(5, (index) {
-                    final rating = double.tryParse(data.contractorProfile.overallRating) ?? 0;
+                    final rating =
+                        double.tryParse(
+                          widget.data.contractorProfile.overallRating,
+                        ) ??
+                        0;
                     if (index < rating.floor()) {
-                      return const Icon(Icons.star, color: Colors.amber, size: 16);
+                      return const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 16,
+                      );
                     } else if (index < rating) {
-                      return const Icon(Icons.star_half, color: Colors.amber, size: 16);
+                      return const Icon(
+                        Icons.star_half,
+                        color: Colors.amber,
+                        size: 16,
+                      );
                     } else {
-                      return Icon(Icons.star_border, color: Colors.amber.shade400, size: 16);
+                      return Icon(
+                        Icons.star_border,
+                        color: Colors.amber.shade400,
+                        size: 16,
+                      );
                     }
                   }),
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  (double.tryParse(data.contractorProfile.overallRating)?.toStringAsFixed(1)) ?? '0.0',
+                  (double.tryParse(
+                        widget.data.contractorProfile.overallRating,
+                      )?.toStringAsFixed(1)) ??
+                      '0.0',
                   style: const TextStyle(
                     fontWeight: AppFontWeights.semiBold,
                     fontSize: AppFontSizes.bodySmall,
@@ -359,7 +427,7 @@ contractorProfile?.username = data.username;
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  "(${data.contractorProfile.totalReviews} review${data.contractorProfile.totalReviews == 1 ? '' : 's'})",
+                  "(${widget.data.contractorProfile.totalReviews} review${widget.data.contractorProfile.totalReviews == 1 ? '' : 's'})",
                   style: const TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
@@ -375,25 +443,43 @@ contractorProfile?.username = data.username;
             /// ===================== SERVICES / PROJECTS STATS =====================
             Column(
               children: [
-              ...List.generate(data.servicesInCategory.length, (index) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: ColorRes.leadGreyColor.shade300
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(child: Text('${data.servicesInCategory[index].serviceName}',style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium,color: ColorRes.textColor),)),
-                      Spacer(),
-                      Icon(Icons.star,size: 16,color: ColorRes.orangeColor,),
-                      SizedBox(width: 6,),
-                      Text('${data.servicesInCategory[index].rating}',style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium,color: ColorRes.textColor),),
-                    ],
-                  ),
-                );
-              },)
+                ...List.generate(widget.data.servicesInCategory.length, (
+                  index,
+                ) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: ColorRes.leadGreyColor.shade300,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${widget.data.servicesInCategory[index].serviceName}',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.medium,
+                              color: ColorRes.textColor,
+                            ),
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(Icons.star, size: 16, color: ColorRes.orangeColor),
+                        SizedBox(width: 6),
+                        Text(
+                          '${widget.data.servicesInCategory[index].rating}',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
               ],
             ),
           ],
@@ -401,70 +487,59 @@ contractorProfile?.username = data.username;
       ),
     );
   }
-
-  Widget _buildStatContainer({required String title, required String value}) {
-    return Container(
-      width: 85, // fixed width for consistent alignment
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      decoration: BoxDecoration(
-        color: ColorRes.background,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: ColorRes.border, width: 1),
-      ),
-      child: Column(
-        children: [
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: AppFontSizes.caption,
-              color: ColorRes.textSecondary,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: AppFontSizes.medium,
-              fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.textColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-
-class AllContractorCard extends StatelessWidget {
+class AllContractorCard extends StatefulWidget {
   final HireContractorUserWithProfile data;
+  final TopContractorsController contractor;
 
-  const AllContractorCard({super.key, required this.data});
+  AllContractorCard({super.key, required this.data, required this.contractor});
+
+  @override
+  State<AllContractorCard> createState() => _AllContractorCardState();
+}
+
+class _AllContractorCardState extends State<AllContractorCard> {
+  Contractor? contractorProfile;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchUserByID();
+  }
+
+  void _fetchUserByID() async {
+    final userId = widget.data.profile.userId;
+
+    contractorProfile = await widget.contractor.getContractorById(userId);
+  }
 
   @override
   Widget build(BuildContext context) {
     final compare = Get.put(ContractorCompareManager(), permanent: true);
-    TopContractorsController contractor=Get.find<TopContractorsController>();
+    final contractor = widget.contractor;
 
-    final user = data.user;
-    final profile = data.profile;
+    final user = widget.data.user;
+    final profile = widget.data.profile;
 
     return GestureDetector(
       onTap: () async {
         log("User Data From Api ${user.id}    ${profile.userId}");
-        final contractorProfile = await contractor.getContractorById(profile.userId);
+        final contractorProfile = await contractor.getContractorById(
+          profile.userId,
+        );
         log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
 
-
-        contractorProfile?.username = data.user.username??  '';
-        contractorProfile?.totalExperience = data.user.totalExperience??  0;
+        contractorProfile?.username = widget.data.user.username ?? '';
+        contractorProfile?.totalExperience =
+            widget.data.user.totalExperience ?? 0;
         // contractorProfile?.projectStats.totalProjects = data.profile.??  0;
 
         if (contractorProfile != null) {
-          Get.to(() => ContractorProfileDetailsScreen(
-contractor: contractorProfile,
-          ));
+          Get.to(
+            () => ContractorProfileDetailsScreen(contractor: contractorProfile),
+          );
         } else {
           log('No contractor found for userId: $profile.userId');
           Get.snackbar(
@@ -473,8 +548,6 @@ contractor: contractorProfile,
             snackPosition: SnackPosition.BOTTOM,
           );
         }
-
-
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -494,19 +567,22 @@ contractor: contractorProfile,
                 CircleAvatar(
                   radius: 26,
                   backgroundColor: Colors.grey.shade100,
-                  backgroundImage: (user.profilePic?.isNotEmpty ?? false)
-                      ? NetworkImage(user.profilePic!)
-                      : null,
-                  onBackgroundImageError: (user.profilePic?.isNotEmpty ?? false)
-                      ? (_, __) {} // only active if image is non-null
-                      : null,
-                  child: (user.profilePic?.isEmpty ?? true)
-                      ? const Icon(
-                    Icons.engineering,
-                    color: Colors.orange,
-                    size: 28,
-                  )
-                      : null,
+                  backgroundImage:
+                      (user.profilePic?.isNotEmpty ?? false)
+                          ? NetworkImage(user.profilePic!)
+                          : null,
+                  onBackgroundImageError:
+                      (user.profilePic?.isNotEmpty ?? false)
+                          ? (_, __) {} // only active if image is non-null
+                          : null,
+                  child:
+                      (user.profilePic?.isEmpty ?? true)
+                          ? const Icon(
+                            Icons.engineering,
+                            color: Colors.orange,
+                            size: 28,
+                          )
+                          : null,
                 ),
 
                 const SizedBox(width: 12),
@@ -535,21 +611,20 @@ contractor: contractorProfile,
                         ),
                       ),
                     ],
-
-
                   ),
                 ),
 
                 /// ===================== COMPARE BUTTON =====================
                 GestureDetector(
                   onTap: () async {
-                    // final userId = data.profile.userId;
-                    //
-                    // final contractorProfile = await contractor.getContractorById(userId);
-                    //
-                    // if (contractorProfile != null) {
-                    //   compare.toggle(contractorProfile, max: 2);
-                    // }
+                    _fetchUserByID();
+
+                    if (contractorProfile != null) {
+                      compare.toggle(
+                        contractorProfile ?? Contractor.fromJson({}),
+                        max: 2,
+                      );
+                    }
                   },
                   child: Obx(() {
                     final selected = compare.isSelected(user.id ?? '');
@@ -584,17 +659,32 @@ contractor: contractorProfile,
                   children: List.generate(5, (index) {
                     final rating = double.tryParse(profile.overallRating) ?? 0;
                     if (index < rating.floor()) {
-                      return const Icon(Icons.star, color: Colors.amber, size: 16);
+                      return const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 16,
+                      );
                     } else if (index < rating) {
-                      return const Icon(Icons.star_half, color: Colors.amber, size: 16);
+                      return const Icon(
+                        Icons.star_half,
+                        color: Colors.amber,
+                        size: 16,
+                      );
                     } else {
-                      return Icon(Icons.star_border, color: Colors.amber.shade400, size: 16);
+                      return Icon(
+                        Icons.star_border,
+                        color: Colors.amber.shade400,
+                        size: 16,
+                      );
                     }
                   }),
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  (double.tryParse(profile.overallRating)?.toStringAsFixed(1)) ?? '0.0',
+                  (double.tryParse(
+                        profile.overallRating,
+                      )?.toStringAsFixed(1)) ??
+                      '0.0',
                   style: const TextStyle(
                     fontWeight: AppFontWeights.semiBold,
                     fontSize: AppFontSizes.bodySmall,
@@ -680,7 +770,6 @@ contractor: contractorProfile,
     );
   }
 }
-
 
 Widget _buildStatContainer({required String title, required String value}) {
   return Container(

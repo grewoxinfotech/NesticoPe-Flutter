@@ -519,7 +519,7 @@ class CommonSearchField extends StatefulWidget {
 class _CommonSearchFieldState extends State<CommonSearchField> {
   final MicController micController = Get.find<MicController>();
   final GoogleMapSearchController controller =
-      Get.find<GoogleMapSearchController>();
+      Get.find<GoogleMapSearchController>(tag: 'city');
 
   //final trendingArea=Get.put(HomeFeedController());
 
@@ -1186,9 +1186,11 @@ Widget highlightText(
   );
 }
 
+// Widget buildSection(String title, List<Map<String, dynamic>> data) {
+
 ///MARK: - Helpers
 /// 🔹 Reusable section widget
-// Widget buildSection(String title, List<Map<String, dynamic>> data) {
+
 //   return Column(
 //     crossAxisAlignment: CrossAxisAlignment.start,
 //     mainAxisSize: MainAxisSize.min,

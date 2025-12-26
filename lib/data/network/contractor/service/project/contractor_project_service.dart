@@ -76,6 +76,32 @@ class ContractorProjectService {
       return false;
     }
   }
+  Future<bool> updateProject(Map<String, dynamic> status, String id) async {
+    try {
+      log("shgdsgasdsidsdwddhjuwd $status");
+      final response = await http.put(
+        Uri.parse('${ApiConstants.contractorProject}/$id'),
+        headers: await header(),
+        body: jsonEncode(status),
+      );
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        log("Data of Json ${data}");
+        return data['success'];
+      } else {
+        print("Failed to load Update Project: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to load Update Project");
+      }
+
+      //2025-12-13T18:30:00.000Z
+    } catch (e) {
+      print("Exception in Update Project: $e");
+      return false;
+    }
+  }
 
   Future<bool> deletedProject(String id) async {
     try {

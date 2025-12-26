@@ -159,7 +159,7 @@ class _PaymentCard extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
-  bool get _canModify => payment.paymentStatus.toLowerCase() != 'success';
+  bool get _canModify => payment.paymentStatus?.toLowerCase() != 'success';
 
   @override
   Widget build(BuildContext context) {
@@ -186,8 +186,8 @@ class _PaymentCard extends StatelessWidget {
                   ),
                 ),
                 _StatusChip(
-                  label: payment.paymentStatus,
-                  color: _paymentStatusColor(payment.paymentStatus),
+                  label: payment.paymentStatus??'',
+                  color: _paymentStatusColor(payment.paymentStatus??''),
                 ),
                 if (_canModify) ...[
                   const SizedBox(width: 4),
@@ -224,7 +224,7 @@ class _PaymentCard extends StatelessWidget {
               children: [
                 _InfoTile(
                   label: 'Mode',
-                  value: _capitalizeFirst(payment.paymentMode),
+                  value: _capitalizeFirst(payment.paymentMode??''),
                 ),
                 if (payment.referenceNote != null &&
                     payment.referenceNote!.isNotEmpty)
@@ -243,7 +243,7 @@ class _PaymentCard extends StatelessWidget {
                 const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
                 const SizedBox(width: 6),
                 Text(
-                  'Paid on: ${_formatDate(payment.paidOn)}',
+                  'Paid on: ${_formatDate(payment.paidOn??DateTime.now())}',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: Colors.grey.shade700,
                   ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
@@ -8,6 +10,22 @@ import 'city_insigths_controller.dart';
 class PropertyFilterControllerForFilter extends GetxController {
   ///=====================================Property Type Selection=====================
   RxInt selectedPropertyTypeIndex = 0.obs;
+RxBool isRERAVerified=false.obs;
+RxBool isPropertyHaveImage=false.obs;
+RxBool isPropertyHaveVideo=false.obs;
+  RxList<String> amenities=<String>[].obs;
+  final showAllAmenities = false.obs;
+  void addBuilderAmenities(String items) {
+    if (amenities.contains(items)) {
+      amenities.remove(items);
+    } else {
+      amenities.add(items);
+    }
+    amenities.refresh();
+  }
+  void toggleAmenitiesView() {
+    showAllAmenities.value = !showAllAmenities.value;
+  }
   RxList<String> propertyType =
       ['Sell', 'Rent', 'Commercial', "PG/Co-living"].obs;
   RxList<String> verificationStatus = <String>['Verified', 'Non-verified'].obs;
@@ -25,7 +43,7 @@ class PropertyFilterControllerForFilter extends GetxController {
 
   RxDouble min = 0.0.obs;
   RxDouble max = 100000000.0.obs;
-  final Rx<RangeValues> _rangeValues = const RangeValues(0.0, 100000000).obs;
+  final Rx<RangeValues> _rangeValues = const RangeValues(0.0, 100000000.0).obs;
 
   RxString bhkType = ''.obs;
   RxString subpropertyType = ''.obs;
@@ -54,11 +72,75 @@ class PropertyFilterControllerForFilter extends GetxController {
   RxList<String> furnishingType =
       <String>["Unfurnished", "Semi Furnished", "Fully Furnished"].obs;
   RxString rentFurnishing = ''.obs;
+  RxList<double> budgetValues = <double>[
+    0,
+    500000,
+    1000000,
+    1500000,
+    2000000,
+    2500000,
+    3000000,
+    3500000,
+    4000000,
+    4500000,
+    5000000,
+    6000000,
+    7000000,
+    8000000,
+    9000000,
+    10000000,
+    20000000,
+    50000000
+  ].obs;
+  RxList<double> commercialBuyBudgetValues = <double>[
+    0,
+    1000000,     // 10L
+    2500000,     // 25L
+    5000000,     // 50L
+    10000000,    // 1Cr
+    20000000,    // 2Cr
+    50000000,    // 5Cr
+    100000000,   // 10Cr
+    200000000,   // 20Cr
+    500000000,   // 50Cr
+    1000000000,  // 100Cr
+  ].obs;
+  RxList<double> commercialRentBudgetValues = <double>[
+    0,
+    10000,       // ₹10K
+    25000,       // ₹25K
+    50000,       // ₹50K
+    100000,      // ₹1L
+    200000,      // ₹2L
+    500000,      // ₹5L
+    1000000,     // ₹10L
+    2000000,     // ₹20L
+  ].obs;
+
+  RxList<double> rentBudgetValues = <double>[
+    0,
+    5000,
+    10000,
+    15000,
+    20000,
+    25000,
+    30000,
+    40000,
+    50000,
+    75000,
+    100000,
+    150000,
+    200000,
+    300000,
+    400000,
+    500000,
+  ].obs;
+
 
   ///=====================================COMMERCIAL PROPERTIES=====================
   // Commercial Buy
-  RxDouble commercialMin = 2000000.0.obs;
-  RxDouble commercialMax = 300000000.0.obs;
+  RxDouble commercialMin = 0.0.obs;
+  RxDouble commercialMax = 0.0.obs;
   Rx<RangeValues> commercialRangeValues =
       const RangeValues(2000000, 300000000).obs;
 
@@ -101,8 +183,10 @@ class PropertyFilterControllerForFilter extends GetxController {
   RxString buySelectedCommercialPropertyTyp = ''.obs;
 
   RxList<String> saleTypeCommercialProperty =
-      <String>["New Properties", "Resale Properties"].obs;
+      <String>["New Properties", "Resale Properties"].obs;  RxList<String> purchaseTypeCommercialProperty =
+      <String>["New Booking", "Resale Properties"].obs;
   RxString selectedSalesType = ''.obs;
+  RxString selectedPurchaseType = ''.obs;
 
   RxList<String> leaseTypeCommercialProperty =
       <String>['Pre-Leased', 'Non-Leased'].obs;
@@ -231,6 +315,7 @@ class PropertyFilterControllerForFilter extends GetxController {
         // Ensure Buy range values are within bounds
         if (_rangeValues.value.start < min.value ||
             _rangeValues.value.end > max.value) {
+
           _rangeValues.value = RangeValues(min.value, max.value);
         }
         break;
@@ -298,12 +383,12 @@ class PropertyFilterControllerForFilter extends GetxController {
   }
 
   /// Buy property price range with validation
-  void buyerPriceRange(RangeValues value) {
-    // Ensure values are within bounds
-    final clampedStart = value.start.clamp(min.value, max.value);
-    final clampedEnd = value.end.clamp(min.value, max.value);
-    _rangeValues.value = RangeValues(clampedStart, clampedEnd);
-  }
+  // void buyerPriceRange(RangeValues value) {
+  //   // Ensure values are within bounds
+  //   final clampedStart = value.start.clamp(min.value, max.value);
+  //   final clampedEnd = value.end.clamp(min.value, max.value);
+  //   _rangeValues.value = RangeValues(clampedStart, clampedEnd);
+  // }
 
   /// Rent property price range with validation
   void dynamicRentChangeValue(RangeValues value) {
@@ -460,7 +545,11 @@ class PropertyFilterControllerForFilter extends GetxController {
   void resetAllFilters() {
     resetFilters();
     // Common
-    verifiedStatusIndex.value = '';
+    isRERAVerified.value=false;
+    isPropertyHaveVideo.value=false;
+    isPropertyHaveImage.value=false;
+    amenities.clear();
+    selectedPurchaseType.value = '';
     statusApplicateIndex.value = '';
     searchFilterByID.clear();
 
@@ -485,6 +574,7 @@ class PropertyFilterControllerForFilter extends GetxController {
         searchFilterByID.clear();
         break;
       case 'priceRange':
+
         _rangeValues.value = RangeValues(min.value, max.value);
         break;
       case 'bhk':
@@ -989,7 +1079,8 @@ class PropertyFilterControllerForFilter extends GetxController {
     Map<String, dynamic>? mapPriceRange() {
       final tab = propertyType[selectedPropertyTypeIndex.value];
       if (tab == 'Sell') {
-        return {'min': _rangeValues.value.start, 'max': _rangeValues.value.end};
+        log("hjsdfbsdfjdsfjhdfbhdfbd ${min.value}   ${max.value}");
+        return {'min': min.value, 'max': max.value};
       } else if (tab == 'Rent') {
         return {
           'min': rentRangeValues.value.start,
@@ -1044,8 +1135,16 @@ class PropertyFilterControllerForFilter extends GetxController {
       if (priceRange != null) 'priceRange': priceRange,
 
       // Flags
+      'reraId': isRERAVerified.value,
+      'hasPhotos': isPropertyHaveImage.value,
+      'hasVideos': isPropertyHaveVideo.value,
+      if(amenities.value.isNotEmpty)
+
+        'amenities':amenities.value.map((e) => e.toLowerCase().replaceAll(" ", "_"),),
+
       if (verifiedStatusIndex.value.isNotEmpty)
         'isVerified': verifiedStatusIndex.value == 'Verified',
+
       if (statusApplicateIndex.value.isNotEmpty)
         'approval_status': slug(statusApplicateIndex.value),
 
@@ -1059,6 +1158,8 @@ class PropertyFilterControllerForFilter extends GetxController {
       // Possession status (buy)
       if (constructionStatusInBuy.value.isNotEmpty)
         'possession_status': slug(constructionStatusInBuy.value),
+      if(selectedPurchaseType.value.isNotEmpty)
+        'transaction_type':slug(selectedPurchaseType.value),
 
       // Furnishing (rent)
       if (mapFurnishType() != null) 'furnish_type': mapFurnishType(),

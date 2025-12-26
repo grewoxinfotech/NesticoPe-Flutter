@@ -14,7 +14,7 @@ import '../../../data/network/review/service/review_service.dart';
 import '../../../widgets/messages/snack_bar.dart';
 
 class ReviewController extends PaginatedController<ReviewItem> {
-  final ReviewService _service = ReviewService();
+  final ReviewUserService _service = ReviewUserService();
 
   // Reactive variables
   RxString statusFilter = 'all'.obs;

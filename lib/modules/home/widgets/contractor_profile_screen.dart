@@ -44,9 +44,9 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
+        title:  Text(
           "Contractor Profile",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: ColorRes.textColor, fontWeight: AppFontWeights.semiBold),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
@@ -119,6 +119,29 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                                       fontSize: AppFontSizes.bodySmall,
                                       fontWeight: AppFontWeights.medium,
                                       color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on_outlined,
+                                    color: ColorRes.primary,
+                                    size: 18,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Expanded(
+
+
+                                    child: Text(
+                                      'Provides service in ${contractorServiceController.userData.value?.city}',
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.caption,
+                                        fontWeight: AppFontWeights.medium,
+                                        color: ColorRes.leadGreyColor.shade600,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -534,9 +557,11 @@ class ServiceCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _detailColumn(
-                  "ADVANCE REQUIRED",
-                  "${service.meta.advanceRequiredPercentage}%",
+                Expanded(
+                  child: _detailColumn(
+                    "ADVANCE REQUIRED",
+                    "${service.meta.advanceRequiredPercentage}%",
+                  ),
                 ),
                 Expanded(
                   child: _detailColumn(

@@ -39,37 +39,59 @@ class _RentCommercialPropertyState extends State<RentCommercialProperty> {
         ),
         const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Budget'),
+        // Obx(
+        //   () => BudgetFilter(
+        //     minValue: widget.controllerForFilter.commercialRentMin.value,
+        //     maxValue: widget.controllerForFilter.commercialRentMax.value,
+        //     values: widget.controllerForFilter.commercialRentRangeValue.value,
+        //     onChanged: (value) {
+        //       widget.controllerForFilter.changeCommercialRent(value);
+        //     },
+        //     minLabel: 'Min',
+        //     maxLabel: 'Max',
+        //     minQuantityLabel: 'L',
+        //     maxQuantityLabel: 'Cr+',
+        //   ),
+        // ),
         Obx(
-          () => BudgetFilter(
-            minValue: widget.controllerForFilter.commercialRentMin.value,
-            maxValue: widget.controllerForFilter.commercialRentMax.value,
-            values: widget.controllerForFilter.commercialRentRangeValue.value,
-            onChanged: (value) {
-              widget.controllerForFilter.changeCommercialRent(value);
+              () => BudgetFilterChange(
+            minSelected: widget.controllerForFilter.commercialRentMin.value,
+            maxSelected: widget.controllerForFilter.commercialRentMax.value,
+            budgetList: widget.controllerForFilter.commercialRentBudgetValues.value,
+            onMinChanged: (val) {
+              if (val != null) {
+                widget.controllerForFilter.commercialRentMin.value = val;
+                print("Main ${widget.controllerForFilter.commercialRentMin.value}");
+              }
             },
-            minLabel: 'Min',
-            maxLabel: 'Max',
-            minQuantityLabel: 'L',
-            maxQuantityLabel: 'Cr+',
+            onMaxChanged: (val) {
+              if (val != null) {
+                widget.controllerForFilter.commercialRentMax.value = val;
+
+                print("mxa ${widget.controllerForFilter.commercialRentMax.value}");
+              }
+            },
+            minLabel: "Min Budget",
+            maxLabel: "Max Budget",
           ),
         ),
 
-        buildPropertyFilterHeadingPadding('Build-up Area'),
-        Obx(
-          () => BudgetFilter(
-            minValue: widget.controllerForFilter.commercialRentAreaMin.value,
-            maxValue: widget.controllerForFilter.commercialRentAreaMax.value,
-            values:
-                widget.controllerForFilter.commercialRentAreaRangeValue.value,
-            onChanged: (value) {
-              widget.controllerForFilter.changeCommercialAreaRent(value);
-            },
-            minLabel: 'Min',
-            maxLabel: 'Max',
-            minQuantityLabel: 'sqft',
-            maxQuantityLabel: 'sqft+',
-          ),
-        ),
+        // buildPropertyFilterHeadingPadding('Build-up Area'),
+        // Obx(
+        //   () => BudgetFilter(
+        //     minValue: widget.controllerForFilter.commercialRentAreaMin.value,
+        //     maxValue: widget.controllerForFilter.commercialRentAreaMax.value,
+        //     values:
+        //         widget.controllerForFilter.commercialRentAreaRangeValue.value,
+        //     onChanged: (value) {
+        //       widget.controllerForFilter.changeCommercialAreaRent(value);
+        //     },
+        //     minLabel: 'Min',
+        //     maxLabel: 'Max',
+        //     minQuantityLabel: 'sqft',
+        //     maxQuantityLabel: 'sqft+',
+        //   ),
+        // ),
 
         buildPropertyFilterHeadingPadding("Available"),
         const SizedBox(height: 7),

@@ -1475,6 +1475,7 @@ class CreatePropertyScreen extends StatelessWidget {
   final bool isEdit;
   final AddPropertyModel? property;
   final bool isLogin;
+
   const CreatePropertyScreen({
     super.key,
     // required this.sellerType,
@@ -2724,7 +2725,7 @@ Widget buildTextField(
   List<TextInputFormatter>? formatter,
   VoidCallback? onTap,
   String? Function(String?)? validator,
-Function(String)? onChanged,
+  Function(String)? onChanged,
 }) {
   return GestureDetector(
     onTap: onTap,

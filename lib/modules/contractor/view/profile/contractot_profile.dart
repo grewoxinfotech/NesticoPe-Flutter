@@ -18,6 +18,7 @@ import '../../../auth/views/delete_account.dart';
 import '../../../home/views/home_screen/home_screen.dart';
 import '../../controller/contractor_profile_controller.dart';
 import '../contractor_plan/contractor_plan_screen.dart';
+import '../employee/contractor_employee_screen.dart';
 import '../project/contractor_service.dart';
 import '../widget/my_service_screen.dart';
 
@@ -130,7 +131,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                               const SizedBox(height: 16),
                             ],
                             _buildActionButton(
-                              icon: Icons.dashboard_outlined,
+                              icon: Icons.my_library_books_outlined,
                               label: "My Service",
 
                               onTap: () {
@@ -138,7 +139,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                               },
                             ),
                             _buildActionButton(
-                              icon: Icons.dashboard_outlined,
+                              icon: Icons.miscellaneous_services_outlined,
                               label: "Contractor Services",
 
                               onTap: () {
@@ -151,6 +152,13 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
 
                               onTap: () {
                                 Get.to(() => ContractorPlanScreen());
+                              },
+                            ), _buildActionButton(
+                              icon: Icons.person,
+                              label: "Employees",
+
+                              onTap: () {
+                                Get.to(() => ContractorEmployeeScreen());
                               },
                             ),
                           ],

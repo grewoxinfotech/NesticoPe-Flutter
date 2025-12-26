@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -10,14 +11,20 @@ import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/contact_helper.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_negotiable_price_screen.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_visit.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
-
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../builder/view/builder_leads.dart';
 import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/views/widgets/property_media_gallery.dart';
+import '../../../seller/module/lead_screen/controllers/lead_controller.dart';
+import '../../../seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
+import '../../../seller/module/lead_screen/controllers/lead_property_negotiable_price_controller.dart';
+import '../../../seller/module/lead_screen/controllers/lead_visit_controller.dart';
 import '../../../seller/view/widget/seller_property_approval_history.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
@@ -27,12 +34,19 @@ class LeadDetailScreen extends StatefulWidget {
   final LeadItem? lead;
   final Items? property;
   final bool isFromLead;
+  final LeadPropertyInquiryController? leadPropertyInquiryController;
+  final LeadVisitController? leadVisitController;
+  final LeadPropertyNegotiablePriceController?
+  leadPropertyNegotiablePriceController;
 
   LeadDetailScreen({
     Key? key,
     this.lead,
     this.property,
     this.isFromLead = false,
+    this.leadPropertyInquiryController,
+    this.leadVisitController,
+    this.leadPropertyNegotiablePriceController,
   }) : assert(
          (lead != null) != (property != null),
          'You must provide either lead OR property, not both.',
@@ -243,20 +257,22 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                             // 4. Property Details
                             _buildPropertyDetailsSection(context, isCompact),
 
-                            Divider(
-                              thickness: 8,
-                              color: ColorRes.leadGreyColor[100],
-                            ),
+                         if(propertyDetails?.amenities?.isNotEmpty??false)...[
+                           Divider(
+                             thickness: 8,
+                             color: ColorRes.leadGreyColor[100],
+                           ),
 
-                            // 5. Amenities
-                            _buildAmenitiesSection(context, isCompact),
+                           // 5. Amenities
+                           _buildAmenitiesSection(context, isCompact),
+                         ],
 
                             Obx(() => _buildExpandButton(context)),
                           ],
                         )
                         : Obx(() => _buildExpandButton(context)),
               ),
-              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+
 
               // 6. Financial Information
               if (widget.isFromLead)
@@ -268,9 +284,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   if (!isLoadingProperty.value && leadProperty.value == null) {
                     return SizedBox.shrink();
                   }
+                  Divider(thickness: 8, color: ColorRes.leadGreyColor[100]);
                   return _buildFinancialSection(context, isCompact);
                 })
               else
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
                 _buildFinancialSection(context, isCompact),
 
               // if (widget.isFromLead) ...[
@@ -323,7 +341,16 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 if (!isLoadingProperty.value && leadProperty.value == null) {
                   return SizedBox.shrink();
                 }
-                return _buildAnalyticsSection(context, propertyData);
+                return _buildAnalyticsSection(
+                  context,
+                  propertyData,
+                  widget.leadPropertyInquiryController,
+                  widget.leadVisitController ?? LeadVisitController(),
+                  widget.leadPropertyNegotiablePriceController ??
+                      LeadPropertyNegotiablePriceController(),
+                  widget.isFromLead,
+                  widget.lead == null,
+                );
               }),
 
               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
@@ -337,19 +364,69 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     );
   }
 
-  Widget _buildAnalyticsSection(BuildContext context, Items property) {
+  Widget _buildAnalyticsSection(
+    BuildContext context,
+    Items property,
+    LeadPropertyInquiryController? propertyInquiryController,
+    LeadVisitController leadVisitController,
+    LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController,
+    bool isFromLead,
+    bool isLeadIsempty,
+  ) {
     return Column(
       children: [
         /// Analytics
-        if (property.scoreBreakdown != null) ...[
-          PerformanceScoreWidget(score: property.scoreBreakdown!),
+        if (!isFromLead && isLeadIsempty) ...[
+          if (property.scoreBreakdown != null) ...[
+            PerformanceScoreWidget(score: property.scoreBreakdown!),
+          ],
         ],
 
         /// Approval History
+        if (!isFromLead && isLeadIsempty) ...[
+          ListTile(
+            tileColor: ColorRes.white,
+            title: Text(
+              'Approval History',
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.semiBold,
+              ),
+            ),
+            leading: Icon(Icons.history, color: ColorRes.primary),
+            trailing: Icon(Icons.arrow_forward_ios_rounded),
+            onTap: () {
+              Get.to(
+                () => SellerPropertyApprovalHistory(
+                  propertyId: property.id ?? '',
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+
+          /// Lead Details
+          ListTile(
+            tileColor: ColorRes.white,
+            title: Text(
+              'Leads',
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.semiBold,
+              ),
+            ),
+            leading: Icon(Icons.leaderboard_outlined, color: ColorRes.primary),
+            trailing: Icon(Icons.arrow_forward_ios_rounded),
+            onTap: () {
+              Get.to(() => BuilderLeads(projectId: property.id ?? ''));
+            },
+          ),
+        ],
+        const SizedBox(height: 8),
         ListTile(
           tileColor: ColorRes.white,
           title: Text(
-            'Approval History',
+            'Visit',
             style: TextStyle(
               fontSize: AppFontSizes.medium,
               fontWeight: AppFontWeights.semiBold,
@@ -358,28 +435,92 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           leading: Icon(Icons.history, color: ColorRes.primary),
           trailing: Icon(Icons.arrow_forward_ios_rounded),
           onTap: () {
+            // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
+            // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
+
+            log(
+              "Buyer Data ${propertyInquiryController?.selectedInquiry.value?.userId}    ============== ${propertyInquiryController?.selectedInquiry.value?.propertyId}",
+            );
+
             Get.to(
-              () =>
-                  SellerPropertyApprovalHistory(propertyId: property.id ?? ''),
+              () => LeadVisit(
+                leadVisitController: leadVisitController,
+                propertyInquiryController:
+                    propertyInquiryController ??
+                    LeadPropertyInquiryController(),
+                buyerID:
+                    propertyInquiryController?.selectedInquiry.value?.userId,
+                propertyId:
+                    propertyInquiryController
+                        ?.selectedInquiry
+                        .value
+                        ?.propertyId,
+              ),
             );
           },
         ),
         const SizedBox(height: 8),
-
-        /// Lead Details
         ListTile(
           tileColor: ColorRes.white,
           title: Text(
-            'Leads',
+            'Negotiable',
             style: TextStyle(
               fontSize: AppFontSizes.medium,
               fontWeight: AppFontWeights.semiBold,
             ),
           ),
-          leading: Icon(Icons.leaderboard_outlined, color: ColorRes.primary),
+          leading: Icon(Icons.currency_rupee_outlined, color: ColorRes.primary),
           trailing: Icon(Icons.arrow_forward_ios_rounded),
           onTap: () {
-            Get.to(() => BuilderLeads(projectId: property.id ?? ''));
+            final selectedInquiry =
+                propertyInquiryController?.selectedInquiry.value;
+            if (selectedInquiry != null) {
+              // Set visit id
+              log(
+                'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+              );
+              leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                selectedInquiry.propertyId ?? '',
+              );
+              log(
+                'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+              );
+            }
+            Get.to(
+              () => LeadNegotiablePriceScreen(
+                controller: leadPropertyNegotiablePriceController,
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        ListTile(
+          tileColor: ColorRes.white,
+          title: Text(
+            'Follow Ups',
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+          leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
+          trailing: Icon(Icons.arrow_forward_ios_rounded),
+          onTap: () {
+            final selectedInquiry =
+                propertyInquiryController?.selectedInquiry.value;
+            if (selectedInquiry != null) {
+              // Set visit id
+              log(
+                'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+              );
+              leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                selectedInquiry.propertyId ?? '',
+              );
+              log(
+                'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+              );
+            }
+            Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
           },
         ),
         const SizedBox(height: 8),

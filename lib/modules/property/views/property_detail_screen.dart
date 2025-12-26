@@ -984,20 +984,55 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 return Positioned(
                   left: 16,
                   bottom: 16,
-                  child: ReraComponent(
-                    text: (!controller.isDeveloper.value) ? "Verified" : "rera",
-                    backgroundColor: ColorRes.black.withOpacity(0.7),
-                    textColor: ColorRes.background,
-                    fontSize: AppFontSizes.small,
+                  child: Row(
+                    children: [
+                      ReraComponent(
+                        text: (!controller.isDeveloper.value) ? "Verified" : "rera",
+                        backgroundColor: ColorRes.black.withOpacity(0.7),
+                        textColor: ColorRes.background,
+                        fontSize: AppFontSizes.small,
 
-                    borderRadius: AppRadius.small,
-                    fontWeight: AppFontWeights.bold,
-                    showIcon: true,
-                    iconColor: ColorRes.success,
-                    iconSize: 14,
+                        borderRadius: AppRadius.small,
+                        fontWeight: AppFontWeights.bold,
+                        showIcon: true,
+                        iconColor: ColorRes.success,
+                        iconSize: 14,
+                      ),
+                      const SizedBox(width: 8),
+                      if (property?.scoreBreakdown?.components.premium.isPremium?? false)
+                        ReraComponent(
+                          text: "NesticoPe Assured",
+                          backgroundColor: ColorRes.black.withOpacity(0.7),
+                          textColor: ColorRes.background,
+
+                          iconColor: ColorRes.primary,
+                          fontSize: AppFontSizes.small,
+                          borderRadius: AppRadius.small,
+                          fontWeight: AppFontWeights.bold,
+                          showIcon: true,
+                        ),
+                    ],
                   ),
                 );
               }),
+              // Obx(() {
+              //   return Positioned(
+              //     left: 16,
+              //     bottom: 16,
+              //     child: ReraComponent(
+              //       text: (!controller.isDeveloper.value) ? "Verified" : "rera",
+              //       backgroundColor: ColorRes.black.withOpacity(0.7),
+              //       textColor: ColorRes.background,
+              //       fontSize: AppFontSizes.small,
+              //
+              //       borderRadius: AppRadius.small,
+              //       fontWeight: AppFontWeights.bold,
+              //       showIcon: true,
+              //       iconColor: ColorRes.success,
+              //       iconSize: 14,
+              //     ),
+              //   );
+              // }),
             ],
           );
         },

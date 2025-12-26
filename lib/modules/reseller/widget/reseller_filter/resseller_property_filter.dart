@@ -591,6 +591,7 @@ import '../../../../data/database/secure_storage_service.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../builder/controller/builder_form_controller.dart';
+import '../../../filter_property/view/widget/common_component/budget_filter.dart';
 import '../../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
 
 class ResellerPropertyFilter extends StatefulWidget {
@@ -604,7 +605,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
 
   final DashboardController controller = Get.put(DashboardController());
   final PropertyController propertyController = Get.find();
-  late final  controllerProject;
+  late final ProjectWizardController   controllerProject;
 
   double tempMinPrice = 0.0;
   double tempMaxPrice = 0.0;
@@ -1739,118 +1740,144 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                 SizedBox(height: 16),
                 buildSectionTitle('Price'),
                 SizedBox(height: 8),
-                Obx(() {
-                  final minVal = controller.resellerMinPrice.value;
-                  final maxVal = controller.resellerMaxPrice.value;
+                // Obx(() {
+                //   final minVal = controller.resellerMinPrice.value;
+                //   final maxVal = controller.resellerMaxPrice.value;
+                //
+                //   if (tempMinPrice < minVal) tempMinPrice = minVal;
+                //   if (tempMaxPrice > maxVal) tempMaxPrice = maxVal;
+                //   if (tempMinPrice > tempMaxPrice) tempMinPrice = minVal;
+                //
+                //   return SliderTheme(
+                //     data: SliderThemeData(
+                //       activeTrackColor: ColorRes.primary,
+                //       inactiveTrackColor: ColorRes.white,
+                //       thumbColor: ColorRes.primary,
+                //       valueIndicatorTextStyle: TextStyle(
+                //         fontSize: AppFontSizes.small,
+                //         color: ColorRes.textColor,
+                //       ),
+                //       overlayColor: ColorRes.primary.withOpacity(0.2),
+                //       rangeThumbShape: RoundRangeSliderThumbShape(
+                //         enabledThumbRadius: 10,
+                //         elevation: 3,
+                //       ),
+                //       rangeTrackShape: RoundedRectRangeSliderTrackShape(),
+                //     ),
+                //     child: RangeSlider(
+                //       values: RangeValues(tempMinPrice, tempMaxPrice),
+                //       min: minVal,
+                //       max: maxVal,
+                //       //divisions: 20,
+                //       labels: RangeLabels(
+                //         '${Formatter.formatPrice(tempMinPrice)}',
+                //         '${Formatter.formatPrice(tempMaxPrice)}',
+                //       ),
+                //       onChanged: (RangeValues values) {
+                //         setState(() {
+                //           tempMinPrice = values.start;
+                //           tempMaxPrice = values.end;
+                //           controller.buyerPriceRange(values);
+                //           // controller.getPropertyType(propertyController.items);
+                //         });
+                //       },
+                //     ),
+                //   );
+                // }),
+                Obx(
+                      () => BudgetFilterChange(
+                    minSelected: controller.resellerMinPrice.value,
+                    maxSelected: controller.resellerMaxPrice.value,
+                    budgetList: controller.budgetValues.value,
+                    onMinChanged: (val) {
+                      if (val != null) {
+                        controller.resellerMinPrice.value = val;
 
-                  if (tempMinPrice < minVal) tempMinPrice = minVal;
-                  if (tempMaxPrice > maxVal) tempMaxPrice = maxVal;
-                  if (tempMinPrice > tempMaxPrice) tempMinPrice = minVal;
+                        print("Main ${controller.resellerMinPrice.value}");
+                      }
+                    },
+                    onMaxChanged: (val) {
+                      if (val != null) {
+                        controller.resellerMaxPrice.value = val;
+                        controller.buyerPriceRange(
+                          RangeValues(controller.resellerMinPrice.value, val)
+                        );
 
-                  return SliderTheme(
-                    data: SliderThemeData(
-                      activeTrackColor: ColorRes.primary,
-                      inactiveTrackColor: ColorRes.white,
-                      thumbColor: ColorRes.primary,
-                      valueIndicatorTextStyle: TextStyle(
-                        fontSize: AppFontSizes.small,
-                        color: ColorRes.textColor,
-                      ),
-                      overlayColor: ColorRes.primary.withOpacity(0.2),
-                      rangeThumbShape: RoundRangeSliderThumbShape(
-                        enabledThumbRadius: 10,
-                        elevation: 3,
-                      ),
-                      rangeTrackShape: RoundedRectRangeSliderTrackShape(),
-                    ),
-                    child: RangeSlider(
-                      values: RangeValues(tempMinPrice, tempMaxPrice),
-                      min: minVal,
-                      max: maxVal,
-                      //divisions: 20,
-                      labels: RangeLabels(
-                        '${Formatter.formatPrice(tempMinPrice)}',
-                        '${Formatter.formatPrice(tempMaxPrice)}',
-                      ),
-                      onChanged: (RangeValues values) {
-                        setState(() {
-                          tempMinPrice = values.start;
-                          tempMaxPrice = values.end;
-                          controller.buyerPriceRange(values);
-                          // controller.getPropertyType(propertyController.items);
-                        });
-                      },
-                    ),
-                  );
-                }),
-                SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorRes.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: ColorRes.primary.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Text(
-                        '${Formatter.formatPrice(tempMinPrice)}',
-                        style: TextStyle(
-                          color: ColorRes.primary,
-                          fontSize: AppFontSizes.bodySmall,
-                          fontWeight: AppFontWeights.semiBold,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorRes.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: ColorRes.primary.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Text(
-                        '${Formatter.formatPrice(tempMaxPrice)}',
-                        style: TextStyle(
-                          color: ColorRes.primary,
-                          fontSize: AppFontSizes.bodySmall,
-                          fontWeight: AppFontWeights.semiBold,
-                        ),
-                      ),
-                    ),
-                  ],
+                        print("mxa ${controller.resellerMaxPrice.value}");
+                      }
+                    },
+                    minLabel: "Min Budget",
+                    maxLabel: "Max Budget",
+                  ),
                 ),
-                SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Min: ₹${Formatter.formatPrice(tempMinPrice)}',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.bodySmall,
-                        color: ColorRes.textSecondary,
-                      ),
-                    ),
-                    Text(
-                      'Max: ₹${Formatter.formatPrice(tempMaxPrice)}',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.bodySmall,
-                        color: ColorRes.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
+                // SizedBox(height: 8),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Container(
+                //       padding: EdgeInsets.symmetric(
+                //         horizontal: 12,
+                //         vertical: 8,
+                //       ),
+                //       decoration: BoxDecoration(
+                //         color: ColorRes.primary.withOpacity(0.1),
+                //         borderRadius: BorderRadius.circular(8),
+                //         border: Border.all(
+                //           color: ColorRes.primary.withOpacity(0.3),
+                //         ),
+                //       ),
+                //       child: Text(
+                //         '${Formatter.formatPrice(tempMinPrice)}',
+                //         style: TextStyle(
+                //           color: ColorRes.primary,
+                //           fontSize: AppFontSizes.bodySmall,
+                //           fontWeight: AppFontWeights.semiBold,
+                //         ),
+                //       ),
+                //     ),
+                //     Container(
+                //       padding: EdgeInsets.symmetric(
+                //         horizontal: 12,
+                //         vertical: 8,
+                //       ),
+                //       decoration: BoxDecoration(
+                //         color: ColorRes.primary.withOpacity(0.1),
+                //         borderRadius: BorderRadius.circular(8),
+                //         border: Border.all(
+                //           color: ColorRes.primary.withOpacity(0.3),
+                //         ),
+                //       ),
+                //       child: Text(
+                //         '${Formatter.formatPrice(tempMaxPrice)}',
+                //         style: TextStyle(
+                //           color: ColorRes.primary,
+                //           fontSize: AppFontSizes.bodySmall,
+                //           fontWeight: AppFontWeights.semiBold,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // SizedBox(height: 8),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Text(
+                //       'Min: ₹${Formatter.formatPrice(tempMinPrice)}',
+                //       style: TextStyle(
+                //         fontSize: AppFontSizes.bodySmall,
+                //         color: ColorRes.textSecondary,
+                //       ),
+                //     ),
+                //     Text(
+                //       'Max: ₹${Formatter.formatPrice(tempMaxPrice)}',
+                //       style: TextStyle(
+                //         fontSize: AppFontSizes.bodySmall,
+                //         color: ColorRes.textSecondary,
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
 
               // buildSectionTitle('Price Range'),

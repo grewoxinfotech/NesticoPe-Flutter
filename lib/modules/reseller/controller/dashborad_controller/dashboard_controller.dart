@@ -636,6 +636,26 @@ class DashboardController extends GetxController {
   Rxn<ReferralModel> dummyReferral = Rxn<ReferralModel>();
   PropertyService _propertyService = PropertyService();
   Rxn<UserModel> userModel = Rxn<UserModel>();
+  RxList<double> budgetValues = <double>[
+    0,
+    500000,
+    1000000,
+    1500000,
+    2000000,
+    2500000,
+    3000000,
+    3500000,
+    4000000,
+    4500000,
+    5000000,
+    6000000,
+    7000000,
+    8000000,
+    9000000,
+    10000000,
+    20000000,
+    50000000
+  ].obs;
   RxBool deleteSuccessStory = false.obs;
 
   final ResellerSuccessStoryService _service = ResellerSuccessStoryService();
@@ -790,7 +810,7 @@ class DashboardController extends GetxController {
     _rangeValues.value = RangeValues(clampedStart, clampedEnd);
 
     // Update observable map
-    priceRangeSeller.value = priceRange(_rangeValues.value.start, _rangeValues.value.end);
+    priceRangeSeller.value = priceRange(resellerMinPrice.value, resellerMaxPrice.value);
 
     // 🧩 Log for debugging
     log('📊 buyerPriceRange called');

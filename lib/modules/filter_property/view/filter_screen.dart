@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
@@ -8,12 +10,18 @@ import 'package:housing_flutter_app/modules/filter_property/controller/property_
 import 'package:housing_flutter_app/modules/filter_property/view/widget/buy_componet/buy_component.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/buy_componet/buyer_filter.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/commercial_property_filter/commercial_property_filter.dart';
+import 'package:housing_flutter_app/modules/filter_property/view/widget/common_component/listed_by.dart';
+import 'package:housing_flutter_app/modules/filter_property/view/widget/common_component/sale_type.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/location_dropdown.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/pg_property/pg_co_living.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/widget/rent_component/rented_filter.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
+import '../../../app/manager/icon_manager.dart';
+import '../../../app/utils/svg_widget.dart';
+import '../../builder/view/additional_deatil/additional_detail.dart';
+import '../../contractor/view/widget/cotractor_active_switch.dart';
 
 class RealEstateFilterScreen extends StatefulWidget {
   final Map<String, String> initialFilters;
@@ -33,6 +41,7 @@ class RealEstateFilterScreen extends StatefulWidget {
 
 class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
   late final PropertyFilterControllerForFilter controllerForFilter;
+  String saleType = "New Properties";
 
   @override
   void initState() {
@@ -48,6 +57,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
@@ -170,6 +181,199 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               },
             ),
             const SizedBox(height: 16),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+
+              decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  borderRadius: BorderRadius.circular(12)
+              ),
+              child: Column(
+                children: [
+                  buildToggle(
+                    "Verify RERA ID",
+                    controllerForFilter.isRERAVerified,
+                  ),
+                  SizedBox(height: 10,),
+                  buildToggle(
+                    "Property Has Photos",
+                    controllerForFilter.isPropertyHaveImage,
+                  ),
+                  SizedBox(height: 10,),
+                  buildToggle(
+                    "Property Has Videos",
+                    controllerForFilter.isPropertyHaveVideo,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            buildPropertyFilterHeadingPadding("Transaction Type"),
+            const SizedBox(height: 7),
+
+            SelectableWrap(
+              items: controllerForFilter.purchaseTypeCommercialProperty,
+              filterControllerForFilter: controllerForFilter,
+              selectedItem: controllerForFilter.selectedPurchaseType,
+              onSelected: (type) {
+                debugPrint('Purchase Type Commercial $type');
+
+                setState(() {
+                  saleType = type;
+                });
+              },
+            ),
+
+            buildPropertyFilterHeadingPadding('Amenities'),
+
+            // // Property Type & Status Card
+            // _buildCard(
+            //   theme: theme,
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       buildBuilderDefaultText('Property Type'),
+            //       const SizedBox(height: 16),
+            //       builderPropertyType(controller),
+            //     ],
+            //   ),
+            // ),
+            // const SizedBox(height: 20),
+
+            // Amenities Card
+            // ------------------ AMENITIES SECTION ------------------
+
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 12),
+              child: _buildCard(
+                theme: theme,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 12),
+
+                    Obx(() {
+                      final amenitiesList = IconManager.allAmenities;
+                      final showAll = controllerForFilter.showAllAmenities.value;
+                      final displayList = showAll
+                          ? amenitiesList
+                          : amenitiesList.take(9).toList();
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Amenities Grid
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: displayList.map((amenity) {
+                              final isSelected = controllerForFilter.amenities.contains(amenity.title);
+
+                              return GestureDetector(
+                                onTap: () {
+                                  controllerForFilter.addBuilderAmenities(amenity.title);
+                                  debugPrint("Selected Amenities: ${controllerForFilter.amenities}");
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width * 0.28,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? theme.primaryColor.withOpacity(0.1)
+                                        : ColorRes.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? theme.primaryColor
+                                          : ColorRes.leadGreyColor.shade300,
+                                      width: 1.2,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.08),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // If you have SVG icons for amenities, uncomment:
+                                      // AppSvgIcon(
+                                      //   assetName: amenity.key,
+                                      //   size: 26,
+                                      //   folder: 'amenities',
+                                      //   color: isSelected
+                                      //       ? theme.primaryColor
+                                      //       : ColorRes.leadGreyColor.shade600,
+                                      // ),
+                                      // const SizedBox(height: 4),
+                                      Text(
+                                        amenity.title,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? theme.primaryColor
+                                              : ColorRes.textColor.withOpacity(0.9),
+                                          fontWeight: isSelected
+                                              ? FontWeight.w600
+                                              : FontWeight.w400,
+                                          fontSize: AppFontSizes.extraSmall,
+                                          height: 1.3,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+
+                          // Show More / Less toggle
+                          if (amenitiesList.length > 9)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 14),
+                              child: Center(
+                                child: GestureDetector(
+                                  onTap: controllerForFilter.toggleAmenitiesView,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        showAll ? 'Show Less' : 'Show More',
+                                        style: TextStyle(
+                                          color: theme.primaryColor,
+                                          fontSize: AppFontSizes.small,
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Icon(
+                                        showAll
+                                            ? Icons.keyboard_arrow_up
+                                            : Icons.keyboard_arrow_down,
+                                        color: theme.primaryColor,
+                                        size: 18,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ),
+
             // Property Type Section
             const SizedBox(height: 8),
             Padding(
@@ -325,6 +529,17 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               }
               return const SizedBox.shrink();
             }),
+            const SizedBox(height: 7),
+            buildPropertyFilterHeadingPadding('Construction Status'),
+            const SizedBox(height: 7),
+            ListedBy(
+              listedByList: controllerForFilter.constructionStatus,
+              selectedString: controllerForFilter.constructionStatusInBuy,
+              onTap: (index) {
+                debugPrint('Construction Status $index');
+              },
+              controllerForFilter:controllerForFilter,
+            ),
             const SizedBox(height: 100),
           ],
         ),
@@ -388,6 +603,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                     onPressed: () {
                       final filters = controllerForFilter.getAllFilters();
                       final stringFilters = convertFiltersToString(filters);
+                      log("Change the filter ${stringFilters}");
                       Get.back(result: stringFilters);
                       // debugPrint(
                       //   '================= Current Filters =================',
@@ -446,3 +662,39 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
     return result;
   }
 }
+Widget buildToggle(String label, RxBool observable) {
+  return Obx(
+        () => Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: AppFontSizes.bodySmall,
+            fontWeight: AppFontWeights.medium,
+            color: ColorRes.textColor,
+          ),
+        ),
+        CustomSwitch(
+          value: observable.value,
+          activeColor: ColorRes.primary,
+
+          inactiveColor: ColorRes.leadGreyColor.shade400,
+          onChanged: (val) {
+            // Call controller toggle
+            observable.value = val;
+          },
+        )
+        // Switch(
+        //   value: observable.value,
+        //   onChanged: (val) => observable.value = val,
+        //   activeColor: ColorRes.primary,
+        // ),
+      ],
+    ),
+  );
+}
+Widget _buildCard({required ThemeData theme, required Widget child}) {
+  return child;
+}
+

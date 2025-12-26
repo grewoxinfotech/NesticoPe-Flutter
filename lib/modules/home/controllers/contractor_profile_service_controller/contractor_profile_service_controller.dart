@@ -1,18 +1,23 @@
+import 'dart:developer';
+
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
+
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 
+import '../../../../data/network/auth/model/user_model.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../../data/network/contractor/service/contractor_my_service.dart';
+import '../../../../data/network/user/service/user_service.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 
 class ContractorServiceController
     extends PaginatedController<ContractorServiceItem> {
   final ContractorMyService _service = ContractorMyService.contractorMyService;
+  final UserService _serviceUser = UserService();
 
   RxList<ContractorServiceItem> selectedItems = <ContractorServiceItem>[].obs;
 
@@ -37,7 +42,7 @@ class ContractorServiceController
     'Warehouse',
     'Other', //
   ];
-
+  Rxn<User> userData = Rxn<User>();
   /// Contractor ID is required to fetch services
   final String contractorId;
 
@@ -70,11 +75,19 @@ class ContractorServiceController
       );
 
       print("Fetched Contractor Services: ${response.items.length}");
+      fetchUserDataFromUrl();
       return response;
     } catch (e) {
       print("Exception in fetchItems: $e");
       rethrow;
     }
+  }
+
+  Future<void> fetchUserDataFromUrl()
+  async {
+    userData.value = await _serviceUser.getUserById(contractorId);
+    log("Fetched User Data From Have: ${userData.value?.toJson()}");
+
   }
 
   Future<void> createInquiry(

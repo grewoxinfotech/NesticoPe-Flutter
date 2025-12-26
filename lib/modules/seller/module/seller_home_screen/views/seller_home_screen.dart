@@ -614,39 +614,34 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Row(
-                              children: [
-                                TitleWithViewAll(
-                                  title: "Overview",
-                                  showViewAll: false,
-                                ),
-                                // TextButton(
-                                //   onPressed: () {
-                                //     Get.to(
-                                //       () => PropertyOverviewScreen(
-                                //         properties: controller.items,
-                                //
-                                //       ),
-                                //     );
-                                //   },
-                                //   child: Text(
-                                //     'Explore',
-                                //     style: TextStyle(
-                                //       fontSize: AppFontSizes.small,
-                                //     ),
-                                //   ),
-                                // ),
-                              ],
-                            ),
+                          Row(
+                            children: [
+                              TitleWithViewAll(
+                                title: "Overview",
+                                showViewAll: false,
+                              ),
+                              // TextButton(
+                              //   onPressed: () {
+                              //     Get.to(
+                              //       () => PropertyOverviewScreen(
+                              //         properties: controller.items,
+                              //
+                              //       ),
+                              //     );
+                              //   },
+                              //   child: Text(
+                              //     'Explore',
+                              //     style: TextStyle(
+                              //       fontSize: AppFontSizes.small,
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: OverViewCard(
-                              property: controller.items,
-                              overview: overview,
-                            ),
+                          SizedBox(height: 10,),
+                          OverViewCard(
+                            property: controller.items,
+                            overview: overview,
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -1588,7 +1583,7 @@ Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyLineChart(monthlyData: monthlyData, months: months),
+          child: MonthlyBarChart(monthlyData: monthlyData, months: months,color: ColorRes.green,),
         ),
       ],
     ),
