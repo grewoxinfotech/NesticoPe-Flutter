@@ -2814,7 +2814,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
           }
 
           // Show empty state
-          if (reviewController.siteReviewWithUsers.isEmpty) {
+          if (reviewController.allReviews.isEmpty) {
             return SizedBox(
               height: 280,
               child: Center(
