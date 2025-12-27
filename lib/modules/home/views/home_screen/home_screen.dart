@@ -1658,192 +1658,192 @@ Future<void> showFindPropertyDialog(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
-                      Stack(
-                        children: [
-                          NesticoPeTextField(
-                            title: "City",
-                            isRequired: true,
-                            prefixIcon: Icons.location_city_outlined,
-                            hintText: "Select City",
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (value) => requiredField(value, 'City'),
-                            onChanged: (value) async {
-                              if (value.isNotEmpty) {
-                                await googleMapController.fetchGooglePlaces(
-                                  value,
-                                );
-                                log("City input: $value");
-                              } else {
-                                googleMapController.predictions.clear();
-                              }
-                            },
-                            controller: controller.selectedCityZ,
-                          ),
-
-                          // City Predictions Dropdown - Below TextField
-                          Obx(() {
-                            final predictions = googleMapController.predictions;
-                            final parsedCities = googleMapController.cityStateList;
-                            final hasParsed = parsedCities.isNotEmpty;
-                            final items = hasParsed ? parsedCities : predictions;
-
-                            if (items.isEmpty) return const SizedBox();
-
-                            return Positioned(
-                              top: 90, // Position below the text field
-                              left: 0,
-                              right: 0,
-                              child: Material(
-                                elevation: 8,
-                                shadowColor: Colors.black26,
-                                borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                  constraints: const BoxConstraints(
-                                    maxHeight: 250,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: ColorRes.primary.withOpacity(0.2),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: ListView.separated(
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                    ),
-                                    itemCount:
-                                    items.length > 3
-                                            ? 3
-                                            : items.length,
-                                    separatorBuilder:
-                                        (context, index) => Divider(
-                                          height: 1,
-                                          thickness: 0.5,
-                                          color: ColorRes.grey.withOpacity(0.2),
-                                        ),
-                                    itemBuilder: (context, index) {
-                                      if (hasParsed) {
-                                        // ✅ Cast item to Map<String, String?>
-                                        final cityData = items[index] as Map<String, String?>;
-
-                                        log("djhfudfhg ${cityData}");
-
-                                        return ListTile(
-                                          leading: const Icon(
-                                            Icons.location_city_outlined,
-                                            size: 20,
-                                            color: ColorRes.primary,
-                                          ),
-                                          title: Text(
-                                            cityData['city'] ?? '',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.small,
-                                              color: ColorRes.homeBlackFade,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            '${cityData['state'] ?? ''}, ${cityData['country'] ?? ''}',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.small,
-                                              color: ColorRes.leadGreyColor[700],
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            controller.selectedCityZ.text = cityData['city'] ?? '';
-                                            googleMapController.predictions.clear();
-                                            googleMapController.cityStateList.clear();
-                                            FocusScope.of(context).unfocus();
-
-                                          },
-                                        );
-                                      } else {
-                                        final city = items[index] as Prediction;
-                                        return ListTile(
-                                          leading: const Icon(
-                                            Icons.location_city_outlined,
-                                            size: 20,
-                                            color: ColorRes.primary,
-                                          ),
-                                          title: Text(
-                                            city.description ?? '',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.small,
-                                              color: ColorRes.homeBlackFade,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            controller.selectedCityZ.text = city.description ?? '';
-                                            googleMapController.predictions.clear();
-                                            FocusScope.of(context).unfocus();
-
-                                          },
-                                        );
-                                      }
-
-                                      // return InkWell(
-                                      //   onTap: () {
-                                      //     controller.selectedCityZ.text =
-                                      //         city
-                                      //             .structuredFormatting
-                                      //             ?.mainText ??
-                                      //         '';
-                                      //     googleMapController.predictions
-                                      //         .clear();
-                                      //     FocusScope.of(context).unfocus();
-                                      //   },
-                                      //   child: Padding(
-                                      //     padding: const EdgeInsets.symmetric(
-                                      //       horizontal: 12,
-                                      //       vertical: 12,
-                                      //     ),
-                                      //     child: Row(
-                                      //       children: [
-                                      //         const Icon(
-                                      //           Icons.location_on,
-                                      //           color: ColorRes.primary,
-                                      //           size: 20,
-                                      //         ),
-                                      //         const SizedBox(width: 12),
-                                      //         Expanded(
-                                      //           child: Text(
-                                      //             city.description ?? '',
-                                      //             style: TextStyle(
-                                      //               fontSize:
-                                      //                   AppFontSizes.medium,
-                                      //               color: ColorRes.textPrimary,
-                                      //             ),
-                                      //           ),
-                                      //         ),
-                                      //       ],
-                                      //     ),
-                                      //   ),
-                                      // );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        ],
+                      // Stack(
+                      //   children: [
+                      //     NesticoPeTextField(
+                      //       title: "City",
+                      //       isRequired: true,
+                      //       prefixIcon: Icons.location_city_outlined,
+                      //       hintText: "Select City",
+                      //       autovalidateMode:
+                      //           AutovalidateMode.onUserInteraction,
+                      //       validator: (value) => requiredField(value, 'City'),
+                      //       onChanged: (value) async {
+                      //         if (value.isNotEmpty) {
+                      //           await googleMapController.fetchGooglePlaces(
+                      //             value,
+                      //           );
+                      //           log("City input: $value");
+                      //         } else {
+                      //           googleMapController.predictions.clear();
+                      //         }
+                      //       },
+                      //       controller: controller.selectedCityZ,
+                      //     ),
+                      //
+                      //     // City Predictions Dropdown - Below TextField
+                      //     Obx(() {
+                      //       final predictions = googleMapController.predictions;
+                      //       final parsedCities = googleMapController.cityStateList;
+                      //       final hasParsed = parsedCities.isNotEmpty;
+                      //       final items = hasParsed ? parsedCities : predictions;
+                      //
+                      //       if (items.isEmpty) return const SizedBox();
+                      //
+                      //       return Positioned(
+                      //         top: 90, // Position below the text field
+                      //         left: 0,
+                      //         right: 0,
+                      //         child: Material(
+                      //           elevation: 8,
+                      //           shadowColor: Colors.black26,
+                      //           borderRadius: BorderRadius.circular(12),
+                      //           child: Container(
+                      //             constraints: const BoxConstraints(
+                      //               maxHeight: 250,
+                      //             ),
+                      //             decoration: BoxDecoration(
+                      //               color: Colors.white,
+                      //               borderRadius: BorderRadius.circular(12),
+                      //               border: Border.all(
+                      //                 color: ColorRes.primary.withOpacity(0.2),
+                      //                 width: 1,
+                      //               ),
+                      //             ),
+                      //             child: ListView.separated(
+                      //               shrinkWrap: true,
+                      //               padding: const EdgeInsets.symmetric(
+                      //                 vertical: 4,
+                      //               ),
+                      //               itemCount:
+                      //               items.length > 3
+                      //                       ? 3
+                      //                       : items.length,
+                      //               separatorBuilder:
+                      //                   (context, index) => Divider(
+                      //                     height: 1,
+                      //                     thickness: 0.5,
+                      //                     color: ColorRes.grey.withOpacity(0.2),
+                      //                   ),
+                      //               itemBuilder: (context, index) {
+                      //                 if (hasParsed) {
+                      //                   // ✅ Cast item to Map<String, String?>
+                      //                   final cityData = items[index] as Map<String, String?>;
+                      //
+                      //                   log("djhfudfhg ${cityData}");
+                      //
+                      //                   return ListTile(
+                      //                     leading: const Icon(
+                      //                       Icons.location_city_outlined,
+                      //                       size: 20,
+                      //                       color: ColorRes.primary,
+                      //                     ),
+                      //                     title: Text(
+                      //                       cityData['city'] ?? '',
+                      //                       style: TextStyle(
+                      //                         fontSize: AppFontSizes.small,
+                      //                         color: ColorRes.homeBlackFade,
+                      //                       ),
+                      //                     ),
+                      //                     subtitle: Text(
+                      //                       '${cityData['state'] ?? ''}, ${cityData['country'] ?? ''}',
+                      //                       style: TextStyle(
+                      //                         fontSize: AppFontSizes.small,
+                      //                         color: ColorRes.leadGreyColor[700],
+                      //                       ),
+                      //                     ),
+                      //                     onTap: () {
+                      //                       controller.selectedCityZ.text = cityData['city'] ?? '';
+                      //                       googleMapController.predictions.clear();
+                      //                       googleMapController.cityStateList.clear();
+                      //                       FocusScope.of(context).unfocus();
+                      //
+                      //                     },
+                      //                   );
+                      //                 } else {
+                      //                   final city = items[index] as Prediction;
+                      //                   return ListTile(
+                      //                     leading: const Icon(
+                      //                       Icons.location_city_outlined,
+                      //                       size: 20,
+                      //                       color: ColorRes.primary,
+                      //                     ),
+                      //                     title: Text(
+                      //                       city.description ?? '',
+                      //                       style: TextStyle(
+                      //                         fontSize: AppFontSizes.small,
+                      //                         color: ColorRes.homeBlackFade,
+                      //                       ),
+                      //                     ),
+                      //                     onTap: () {
+                      //                       controller.selectedCityZ.text = city.description ?? '';
+                      //                       googleMapController.predictions.clear();
+                      //                       FocusScope.of(context).unfocus();
+                      //
+                      //                     },
+                      //                   );
+                      //                 }
+                      //
+                      //                 // return InkWell(
+                      //                 //   onTap: () {
+                      //                 //     controller.selectedCityZ.text =
+                      //                 //         city
+                      //                 //             .structuredFormatting
+                      //                 //             ?.mainText ??
+                      //                 //         '';
+                      //                 //     googleMapController.predictions
+                      //                 //         .clear();
+                      //                 //     FocusScope.of(context).unfocus();
+                      //                 //   },
+                      //                 //   child: Padding(
+                      //                 //     padding: const EdgeInsets.symmetric(
+                      //                 //       horizontal: 12,
+                      //                 //       vertical: 12,
+                      //                 //     ),
+                      //                 //     child: Row(
+                      //                 //       children: [
+                      //                 //         const Icon(
+                      //                 //           Icons.location_on,
+                      //                 //           color: ColorRes.primary,
+                      //                 //           size: 20,
+                      //                 //         ),
+                      //                 //         const SizedBox(width: 12),
+                      //                 //         Expanded(
+                      //                 //           child: Text(
+                      //                 //             city.description ?? '',
+                      //                 //             style: TextStyle(
+                      //                 //               fontSize:
+                      //                 //                   AppFontSizes.medium,
+                      //                 //               color: ColorRes.textPrimary,
+                      //                 //             ),
+                      //                 //           ),
+                      //                 //         ),
+                      //                 //       ],
+                      //                 //     ),
+                      //                 //   ),
+                      //                 // );
+                      //               },
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       );
+                      //     }),
+                      //   ],
+                      // ),
+                      _buildFieldLabel("City"),
+                      SizedBox(height: 10,),
+                      CitySelectionWidget(
+                        isEditing: true,
+                        controller: controller.selectedCityZ,
+color: ColorRes.primary,
+                        fillColor: ColorRes.white,
+                        onCitySelected: (selectedCity) {
+                          print("✅ Selected city: ${selectedCity.description}");
+                          controller.selectedCityZ.text =
+                              selectedCity.description ?? '';
+                          // You can also store city details in your controller here
+                        },
                       ),
-//                       buildSectionTitle("City"),
-//                       SizedBox(height: 10,),
-//                       CitySelectionWidget(
-//                         isEditing: true,
-//                         controller: controller.selectedCityZ,
-// color: ColorRes.primary,
-//                         fillColor: ColorRes.white,
-//                         onCitySelected: (selectedCity) {
-//                           print("✅ Selected city: ${selectedCity.description}");
-//                           controller.selectedCityZ.text =
-//                               selectedCity.description ?? '';
-//                           // You can also store city details in your controller here
-//                         },
-//                       ),
 
                       const SizedBox(height: 16),
 
@@ -5733,7 +5733,7 @@ class StateSelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final googleMapController = Get.find<GoogleMapSearchController>();
+    final googleMapController = Get.put(GoogleMapSearchController());
     return Column(
       children: [
         // 🔹 Custom TextField

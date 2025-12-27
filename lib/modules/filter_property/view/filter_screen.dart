@@ -253,7 +253,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                     const SizedBox(height: 12),
 
                     Obx(() {
-                      final amenitiesList = IconManager.allAmenities;
+                      final amenitiesList = IconManager.amenitiesItems;
                       final showAll = controllerForFilter.showAllAmenities.value;
                       final displayList = showAll
                           ? amenitiesList

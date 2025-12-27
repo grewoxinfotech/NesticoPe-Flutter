@@ -69,6 +69,11 @@ class AppSvgRes {
   static const String wardrobe = "wardrobe";
   static const String geyser = "geyser";
   static const String wifi = "wifi";
+  //----------------------------new added function--------------------
+  static const String sunlight="sunlight";
+  static const String ventilator="ventilator";
+  static const String parking="parking";
+  static const String rain_water_harvesting="rain-water-harvesting";
 
 
   //---------------------------project section----------------------

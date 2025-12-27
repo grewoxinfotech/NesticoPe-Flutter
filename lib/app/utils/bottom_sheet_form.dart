@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -20,11 +22,16 @@ class ContactOwnerBottom extends StatefulWidget {
   final String titleText;
   final String chatButtonText;
   final String formTitle;
+  final bool isForSell;
+  final double forRentPrice;
+  final double forSellPrice;
+  final String listingType;
   final String nameLabel;
   final String phoneLabel;
   final String emailLabel;
   final String contactButtonText;
   final String termsText;
+
   final String termsClickableText;
   final bool inQuireSubmitted;
   final double? price;
@@ -47,6 +54,7 @@ class ContactOwnerBottom extends StatefulWidget {
     String? price,
     bool isNegotiable,
     bool isAllowAllCondition,
+    String? inquiryType,
     bool isBookSiteVisit,
     String planningToBuy,
     DateTime? selectedDate,
@@ -91,6 +99,10 @@ class ContactOwnerBottom extends StatefulWidget {
     this.phoneIcon = Icons.call,
     this.emailIcon = Icons.email_outlined,
     this.chatButtonIcon = const Icon(Icons.call, color: ColorRes.white),
+    this.forRentPrice = 0.0,
+    this.forSellPrice = 0,
+    this.isForSell = false,
+    required this.listingType,
   });
 
   @override
@@ -101,6 +113,9 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
   final _formKey = GlobalKey<FormState>();
 
   String dropdownValue = 'Option 1';
+  String selectedType = '';
+  double miniPrice=0.0;
+  double currentPrice=0.0;
 
   // TextControllers
   late TextEditingController _nameController;
@@ -118,12 +133,41 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      if(widget.isForSell){
+        if(widget.listingType=="sell"){
+          _negotiablePriceController.text = widget.forSellPrice.toString();
+           miniPrice=widget.forSellPrice*0.98;
+           currentPrice=widget.forSellPrice;
+           log("Current price ${currentPrice} ${miniPrice}");
+        }
+        else if(widget.listingType=="rent"){
+          _negotiablePriceController.text = widget.forRentPrice.toString();
+          miniPrice=widget.forRentPrice*0.98;
+          currentPrice=widget.forRentPrice;
+        }
+      }
+      else{
+        if(widget.listingType=="sell"){
+          _negotiablePriceController.text = widget.forSellPrice.toString();
+          miniPrice=widget.forSellPrice*0.98;
+          currentPrice=widget.forSellPrice;
+        }
+        else if(widget.listingType=="rent"){
+          _negotiablePriceController.text = widget.forRentPrice.toString();
+          miniPrice=widget.forRentPrice*0.98;
+          currentPrice=widget.forRentPrice;
+        }
 
+      }
+    });
+    selectedType = widget.listingType;
     _nameController = TextEditingController();
     _phoneController = TextEditingController();
     _emailController = TextEditingController();
 
     _allowSellerContact = widget.allowSellerContact;
+ 
     _negotiable = widget.negotiable;
     _bookSiteVisit = widget.bookSiteVisit;
 
@@ -158,6 +202,8 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
           _negotiablePriceController.text.trim(),
           _negotiable,
           _bookSiteVisit,
+
+          selectedType,
           _allowSellerContact,
           dropdownValue,
           _selectedDate,
@@ -486,6 +532,83 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                   (value) => value == null || value.isEmpty ? "Required" : null,
             ),
             const SizedBox(height: 20),
+            if (widget.isForSell) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            selectedType == 'sell'
+                                ? ColorRes.primary
+                                : Colors.grey.shade300,
+                        minimumSize: const Size(double.infinity, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          selectedType = 'sell';
+                          _negotiablePriceController.text =
+                              widget.forSellPrice.toString();
+                          miniPrice=widget.forSellPrice*0.98;
+                          currentPrice=widget.forSellPrice;
+                        });
+                      },
+                      child: Text(
+                        'Interested for Sell',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: AppFontWeights.semiBold,
+                          color:
+                              selectedType == 'sell'
+                                  ? Colors.white
+                                  : ColorRes.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            selectedType == 'rent'
+                                ? ColorRes.success
+                                : Colors.grey.shade300,
+                        minimumSize: const Size(double.infinity, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          selectedType = 'rent';
+
+                          _negotiablePriceController.text =
+                              widget.forRentPrice.toString();
+                          miniPrice=widget.forRentPrice*0.98;
+                          currentPrice=widget.forRentPrice;
+                        });
+                      },
+                      child: Text(
+                        'Interested for Rent',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: AppFontWeights.semiBold,
+                          color:
+                              selectedType == 'rent'
+                                  ? Colors.white
+                                  : ColorRes.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 20),
             Row(
               children: [
                 Checkbox(
@@ -510,7 +633,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               ],
             ),
             if (_negotiable) ...[
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 "When are you planning to buy",
                 textAlign: TextAlign.left,
@@ -520,79 +643,147 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                   color: ColorRes.textSecondary,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
-                children:
-                    [
-                      'less than 1 month',
-                      'less than 3 month',
-                      'less than 6 month',
-                      'less than 12 month',
-                    ].map((option) {
-                      return buildChoice(
-                        title: option,
-                        selected: dropdownValue == option,
-                        onTap: () {
-                          setState(() {
-                            dropdownValue = option;
-                          });
-                        },
-                      );
-                    }).toList(),
+                children: [
+                  'less than 1 month',
+                  'less than 3 month',
+                  'less than 6 month',
+                  'less than 12 month',
+                ].map((option) {
+                  return buildChoice(
+                    title: option,
+                    selected: dropdownValue == option,
+                    onTap: () {
+                      setState(() {
+                        dropdownValue = option;
+                      });
+                    },
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 16),
               buildSectionTitle("Negotiable Price"),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: _negotiablePriceController,
-                style: TextStyle(fontSize: AppFontSizes.bodySmall),
-                decoration: InputDecoration(
-                  hintText: 'Enter your negotiable price',
-                  hintStyle: TextStyle(fontSize: AppFontSizes.small),
-                  labelStyle: TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.medium,
-                  ),
-                  prefixIcon: Icon(Icons.currency_rupee_outlined, size: 18),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: ColorRes.overlay),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: ColorRes.overlay),
-                  ),
-                ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Required";
-                  }
+              // TextFormField(
+              //   controller: _negotiablePriceController,
+              //   style: TextStyle(fontSize: AppFontSizes.bodySmall),
+              //   decoration: InputDecoration(
+              //     hintText: 'Enter your negotiable price',
+              //     hintStyle: TextStyle(fontSize: AppFontSizes.small),
+              //     labelStyle: TextStyle(
+              //       fontSize: AppFontSizes.small,
+              //       fontWeight: AppFontWeights.medium,
+              //     ),
+              //     prefixIcon: const Icon(Icons.currency_rupee_outlined, size: 18),
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(12),
+              //       borderSide: const BorderSide(color: ColorRes.overlay),
+              //     ),
+              //     enabledBorder: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(12),
+              //       borderSide: const BorderSide(color: ColorRes.overlay),
+              //     ),
+              //   ),
+              //   keyboardType: TextInputType.number,
+              //   validator: (value) {
+              //
+              //     if (value == null || value.trim().isEmpty) {
+              //       return "Required";
+              //     }
+              //
+              //     final enteredPrice = double.tryParse(value);
+              //     if (enteredPrice == null) {
+              //       return "Enter a valid amount";
+              //     }
+              //
+              //     final originalPrice = int.tryParse(_negotiablePriceController.text)??0;
+              //     final minAllowedPrice = originalPrice * 0.98;
+              //     print("Price $originalPrice  $minAllowedPrice");
+              //
+              //     if (enteredPrice < minAllowedPrice || enteredPrice >= originalPrice) {
+              //       return "Price must be between "
+              //           "${Formatter.formatPrice(minAllowedPrice)} "
+              //           "and ${Formatter.formatPrice(originalPrice)}";
+              //     }
+              //
+              //     return null;
+              //   },
+              // ),
+              // const SizedBox(height: 12),
+             StatefulBuilder(builder:(context, setState) {
+               log("Lst Current price ${currentPrice} ${miniPrice}");
 
-                  final enteredPrice = double.tryParse(value);
-                  if (enteredPrice == null) {
-                    return "Enter a valid amount";
-                  }
+               return Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: [
+                   TextFormField(
+                     controller: _negotiablePriceController,
+                     style: TextStyle(fontSize: AppFontSizes.bodySmall),
+                     decoration: InputDecoration(
+                       hintText: 'Enter your negotiable price',
+                       hintStyle: TextStyle(fontSize: AppFontSizes.small),
+                       labelStyle: TextStyle(
+                         fontSize: AppFontSizes.small,
+                         fontWeight: AppFontWeights.medium,
+                       ),
+                       prefixIcon: const Icon(Icons.currency_rupee_outlined, size: 18),
+                       border: OutlineInputBorder(
+                         borderRadius: BorderRadius.circular(12),
+                         borderSide: const BorderSide(color: ColorRes.overlay),
+                       ),
+                       enabledBorder: OutlineInputBorder(
+                         borderRadius: BorderRadius.circular(12),
+                         borderSide: const BorderSide(color: ColorRes.overlay),
+                       ),
+                     ),
+                     keyboardType: TextInputType.number,
+                     validator: (value) {
 
-                  final originalPrice = widget.price!;
+                       if (value == null || value.trim().isEmpty) {
+                         return "Required";
+                       }
 
-                  // Calculate 2% lower limit
-                  final minAllowedPrice = originalPrice * 0.98;
+                       final enteredPrice = num.tryParse(value);
+                       if (enteredPrice == null) {
+                         return "Enter a valid amount";
+                       }
 
-                  if (enteredPrice < minAllowedPrice ||
-                      enteredPrice >= originalPrice) {
-                    return "Price must be between "
-                        "${Formatter.formatPrice(minAllowedPrice)} "
-                        "and ${Formatter.formatPrice(originalPrice)}";
-                  }
+                       if (enteredPrice < miniPrice || enteredPrice > currentPrice) {
+                         return "Price must be between "
+                             "${Formatter.formatFullPrice(miniPrice)} "
+                             "and ${Formatter.formatPrice(currentPrice)}";
+                       }
 
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
+                       return null;
+                     },
+                   ),
+                   const SizedBox(height: 12),
+                   Text(
+                     "Original property price: ${Formatter.formatPrice(currentPrice)}",
+                     style: TextStyle(
+                       fontSize: AppFontSizes.caption,
+                       fontWeight: AppFontWeights.medium,
+                       color: ColorRes.textSecondary,
+                     ),
+                   ),
+                   const SizedBox(height: 4),
+                   Text(
+                     "Minimum acceptable price (2% discount): ${Formatter.formatFullPrice(miniPrice)}",
+                     style: TextStyle(
+                       fontSize: AppFontSizes.caption,
+                       fontWeight: AppFontWeights.medium,
+                       color: ColorRes.primary,
+                     ),
+                   ),
+                 ],
+               );
+             },)
+
             ],
+
             Row(
               children: [
                 Checkbox(
@@ -791,24 +982,31 @@ class _DateTimeDropdownExampleState extends State<DateTimeDropdownExample> {
         //       (value) => value == null || value.isEmpty ? "Required" : null,
         // ),
         NesticoPeDropdownField<String>(
-
           value: selectedDate,
           hintText: "Select date",
           prefixIcon: Icons.calendar_today_outlined,
           items:
-          dateList
-              .map(
-                (date) => DropdownMenuItem(value: date, child: Text(date,style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)),
-
-          )
-              .toList(),
+              dateList
+                  .map(
+                    (date) => DropdownMenuItem(
+                      value: date,
+                      child: Text(
+                        date,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
           onChanged: (val) {
             setState(() => selectedDate = val);
             _notifyParent();
           },
           darkText: true,
-      validator:
-          (value) => value == null || value.isEmpty ? "Required" : null,
+          validator:
+              (value) => value == null || value.isEmpty ? "Required" : null,
         ),
 
         const SizedBox(height: 8),
@@ -835,18 +1033,25 @@ class _DateTimeDropdownExampleState extends State<DateTimeDropdownExample> {
         //   validator:
         //       (value) => value == null || value.isEmpty ? "Required" : null,
         // ),
-
         NesticoPeDropdownField<String>(
-
           value: selectedTime,
           hintText: "Select time",
           prefixIcon: Icons.access_time_outlined,
           items:
-          timeList
-              .map(
-                (time) => DropdownMenuItem(value: time, child: Text(time,style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),)),
-          )
-              .toList(),
+              timeList
+                  .map(
+                    (time) => DropdownMenuItem(
+                      value: time,
+                      child: Text(
+                        time,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
           onChanged: (val) {
             setState(() => selectedTime = val);
             _notifyParent();

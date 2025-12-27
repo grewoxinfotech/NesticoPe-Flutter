@@ -53,6 +53,19 @@ class ProjectFilterController extends GetxController {
     super.onInit();
     _loadData();
   }
+  RxList<String> amenities=<String>[].obs;
+  final showAllAmenities = false.obs;
+  void addBuilderAmenities(String items) {
+    if (amenities.contains(items)) {
+      amenities.remove(items);
+    } else {
+      amenities.add(items);
+    }
+    amenities.refresh();
+  }
+  void toggleAmenitiesView() {
+    showAllAmenities.value = !showAllAmenities.value;
+  }
 
   Future<void> _loadData() async {
     cityList.value =

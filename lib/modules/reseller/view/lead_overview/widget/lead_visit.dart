@@ -61,16 +61,23 @@ class _LeadVisitState extends State<LeadVisit> {
     // TODO: implement initState
     super.initState();
     final selectedInquiry = propertyInquiryController?.selectedInquiry.value;
+
     if (selectedInquiry != null) {
       // Set visit id
       print(
-        'Setting visit ID for user ${widget.buyerID} and property ${widget.propertyId}',
+        'Setting visit ID for uservcgfd ${widget.buyerID} and property ${widget.propertyId}',
       );
       print(
         'Setting visit ID for user ${selectedInquiry.toMap()} and property ${selectedInquiry.propertyId}',
       );
       leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
       print('Visit ID set: ${leadVisitController.items.map((e) => e.toMap())}');
+    }
+    else if(widget.propertyId!=null){
+      print(
+        'Setting visit ID for uservcgfd ${widget.buyerID} and property ${widget.propertyId}',
+      );
+      leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
     }
   }
 

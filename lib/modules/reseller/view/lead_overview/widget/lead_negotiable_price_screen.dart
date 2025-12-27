@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
 import 'package:intl/intl.dart';
 import '../../../../../app/constants/color_res.dart';
@@ -80,183 +81,246 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
   }
 
   Widget _buildNegotiableCard(
-    NegotiableItem item,
-    BuildContext context,
-    LeadPropertyNegotiablePriceController controller,
-  ) {
-    final theme = Theme.of(context);
-
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
+      NegotiableItem item,
+      BuildContext context,
+      LeadPropertyNegotiablePriceController controller,
+      ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        border: Border.all(color: ColorRes.leadGreyColor.shade300),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Obx(() =>  _buildLabelValue('Buyer ID', controller.selectedVisit.value?.username ?? '-')),
-                ),
-              ],
-            ),
-            Divider(height: 20,color: ColorRes.leadGreyColor.shade300,),
-            // Top Row - Buyer and Selle
-            Row(
-              children: [
-                Column(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // -------------------- BUYER + STATUS --------------------
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // BUYER SECTION
+              Expanded(
+                flex: 1,
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLabelValue(
-                      'Proposed New Price',
-                      '₹ ${_formatNumber(item.negotiablePrice)}',
+                    const Text(
+                      "BUYER",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.medium,
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    _buildLabelValue(
-                      'Negotiable Price',
-                      '₹ ${_formatNumber(item.previousNegotiablePrice)}',
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Column(
-                  children: [
-                    buildSectionTitle('New Status'),
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: getStatusColor(item.newStatus).withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(8),
+                        color: ColorRes.leadGreyColor.shade200,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Text(
-                        (capitalizeEachWord(item.newStatus) ?? 'N/A'),
-                        style: TextStyle(
-                          fontWeight: AppFontWeights.semiBold,
-                          fontSize: AppFontSizes.small,
-                          color: getStatusColor(item.newStatus),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 6),
-                    buildSectionTitle('Old Status'),
-                    SizedBox(height: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: getStatusColor(item.oldStatus).withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child:
-                          item.oldStatus == null
-                              ? Text(
-                                ('N/A'),
-                                style: TextStyle(
-                                  fontWeight: AppFontWeights.semiBold,
-                                  fontSize: AppFontSizes.small,
-                                  color: getStatusColor(item.oldStatus),
-                                ),
-                              )
-                              : Text(
-                                (capitalizeEachWord(item.oldStatus ?? 'N/A') ??
-                                    'N/A'),
-                                style: TextStyle(
-                                  fontWeight: AppFontWeights.semiBold,
-                                  fontSize: AppFontSizes.small,
-                                  color: getStatusColor(item.oldStatus),
-                                ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.account_circle_outlined,
+                              size: 20, color: Colors.grey),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              controller.selectedVisit.value?.username ??
+                                  'John D.',
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textColor,
+                                fontSize: AppFontSizes.bodySmall,
                               ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
 
-            const SizedBox(height: 8),
+              const SizedBox(width: 16),
 
-            // Dates
-            _buildLabelValue('Created At', formatDate(item.createdAt)),
-            _buildLabelValue('Updated At', formatDate(item.updatedAt)),
-            if (item.rejectionReason?.isNotEmpty ?? false) ...[
-              _buildLabelValue('Rejection Reason', item.rejectionReason ?? ''),
+              // STATUS SECTION
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "CURRENT STATUS",
+                      style: TextStyle(
+                        color: ColorRes.leadGreyColor.shade600,
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                         Icon(Icons.circle, size: 10, color:getStatusColor(item.newStatus)),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            (item.newStatus!=null)?capitalizeEachWord(item.newStatus):"N/A",
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: AppFontWeights.semiBold,
+                              fontSize: AppFontSizes.bodySmall,
+                              color: ColorRes.textColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                         Icon(Icons.circle, size: 10, color: getStatusColor(item.oldStatus)),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                              (item.oldStatus!=null)?capitalizeEachWord(item.oldStatus):"N/A",
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: AppFontWeights.semiBold,
+                              fontSize: AppFontSizes.bodySmall,
+                              color: ColorRes.textColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ],
+          ),
 
-            const SizedBox(height: 12),
+          const SizedBox(height: 24),
 
-            // Action Buttons
-            Row(
-              children: [
+          // -------------------- PRICE SECTION --------------------
 
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: reject action
-                         controller.openAddFollowUpDialog();
-                        controller.populatedContainData(item);
-                      },
-                      icon: const Icon(Icons.timer_outlined, color: ColorRes.white),
-                      label: const Text(
-                        "Rejected",
-                        style: TextStyle(color: ColorRes.white),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorRes.error,
-                        side: const BorderSide(color: ColorRes.error),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Negotiable Price",
+                style: TextStyle(
+                  color: ColorRes.leadGreyColor.shade600,
+                  fontWeight: AppFontWeights.medium,
+                  fontSize: AppFontSizes.small,
+                ),
+              ),
+              Text(
+                "Previous Price",
+                style: TextStyle(
+                  color: ColorRes.leadGreyColor.shade600,
+                  fontWeight: AppFontWeights.medium,
+                  fontSize: AppFontSizes.small,
+                ),
+              ),
+
+            ],
+          ),
+          Row(
+
+            children: [
+              Expanded(
+                child: Text(
+                  Formatter.formatPrice(
+                      num.tryParse(item.negotiablePrice ?? '0') ?? 0),
+                  style:  TextStyle(
+                    fontSize: AppFontSizes.body,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textColor,
+                  ),
+                ),
+              ),
+
+
+              Text(
+                "${Formatter.formatPrice(num.tryParse(item.previousNegotiablePrice ?? '0.0') ?? 0)}",
+                style: TextStyle(
+                  color: ColorRes.textColor,
+                  fontWeight: AppFontWeights.medium,
+                  fontSize: AppFontSizes.body,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // -------------------- BUTTONS --------------------
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    controller.openAddFollowUpDialog();
+                    controller.populatedContainData(item);
+                  },
+                  icon: const Icon(Icons.close, color: ColorRes.error),
+                  label: const Text(
+                    "Reject",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: ColorRes.error,
                     ),
                   ),
-                  const SizedBox(width: 12),
-
-
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: accept action
-                        // if(visit.status!="confirmed"){
-                        //   controller.approvedVisite(visit.id??'');
-                        // }else{
-                        //
-                        // }
-                        controller.updateTheDataApproved(item.id??'');
-
-
-
-                      },
-                      icon: const Icon(Icons.check, color: Colors.white),
-                      label: const Text("Approved"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: const Color(0xFFFFEAEA),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    controller.updateTheDataApproved(item.id ?? '');
+                  },
+                  icon: const Icon(Icons.check, color: Colors.white),
+                  label: const Text(
+                    "Approve",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-
-              ],
-            ),
-          ],
-        ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
+
+
 
   Widget _buildLabelValue(String label, String value) {
     return Padding(

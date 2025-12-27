@@ -455,16 +455,19 @@ class FinancialInfo {
   final double? pricePerSqft;
   final double? brokerCommission;
   final bool? brokerNegotiable;
+  final bool? is_for_sellorrent;
   final double? propertySecurityDeposit;
   final int? lockInPeriod;
   final int? noticePeriod;
   final bool? negotiable;
   final double? maintenanceCharges;
-  final double? pastFiveYearPrice;
-  final double? futureFiveYearPrice;
+  final List<PropertyPriceYearly>? propertyPricePast;
+  final List<PropertyPriceYearly>? propertyPriceFuture;
+
   final dynamic parkingCharges; // can be string or number
 
   FinancialInfo({
+    this.is_for_sellorrent,
     this.propertyPrice,
     this.propertyRentPerMonth,
     this.monthlyRent,
@@ -475,7 +478,7 @@ class FinancialInfo {
     this.lockInPeriod,
     this.noticePeriod,
     this.negotiable,
-    this.futureFiveYearPrice,this.pastFiveYearPrice,
+    this.propertyPriceFuture,this.propertyPricePast,
     this.maintenanceCharges,
     this.parkingCharges,
   });
@@ -488,8 +491,11 @@ class FinancialInfo {
       monthlyRent: (json['monthlyRent'] as num?)?.toDouble(),
       pricePerSqft: (json['price_per_sqft'] as num?)?.toDouble(),
       brokerCommission: (json['broker_commission'] as num?)?.toDouble(),
-      futureFiveYearPrice:json['property_price_future'] ??0.0,
-      pastFiveYearPrice:json['property_price_past'] ??0.0,
+is_for_sellorrent:  json['is_for_sellorrent'] is bool
+    ? json['is_for_sellorrent']
+    : (json['is_for_sellorrent']?.toString().toLowerCase() == 'true'),
+propertyPriceFuture:json['property_price_future'] ??0.0,
+      propertyPricePast:json['property_price_past'] ??0.0,
       brokerNegotiable:
           json['broker_negotiable'] is bool
               ? json['broker_negotiable']
@@ -515,6 +521,8 @@ class FinancialInfo {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
+
+    // --- Base financial fields ---
     if (propertyPrice != null) data['property_price'] = propertyPrice;
     if (propertyRentPerMonth != null)
       data['property_rent_per_month'] = propertyRentPerMonth;
@@ -522,6 +530,7 @@ class FinancialInfo {
     if (pricePerSqft != null) data['price_per_sqft'] = pricePerSqft;
     if (brokerCommission != null) data['broker_commission'] = brokerCommission;
     if (brokerNegotiable != null) data['broker_negotiable'] = brokerNegotiable;
+    if (is_for_sellorrent != null) data['is_for_sellorrent'] = is_for_sellorrent;
     if (propertySecurityDeposit != null)
       data['property_security_deposit'] = propertySecurityDeposit;
     if (lockInPeriod != null) data['lock_in_period'] = lockInPeriod;
@@ -530,7 +539,43 @@ class FinancialInfo {
     if (maintenanceCharges != null)
       data['maintenance_charges'] = maintenanceCharges;
     if (parkingCharges != null) data['parking_charges'] = parkingCharges;
+
+    // --- 🏠 Past 5-Year Price Data ---
+    if (propertyPricePast != null && propertyPricePast!.isNotEmpty) {
+      data['property_price_past'] =
+          propertyPricePast!.map((e) => e.toJson()).toList();
+    }
+
+    // --- 🔮 Future 5-Year Price Data ---
+    if (propertyPriceFuture != null && propertyPriceFuture!.isNotEmpty) {
+      data['property_price_future'] =
+          propertyPriceFuture!.map((e) => e.toJson()).toList();
+    }
+
     return data;
+  }
+
+}
+class PropertyPriceYearly {
+  final int? year;
+  final double? price;
+
+
+  PropertyPriceYearly({this.year, this.price});
+
+  factory PropertyPriceYearly.fromJson(Map<String, dynamic> json) {
+    return PropertyPriceYearly(
+      year: json['year'],
+      price: (json['price'] as num?)?.toDouble(),
+
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (year != null) 'year': year,
+      if (price != null) 'price': price,
+    };
   }
 }
 

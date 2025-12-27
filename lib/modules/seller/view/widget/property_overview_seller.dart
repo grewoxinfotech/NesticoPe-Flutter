@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -15,6 +17,10 @@ import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/controllers/property_controller.dart';
 import '../../../property/views/property_detail_screen.dart';
 import '../../../property/views/widgets/property_media_gallery.dart';
+import '../../../reseller/view/lead_overview/widget/lead_visit.dart';
+import '../../module/lead_screen/controllers/lead_property_inquiry_controller.dart';
+import '../../module/lead_screen/controllers/lead_property_negotiable_price_controller.dart';
+import '../../module/lead_screen/controllers/lead_visit_controller.dart';
 import '../../module/lead_screen/views/lead_screen_enhanced.dart';
 
 // class PropertyOverviewSellerScreen extends StatelessWidget {
@@ -128,6 +134,9 @@ class PropertyOverviewSellerScreen extends StatefulWidget {
 class _PropertyOverviewSellerScreenState
     extends State<PropertyOverviewSellerScreen> {
   late final PropertyController controller;
+  final LeadPropertyInquiryController leadPropertyInquiryController=Get.put(LeadPropertyInquiryController());
+  final LeadVisitController leadVisitController=Get.put(LeadVisitController());
+  final LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController=Get.put(LeadPropertyNegotiablePriceController());
   final Rxn<Items> _property = Rxn<Items>();
   final RxBool _isLoading = true.obs;
 
@@ -235,6 +244,7 @@ class _PropertyOverviewSellerScreenState
         final property = _property.value!;
 
         return SingleChildScrollView(
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -294,6 +304,23 @@ class _PropertyOverviewSellerScreenState
                 Icons.label_important_outline,
                 () {
                   Get.to(() => SellerLeadScreen(propertyId: property.id ?? ''));
+                },
+              ),
+              SizedBox(height: 10),
+              _buildMenuItem(
+                "Visit",
+                Icons.history,
+                    () {
+                      Get.to(
+                            () => LeadVisit(
+                          leadVisitController: leadVisitController,
+                          propertyInquiryController:
+                          leadPropertyInquiryController,
+                          propertyId:
+                          property.id,
+                        ),
+                      );
+
                 },
               ),
 

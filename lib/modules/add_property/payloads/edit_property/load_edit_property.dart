@@ -356,21 +356,63 @@ class LoadEditPropertyPayload extends GetxController {
             0.0)
         .toStringAsFixed(0);
 
-    controller.pastFiveYearPrice.text =
-        (property.propertyDetails?.financialInfo?.pastFiveYearPrice != null &&
-                property.propertyDetails!.financialInfo!.pastFiveYearPrice! !=
-                    0)
-            ? property.propertyDetails!.financialInfo!.pastFiveYearPrice!
-                .toStringAsFixed(0)
-            : '0';
+    // controller.pastFiveYearPrice.text =
+    //     (property.propertyDetails?.financialInfo?.propertyPricePast != null &&
+    //             property.propertyDetails!.financialInfo!.pastFiveYearPrice! !=
+    //                 0)
+    //         ? property.propertyDetails!.financialInfo!.pastFiveYearPrice!
+    //             .toStringAsFixed(0)
+    //         : '0';
+    //
+    // controller.futureFiveYearPrice.text =
+    //     (property.propertyDetails?.financialInfo?.futureFiveYearPrice != null &&
+    //             property.propertyDetails!.financialInfo!.futureFiveYearPrice! !=
+    //                 0)
+    //         ? property.propertyDetails!.financialInfo!.futureFiveYearPrice!
+    //             .toStringAsFixed(0)
+    //         : '0';
+    // 🏠 Past 5 Years Prices
+    // is_for_sellorrent:isPredefinedCostEnabled.value,
+    // monthlyRent:double.tryParse(
+    // rent_MonthilyRent.text.trim(),
+    // ),
+    controller.isPredefinedCostEnabled.value=property.propertyDetails?.financialInfo?.is_for_sellorrent??false;
+    // controller.rent_MonthilyRent.text=property.propertyDetails?.financialInfo?.monthlyRent.toString()??'0.0';
+    // controller.sell_ExpectedPrice.text=property.propertyDetails?.financialInfo?.propertyPrice.toString()??'0.0';
 
-    controller.futureFiveYearPrice.text =
-        (property.propertyDetails?.financialInfo?.futureFiveYearPrice != null &&
-                property.propertyDetails!.financialInfo!.futureFiveYearPrice! !=
-                    0)
-            ? property.propertyDetails!.financialInfo!.futureFiveYearPrice!
-                .toStringAsFixed(0)
-            : '0';
+    if (property.propertyDetails?.financialInfo?.propertyPricePast != null &&
+        property.propertyDetails!.financialInfo!.propertyPricePast!.isNotEmpty) {
+      final pastList = property.propertyDetails!.financialInfo!.propertyPricePast!;
+      for (int i = 0; i < controller.pastPrices.length; i++) {
+        if (i < pastList.length) {
+          controller.pastPrices[i].text = (pastList[i].price ?? 0).toStringAsFixed(0);
+        } else {
+          controller.pastPrices[i].text = '0';
+        }
+      }
+    } else {
+      for (var textCtrl in controller.pastPrices) {
+        textCtrl.text = '0';
+      }
+    }
+
+// 🔮 Future 5 Years Prices
+    if (property.propertyDetails?.financialInfo?.propertyPriceFuture != null &&
+        property.propertyDetails!.financialInfo!.propertyPriceFuture!.isNotEmpty) {
+      final futureList = property.propertyDetails!.financialInfo!.propertyPriceFuture!;
+      for (int i = 0; i < controller.futurePrices.length; i++) {
+        if (i < futureList.length) {
+          controller.futurePrices[i].text = (futureList[i].price ?? 0).toStringAsFixed(0);
+        } else {
+          controller.futurePrices[i].text = '0';
+        }
+      }
+    } else {
+      for (var textCtrl in controller.futurePrices) {
+        textCtrl.text = '0';
+      }
+    }
+
 
     /// Security Deposit
     controller.rent_SecurityDeposit.text =

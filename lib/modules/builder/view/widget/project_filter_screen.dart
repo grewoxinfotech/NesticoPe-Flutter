@@ -470,6 +470,7 @@ import 'package:housing_flutter_app/modules/add_property/view/create_property.da
 import 'package:housing_flutter_app/modules/builder/controller/project_filter_controller.dart';
 import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
 import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
+import '../../../../app/manager/icon_manager.dart';
 import '../../../filter_property/view/filter_screen.dart';
 import '../../../filter_property/view/widget/buy_componet/buy_component.dart';
 import '../../../filter_property/view/widget/common_component/bhk_list.dart';
@@ -478,7 +479,7 @@ import '../../../search_property/model/search_model.dart';
 import '../../../search_property/view/search_screen.dart';
 
 class ProjectFilterScreen extends StatelessWidget {
-  final Function(Map<String, dynamic>) onApply;
+  final Function(Map<String, String>) onApply;
   final Map<String, dynamic>? initialFilters;
 
   const ProjectFilterScreen({
@@ -489,13 +490,15 @@ class ProjectFilterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final controller = Get.put(ProjectFilterController());
 
     // 🔥 SET INITIAL FILTER VALUES
     if (initialFilters != null) {
       if (initialFilters!["propertyTypes"] != null &&
           initialFilters!["propertyTypes"].toString().isNotEmpty) {
-        controller.selectedPropertyType.value = initialFilters!["propertyTypes"];
+        controller.selectedPropertyType.value =
+            initialFilters!["propertyTypes"];
       }
       if (initialFilters!["city"] != null &&
           initialFilters!["city"].toString().isNotEmpty) {
@@ -524,21 +527,20 @@ class ProjectFilterScreen extends StatelessWidget {
             children: [
               // PROPERTY TYPE
               Obx(
-                    () => _dropdown(
+                () => _dropdown(
                   title: "Property Type",
                   value: controller.selectedPropertyType.value,
                   items: controller.propertyTypes,
                   onChanged: (val) {
                     controller.selectedPropertyType.value = val!;
                   },
-
                 ),
               ),
               const SizedBox(height: 16),
 
               // CITY
               Obx(
-                    () => _dropdown(
+                () => _dropdown(
                   title: 'City',
                   hint: 'Select city',
                   value: controller.selectedCity.value,
@@ -551,33 +553,205 @@ class ProjectFilterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+                padding: EdgeInsets.symmetric(vertical: 12),
 
                 decoration: BoxDecoration(
-                    color: ColorRes.white,
-                    borderRadius: BorderRadius.circular(12)
+                  color: ColorRes.white,
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   children: [
-                    buildToggle(
-                      "Verify RERA ID",
-                      controller.isRERAVerified,
-                    ),
-                    SizedBox(height: 10,),
+                    buildToggle("Verify RERA ID", controller.isRERAVerified),
+                    SizedBox(height: 10),
                     buildToggle(
                       "Property Has Photos",
                       controller.isPropertyHaveImage,
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 10),
                     buildToggle(
                       "Property Has Videos",
                       controller.isPropertyHaveVideo,
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 10),
                     buildToggle(
                       "Project Has Brochure",
                       controller.isPropertyHaveBroucher,
                     ),
+                  ],
+                ),
+              ),
+              Text(
+                'Amenities',
+                style: TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  color: ColorRes.textColor,
+                  fontWeight: AppFontWeights.semiBold,
+                ),
+              ),
+
+              // // Property Type & Status Card
+              // _buildCard(
+              //   theme: theme,
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       buildBuilderDefaultText('Property Type'),
+              //       const SizedBox(height: 16),
+              //       builderPropertyType(controller),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+
+              // Amenities Card
+              // ------------------ AMENITIES SECTION ------------------
+              _buildCard(
+                theme: theme,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 12),
+
+                    Obx(() {
+                      final amenitiesList = IconManager.allAmenities;
+                      final showAll = controller.showAllAmenities.value;
+                      final displayList =
+                          showAll
+                              ? amenitiesList
+                              : amenitiesList.take(9).toList();
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Amenities Grid
+
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children:
+                                displayList.map((amenity) {
+                                  final isSelected = controller.amenities
+                                      .contains(amenity.title);
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      controller.addBuilderAmenities(
+                                        amenity.title,
+                                      );
+                                      debugPrint(
+                                        "Selected Amenities: ${controller.amenities}",
+                                      );
+                                    },
+                                    child: Container(
+                                      width:
+                                          MediaQuery.of(context).size.width *
+                                          0.28,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 10,
+                                        horizontal: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            isSelected
+                                                ? theme.primaryColor
+                                                    .withOpacity(0.1)
+                                                : ColorRes.white,
+                                        borderRadius: BorderRadius.circular(
+                                          12,
+                                        ),
+                                        border: Border.all(
+                                          color:
+                                              isSelected
+                                                  ? theme.primaryColor
+                                                  : ColorRes
+                                                      .leadGreyColor
+                                                      .shade300,
+                                          width: 1.2,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(
+                                              0.08,
+                                            ),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          // If you have SVG icons for amenities, uncomment:
+                                          // AppSvgIcon(
+                                          //   assetName: amenity.key,
+                                          //   size: 26,
+                                          //   folder: 'amenities',
+                                          //   color: isSelected
+                                          //       ? theme.primaryColor
+                                          //       : ColorRes.leadGreyColor.shade600,
+                                          // ),
+                                          // const SizedBox(height: 4),
+                                          Text(
+                                            amenity.title,
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color:
+                                                  isSelected
+                                                      ? theme.primaryColor
+                                                      : ColorRes.textColor
+                                                          .withOpacity(0.9),
+                                              fontWeight:
+                                                  isSelected
+                                                      ? FontWeight.w600
+                                                      : FontWeight.w400,
+                                              fontSize:
+                                                  AppFontSizes.extraSmall,
+                                              height: 1.3,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                          ),
+
+                          // Show More / Less toggle
+                          if (amenitiesList.length > 9)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 14),
+                              child: Center(
+                                child: GestureDetector(
+                                  onTap: controller.toggleAmenitiesView,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        showAll ? 'Show Less' : 'Show More',
+                                        style: TextStyle(
+                                          color: theme.primaryColor,
+                                          fontSize: AppFontSizes.small,
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Icon(
+                                        showAll
+                                            ? Icons.keyboard_arrow_up
+                                            : Icons.keyboard_arrow_down,
+                                        color: theme.primaryColor,
+                                        size: 18,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -586,7 +760,7 @@ class ProjectFilterScreen extends StatelessWidget {
                 'BHK Type',
                 style: TextStyle(
                   fontSize: AppFontSizes.medium,
-                  color:ColorRes.textColor,
+                  color: ColorRes.textColor,
                   fontWeight: AppFontWeights.semiBold,
                 ),
               ),
@@ -603,12 +777,12 @@ class ProjectFilterScreen extends StatelessWidget {
                 'Budget Range',
                 style: TextStyle(
                   fontSize: AppFontSizes.medium,
-                  color:ColorRes.textColor,
+                  color: ColorRes.textColor,
                   fontWeight: AppFontWeights.semiBold,
                 ),
               ),
               Obx(
-                    () => BudgetFilterChange(
+                () => BudgetFilterChange(
                   minSelected: controller.min.value,
                   maxSelected: controller.max.value,
                   budgetList: controller.budgetValues.value,
@@ -638,16 +812,18 @@ class ProjectFilterScreen extends StatelessWidget {
                     Prediction selectedCity = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CommonSearchField(
-                          selectedCity: controller.selectedCity.value,
-                          isLocality: true,
-                          onCitySelected: (city) {
-                            Navigator.pop(context, city);
-                          },
-                          isFromAddProperty: true,
-                          initialSearchText: controller.selectedLocality.value,
-                          hintText: 'Locality',
-                        ),
+                        builder:
+                            (context) => CommonSearchField(
+                              selectedCity: controller.selectedCity.value,
+                              isLocality: true,
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              initialSearchText:
+                                  controller.selectedLocality.value,
+                              hintText: 'Locality',
+                            ),
                       ),
                     );
 
@@ -699,15 +875,27 @@ class ProjectFilterScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         final filterData = {
-                          "propertyTypes": controller.selectedPropertyType.value,
-                          "city": controller.selectedCity.value,
-                          "location": controller.selectedLocality.value,
+                          "propertyTypes":
+                              controller.selectedPropertyType.value.toString(),
+                          "city": controller.selectedCity.value.toString(),
+                          "location": controller.selectedLocality.value.toString(),
+                          'reraId': controller.isRERAVerified.value.toString(),
+                          'hasPhotos': controller.isPropertyHaveImage.value.toString(),
+                          'hasVideos': controller.isPropertyHaveVideo.value.toString(),
+                          'hasBrochure': controller.isPropertyHaveBroucher.value.toString(),
+                          'minPrice': controller.min.value.toString(),
+                          'maxPrice':controller.max.value.toString(),
+                          'bhk':controller.bhkType.value.toString(),
+                         if(controller.amenities.isNotEmpty)
+                           'amenities': controller.amenities.value.map(
+                                 (e) => e.toLowerCase().replaceAll(" ", "_"),
+                           ).toString(),
                         };
 
                         final nonNullFilters = Map.fromEntries(
                           filterData.entries.where(
-                                (e) =>
-                            e.value != null &&
+                            (e) =>
+                                e.value != null &&
                                 e.value.toString().trim().isNotEmpty,
                           ),
                         );
@@ -755,11 +943,12 @@ class ProjectFilterScreen extends StatelessWidget {
       darkText: true,
       title: title,
       items:
-      items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+          items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: onChanged,
     );
   }
 }
+
 class BHKProjectTypes extends StatelessWidget {
   BHKProjectTypes({
     super.key,
@@ -802,12 +991,14 @@ class BHKProjectTypes extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color:
-                    isSelected
-                        ? ColorRes.primary.withOpacity(0.1)
-                        : ColorRes.white,
+                        isSelected
+                            ? ColorRes.primary.withOpacity(0.1)
+                            : ColorRes.white,
                     border: Border.all(
                       color:
-                      isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade300,
+                          isSelected
+                              ? ColorRes.primary
+                              : ColorRes.leadGreyColor.shade300,
                       width: isSelected ? 1.8 : 1.5,
                     ),
                     borderRadius: BorderRadius.circular(10),
@@ -833,4 +1024,8 @@ class BHKProjectTypes extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildCard({required ThemeData theme, required Widget child}) {
+  return child;
 }

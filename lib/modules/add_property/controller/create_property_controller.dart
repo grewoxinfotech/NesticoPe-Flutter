@@ -49,6 +49,53 @@ class CreatePropertyController extends GetxController {
   ImagePicker picker = ImagePicker();
   RxBool isLoading = false.obs;
 
+
+
+
+
+  ///=======================================26-12-2025=============================================================
+  final isPredefinedCostEnabled = false.obs;
+
+  final pastPrices = List.generate(5, (_) => TextEditingController());
+  final futurePrices = List.generate(5, (_) => TextEditingController());
+
+  /// 🏠 Past 5 Years Prices (Required)
+  List<PropertyPriceYearly> getPastPriceData() {
+    final currentYear = DateTime.now().year;
+
+    return List.generate(5, (index) {
+      final year = currentYear - (index + 1);
+      final priceText = pastPrices[index].text.trim();
+      final price = double.tryParse(priceText) ?? 0.0;
+
+      return PropertyPriceYearly(
+        year: year,
+        price: price,
+      );
+    });
+  }
+
+
+  /// 🔮 Future 5 Years Prices (Optional)
+  List<PropertyPriceYearly> getFuturePriceData() {
+    final currentYear = DateTime.now().year;
+
+    return List.generate(5, (index) {
+      final year = currentYear + (index + 1);
+      final priceText = futurePrices[index].text.trim();
+      final price = double.tryParse(priceText.isEmpty ? "0" : priceText) ?? 0;
+
+      return PropertyPriceYearly(
+        year: year,
+        price: price,
+      );
+    });
+  }
+
+
+
+
+
   ////////////document upload //////////////////
 
   ///======================================================================
@@ -149,7 +196,7 @@ class CreatePropertyController extends GetxController {
   var rent_lockInPeriod = "".obs;
   var rent_Custom_LockIn_Period = TextEditingController();
   var rent_CoveredParking = '0'.obs;
-  var rent_MonthilyRent = TextEditingController();
+  var rent_MonthilyRent = TextEditingController(text: 0.toString());
   var rent_SecurityDeposit = TextEditingController();
   var rent_AvailableFrom = TextEditingController();
   var sell_rent_Flat_No = TextEditingController();
@@ -3170,8 +3217,13 @@ class CreatePropertyController extends GetxController {
                   propertyRentPerMonth: double.tryParse(
                     rent_MonthilyRent.text.trim(),
                   ),
+
                   propertySecurityDeposit: double.tryParse(
                     rent_SecurityDeposit.text.trim(),
+                  ),
+                  is_for_sellorrent:isPredefinedCostEnabled.value,
+                  propertyPrice:double.tryParse(
+                    sell_ExpectedPrice.text.trim(),
                   ),
                   negotiable:
                       negotiablePriceOrNot.value.toLowerCase() == 'yes'
@@ -3317,8 +3369,8 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
     final parsedDate = DateFormat(
       'dd/MM/yyyy',
-    ).parse(sell_AvailableFrom.text.trim());
-    final formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+    ).tryParse(sell_AvailableFrom.text.trim());
+    final formattedDate =(parsedDate!=null)? DateFormat('yyyy-MM-dd').format(parsedDate):null;
     final data = AddPropertyModel(
       type:
           propertyType.value.isNotEmpty
@@ -3382,7 +3434,7 @@ class CreatePropertyController extends GetxController {
           possessionDate:
               sell_constructionStatus.value.toLowerCase() ==
                       'under construction'
-                  ? sell_AvailableFrom.text.trim().isNotEmpty
+                  ? ((sell_AvailableFrom.text.trim().isNotEmpty) && (formattedDate!=null))
                       ? formattedDate
                       : null
                   : null,
@@ -3411,15 +3463,36 @@ class CreatePropertyController extends GetxController {
                   propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
-                  pastFiveYearPrice:
-                      (pastFiveYearPrice.text.trim().isNotEmpty)
-                          ? double.tryParse(pastFiveYearPrice.text.trim())
-                          : null,
+              is_for_sellorrent:isPredefinedCostEnabled.value,
+              propertyRentPerMonth:double.tryParse(
+                rent_MonthilyRent.text.trim(),
+              ),
+              // propertyPricePast: List.generate(5, (index) {
+              //   final currentYear = DateTime.now().year;
+              //   final year = currentYear - (index + 1);
+              //   final priceText = pastPrices[index].text.trim();
+              //   final price = double.tryParse(priceText) ?? 0.0;
+              //   return PropertyPriceYearly(
+              //     year: year,
+              //     price: price,
+              //
+              //   );
+              // }),
+              propertyPricePast: getPastPriceData(),
 
-                  futureFiveYearPrice:
-                      (futureFiveYearPrice.text.trim().isNotEmpty)
-                          ? double.tryParse(futureFiveYearPrice.text.trim())
-                          : null,
+              // 🔮 Future 5 Years Prices
+              // propertyPriceFuture: List.generate(5, (index) {
+              //   final currentYear = DateTime.now().year;
+              //   final year = currentYear + (index + 1);
+              //   final priceText = futurePrices[index].text.trim();
+              //   final price = double.tryParse(priceText) ?? 0.0;
+              //   return PropertyPriceYearly(
+              //     year: year,
+              //     price: price,
+              //
+              //   );
+              // }),
+              propertyPriceFuture: getFuturePriceData(),
                   negotiable:
                       negotiablePriceOrNot.value.toLowerCase() == 'yes'
                           ? true
@@ -4422,15 +4495,30 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          pastFiveYearPrice:
-              (pastFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(pastFiveYearPrice.text.trim())
-                  : null,
+          propertyPricePast: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear - (index + 1);
+            final priceText = pastPrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
 
-          futureFiveYearPrice:
-              (futureFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(futureFiveYearPrice.text.trim())
-                  : null,
+            );
+          }),
+
+          // 🔮 Future 5 Years Prices
+          propertyPriceFuture: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear + (index + 1);
+            final priceText = futurePrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
+
+            );
+          }),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4563,15 +4651,30 @@ class CreatePropertyController extends GetxController {
                   : null,
         ),
         financialInfo: FinancialInfo(
-          pastFiveYearPrice:
-              (pastFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(pastFiveYearPrice.text.trim())
-                  : null,
+          propertyPricePast: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear - (index + 1);
+            final priceText = pastPrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
 
-          futureFiveYearPrice:
-              (futureFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(futureFiveYearPrice.text.trim())
-                  : null,
+            );
+          }),
+
+          // 🔮 Future 5 Years Prices
+          propertyPriceFuture: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear + (index + 1);
+            final priceText = futurePrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
+
+            );
+          }),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4731,15 +4834,30 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          pastFiveYearPrice:
-              (pastFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(pastFiveYearPrice.text.trim())
-                  : null,
+          propertyPricePast: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear - (index + 1);
+            final priceText = pastPrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
 
-          futureFiveYearPrice:
-              (futureFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(futureFiveYearPrice.text.trim())
-                  : null,
+            );
+          }),
+
+          // 🔮 Future 5 Years Prices
+          propertyPriceFuture: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear + (index + 1);
+            final priceText = futurePrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
+
+            );
+          }),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4853,15 +4971,30 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          pastFiveYearPrice:
-              (pastFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(pastFiveYearPrice.text.trim())
-                  : null,
+          propertyPricePast: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear - (index + 1);
+            final priceText = pastPrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
 
-          futureFiveYearPrice:
-              (futureFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(futureFiveYearPrice.text.trim())
-                  : null,
+            );
+          }),
+
+          // 🔮 Future 5 Years Prices
+          propertyPriceFuture: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear + (index + 1);
+            final priceText = futurePrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
+
+            );
+          }),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4971,15 +5104,30 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          pastFiveYearPrice:
-              (pastFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(pastFiveYearPrice.text.trim())
-                  : null,
+          propertyPricePast: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear - (index + 1);
+            final priceText = pastPrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
 
-          futureFiveYearPrice:
-              (futureFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(futureFiveYearPrice.text.trim())
-                  : null,
+            );
+          }),
+
+          // 🔮 Future 5 Years Prices
+          propertyPriceFuture: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear + (index + 1);
+            final priceText = futurePrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
+
+            );
+          }),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -5095,15 +5243,30 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          pastFiveYearPrice:
-              (pastFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(pastFiveYearPrice.text.trim())
-                  : null,
+          propertyPricePast: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear - (index + 1);
+            final priceText = pastPrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
 
-          futureFiveYearPrice:
-              (futureFiveYearPrice.text.trim().isNotEmpty)
-                  ? double.tryParse(futureFiveYearPrice.text.trim())
-                  : null,
+            );
+          }),
+
+          // 🔮 Future 5 Years Prices
+          propertyPriceFuture: List.generate(5, (index) {
+            final currentYear = DateTime.now().year;
+            final year = currentYear + (index + 1);
+            final priceText = futurePrices[index].text.trim();
+            final price = double.tryParse(priceText) ?? 0.0;
+            return PropertyPriceYearly(
+              year: year,
+              price: price,
+
+            );
+          }),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())

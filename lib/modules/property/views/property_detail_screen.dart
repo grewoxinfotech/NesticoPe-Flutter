@@ -350,6 +350,192 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
+                    if ((currentProperty
+                                .propertyDetails
+                                ?.financialInfo
+                                ?.is_for_sellorrent ??
+                            false) &&
+                        (currentProperty.listingType?.toLowerCase() ==
+                            'sell')) ...[
+                      if (currentProperty
+                              .propertyDetails
+                              ?.financialInfo
+                              ?.propertyRentPerMonth !=
+                          null) ...[
+                        const SizedBox(height: 12),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                        //   child: Container(
+                        //     padding: const EdgeInsets.all(12),
+                        //     decoration: BoxDecoration(
+                        //       color: ColorRes.primary.withOpacity(0.05),
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       border: Border.all(
+                        //         color: ColorRes.primary.withOpacity(0.2),
+                        //       ),
+                        //     ),
+                        //     child: Row(
+                        //       children: [
+                        //         const Icon(
+                        //           Icons.house,
+                        //           color: ColorRes.primary,
+                        //         ),
+                        //         const SizedBox(width: 8),
+                        //         Expanded(
+                        //           child: Text(
+                        //             'This property is also available for rent at '
+                        //             '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month.',
+                        //             style: const TextStyle(
+                        //               fontSize: AppFontSizes.bodySmall,
+                        //               fontWeight: AppFontWeights.medium,
+                        //               color: ColorRes.textPrimary,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const TitleWithViewAll(title: 'Also for rent'),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Text.rich(
+                                        TextSpan(
+                                          text: 'This property is also available for rent at ',
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.caption,
+                                            fontWeight: AppFontWeights.medium,
+                                            color: ColorRes.leadGreyColor[700],
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                              '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
+                                              style: const TextStyle(
+                                                fontSize: AppFontSizes.bodySmall,
+                                                fontWeight: AppFontWeights.semiBold,
+                                                color: ColorRes.textPrimary,
+                                              ),
+                                            ),
+                                            const TextSpan(text: '.'),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Divider(
+                          indent: 18,
+                          endIndent: 18,
+                          color: ColorRes.leadGreyColor.shade300,
+                        ),
+                      ] else ...[
+                        SizedBox.shrink(),
+                      ],
+                    ],
+                    if ((currentProperty.propertyDetails?.financialInfo?.is_for_sellorrent ?? false) &&
+                        (currentProperty.listingType?.toLowerCase() == 'rent')) ...
+                      [
+                        if (currentProperty
+                            .propertyDetails
+                            ?.financialInfo
+                            ?.price !=
+                            null) ...[
+                          const SizedBox(height: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const TitleWithViewAll(title: 'Also for Sell'),
+                              const SizedBox(height: 8),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Text.rich(
+                                          TextSpan(
+                                            text: 'This property is also available for sell at ',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.caption,
+                                              fontWeight: AppFontWeights.medium,
+                                              color: ColorRes.leadGreyColor[700],
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text:
+                                                '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
+                                                style: const TextStyle(
+                                                  fontSize: AppFontSizes.bodySmall,
+                                                  fontWeight: AppFontWeights.semiBold,
+                                                  color: ColorRes.textPrimary,
+                                                ),
+                                              ),
+                                              const TextSpan(text: '.'),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+                          Divider(
+                            indent: 18,
+                            endIndent: 18,
+                            color: ColorRes.leadGreyColor.shade300,
+                          ),
+                        ] else ...[
+                          SizedBox.shrink(),
+                        ],
+                      ]
+                    ,
+
                     if (currentProperty
                             .propertyDetails
                             ?.furnishInfo
@@ -666,6 +852,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 ),
                                 child: ContactOwnerBottom(
                                   price: priceManager.actualPrice,
+                                  listingType: currentProperty.listingType?.toLowerCase()??'',
+                                  forRentPrice: currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth??0,
+                                  forSellPrice: currentProperty.propertyDetails?.financialInfo?.price??0,
+                                  isForSell: currentProperty.propertyDetails?.financialInfo?.is_for_sellorrent??false,
+
                                   inQuireSubmitted:
                                       controller.hasSubmittedInquiry.value,
                                   titleText: "Contact the Owner",
@@ -677,6 +868,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   emailIcon: Icons.email,
                                   allowSellerContact: false,
                                   negotiable: false,
+
                                   bookSiteVisit: false,
                                   onChatPressed: () {
                                     print("WhatsApp button clicked!");
@@ -686,8 +878,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     phone,
                                     email,
                                     price,
-                                    isNegotiable,
+                                      isNegotiable,
+
                                     isAllowAllCondition,
+                                    inquiryListing,
                                     isBookSiteVisit,
                                     planningToBuy,
                                     date,
@@ -702,6 +896,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                       "meta": {
                                         if (price != null)
                                           "negotiablePrice": price,
+                                        if (inquiryListing != null && (inquiryListing?.isNotEmpty??false))
+                                          "inquiryType": inquiryListing.toLowerCase(),
                                         if (isNegotiable != null)
                                           "isNegotiable": isNegotiable,
                                         if (planningToBuy != null)
@@ -987,7 +1183,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   child: Row(
                     children: [
                       ReraComponent(
-                        text: (!controller.isDeveloper.value) ? "Verified" : "rera",
+                        text:
+                            (!controller.isDeveloper.value)
+                                ? "Verified"
+                                : "rera",
                         backgroundColor: ColorRes.black.withOpacity(0.7),
                         textColor: ColorRes.background,
                         fontSize: AppFontSizes.small,
@@ -999,7 +1198,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         iconSize: 14,
                       ),
                       const SizedBox(width: 8),
-                      if (property?.scoreBreakdown?.components.premium.isPremium?? false)
+                      if (property
+                              ?.scoreBreakdown
+                              ?.components
+                              .premium
+                              .isPremium ??
+                          false)
                         ReraComponent(
                           text: "NesticoPe Assured",
                           backgroundColor: ColorRes.black.withOpacity(0.7),

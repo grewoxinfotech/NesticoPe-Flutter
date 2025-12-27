@@ -363,16 +363,21 @@ class IconManager {
     ),
     IconItem(
       key: AppSvgRes.playground,
-      title: "Playground",
+      title: "Kids Area",
       icon: Icons.sports_soccer,
     ),
     IconItem(
       key: AppSvgRes.sports,
-      title: "Sports Facility",
+      title: "Sports",
       icon: Icons.sports_basketball,
     ),
     IconItem(key: AppSvgRes.swimming, title: "Swimming Pool", icon: Icons.pool),
-    IconItem(key: AppSvgRes.tap, title: "Water Supply", icon: Icons.water_drop),
+    IconItem(key: AppSvgRes.tap, title: "Regular Water Supply", icon: Icons.water_drop),
+    IconItem(key: AppSvgRes.rain_water_harvesting, title: "Rainwater Harvesting", icon: Icons.water_drop),
+    IconItem(key: AppSvgRes.security, title: "24/7 Security", icon: Icons.water_drop),
+    IconItem(key: AppSvgRes.parking, title: "Parking", icon: Icons.water_drop),
+    IconItem(key: AppSvgRes.sunlight, title: "Sunlight", icon: Icons.water_drop),
+    IconItem(key: AppSvgRes.ventilator, title: "Ventilation", icon: Icons.water_drop),
   ];
   static final List<IconItem> roomAmenities=[
     IconItem(key: AppSvgRes.wifi, title: "Wifi", icon: Icons.wifi),
@@ -395,11 +400,11 @@ class IconManager {
       title: "Power Backup",
       icon: Icons.battery_charging_full,
     ),
-    IconItem(key: AppSvgRes.cctv, title: "CCTV", icon: Icons.videocam),
+    IconItem(key: AppSvgRes.cctv, title: "CCTV Surveillance", icon: Icons.videocam),
 
     IconItem(
       key: AppSvgRes.internet_connectivity,
-      title: "Wifi Connectivity",
+      title: "Wi-Fi Connectivity",
       icon: Icons.wifi,
     ),
     IconItem(
@@ -424,12 +429,12 @@ class IconManager {
     ),
     IconItem(
       key: AppSvgRes.multi_purpose_hall,
-      title: "MultiPurpose Hall",
+      title: "Multipurpose Hall",
       icon: Icons.wifi,
     ),
     IconItem(
       key: AppSvgRes.solar_panel,
-      title: "Solar Panel",
+      title: "Solar Panels",
       icon: Icons.wifi,
     ),
     IconItem(
@@ -438,7 +443,11 @@ class IconManager {
       icon: Icons.wifi,
     ),
 
-    IconItem(key: AppSvgRes.security, title: "24x7 Security", icon: Icons.security),
+     IconItem(key: AppSvgRes.security, title: "24x7 Security", icon: Icons.security),
+    // IconItem(key: AppSvgRes.parking, title: "Parking", icon: Icons.water_drop),
+    // IconItem(key: AppSvgRes.sunlight, title: "Sunlight", icon: Icons.water_drop),
+    // IconItem(key: AppSvgRes.ventilator, title: "Ventilation", icon: Icons.water_drop),
+    // IconItem(key: AppSvgRes.rain_water_harvesting, title: "Rainwater Harvesting", icon: Icons.water_drop),
 
     IconItem(
       key: AppSvgRes.washing,
@@ -460,7 +469,7 @@ class IconManager {
       title: "Service Lift",
       icon: Icons.elevator_outlined,
     ),
-    IconItem(key: AppSvgRes.garden, title: "Garden", icon: Icons.park),
+    IconItem(key: AppSvgRes.garden, title: "Gardens", icon: Icons.park),
     IconItem(
       key: AppSvgRes.hall,
       title: "Temple",
@@ -485,7 +494,7 @@ class IconManager {
     // ),
     IconItem(
       key: AppSvgRes.home_theater,
-      title: 'Amphitheatre Theater',
+      title: 'Amphitheatre',
       icon: Icons.video_call_outlined,
     ),
   ];

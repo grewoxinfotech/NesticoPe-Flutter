@@ -1,3 +1,4 @@
+import '../../../../modules/add_property/model/add_property_model.dart';
 import 'analytics_model.dart';
 
 class PropertyModel {
@@ -926,8 +927,12 @@ class FinancialInfo {
   double brokerCommission;
   double propertySecurityDeposit;
   bool negotiable;
+
   int? noticePeriod; // For PG properties
   int? lockInPeriod; // For PG properties
+  final List<PropertyPriceYearly>? propertyPricePast;
+  final List<PropertyPriceYearly>? propertyPriceFuture;
+  final bool? is_for_sellorrent;
 
   FinancialInfo({
     this.price = 0,
@@ -940,11 +945,22 @@ class FinancialInfo {
     this.negotiable = false,
     this.noticePeriod,
     this.lockInPeriod,
+    this.is_for_sellorrent,
+    this.propertyPriceFuture,this.propertyPricePast,
   });
 
   FinancialInfo.fromJson(Map<String, dynamic> json)
     : price = TypeConverter.parseDouble(json['property_price']) ?? 0,
       maintenance = TypeConverter.parseDouble(json['maintenance']) ?? 0,
+        is_for_sellorrent=  json['is_for_sellorrent'] is bool
+  ? json['is_for_sellorrent']
+      : (json['is_for_sellorrent']?.toString().toLowerCase() == 'true'),
+        propertyPriceFuture = (json['property_price_future'] as List?)
+            ?.map((e) => PropertyPriceYearly.fromJson(e))
+            .toList(),
+        propertyPricePast = (json['property_price_past'] as List?)
+            ?.map((e) => PropertyPriceYearly.fromJson(e))
+            .toList(),
       propertyRentPerMonth =
           TypeConverter.parseDouble(json['property_rent_per_month']) ?? 0,
       pricePerSqft = TypeConverter.parseDouble(json['price_per_sqft']) ?? 0,
@@ -966,8 +982,12 @@ class FinancialInfo {
       "broker_commission": brokerCommission,
       "property_security_deposit": propertySecurityDeposit,
       "negotiable": negotiable,
+      if (is_for_sellorrent != null) 'is_for_sellorrent' : is_for_sellorrent,
       if (noticePeriod != null) "notice_period": noticePeriod,
       if (lockInPeriod != null) "lock_in_period": lockInPeriod,
+      if (propertyPricePast != null && propertyPricePast!.isNotEmpty) "property_price_past": propertyPricePast!.map((e) => e.toJson()).toList(),
+      if (propertyPriceFuture != null && propertyPriceFuture!.isNotEmpty) "property_price_future": propertyPriceFuture!.map((e) => e.toJson()).toList(),
+
     };
   }
 }

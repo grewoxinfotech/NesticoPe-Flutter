@@ -344,6 +344,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                   // Check if inquiry already submitted
                                   inQuireSubmitted:
                                       controller.hasSubmittedInquiry.value,
+                                  listingType: '',
                                   titleText: "Contact the Owner",
                                   chatButtonText: "Chat via WhatsApp",
                                   formTitle: "Quick Contact Form",
@@ -363,6 +364,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                     price,
                                     isNegotiable,
                                     isAllowAllCondition,
+                                      inquiryListing,
                                     isBookSiteVisit,
                                     planningToBuy,
                                     date,

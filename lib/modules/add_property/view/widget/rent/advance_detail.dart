@@ -383,7 +383,7 @@ class RentAdvanceDetail extends StatelessWidget {
               //   controller.sell_rent_Flat_No,
               //   isPhoneKey: true,
               // ),
-              if (controller.rent_propertyType.value != 'Independent House' ||
+              if (controller.rent_propertyType.value != 'Independent House' &&
                   controller.rent_propertyType.value != 'Villa') ...[
                 SizedBox(height: 16),
                 buildSectionTitle('Floor No.'),
@@ -393,7 +393,23 @@ class RentAdvanceDetail extends StatelessWidget {
                   Icons.apartment_outlined,
                   controller.sell_rent_Floor_No,
                   isPhoneKey: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter floor number';
+                    }
+                    final floorNo = int.tryParse(value);
+                    final totalFloor = int.tryParse(controller.sell_rent_Total_Floor.text);
+
+                    if (floorNo == null) {
+                      return 'Enter a valid number';
+                    }
+                    if (totalFloor != null && floorNo > totalFloor) {
+                      return 'Floor number cannot be greater than total floors';
+                    }
+                    return null;
+                  },
                 ),
+
                 SizedBox(height: 16),
                 buildSectionTitle('Total Floor'),
                 SizedBox(height: 8),
@@ -402,8 +418,19 @@ class RentAdvanceDetail extends StatelessWidget {
                   Icons.apartment_outlined,
                   controller.sell_rent_Total_Floor,
                   isPhoneKey: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter total floors';
+                    }
+                    final totalFloor = int.tryParse(value);
+                    if (totalFloor == null) {
+                      return 'Enter a valid number';
+                    }
+                    return null;
+                  },
                 ),
               ],
+
               SizedBox(height: 16),
 
               if (controller.lookingTo.value == 'Rent') ...[
