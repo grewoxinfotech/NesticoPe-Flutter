@@ -1010,6 +1010,7 @@ class FinancialInfo {
 
   /// Future price projection
   List<PropertyPriceYear> priceFuture;
+  final bool? is_for_sellorrent;
 
   FinancialInfo({
     this.price = 0,
@@ -1025,11 +1026,16 @@ class FinancialInfo {
     this.isForSellOrRent = false,
     this.pricePast = const [],
     this.priceFuture = const [],
+    this.is_for_sellorrent,
   });
 
   factory FinancialInfo.fromJson(Map<String, dynamic> json) {
     return FinancialInfo(
       price: TypeConverter.parseDouble(json['property_price']) ?? 0,
+      is_for_sellorrent:
+          json['is_for_sellorrent'] is bool
+              ? json['is_for_sellorrent']
+              : (json['is_for_sellorrent']?.toString().toLowerCase() == 'true'),
       propertyRentPerMonth:
           TypeConverter.parseDouble(json['property_rent_per_month']) ?? 0,
       monthlyRent: TypeConverter.parseDouble(json['monthlyRent']),
@@ -1071,6 +1077,7 @@ class FinancialInfo {
       "is_for_sellorrent": isForSellOrRent,
       "property_price_past": pricePast.map((e) => e.toJson()).toList(),
       "property_price_future": priceFuture.map((e) => e.toJson()).toList(),
+      if (is_for_sellorrent != null) 'is_for_sellorrent': is_for_sellorrent,
     };
   }
 }
