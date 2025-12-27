@@ -1,12 +1,14 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/manager/compare_manager.dart';
 import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/modules/builder/view/project_detail/widgets/model_render_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/overall_rating_controller.dart';
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -1104,15 +1106,48 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               ),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(Icons.apartment, color: ColorRes.white, size: 16),
-                const SizedBox(width: 6),
-                Text(
-                  'Variant ${variantIndex + 1}',
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.white,
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.apartment,
+                      color: ColorRes.white,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Variant ${variantIndex + 1}',
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.white,
+                      ),
+                    ),
+                  ],
+                ),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'View 3D',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.white,
+                        ),
+                        recognizer:
+                            TapGestureRecognizer()
+                              ..onTap = () {
+                                Get.to(
+                                  () => ModelRenderScreen(
+                                    modelUrl: variant.models.first,
+                                    iosModelUrl: variant.models.first,
+                                  ),
+                                );
+                              },
+                      ),
+                    ],
                   ),
                 ),
               ],

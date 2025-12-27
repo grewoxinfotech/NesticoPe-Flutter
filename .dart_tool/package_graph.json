@@ -34,6 +34,7 @@
         "internet_connection_checker_plus",
         "intl",
         "mime",
+        "model_viewer_plus",
         "multi_image_picker_view",
         "open_filex",
         "path_provider",
@@ -130,6 +131,20 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "model_viewer_plus",
+      "version": "1.9.3",
+      "dependencies": [
+        "android_intent_plus",
+        "flutter",
+        "path",
+        "url_launcher",
+        "web",
+        "webview_flutter",
+        "webview_flutter_android",
+        "webview_flutter_wkwebview"
       ]
     },
     {
@@ -946,6 +961,49 @@
       ]
     },
     {
+      "name": "webview_flutter_wkwebview",
+      "version": "3.23.5",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "path",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter_android",
+      "version": "4.10.11",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter",
+      "version": "4.13.0",
+      "dependencies": [
+        "flutter",
+        "webview_flutter_android",
+        "webview_flutter_platform_interface",
+        "webview_flutter_wkwebview"
+      ]
+    },
+    {
+      "name": "web",
+      "version": "1.1.1",
+      "dependencies": []
+    },
+    {
+      "name": "android_intent_plus",
+      "version": "5.3.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "platform"
+      ]
+    },
+    {
       "name": "win32_registry",
       "version": "2.1.0",
       "dependencies": [
@@ -960,11 +1018,6 @@
       "dependencies": [
         "ffi"
       ]
-    },
-    {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
     },
     {
       "name": "flutter_web_plugins",
@@ -1766,6 +1819,20 @@
       ]
     },
     {
+      "name": "webview_flutter_platform_interface",
+      "version": "2.14.0",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "platform",
+      "version": "3.1.6",
+      "dependencies": []
+    },
+    {
       "name": "xml",
       "version": "6.6.1",
       "dependencies": [
@@ -1818,11 +1885,6 @@
         "meta",
         "vector_math"
       ]
-    },
-    {
-      "name": "platform",
-      "version": "3.1.6",
-      "dependencies": []
     },
     {
       "name": "xdg_directories",

@@ -350,7 +350,7 @@ class RentPriceDetail extends StatelessWidget {
                           Icons.currency_rupee_outlined,
                           onChanged: (value) {
                             log("Past year 5 ${controller.pastPrices.map((e) => e,)}");
-
+                            
                           },
                           controller.pastPrices[index],
                           isPhoneKey: true,

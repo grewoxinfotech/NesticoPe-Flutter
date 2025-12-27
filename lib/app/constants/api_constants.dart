@@ -4,8 +4,8 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
-  // static const String url = "http://192.168.1.2:19725";
-  static const String url = "https://sympathy-resolve-tampa-bra.trycloudflare.com";
+
+  static const String url = "http://192.168.1.2:19725";
 
   // static const String url =
   //     "https://bow-dir-facility-adjusted.trycloudflare.com";
@@ -127,7 +127,8 @@ class ApiConstants {
       "$baseURL/milestonepayment";
 
   static String get contractorLeadFollowUp => "$baseURL/followup";
-  static String get myContractorProfileReview => "$baseURL/review/check/contractor_service";
+  static String get myContractorProfileReview =>
+      "$baseURL/review/check/contractor_service";
 
   static String get contractorCompare =>
       "$baseURL/contractorService/contractor";

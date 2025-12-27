@@ -56,6 +56,7 @@ dependencies:
   timeago: ^3.7.1
   syncfusion_flutter_pdfviewer:
   device_info_plus:
+  model_viewer_plus:
 
 
 dev_dependencies:

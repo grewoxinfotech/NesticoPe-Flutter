@@ -918,77 +918,184 @@ class ParkingInfo {
   };
 }
 
+// class FinancialInfo {
+//   double price;
+//   double? maintenance;
+//   double propertyRentPerMonth;
+//   final double? monthlyRent;
+//   double pricePerSqft;
+//   double brokerCommission;
+//   double propertySecurityDeposit;
+//   bool negotiable;
+//   int? noticePeriod; // For PG properties
+//   int? lockInPeriod; // For PG properties
+//
+//   FinancialInfo({
+//     this.price = 0,
+//     this.maintenance,
+//     this.propertyRentPerMonth = 0,
+//     this.monthlyRent,
+//     this.pricePerSqft = 0,
+//     this.brokerCommission = 0,
+//     this.propertySecurityDeposit = 0,
+//     this.negotiable = false,
+//     this.noticePeriod,
+//     this.lockInPeriod,
+//   });
+//
+//   FinancialInfo.fromJson(Map<String, dynamic> json)
+//     : price = TypeConverter.parseDouble(json['property_price']) ?? 0,
+//       maintenance = TypeConverter.parseDouble(json['maintenance']) ?? 0,
+//       propertyRentPerMonth =
+//           TypeConverter.parseDouble(json['property_rent_per_month']) ?? 0,
+//       pricePerSqft = TypeConverter.parseDouble(json['price_per_sqft']) ?? 0,
+//       brokerCommission =
+//           TypeConverter.parseDouble(json['broker_commission']) ?? 0,
+//       propertySecurityDeposit =
+//           TypeConverter.parseDouble(json['property_security_deposit']) ?? 0,
+//       monthlyRent = TypeConverter.parseDouble(json['monthlyRent']) ?? 0,
+//       negotiable = json['negotiable'] ?? false,
+//       noticePeriod = TypeConverter.parseInt(json['notice_period']),
+//       lockInPeriod = TypeConverter.parseInt(json['lock_in_period']);
+//
+//   Map<String, dynamic> toJson() {
+//     return {
+//       "property_price": price,
+//       "property_rent_per_month": propertyRentPerMonth,
+//       "maintenance": maintenance,
+//       "price_per_sqft": pricePerSqft,
+//       "broker_commission": brokerCommission,
+//       "property_security_deposit": propertySecurityDeposit,
+//       "negotiable": negotiable,
+//       if (noticePeriod != null) "notice_period": noticePeriod,
+//       if (lockInPeriod != null) "lock_in_period": lockInPeriod,
+//     };
+//   }
+// }
+
 class FinancialInfo {
+  /// Sell price
   double price;
-  double? maintenance;
+
+  /// Rent per month
   double propertyRentPerMonth;
+
+  /// Optional monthly rent (PG / alternate use)
   final double? monthlyRent;
+
+  /// Maintenance charge
+  double? maintenance;
+
+  /// Price per sqft
   double pricePerSqft;
+
+  /// Broker commission
   double brokerCommission;
+
+  /// Security deposit
   double propertySecurityDeposit;
+
+  /// Negotiable or not
   bool negotiable;
 
-  int? noticePeriod; // For PG properties
-  int? lockInPeriod; // For PG properties
-  final List<PropertyPriceYearly>? propertyPricePast;
-  final List<PropertyPriceYearly>? propertyPriceFuture;
-  final bool? is_for_sellorrent;
+  /// PG-specific
+  int? noticePeriod;
+  int? lockInPeriod;
+
+  /// Sell or Rent flag
+  bool isForSellOrRent;
+
+  /// Historical prices
+  List<PropertyPriceYear> pricePast;
+
+  /// Future price projection
+  List<PropertyPriceYear> priceFuture;
 
   FinancialInfo({
     this.price = 0,
-    this.maintenance,
     this.propertyRentPerMonth = 0,
     this.monthlyRent,
+    this.maintenance,
     this.pricePerSqft = 0,
     this.brokerCommission = 0,
     this.propertySecurityDeposit = 0,
     this.negotiable = false,
     this.noticePeriod,
     this.lockInPeriod,
-    this.is_for_sellorrent,
-    this.propertyPriceFuture,this.propertyPricePast,
+    this.isForSellOrRent = false,
+    this.pricePast = const [],
+    this.priceFuture = const [],
   });
 
-  FinancialInfo.fromJson(Map<String, dynamic> json)
-    : price = TypeConverter.parseDouble(json['property_price']) ?? 0,
-      maintenance = TypeConverter.parseDouble(json['maintenance']) ?? 0,
-        is_for_sellorrent=  json['is_for_sellorrent'] is bool
-  ? json['is_for_sellorrent']
-      : (json['is_for_sellorrent']?.toString().toLowerCase() == 'true'),
-        propertyPriceFuture = (json['property_price_future'] as List?)
-            ?.map((e) => PropertyPriceYearly.fromJson(e))
-            .toList(),
-        propertyPricePast = (json['property_price_past'] as List?)
-            ?.map((e) => PropertyPriceYearly.fromJson(e))
-            .toList(),
-      propertyRentPerMonth =
+  factory FinancialInfo.fromJson(Map<String, dynamic> json) {
+    return FinancialInfo(
+      price: TypeConverter.parseDouble(json['property_price']) ?? 0,
+      propertyRentPerMonth:
           TypeConverter.parseDouble(json['property_rent_per_month']) ?? 0,
-      pricePerSqft = TypeConverter.parseDouble(json['price_per_sqft']) ?? 0,
-      brokerCommission =
+      monthlyRent: TypeConverter.parseDouble(json['monthlyRent']),
+      maintenance: TypeConverter.parseDouble(json['maintenance']),
+      pricePerSqft: TypeConverter.parseDouble(json['price_per_sqft']) ?? 0,
+      brokerCommission:
           TypeConverter.parseDouble(json['broker_commission']) ?? 0,
-      propertySecurityDeposit =
+      propertySecurityDeposit:
           TypeConverter.parseDouble(json['property_security_deposit']) ?? 0,
-      monthlyRent = TypeConverter.parseDouble(json['monthlyRent']) ?? 0,
-      negotiable = json['negotiable'] ?? false,
-      noticePeriod = TypeConverter.parseInt(json['notice_period']),
-      lockInPeriod = TypeConverter.parseInt(json['lock_in_period']);
+      negotiable: json['negotiable'] ?? false,
+      noticePeriod: TypeConverter.parseInt(json['notice_period']),
+      lockInPeriod: TypeConverter.parseInt(json['lock_in_period']),
+      isForSellOrRent: json['is_for_sellorrent'] ?? false,
+      pricePast:
+          (json['property_price_past'] as List<dynamic>?)
+              ?.map((e) => PropertyPriceYear.fromJson(e))
+              .toList() ??
+          [],
+      priceFuture:
+          (json['property_price_future'] as List<dynamic>?)
+              ?.map((e) => PropertyPriceYear.fromJson(e))
+              .toList() ??
+          [],
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
       "property_price": price,
       "property_rent_per_month": propertyRentPerMonth,
+      "monthlyRent": monthlyRent,
       "maintenance": maintenance,
       "price_per_sqft": pricePerSqft,
       "broker_commission": brokerCommission,
       "property_security_deposit": propertySecurityDeposit,
       "negotiable": negotiable,
-      if (is_for_sellorrent != null) 'is_for_sellorrent' : is_for_sellorrent,
-      if (noticePeriod != null) "notice_period": noticePeriod,
-      if (lockInPeriod != null) "lock_in_period": lockInPeriod,
-      if (propertyPricePast != null && propertyPricePast!.isNotEmpty) "property_price_past": propertyPricePast!.map((e) => e.toJson()).toList(),
-      if (propertyPriceFuture != null && propertyPriceFuture!.isNotEmpty) "property_price_future": propertyPriceFuture!.map((e) => e.toJson()).toList(),
-
+      "notice_period": noticePeriod,
+      "lock_in_period": lockInPeriod,
+      "is_for_sellorrent": isForSellOrRent,
+      "property_price_past": pricePast.map((e) => e.toJson()).toList(),
+      "property_price_future": priceFuture.map((e) => e.toJson()).toList(),
     };
+  }
+}
+
+class PropertyPriceYear {
+  final int year;
+  final double price;
+  final double pricePerSqft;
+
+  PropertyPriceYear({
+    required this.year,
+    required this.price,
+    required this.pricePerSqft,
+  });
+
+  factory PropertyPriceYear.fromJson(Map<String, dynamic> json) {
+    return PropertyPriceYear(
+      year: TypeConverter.parseInt(json['year']) ?? 0,
+      price: TypeConverter.parseDouble(json['price']) ?? 0,
+      pricePerSqft: TypeConverter.parseDouble(json['price_per_sqft']) ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {"year": year, "price": price, "price_per_sqft": pricePerSqft};
   }
 }
 

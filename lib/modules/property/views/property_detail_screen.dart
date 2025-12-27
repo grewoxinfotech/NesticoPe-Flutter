@@ -50,6 +50,7 @@ import '../../../widgets/map/address_and_map_detail.dart';
 import '../../../widgets/map/near_by_location_map_section.dart';
 import '../../../widgets/property/furnishing_details.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
+import '../../location_price_matrix/controllers/location_price_matrix_controller.dart';
 import '../../review/views/widget/property_project_review_section.dart';
 import '../../search_property/controller/search_controller.dart';
 import '../controllers/overall_rating_controller.dart';
@@ -182,6 +183,13 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
       // Fetch overall rating
       _overallRatingController.fetchOverallRating(currentProperty.id ?? '');
+
+      Get.put(
+        LocationPriceMatrixController(
+          city: currentProperty.city ?? '',
+          propertyType: currentProperty.listingType ?? '',
+        ),
+      );
     } catch (e, s) {
       log(
         '[PropertyDetail] ERROR in _loadData',
@@ -623,7 +631,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if (currentProperty.investmentInsight != null) ...[
+                    if (currentProperty.propertyDetails?.financialInfo !=
+                        null) ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Investment Insight'),
                       const SizedBox(height: 8),
@@ -633,7 +642,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             '[PropertyDetail] 📊 Building InvestmentInsightChart',
                           );
                           return InvestmentInsightChart(
-                            insight: currentProperty.investmentInsight!,
+                            currentProperty: currentProperty,
                           );
                         },
                       ),

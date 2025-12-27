@@ -17,6 +17,7 @@ import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/property/services/property_contacted_service.dart';
 import '../../../data/network/trending_area/model/trending_area_model.dart';
 import '../../../data/network/trending_area/service/trending_area_service.dart';
+import '../../../utils/logger/app_logger.dart';
 import '../../propert_detail/view/property_details.dart';
 
 class PropertyController extends PaginatedController<Items> {
@@ -260,6 +261,7 @@ class PropertyController extends PaginatedController<Items> {
 
       final property = await _service.getPropertyById(id);
       if (property != null) {
+        AppLogger.structured("Property By Id For Graph", property.toJson());
         items.add(property);
         items.refresh();
         return property;
