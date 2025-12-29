@@ -7,11 +7,15 @@ class LocationPriceMatrixController extends GetxController {
   final MarketInsightService _service = MarketInsightService.instance;
 
   final String city;
+  final String location;
+  final String state;
   final String propertyType;
 
   LocationPriceMatrixController({
     required this.city,
     required this.propertyType,
+    required this.location,
+    required this.state,
   });
 
   @override
@@ -19,7 +23,12 @@ class LocationPriceMatrixController extends GetxController {
     super.onInit();
 
     fetchMarketInsights(
-      filters: {'location': city, 'propertyTypes': propertyType},
+      filters: {
+        'location': location,
+        'propertyTypes': propertyType,
+        'city': city,
+        'state': state,
+      },
     );
   }
 
@@ -66,6 +75,15 @@ class LocationPriceMatrixController extends GetxController {
   /// Convenience getter – Buy data
   Map<String, Map<String, List<LocationInsight>>>? get buyData =>
       marketInsight.value?.data.buy;
+
+  Map<String, List<LocationInsight>>? get buyDataByState =>
+      marketInsight.value?.data.buy[state];
+
+  List<LocationInsight>? get buyDataByCity =>
+      marketInsight.value?.data.buy[state]?[city];
+
+  List<PriceTrend>? get avgPriceTrendByCity =>
+      marketInsight.value?.data.buy[state]?[city]?.first.priceTrend;
 
   /// Convenience getter – Rent data
   Map<String, dynamic>? get rentData => marketInsight.value?.data.rent;

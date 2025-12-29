@@ -19,7 +19,7 @@ class InsightsPropertyController extends PaginatedController<Items> {
   @override
   void onInit() {
     super.onInit();
-    filters = {'city': city};
+    filters = {'city': city, 'listingType': 'Sell'};
     loadInitial();
   }
 
@@ -40,6 +40,17 @@ class InsightsPropertyController extends PaginatedController<Items> {
     final response = await _service.fetchProperties(
       page: page,
       filters: filters,
+      fields: [
+        "id",
+        "propertyType",
+        "listingType",
+        "type",
+        "location",
+        "city",
+        "propertyMedia.images[0]",
+        "propertyDetails.bhk",
+        "propertyDetails.financial_info",
+      ],
     );
     return response;
   }

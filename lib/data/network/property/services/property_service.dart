@@ -35,10 +35,12 @@ class PropertyService {
   Future<PaginationResponse<Items>> fetchProperties({
     int page = 1,
     Map<String, String>? filters,
+    List<String>? fields,
   }) async {
     try {
       final queryParameters = {
         'page': page.toString(),
+        if (fields != null) ...{'fields': fields.join(',')},
         if (filters != null) ...filters,
       };
 

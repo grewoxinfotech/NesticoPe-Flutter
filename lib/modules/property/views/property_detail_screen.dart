@@ -188,6 +188,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         LocationPriceMatrixController(
           city: currentProperty.city ?? '',
           propertyType: currentProperty.listingType ?? '',
+          location: currentProperty.location ?? '',
+          state: currentProperty.state ?? '',
         ),
       );
     } catch (e, s) {
@@ -410,13 +412,18 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             const TitleWithViewAll(title: 'Also for rent'),
                             const SizedBox(height: 8),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: ColorRes.white,
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.8),
+                                  border: Border.all(
+                                    color: ColorRes.leadGreyColor.shade300,
+                                    width: 0.8,
+                                  ),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey.withOpacity(0.1),
@@ -431,7 +438,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     Expanded(
                                       child: Text.rich(
                                         TextSpan(
-                                          text: 'This property is also available for rent at ',
+                                          text:
+                                              'This property is also available for rent at ',
                                           style: TextStyle(
                                             fontSize: AppFontSizes.caption,
                                             fontWeight: AppFontWeights.medium,
@@ -440,10 +448,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                           children: [
                                             TextSpan(
                                               text:
-                                              '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
+                                                  '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
                                               style: const TextStyle(
-                                                fontSize: AppFontSizes.bodySmall,
-                                                fontWeight: AppFontWeights.semiBold,
+                                                fontSize:
+                                                    AppFontSizes.bodySmall,
+                                                fontWeight:
+                                                    AppFontWeights.semiBold,
                                                 color: ColorRes.textPrimary,
                                               ),
                                             ),
@@ -468,81 +478,92 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         SizedBox.shrink(),
                       ],
                     ],
-                    if ((currentProperty.propertyDetails?.financialInfo?.is_for_sellorrent ?? false) &&
-                        (currentProperty.listingType?.toLowerCase() == 'rent')) ...
-                      [
-                        if (currentProperty
-                            .propertyDetails
-                            ?.financialInfo
-                            ?.price !=
-                            null) ...[
-                          const SizedBox(height: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const TitleWithViewAll(title: 'Also for Sell'),
-                              const SizedBox(height: 8),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.8),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.1),
-                                        blurRadius: 6,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
+                    if ((currentProperty
+                                .propertyDetails
+                                ?.financialInfo
+                                ?.is_for_sellorrent ??
+                            false) &&
+                        (currentProperty.listingType?.toLowerCase() ==
+                            'rent')) ...[
+                      if (currentProperty
+                              .propertyDetails
+                              ?.financialInfo
+                              ?.price !=
+                          null) ...[
+                        const SizedBox(height: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const TitleWithViewAll(title: 'Also for Sell'),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: ColorRes.leadGreyColor.shade300,
+                                    width: 0.8,
                                   ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: Text.rich(
-                                          TextSpan(
-                                            text: 'This property is also available for sell at ',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.caption,
-                                              fontWeight: AppFontWeights.medium,
-                                              color: ColorRes.leadGreyColor[700],
-                                            ),
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
-                                                style: const TextStyle(
-                                                  fontSize: AppFontSizes.bodySmall,
-                                                  fontWeight: AppFontWeights.semiBold,
-                                                  color: ColorRes.textPrimary,
-                                                ),
-                                              ),
-                                              const TextSpan(text: '.'),
-                                            ],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Text.rich(
+                                        TextSpan(
+                                          text:
+                                              'This property is also available for sell at ',
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.caption,
+                                            fontWeight: AppFontWeights.medium,
+                                            color: ColorRes.leadGreyColor[700],
                                           ),
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
+                                              style: const TextStyle(
+                                                fontSize:
+                                                    AppFontSizes.bodySmall,
+                                                fontWeight:
+                                                    AppFontWeights.semiBold,
+                                                color: ColorRes.textPrimary,
+                                              ),
+                                            ),
+                                            const TextSpan(text: '.'),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
+                        ),
 
-                          const SizedBox(height: 12),
-                          Divider(
-                            indent: 18,
-                            endIndent: 18,
-                            color: ColorRes.leadGreyColor.shade300,
-                          ),
-                        ] else ...[
-                          SizedBox.shrink(),
-                        ],
-                      ]
-                    ,
+                        const SizedBox(height: 12),
+                        Divider(
+                          indent: 18,
+                          endIndent: 18,
+                          color: ColorRes.leadGreyColor.shade300,
+                        ),
+                      ] else ...[
+                        SizedBox.shrink(),
+                      ],
+                    ],
 
                     if (currentProperty
                             .propertyDetails
@@ -861,10 +882,28 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 ),
                                 child: ContactOwnerBottom(
                                   price: priceManager.actualPrice,
-                                  listingType: currentProperty.listingType?.toLowerCase()??'',
-                                  forRentPrice: currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth??0,
-                                  forSellPrice: currentProperty.propertyDetails?.financialInfo?.price??0,
-                                  isForSell: currentProperty.propertyDetails?.financialInfo?.is_for_sellorrent??false,
+                                  listingType:
+                                      currentProperty.listingType
+                                          ?.toLowerCase() ??
+                                      '',
+                                  forRentPrice:
+                                      currentProperty
+                                          .propertyDetails
+                                          ?.financialInfo
+                                          ?.propertyRentPerMonth ??
+                                      0,
+                                  forSellPrice:
+                                      currentProperty
+                                          .propertyDetails
+                                          ?.financialInfo
+                                          ?.price ??
+                                      0,
+                                  isForSell:
+                                      currentProperty
+                                          .propertyDetails
+                                          ?.financialInfo
+                                          ?.is_for_sellorrent ??
+                                      false,
 
                                   inQuireSubmitted:
                                       controller.hasSubmittedInquiry.value,
@@ -887,7 +926,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     phone,
                                     email,
                                     price,
-                                      isNegotiable,
+                                    isNegotiable,
 
                                     isAllowAllCondition,
                                     inquiryListing,
@@ -905,8 +944,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                       "meta": {
                                         if (price != null)
                                           "negotiablePrice": price,
-                                        if (inquiryListing != null && (inquiryListing?.isNotEmpty??false))
-                                          "inquiryType": inquiryListing.toLowerCase(),
+                                        if (inquiryListing != null &&
+                                            (inquiryListing?.isNotEmpty ??
+                                                false))
+                                          "inquiryType":
+                                              inquiryListing.toLowerCase(),
                                         if (isNegotiable != null)
                                           "isNegotiable": isNegotiable,
                                         if (planningToBuy != null)
