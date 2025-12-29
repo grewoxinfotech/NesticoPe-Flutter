@@ -45,7 +45,7 @@ class OverallRatingController extends GetxController {
       DetailedRatings(
         location: 0,
         cleanliness: 0,
-        accuracy: 0,
+        nightlifeRating: 0,
         value: 0,
         amenities: 0,
       );

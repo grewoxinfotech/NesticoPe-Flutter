@@ -440,35 +440,37 @@ class LeadService {
     String? buyerId,
     String? propertyId,
     Map<String, String>? filters,
-
   }) async {
-
     try {
       Map<String, String> queryParameters = {};
 
       if (page == 1) {
-        // First page: include all filters including property_id
+        // First page: include all filters and property_id if present
         queryParameters = {
           'page': page.toString(),
-          if (buyerId != null) 'buyer_id': buyerId.toString(),
-          if (propertyId != null) 'property_id': propertyId.toString(),
-
+          if (buyerId != null && buyerId.isNotEmpty) 'buyer_id': buyerId,
+          if (propertyId != null && propertyId.isNotEmpty) 'property_id': propertyId,
           if (filters != null) ...filters,
         };
       } else {
-        // Subsequent pages: include all filters including property_id
-        queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
+        // Subsequent pages: include filters only, with limit
+        queryParameters = {
+          if (filters != null) ...filters,
+          'limit': 'all',
+        };
       }
+
+      log("Selected QueryParameter: $queryParameters");
 
       // Build the base URL
       final baseUri = "$baseLeadVisitUrl";
-
       final uri = Uri.parse(baseUri).replace(queryParameters: queryParameters);
 
       print("Property LeadVisitData API URL: $uri");
       print("Query Parameters: $queryParameters");
 
       final response = await http.get(uri, headers: await headers());
+
       print("Property LeadVisitData API response status: ${response.statusCode}");
       print("Property LeadVisitData API response body: ${response.body}");
 
@@ -478,7 +480,6 @@ class LeadService {
         return PaginationResponse<LeadVisitItem>.fromJson(
           data,
               (json) => LeadVisitItem.fromMap(json),
-
         );
       } else {
         print("Failed to load Property LeadVisitData: ${response.statusCode}");
@@ -487,10 +488,10 @@ class LeadService {
       }
     } catch (e) {
       print("Exception in fetch Property LeadVisitData: $e");
-      print("Exception in fetch Property LeadVisitData: $e");
       rethrow;
     }
   }
+
 
   Future<bool> updateTheVisitedData(Map<String,dynamic> user,String id) async {
     try {

@@ -156,49 +156,67 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      "CURRENT STATUS",
-                      style: TextStyle(
-                        color: ColorRes.leadGreyColor.shade600,
-                        fontSize: AppFontSizes.small,
-                        fontWeight: AppFontWeights.medium,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+
+                    Column(
                       children: [
-                         Icon(Icons.circle, size: 10, color:getStatusColor(item.newStatus)),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            (item.newStatus!=null)?capitalizeEachWord(item.newStatus):"N/A",
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: AppFontWeights.semiBold,
-                              fontSize: AppFontSizes.bodySmall,
-                              color: ColorRes.textColor,
-                            ),
+                        Text(
+                          "New Status",
+                          style: TextStyle(
+                            color: ColorRes.leadGreyColor.shade600,
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.medium,
                           ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                             Icon(Icons.circle, size: 10, color:getStatusColor(item.newStatus)),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                (item.newStatus!=null)?capitalizeEachWord(item.newStatus):"N/A",
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: AppFontWeights.semiBold,
+                                  fontSize: AppFontSizes.bodySmall,
+                                  color: ColorRes.textColor,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                     const SizedBox(height: 6),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+                    Column(
                       children: [
-                         Icon(Icons.circle, size: 10, color: getStatusColor(item.oldStatus)),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                              (item.oldStatus!=null)?capitalizeEachWord(item.oldStatus):"N/A",
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: AppFontWeights.semiBold,
-                              fontSize: AppFontSizes.bodySmall,
-                              color: ColorRes.textColor,
-                            ),
+                        Text(
+                          "Old Status",
+                          style: TextStyle(
+                            color: ColorRes.leadGreyColor.shade600,
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.medium,
                           ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                             Icon(Icons.circle, size: 10, color: getStatusColor(item.oldStatus)),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                  (item.oldStatus!=null)?capitalizeEachWord(item.oldStatus):"N/A",
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: AppFontWeights.semiBold,
+                                  fontSize: AppFontSizes.bodySmall,
+                                  color: ColorRes.textColor,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -261,60 +279,63 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
             ],
           ),
 
-          const SizedBox(height: 24),
+
 
           // -------------------- BUTTONS --------------------
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    controller.openAddFollowUpDialog();
-                    controller.populatedContainData(item);
-                  },
-                  icon: const Icon(Icons.close, color: ColorRes.error),
-                  label: const Text(
-                    "Reject",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: ColorRes.error,
+          if(item.newStatus?.toLowerCase()=="pending")...[
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      controller.openAddFollowUpDialog();
+                      controller.populatedContainData(item);
+                    },
+                    icon: const Icon(Icons.close, color: ColorRes.error),
+                    label: const Text(
+                      "Reject",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: ColorRes.error,
+                      ),
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: const Color(0xFFFFEAEA),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: const Color(0xFFFFEAEA),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    controller.updateTheDataApproved(item.id ?? '');
-                  },
-                  icon: const Icon(Icons.check, color: Colors.white),
-                  label: const Text(
-                    "Approve",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      controller.updateTheDataApproved(item.id ?? '');
+                    },
+                    icon: const Icon(Icons.check, color: Colors.white),
+                    label: const Text(
+                      "Approve",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ]
         ],
       ),
     );

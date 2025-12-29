@@ -17,6 +17,7 @@ import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/controllers/property_controller.dart';
 import '../../../property/views/property_detail_screen.dart';
 import '../../../property/views/widgets/property_media_gallery.dart';
+import '../../../reseller/view/lead_overview/widget/lead_negotiable_price_screen.dart';
 import '../../../reseller/view/lead_overview/widget/lead_visit.dart';
 import '../../module/lead_screen/controllers/lead_property_inquiry_controller.dart';
 import '../../module/lead_screen/controllers/lead_property_negotiable_price_controller.dart';
@@ -318,6 +319,24 @@ class _PropertyOverviewSellerScreenState
                           leadPropertyInquiryController,
                           propertyId:
                           property.id,
+                        ),
+                      );
+
+                },
+              ), SizedBox(height: 10),
+              _buildMenuItem(
+                "Negotiable",
+                Icons.currency_rupee_outlined,
+                    () {
+                      leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                        property.id ?? '',
+                      );
+                      log(
+                        'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+                      );
+                      Get.to(
+                            () => LeadNegotiablePriceScreen(
+                          controller: leadPropertyNegotiablePriceController,
                         ),
                       );
 

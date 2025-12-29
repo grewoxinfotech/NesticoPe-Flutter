@@ -1404,7 +1404,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: "Recommended Sellers",
                               showViewAll: true,
                             ),
-                            const SizedBox(height: 15),
+                            const SizedBox(height: 12),
+
                             SellerListWidget(
                               topSeller: topSellerController.items,
                             ),

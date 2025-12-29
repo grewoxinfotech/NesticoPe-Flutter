@@ -111,6 +111,25 @@ class _LeadVisitState extends State<LeadVisit> {
             ),
           );
         } else {
+          // Convert all visit items to a list of buyerIds (non-null, non-empty)
+          final buyerIds = leadVisitController.items
+              .map((element) => element.buyerId)
+              .where((id) => id != null && id!.isNotEmpty)
+              .cast<String>()
+              .toList();
+
+          // Fetch visitors’ profiles using the collected buyerIds
+          // if (buyerIds.isNotEmpty) {
+          //   leadVisitController.getTheVisitersProfile(buyerIds);
+          // }
+          for(var visit in buyerIds)
+            {
+              log("Selected Data From Visit ${visit}");
+              leadVisitController.getTheVisitersProfile(visit);
+            }
+
+          log("Selected Visit: ${leadVisitController.selectedVisit.value?.toJson()}");
+
           return RefreshIndicator(
             onRefresh: leadVisitController.refreshLead,
             color: ColorRes.primary,
@@ -120,15 +139,17 @@ class _LeadVisitState extends State<LeadVisit> {
               separatorBuilder: (_, __) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
                 final visit = leadVisitController.items[index];
-                leadVisitController.getTheVisitersProfile(visit.buyerId ?? '');
-                log("Settti fjfjjf ${leadVisitController.selectedVisit.value?.toJson()}");
 
+                // Retrieve the user profile based on buyerId
                 final user = leadVisitController.userProfiles[visit.buyerId];
-                return _buildVisitCard(context, visit, leadVisitController,user);
+                log("USrtr Data From Visit ${user?.toJson()}");
+
+                return _buildVisitCard(context, visit, leadVisitController, user);
               },
             ),
           );
         }
+
       }),
     );
   }

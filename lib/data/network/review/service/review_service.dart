@@ -33,7 +33,7 @@ class ReviewUserService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Review data: $data");
+        print("Review data:  $data");
 
         return PaginationResponse<ReviewItem>.fromJson(
           data,
@@ -123,10 +123,11 @@ class ReviewUserService {
   /// 👍 Mark review as helpful
   Future<bool> markHelpful(String reviewId) async {
     try {
-      final uri = Uri.parse('$baseUrl/reviews/$reviewId/helpful');
-      final response = await http.post(uri);
-
-      if (response.statusCode == 200) {
+      log("Print second number $reviewId");
+      final uri = Uri.parse('$baseUrl/$reviewId/helpful');
+      final response = await http.post(uri,headers: await headers());
+      log("Print second change  $uri");
+      if (response.statusCode == 200||response.statusCode == 201) {
         print('✅ Marked as helpful');
         return true;
       } else {

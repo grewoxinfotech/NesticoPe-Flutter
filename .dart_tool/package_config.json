@@ -303,7 +303,11 @@
     },
     {
       "name": "flutter",
+<<<<<<< Updated upstream
       "rootUri": "file:///C:/flutter/src/flutter/packages/flutter",
+=======
+      "rootUri": "file:///D:/flutter/packages/flutter",
+>>>>>>> Stashed changes
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -321,7 +325,11 @@
     },
     {
       "name": "flutter_localizations",
+<<<<<<< Updated upstream
       "rootUri": "file:///C:/flutter/src/flutter/packages/flutter_localizations",
+=======
+      "rootUri": "file:///D:/flutter/packages/flutter_localizations",
+>>>>>>> Stashed changes
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -393,7 +401,11 @@
     },
     {
       "name": "flutter_test",
+<<<<<<< Updated upstream
       "rootUri": "file:///C:/flutter/src/flutter/packages/flutter_test",
+=======
+      "rootUri": "file:///D:/flutter/packages/flutter_test",
+>>>>>>> Stashed changes
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -405,7 +417,11 @@
     },
     {
       "name": "flutter_web_plugins",
+<<<<<<< Updated upstream
       "rootUri": "file:///C:/flutter/src/flutter/packages/flutter_web_plugins",
+=======
+      "rootUri": "file:///D:/flutter/packages/flutter_web_plugins",
+>>>>>>> Stashed changes
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -903,7 +919,11 @@
     },
     {
       "name": "sky_engine",
+<<<<<<< Updated upstream
       "rootUri": "file:///C:/flutter/src/flutter/bin/cache/pkg/sky_engine",
+=======
+      "rootUri": "file:///D:/flutter/bin/cache/pkg/sky_engine",
+>>>>>>> Stashed changes
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -1311,8 +1331,14 @@
     }
   ],
   "generator": "pub",
+<<<<<<< Updated upstream
   "generatorVersion": "3.9.0",
   "flutterRoot": "file:///C:/flutter/src/flutter",
   "flutterVersion": "3.35.1",
+=======
+  "generatorVersion": "3.9.2",
+  "flutterRoot": "file:///D:/flutter",
+  "flutterVersion": "3.35.4",
+>>>>>>> Stashed changes
   "pubCache": "file:///C:/Users/DELL/AppData/Local/Pub/Cache"
 }

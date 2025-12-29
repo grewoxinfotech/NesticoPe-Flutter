@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -18,16 +19,17 @@ class SellerListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     print("[TopSeller] topSeller : ${topSeller.map((e) => e.firstName)}");
     return SizedBox(
-      height: 190, // smaller height
+      height: 175,
+      // smaller height
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: topSeller.length,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         itemBuilder: (context, index) {
           final seller = topSeller[index];
 
           return SizedBox(
-            width: 140, // reduced card width
+            width: 250, // reduced card width
             child: GestureDetector(
               onTap: () {
                 Get.to(
@@ -80,7 +82,7 @@ class SellerListWidget extends StatelessWidget {
                 );
               },
               child: SellerCard(
-                name: '${seller.firstName} ${seller.lastName}',
+                name: '${((seller.firstName==null)|| (seller.lastName==null))?seller.username:'${seller.firstName} ${seller.lastName}'}',
                 imageUrl: seller.profilePic ?? null,
                 experience: seller.sellerType ?? '',
                 location: seller.city ?? '',
@@ -176,333 +178,587 @@ class SellerListWidget extends StatelessWidget {
     // );
   }
 }
-
 class SellerCard extends StatelessWidget {
   final String name;
   final String? imageUrl;
-  final String experience;
-  final String location;
-  final int properties;
-  final String sellerType;
+  final String? city;
+  final String? state;
+  final String? sellerType;
+  final bool isPremium;
+  final bool isActive;
+  final int? properties;
+  final int? projects;
+  final String? experience;
+  final String? location; // optional if provided separately
 
   const SellerCard({
     super.key,
     required this.name,
     this.imageUrl,
-    required this.experience,
-    required this.location,
-    required this.properties,
-    required this.sellerType,
+    this.city,
+    this.state,
+    this.sellerType,
+    this.isPremium = false,
+    this.isActive = false,
+    this.properties,
+    this.projects,
+    this.experience,
+    this.location,
   });
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Container(
-  //     margin: const EdgeInsets.only(right: 10),
-  //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
-  //     child: ClipRRect(
-  //       borderRadius: BorderRadius.circular(14),
-  //       child: Stack(
-  //         children: [
-  //           Positioned.fill(
-  //             child: CustomImage(
-  //               type:
-  //                   imageUrl != null
-  //                       ? CustomImageType.network
-  //                       : CustomImageType.asset,
-  //               src: imageUrl ?? '',
-  //               fit: BoxFit.cover,
-  //             ),
-  //           ),
-  //
-  //           // Gradient Overlay
-  //           Positioned.fill(
-  //             child: DecoratedBox(
-  //               decoration: BoxDecoration(
-  //                 gradient: LinearGradient(
-  //                   begin: Alignment.topCenter,
-  //                   end: Alignment.bottomCenter,
-  //                   colors: [
-  //                     ColorRes.transparentColor,
-  //                     ColorRes.black.withOpacity(0.7),
-  //                     ColorRes.black.withOpacity(0.9),
-  //                   ],
-  //                   stops: const [0.5, 0.7, 1.0],
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //
-  //           Positioned(
-  //             left: 10,
-  //             top: 10,
-  //             child: Container(
-  //               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-  //               decoration: BoxDecoration(
-  //                 color: ColorRes.homedeepOrange.shade600,
-  //                 borderRadius: BorderRadius.circular(4),
-  //               ),
-  //               child: Text(
-  //                 'Top Rated',
-  //                 style: TextStyle(
-  //                   color: ColorRes.white,
-  //                   fontSize: AppFontSizes.mini,
-  //                   fontWeight: AppFontWeights.semiBold,
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //
-  //           // Bottom Content
-  //           Padding(
-  //             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               mainAxisAlignment: MainAxisAlignment.end,
-  //               children: [
-  //                 Text(
-  //                   name,
-  //                   maxLines: 1,
-  //                   overflow: TextOverflow.ellipsis,
-  //                   style: TextStyle(
-  //                     color: ColorRes.white,
-  //                     fontWeight: AppFontWeights.semiBold,
-  //                     fontSize: AppFontSizes.caption,
-  //                   ),
-  //                 ),
-  //
-  //                 const SizedBox(height: 4),
-  //
-  //                 Row(
-  //                   children: [
-  //                     Icon(
-  //                       Icons.work_outline,
-  //                       size: 12,
-  //                       color: ColorRes.whiteShade,
-  //                     ),
-  //                     const SizedBox(width: 4),
-  //                     Text(
-  //                       "$experience yrs Exp.",
-  //                       style: TextStyle(
-  //                         color: ColorRes.white.withOpacity(0.9),
-  //                         fontSize: AppFontSizes.mini,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //
-  //                 const SizedBox(height: 4),
-  //
-  //                 Row(
-  //                   mainAxisSize: MainAxisSize.min,
-  //                   children: [
-  //                     Icon(
-  //                       Icons.location_on_outlined,
-  //                       size: 12,
-  //                       color: ColorRes.white.withOpacity(0.9),
-  //                     ),
-  //                     const SizedBox(width: 3),
-  //                     Expanded(
-  //                       child: Text(
-  //                         location,
-  //                         maxLines: 1,
-  //                         overflow: TextOverflow.ellipsis,
-  //                         style: TextStyle(
-  //                           fontSize: AppFontSizes.mini,
-  //                           color: ColorRes.white.withOpacity(0.9),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //
-  //                 const SizedBox(height: 4),
-  //
-  //                 Row(
-  //                   children: [
-  //                     Text(
-  //                       "${formatNumber(properties)} Properties",
-  //                       style: TextStyle(
-  //                         color: ColorRes.white,
-  //                         fontSize: AppFontSizes.caption,
-  //                         fontWeight: AppFontWeights.semiBold,
-  //                       ),
-  //                     ),
-  //                     const SizedBox(width: 3),
-  //                     const Icon(
-  //                       Icons.arrow_forward_ios,
-  //                       color: ColorRes.white,
-  //                       size: 10,
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ],
-
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
+    log("sller name $name");
+    final displayLocation = location ??
+        [
+          if (city != null && city!.isNotEmpty) city!,
+          if (state != null && state!.isNotEmpty) state!
+        ].join(', ');
+
+    final inventoryText = sellerType?.toLowerCase() == 'builder'
+        ? '${projects ?? 0} Projects Listed'
+        : '${properties ?? 0} Properties Listed';
+
     return Container(
-      margin: const EdgeInsets.only(right: 10),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: Stack(
-          children: [
-            // 🔹 Background image (blurred)
-            Positioned.fill(
-              child: ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
-                child: CustomImage(
-                  type:
-                      imageUrl != null
-                          ? CustomImageType.network
-                          : CustomImageType.asset,
-                  src: imageUrl ?? '',
-                  fit: BoxFit.cover,
-                ),
+      margin: const EdgeInsets.symmetric(horizontal: 6,),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🧑 Profile Row
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Avatar
+              CircleAvatar(
+                radius: 25,
+                backgroundColor: ColorRes.primary.withOpacity(0.1),
+                backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
+                    ? NetworkImage(imageUrl!)
+                    : null,
+                child: imageUrl == null || imageUrl!.isEmpty
+                    ? const Icon(Icons.person, color: ColorRes.primary, size: 25)
+                    : null,
               ),
-            ),
+              const SizedBox(width: 12),
 
-            // 🔹 Gradient Overlay
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      ColorRes.transparentColor,
-                      ColorRes.black.withOpacity(0.5),
-                      ColorRes.black.withOpacity(0.9),
-                    ],
-                    stops: const [0.5, 0.7, 1.0],
-                  ),
-                ),
-              ),
-            ),
-
-            // 🔹 "Top Rated" badge
-            Positioned(
-              left: 10,
-              top: 10,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                decoration: BoxDecoration(
-                  color: ColorRes.homedeepOrange.shade600,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  'Top Rated',
-                  style: TextStyle(
-                    color: ColorRes.white,
-                    fontSize: AppFontSizes.mini,
-                    fontWeight: AppFontWeights.semiBold,
-                  ),
-                ),
-              ),
-            ),
-
-            // 🔹 Foreground content
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // 🟠 Circular avatar on top of blurred bg
-                  SizedBox(height: 30),
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: ColorRes.primary, width: 2.0),
+              // Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name.isNotEmpty ? name : "Unknown Seller",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textPrimary,
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: CustomImage(
-                          height: 70,
-                          width: 70,
-                          type: CustomImageType.network,
-                          src: imageUrl,
+                    ),
+                    const SizedBox(height: 4),
+
+                    // 🏢 Seller Type + Location
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.person_outline,
+                            size: 14, color: ColorRes.textSecondary),
+                        const SizedBox(width: 4),
+                        Text(
+                          (sellerType ?? 'Owner'),
+                          style: const TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.textSecondary,
+                          ),
                         ),
-                      ),
+                        if (displayLocation.isNotEmpty) ...[
+                          const SizedBox(width: 8),
+                          const Icon(Icons.location_on_outlined,
+                              size: 14, color: ColorRes.textSecondary),
+                          const SizedBox(width: 2),
+                          Expanded(
+                            child: Text(
+                              displayLocation,
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                color: ColorRes.textSecondary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ),
 
-                  Spacer(),
+                    // 💼 Experience row
+                    // if (experience != null && experience!.isNotEmpty) ...[
+                    //   const SizedBox(height: 6),
+                    //   Row(
+                    //     children: [
+                    //       const Icon(Icons.work_outline,
+                    //           size: 14, color: ColorRes.textSecondary),
+                    //       const SizedBox(width: 4),
+                    //       Text(
+                    //         "$experience experience",
+                    //         style: const TextStyle(
+                    //           fontSize: AppFontSizes.caption,
+                    //           color: ColorRes.textSecondary,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ],
 
-                  Text(
-                    name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: ColorRes.white,
-                      fontWeight: AppFontWeights.semiBold,
-                      fontSize: AppFontSizes.caption,
-                    ),
-                  ),
+                    const SizedBox(height: 6),
 
-                  const SizedBox(height: 4),
-
-                  if (location != null && location.isNotEmpty) ...[
+                    // 🏅 Badges
                     Row(
                       children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 12,
-                          color: ColorRes.white.withOpacity(0.9),
-                        ),
-                        const SizedBox(width: 3),
-                        Flexible(
-                          child: Text(
-                            location,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.mini,
-                              color: ColorRes.white.withOpacity(0.9),
+                        if (isPremium)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.star,
+                                    size: 14, color: Colors.amber),
+                                SizedBox(width: 3),
+                                Text(
+                                  "Premium",
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: Colors.amber,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (isPremium) const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.circle,
+                                  size: 8, color: Colors.green),
+                              SizedBox(width: 4),
+                              Text(
+                                "Active",
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.medium,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-
-                    const SizedBox(height: 4),
                   ],
+                ),
+              ),
+            ],
+          ),
 
-                  Row(
+          const SizedBox(height: 14),
+
+          // 🏘️ Inventory Section
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: ColorRes.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.home_work_outlined,
+                    color: ColorRes.primary, size: 22),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "${formatNumber(properties)} ${sellerType == "owner" ? 'Properties' : 'Projects'}",
+                      const Text(
+                        "Inventory",
                         style: TextStyle(
-                          color: ColorRes.white,
                           fontSize: AppFontSizes.caption,
-                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textSecondary,
                         ),
                       ),
-                      const SizedBox(width: 3),
-                      const Icon(
-                        Icons.arrow_forward_ios,
-                        color: ColorRes.white,
-                        size: 10,
+                      Text(
+                        inventoryText,
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textPrimary,
+                        ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
+extension StringCap on String {
+  String get capitalizeFirst =>
+      isNotEmpty ? '${this[0].toUpperCase()}${substring(1)}' : this;
+}
+
+
+extension CapExtension on String {
+  String get capitalizeFirst =>
+      isNotEmpty ? '${this[0].toUpperCase()}${substring(1)}' : this;
+}
+// class SellerCard extends StatelessWidget {
+//   final String name;
+//   final String? imageUrl;
+//   final String experience;
+//   final String location;
+//   final int properties;
+//   final String sellerType;
+//
+//   const SellerCard({
+//     super.key,
+//     required this.name,
+//     this.imageUrl,
+//     required this.experience,
+//     required this.location,
+//     required this.properties,
+//     required this.sellerType,
+//   });
+//
+//   // @override
+//   // Widget build(BuildContext context) {
+//   //   return Container(
+//   //     margin: const EdgeInsets.only(right: 10),
+//   //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
+//   //     child: ClipRRect(
+//   //       borderRadius: BorderRadius.circular(14),
+//   //       child: Stack(
+//   //         children: [
+//   //           Positioned.fill(
+//   //             child: CustomImage(
+//   //               type:
+//   //                   imageUrl != null
+//   //                       ? CustomImageType.network
+//   //                       : CustomImageType.asset,
+//   //               src: imageUrl ?? '',
+//   //               fit: BoxFit.cover,
+//   //             ),
+//   //           ),
+//   //
+//   //           // Gradient Overlay
+//   //           Positioned.fill(
+//   //             child: DecoratedBox(
+//   //               decoration: BoxDecoration(
+//   //                 gradient: LinearGradient(
+//   //                   begin: Alignment.topCenter,
+//   //                   end: Alignment.bottomCenter,
+//   //                   colors: [
+//   //                     ColorRes.transparentColor,
+//   //                     ColorRes.black.withOpacity(0.7),
+//   //                     ColorRes.black.withOpacity(0.9),
+//   //                   ],
+//   //                   stops: const [0.5, 0.7, 1.0],
+//   //                 ),
+//   //               ),
+//   //             ),
+//   //           ),
+//   //
+//   //           Positioned(
+//   //             left: 10,
+//   //             top: 10,
+//   //             child: Container(
+//   //               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+//   //               decoration: BoxDecoration(
+//   //                 color: ColorRes.homedeepOrange.shade600,
+//   //                 borderRadius: BorderRadius.circular(4),
+//   //               ),
+//   //               child: Text(
+//   //                 'Top Rated',
+//   //                 style: TextStyle(
+//   //                   color: ColorRes.white,
+//   //                   fontSize: AppFontSizes.mini,
+//   //                   fontWeight: AppFontWeights.semiBold,
+//   //                 ),
+//   //               ),
+//   //             ),
+//   //           ),
+//   //
+//   //           // Bottom Content
+//   //           Padding(
+//   //             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+//   //             child: Column(
+//   //               crossAxisAlignment: CrossAxisAlignment.start,
+//   //               mainAxisAlignment: MainAxisAlignment.end,
+//   //               children: [
+//   //                 Text(
+//   //                   name,
+//   //                   maxLines: 1,
+//   //                   overflow: TextOverflow.ellipsis,
+//   //                   style: TextStyle(
+//   //                     color: ColorRes.white,
+//   //                     fontWeight: AppFontWeights.semiBold,
+//   //                     fontSize: AppFontSizes.caption,
+//   //                   ),
+//   //                 ),
+//   //
+//   //                 const SizedBox(height: 4),
+//   //
+//   //                 Row(
+//   //                   children: [
+//   //                     Icon(
+//   //                       Icons.work_outline,
+//   //                       size: 12,
+//   //                       color: ColorRes.whiteShade,
+//   //                     ),
+//   //                     const SizedBox(width: 4),
+//   //                     Text(
+//   //                       "$experience yrs Exp.",
+//   //                       style: TextStyle(
+//   //                         color: ColorRes.white.withOpacity(0.9),
+//   //                         fontSize: AppFontSizes.mini,
+//   //                       ),
+//   //                     ),
+//   //                   ],
+//   //                 ),
+//   //
+//   //                 const SizedBox(height: 4),
+//   //
+//   //                 Row(
+//   //                   mainAxisSize: MainAxisSize.min,
+//   //                   children: [
+//   //                     Icon(
+//   //                       Icons.location_on_outlined,
+//   //                       size: 12,
+//   //                       color: ColorRes.white.withOpacity(0.9),
+//   //                     ),
+//   //                     const SizedBox(width: 3),
+//   //                     Expanded(
+//   //                       child: Text(
+//   //                         location,
+//   //                         maxLines: 1,
+//   //                         overflow: TextOverflow.ellipsis,
+//   //                         style: TextStyle(
+//   //                           fontSize: AppFontSizes.mini,
+//   //                           color: ColorRes.white.withOpacity(0.9),
+//   //                         ),
+//   //                       ),
+//   //                     ),
+//   //                   ],
+//   //                 ),
+//   //
+//   //                 const SizedBox(height: 4),
+//   //
+//   //                 Row(
+//   //                   children: [
+//   //                     Text(
+//   //                       "${formatNumber(properties)} Properties",
+//   //                       style: TextStyle(
+//   //                         color: ColorRes.white,
+//   //                         fontSize: AppFontSizes.caption,
+//   //                         fontWeight: AppFontWeights.semiBold,
+//   //                       ),
+//   //                     ),
+//   //                     const SizedBox(width: 3),
+//   //                     const Icon(
+//   //                       Icons.arrow_forward_ios,
+//   //                       color: ColorRes.white,
+//   //                       size: 10,
+//   //                     ),
+//   //                   ],
+//   //                 ),
+//   //               ],
+//
+//   //             ),
+//   //           ),
+//   //         ],
+//   //       ),
+//   //     ),
+//   //   );
+//   // }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: const EdgeInsets.only(right: 10),
+//       decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
+//       child: ClipRRect(
+//         borderRadius: BorderRadius.circular(14),
+//         child: Stack(
+//           children: [
+//             // 🔹 Background image (blurred)
+//             Positioned.fill(
+//               child: ImageFiltered(
+//                 imageFilter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+//                 child: CustomImage(
+//                   type:
+//                       imageUrl != null
+//                           ? CustomImageType.network
+//                           : CustomImageType.asset,
+//                   src: imageUrl ?? '',
+//                   fit: BoxFit.cover,
+//                 ),
+//               ),
+//             ),
+//
+//             // 🔹 Gradient Overlay
+//             Positioned.fill(
+//               child: DecoratedBox(
+//                 decoration: BoxDecoration(
+//                   gradient: LinearGradient(
+//                     begin: Alignment.topCenter,
+//                     end: Alignment.bottomCenter,
+//                     colors: [
+//                       ColorRes.transparentColor,
+//                       ColorRes.black.withOpacity(0.5),
+//                       ColorRes.black.withOpacity(0.9),
+//                     ],
+//                     stops: const [0.5, 0.7, 1.0],
+//                   ),
+//                 ),
+//               ),
+//             ),
+//
+//             // 🔹 "Top Rated" badge
+//             Positioned(
+//               left: 10,
+//               top: 10,
+//               child: Container(
+//                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+//                 decoration: BoxDecoration(
+//                   color: ColorRes.homedeepOrange.shade600,
+//                   borderRadius: BorderRadius.circular(4),
+//                 ),
+//                 child: Text(
+//                   'Top Rated',
+//                   style: TextStyle(
+//                     color: ColorRes.white,
+//                     fontSize: AppFontSizes.mini,
+//                     fontWeight: AppFontWeights.semiBold,
+//                   ),
+//                 ),
+//               ),
+//             ),
+//
+//             // 🔹 Foreground content
+//             Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 mainAxisAlignment: MainAxisAlignment.end,
+//                 children: [
+//                   // 🟠 Circular avatar on top of blurred bg
+//                   SizedBox(height: 30),
+//                   Center(
+//                     child: Container(
+//                       decoration: BoxDecoration(
+//                         shape: BoxShape.circle,
+//                         border: Border.all(color: ColorRes.primary, width: 2.0),
+//                       ),
+//                       child: ClipRRect(
+//                         borderRadius: BorderRadius.circular(50),
+//                         child: CustomImage(
+//                           height: 70,
+//                           width: 70,
+//                           type: CustomImageType.network,
+//                           src: imageUrl,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//
+//                   Spacer(),
+//
+//                   Text(
+//                     name,
+//                     maxLines: 1,
+//                     overflow: TextOverflow.ellipsis,
+//                     style: TextStyle(
+//                       color: ColorRes.white,
+//                       fontWeight: AppFontWeights.semiBold,
+//                       fontSize: AppFontSizes.caption,
+//                     ),
+//                   ),
+//
+//                   const SizedBox(height: 4),
+//
+//                   if (location != null && location.isNotEmpty) ...[
+//                     Row(
+//                       children: [
+//                         Icon(
+//                           Icons.location_on_outlined,
+//                           size: 12,
+//                           color: ColorRes.white.withOpacity(0.9),
+//                         ),
+//                         const SizedBox(width: 3),
+//                         Flexible(
+//                           child: Text(
+//                             location,
+//                             maxLines: 1,
+//                             overflow: TextOverflow.ellipsis,
+//                             style: TextStyle(
+//                               fontSize: AppFontSizes.mini,
+//                               color: ColorRes.white.withOpacity(0.9),
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//
+//                     const SizedBox(height: 4),
+//                   ],
+//
+//                   Row(
+//                     children: [
+//                       Text(
+//                         "${formatNumber(properties)} ${sellerType == "owner" ? 'Properties' : 'Projects'}",
+//                         style: TextStyle(
+//                           color: ColorRes.white,
+//                           fontSize: AppFontSizes.caption,
+//                           fontWeight: AppFontWeights.semiBold,
+//                         ),
+//                       ),
+//                       const SizedBox(width: 3),
+//                       const Icon(
+//                         Icons.arrow_forward_ios,
+//                         color: ColorRes.white,
+//                         size: 10,
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 String formatNumber(int number) {
   if (number >= 1000000000) {

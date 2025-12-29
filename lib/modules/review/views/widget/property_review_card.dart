@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
+import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
 import 'package:housing_flutter_app/modules/user/controllers/user_controller.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
@@ -258,6 +260,7 @@ import '../../../../app/constants/size_manager.dart';
 
 class PropertyReviewCard extends StatefulWidget {
   final ReviewItem reviewItem;
+
   const PropertyReviewCard({super.key, required this.reviewItem});
 
   @override
@@ -266,6 +269,7 @@ class PropertyReviewCard extends StatefulWidget {
 
 class _PropertyReviewCardState extends State<PropertyReviewCard> {
   late final UserController userController;
+  final reviewController = Get.put(ReviewController());
 
   @override
   void initState() {
@@ -286,20 +290,12 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
-      margin: const EdgeInsets.symmetric(vertical: 12),
+      margin: const EdgeInsets.symmetric(vertical: 4),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: ColorRes.leadGreyColor.shade300.withOpacity(0.25),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 0.8),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.8),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -331,9 +327,10 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
 
           // 💬 Review Content
           Text(
-            widget.reviewItem.content ?? '',
+            '${widget.reviewItem.content}' ?? '',
+
             style: TextStyle(
-              fontSize: AppFontSizes.body,
+              fontSize: AppFontSizes.small,
               color: ColorRes.leadGreyColor.shade800,
             ),
             maxLines: 2,
@@ -341,36 +338,44 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
           ),
 
           const SizedBox(height: 16),
-
-          // 📅 Footer — Type & Date
+          if (widget.reviewItem.pros != null &&
+              ((widget.reviewItem.pros?.text?.isNotEmpty ?? false) ||
+                  (widget.reviewItem.pros?.tags?.isNotEmpty ?? false)))
+            ProsConsSection(review: widget.reviewItem, isPros: true),
+          const SizedBox(height: 10),
+          // ❌ Cons Section
+          if (widget.reviewItem.cons != null &&
+              ((widget.reviewItem.cons?.text?.isNotEmpty ?? false) ||
+                  (widget.reviewItem.cons?.tags?.isNotEmpty ?? false)))
+            ProsConsSection(review: widget.reviewItem, isPros: false),
+          const SizedBox(height: 12),
+          // 👍 Helpful & Report Row
           // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
           //   children: [
-          //     if ((widget.reviewItem.entityType ?? '').isNotEmpty)
-          //       Container(
-          //         padding: const EdgeInsets.symmetric(
-          //           horizontal: 10,
-          //           vertical: 4,
-          //         ),
-          //         decoration: BoxDecoration(
-          //           color: ColorRes.primary.withOpacity(0.08),
-          //           borderRadius: BorderRadius.circular(6),
-          //         ),
-          //         child: Text(
-          //           widget.reviewItem.entityType!,
-          //           style: TextStyle(
+          //     Icon(Icons.thumb_up_alt_outlined,
+          //         size: 18, color: ColorRes.textSecondary),
+          //     const SizedBox(width: 4),
+          //     GestureDetector(
+          //       onTap: () {
+          //         // reviewController.markHelpful(widget.reviewItem.id??'');
+          //         // reviewController.refreshList();
+          //       },
+          //       child: Text(
+          //         "Helpful (${widget.reviewItem.helpfulCount ?? 0})",
+          //         style: TextStyle(
           //             fontSize: AppFontSizes.small,
-          //             fontWeight: FontWeight.w600,
-          //             color: ColorRes.primary,
-          //           ),
-          //         ),
+          //             color: ColorRes.textSecondary),
           //       ),
+          //     ),
+          //     Spacer(),
+          //     Icon(Icons.flag_outlined,
+          //         size: 18, color: ColorRes.textSecondary),
+          //     const SizedBox(width: 4),
           //     Text(
-          //       _formatDate(widget.reviewItem.createdAt ?? DateTime.now()),
+          //       "Report",
           //       style: TextStyle(
-          //         fontSize: AppFontSizes.small,
-          //         color: ColorRes.leadGreyColor.shade600,
-          //       ),
+          //           fontSize: AppFontSizes.small,
+          //           color: ColorRes.textSecondary),
           //     ),
           //   ],
           // ),
@@ -486,5 +491,132 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
     return "${date.day.toString().padLeft(2, '0')}-"
         "${date.month.toString().padLeft(2, '0')}-"
         "${date.year}";
+  }
+}
+
+class ProsConsSection extends StatefulWidget {
+  final ReviewItem review;
+  final bool isPros;
+
+  const ProsConsSection({
+    super.key,
+    required this.review,
+    required this.isPros,
+  });
+
+  @override
+  State<ProsConsSection> createState() => _ProsConsSectionState();
+}
+
+class _ProsConsSectionState extends State<ProsConsSection> {
+  bool showMore = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final ReviewProsCons? section =
+        widget.isPros ? widget.review.pros : widget.review.cons;
+
+    final tags = section?.tags ?? [];
+    final text = section?.text ?? "";
+    final color = widget.isPros ? Colors.green : Colors.red;
+    final title = widget.isPros ? "Like" : "Dislike";
+    final icon = widget.isPros ? Icons.add_circle : Icons.remove_circle;
+
+    if ((tags.isEmpty) && text.isEmpty) return const SizedBox.shrink();
+
+    // Determine visible tags based on showMore
+    final visibleTags = showMore ? tags : tags.take(3).toList();
+    final hasMore = tags.length > 3 || text.length > 100;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Title
+        Row(
+          children: [
+            Icon(icon, color: color, size: 18),
+            const SizedBox(width: 6),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: AppFontWeights.regular,
+                fontSize: AppFontSizes.bodySmall,
+                color: ColorRes.leadGreyColor.shade600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        if (text.isNotEmpty) ...[
+          Text(
+            showMore
+                ? text
+                : text.length > 100
+                ? "${text.substring(0, 100)}..."
+                : text,
+            style: TextStyle(
+              fontSize: AppFontSizes.small,
+              fontWeight: AppFontWeights.medium,
+              color: color.shade500,
+              height: 1.3,
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
+
+        // Tags
+        if (visibleTags.isNotEmpty)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children:
+                visibleTags
+                    .map(
+                      (t) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          capitalizeEachWord(t),
+                          style: TextStyle(
+                            fontSize: AppFontSizes.extraSmall,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+          ),
+
+        // Text content
+
+        // Show more / less button
+        if (hasMore)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              onPressed: () => setState(() => showMore = !showMore),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(40, 24),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                showMore ? "Show Less" : "Show More",
+                style: TextStyle(
+                  fontSize: AppFontSizes.small,
+                  color: color,
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }

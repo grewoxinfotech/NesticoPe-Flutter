@@ -53,14 +53,14 @@ class ReviewData {
 class DetailedRatings {
   final double location;
   final double cleanliness;
-  final double accuracy;
+  final double nightlifeRating;
   final double value;
   final double amenities;
 
   DetailedRatings({
     required this.location,
     required this.cleanliness,
-    required this.accuracy,
+    required this.nightlifeRating,
     required this.value,
     required this.amenities,
   });
@@ -69,7 +69,7 @@ class DetailedRatings {
     return DetailedRatings(
       location: (json['location'] ?? 0).toDouble(),
       cleanliness: (json['cleanliness'] ?? 0).toDouble(),
-      accuracy: (json['accuracy'] ?? 0).toDouble(),
+      nightlifeRating: (json['nightlife'] ?? 0).toDouble(),
       value: (json['value'] ?? 0).toDouble(),
       amenities: (json['amenities'] ?? 0).toDouble(),
     );
@@ -79,7 +79,7 @@ class DetailedRatings {
     return {
       'location': location,
       'cleanliness': cleanliness,
-      'accuracy': accuracy,
+      'nightlife': nightlifeRating,
       'value': value,
       'amenities': amenities,
     };
@@ -88,7 +88,7 @@ class DetailedRatings {
   factory DetailedRatings.empty() => DetailedRatings(
     location: 0,
     cleanliness: 0,
-    accuracy: 0,
+    nightlifeRating: 0,
     value: 0,
     amenities: 0,
   );

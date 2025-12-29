@@ -314,12 +314,248 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         return _buildTitleSection(currentProperty);
                       },
                     ),
+                    if ((currentProperty
+                                .propertyDetails
+                                ?.financialInfo
+                                ?.is_for_sellorrent ??
+                            false) &&
+                        (currentProperty.listingType?.toLowerCase() ==
+                            'sell')) ...[
+                      if (currentProperty
+                              .propertyDetails
+                              ?.financialInfo
+                              ?.propertyRentPerMonth !=
+                          null) ...[
 
-                    Divider(
-                      indent: 18,
-                      endIndent: 18,
-                      color: ColorRes.leadGreyColor.shade300,
-                    ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                        //   child: Container(
+                        //     padding: const EdgeInsets.all(12),
+                        //     decoration: BoxDecoration(
+                        //       color: ColorRes.primary.withOpacity(0.05),
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       border: Border.all(
+                        //         color: ColorRes.primary.withOpacity(0.2),
+                        //       ),
+                        //     ),
+                        //     child: Row(
+                        //       children: [
+                        //         const Icon(
+                        //           Icons.house,
+                        //           color: ColorRes.primary,
+                        //         ),
+                        //         const SizedBox(width: 8),
+                        //         Expanded(
+                        //           child: Text(
+                        //             'This property is also available for rent at '
+                        //             '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month.',
+                        //             style: const TextStyle(
+                        //               fontSize: AppFontSizes.bodySmall,
+                        //               fontWeight: AppFontWeights.medium,
+                        //               color: ColorRes.textPrimary,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+
+                        Divider(
+                          indent: 18,
+                          endIndent: 18,
+                          color: ColorRes.leadGreyColor.shade300,
+                        ),
+                        const SizedBox(height: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const TitleWithViewAll(title: 'Also for Rent'),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.primary.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: ColorRes.primary.withOpacity(0.3),
+                                    width: 0.8,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+
+                                    Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+
+                                        Text(
+                                          'Available Rent Price',
+                                          style: const TextStyle(
+                                            fontSize: AppFontSizes.caption,
+                                            fontWeight: AppFontWeights.medium,
+                                            color: ColorRes.textPrimary,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
+                                          style: const TextStyle(
+                                            fontSize: AppFontSizes.body,
+                                            fontWeight: AppFontWeights.semiBold,
+                                            color: ColorRes.textPrimary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Divider(
+                          indent: 18,
+                          endIndent: 18,
+                          color: ColorRes.leadGreyColor.shade300,
+                        ),
+                      ] else ...[
+                        SizedBox.shrink(),
+                      ],
+                    ],
+                    if ((currentProperty
+                                .propertyDetails
+                                ?.financialInfo
+                                ?.is_for_sellorrent ??
+                            false) &&
+                        (currentProperty.listingType?.toLowerCase() ==
+                            'rent')) ...[
+                      if (currentProperty
+                              .propertyDetails
+                              ?.financialInfo
+                              ?.price !=
+                          null) ...[
+
+                        const SizedBox(height: 12),
+                        Divider(
+                          indent: 18,
+                          endIndent: 18,
+                          color: ColorRes.leadGreyColor.shade300,
+                        ),
+                        const SizedBox(height: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const TitleWithViewAll(title: 'Also for Sell'),
+                            const SizedBox(height: 8),
+                            // Padding(
+                            //   padding: const EdgeInsets.symmetric(
+                            //     horizontal: 16,
+                            //   ),
+                            //   child: Container(
+                            //     padding: const EdgeInsets.all(12),
+                            //     decoration: BoxDecoration(
+                            //       color: ColorRes.white,
+                            //       borderRadius: BorderRadius.circular(12),
+                            //       border: Border.all(
+                            //         color: ColorRes.leadGreyColor.shade300,
+                            //         width: 0.8,
+                            //       ),
+                            //     ),
+                            //     child: Row(
+                            //       crossAxisAlignment: CrossAxisAlignment.center,
+                            //       children: [
+                            //         Expanded(
+                            //           child: Text.rich(
+                            //             TextSpan(
+                            //               text:
+                            //                   'This property is also available for sell at ',
+                            //               style: TextStyle(
+                            //                 fontSize: AppFontSizes.caption,
+                            //                 fontWeight: AppFontWeights.medium,
+                            //                 color: ColorRes.leadGreyColor[700],
+                            //               ),
+                            //               children: [
+                            //                 TextSpan(
+                            //                   text:
+                            //                       '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
+                            //                   style: const TextStyle(
+                            //                     fontSize:
+                            //                         AppFontSizes.bodySmall,
+                            //                     fontWeight:
+                            //                         AppFontWeights.semiBold,
+                            //                     color: ColorRes.textPrimary,
+                            //                   ),
+                            //                 ),
+                            //                 const TextSpan(text: '.'),
+                            //               ],
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.primary.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: ColorRes.primary.withOpacity(0.3),
+                                    width: 0.8,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+
+                                        Text(
+                                          'Available Sell Price',
+                                          style: const TextStyle(
+                                            fontSize: AppFontSizes.caption,
+                                            fontWeight: AppFontWeights.medium,
+                                            color: ColorRes.textPrimary,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
+                                          style: const TextStyle(
+                                            fontSize: AppFontSizes.body,
+                                            fontWeight: AppFontWeights.semiBold,
+                                            color: ColorRes.textPrimary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 12),
+                        Divider(
+                          indent: 18,
+                          endIndent: 18,
+                          color: ColorRes.leadGreyColor.shade300,
+                        ),
+                      ] else ...[
+                        SizedBox.shrink(),
+                      ],
+                    ],
 
                     if (currentProperty.propertyDetails?.amenities != null) ...[
                       const SizedBox(height: 12),

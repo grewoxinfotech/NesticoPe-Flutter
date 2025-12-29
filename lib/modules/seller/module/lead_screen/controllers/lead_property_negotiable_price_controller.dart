@@ -83,11 +83,10 @@ final leadId=''.obs;
       "buyerId": buyerId.value,
       "sellerId": sellerId.value,
       "negotiablePrice": negotiablePrice,
-      "action": action.value,
-      "previousAction": previousAction.value,
+      // "action": action.value,
+      // "previousAction": previousAction.value,
       "previousNegotiablePrice": previousNegotiablePrice.value,
-      "newStatus": newStatus.value,
-      "status": status.value,
+      "newStatus": "rejected",
       "rejectionReason": txtReason.text.trim(),
     };
   }
@@ -303,9 +302,8 @@ final leadId=''.obs;
   async {
     var data={
       "newStatus": "approved",
-      "status": "approved",
-      "previousAction": "N/A"
     };
+    log("Approved payload : $data");
     final response=await _leadService.updateStatusOfNegotiable(data, id);
     if(response){
       refreshList();

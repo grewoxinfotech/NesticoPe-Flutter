@@ -13,8 +13,8 @@ class ReviewItem {
   final DetailedRatings? detailedRatings;
   final List<String>? photos;
   final List<String>? videos;
-  final String? pros;
-  final String? cons;
+  final ReviewProsCons? pros;
+  final ReviewProsCons? cons;
   final bool? isVerified;
   final String? verificationType;
   final String? status;
@@ -76,8 +76,13 @@ class ReviewItem {
               : null,
       photos: (json['photos'] as List?)?.map((e) => e.toString()).toList(),
       videos: (json['videos'] as List?)?.map((e) => e.toString()).toList(),
-      pros: json['pros'],
-      cons: json['cons'],
+      pros: json['pros'] != null && json['pros'] is Map<String, dynamic>
+          ? ReviewProsCons.fromJson(json['pros'])
+          : null,
+      cons: json['cons'] != null && json['cons'] is Map<String, dynamic>
+          ? ReviewProsCons.fromJson(json['cons'])
+          : null,
+
       isVerified: json['is_verified'] ?? false,
       verificationType: json['verification_type'],
       status: json['status'] ?? '',
@@ -110,8 +115,9 @@ class ReviewItem {
       map['detailed_ratings'] = detailedRatings!.toJson();
     if (photos != null && photos!.isNotEmpty) map['photos'] = photos;
     if (videos != null && videos!.isNotEmpty) map['videos'] = videos;
-    if (pros != null) map['pros'] = pros;
-    if (cons != null) map['cons'] = cons;
+    if (pros != null) map['pros'] = pros!.toJson();
+    if (cons != null) map['cons'] = cons!.toJson();
+
     if (isVerified != null) map['is_verified'] = isVerified;
     if (verificationType != null) map['verification_type'] = verificationType;
     if (status != null) map['status'] = status;
@@ -144,8 +150,8 @@ extension ReviewItemCopy on ReviewItem {
     DetailedRatings? detailedRatings,
     List<String>? photos,
     List<String>? videos,
-    String? pros,
-    String? cons,
+    ReviewProsCons? pros,
+    ReviewProsCons? cons,
     bool? isVerified,
     String? verificationType,
     String? status,
@@ -191,6 +197,28 @@ extension ReviewItemCopy on ReviewItem {
     );
   }
 }
+
+class ReviewProsCons {
+  final String? text;
+  final List<String>? tags;
+
+  ReviewProsCons({this.text, this.tags});
+
+  factory ReviewProsCons.fromJson(Map<String, dynamic> json) {
+    return ReviewProsCons(
+      text: json['text'] ?? '',
+      tags: (json['tags'] as List?)?.map((e) => e.toString()).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    if (text != null) map['text'] = text;
+    if (tags != null && tags!.isNotEmpty) map['tags'] = tags;
+    return map;
+  }
+}
+
 
 // class DetailedRatings {
 //   final double? location;

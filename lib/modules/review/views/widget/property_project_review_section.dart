@@ -10,6 +10,7 @@ import '../../../auth/views/login_screen.dart';
 import '../../../property/controllers/overall_rating_controller.dart';
 import '../../controllers/review_controller.dart';
 import 'add_property_review.dart';
+import 'all_review_screen.dart';
 
 class ReviewSection extends StatelessWidget {
   final RxBool canAddReview;
@@ -73,7 +74,7 @@ class ReviewSection extends StatelessWidget {
           final detailedRatings =
               overallData?.detailedRatings ??
               DetailedRatings(
-                accuracy: 0,
+                nightlifeRating: 0,
                 amenities: 0,
                 cleanliness: 0,
                 location: 0,
@@ -90,9 +91,12 @@ class ReviewSection extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              const TitleWithViewAll(
+              TitleWithViewAll(
                 title: "Reviews & Ratings",
                 showViewAll: true,
+                onViewAll: () {
+                  Get.to(() => AllReviewScreen(reviewController: reviewCtrl));
+                },
               ),
 
               const SizedBox(height: 12),
@@ -108,21 +112,28 @@ class ReviewSection extends StatelessWidget {
 
               // 📋 Review List (reusable)
               if (reviewCtrl.items.isNotEmpty)
-                SizedBox(
-                  height: 230,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: reviewCtrl.items.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 16),
-                    itemBuilder: (context, index) {
-                      return reviewCardBuilder(
-                        context,
-                        reviewCtrl.items[index],
-                      );
-                    },
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: reviewCardBuilder(
+                    context,
+                    reviewCtrl.items.first, // 👈 show only the first review
                   ),
                 )
+              // ) SizedBox(
+              //   height: 580,
+              //   child: ListView.separated(
+              //     scrollDirection: Axis.horizontal,
+              //     padding: const EdgeInsets.symmetric(horizontal: 16),
+              //     itemCount: reviewCtrl.items.length,
+              //     separatorBuilder: (_, __) => const SizedBox(width: 16),
+              //     itemBuilder: (context, index) {
+              //       return reviewCardBuilder(
+              //         context,
+              //         reviewCtrl.items[index],
+              //       );
+              //     },
+              //   ),
+              // )
               else if (!reviewCtrl.isLoading.value && totalReviews == 0)
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

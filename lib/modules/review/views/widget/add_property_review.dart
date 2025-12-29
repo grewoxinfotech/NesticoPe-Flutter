@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
@@ -51,10 +53,10 @@ class AddReviewScreen extends StatelessWidget {
 
                 // Content
                 NesticoPeTextField(
-                  // isRequired: true,
+                  isRequired: true,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   controller: controller.contentController,
-                  title: 'Your Review (Optional)',
+                  title: 'Your Review',
                   hintText: 'Share your detailed experience...',
                   maxLines: 4,
                   validator: (v) {
@@ -65,8 +67,6 @@ class AddReviewScreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 13),
-
-                // Overall Rating
                 Obx(
                   () => _buildRatingSection(
                     title: 'Overall Rating',
@@ -80,6 +80,214 @@ class AddReviewScreen extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 16),
+                NesticoPeTextField(
+                  // isRequired: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  controller: controller.prosController,
+                  title: 'Pros (Optional)',
+                  hintText: 'What did you like about this property',
+                  maxLines: 4,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Selective Pros(Optional)',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.headingTitle,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(height: 13),
+                Obx(() {
+                  final prosToDisplay =
+                      controller.showAllPros.value
+                          ? controller.prosTags
+                          : controller.prosTags.take(6).toList();
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children:
+                            prosToDisplay.map((tag) {
+                              final isSelected = controller.selectedListOfProc
+                                  .contains(tag);
+                              final isDisabled = controller.selectedListOfCons
+                                  .any((cons) => cons.id == tag.counterpart);
+
+                              return GestureDetector(
+                                onTap:
+                                    isDisabled
+                                        ? null
+                                        : () => controller.toggleTag(tag),
+                                child: Opacity(
+                                  opacity: isDisabled ? 0.4 : 1.0,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          isSelected
+                                              ? Colors.green.shade100
+                                              : Colors.grey.shade100,
+                                      border: Border.all(
+                                        color:
+                                            isSelected
+                                                ? Colors.green.shade300
+                                                : Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      tag.label,
+                                      style: TextStyle(
+                                        color:
+                                            isSelected
+                                                ? Colors.green.shade900
+                                                : Colors.grey.shade700,
+                                        fontSize: AppFontSizes.small,
+                                        fontWeight:
+                                            isSelected
+                                                ? AppFontWeights.medium
+                                                : AppFontWeights.regular,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                      ),
+
+                      if (controller.prosTags.length > 6)
+                        Center(
+                          child: TextButton(
+                            onPressed: controller.toggleShowAllPros,
+                            child: Text(
+                              controller.showAllPros.value
+                                  ? 'Show Less ▲'
+                                  : 'Show More ▼',
+                              style: TextStyle(
+                                color: Colors.green.shade700,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                }),
+
+                SizedBox(height: 16),
+                NesticoPeTextField(
+                  // isRequired: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  controller: controller.consController,
+                  title: 'Cons (Optional)',
+                  hintText: 'What did you like about this property',
+                  maxLines: 4,
+                ),
+                SizedBox(height: 13),
+                Text(
+                  'Selective Cons(Optional)',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.headingTitle,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+
+                SizedBox(height: 13),
+                Obx(() {
+                  final consToDisplay =
+                      controller.showAllCons.value
+                          ? controller.consTags
+                          : controller.consTags.take(6).toList();
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children:
+                            consToDisplay.map((tag) {
+                              final isSelected = controller.selectedListOfCons
+                                  .contains(tag);
+                              final isDisabled = controller.selectedListOfProc
+                                  .any((pro) => pro.id == tag.counterpart);
+
+                              return GestureDetector(
+                                onTap:
+                                    isDisabled
+                                        ? null
+                                        : () => controller.toggleConsTag(tag),
+                                child: Opacity(
+                                  opacity: isDisabled ? 0.4 : 1.0,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          isSelected
+                                              ? Colors.red.shade100
+                                              : Colors.grey.shade100,
+                                      border: Border.all(
+                                        color:
+                                            isSelected
+                                                ? Colors.red.shade300
+                                                : Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      tag.label,
+                                      style: TextStyle(
+                                        color:
+                                            isSelected
+                                                ? Colors.red.shade900
+                                                : Colors.grey.shade700,
+                                        fontSize: AppFontSizes.small,
+                                        fontWeight:
+                                            isSelected
+                                                ? AppFontWeights.medium
+                                                : AppFontWeights.regular,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                      ),
+
+                      if (controller.consTags.length > 6)
+                        Center(
+                          child: TextButton(
+                            onPressed: controller.toggleShowAllCons,
+                            child: Text(
+                              controller.showAllCons.value
+                                  ? 'Show Less ▲'
+                                  : 'Show More ▼',
+                              style: TextStyle(
+                                color: Colors.red.shade700,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                }),
+
                 // Divider(height: 32, color: ColorRes.leadGreyColor.shade300),
 
                 // Detailed Ratings Header
@@ -137,11 +345,11 @@ class AddReviewScreen extends StatelessWidget {
                       // Accuracy Rating
                       Obx(
                         () => _buildRatingSectionWithoutContainer(
-                          title: 'Accuracy',
+                          title: 'Nightlife',
 
-                          rating: controller.accuracyRating.value,
+                          rating: controller.nightlifeRating.value,
                           onRatingChanged: (rating) {
-                            controller.accuracyRating.value = rating;
+                            controller.nightlifeRating.value = rating;
                           },
                         ),
                       ),
@@ -359,6 +567,9 @@ class AddReviewScreen extends StatelessWidget {
       return;
     }
 
+    final prosText = controller.prosController.text.trim();
+    final consText = controller.consController.text.trim();
+
     final data = ReviewItem(
       entityType: entityType,
       entityId: entityId,
@@ -367,20 +578,23 @@ class AddReviewScreen extends StatelessWidget {
       content: controller.contentController.text.trim(),
       detailedRatings: DetailedRatings(
         amenities: controller.amenitiesRating.value.toDouble(),
-        accuracy: controller.accuracyRating.value.toDouble(),
+        nightlifeRating: controller.nightlifeRating.value.toDouble(),
         cleanliness: controller.cleanlinessRating.value.toDouble(),
         location: controller.locationRating.value.toDouble(),
         value: controller.valueRating.value.toDouble(),
       ),
-      pros:
-          controller.prosController.text.trim().isNotEmpty
-              ? controller.prosController.text.trim()
-              : null,
-      cons:
-          controller.consController.text.trim().isNotEmpty
-              ? controller.consController.text.trim()
-              : null,
+      pros: ReviewProsCons(
+        text: prosText,
+        tags: controller.selectedListOfProc.value.map((e) => e.id).toList(),
+      ),
+      // add tag list later if needed
+      cons: ReviewProsCons(
+        text: consText,
+        tags: controller.selectedListOfCons.value.map((e) => e.id).toList(),
+      ),
     );
+
+    log("Print the section ${data.toJson()}");
 
     try {
       final success = await controller.createReview(data);
@@ -389,11 +603,9 @@ class AddReviewScreen extends StatelessWidget {
         Get.back(result: true); // return true to previous screen
       } else {
         Get.snackbar('Error', 'Failed to submit review');
-        return;
       }
     } catch (e) {
       Get.snackbar('Error', e.toString());
-      return;
     }
   }
 }
