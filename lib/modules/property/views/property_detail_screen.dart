@@ -187,7 +187,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       Get.put(
         LocationPriceMatrixController(
           city: currentProperty.city ?? '',
-          propertyType: currentProperty.listingType ?? '',
+          propertyType: currentProperty.propertyType ?? '',
           location: currentProperty.location ?? '',
           state: currentProperty.state ?? '',
         ),

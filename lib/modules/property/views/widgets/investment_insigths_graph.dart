@@ -59,9 +59,9 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   final int _maxSelection = 2;
 
   final List<Color> _comparisonColors = [
-    const Color(0xFFFF6B6B), // Red
-    const Color(0xFF4ECDC4), // Teal
-    const Color(0xFFFFBE0B), // Yellow
+    ColorRes.error, // Red
+    ColorRes.leadTealColor, // Teal
+    ColorRes.homeYellow, // Yellow
   ];
 
   @override
@@ -146,11 +146,29 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
     return null;
   }
 
+  /// Get locality chart data - shows average by city for the current locality
   List<_ChartPoint> _getLocalityChartData() {
-    final propertyTypeData = _getPropertyTypeData();
-    if (propertyTypeData == null) return [];
+    final cityAvgPriceTrend = _matrixController.getAvgPriceTrendByCity();
+    if (cityAvgPriceTrend == null || cityAvgPriceTrend.isEmpty) return [];
 
-    return propertyTypeData.priceTrend
+    return cityAvgPriceTrend
+        .map(
+          (trend) => _ChartPoint(
+            trend.year,
+            trend.avgPricePerSqFt,
+            trend.year <= DateTime.now().year,
+          ),
+        )
+        .toList()
+      ..sort((a, b) => a.year.compareTo(b.year));
+  }
+
+  /// Get property type chart data - shows average by property type in the state
+  List<_ChartPoint> _getPropertyTypeChartData() {
+    final propertyTypeData = _matrixController.getAvgPriceTrendByPropertyType();
+    if (propertyTypeData == null || propertyTypeData.isEmpty) return [];
+
+    return propertyTypeData
         .map(
           (trend) => _ChartPoint(
             trend.year,
@@ -193,78 +211,110 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
       );
     }
 
-    final myPropertyData = _generateChartData(
-      past: financialInfo.pricePast,
-      future: financialInfo.priceFuture,
-    );
+    return Obx(() {
+      // Trigger rebuild when controller data changes
+      _matrixController.marketInsight.value;
 
-    // Validate main property data
-    if (myPropertyData.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Text('Invalid property data'),
-        ),
+      final myPropertyData = _generateChartData(
+        past: financialInfo.pricePast,
+        future: financialInfo.priceFuture,
       );
-    }
 
-    // Collect all prices for axis calculation
-    List<num> allPrices = myPropertyData.map((e) => e.price).toList();
-
-    if (_comparisonType == 'locality') {
-      final localityData = _getLocalityChartData();
-      if (localityData.isNotEmpty) {
-        allPrices.addAll(localityData.map((e) => e.price));
+      // Validate main property data
+      if (myPropertyData.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24.0),
+            child: Text('Invalid property data'),
+          ),
+        );
       }
-    } else {
-      for (var prop in _selectedProperties) {
-        if (prop.chartData.isNotEmpty) {
-          allPrices.addAll(prop.chartData.map((e) => e.price));
+
+      // Collect all prices for axis calculation
+      List<num> allPrices = myPropertyData.map((e) => e.price).toList();
+
+      if (_comparisonType == 'locality') {
+        final localityData = _getLocalityChartData();
+        if (localityData.isNotEmpty) {
+          allPrices.addAll(localityData.map((e) => e.price));
+        }
+      } else if (_comparisonType == 'property') {
+        // Add property type average to prices
+        final propertyTypeData = _getPropertyTypeChartData();
+        if (propertyTypeData.isNotEmpty) {
+          allPrices.addAll(propertyTypeData.map((e) => e.price));
+        }
+
+        // Add selected properties prices
+        for (var prop in _selectedProperties) {
+          if (prop.chartData.isNotEmpty) {
+            allPrices.addAll(prop.chartData.map((e) => e.price));
+          }
         }
       }
-    }
 
-    // Ensure we have valid price data
-    if (allPrices.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Text('No price data available'),
-        ),
+      // Ensure we have valid price data
+      if (allPrices.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24.0),
+            child: Text('No price data available'),
+          ),
+        );
+      }
+
+      final minPrice = allPrices.reduce(min);
+      final maxPrice = allPrices.reduce(max);
+      final range = maxPrice - minPrice;
+
+      // Avoid division by zero
+      if (range <= 0) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24.0),
+            child: Text('Invalid price range'),
+          ),
+        );
+      }
+
+      final yInterval = _calculateOptimalInterval(range.toDouble());
+      final minY =
+          ((minPrice - range * 0.05) ~/ yInterval * yInterval).toDouble();
+      final maxY =
+          ((maxPrice + range * 0.05) ~/ yInterval * yInterval + yInterval)
+              .toDouble();
+
+      // Calculate metrics with null safety
+      final pastStart = financialInfo.pricePast.first.pricePerSqft;
+      final pastEnd = financialInfo.pricePast.last.pricePerSqft;
+      final futureEnd = financialInfo.priceFuture.last.pricePerSqft;
+
+      final pastGrowth =
+          pastStart > 0 ? ((pastEnd - pastStart) / pastStart) * 100 : 0.0;
+      final futureROI =
+          pastEnd > 0 ? ((futureEnd - pastEnd) / pastEnd) * 100 : 0.0;
+
+      return _buildChartUI(
+        context,
+        myPropertyData,
+        minY,
+        maxY,
+        yInterval,
+        pastGrowth,
+        futureROI,
       );
-    }
+    });
+  }
 
-    final minPrice = allPrices.reduce(min);
-    final maxPrice = allPrices.reduce(max);
-    final range = maxPrice - minPrice;
-
-    // Avoid division by zero
-    if (range <= 0) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Text('Invalid price range'),
-        ),
-      );
-    }
-
-    final yInterval = _calculateOptimalInterval(range.toDouble());
-    final minY =
-        ((minPrice - range * 0.05) ~/ yInterval * yInterval).toDouble();
-    final maxY =
-        ((maxPrice + range * 0.05) ~/ yInterval * yInterval + yInterval)
-            .toDouble();
-
-    // Calculate metrics with null safety
-    final pastStart = financialInfo.pricePast.first.pricePerSqft;
-    final pastEnd = financialInfo.pricePast.last.pricePerSqft;
-    final futureEnd = financialInfo.priceFuture.last.pricePerSqft;
-
-    final pastGrowth =
-        pastStart > 0 ? ((pastEnd - pastStart) / pastStart) * 100 : 0.0;
-    final futureROI =
-        pastEnd > 0 ? ((futureEnd - pastEnd) / pastEnd) * 100 : 0.0;
-
+  Widget _buildChartUI(
+    BuildContext context,
+    List<_ChartPoint> myPropertyData,
+    double minY,
+    double maxY,
+    double yInterval,
+    double pastGrowth,
+    double futureROI,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -338,18 +388,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
           // Chart
           Container(
             height: 280,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
+
             child: LineChart(
               LineChartData(
                 minX: 0,
@@ -391,13 +430,13 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF3B82F6) : Colors.grey[100],
+          color: isSelected ? ColorRes.primary : Colors.grey[100],
           borderRadius: BorderRadius.circular(12),
           boxShadow:
               isSelected
                   ? [
                     BoxShadow(
-                      color: const Color(0xFF3B82F6).withOpacity(0.3),
+                      color: ColorRes.primary.withOpacity(0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -602,7 +641,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
         ElevatedButton(
           onPressed: () => _showPropertySelectionSheet(propertyId, city),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF3B82F6),
+            backgroundColor: ColorRes.primary,
             foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
@@ -635,7 +674,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
     lines.add(_buildMainPropertyLine(myPropertyData));
 
     if (_comparisonType == 'locality') {
-      // Add locality comparison line
+      // Add locality comparison line - shows city average
       final localityData = _getLocalityChartData();
       if (localityData.isNotEmpty) {
         lines.add(
@@ -647,6 +686,18 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
         );
       }
     } else if (_comparisonType == 'property') {
+      // Check if we have property type data - shows average by property type
+      final propertyTypeData = _getPropertyTypeChartData();
+      if (propertyTypeData.isNotEmpty) {
+        lines.add(
+          _buildComparisonLine(
+            propertyTypeData,
+            _comparisonColors[0],
+            isDashed: true,
+          ),
+        );
+      }
+
       // Add all selected property lines with null safety
       for (int i = 0; i < _selectedProperties.length; i++) {
         final chartData = _selectedProperties[i].chartData;
@@ -654,7 +705,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
           lines.add(
             _buildComparisonLine(
               chartData,
-              _comparisonColors[i % _comparisonColors.length],
+              _comparisonColors[(i + 1) % _comparisonColors.length],
               isDashed: false,
             ),
           );
@@ -735,7 +786,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
-          reservedSize: 50,
+          reservedSize: 45,
           getTitlesWidget: (value, meta) {
             return Padding(
               padding: const EdgeInsets.only(right: 8),
@@ -792,14 +843,22 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
             Color color = const Color(0xFF3B82F6);
 
             if (_comparisonType == 'locality' && lineIndex == 1) {
-              label = _selectedLocation ?? 'Locality';
+              label = '${_matrixController.city} Avg';
               color = _comparisonColors[0];
-            } else if (_comparisonType == 'property' &&
-                lineIndex > 0 &&
-                lineIndex - 1 < _selectedProperties.length) {
-              final propIndex = lineIndex - 1;
-              label = _selectedProperties[propIndex].title;
-              color = _comparisonColors[propIndex % _comparisonColors.length];
+            } else if (_comparisonType == 'property') {
+              if (lineIndex == 1) {
+                // First comparison line is property type average
+                label = '${_matrixController.propertyType} Avg';
+                color = _comparisonColors[0];
+              } else if (lineIndex > 1 &&
+                  lineIndex - 2 < _selectedProperties.length) {
+                // Other lines are selected properties
+                final propIndex = lineIndex - 2;
+                label = _selectedProperties[propIndex].title;
+                color =
+                    _comparisonColors[(propIndex + 1) %
+                        _comparisonColors.length];
+              }
             }
 
             return LineTooltipItem(
@@ -817,41 +876,81 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   }
 
   Widget _buildLegend() {
-    return Wrap(
-      spacing: 16,
-      runSpacing: 8,
-      alignment: WrapAlignment.center,
-      children: [
-        _legendItem('My Property', const Color(0xFF3B82F6)),
-        if (_comparisonType == 'locality' && _selectedLocation != null)
-          _legendItem('${_selectedLocation!} Avg', _comparisonColors[0]),
-        if (_comparisonType == 'property')
-          ..._selectedProperties.asMap().entries.map((entry) {
-            return _legendItem(
-              entry.value.title,
-              _comparisonColors[entry.key % _comparisonColors.length],
-            );
-          }),
-      ],
+    final items = <Widget>[
+      _legendItem(
+        label: 'My Property',
+        color: const Color(0xFF3B82F6),
+        isPrimary: true,
+      ),
+    ];
+
+    if (_comparisonType == 'locality') {
+      items.add(
+        _legendItem(
+          label: '${_matrixController.city} Avg',
+          color: _comparisonColors[0],
+        ),
+      );
+    }
+
+    if (_comparisonType == 'property') {
+      items.add(
+        _legendItem(
+          label: '${_matrixController.propertyType} Avg',
+          color: _comparisonColors[0],
+        ),
+      );
+
+      items.addAll(
+        _selectedProperties.asMap().entries.map((entry) {
+          return _legendItem(
+            label: entry.value.title,
+            color:
+                _comparisonColors[(entry.key + 1) % _comparisonColors.length],
+          );
+        }),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 10,
+        alignment: WrapAlignment.start,
+        children: items,
+      ),
     );
   }
 
-  Widget _legendItem(String text, Color color) {
+  Widget _legendItem({
+    required String label,
+    required Color color,
+    bool isPrimary = false,
+  }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Color dot
         Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(6),
-          ),
+          width: isPrimary ? 10 : 8,
+          height: isPrimary ? 10 : 8,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 8),
-        Text(
-          text.length > 20 ? '${text.substring(0, 20)}...' : text,
-          style: const TextStyle(fontSize: 12),
+
+        // Label
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: isPrimary ? FontWeight.w600 : FontWeight.w500,
+              color: Theme.of(Get.context!).textTheme.bodyMedium!.color,
+            ),
+          ),
         ),
       ],
     );
@@ -897,7 +996,15 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
                       const Spacer(),
                       if (controller.selectedPropertyIds.isNotEmpty)
                         TextButton(
-                          onPressed: controller.clearSelection,
+                          onPressed: () {
+                            // Clear controller selections
+                            controller.clearSelection();
+                            // Clear widget state and trigger rebuild
+                            setState(() {
+                              _selectedProperties.clear();
+                            });
+                            Get.back();
+                          },
                           child: const Text('Clear All'),
                         ),
                       IconButton(

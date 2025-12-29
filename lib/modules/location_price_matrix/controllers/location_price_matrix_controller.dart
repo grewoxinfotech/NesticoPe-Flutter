@@ -88,6 +88,58 @@ class LocationPriceMatrixController extends GetxController {
   /// Convenience getter – Rent data
   Map<String, dynamic>? get rentData => marketInsight.value?.data.rent;
 
+  /// Get average price trend by property type across all states and cities
+  /// This compares the current property type with other property types in the same state/city
+  List<PriceTrend>? getAvgPriceTrendByPropertyType() {
+    try {
+      final buyData = marketInsight.value?.data.buy;
+      if (buyData == null || propertyType.isEmpty) return null;
+
+      final stateData = buyData[state];
+      if (stateData == null) return null;
+
+      final cityData = stateData[city];
+      if (cityData == null) return null;
+
+      // Find location data that matches current location
+      final locationData = cityData.firstWhereOrNull(
+        (loc) =>
+            loc.location.toLowerCase() == location.toLowerCase() ||
+            loc.location.toLowerCase().contains(location.toLowerCase()),
+      );
+
+      if (locationData == null) return null;
+
+      // Get property type data for current property type
+      final propertyTypeData = locationData.propertyTypes[propertyType];
+      if (propertyTypeData == null) return null;
+
+      return propertyTypeData.priceTrend;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Get average price trend by city for a specific locality
+  /// This compares the current locality with city averages
+  List<PriceTrend>? getAvgPriceTrendByCity() {
+    try {
+      final buyData = marketInsight.value?.data.buy;
+      if (buyData == null) return null;
+
+      final stateData = buyData[state];
+      if (stateData == null) return null;
+
+      final cityData = stateData[city];
+      if (cityData == null || cityData.isEmpty) return null;
+
+      // Get the first location's price trend for city average
+      return cityData.first.priceTrend;
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Clear cached data
   void clearData() {
     marketInsight.value = null;
