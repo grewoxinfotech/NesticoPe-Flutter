@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:intl/intl.dart';
 
@@ -50,7 +52,8 @@ class InvestmentInsightChart extends StatefulWidget {
 }
 
 class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
-  final LocationPriceMatrixController _matrixController = Get.find();
+  // --- FIX START: Use late and find by tag ---
+  late final LocationPriceMatrixController _matrixController;
 
   String _comparisonType = 'locality'; // 'locality' or 'property'
   String? _selectedLocation;
@@ -67,8 +70,15 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   @override
   void initState() {
     super.initState();
+
+    // Find the specific controller instance for this property ID
+    _matrixController = Get.find<LocationPriceMatrixController>(
+      tag: 'matrix_${widget.currentProperty.id}',
+    );
+
     _initializeDefaults();
   }
+  // --- FIX END ---
 
   void _initializeDefaults() {
     _selectedLocation = widget.currentProperty.location;
@@ -332,7 +342,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
             children: [
               Expanded(
                 child: _comparisonTypeButton(
-                  label: 'Compare with Locality',
+                  label: 'with Locality',
                   icon: Icons.location_on,
                   isSelected: _comparisonType == 'locality',
                   onTap: () => setState(() => _comparisonType = 'locality'),
@@ -341,7 +351,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
               const SizedBox(width: 12),
               Expanded(
                 child: _comparisonTypeButton(
-                  label: 'Compare with Properties',
+                  label: 'with Properties',
                   icon: Icons.home,
                   isSelected: _comparisonType == 'property',
                   onTap: () => setState(() => _comparisonType = 'property'),
@@ -351,26 +361,87 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
           ),
           const SizedBox(height: 24),
 
-          // Metrics Cards
           Row(
             children: [
-              Expanded(
-                child: _metricCard(
-                  title: 'Past Growth',
-                  value: '${pastGrowth.toStringAsFixed(1)}%',
-                  icon: Icons.trending_up,
-                  color: const Color(0xFF10B981),
+              if (widget
+                      .currentProperty
+                      .investmentInsightModel
+                      ?.priceTrend
+                      ?.growthPercentage5yr !=
+                  null)
+                Expanded(
+                  child: _metricCard(
+                    title: '5 Year Growth',
+                    value:
+                        '${widget.currentProperty.investmentInsightModel!.priceTrend!.growthPercentage5yr!.toStringAsFixed(1)}%',
+                    icon: Icons.arrow_drop_up,
+                    color: ColorRes.green,
+                  ),
                 ),
-              ),
               const SizedBox(width: 12),
-              Expanded(
-                child: _metricCard(
-                  title: 'Future ROI',
-                  value: '${futureROI.toStringAsFixed(1)}%',
-                  icon: Icons.show_chart,
-                  color: const Color(0xFFFF9800),
+              if (widget
+                      .currentProperty
+                      .investmentInsightModel
+                      ?.priceTrend
+                      ?.cagrPercentage !=
+                  null)
+                Expanded(
+                  child: _metricCard(
+                    title: 'CAGR',
+                    value:
+                        '${widget.currentProperty.investmentInsightModel!.priceTrend!.cagrPercentage!.toStringAsFixed(1)}%',
+                    // icon: Icons.show_chart,
+                    color: ColorRes.primary,
+                  ),
                 ),
-              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+          //     ),
+          //     SizedBox(width: 12),
+          //     Expanded(
+          //       child: Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+          //     ),
+          //   ],
+          // ),
+          // SizedBox(height: 12),
+          Row(
+            children: [
+              if (widget
+                      .currentProperty
+                      .investmentInsightModel
+                      ?.futureProjection
+                      ?.projectedPrice5yr !=
+                  null)
+                Expanded(
+                  child: _metricCard(
+                    title: 'Projected Price',
+                    value:
+                        '${Formatter.formatPrice(widget.currentProperty.investmentInsightModel!.futureProjection!.projectedPrice5yr!)}',
+                    // icon: Icons.trending_up,
+                    color: Color(0xFF1073B9),
+                  ),
+                ),
+              const SizedBox(width: 12),
+              if (widget
+                      .currentProperty
+                      .investmentInsightModel
+                      ?.futureProjection
+                      ?.roiPercentage5yr !=
+                  null)
+                Expanded(
+                  child: _metricCard(
+                    title: 'Expected ROI',
+                    value:
+                        '${widget.currentProperty.investmentInsightModel!.futureProjection!.roiPercentage5yr}%',
+                    icon: Icons.arrow_drop_up,
+                    color: Color(0xFF5500FF),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 24),
@@ -414,8 +485,250 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
 
           // Legend
           _buildLegend(),
+
+          // Property Price Summary
+          _buildPriceSummary(),
         ],
       ),
+    );
+  }
+
+  // Widget _buildPriceSummary() {
+  //   final insight = widget.currentProperty.investmentInsightModel;
+  //   final cityName = widget.currentProperty.city ?? "";
+  //
+  //   return Container(
+  //     margin: const EdgeInsets.only(top: 24),
+  //     child: Column(
+  //       children: [
+  //         // --- Table Header ---
+  //         Padding(
+  //           padding: const EdgeInsets.only(bottom: 12.0),
+  //           child: Row(
+  //             children: [
+  //               _headerItem('With Locality'),
+  //               _headerItem('Current Price'),
+  //               _headerItem('Last 1 year'),
+  //               _headerItem('Last 5 years'),
+  //             ],
+  //           ),
+  //         ),
+  //         const Divider(height: 1),
+  //
+  //         // --- Row 1: My Property ---
+  //         _buildSummaryRow(
+  //           indicatorColor: ColorRes.primary,
+  //           currentPrice: insight?.priceTrend?.currentPrice,
+  //           growth1yr: null,
+  //           growth5yr: insight?.priceTrend?.growthPercentage5yr,
+  //         ),
+  //         const Divider(height: 1),
+  //
+  //         // --- Row 2: Average in City ---
+  //         // _buildSummaryRow(
+  //         //   title: 'Avg. in $cityName',
+  //         //   indicatorColor: ColorRes.green,
+  //         //   currentPrice: _matrixController.avgPriceInCity,
+  //         //   growth1yr: _matrixController.cityGrowth1yr,
+  //         //
+  //         //   growth5yr: _matrixController.cityGrowth5yr,
+  //         // ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _buildPriceSummary() {
+    /// My property summary
+    final myChart = _generateChartData(
+      past: widget.currentProperty.propertyDetails!.financialInfo!.pricePast,
+      future:
+          widget.currentProperty.propertyDetails!.financialInfo!.priceFuture,
+    );
+    final mySummary = _summaryFromChart(myChart);
+
+    /// Locality summary
+    final localitySummary =
+        _comparisonType == 'locality'
+            ? _summaryFromChart(_getLocalityChartData())
+            : null;
+
+    /// Property-type average summary
+    final propertyTypeSummary =
+        _comparisonType == 'property'
+            ? _summaryFromChart(_getPropertyTypeChartData())
+            : null;
+
+    return Container(
+      margin: const EdgeInsets.only(top: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          // ───── Header ─────
+          SizedBox(height: 10),
+          Row(
+            children: [
+              _headerItem('', flex: 1),
+              _headerItem('Current Price', flex: 2),
+              _headerItem('Last 1 year', flex: 2),
+              _headerItem('Last 5 years', flex: 2),
+            ],
+          ),
+          SizedBox(height: 10),
+
+          Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+
+          // ───── My Property ─────
+          _buildSummaryRow(
+            indicatorColor: ColorRes.primary,
+            currentPrice: mySummary.current,
+            growth1yr: mySummary.oneYear,
+            growth5yr: mySummary.fiveYear,
+          ),
+
+          // ───── Locality Avg ─────
+          if (localitySummary != null) ...[
+            Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+            _buildSummaryRow(
+              indicatorColor: _comparisonColors[0],
+              currentPrice: localitySummary.current,
+              growth1yr: localitySummary.oneYear,
+              growth5yr: localitySummary.fiveYear,
+            ),
+          ],
+
+          // ───── Property Type Avg ─────
+          if (propertyTypeSummary != null) ...[
+            Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+
+            _buildSummaryRow(
+              indicatorColor: _comparisonColors[0],
+              currentPrice: propertyTypeSummary.current,
+              growth1yr: propertyTypeSummary.oneYear,
+              growth5yr: propertyTypeSummary.fiveYear,
+            ),
+          ],
+
+          // ───── Selected Properties ─────
+          if (_comparisonType == 'property' && _selectedProperties.isNotEmpty)
+            ..._selectedProperties.asMap().entries.map((entry) {
+              final index = entry.key;
+              final prop = entry.value;
+              final summary = _summaryFromChart(prop.chartData);
+
+              return Column(
+                children: [
+                  Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+                  _buildSummaryRow(
+                    indicatorColor:
+                        _comparisonColors[(index + 1) %
+                            _comparisonColors.length],
+                    currentPrice: summary.current,
+                    growth1yr: summary.oneYear,
+                    growth5yr: summary.fiveYear,
+                  ),
+                ],
+              );
+            }),
+        ],
+      ),
+    );
+  }
+
+  /// Reusable Row Component
+  Widget _buildSummaryRow({
+    required Color indicatorColor,
+    num? currentPrice,
+    double? growth1yr,
+    double? growth5yr,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        children: [
+          // Title Column with Legend Dot
+          Expanded(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  width: 10,
+                  height: 10,
+                  margin: EdgeInsets.only(left: 10),
+                  decoration: BoxDecoration(
+                    color: indicatorColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Current Price Column
+          Expanded(
+            flex: 2,
+            child: Text(
+              currentPrice != null ? '₹$currentPrice' : '--',
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            ),
+          ),
+
+          // Growth Columns
+          Expanded(flex: 2, child: _growthValue(growth1yr)),
+          Expanded(flex: 2, child: _growthValue(growth5yr)),
+        ],
+      ),
+    );
+  }
+
+  /// Helper for Header Text
+  Widget _headerItem(String label, {int flex = 2}) {
+    return Expanded(
+      flex: flex,
+      child: Text(
+        label,
+        style: TextStyle(
+          color: ColorRes.leadGreyColor.shade800,
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  /// Helper for Growth Formatting (Icon + Text)
+  Widget _growthValue(double? value) {
+    if (value == null || value == 0) {
+      return const Text(
+        "--",
+        style: TextStyle(color: Colors.grey, fontSize: 13),
+        textAlign: TextAlign.center,
+      );
+    }
+    final bool isPositive = value >= 0;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          isPositive ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+          size: 20,
+          color: isPositive ? ColorRes.green : ColorRes.error,
+        ),
+        Text(
+          '${value.abs().toStringAsFixed(1)}%',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: isPositive ? ColorRes.green : ColorRes.error,
+          ),
+        ),
+      ],
     );
   }
 
@@ -472,32 +785,32 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   Widget _metricCard({
     required String title,
     required String value,
-    required IconData icon,
+    IconData? icon,
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [color.withOpacity(0.1), color.withOpacity(0.05)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: color.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                ),
+              ),
+              if (icon != null) ...[Icon(icon, color: color, size: 24)],
+            ],
           ),
           const SizedBox(height: 4),
           Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
@@ -554,34 +867,6 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
         }
       }
       return SizedBox.shrink();
-      // return Row(
-      //   children: [
-      //     Expanded(
-      //       child: _buildDropdown(
-      //         label: 'Location',
-      //         value: _selectedLocation,
-      //         items:
-      //             locations.isEmpty
-      //                 ? [widget.currentProperty.location ?? 'Unknown']
-      //                 : locations,
-      //         onChanged: (value) => setState(() => _selectedLocation = value),
-      //       ),
-      //     ),
-      //     const SizedBox(width: 12),
-      //     Expanded(
-      //       child: _buildDropdown(
-      //         label: 'Property Type',
-      //         value: _selectedPropertyType,
-      //         items:
-      //             propertyTypes.isEmpty
-      //                 ? [widget.currentProperty.propertyType ?? 'apartment']
-      //                 : propertyTypes.toSet().toList(),
-      //         onChanged:
-      //             (value) => setState(() => _selectedPropertyType = value),
-      //       ),
-      //     ),
-      //   ],
-      // );
     });
   }
 
@@ -726,21 +1011,6 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
         show: true,
         color: const Color(0xFF3B82F6).withOpacity(0.1),
       ),
-      // dotData: FlDotData(
-      //   show: true,
-      //   getDotPainter: (spot, _, __, index) {
-      //     final point = data[index];
-      //     return FlDotCirclePainter(
-      //       radius: 5,
-      //       color:
-      //           point.isPast
-      //               ? const Color(0xFF10B981)
-      //               : const Color(0xFFFF9800),
-      //       strokeWidth: 2,
-      //       strokeColor: Colors.white,
-      //     );
-      //   },
-      // ),
       dotData: const FlDotData(show: false),
       spots: [
         for (int i = 0; i < data.length; i++)
@@ -761,17 +1031,6 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
       color: color,
       dashArray: isDashed ? [5, 5] : null,
       belowBarData: BarAreaData(show: false),
-      // dotData: FlDotData(
-      //   show: true,
-      //   getDotPainter: (spot, _, __, ___) {
-      //     return FlDotCirclePainter(
-      //       radius: 4,
-      //       color: color,
-      //       strokeWidth: 2,
-      //       strokeColor: Colors.white,
-      //     );
-      //   },
-      // ),
       dotData: const FlDotData(show: false),
       spots: [
         for (int i = 0; i < data.length; i++)
@@ -879,7 +1138,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
     final items = <Widget>[
       _legendItem(
         label: 'My Property',
-        color: const Color(0xFF3B82F6),
+        color: ColorRes.primary,
         isPrimary: true,
       ),
     ];
@@ -1066,25 +1325,11 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
                               controller.selectedPropertyIds.length <
                                   _maxSelection;
 
-                          final imageUrl =
-                              item.propertyMedia?.images?.isNotEmpty == true
-                                  ? item.propertyMedia!.images!.first
-                                  : null;
-
                           return Opacity(
                             opacity: canSelect ? 1.0 : 0.5,
                             child: Card(
                               margin: const EdgeInsets.only(bottom: 12),
                               child: ListTile(
-                                // leading: CustomImage(
-                                //   type:
-                                //       imageUrl != null
-                                //           ? CustomImageType.network
-                                //           : CustomImageType.asset,
-                                //   src: imageUrl ?? IMGRes.home1,
-                                //   height: 60,
-                                //   width: 60,
-                                // ),
                                 title: Text(
                                   PropertyNameManager(item).displayName ?? '',
                                   maxLines: 2,
@@ -1241,4 +1486,29 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
       },
     );
   }
+}
+
+class PriceSummary {
+  final num? current;
+  final double? oneYear;
+  final double? fiveYear;
+
+  PriceSummary({this.current, this.oneYear, this.fiveYear});
+}
+
+PriceSummary _summaryFromChart(List<_ChartPoint> points) {
+  final past = points.where((e) => e.isPast).toList();
+  if (past.length < 2) return PriceSummary();
+
+  return PriceSummary(
+    current: past.last.price,
+    oneYear: _growth(past[past.length - 2].price, past.last.price),
+    fiveYear:
+        past.length >= 5 ? _growth(past.first.price, past.last.price) : null,
+  );
+}
+
+double? _growth(num? start, num? end) {
+  if (start == null || end == null || start == 0) return null;
+  return ((end - start) / start) * 100;
 }

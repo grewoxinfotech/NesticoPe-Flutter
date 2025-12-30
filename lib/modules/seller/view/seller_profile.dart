@@ -13,7 +13,7 @@ import 'package:housing_flutter_app/modules/property/controllers/top_seller_prop
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/seller_property_list.dart';
 
-import '../../../app/widgets/image/custom_image.dart';
+import '../../../app/widgets/image/custom_image.dart' hide ColorRes;
 import '../../../data/network/property/models/property_model.dart';
 import '../../property/controllers/top_seller_profile_controller.dart';
 import '../../property/controllers/top_seller_project_controller.dart';

@@ -512,7 +512,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/modules/other/trending_city/controllers/trending_city_controller.dart';
 import 'package:housing_flutter_app/modules/propert_detail/view/property_details.dart';
 import '../../../../app/constants/img_res.dart';

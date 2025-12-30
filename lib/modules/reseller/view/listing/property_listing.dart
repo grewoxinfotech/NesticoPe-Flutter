@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';

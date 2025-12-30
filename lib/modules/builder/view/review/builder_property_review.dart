@@ -125,7 +125,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/widgets/media/media_preview.dart';
 import '../../../../data/network/builder/model/builder_model.dart';

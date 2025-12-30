@@ -11,7 +11,8 @@ import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
 import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/modules/home/views/compare_screen/comapre_screen.dart';
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
@@ -390,11 +391,10 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                       shape: BoxShape.circle,
                     ),
                     child: CircleAvatar(
-                      backgroundImage:
-                          CustomImage(
-                            type: CustomImageType.asset,
-                            src: IMGRes.user_1,
-                          ).toImageProvider(),
+                      backgroundImage: CustomImage(
+                        type: CustomImageType.asset,
+                        src: IMGRes.user_1,
+                      ).toImageProvider(context),
                       radius: 13,
                     ),
                   ),

@@ -167,7 +167,8 @@
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 
 // class HorizontalPropertyCard extends StatelessWidget {
 //   final String imageUrl;

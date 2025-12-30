@@ -6,7 +6,8 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/data/network/property/models/top_property_model.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/compare_manager.dart';

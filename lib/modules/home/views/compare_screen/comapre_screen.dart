@@ -48,7 +48,7 @@ import 'package:housing_flutter_app/modules/property_rating/view/widget/read_mor
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/size_manager.dart';
-import '../../../../app/widgets/image/custom_image.dart';
+import '../../../../app/widgets/image/custom_image.dart' hide ColorRes;
 import '../../../../app/manager/compare_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
@@ -303,7 +303,7 @@ class PropertyCardForCompare extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            SizedBox(width: 10,),
+                            SizedBox(width: 10),
                             Container(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 14,
@@ -897,7 +897,7 @@ class _ComparisonRow extends StatelessWidget {
     required this.label,
     required this.valueA,
     required this.valueB,
-    this.isAddress=false,
+    this.isAddress = false,
     this.highlightB = false,
     this.isLast = false,
   });
@@ -927,33 +927,47 @@ class _ComparisonRow extends StatelessWidget {
             ),
           ),
 
-
           Expanded(
-            child:(isAddress)?ReadMoreClass(description: valueA, trimLines: 3, size: AppFontSizes.small, colorClickableText: ColorRes.primary) :Text(
-              valueA,
+            child:
+                (isAddress)
+                    ? ReadMoreClass(
+                      description: valueA,
+                      trimLines: 3,
+                      size: AppFontSizes.small,
+                      colorClickableText: ColorRes.primary,
+                    )
+                    : Text(
+                      valueA,
 
-
-              style: TextStyle(
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.medium,
-                color: ColorRes.textColor,
-              ),
-            ),
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.medium,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
           ),
-          SizedBox(width: 12,),
+          SizedBox(width: 12),
           Expanded(
             child: Container(
               padding:
                   highlightB ? const EdgeInsets.symmetric(vertical: 6) : null,
-              child:(isAddress)?ReadMoreClass(description: valueB, trimLines: 3, size: AppFontSizes.small, colorClickableText: ColorRes.primary) : Text(
-                valueB,
+              child:
+                  (isAddress)
+                      ? ReadMoreClass(
+                        description: valueB,
+                        trimLines: 3,
+                        size: AppFontSizes.small,
+                        colorClickableText: ColorRes.primary,
+                      )
+                      : Text(
+                        valueB,
 
-                style: const TextStyle(
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.medium,
-                  color: ColorRes.textColor,
-                ),
-              ),
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.medium,
+                          color: ColorRes.textColor,
+                        ),
+                      ),
             ),
           ),
         ],
@@ -961,6 +975,7 @@ class _ComparisonRow extends StatelessWidget {
     );
   }
 }
+
 class _ComparisonTable extends StatelessWidget {
   final Items a;
   final Items b;
@@ -980,7 +995,6 @@ class _ComparisonTable extends StatelessWidget {
           _header(),
 
           // ---- Comparison Rows ----
-
           if (!_shouldHide(a.propertyType, b.propertyType))
             _ComparisonRow(
               icon: Icons.home_outlined,
@@ -1007,7 +1021,7 @@ class _ComparisonTable extends StatelessWidget {
               highlightB: _highlightB(
                 a,
                 b,
-                    (x) => x.propertyDetails?.propertyBuiltUpArea ?? 0,
+                (x) => x.propertyDetails?.propertyBuiltUpArea ?? 0,
               ),
             ),
 
@@ -1050,7 +1064,7 @@ class _ComparisonTable extends StatelessWidget {
               highlightB: _highlightB(
                 a,
                 b,
-                    (x) => x.propertyDetails?.financialInfo?.pricePerSqft ?? 0,
+                (x) => x.propertyDetails?.financialInfo?.pricePerSqft ?? 0,
               ),
             ),
 
@@ -1062,8 +1076,7 @@ class _ComparisonTable extends StatelessWidget {
               isAddress: true,
               valueB: _amenities(b),
               highlightB:
-              (b.propertyDetails?.amenities?.length ?? 0) >
-
+                  (b.propertyDetails?.amenities?.length ?? 0) >
                   (a.propertyDetails?.amenities?.length ?? 0),
             ),
 
@@ -1080,14 +1093,16 @@ class _ComparisonTable extends StatelessWidget {
             _ComparisonRow(
               icon: Icons.price_change,
               label: 'Price',
-              valueA: PropertyPriceManager(
-                listingType: a.listingType ?? '',
-                financialInfo: a.propertyDetails?.financialInfo,
-              ).displayPrice,
-              valueB: PropertyPriceManager(
-                listingType: b.listingType ?? '',
-                financialInfo: b.propertyDetails?.financialInfo,
-              ).displayPrice,
+              valueA:
+                  PropertyPriceManager(
+                    listingType: a.listingType ?? '',
+                    financialInfo: a.propertyDetails?.financialInfo,
+                  ).displayPrice,
+              valueB:
+                  PropertyPriceManager(
+                    listingType: b.listingType ?? '',
+                    financialInfo: b.propertyDetails?.financialInfo,
+                  ).displayPrice,
               isLast: true,
             ),
         ],
@@ -1100,9 +1115,7 @@ class _ComparisonTable extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: ColorRes.leadGreyColor[200]!),
-        ),
+        border: Border(bottom: BorderSide(color: ColorRes.leadGreyColor[200]!)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/rating_widget.dart';
 import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
@@ -27,7 +28,8 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
   final ResellerSuccessStoryController controller = Get.put(
     ResellerSuccessStoryController(),
   );
-  final DashboardController dashboardController = Get.find<DashboardController>();
+  final DashboardController dashboardController =
+      Get.find<DashboardController>();
 
   // final formKey = GlobalKey<FormState>();
   //
@@ -100,11 +102,9 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
               ? controller.imagePath.value!.path
               : null,
     ); // you can implement API call in controller
-    if(success)
-      {
-
-          await dashboardController.fetchResellerDashboardDataFromApi();
-      }
+    if (success) {
+      await dashboardController.fetchResellerDashboardDataFromApi();
+    }
     if (!success) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
@@ -139,7 +139,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
       updatedAt: DateTime.now(),
       updatedBy: null,
     );
-log("Update file path ${controller.imagePath.value}");
+    log("Update file path ${controller.imagePath.value}");
     final success = await controller.updateStory(
       story?.id ?? '',
       data,
@@ -303,6 +303,7 @@ log("Update file path ${controller.imagePath.value}");
                 },
               ),
               const SizedBox(height: 16),
+
               // Obx(() => Row(
               //   mainAxisAlignment: MainAxisAlignment.start,
               //   children: List.generate(5, (index) {
@@ -324,12 +325,14 @@ log("Update file path ${controller.imagePath.value}");
               //     );
               //   }),
               // )),
-
               Obx(
-                () =>  RatingField(title:  "Rating (0 - 5)", rating: controller.rating.value.toDouble(), onRatingChanged: (newRating) {
-                  controller.rating.value = newRating.toInt();
-
-                },),
+                () => RatingField(
+                  title: "Rating (0 - 5)",
+                  rating: controller.rating.value.toDouble(),
+                  onRatingChanged: (newRating) {
+                    controller.rating.value = newRating.toInt();
+                  },
+                ),
               ),
 
               const SizedBox(height: 24),
@@ -355,7 +358,6 @@ log("Update file path ${controller.imagePath.value}");
               // --- Submit Button ---
               Obx(
                 () => SafeArea(
-
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -443,10 +445,7 @@ log("Update file path ${controller.imagePath.value}");
     return Stack(
       fit: StackFit.expand,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: imageWidget,
-        ),
+        ClipRRect(borderRadius: BorderRadius.circular(16), child: imageWidget),
 
         // 🔹 Gradient overlay (for better text contrast)
         if (isEditMode)
@@ -457,10 +456,7 @@ log("Update file path ${controller.imagePath.value}");
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.center,
-                  colors: [
-                    Colors.black.withOpacity(0.5),
-                    Colors.transparent,
-                  ],
+                  colors: [Colors.black.withOpacity(0.5), Colors.transparent],
                 ),
               ),
             ),
@@ -480,8 +476,10 @@ log("Update file path ${controller.imagePath.value}");
                   onPressed: controller.builderImagePicker,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorRes.primary,
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -502,6 +500,7 @@ log("Update file path ${controller.imagePath.value}");
       ],
     );
   }
+
   // Widget _buildImageContent() {
   //   final file = controller.imagePath.value; // Rxn<File>
   //   final networkImage = story?.image; // URL from API if edit mode

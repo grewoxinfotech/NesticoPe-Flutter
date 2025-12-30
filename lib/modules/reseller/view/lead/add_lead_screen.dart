@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
@@ -51,11 +52,11 @@ class AddLeadScreen extends StatelessWidget {
                       (v) => v == null || v.isEmpty ? 'Name is required' : null,
                 ),
                 const SizedBox(height: 16),
-        
+
                 // Phone
                 NesticoPeTextField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-        
+
                   controller: controller.phoneController,
                   title: 'Phone',
                   hintText: 'Enter phone number',
@@ -68,7 +69,7 @@ class AddLeadScreen extends StatelessWidget {
                               : null,
                 ),
                 const SizedBox(height: 16),
-        
+
                 // Email
                 NesticoPeTextField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -84,7 +85,7 @@ class AddLeadScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 16),
-        
+
                 // Property
                 Obx(
                   () => NesticoPeDropdownField(
@@ -119,11 +120,12 @@ class AddLeadScreen extends StatelessWidget {
                         }).toList(),
                     onChanged: (val) => controller.selectedProperty.value = val,
                     validator:
-                        (val) => val == null ? 'Please select a property' : null,
+                        (val) =>
+                            val == null ? 'Please select a property' : null,
                   ),
                 ),
                 const SizedBox(height: 16),
-        
+
                 // Source
                 Obx(
                   () => NesticoPeDropdownField<String>(
@@ -148,7 +150,7 @@ class AddLeadScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-        
+
                 // Status
                 Obx(
                   () => NesticoPeDropdownField<String>(
@@ -173,7 +175,7 @@ class AddLeadScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-        
+
                 // Stage
                 Obx(
                   () => NesticoPeDropdownField<String>(
@@ -198,7 +200,7 @@ class AddLeadScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-        
+
                 // Note
                 NesticoPeTextField(
                   controller: controller.noteController,
@@ -207,7 +209,7 @@ class AddLeadScreen extends StatelessWidget {
                   maxLines: 4,
                 ),
                 const SizedBox(height: 24),
-        
+
                 // Submit Button
                 SizedBox(
                   width: double.infinity,
@@ -236,7 +238,10 @@ class AddLeadScreen extends StatelessWidget {
                           : !controller.isLoading.value
                           ? "Add Lead"
                           : "Adding...",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

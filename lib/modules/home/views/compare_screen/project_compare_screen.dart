@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 import 'package:housing_flutter_app/modules/new_project/view/latest_project.dart';
@@ -208,23 +209,24 @@ class ProjectCardForCompare extends StatelessWidget {
                   borderRadius: const BorderRadius.horizontal(
                     left: Radius.circular(11),
                   ),
-                  child: (_firstImage(item).isNotEmpty)
-                      ? CustomImage(
-                    type: CustomImageType.network,
-                    src: _firstImage(item),
-                    width: 120,
-                    height: 121,
-                    fit: BoxFit.cover,
-                  )
-                      : Container(
-                    width: 120,
-                    height: 121,
-                    color: ColorRes.leadGreyColor.shade200,
-                    child: const Icon(
-                      Icons.image,
-                      color: ColorRes.grey,
-                    ),
-                  ),
+                  child:
+                      (_firstImage(item).isNotEmpty)
+                          ? CustomImage(
+                            type: CustomImageType.network,
+                            src: _firstImage(item),
+                            width: 120,
+                            height: 121,
+                            fit: BoxFit.cover,
+                          )
+                          : Container(
+                            width: 120,
+                            height: 121,
+                            color: ColorRes.leadGreyColor.shade200,
+                            child: const Icon(
+                              Icons.image,
+                              color: ColorRes.grey,
+                            ),
+                          ),
                 ),
 
                 // Content Section
@@ -303,7 +305,7 @@ class ProjectCardForCompare extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            SizedBox(width: 10,),
+                            SizedBox(width: 10),
                             GestureDetector(
                               onTap: () {
                                 // Get.to(
@@ -431,7 +433,8 @@ class _ProjectComparisonTable extends StatelessWidget {
               label: 'Total Units',
               valueA: _getTotalUnits(a),
               valueB: _getTotalUnits(b),
-              highlightB: (b.projectSize?.totalUnits ?? 0) >
+              highlightB:
+                  (b.projectSize?.totalUnits ?? 0) >
                   (a.projectSize?.totalUnits ?? 0),
             ),
 
@@ -441,7 +444,8 @@ class _ProjectComparisonTable extends StatelessWidget {
               label: 'Buildings',
               valueA: _getTotalBuildings(a),
               valueB: _getTotalBuildings(b),
-              highlightB: (b.projectSize?.totalBuildings ?? 0) >
+              highlightB:
+                  (b.projectSize?.totalBuildings ?? 0) >
                   (a.projectSize?.totalBuildings ?? 0),
             ),
 
@@ -488,9 +492,7 @@ class _ProjectComparisonTable extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: ColorRes.leadGreyColor[200]!),
-        ),
+        border: Border(bottom: BorderSide(color: ColorRes.leadGreyColor[200]!)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -579,7 +581,7 @@ class _ProjectComparisonTable extends StatelessWidget {
       'Sep',
       'Oct',
       'Nov',
-      'Dec'
+      'Dec',
     ];
     return months[month - 1];
   }
@@ -604,7 +606,7 @@ class _ComparisonRow extends StatelessWidget {
     required this.label,
     required this.valueA,
     required this.valueB,
-    this.isAddress=false,
+    this.isAddress = false,
     this.highlightB = false,
     this.isLast = false,
   });
@@ -614,20 +616,19 @@ class _ComparisonRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: Colors.grey[300]!)),
+        border:
+            isLast
+                ? null
+                : Border(bottom: BorderSide(color: Colors.grey[300]!)),
       ),
       child: Row(
         children: [
-
           Expanded(
             child: Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-
                 fontSize: AppFontSizes.caption,
                 fontWeight: AppFontWeights.medium,
                 color: ColorRes.leadGreyColor[700],
@@ -636,31 +637,46 @@ class _ComparisonRow extends StatelessWidget {
           ),
 
           Expanded(
-            child:(isAddress)?ReadMoreClass(description: valueA, trimLines: 3, size: AppFontSizes.small, colorClickableText: ColorRes.primary) : Text(
-              valueA,
+            child:
+                (isAddress)
+                    ? ReadMoreClass(
+                      description: valueA,
+                      trimLines: 3,
+                      size: AppFontSizes.small,
+                      colorClickableText: ColorRes.primary,
+                    )
+                    : Text(
+                      valueA,
 
-              style: const TextStyle(
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.medium,
-                color: ColorRes.textColor,
-              ),
-            ),
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.medium,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
           ),
 
           Expanded(
             child: Container(
-              padding: highlightB
-                  ? const EdgeInsets.symmetric(vertical: 6)
-                  : null,
-              child:(isAddress)?ReadMoreClass(description: valueB, trimLines: 3, size: AppFontSizes.small, colorClickableText: ColorRes.primary) : Text(
-                valueB,
+              padding:
+                  highlightB ? const EdgeInsets.symmetric(vertical: 6) : null,
+              child:
+                  (isAddress)
+                      ? ReadMoreClass(
+                        description: valueB,
+                        trimLines: 3,
+                        size: AppFontSizes.small,
+                        colorClickableText: ColorRes.primary,
+                      )
+                      : Text(
+                        valueB,
 
-                style: const TextStyle(
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.medium,
-                  color: ColorRes.textColor,
-                ),
-              ),
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.medium,
+                          color: ColorRes.textColor,
+                        ),
+                      ),
             ),
           ),
         ],

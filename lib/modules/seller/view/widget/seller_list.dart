@@ -4,7 +4,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart';
 
 import '../../../../app/constants/color_res.dart';
@@ -82,7 +83,8 @@ class SellerListWidget extends StatelessWidget {
                 );
               },
               child: SellerCard(
-                name: '${((seller.firstName==null)|| (seller.lastName==null))?seller.username:'${seller.firstName} ${seller.lastName}'}',
+                name:
+                    '${((seller.firstName == null) || (seller.lastName == null)) ? seller.username : '${seller.firstName} ${seller.lastName}'}',
                 imageUrl: seller.profilePic ?? null,
                 experience: seller.sellerType ?? '',
                 location: seller.city ?? '',
@@ -178,6 +180,7 @@ class SellerListWidget extends StatelessWidget {
     // );
   }
 }
+
 class SellerCard extends StatelessWidget {
   final String name;
   final String? imageUrl;
@@ -209,18 +212,20 @@ class SellerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     log("sller name $name");
-    final displayLocation = location ??
+    final displayLocation =
+        location ??
         [
           if (city != null && city!.isNotEmpty) city!,
-          if (state != null && state!.isNotEmpty) state!
+          if (state != null && state!.isNotEmpty) state!,
         ].join(', ');
 
-    final inventoryText = sellerType?.toLowerCase() == 'builder'
-        ? '${projects ?? 0} Projects Listed'
-        : '${properties ?? 0} Properties Listed';
+    final inventoryText =
+        sellerType?.toLowerCase() == 'builder'
+            ? '${projects ?? 0} Projects Listed'
+            : '${properties ?? 0} Properties Listed';
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 6,),
+      margin: const EdgeInsets.symmetric(horizontal: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: ColorRes.white,
@@ -238,12 +243,18 @@ class SellerCard extends StatelessWidget {
               CircleAvatar(
                 radius: 25,
                 backgroundColor: ColorRes.primary.withOpacity(0.1),
-                backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
-                    ? NetworkImage(imageUrl!)
-                    : null,
-                child: imageUrl == null || imageUrl!.isEmpty
-                    ? const Icon(Icons.person, color: ColorRes.primary, size: 25)
-                    : null,
+                backgroundImage:
+                    imageUrl != null && imageUrl!.isNotEmpty
+                        ? NetworkImage(imageUrl!)
+                        : null,
+                child:
+                    imageUrl == null || imageUrl!.isEmpty
+                        ? const Icon(
+                          Icons.person,
+                          color: ColorRes.primary,
+                          size: 25,
+                        )
+                        : null,
               ),
               const SizedBox(width: 12),
 
@@ -268,8 +279,11 @@ class SellerCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Icon(Icons.person_outline,
-                            size: 14, color: ColorRes.textSecondary),
+                        const Icon(
+                          Icons.person_outline,
+                          size: 14,
+                          color: ColorRes.textSecondary,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           (sellerType ?? 'Owner'),
@@ -280,8 +294,11 @@ class SellerCard extends StatelessWidget {
                         ),
                         if (displayLocation.isNotEmpty) ...[
                           const SizedBox(width: 8),
-                          const Icon(Icons.location_on_outlined,
-                              size: 14, color: ColorRes.textSecondary),
+                          const Icon(
+                            Icons.location_on_outlined,
+                            size: 14,
+                            color: ColorRes.textSecondary,
+                          ),
                           const SizedBox(width: 2),
                           Expanded(
                             child: Text(
@@ -315,7 +332,6 @@ class SellerCard extends StatelessWidget {
                     //     ],
                     //   ),
                     // ],
-
                     const SizedBox(height: 6),
 
                     // 🏅 Badges
@@ -324,15 +340,16 @@ class SellerCard extends StatelessWidget {
                         if (isPremium)
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.amber.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Row(
                               children: [
-                                Icon(Icons.star,
-                                    size: 14, color: Colors.amber),
+                                Icon(Icons.star, size: 14, color: Colors.amber),
                                 SizedBox(width: 3),
                                 Text(
                                   "Premium",
@@ -348,15 +365,16 @@ class SellerCard extends StatelessWidget {
                         if (isPremium) const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Row(
                             children: [
-                              Icon(Icons.circle,
-                                  size: 8, color: Colors.green),
+                              Icon(Icons.circle, size: 8, color: Colors.green),
                               SizedBox(width: 4),
                               Text(
                                 "Active",
@@ -389,8 +407,11 @@ class SellerCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.home_work_outlined,
-                    color: ColorRes.primary, size: 22),
+                const Icon(
+                  Icons.home_work_outlined,
+                  color: ColorRes.primary,
+                  size: 22,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -427,7 +448,6 @@ extension StringCap on String {
   String get capitalizeFirst =>
       isNotEmpty ? '${this[0].toUpperCase()}${substring(1)}' : this;
 }
-
 
 extension CapExtension on String {
   String get capitalizeFirst =>

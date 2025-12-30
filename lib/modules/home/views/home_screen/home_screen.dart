@@ -10,7 +10,8 @@ import 'package:housing_flutter_app/app/manager/property/property_pricemanager.d
 import 'package:housing_flutter_app/app/manager/property_highlight_manager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/widgets/cards/banner_card_with_text.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/app/widgets/texts/headline_text.dart';
 import 'package:housing_flutter_app/app/widgets/texts/title_with_disc.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
@@ -264,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final MicController micController = Get.put(MicController());
   final GoogleMapSearchController googleMapController = Get.put(
     GoogleMapSearchController(),
-    tag: 'city'
+    tag: 'city',
   );
   final profileController = Get.put(BuyerProfileDataController());
   final SharePropertyController propertyShareController = Get.put(
@@ -1542,16 +1543,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 12),
                       WhyChooseUsSection(),
-                     if(reviewController.siteReviewWithUsers.isNotEmpty)...[
-                       const SizedBox(height: 20),
-                       const TitleWithViewAll(
-                         title: "Reviews & Testimonials",
-                         showViewAll: false,
-                       ),
-                       SizedBox(height: 12),
-                       ReviewsAndTestimonials(),
-                       SizedBox(height: AppSpacing.medium),
-                     ]
+                      if (reviewController.siteReviewWithUsers.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        const TitleWithViewAll(
+                          title: "Reviews & Testimonials",
+                          showViewAll: false,
+                        ),
+                        SizedBox(height: 12),
+                        ReviewsAndTestimonials(),
+                        SizedBox(height: AppSpacing.medium),
+                      ],
                     ],
                   ),
                   Padding(
@@ -1658,7 +1659,6 @@ Future<void> showFindPropertyDialog(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       // Stack(
                       //   children: [
                       //     NesticoPeTextField(
@@ -1832,11 +1832,11 @@ Future<void> showFindPropertyDialog(
                       //   ],
                       // ),
                       _buildFieldLabel("City"),
-                      SizedBox(height: 10,),
+                      SizedBox(height: 10),
                       CitySelectionWidget(
                         isEditing: true,
                         controller: controller.selectedCityZ,
-color: ColorRes.primary,
+                        color: ColorRes.primary,
                         fillColor: ColorRes.white,
                         onCitySelected: (selectedCity) {
                           print("✅ Selected city: ${selectedCity.description}");

@@ -7,7 +7,8 @@ import 'package:housing_flutter_app/app/manager/compare_manager.dart';
 import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/modules/builder/view/project_detail/widgets/model_render_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/overall_rating_controller.dart';
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
@@ -366,7 +367,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                     price,
                                     isNegotiable,
                                     isAllowAllCondition,
-                                      inquiryListing,
+                                    inquiryListing,
                                     isBookSiteVisit,
                                     planningToBuy,
                                     date,

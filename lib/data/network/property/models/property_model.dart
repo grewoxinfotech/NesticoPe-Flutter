@@ -143,7 +143,7 @@ class Items {
   String? createdAt;
   String? updatedAt;
   ScoreBreakdownModel? scoreBreakdown;
-  InvestmentInsight? investmentInsight;
+  InvestmentInsightModel? investmentInsightModel;
 
   Items({
     this.propertyMedia,
@@ -204,7 +204,7 @@ class Items {
     this.createdAt,
     this.updatedAt,
     this.scoreBreakdown,
-    this.investmentInsight,
+    this.investmentInsightModel,
   });
 
   Items.fromJson(Map<String, dynamic> json) {
@@ -292,9 +292,9 @@ class Items {
               json['scoreBreakdown'] as Map<String, dynamic>,
             )
             : null;
-    investmentInsight =
+    investmentInsightModel =
         json['investment_insight'] != null
-            ? InvestmentInsight.fromJson(
+            ? InvestmentInsightModel.fromJson(
               json['investment_insight'] as Map<String, dynamic>,
             )
             : null;
@@ -374,13 +374,93 @@ class Items {
       score.removeWhere((key, value) => value == null);
       data['scoreBreakdown'] = score;
     }
-    if (investmentInsight != null) {
-      final investment = investmentInsight!.toJson();
+    if (investmentInsightModel != null) {
+      final investment = investmentInsightModel!.toJson();
       investment.removeWhere((key, value) => value == null);
       data['investment_insight'] = investment;
     }
 
     return data;
+  }
+}
+
+class InvestmentInsightModel {
+  final PriceTrendModel? priceTrend;
+  final FutureProjectionModel? futureProjection;
+
+  InvestmentInsightModel({this.priceTrend, this.futureProjection});
+
+  factory InvestmentInsightModel.fromJson(Map<String, dynamic> json) {
+    return InvestmentInsightModel(
+      priceTrend:
+          json['price_trend'] != null
+              ? PriceTrendModel.fromJson(json['price_trend'])
+              : null,
+      futureProjection:
+          json['future_projection'] != null
+              ? FutureProjectionModel.fromJson(json['future_projection'])
+              : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'price_trend': priceTrend?.toJson(),
+      'future_projection': futureProjection?.toJson(),
+    };
+  }
+}
+
+class PriceTrendModel {
+  final num? currentPrice;
+  final num? past5yrPrice;
+  final double? growthPercentage5yr;
+  final double? cagrPercentage;
+
+  PriceTrendModel({
+    this.currentPrice,
+    this.past5yrPrice,
+    this.growthPercentage5yr,
+    this.cagrPercentage,
+  });
+
+  factory PriceTrendModel.fromJson(Map<String, dynamic> json) {
+    return PriceTrendModel(
+      currentPrice: json['current_price'],
+      past5yrPrice: json['past_5yr_price'],
+      growthPercentage5yr: (json['growth_percentage_5yr'] as num?)?.toDouble(),
+      cagrPercentage: (json['cagr_percentage'] as num?)?.toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'current_price': currentPrice,
+      'past_5yr_price': past5yrPrice,
+      'growth_percentage_5yr': growthPercentage5yr,
+      'cagr_percentage': cagrPercentage,
+    };
+  }
+}
+
+class FutureProjectionModel {
+  final num? projectedPrice5yr;
+  final double? roiPercentage5yr;
+
+  FutureProjectionModel({this.projectedPrice5yr, this.roiPercentage5yr});
+
+  factory FutureProjectionModel.fromJson(Map<String, dynamic> json) {
+    return FutureProjectionModel(
+      projectedPrice5yr: json['projected_price_5yr'],
+      roiPercentage5yr: (json['roi_percentage_5yr'] as num?)?.toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'projected_price_5yr': projectedPrice5yr,
+      'roi_percentage_5yr': roiPercentage5yr,
+    };
   }
 }
 
@@ -1340,133 +1420,6 @@ num? _toNum(dynamic value) {
   if (value == null) return null;
   if (value is num) return value;
   return num.tryParse(value.toString());
-}
-
-/// --------------------
-/// Investment Insight
-/// --------------------
-class InvestmentInsight {
-  final PriceTrend? priceTrend;
-  final FutureProjection? futureProjection;
-
-  const InvestmentInsight({this.priceTrend, this.futureProjection});
-
-  /// True if any usable insight exists
-  bool get isNotEmpty =>
-      (priceTrend?.isNotEmpty ?? false) ||
-      (futureProjection?.isNotEmpty ?? false);
-
-  factory InvestmentInsight.fromJson(Map<String, dynamic> json) {
-    return InvestmentInsight(
-      priceTrend:
-          json['price_trend'] != null
-              ? PriceTrend.fromJson(json['price_trend'])
-              : null,
-      futureProjection:
-          json['future_projection'] != null
-              ? FutureProjection.fromJson(json['future_projection'])
-              : null,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'price_trend': priceTrend?.toJson(),
-      'future_projection': futureProjection?.toJson(),
-    };
-  }
-}
-
-/// --------------------
-/// Price Trend
-/// --------------------
-class PriceTrend {
-  final num? currentPrice;
-  final num? past5yrPrice;
-  final num? growthPercentage5yr;
-  final num? cagrPercentage;
-
-  const PriceTrend({
-    this.currentPrice,
-    this.past5yrPrice,
-    this.growthPercentage5yr,
-    this.cagrPercentage,
-  });
-
-  /// True if at least one meaningful value exists
-  bool get isNotEmpty =>
-      (currentPrice != null && currentPrice! > 0) ||
-      (past5yrPrice != null && past5yrPrice! > 0) ||
-      (growthPercentage5yr != null && growthPercentage5yr!.isFinite) ||
-      (cagrPercentage != null && cagrPercentage!.isFinite);
-
-  /// Optional sanity check (UI usage)
-  bool get isCagrRealistic => cagrPercentage != null && cagrPercentage! <= 50;
-
-  /// UI helpers
-  String get formattedCurrentPrice =>
-      currentPrice == null ? '--' : '₹${currentPrice!.toStringAsFixed(0)}';
-
-  String get formattedCagr =>
-      cagrPercentage == null ? '--' : '${cagrPercentage!.toStringAsFixed(2)}%';
-
-  factory PriceTrend.fromJson(Map<String, dynamic> json) {
-    return PriceTrend(
-      currentPrice: _toNum(json['current_price']),
-      past5yrPrice: _toNum(json['past_5yr_price']),
-      growthPercentage5yr: _toNum(json['growth_percentage_5yr']),
-      cagrPercentage: _toNum(json['cagr_percentage']),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'current_price': currentPrice,
-      'past_5yr_price': past5yrPrice,
-      'growth_percentage_5yr': growthPercentage5yr,
-      'cagr_percentage': cagrPercentage,
-    };
-  }
-}
-
-/// --------------------
-/// Future Projection
-/// --------------------
-class FutureProjection {
-  final num? projectedPrice5yr;
-  final num? roiPercentage5yr;
-
-  const FutureProjection({this.projectedPrice5yr, this.roiPercentage5yr});
-
-  /// True if future projection exists
-  bool get isNotEmpty =>
-      (projectedPrice5yr != null && projectedPrice5yr! > 0) ||
-      (roiPercentage5yr != null && roiPercentage5yr!.isFinite);
-
-  /// UI helpers
-  String get formattedProjectedPrice =>
-      projectedPrice5yr == null
-          ? '--'
-          : '₹${projectedPrice5yr!.toStringAsFixed(0)}';
-
-  String get formattedRoi =>
-      roiPercentage5yr == null
-          ? '--'
-          : '${roiPercentage5yr!.toStringAsFixed(2)}%';
-
-  factory FutureProjection.fromJson(Map<String, dynamic> json) {
-    return FutureProjection(
-      projectedPrice5yr: _toNum(json['projected_price_5yr']),
-      roiPercentage5yr: _toNum(json['roi_percentage_5yr']),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'projected_price_5yr': projectedPrice5yr,
-      'roi_percentage_5yr': roiPercentage5yr,
-    };
-  }
 }
 
 class TypeConverter {

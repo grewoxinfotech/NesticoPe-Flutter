@@ -2,7 +2,8 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 
 import '../../constants/app_font_sizes.dart';
 
@@ -53,8 +54,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
       height: height,
       width: width,
       child: ClipRRect(
-
-        borderRadius: BorderRadius.circular(borderRadius,),
+        borderRadius: BorderRadius.circular(borderRadius),
 
         child: Stack(
           children: [
@@ -104,7 +104,7 @@ class NesticoPeBannerCardWithText extends StatelessWidget {
                       developersName
                           .substring(0, 1)
                           .toUpperCase(), // First letter
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: ColorRes.white,
                         fontWeight: AppFontWeights.medium,
                         fontSize: AppFontSizes.small,

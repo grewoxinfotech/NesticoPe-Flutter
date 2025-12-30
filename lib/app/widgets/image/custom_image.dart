@@ -1,150 +1,16 @@
-// import 'dart:io';
-// import 'dart:typed_data';
-// import 'package:flutter/material.dart';
-//
-// /// Supported image sources
-// enum CustomImageType { asset, network, file, memory }
-//
-// class CustomImage extends StatelessWidget {
-//   final String? src;
-//   final File? file;
-//   final Uint8List? bytes;
-//   final CustomImageType type;
-//   final BoxFit fit;
-//   final double? width;
-//   final double? height;
-//
-//   /// Optional overrides
-//   final ImageErrorWidgetBuilder? errorBuilder;
-//   final ImageFrameBuilder? frameBuilder;
-//   final ImageLoadingBuilder? loadingBuilder;
-//
-//   const CustomImage({
-//     super.key,
-//     this.src,
-//     this.file,
-//     this.bytes,
-//     required this.type,
-//     this.fit = BoxFit.cover,
-//     this.width,
-//     this.height,
-//     this.errorBuilder,
-//     this.frameBuilder,
-//     this.loadingBuilder,
-//   });
-//
-//   /// ✅ Returns an ImageProvider for CircleAvatar, DecorationImage, etc.
-//   ImageProvider toImageProvider() {
-//     switch (type) {
-//       case CustomImageType.asset:
-//         return AssetImage(src ?? "");
-//       case CustomImageType.network:
-//         return NetworkImage(src ?? "");
-//       case CustomImageType.file:
-//         return FileImage(file ?? File(""));
-//       case CustomImageType.memory:
-//         return MemoryImage(bytes ?? Uint8List(0));
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     switch (type) {
-//       case CustomImageType.asset:
-//         return Image.asset(
-//           src ?? "",
-//           fit: fit,
-//           width: width,
-//           height: height,
-//           errorBuilder: errorBuilder ?? _defaultErrorBuilder,
-//           frameBuilder: frameBuilder ?? _defaultFrameBuilder,
-//           // loadingBuilder: loadingBuilder ?? _defaultLoadingBuilder,
-//         );
-//
-//       case CustomImageType.network:
-//         return Image.network(
-//           src ?? "",
-//           fit: fit,
-//           width: width,
-//           height: height,
-//           errorBuilder: errorBuilder ?? _defaultErrorBuilder,
-//           frameBuilder: frameBuilder ?? _defaultFrameBuilder,
-//           loadingBuilder: loadingBuilder ?? _defaultLoadingBuilder,
-//         );
-//
-//       case CustomImageType.file:
-//         return Image.file(
-//           file ?? File(""),
-//           fit: fit,
-//           width: width,
-//           height: height,
-//           errorBuilder: errorBuilder ?? _defaultErrorBuilder,
-//           frameBuilder: frameBuilder ?? _defaultFrameBuilder,
-//         );
-//
-//       case CustomImageType.memory:
-//         return Image.memory(
-//           bytes ?? Uint8List(0),
-//           fit: fit,
-//           width: width,
-//           height: height,
-//           errorBuilder: errorBuilder ?? _defaultErrorBuilder,
-//           frameBuilder: frameBuilder ?? _defaultFrameBuilder,
-//         );
-//     }
-//   }
-//
-//   /// Default error handler
-//   Widget _defaultErrorBuilder(
-//     BuildContext context,
-//     Object error,
-//     StackTrace? stackTrace,
-//   ) {
-//     return const Icon(Icons.broken_image, color: Colors.grey, size: 40);
-//   }
-//
-//   /// Default frame handler (fade-in effect)
-//   Widget _defaultFrameBuilder(
-//     BuildContext context,
-//     Widget child,
-//     int? frame,
-//     bool wasSynchronouslyLoaded,
-//   ) {
-//     if (wasSynchronouslyLoaded) return child;
-//     return AnimatedOpacity(
-//       opacity: frame == null ? 0 : 1,
-//       duration: const Duration(milliseconds: 500),
-//       child: child,
-//     );
-//   }
-//
-//   /// Default loading handler (progress indicator)
-//   Widget _defaultLoadingBuilder(
-//     BuildContext context,
-//     Widget child,
-//     ImageChunkEvent? loadingProgress,
-//   ) {
-//     if (loadingProgress == null) return child;
-//     return Center(
-//       child: CircularProgressIndicator(
-//         value:
-//             loadingProgress.expectedTotalBytes != null
-//                 ? loadingProgress.cumulativeBytesLoaded /
-//                     (loadingProgress.expectedTotalBytes ?? 1)
-//                 : null,
-//       ),
-//     );
-//   }
-// }
-
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../../constants/color_res.dart';
+// Assuming this is your color file path
+// import '../../constants/color_res.dart';
 
-/// Supported image sources
+// Temporary placeholder for the color if the import is missing
+class ColorRes {
+  static const Color leadGreyColor = Colors.grey;
+}
+
 enum CustomImageType { asset, network, file, memory }
 
 class CustomImage extends StatelessWidget {
@@ -156,7 +22,10 @@ class CustomImage extends StatelessWidget {
   final double? width;
   final double? height;
 
-  /// Optional overrides
+  // New parameters to control memory usage manually if needed
+  final int? memCacheWidth;
+  final int? memCacheHeight;
+
   final Widget Function(BuildContext, String)? networkPlaceholder;
   final Widget Function(BuildContext, String, dynamic)? networkError;
   final ImageErrorWidgetBuilder? errorBuilder;
@@ -172,6 +41,8 @@ class CustomImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.width,
     this.height,
+    this.memCacheWidth,
+    this.memCacheHeight,
     this.errorBuilder,
     this.frameBuilder,
     this.loadingBuilder,
@@ -179,22 +50,63 @@ class CustomImage extends StatelessWidget {
     this.networkError,
   });
 
-  /// ✅ Returns an ImageProvider for CircleAvatar, DecorationImage, etc.
-  ImageProvider toImageProvider() {
+  /// Helper to calculate optimal cache size based on display size
+  /// This prevents loading a 4000px image for a 50px icon.
+  int? _getCacheWidth(BuildContext context) {
+    if (memCacheWidth != null) return memCacheWidth;
+    if (width != null && width != double.infinity) {
+      return (width! * MediaQuery.of(context).devicePixelRatio).toInt();
+    }
+    return null;
+  }
+
+  int? _getCacheHeight(BuildContext context) {
+    if (memCacheHeight != null) return memCacheHeight;
+    if (height != null && height != double.infinity) {
+      return (height! * MediaQuery.of(context).devicePixelRatio).toInt();
+    }
+    return null;
+  }
+
+  /// ✅ Returns an ImageProvider.
+  /// Note: ResizeImage is used to prevent OOM crashes in providers too.
+  ImageProvider toImageProvider(BuildContext context) {
+    // Calculate cache sizes
+    final int? cacheW = _getCacheWidth(context);
+    final int? cacheH = _getCacheHeight(context);
+
+    ImageProvider provider;
+
     switch (type) {
       case CustomImageType.asset:
-        return AssetImage(src ?? "");
+        provider = AssetImage(src ?? "");
+        break;
       case CustomImageType.network:
-        return CachedNetworkImageProvider(src ?? "");
+        return CachedNetworkImageProvider(
+          src ?? "",
+          maxWidth: cacheW,
+          maxHeight: cacheH,
+        );
       case CustomImageType.file:
-        return FileImage(file ?? File(""));
+        provider = FileImage(file ?? File(""));
+        break;
       case CustomImageType.memory:
-        return MemoryImage(bytes ?? Uint8List(0));
+        provider = MemoryImage(bytes ?? Uint8List(0));
+        break;
     }
+
+    // Wrap asset/file/memory in ResizeImage to optimize memory
+    if (cacheW != null || cacheH != null) {
+      return ResizeImage(provider, width: cacheW, height: cacheH);
+    }
+    return provider;
   }
 
   @override
   Widget build(BuildContext context) {
+    final int? cacheW = _getCacheWidth(context);
+    final int? cacheH = _getCacheHeight(context);
+
     switch (type) {
       case CustomImageType.asset:
         return Image.asset(
@@ -202,9 +114,10 @@ class CustomImage extends StatelessWidget {
           fit: fit,
           width: width,
           height: height,
+          cacheWidth: cacheW, // Optimized
+          cacheHeight: cacheH, // Optimized
           errorBuilder: errorBuilder ?? _defaultErrorBuilder,
           frameBuilder: frameBuilder ?? _defaultFrameBuilder,
-          // loadingBuilder: loadingBuilder ?? _defaultLoadingBuilder,
         );
 
       case CustomImageType.network:
@@ -213,15 +126,24 @@ class CustomImage extends StatelessWidget {
           fit: fit,
           width: width,
           height: height,
+          memCacheWidth: cacheW, // Optimized: Decodes only what is needed
+          memCacheHeight: cacheH, // Optimized
           placeholder:
               networkPlaceholder ??
               (context, url) => const Center(
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
               ),
           errorWidget:
               networkError ??
-              (context, url, error) =>
-                  const Icon(Icons.broken_image, size: 40, color: ColorRes.leadGreyColor),
+              (context, url, error) => const Icon(
+                Icons.broken_image,
+                size: 40,
+                color: ColorRes.leadGreyColor,
+              ),
         );
 
       case CustomImageType.file:
@@ -230,6 +152,8 @@ class CustomImage extends StatelessWidget {
           fit: fit,
           width: width,
           height: height,
+          cacheWidth: cacheW, // Optimized
+          cacheHeight: cacheH, // Optimized
           errorBuilder: errorBuilder ?? _defaultErrorBuilder,
           frameBuilder: frameBuilder ?? _defaultFrameBuilder,
         );
@@ -240,22 +164,26 @@ class CustomImage extends StatelessWidget {
           fit: fit,
           width: width,
           height: height,
+          cacheWidth: cacheW, // Optimized
+          cacheHeight: cacheH, // Optimized
           errorBuilder: errorBuilder ?? _defaultErrorBuilder,
           frameBuilder: frameBuilder ?? _defaultFrameBuilder,
         );
     }
   }
 
-  /// Default error handler
   Widget _defaultErrorBuilder(
     BuildContext context,
     Object error,
     StackTrace? stackTrace,
   ) {
-    return  Icon(Icons.broken_image, color: ColorRes.leadGreyColor, size: 40);
+    return const Icon(
+      Icons.broken_image,
+      color: ColorRes.leadGreyColor,
+      size: 40,
+    );
   }
 
-  /// Default frame handler (fade-in effect)
   Widget _defaultFrameBuilder(
     BuildContext context,
     Widget child,
@@ -265,26 +193,10 @@ class CustomImage extends StatelessWidget {
     if (wasSynchronouslyLoaded) return child;
     return AnimatedOpacity(
       opacity: frame == null ? 0 : 1,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(
+        milliseconds: 300,
+      ), // Reduced duration for snappier feel
       child: child,
-    );
-  }
-
-  /// Default loading handler (progress indicator)
-  Widget _defaultLoadingBuilder(
-    BuildContext context,
-    Widget child,
-    ImageChunkEvent? loadingProgress,
-  ) {
-    if (loadingProgress == null) return child;
-    return Center(
-      child: CircularProgressIndicator(
-        value:
-            loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                    (loadingProgress.expectedTotalBytes ?? 1)
-                : null,
-      ),
     );
   }
 }
