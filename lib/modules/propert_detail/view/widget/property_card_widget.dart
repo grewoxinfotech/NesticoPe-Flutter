@@ -373,79 +373,79 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
               child: Facilities(property: widget.property),
             ),
             SizedBox(height: 8),
-            Divider(
-              height: 15,
-              color: ColorRes.leadGreyColor.shade300,
-              indent: 12,
-              endIndent: 12,
-            ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppPadding.small),
-              child: Row(
-                children: [
-                  // TODO: Change Image
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: ColorRes.primary, width: 2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: CircleAvatar(
-                      backgroundImage: CustomImage(
-                        type: CustomImageType.asset,
-                        src: IMGRes.user_1,
-                      ).toImageProvider(context),
-                      radius: 13,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          DataMasker.maskName(widget.property.ownerName),
-                          style: const TextStyle(
-                            fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textColor,
-                          ),
-                        ),
-                        Text(
-                          widget.role,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppPadding.small,
-                      vertical: AppPadding.small,
-                    ),
-                    decoration: BoxDecoration(
-                      // color: ColorRes.primary,
-                      border: Border.all(color: ColorRes.primary, width: 1.5),
-                      borderRadius: BorderRadius.circular(AppRadius.small),
-                    ),
-                    child: const Text(
-                      "View Details",
-                      style: TextStyle(
-                        color: ColorRes.primary,
-                        fontSize: AppFontSizes.extraSmall,
-                        fontWeight: AppFontWeights.semiBold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
+            // Divider(
+            //   height: 15,
+            //   color: ColorRes.leadGreyColor.shade300,
+            //   indent: 12,
+            //   endIndent: 12,
+            // ),
+            //
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: AppPadding.small),
+            //   child: Row(
+            //     children: [
+            //       // TODO: Change Image
+            //       Container(
+            //         decoration: BoxDecoration(
+            //           border: Border.all(color: ColorRes.primary, width: 2),
+            //           shape: BoxShape.circle,
+            //         ),
+            //         child: CircleAvatar(
+            //           backgroundImage: CustomImage(
+            //             type: CustomImageType.asset,
+            //             src: IMGRes.user_1,
+            //           ).toImageProvider(context),
+            //           radius: 13,
+            //         ),
+            //       ),
+            //       const SizedBox(width: 8),
+            //       Expanded(
+            //         child: Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             Text(
+            //               DataMasker.maskName(widget.property.ownerName),
+            //               style: const TextStyle(
+            //                 fontSize: AppFontSizes.small,
+            //                 fontWeight: AppFontWeights.semiBold,
+            //                 color: ColorRes.textColor,
+            //               ),
+            //             ),
+            //             Text(
+            //               widget.role,
+            //               style: const TextStyle(
+            //                 fontSize: 10,
+            //                 fontWeight: AppFontWeights.medium,
+            //                 color: ColorRes.grey,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //
+            //       Container(
+            //         padding: const EdgeInsets.symmetric(
+            //           horizontal: AppPadding.small,
+            //           vertical: AppPadding.small,
+            //         ),
+            //         decoration: BoxDecoration(
+            //           // color: ColorRes.primary,
+            //           border: Border.all(color: ColorRes.primary, width: 1.5),
+            //           borderRadius: BorderRadius.circular(AppRadius.small),
+            //         ),
+            //         child: const Text(
+            //           "View Details",
+            //           style: TextStyle(
+            //             color: ColorRes.primary,
+            //             fontSize: AppFontSizes.extraSmall,
+            //             fontWeight: AppFontWeights.semiBold,
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             if (widget.isFeedbackEnabled) ...[
               const SizedBox(height: AppSpacing.small),
 

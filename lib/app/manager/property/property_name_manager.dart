@@ -16,7 +16,9 @@ class PropertyNameManager {
     if (type == "residential") {
       final bhk = property.propertyDetails?.bhk ?? 0;
       // If bhk = 0, show only property type
-      return bhk > 0 ? "$bhk BHK $propertyType" : propertyType;
+      return bhk > 0
+          ? "$bhk BHK ${propertyType.replaceAll("_", " ").capitalize.toString()}"
+          : propertyType.replaceAll("_", " ").capitalize.toString();
     }
 
     if (type == "commercial") {

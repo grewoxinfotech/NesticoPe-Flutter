@@ -1637,11 +1637,15 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
     _selectedPropertyType = widget.currentProperty.propertyType;
   }
 
-  String _formatCurrency(num value) {
-    return NumberFormat.compactCurrency(
-      symbol: '₹',
-      decimalDigits: 1,
-    ).format(value);
+  String _getFormattedCurrency(double value) {
+    if (value >= 10000000) {
+      return '${(value / 10000000).toStringAsFixed(1)}Cr';
+    } else if (value >= 100000) {
+      return '${(value / 100000).toStringAsFixed(1)}L';
+    } else if (value >= 1000) {
+      return '${(value / 1000).toStringAsFixed(0)}k';
+    }
+    return value.toStringAsFixed(0);
   }
 
   String _formatCurrencyFull(num value) {
@@ -2029,7 +2033,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
               LineChartData(
                 minX: 0,
                 maxX: (myPropertyData.length - 1).toDouble(),
-                minY: minY,
+                minY: 0,
                 maxY: maxY,
                 gridData: FlGridData(
                   show: true,
@@ -2144,9 +2148,9 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
           Row(
             children: [
               _headerItem('', flex: 1),
-              _headerItem('Current Price', flex: 2),
-              _headerItem('Last 1 year', flex: 2),
-              _headerItem('Last 5 years', flex: 2),
+              _headerItem('Current Price', flex: 3),
+              _headerItem('Last 1 year', flex: 3),
+              _headerItem('Last 5 years', flex: 3),
             ],
           ),
           SizedBox(height: 10),
@@ -2243,7 +2247,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
 
           // Current Price Column
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Text(
               currentPrice != null ? '₹$currentPrice' : '--',
               style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
@@ -2251,8 +2255,8 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
           ),
 
           // Growth Columns
-          Expanded(flex: 2, child: _growthValue(growth1yr)),
-          Expanded(flex: 2, child: _growthValue(growth5yr)),
+          Expanded(flex: 3, child: _growthValue(growth1yr)),
+          Expanded(flex: 3, child: _growthValue(growth5yr)),
         ],
       ),
     );
@@ -2291,12 +2295,15 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
           size: 20,
           color: isPositive ? ColorRes.green : ColorRes.error,
         ),
-        Text(
-          '${value.abs().toStringAsFixed(1)}%',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isPositive ? ColorRes.green : ColorRes.error,
+        Expanded(
+          child: Text(
+            '${value.abs().toStringAsFixed(1)}%',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isPositive ? ColorRes.green : ColorRes.error,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ],
@@ -2575,6 +2582,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   LineChartBarData _buildMainPropertyLine(List<_ChartPoint> data) {
     return LineChartBarData(
       isCurved: true,
+      preventCurveOverShooting: true,
       curveSmoothness: 0.35,
       barWidth: 3,
       color: const Color(0xFF3B82F6),
@@ -2597,6 +2605,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   }) {
     return LineChartBarData(
       isCurved: true,
+      preventCurveOverShooting: true,
       curveSmoothness: 0.35,
       barWidth: 2.5,
       color: color,
@@ -2621,7 +2630,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
             return Padding(
               padding: const EdgeInsets.only(right: 8),
               child: Text(
-                _formatCurrency(value),
+                _getFormattedCurrency(value),
                 textAlign: TextAlign.right,
                 style: const TextStyle(
                   fontSize: 10,
@@ -2881,7 +2890,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
                   }
 
                   /// Empty state
-                  if (controller.items.isEmpty) {
+                  if (!controller.isLoading.value && controller.items.isEmpty) {
                     return const Center(child: Text('No properties found'));
                   }
 

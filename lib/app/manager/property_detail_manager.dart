@@ -171,6 +171,9 @@
 //   }
 // }
 
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+
 import '../../data/network/property/models/property_model.dart';
 
 class PropertyDetailManager {
@@ -193,7 +196,7 @@ class PropertyDetailManager {
       if (pd.floorInfo != null) {
         details.add({
           "Floor":
-          "${pd.floorInfo!.floorNumber} of ${pd.floorInfo!.totalFloors}",
+              "${pd.floorInfo!.floorNumber} of ${pd.floorInfo!.totalFloors}",
         });
       }
       if (pd.furnishInfo?.furnishType != null) {
@@ -210,13 +213,18 @@ class PropertyDetailManager {
       switch (property.listingType?.toLowerCase()) {
         case 'rent':
           if (pd.financialInfo?.price != null) {
-            details.add({"Rent": "${pd.financialInfo!.price} INR / month"});
+            details.add({
+              "Rent":
+                  "${Formatter.formatPrice(pd.financialInfo!.price)}/ month",
+            });
           }
           break;
 
         case 'sell':
           if (pd.financialInfo?.price != null) {
-            details.add({"Price": "${pd.financialInfo!.price} INR"});
+            details.add({
+              "Price": "${Formatter.formatPrice(pd.financialInfo!.price)}",
+            });
           }
           break;
 
@@ -230,9 +238,9 @@ class PropertyDetailManager {
               final maxRent = rents.reduce((a, b) => a > b ? a : b);
 
               final rentText =
-              (minRent == maxRent)
-                  ? "$minRent INR / month"
-                  : "$minRent - $maxRent INR / month";
+                  (minRent == maxRent)
+                      ? "$minRent INR / month"
+                      : "$minRent - $maxRent INR / month";
               details.add({"Rent Range": rentText});
             }
 
@@ -299,6 +307,40 @@ class PropertyDetailManager {
           break;
         case 'house':
           break;
+        case 'agricultural_land':
+          final plot = pd.plotInfo;
+          if (plot != null) {
+            if (plot.plotArea != null) {
+              details.add({
+                "Plot Area": "${plot.plotArea} ${plot.plotAreaUnit}",
+              });
+            }
+            if (plot.plotLength != null) {
+              details.add({"Plot Length": "${plot.plotLength}"});
+            }
+            if (plot.plotWidth != null) {
+              details.add({"Plot Width": "${plot.plotWidth}"});
+            }
+            if (plot.ownership != null) {
+              details.add({"Ownership": plot.ownership!});
+            }
+            if (plot.zoneType != null) {
+              details.add({"Plot Type": plot.zoneType!});
+            }
+            if (plot.possessionStatus != null) {
+              details.add({"Possession": plot.possessionStatus!});
+            }
+            if (property.propertyType != null) {
+              details.add({
+                "Property Type":
+                    property.propertyType!
+                        .replaceAll("_", " ")
+                        .capitalize
+                        .toString(),
+              });
+            }
+          }
+          break;
       }
     }
 
@@ -307,7 +349,7 @@ class PropertyDetailManager {
       if (pd.floorInfo != null) {
         details.add({
           "Floor":
-          "${pd.floorInfo!.floorNumber} of ${pd.floorInfo!.totalFloors}",
+              "${pd.floorInfo!.floorNumber} of ${pd.floorInfo!.totalFloors}",
         });
       }
       if (pd.propertyBuiltUpArea != null) {
@@ -317,12 +359,17 @@ class PropertyDetailManager {
       switch (property.listingType?.toLowerCase()) {
         case 'rent':
           if (pd.financialInfo?.price != null) {
-            details.add({"Rent": "${pd.financialInfo!.price} INR / month"});
+            details.add({
+              "Rent":
+                  "${Formatter.formatPrice(pd.financialInfo!.price)} / month",
+            });
           }
           break;
         case 'sell':
           if (pd.financialInfo?.price != null) {
-            details.add({"Price": "${pd.financialInfo!.price} INR"});
+            details.add({
+              "Price": "${Formatter.formatPrice(pd.financialInfo!.price)}",
+            });
           }
           break;
       }
@@ -334,7 +381,7 @@ class PropertyDetailManager {
       if ((parking.covered ?? false) || (parking.open ?? false)) {
         details.add({
           "Parking":
-          "${(parking.covered ?? false) ? "1 Covered" : "0 Covered"}, ${(parking.open ?? false) ? "1 Open" : "0 Open"}",
+              "${(parking.covered ?? false) ? "1 Covered" : "0 Covered"}, ${(parking.open ?? false) ? "1 Open" : "0 Open"}",
         });
       }
     }

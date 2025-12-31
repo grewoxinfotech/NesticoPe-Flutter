@@ -15,7 +15,7 @@ import 'package:housing_flutter_app/modules/property/views/property_detail_scree
 import 'package:housing_flutter_app/modules/seller/view/widget/seller_property_list.dart';
 
 import '../../../app/widgets/image/custom_image.dart' hide ColorRes;
-import '../../../app/widgets/image/custom_image.dart';
+import '../../../app/widgets/image/custom_image.dart' hide ColorRes;
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../property/controllers/top_seller_profile_controller.dart';
@@ -734,9 +734,9 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
           child: ListView(
             children: [
               _buildBackButton(context),
-              _buildProfileHeader(user??User.fromJson({}),profile),
+              _buildProfileHeader(user ?? User.fromJson({}), profile),
 
-              _buildAgentCard(user?? User.fromJson({}), profile),
+              _buildAgentCard(user ?? User.fromJson({}), profile),
               const SizedBox(height: 10),
               _buildContentSection(),
             ],
@@ -752,7 +752,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
       child: Align(
         alignment: Alignment.topLeft,
         child: IconButton(
-          icon: const Icon(Icons.arrow_back, color: ColorRes.blackShade87),
+          icon: Icon(Icons.arrow_back, color: ColorRes.blackShade87),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -803,9 +803,12 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
       user.lastName?.trim(),
     ].where((e) => e != null && e.isNotEmpty).join(' ');
 
-    final displayName = fullName.isNotEmpty
-        ? fullName
-        : (user.username?.isNotEmpty == true ? user.username! : 'Not Defined');
+    final displayName =
+        fullName.isNotEmpty
+            ? fullName
+            : (user.username?.isNotEmpty == true
+                ? user.username!
+                : 'Not Defined');
 
     final sellerType = safeValue(profile.sellerType);
     final companyName = safeValue(profile.companyName);
@@ -819,7 +822,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Column(
         children: [
@@ -831,10 +834,11 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundImage: (widget.profilePic != null &&
-                        widget.profilePic!.isNotEmpty)
-                        ? NetworkImage(widget.profilePic!)
-                        : const AssetImage(IMGRes.user_1) as ImageProvider,
+                    backgroundImage:
+                        (widget.profilePic != null &&
+                                widget.profilePic!.isNotEmpty)
+                            ? NetworkImage(widget.profilePic!)
+                            : const AssetImage(IMGRes.user_1) as ImageProvider,
                   ),
                   if (user.isVerified == true)
                     Positioned(
@@ -874,7 +878,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
                             ),
                           ),
                         ),
-                          _buildVerifiedBadge(user??User.fromJson({})),
+                        _buildVerifiedBadge(user ?? User.fromJson({})),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -883,7 +887,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
                       style: TextStyle(
                         fontSize: AppFontSizes.caption,
                         color: ColorRes.grey,
-                        fontWeight: AppFontWeights.medium
+                        fontWeight: AppFontWeights.medium,
                       ),
                     ),
                     Text(
@@ -891,7 +895,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
                       style: TextStyle(
                         fontSize: AppFontSizes.caption,
                         color: ColorRes.grey,
-                          fontWeight: AppFontWeights.medium
+                        fontWeight: AppFontWeights.medium,
                       ),
                     ),
                   ],
@@ -906,7 +910,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildInfoField("RERA", rera),
-              SizedBox(width: 10,),
+              SizedBox(width: 10),
               _buildInfoField("GST", gst),
             ],
           ),
@@ -940,9 +944,6 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
       ),
     );
   }
-
-
-
 
   Widget _buildVerifiedBadge(User user) {
     if (user?.isPremium != true) {
@@ -1013,21 +1014,24 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
   //   );
   // }
   Widget _buildAgentCard(User user, ProfileSellerModel profile) {
-    final totalItems = widget.isOwner
-        ? propertyController?.total.value ?? 0
-        : projectController?.items.length ?? 0;
+    final totalItems =
+        widget.isOwner
+            ? propertyController?.total.value ?? 0
+            : projectController?.items.length ?? 0;
 
     final itemLabel = widget.isOwner ? 'Properties' : 'Projects';
 
-    final experience = (user.totalExperience != null && user.totalExperience! > 0)
-        ? '${user.totalExperience} years'
-        : 'Not Defined';
+    final experience =
+        (user.totalExperience != null && user.totalExperience! > 0)
+            ? '${user.totalExperience} years'
+            : 'Not Defined';
 
     final totalProperty = totalItems > 0 ? '$totalItems' : 'Not Defined';
 
-    final sellerType = (profile.sellerType?.isNotEmpty == true)
-        ? profile.sellerType
-        : 'Not Defined';
+    final sellerType =
+        (profile.sellerType?.isNotEmpty == true)
+            ? profile.sellerType
+            : 'Not Defined';
 
     return AgentCard(
       status: experience,
@@ -1036,8 +1040,6 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
       label: itemLabel,
     );
   }
-
-
 
   Widget _buildContentSection() {
     if (widget.isOwner) {
@@ -1211,6 +1213,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
     );
   }
 }
+
 class AgentCard extends StatelessWidget {
   final String? totalProperty;
   final String? sellerType;
@@ -1238,7 +1241,7 @@ class AgentCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-       border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1249,7 +1252,7 @@ class AgentCard extends StatelessWidget {
             width: 1,
             color: ColorRes.leadGreyColor.shade300,
           ),
-          _bottomTile("Experience", safeValue(status),),
+          _bottomTile("Experience", safeValue(status)),
           Container(
             height: 60,
             width: 1,
@@ -1290,7 +1293,6 @@ class AgentCard extends StatelessWidget {
     );
   }
 }
-
 
 // class AgentCard extends StatelessWidget {
 //   final String? experience;
@@ -1371,7 +1373,6 @@ class _AgentInfo {
   final String value;
   _AgentInfo({required this.title, required this.value});
 }
-
 
 class SectionTitle extends StatelessWidget {
   final String title;
@@ -1569,7 +1570,7 @@ class SellerProfileProjectCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Row(
         children: [
@@ -1577,13 +1578,15 @@ class SellerProfileProjectCard extends StatelessWidget {
           Stack(
             children: [
               ClipRRect(
-                borderRadius:
-                const BorderRadius.horizontal(left: Radius.circular(12)),
+                borderRadius: const BorderRadius.horizontal(
+                  left: Radius.circular(12),
+                ),
                 child: CustomImage(
                   type: CustomImageType.network,
-                  src: (project.mediaGallery?.images?.isNotEmpty ?? false)
-                      ? project.mediaGallery!.images!.first
-                      : 'https://via.placeholder.com/150',
+                  src:
+                      (project.mediaGallery?.images?.isNotEmpty ?? false)
+                          ? project.mediaGallery!.images!.first
+                          : 'https://via.placeholder.com/150',
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
@@ -1594,8 +1597,10 @@ class SellerProfileProjectCard extends StatelessWidget {
                   top: 6,
                   left: 6,
                   child: Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: ColorRes.black,
                       borderRadius: BorderRadius.circular(6),
@@ -1616,8 +1621,7 @@ class SellerProfileProjectCard extends StatelessWidget {
           /// CONTENT SECTION
           Expanded(
             child: Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1675,8 +1679,8 @@ class SellerProfileProjectCard extends StatelessWidget {
                         _chip(
                           project.configuration.isNotEmpty
                               ? project.configuration
-                              .map((e) => e.variants.first.name)
-                              .join(', ')
+                                  .map((e) => e.variants.first.name)
+                                  .join(', ')
                               : 'Configs',
                         ),
                         const SizedBox(width: 6),
@@ -1684,8 +1688,6 @@ class SellerProfileProjectCard extends StatelessWidget {
                       ],
                     ),
                   ),
-
-
 
                   /// PRICE + ARROW ICON
                   Row(
@@ -1716,18 +1718,19 @@ class SellerProfileProjectCard extends StatelessWidget {
     );
   }
 }
-  Widget _chip(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: AppFontSizes.caption,
-        fontWeight: AppFontWeights.medium,
-        color: ColorRes.blackShade54,
-      ),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-    );
-  }
+
+Widget _chip(String text) {
+  return Text(
+    text,
+    style: TextStyle(
+      fontSize: AppFontSizes.caption,
+      fontWeight: AppFontWeights.medium,
+      color: ColorRes.blackShade54,
+    ),
+    maxLines: 1,
+    overflow: TextOverflow.ellipsis,
+  );
+}
 
 //   /// STATUS BADGE
 //   Widget _statusBadge(String status) {
@@ -1756,4 +1759,3 @@ class SellerProfileProjectCard extends StatelessWidget {
 // }
 String safeValue(String? value) =>
     (value != null && value.trim().isNotEmpty) ? value : 'Not Defined';
-

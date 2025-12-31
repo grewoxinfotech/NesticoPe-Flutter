@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/app/constants/svg_res.dart';
+import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
@@ -46,7 +47,6 @@ class _PropertyCardState extends State<PropertyCard> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
   }
 
   @override
@@ -221,30 +221,18 @@ class _PropertyCardState extends State<PropertyCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Title
-                  if (widget.property.type!.toLowerCase() == "residential")
-                    Text(
-                      "${widget.property.propertyDetails?.bhk ?? 0} BHK ${widget.property.propertyType?.capitalize}",
-                      style: TextStyle(
-                        fontWeight: AppFontWeights.semiBold,
+                  Text(
+                    PropertyNameManager(widget.property).displayName,
+                    style: TextStyle(
+                      fontWeight: AppFontWeights.semiBold,
 
-                        fontSize: AppFontSizes.body,
-                        color: ColorRes.blackShade87,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      fontSize: AppFontSizes.body,
+                      color: ColorRes.blackShade87,
                     ),
-                  if (widget.property.type!.toLowerCase() == "commercial")
-                    Text(
-                      "${widget.property.propertyType?.capitalize}",
-                      style: TextStyle(
-                        fontWeight: AppFontWeights.semiBold,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
 
-                        fontSize: AppFontSizes.body,
-                        color: ColorRes.blackShade87,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
                   const SizedBox(height: 4),
 
                   // Location

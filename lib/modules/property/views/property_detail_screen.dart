@@ -3309,6 +3309,7 @@ import 'package:timeago/timeago.dart' as timeFormatter;
 import 'package:video_player/video_player.dart';
 
 import '../../../app/constants/enum.dart';
+import '../../../app/manager/property/property_name_manager.dart';
 import '../../../app/manager/property_detail_manager.dart';
 import '../../../app/manager/property_highlight_manager.dart';
 import '../../../app/utils/helper_function/contact_helper.dart';
@@ -3560,15 +3561,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             ),
           );
         }
-
-        // Create priceManager with fresh data
-        log('[PropertyDetail] 📊 Creating priceManager');
-        final priceManager = PropertyPriceManager(
-          financialInfo:
-              currentProperty.propertyDetails?.financialInfo ?? FinancialInfo(),
-          listingType: currentProperty.listingType ?? '',
-        );
-        log('[PropertyDetail] ✅ priceManager created');
 
         return SafeArea(
           child: Stack(
@@ -3999,7 +3991,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ],
                     ],
 
-
                     // if ((currentProperty
                     //             .propertyDetails
                     //             ?.financialInfo
@@ -4204,7 +4195,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     //     SizedBox.shrink(),
                     //   ],
                     // ],
-
                     if (currentProperty
                             .propertyDetails
                             ?.furnishInfo
@@ -4734,14 +4724,13 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     price,
                                     isNegotiable,
 
-
                                     isAllowAllCondition,
                                     inquiryListing,
                                     isBookSiteVisit,
                                     planningToBuy,
                                     date,
                                     time,
-                                      roomInfo,
+                                    roomInfo,
                                   ) async {
                                     final inquiry = {
                                       "name": name ?? "",
@@ -4765,7 +4754,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                           "visitDate":
                                               '${date.day}-${date.month}-${date.year}',
                                         if (roomInfo != null)
-                                          "selectedRoomType":roomInfo,
+                                          "selectedRoomType": roomInfo,
                                         if (time != null)
                                           "visitTime":
                                               '${time.hour.toString().padLeft(2, '0')}:'
@@ -5110,6 +5099,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         item["url"]!,
                         fit: BoxFit.cover,
                         width: double.infinity,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
                       );
                     } else if (item["type"] == "video") {
                       return CustomVideoPlayer(url: item["url"]!);
@@ -5221,30 +5218,17 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 🔹 Title
-          if (property.type!.toLowerCase() == "residential")
-            Text(
-              "${property.propertyDetails?.bhk ?? 0} BHK ${property.propertyType!.capitalize}",
-              style: const TextStyle(
-                fontWeight: AppFontWeights.semiBold,
+          Text(
+            PropertyNameManager(property).displayName,
+            style: const TextStyle(
+              fontWeight: AppFontWeights.semiBold,
 
-                fontSize: AppFontSizes.body,
-                color: ColorRes.blackShade87,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              fontSize: AppFontSizes.body,
+              color: ColorRes.blackShade87,
             ),
-          if (property.type!.toLowerCase() == "commercial")
-            Text(
-              "${property.propertyType!.capitalize}",
-              style: const TextStyle(
-                fontWeight: AppFontWeights.semiBold,
-
-                fontSize: AppFontSizes.body,
-                color: ColorRes.blackShade87,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
 
           const SizedBox(height: 4),
 
