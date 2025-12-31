@@ -49,6 +49,9 @@ class LocationInsight {
   final String location;
   final int totalListings;
   final double demandIndex;
+  final double oneYearGrowth;
+  final double threeYearGrowth;
+  final double fiveYearGrowth;
   final List<PriceTrend> priceTrend;
   final Map<String, PropertyTypeData> propertyTypes;
 
@@ -58,6 +61,9 @@ class LocationInsight {
     required this.demandIndex,
     required this.priceTrend,
     required this.propertyTypes,
+    this.oneYearGrowth = 0.0,
+    this.threeYearGrowth = 0.0,
+    this.fiveYearGrowth = 0.0,
   });
 
   factory LocationInsight.fromJson(Map<String, dynamic> json) {
@@ -72,6 +78,9 @@ class LocationInsight {
       propertyTypes: (json['propertyTypes'] as Map<String, dynamic>? ?? {}).map(
         (key, value) => MapEntry(key, PropertyTypeData.fromJson(value)),
       ),
+      oneYearGrowth: (json['oneYearGrowth'] ?? 0).toDouble(),
+      threeYearGrowth: (json['threeYearGrowth'] ?? 0).toDouble(),
+      fiveYearGrowth: (json['fiveYearGrowth'] ?? 0).toDouble(),
     );
   }
 }

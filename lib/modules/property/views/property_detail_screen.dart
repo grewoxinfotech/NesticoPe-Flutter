@@ -4050,28 +4050,29 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if (currentProperty.propertyDetails?.financialInfo !=
-                        null) ...[
+                    if (currentProperty
+                                .propertyDetails
+                                ?.financialInfo
+                                ?.pricePast !=
+                            null &&
+                        currentProperty
+                                .propertyDetails
+                                ?.financialInfo
+                                ?.priceFuture !=
+                            null &&
+                        currentProperty.investmentInsightModel != null) ...[
                       const SizedBox(height: 12),
-                      ExpandableTile(
-                        title: "Investment Insights",
-                        subtitle: "Show Trends of Property",
-                        leadingIcon: Icons.trending_up_outlined,
-                        trailingIcon: Icons.keyboard_arrow_down_rounded,
-                        children: [
-                          const TitleWithViewAll(title: 'Investment Insight'),
-                          const SizedBox(height: 8),
-                          Builder(
-                            builder: (context) {
-                              log(
-                                '[PropertyDetail] 📊 Building InvestmentInsightChart',
-                              );
-                              return InvestmentInsightChart(
-                                currentProperty: currentProperty,
-                              );
-                            },
-                          ),
-                        ],
+                      const TitleWithViewAll(title: 'Investment Insight'),
+                      const SizedBox(height: 8),
+                      Builder(
+                        builder: (context) {
+                          log(
+                            '[PropertyDetail] 📊 Building InvestmentInsightChart',
+                          );
+                          return InvestmentInsightChart(
+                            currentProperty: currentProperty,
+                          );
+                        },
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -4954,7 +4955,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       chips.add(_buildFacilityChip('Cupboard', Icons.door_sliding));
     }
     if (facilities.other != null && facilities.other!.isNotEmpty) {
-      chips.add(_buildFacilityChip(facilities.other!, Icons.more_horiz));
+      chips.addAll(
+        facilities.other!
+            .split("\n\n")
+            .map((e) => _buildFacilityChip(e, Icons.more_horiz))
+            .toList(),
+      );
     }
 
     if (chips.isEmpty) {

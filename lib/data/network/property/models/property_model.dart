@@ -144,7 +144,9 @@ class Items {
   String? updatedAt;
   ScoreBreakdownModel? scoreBreakdown;
   InvestmentInsightModel? investmentInsightModel;
-
+  double? oneYearGrowth;
+  double? threeYearGrowth;
+  double? fiveYearGrowth;
   Items({
     this.propertyMedia,
     this.id,
@@ -205,6 +207,9 @@ class Items {
     this.updatedAt,
     this.scoreBreakdown,
     this.investmentInsightModel,
+    this.oneYearGrowth,
+    this.threeYearGrowth,
+    this.fiveYearGrowth,
   });
 
   Items.fromJson(Map<String, dynamic> json) {
@@ -298,6 +303,9 @@ class Items {
               json['investment_insight'] as Map<String, dynamic>,
             )
             : null;
+    oneYearGrowth = TypeConverter.parseDouble(json['oneYearGrowth']);
+    threeYearGrowth = TypeConverter.parseDouble(json['threeYearGrowth']);
+    fiveYearGrowth = TypeConverter.parseDouble(json['fiveYearGrowth']);
   }
 
   Map<String, dynamic> toJson() {
@@ -379,6 +387,10 @@ class Items {
       investment.removeWhere((key, value) => value == null);
       data['investment_insight'] = investment;
     }
+
+    if (oneYearGrowth != null) data['oneYearGrowth'] = oneYearGrowth;
+    if (threeYearGrowth != null) data['threeYearGrowth'] = threeYearGrowth;
+    if (fiveYearGrowth != null) data['fiveYearGrowth'] = fiveYearGrowth;
 
     return data;
   }

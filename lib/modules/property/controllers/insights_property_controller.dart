@@ -6,10 +6,10 @@ import '../../../data/network/property/models/property_model.dart';
 import '../../../data/network/property/services/property_service.dart';
 
 class InsightsPropertyController extends PaginatedController<Items> {
-  final String city;
+  final String location;
   final PropertyService _service = PropertyService();
 
-  InsightsPropertyController({required this.city});
+  InsightsPropertyController({required this.location});
 
   Map<String, String>? filters = {};
 
@@ -19,7 +19,7 @@ class InsightsPropertyController extends PaginatedController<Items> {
   @override
   void onInit() {
     super.onInit();
-    filters = {'city': city, 'listingType': 'Sell'};
+    filters = {'location': location, 'listingType': 'Sell'};
     loadInitial();
   }
 
