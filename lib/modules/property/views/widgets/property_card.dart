@@ -43,6 +43,13 @@ class _PropertyCardState extends State<PropertyCard> {
   bool isFavorite = false;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     final priceManager = PropertyPriceManager(
       listingType: widget.property.listingType ?? "",

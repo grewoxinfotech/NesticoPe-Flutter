@@ -605,6 +605,7 @@ import '../../auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dart';
 import '../../contractor/view/widget/convert_to_contractor.dart';
 import '../../hire_contractor/view/hire_contractor_screen.dart';
+import '../../subscription/views/user_subscription_details.dart';
 import '../../support_ticket/views/support_ticket_screen.dart';
 import '../../support_ticket/controllers/chat_socket_controller.dart';
 import '../../dashboard/views/seller_dashboard_screen.dart';
@@ -701,6 +702,12 @@ class ProfileScreen extends StatelessWidget {
                         title: "My Activity",
                         subTitle: "Track your interactions",
                         onTap: () => Get.to(() => UserActivityScreen()),
+                      ),
+                      SettingsMenuTile(
+                        icon: Icons.subscriptions_outlined,
+                        title: "My Subscription",
+                        subTitle: "show your all plan",
+                        onTap: () => Get.to(() => UserSubscriptionDetails()),
                       ),
                       if (!UserHelper.isGuest) ...[
                         SettingsMenuTile(

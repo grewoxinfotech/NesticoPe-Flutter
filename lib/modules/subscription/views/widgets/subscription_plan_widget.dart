@@ -1,12 +1,18 @@
+import 'dart:developer';
+
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/font_res.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
+import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/subscription/model/subscription_model.dart';
+import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../../widgets/display/ic.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../controller/subscription_controller.dart';
@@ -50,8 +56,14 @@ class SubscriptionPlansWidget extends StatelessWidget {
     return Obx(() {
       final bool isSelected = selectedPlanIndex.value == index;
 
+      log("Plan Selected : ${selectedPlanIndex.value == index}");
+
       return GestureDetector(
-        onTap: () => selectedPlanIndex.value = index,
+        onTap: () async {
+
+
+            selectedPlanIndex.value = index;
+        },
         child: Container(
           decoration: BoxDecoration(
             color: ColorRes.white,
@@ -250,17 +262,88 @@ class SubscriptionPlansWidget extends StatelessWidget {
           onPressed:
               isSelected
                   ? () async {
-                    final controller = Get.find<SubscriptionPlanController>();
-                    final success = await controller.buySubscriptionPlan(
-                      plan.id,
-                    );
-                    if (success) {
-                      NesticoPeSnackBar.showAwesomeSnackbar(
-                        title: 'Success',
-                        message: "Plan purchased successfully",
-                        contentType: ContentType.success,
-                      );
-                    }
+                   if(UserHelper.isSellerBuilder)
+                     {
+                       log("Plan buy or not ");
+                       selectedPlanIndex.value = index;
+                       try {
+                         final user =
+                         await SecureStorage.getUserData();
+
+                         if (user == null) {
+                           Get.snackbar(
+                             'Error',
+                             'No user data found. Please log in.',
+                             snackPosition: SnackPosition.BOTTOM,
+                             backgroundColor: ColorRes.error
+                                 .withOpacity(0.1),
+                             colorText: ColorRes.error,
+                           );
+                           return;
+                         }
+
+                         final fullName =
+                             user.user?.fullName ?? '';
+                         final firstName =
+                             user.user?.firstName ?? '';
+                         final username =
+                             user.user?.username ?? '';
+                         final email = user.user?.email ?? '';
+                         final phone = user.user?.phone ?? '';
+
+                         final displayName =
+                         (firstName.isEmpty
+                             ? username
+                             : fullName)
+                             .trim();
+
+                         if (Get.context == null) {
+                           Get.snackbar(
+                             'Error',
+                             'UI not ready to show dialog.',
+                             snackPosition: SnackPosition.BOTTOM,
+                             backgroundColor: ColorRes.error
+                                 .withOpacity(0.1),
+                             colorText: ColorRes.error,
+                           );
+                           return;
+                         }
+
+                         addInquiryForPlanBuy(
+                           displayName,
+                           email,
+                           phone,
+                           plan.id,
+                           user.user?.id??''
+                         );
+                       } catch (e, s) {
+                         debugPrint(
+                           '❌ Error in Get Offer button: $e',
+                         );
+                         debugPrint('$s');
+                         Get.snackbar(
+                           'Error',
+                           'Something went wrong. Please try again.',
+                           snackPosition: SnackPosition.BOTTOM,
+                           backgroundColor: ColorRes.error
+                               .withOpacity(0.1),
+                           colorText: ColorRes.error,
+                         );
+                       }
+                     }
+                   else{
+                     final controller = Get.find<SubscriptionPlanController>();
+                     final success = await controller.buySubscriptionPlan(
+                       plan.id,
+                     );
+                     if (success) {
+                       NesticoPeSnackBar.showAwesomeSnackbar(
+                         title: 'Success',
+                         message: "Plan purchased successfully",
+                         contentType: ContentType.success,
+                       );
+                     }
+                   }
                   }
                   : () => selectedPlanIndex.value = index,
           style: ElevatedButton.styleFrom(
@@ -339,3 +422,246 @@ class SubscriptionPlansWidget extends StatelessWidget {
     );
   }
 }
+void addInquiryForPlanBuy(
+    String name,
+    String email,
+    String phone,
+    String plan,
+    String userId,
+
+    ) {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final _nameController = TextEditingController(text: name);
+  final _emailController = TextEditingController(text: email);
+  final _phoneController = TextEditingController(text: phone);
+
+  Get.dialog(
+    Dialog(
+      backgroundColor: ColorRes.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        "Get Offer Price",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.body,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.white,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => Get.back(),
+                      borderRadius: BorderRadius.circular(50),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: ColorRes.white,
+                        size: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Body
+              Flexible(
+                flex: 1,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      NesticoPeTextField(
+                        controller: _nameController,
+                        title: "Name",
+                        hintText: 'Enter your name',
+                        prefixIcon: Icons.person_outline,
+                        isRequired: true,
+                        validator:
+                            (value) =>
+                        value == null || value.trim().isEmpty
+                            ? 'Name is required'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+
+                      NesticoPeTextField(
+                        controller: _emailController,
+                        hintText: 'Enter your email',
+                        prefixIcon: Icons.email_outlined,
+                        title: "Email",
+                        keyboardType: TextInputType.emailAddress,
+                        isRequired: true,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Email is required';
+                          }
+                          if (!GetUtils.isEmail(value.trim())) {
+                            return 'Enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      NesticoPeTextField(
+                        controller: _phoneController,
+                        hintText: 'Enter your phone number',
+                        title: "Phone",
+                        prefixIcon: Icons.phone_outlined,
+                        keyboardType: TextInputType.phone,
+                        isRequired: true,
+                        maxLength: 10,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Phone is required';
+                          }
+                          if (!GetUtils.isPhoneNumber(value.trim())) {
+                            return 'Enter a valid phone number';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Footer Buttons
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  border: Border(
+                    top: BorderSide(
+                      color: ColorRes.grey.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Get.back(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: const BorderSide(color: ColorRes.primary),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            final controller = Get.find<SubscriptionPlanController>();
+
+                            // perform your submission logic here
+                            final inquiry = {
+                              "userId": userId,
+                              "planId": plan,
+                              "name": name,
+                              "email": email,
+                              "phone": phone,
+                              "status": "pending"
+                            };
+                            final success = await controller.subscriptionPlanInquiry(
+                             inquiry
+                            );
+
+                            if (success) {
+
+                              CustomSnackBar.show(
+                                Get.overlayContext!,
+                                message: "Inquiry submitted Successfully",
+                                type: SnackBarType.success,
+                              );
+                              Get.back();
+
+                            }
+                            // if (success) {
+                            //   NesticoPeSnackBar.showAwesomeSnackbar(
+                            //     title: 'Success',
+                            //     message: "Plan purchased successfully",
+                            //     contentType: ContentType.success,
+                            //   );
+                            // }
+
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorRes.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.send, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Request Offer Price',
+
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+    barrierDismissible: true,
+  );
+}
+

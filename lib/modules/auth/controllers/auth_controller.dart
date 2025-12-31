@@ -89,6 +89,7 @@ class AuthController extends GetxController {
       await SecureStorage.saveToken(user.token!);
       await SecureStorage.saveUserData(user);
       await SecureStorage.saveLoggedIn(true);
+      await SecureStorage.saveTermAndConditionValue(false.toString());
       await UserHelper.setUserType(
         user.user?.userType,
         sellerType: user.user?.sellerType,
@@ -208,11 +209,6 @@ class AuthController extends GetxController {
             verifyOTPFor: VerifyOTPFor.sellerRegister,
             data: data,
             redirectAfterOtp: LoginScreen(),
-            // redirectAfterOtp: CreatePropertyScreen(
-            //   sellerType:
-            //       sellerType == "owner" ? SellerType.owner : SellerType.builder,
-            //   isLogin: true,
-            // ),
           ),
         );
 

@@ -87,15 +87,15 @@ class _ContractorComparisonScreenState
             fontWeight: AppFontWeights.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.clear_all, color: ColorRes.black, size: 20),
-            onPressed: () {
-              _compareManager.clear();
-              Get.back();
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.clear_all, color: ColorRes.black, size: 20),
+        //     onPressed: () {
+        //       _compareManager.clear();
+        //       Get.back();
+        //     },
+        //   ),
+        // ],
       ),
       body: SafeArea(
         child: Padding(
@@ -264,6 +264,9 @@ class _ContractorCardForCompare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = contractor.data.contractor;
+    final p = contractor.data.profile;
+
     return Material(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
@@ -293,7 +296,9 @@ class _ContractorCardForCompare extends StatelessWidget {
                       radius: 35,
                       backgroundColor: ColorRes.primary,
                       child: Text(
-                        contractor.data.contractor.username[0].toUpperCase(),
+                        (c.username.isNotEmpty
+                            ? c.username[0].toUpperCase()
+                            : '?'),
                         style: const TextStyle(
                           color: ColorRes.white,
                           fontSize: AppFontSizes.displaySmall,
@@ -312,66 +317,83 @@ class _ContractorCardForCompare extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Username
-                        Text(
-                          contractor.data.contractor.username,
-                          style: const TextStyle(
-                            fontSize: AppFontSizes.bodyMedium,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textColor,
-                            height: 1.2,
+                        // Username (only if available)
+                        if ((c.username).isNotEmpty)
+                          Text(
+                            c.username,
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.bodyMedium,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.textColor,
+                              height: 1.2,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
 
-                        // Location
-                        Text(
-                          '${contractor.data.contractor.city ?? 'N/A'}, ${contractor.data.contractor.state ?? 'N/A'}',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            color: ColorRes.leadGreyColor[600],
-                            height: 1.3,
+                        // Location (only if any non-null)
+                        if ((c.city != null && c.city!.isNotEmpty) ||
+                            (c.state != null && c.state!.isNotEmpty))
+                          Text(
+                            '${c.city ?? ''}${c.city != null && c.state != null ? ', ' : ''}${c.state ?? ''}',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.caption,
+                              color: ColorRes.leadGreyColor[600],
+                              height: 1.3,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
 
-                        // Rating & Services
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.star,
-                              color: ColorRes.homeYellow,
-                              size: 14,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${contractor.data.profile.overallRating}',
-                              style: const TextStyle(
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.semiBold,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              width: 3,
-                              height: 3,
-                              decoration: const BoxDecoration(
-                                color: ColorRes.grey,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${contractor.data.profile.totalServices} Services',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.leadGreyColor[600],
-                              ),
-                            ),
-                          ],
-                        ),
+                        // Rating & Services (only if data exists)
+                        if (p.overallRating != null ||
+                            (p.totalServices != null && p.totalServices > 0))
+                          Row(
+                            children: [
+                              if (p.overallRating != null)
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.star,
+                                      color: ColorRes.homeYellow,
+                                      size: 14,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${p.overallRating}',
+                                      style: const TextStyle(
+                                        fontSize: AppFontSizes.small,
+                                        fontWeight: AppFontWeights.semiBold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              if (p.overallRating != null &&
+                                  (p.totalServices != null &&
+                                      p.totalServices > 0))
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Container(
+                                    width: 3,
+                                    height: 3,
+                                    decoration: const BoxDecoration(
+                                      color: ColorRes.grey,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ),
+                              if (p.totalServices != null &&
+                                  p.totalServices > 0)
+                                Text(
+                                  '${p.totalServices} Services',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.small,
+                                    color: ColorRes.leadGreyColor[600],
+                                  ),
+                                ),
+                            ],
+                          ),
 
                         // View Profile Button
                         Row(
@@ -406,6 +428,7 @@ class _ContractorCardForCompare extends StatelessWidget {
                 ),
               ],
             ),
+
             // Remove button
             if (onRemove != null)
               Positioned(
@@ -426,6 +449,7 @@ class _ContractorCardForCompare extends StatelessWidget {
     );
   }
 }
+
 
 class _ContractorComparisonTable extends StatelessWidget {
   final ContractorDataResponse a;

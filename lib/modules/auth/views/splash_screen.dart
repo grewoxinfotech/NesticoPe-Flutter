@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -58,6 +59,16 @@ class _SplashScreenState extends State<SplashScreen>
       final String? token = await SecureStorage.getToken();
       final String? selectedCity =
           await SecureStorage.getSelectedCity(); // 🆕 store selected city locally
+      if(!isLogin)
+        {
+          final data = await SecureStorage.getTermAndConditionValue();
+          log("Sjhdshuh $data");
+          bool isAcceptable=data=="true";
+          if(!isAcceptable) {
+            await SecureStorage.saveTermAndConditionValue(false.toString());
+          }
+
+        }
 
       print(
         "DEBUG >> isLogin=$isLogin, token=$token, role=${UserHelper.userType}, city=$selectedCity",

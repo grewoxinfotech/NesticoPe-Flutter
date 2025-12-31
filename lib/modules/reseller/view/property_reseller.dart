@@ -5854,7 +5854,7 @@ Widget buildMetricCard(String title, String value, IconData icon, Color color) {
           isCompact ? AppFontSizes.medium : AppFontSizes.medium;
       final iconSize = isCompact ? 16.0 : 18.0;
       final iconPadding = isCompact ? 6.0 : 8.0;
-      final cardPadding = isCompact ? 12.0 : 12.0;
+      final cardPadding = isCompact ? 10.0 : 10.0;
 
       return Container(
         padding: EdgeInsets.all(cardPadding),

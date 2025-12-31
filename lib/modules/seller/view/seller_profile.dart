@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/app/manager/property/property_name_manager.d
 import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
 import 'package:housing_flutter_app/modules/profile/model/seller_profile.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/controllers/top_seller_property_controller.dart';
@@ -14,6 +15,8 @@ import 'package:housing_flutter_app/modules/property/views/property_detail_scree
 import 'package:housing_flutter_app/modules/seller/view/widget/seller_property_list.dart';
 
 import '../../../app/widgets/image/custom_image.dart' hide ColorRes;
+import '../../../app/widgets/image/custom_image.dart';
+import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../property/controllers/top_seller_profile_controller.dart';
 import '../../property/controllers/top_seller_project_controller.dart';
@@ -731,10 +734,10 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
           child: ListView(
             children: [
               _buildBackButton(context),
-              _buildProfileHeader(user),
-              _buildVerifiedBadge(user),
-              _buildAgentCard(user, profile),
-              const SizedBox(height: 20),
+              _buildProfileHeader(user??User.fromJson({}),profile),
+
+              _buildAgentCard(user?? User.fromJson({}), profile),
+              const SizedBox(height: 10),
               _buildContentSection(),
             ],
           ),
@@ -756,31 +759,192 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
     );
   }
 
-  Widget _buildProfileHeader(dynamic user) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundImage:
-              (widget.profilePic != null && widget.profilePic!.isNotEmpty)
-                  ? NetworkImage(widget.profilePic!)
-                  : const AssetImage(IMGRes.user_1) as ImageProvider,
-        ),
-        const SizedBox(height: 12),
-        Text(
-          user?.fullName ?? 'N/A',
-          style: TextStyle(
-            fontSize: AppFontSizes.body,
-            fontWeight: AppFontWeights.bold,
-            color: ColorRes.textColor,
+  // Widget _buildProfileHeader(User user,ProfileSellerModel profile) {
+  //   // Combine first + last name safely
+  //   final fullName = [
+  //     user.firstName?.trim(),
+  //     user.lastName?.trim(),
+  //   ].where((e) => e != null && e.isNotEmpty).join(' ');
+  //
+  //   // Fallback to username if fullName is empty
+  //   final displayName =
+  //   fullName.isNotEmpty ? fullName : (user.username ?? 'N/A');
+  //
+  //   return Column(
+  //     children: [
+  //       CircleAvatar(
+  //         radius: 50,
+  //         backgroundImage:
+  //         (widget.profilePic != null && widget.profilePic!.isNotEmpty)
+  //             ? NetworkImage(widget.profilePic!)
+  //             : const AssetImage(IMGRes.user_1) as ImageProvider,
+  //       ),
+  //       const SizedBox(height: 12),
+  //       Text(
+  //         displayName,
+  //         style: TextStyle(
+  //           fontSize: AppFontSizes.body,
+  //           fontWeight: AppFontWeights.bold,
+  //           color: ColorRes.textColor,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 8),
+  //     ],
+  //   );
+  // }
+
+  Widget _buildProfileHeader(User user, ProfileSellerModel profile) {
+    // Safely handle null or empty fields
+    String safeValue(String? v) =>
+        (v != null && v.trim().isNotEmpty) ? v : 'Not Defined';
+
+    final fullName = [
+      user.firstName?.trim(),
+      user.lastName?.trim(),
+    ].where((e) => e != null && e.isNotEmpty).join(' ');
+
+    final displayName = fullName.isNotEmpty
+        ? fullName
+        : (user.username?.isNotEmpty == true ? user.username! : 'Not Defined');
+
+    final sellerType = safeValue(profile.sellerType);
+    final companyName = safeValue(profile.companyName);
+    final rera = safeValue(profile.reraNumber);
+    final gst = safeValue(profile.gstNumber);
+    final isPremium = user.isPremium ?? false;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+      ),
+      child: Column(
+        children: [
+          // Profile Header Row
+          Row(
+            children: [
+              // Profile Picture
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: (widget.profilePic != null &&
+                        widget.profilePic!.isNotEmpty)
+                        ? NetworkImage(widget.profilePic!)
+                        : const AssetImage(IMGRes.user_1) as ImageProvider,
+                  ),
+                  if (user.isVerified == true)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.verified,
+                          color: Colors.blue,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 12),
+
+              // User Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            displayName,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.body,
+                              fontWeight: AppFontWeights.bold,
+                              color: ColorRes.textColor,
+                            ),
+                          ),
+                        ),
+                          _buildVerifiedBadge(user??User.fromJson({})),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      capitalizeEachWord(sellerType),
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.grey,
+                        fontWeight: AppFontWeights.medium
+                      ),
+                    ),
+                    Text(
+                      capitalizeEachWord(companyName),
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.grey,
+                          fontWeight: AppFontWeights.medium
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 8),
-      ],
+          const SizedBox(height: 16),
+
+          // RERA & GST Info
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildInfoField("RERA", rera),
+              SizedBox(width: 10,),
+              _buildInfoField("GST", gst),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildVerifiedBadge(dynamic user) {
+  Widget _buildInfoField(String title, String value) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: AppFontSizes.small,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: AppFontSizes.small,
+              color: ColorRes.textColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+
+  Widget _buildVerifiedBadge(User user) {
     if (user?.isPremium != true) {
       return const SizedBox.shrink();
     }
@@ -793,7 +957,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
             Icon(Icons.verified_outlined, color: ColorRes.green, size: 17),
             const SizedBox(width: 4),
             Text(
-              'Verified Seller',
+              'Verified',
               style: TextStyle(
                 fontSize: AppFontSizes.medium,
                 fontWeight: AppFontWeights.medium,
@@ -807,20 +971,73 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
     );
   }
 
-  Widget _buildAgentCard(dynamic user, dynamic profile) {
-    final totalItems =
-        widget.isOwner
-            ? propertyController?.total.value ?? 0
-            : projectController?.items.length ?? 0;
+  // Widget _buildAgentCard(User user, ProfileSellerModel profile) {
+  //   final totalItems =
+  //       widget.isOwner
+  //           ? propertyController?.total.value ?? 0
+  //           : projectController?.items.length ?? 0;
+  //
+  //   final itemLabel = widget.isOwner ? 'properties' : 'projects';
+  //
+  //   return AgentCard(
+  //     experience: '${user?.totalExperience ?? 'N/A'} years',
+  //     totalProperty: '$totalItems $itemLabel',
+  //     sellerType: profile?.sellerType ?? 'N/A',
+  //   );
+  // }
+  // Widget _buildAgentCard(User user, ProfileSellerModel profile) {
+  //   final totalItems = widget.isOwner
+  //       ? propertyController?.total.value ?? 0
+  //       : projectController?.items.length ?? 0;
+  //
+  //   final itemLabel = widget.isOwner ? 'properties' : 'projects';
+  //
+  //   final experience = user.totalExperience != null && user.totalExperience! > 0
+  //       ? '${user.totalExperience} years'
+  //       : ''; // Hide if 0 or null
+  //
+  //   final totalProperty =
+  //   totalItems > 0 ? '$totalItems' : ''; // Hide if 0
+  //
+  //   final sellerType =
+  //   (profile.sellerType != null && profile.sellerType!.isNotEmpty)
+  //       ? profile.sellerType
+  //       : ''; // Hide if empty
+  //
+  //   return AgentCard(
+  //     experience: experience,
+  //     totalProperty: totalProperty,
+  //     sellerType: sellerType,
+  //     label: itemLabel,
+  //
+  //   );
+  // }
+  Widget _buildAgentCard(User user, ProfileSellerModel profile) {
+    final totalItems = widget.isOwner
+        ? propertyController?.total.value ?? 0
+        : projectController?.items.length ?? 0;
 
-    final itemLabel = widget.isOwner ? 'properties' : 'projects';
+    final itemLabel = widget.isOwner ? 'Properties' : 'Projects';
+
+    final experience = (user.totalExperience != null && user.totalExperience! > 0)
+        ? '${user.totalExperience} years'
+        : 'Not Defined';
+
+    final totalProperty = totalItems > 0 ? '$totalItems' : 'Not Defined';
+
+    final sellerType = (profile.sellerType?.isNotEmpty == true)
+        ? profile.sellerType
+        : 'Not Defined';
 
     return AgentCard(
-      experience: '${user?.totalExperience ?? 'N/A'} years',
-      totalProperty: '$totalItems $itemLabel',
-      sellerType: profile?.sellerType ?? 'N/A',
+      status: experience,
+      totalProperty: totalProperty,
+      sellerType: sellerType,
+      label: itemLabel,
     );
   }
+
+
 
   Widget _buildContentSection() {
     if (widget.isOwner) {
@@ -994,62 +1211,167 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
     );
   }
 }
-
 class AgentCard extends StatelessWidget {
-  final String experience;
-  final String totalProperty;
-  final String sellerType;
+  final String? totalProperty;
+  final String? sellerType;
+  final String? status;
+  final String? label;
 
   const AgentCard({
     super.key,
-    required this.experience,
-    required this.totalProperty,
-    required this.sellerType,
+    this.totalProperty,
+    this.sellerType,
+    this.status,
+    this.label,
   });
+
+  String safeValue(String? value) =>
+      (value != null && value.trim().isNotEmpty && value != 'N/A')
+          ? value
+          : 'Not Defined';
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ColorRes.grey.withOpacity(0.25), width: 0.8),
-        boxShadow: [
-          BoxShadow(
-            color: ColorRes.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
+       border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Expanded(child: InfoTile(title: 'Experience', value: experience)),
-
-          _divider(),
-
-          Expanded(child: InfoTile(title: 'Type', value: sellerType)),
-
-          _divider(),
-
-          Expanded(
-            child: InfoTile(title: 'Total Properties', value: totalProperty),
+          _bottomTile("Properties", safeValue(totalProperty)),
+          Container(
+            height: 60,
+            width: 1,
+            color: ColorRes.leadGreyColor.shade300,
           ),
+          _bottomTile("Experience", safeValue(status),),
+          Container(
+            height: 60,
+            width: 1,
+            color: ColorRes.leadGreyColor.shade300,
+          ),
+          _bottomTile("Type", capitalizeEachWord(safeValue(sellerType))),
         ],
       ),
     );
   }
 
-  Widget _divider() {
-    return Container(
-      height: 36,
-      width: 1,
-      color: ColorRes.grey.withOpacity(0.35),
+  Widget _bottomTile(String title, String value, {bool isActive = false}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      child: Expanded(
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: TextStyle(
+                color: isActive ? Colors.green : ColorRes.textColor,
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.semiBold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title.toUpperCase(),
+              style: TextStyle(
+                color: ColorRes.grey,
+                fontSize: AppFontSizes.small,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
+
+
+// class AgentCard extends StatelessWidget {
+//   final String? experience;
+//   final String? totalProperty;
+//   final String? sellerType;
+//   final String? label;
+//
+//   const AgentCard({
+//     super.key,
+//     this.experience,
+//     this.totalProperty,
+//     this.sellerType, this.label,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     // Dynamically include only valid fields
+//     final List<_AgentInfo> infoList = [
+//       if (experience != null &&
+//           experience!.trim().isNotEmpty &&
+//           experience != 'N/A')
+//         _AgentInfo(title: 'Experience', value: experience!),
+//
+//       if (sellerType != null &&
+//           sellerType!.trim().isNotEmpty &&
+//           sellerType != 'N/A')
+//         _AgentInfo(title: 'Type', value: sellerType!),
+//
+//       if (totalProperty != null &&
+//           totalProperty!.trim().isNotEmpty &&
+//           totalProperty != 'N/A')
+//         _AgentInfo(title: 'Total $label', value: totalProperty!),
+//     ];
+//
+//     // Hide card entirely if no data
+//     if (infoList.isEmpty) return const SizedBox.shrink();
+//
+//     return Container(
+//       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+//       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+//       decoration: BoxDecoration(
+//         color: ColorRes.white,
+//         borderRadius: BorderRadius.circular(16),
+//         border: Border.all(color: ColorRes.grey.withOpacity(0.25), width: 0.8),
+//         boxShadow: [
+//           BoxShadow(
+//             color: ColorRes.black.withOpacity(0.04),
+//             blurRadius: 6,
+//             offset: const Offset(0, 3),
+//           ),
+//         ],
+//       ),
+//       child: Row(
+//         children: [
+//           for (int i = 0; i < infoList.length; i++) ...[
+//             Expanded(
+//               child: InfoTile(
+//                 title: infoList[i].title,
+//                 value: infoList[i].value,
+//               ),
+//             ),
+//             if (i < infoList.length - 1) _divider(),
+//           ],
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _divider() => Container(
+//     height: 36,
+//     width: 1,
+//     color: ColorRes.grey.withOpacity(0.35),
+//   );
+// }
+
+class _AgentInfo {
+  final String title;
+  final String value;
+  _AgentInfo({required this.title, required this.value});
+}
+
 
 class SectionTitle extends StatelessWidget {
   final String title;
@@ -1242,169 +1564,196 @@ class SellerProfileProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: ColorRes.white,
-      borderRadius: BorderRadius.circular(14),
-      elevation: 1,
-      shadowColor: ColorRes.black.withOpacity(0.06),
-      child: Container(
-        height: 130,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
-        ),
-        child: Row(
-          children: [
-            /// IMAGE SECTION
-            ClipRRect(
-              borderRadius: const BorderRadius.horizontal(
-                left: Radius.circular(11),
-              ),
-              child: CustomImage(
-                type: CustomImageType.network,
-                src:
-                    (project.mediaGallery?.images?.isNotEmpty ?? false)
-                        ? project.mediaGallery!.images!.first
-                        : 'https://via.placeholder.com/150',
-                width: 110,
-                height: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            /// CONTENT SECTION
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    /// PROJECT NAME + VERIFIED
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            project.projectName,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.bodyMedium,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.textColor,
-                              height: 1.2,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (project.isVerified)
-                          const Icon(
-                            Icons.verified,
-                            size: 16,
-                            color: ColorRes.primary,
-                          ),
-                      ],
-                    ),
-
-                    /// LOCATION
-                    Text(
-                      '${project.projectArea}, ${project.city}',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.caption,
-                        color: ColorRes.leadGreyColor[600],
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    /// CONFIGURATION + SIZE
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _chip(
-                            project.configuration.isNotEmpty
-                                ? project.configuration
-                                    .map((e) => e.variants.first.name)
-                                    .join(', ')
-                                : 'Configs',
-                          ),
-                          const SizedBox(width: 6),
-                          _chip(project.getPriceRange()),
-                        ],
-                      ),
-                    ),
-
-                    /// PRICE RANGE + STATUS
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            project.getPriceRange(),
-                            style: TextStyle(
-                              fontSize: AppFontSizes.body,
-                              fontWeight: AppFontWeights.bold,
-                              color: ColorRes.textColor,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        _statusBadge(project.status),
-                      ],
-                    ),
-                  ],
+    return Container(
+      height: 100,
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+      ),
+      child: Row(
+        children: [
+          /// IMAGE + STATUS BADGE
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius:
+                const BorderRadius.horizontal(left: Radius.circular(12)),
+                child: CustomImage(
+                  type: CustomImageType.network,
+                  src: (project.mediaGallery?.images?.isNotEmpty ?? false)
+                      ? project.mediaGallery!.images!.first
+                      : 'https://via.placeholder.com/150',
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
                 ),
               ),
+              if (project.status.isNotEmpty)
+                Positioned(
+                  top: 6,
+                  left: 6,
+                  child: Container(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: ColorRes.black,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      project.status.toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+
+          /// CONTENT SECTION
+          Expanded(
+            child: Padding(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  /// TITLE + CONFIG CHIP
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          project.projectName,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.bodyMedium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textColor,
+                            height: 1.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (project.isVerified)
+                        const Icon(
+                          Icons.verified,
+                          size: 16,
+                          color: ColorRes.primary,
+                        ),
+                    ],
+                  ),
+
+                  /// LOCATION
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on_outlined,
+                        size: 12,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(width: 2),
+                      Expanded(
+                        child: Text(
+                          '${project.projectArea}, ${project.city}',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.leadGreyColor[600],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _chip(
+                          project.configuration.isNotEmpty
+                              ? project.configuration
+                              .map((e) => e.variants.first.name)
+                              .join(', ')
+                              : 'Configs',
+                        ),
+                        const SizedBox(width: 6),
+                        _chip(project.getPriceRange()),
+                      ],
+                    ),
+                  ),
+
+
+
+                  /// PRICE + ARROW ICON
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        project.getPriceRange(),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF007BFF), // blue color
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// SMALL CHIP UI
-  Widget _chip(String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: ColorRes.leadGreyColor.shade100,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: AppFontSizes.small,
-          color: ColorRes.leadGreyColor[700],
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
-
-  /// STATUS BADGE
-  Widget _statusBadge(String status) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color:
-            status.toLowerCase() == 'active'
-                ? ColorRes.success.withOpacity(0.15)
-                : ColorRes.warning.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        status,
-        style: TextStyle(
-          fontSize: AppFontSizes.small,
-          fontWeight: AppFontWeights.semiBold,
-          color:
-              status.toLowerCase() == 'active'
-                  ? ColorRes.success
-                  : ColorRes.warning,
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+  Widget _chip(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: AppFontSizes.caption,
+        fontWeight: AppFontWeights.medium,
+        color: ColorRes.blackShade54,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+//   /// STATUS BADGE
+//   Widget _statusBadge(String status) {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+//       decoration: BoxDecoration(
+//         color:
+//             status.toLowerCase() == 'active'
+//                 ? ColorRes.success.withOpacity(0.15)
+//                 : ColorRes.warning.withOpacity(0.15),
+//         borderRadius: BorderRadius.circular(6),
+//       ),
+//       child: Text(
+//         status,
+//         style: TextStyle(
+//           fontSize: AppFontSizes.small,
+//           fontWeight: AppFontWeights.semiBold,
+//           color:
+//               status.toLowerCase() == 'active'
+//                   ? ColorRes.success
+//                   : ColorRes.warning,
+//         ),
+//       ),
+//     );
+//   }
+// }
+String safeValue(String? value) =>
+    (value != null && value.trim().isNotEmpty) ? value : 'Not Defined';
+

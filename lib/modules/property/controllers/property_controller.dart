@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:collection/collection.dart';
 
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/network/property/models/inquiry_model.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/data/network/property/models/top_property_model.dart';
@@ -28,9 +29,11 @@ class PropertyController extends PaginatedController<Items> {
   final PropertyContactedService _contactedService = PropertyContactedService();
   RxList<Items> recommendedProperties = <Items>[].obs;
   final RxBool hasSubmittedInquiry = false.obs;
+  final RxBool isAcceptableTermsAndCondition = false.obs;
 
   // Reactive fields
   Rxn<PropertyMedia> propertyMedia = Rxn<PropertyMedia>();
+
   // Rxn<PropertyDetails> propertyDetails = Rxn<PropertyDetails>();
   Rxn<String> location = Rxn<String>();
   RxList<NearbyLocations> nearbyLocations = <NearbyLocations>[].obs;
@@ -101,6 +104,103 @@ class PropertyController extends PaginatedController<Items> {
     } catch (e) {
       print("Error loading top properties: $e");
     }
+  }
+
+  Future<void> checkTermsAndConditionApplyOrNot() async {
+    final statusString = await SecureStorage.getTermAndConditionValue();
+    final isAccepted = statusString?.toLowerCase() == 'true';
+
+    log("Check Terms: $statusString -> $isAccepted");
+
+    if (!isAccepted) {
+      showDisclaimerDialog();
+    } else {
+      isAcceptableTermsAndCondition.value = true;
+    }
+  }
+
+  void showDisclaimerDialog() {
+    Get.dialog(
+      Dialog(
+        backgroundColor: ColorRes.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        child: Container(
+          constraints: const BoxConstraints(
+            maxHeight: 250, // set a safe max height for smaller screens
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title
+              const Text(
+                "Disclaimer",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Scrollable Content
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Text(
+                    "NesticoPe only provides property listings for informational purposes. We are not part of any transactions. Please verify all details and RERA compliance independently.",
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: Colors.black87,
+                      height: 1.55,
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Confirm Button
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 14,
+                    ),
+                    elevation: 2,
+                  ),
+                  onPressed: () async {
+                    isAcceptableTermsAndCondition.value = true;
+                    await SecureStorage.saveTermAndConditionValue(
+                      isAcceptableTermsAndCondition.value.toString(),
+                    );
+                    Get.back(); // Close dialog
+                  },
+                  child: const Text(
+                    "Ok, Got It",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible:
+          false, // Prevent user from closing without accepting terms
+    );
   }
 
   /// Get city from secure storage and load properties
@@ -185,6 +285,8 @@ class PropertyController extends PaginatedController<Items> {
     filters ??= {};
 
     print('ApplyFilter called: key=$key, val=$val');
+
+    log("Change the data of For Filter ${filters}");
 
     if (key == 'propertyType') {
       final cityValue = includeCity ? filters!['city'] : null;

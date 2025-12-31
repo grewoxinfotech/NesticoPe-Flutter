@@ -99,20 +99,30 @@ class SubscriptionPlan {
     );
   }
 }
-
 class PlanFeatures {
   final dynamic maxProperties; // can be "unlimited" or int
+  final dynamic maxLeads; // can be "unlimited" or int
+  final dynamic maxUsers; // can be "unlimited" or int
   final String? commission;
-  final String? analytics;
-  final String? support;
+  final dynamic analytics; // can be bool or String (depending on API)
+  final dynamic support; // can be bool or String
   final bool? bulkListing;
   final String? clientManagement;
   final bool? verifiedBadge;
   final String? marketingTools;
   final bool? dedicatedSupport;
 
+  final bool? exportData;
+  final bool? advancedReports;
+  final bool? customBranding;
+  final bool? apiAccess;
+  final bool? prioritySupport;
+  final bool? dedicatedManager;
+
   PlanFeatures({
     this.maxProperties,
+    this.maxLeads,
+    this.maxUsers,
     this.commission,
     this.analytics,
     this.support,
@@ -121,11 +131,19 @@ class PlanFeatures {
     this.verifiedBadge,
     this.marketingTools,
     this.dedicatedSupport,
+    this.exportData,
+    this.advancedReports,
+    this.customBranding,
+    this.apiAccess,
+    this.prioritySupport,
+    this.dedicatedManager,
   });
 
   factory PlanFeatures.fromJson(Map<String, dynamic> json) {
     return PlanFeatures(
-      maxProperties: json['maxProperties'], // could be int or string
+      maxProperties: json['maxProperties'],
+      maxLeads: json['maxLeads'],
+      maxUsers: json['maxUsers'],
       commission: json['commission'],
       analytics: json['analytics'],
       support: json['support'],
@@ -134,9 +152,76 @@ class PlanFeatures {
       verifiedBadge: json['verifiedBadge'],
       marketingTools: json['marketingTools'],
       dedicatedSupport: json['dedicatedSupport'],
+      exportData: json['exportData'],
+      advancedReports: json['advancedReports'],
+      customBranding: json['customBranding'],
+      apiAccess: json['apiAccess'],
+      prioritySupport: json['prioritySupport'],
+      dedicatedManager: json['dedicatedManager'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'maxProperties': maxProperties,
+      'maxLeads': maxLeads,
+      'maxUsers': maxUsers,
+      'commission': commission,
+      'analytics': analytics,
+      'support': support,
+      'bulkListing': bulkListing,
+      'clientManagement': clientManagement,
+      'verifiedBadge': verifiedBadge,
+      'marketingTools': marketingTools,
+      'dedicatedSupport': dedicatedSupport,
+      'exportData': exportData,
+      'advancedReports': advancedReports,
+      'customBranding': customBranding,
+      'apiAccess': apiAccess,
+      'prioritySupport': prioritySupport,
+      'dedicatedManager': dedicatedManager,
+    };
+  }
 }
+
+//
+// class PlanFeatures {
+//   final dynamic maxProperties; // can be "unlimited" or int
+//   final String? commission;
+//   final String? analytics;
+//   final String? support;
+//   final bool? bulkListing;
+//   final String? clientManagement;
+//   final bool? verifiedBadge;
+//   final String? marketingTools;
+//   final bool? dedicatedSupport;
+//
+//   PlanFeatures({
+//     this.maxProperties,
+//     this.commission,
+//     this.analytics,
+//     this.support,
+//     this.bulkListing,
+//     this.clientManagement,
+//     this.verifiedBadge,
+//     this.marketingTools,
+//     this.dedicatedSupport,
+//   });
+//
+//   factory PlanFeatures.fromJson(Map<String, dynamic> json) {
+//     return PlanFeatures(
+//       maxProperties: json['maxProperties'], // could be int or string
+//       commission: json['commission'],
+//       analytics: json['analytics'],
+//       support: json['support'],
+//       bulkListing: json['bulkListing'],
+//       clientManagement: json['clientManagement'],
+//       verifiedBadge: json['verifiedBadge'],
+//       marketingTools: json['marketingTools'],
+//       dedicatedSupport: json['dedicatedSupport'],
+//     );
+//   }
+// }
 
 class FeatureItem {
   final String name;

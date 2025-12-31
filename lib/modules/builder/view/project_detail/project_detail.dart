@@ -372,6 +372,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                     planningToBuy,
                                     date,
                                     time,
+                                      roomInfo,
                                   ) async {
                                     final inquiry = {
                                       "name": name ?? "",

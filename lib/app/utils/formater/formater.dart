@@ -22,6 +22,39 @@ class Formatter {
     }
     return '₹$value';
   }
+  /// Converts an ISO date string (e.g., "2025-12-30T07:07:57.000Z")
+  /// into a readable format like "30 Dec 2025".
+  static String formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return '-';
+    try {
+      final date = DateTime.parse(dateString).toLocal();
+      return DateFormat('dd MMM yyyy').format(date);
+    } catch (e) {
+      return '-';
+    }
+  }
+
+  /// Converts to a detailed date-time format like "30 Dec 2025, 12:30 PM"
+  static String formatDateTime(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return '-';
+    try {
+      final date = DateTime.parse(dateString).toLocal();
+      return DateFormat('dd MMM yyyy, hh:mm a').format(date);
+    } catch (e) {
+      return '-';
+    }
+  }
+
+  /// Converts a [DateTime] object directly to "30 Dec 2025"
+  static String formatDateFromDateTime(DateTime? date) {
+    if (date == null) return '-';
+    try {
+      return DateFormat('dd MMM yyyy').format(date.toLocal());
+    } catch (e) {
+      return '-';
+    }
+  }
+
 
 
   static String formatPrice(num price) {

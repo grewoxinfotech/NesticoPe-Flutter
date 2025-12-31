@@ -3317,6 +3317,7 @@ import '../../../app/widgets/texts/headline_text.dart';
 import '../../../data/network/overall_rating/model/overall_rating_model.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../../utils/common_widget/rera_widget.dart';
+import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../../widgets/button/property_action_button.dart';
 import '../../../widgets/map/address_and_map_detail.dart';
 import '../../../widgets/map/near_by_location_map_section.dart';
@@ -3352,6 +3353,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   @override
   void initState() {
     super.initState();
+
     log('[PropertyDetail] initState called');
 
     // Get property ID
@@ -3361,6 +3363,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     // Initialize controllers
     log('[PropertyDetail] Initializing PropertyController');
     controller = Get.put(PropertyController(), tag: 'property_$propertyId');
+    controller.checkTermsAndConditionApplyOrNot();
 
     log('[PropertyDetail] Initializing GoogleMapSearchController');
     mapController = Get.put(
@@ -3605,6 +3608,39 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                               ?.financialInfo
                               ?.propertyRentPerMonth !=
                           null) ...[
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                        //   child: Container(
+                        //     padding: const EdgeInsets.all(12),
+                        //     decoration: BoxDecoration(
+                        //       color: ColorRes.primary.withOpacity(0.05),
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       border: Border.all(
+                        //         color: ColorRes.primary.withOpacity(0.2),
+                        //       ),
+                        //     ),
+                        //     child: Row(
+                        //       children: [
+                        //         const Icon(
+                        //           Icons.house,
+                        //           color: ColorRes.primary,
+                        //         ),
+                        //         const SizedBox(width: 8),
+                        //         Expanded(
+                        //           child: Text(
+                        //             'This property is also available for rent at '
+                        //             '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month.',
+                        //             style: const TextStyle(
+                        //               fontSize: AppFontSizes.bodySmall,
+                        //               fontWeight: AppFontWeights.medium,
+                        //               color: ColorRes.textPrimary,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                         Divider(
                           indent: 18,
                           endIndent: 18,
@@ -3963,6 +3999,212 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ],
                     ],
 
+
+                    // if ((currentProperty
+                    //             .propertyDetails
+                    //             ?.financialInfo
+                    //             ?.is_for_sellorrent ??
+                    //         false) &&
+                    //     (currentProperty.listingType?.toLowerCase() ==
+                    //         'sell')) ...[
+                    //   if (currentProperty
+                    //           .propertyDetails
+                    //           ?.financialInfo
+                    //           ?.propertyRentPerMonth !=
+                    //       null) ...[
+                    //     const SizedBox(height: 12),
+                    //     // Padding(
+                    //     //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //     //   child: Container(
+                    //     //     padding: const EdgeInsets.all(12),
+                    //     //     decoration: BoxDecoration(
+                    //     //       color: ColorRes.primary.withOpacity(0.05),
+                    //     //       borderRadius: BorderRadius.circular(10),
+                    //     //       border: Border.all(
+                    //     //         color: ColorRes.primary.withOpacity(0.2),
+                    //     //       ),
+                    //     //     ),
+                    //     //     child: Row(
+                    //     //       children: [
+                    //     //         const Icon(
+                    //     //           Icons.house,
+                    //     //           color: ColorRes.primary,
+                    //     //         ),
+                    //     //         const SizedBox(width: 8),
+                    //     //         Expanded(
+                    //     //           child: Text(
+                    //     //             'This property is also available for rent at '
+                    //     //             '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month.',
+                    //     //             style: const TextStyle(
+                    //     //               fontSize: AppFontSizes.bodySmall,
+                    //     //               fontWeight: AppFontWeights.medium,
+                    //     //               color: ColorRes.textPrimary,
+                    //     //             ),
+                    //     //           ),
+                    //     //         ),
+                    //     //       ],
+                    //     //     ),
+                    //     //   ),
+                    //     // ),
+                    //     Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         const TitleWithViewAll(title: 'Also for rent'),
+                    //         const SizedBox(height: 8),
+                    //         Padding(
+                    //           padding: const EdgeInsets.symmetric(
+                    //             horizontal: 16,
+                    //           ),
+                    //           child: Container(
+                    //             padding: const EdgeInsets.all(12),
+                    //             decoration: BoxDecoration(
+                    //               color: ColorRes.white,
+                    //               borderRadius: BorderRadius.circular(12),
+                    //               border: Border.all(
+                    //                 color: ColorRes.leadGreyColor.shade300,
+                    //                 width: 0.8,
+                    //               ),
+                    //               boxShadow: [
+                    //                 BoxShadow(
+                    //                   color: Colors.grey.withOpacity(0.1),
+                    //                   blurRadius: 6,
+                    //                   offset: const Offset(0, 2),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //             child: Row(
+                    //               crossAxisAlignment: CrossAxisAlignment.center,
+                    //               children: [
+                    //                 Expanded(
+                    //                   child: Text.rich(
+                    //                     TextSpan(
+                    //                       text:
+                    //                           'This property is also available for rent at ',
+                    //                       style: TextStyle(
+                    //                         fontSize: AppFontSizes.caption,
+                    //                         fontWeight: AppFontWeights.medium,
+                    //                         color: ColorRes.leadGreyColor[700],
+                    //                       ),
+                    //                       children: [
+                    //                         TextSpan(
+                    //                           text:
+                    //                               '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
+                    //                           style: const TextStyle(
+                    //                             fontSize:
+                    //                                 AppFontSizes.bodySmall,
+                    //                             fontWeight:
+                    //                                 AppFontWeights.semiBold,
+                    //                             color: ColorRes.textPrimary,
+                    //                           ),
+                    //                         ),
+                    //                         const TextSpan(text: '.'),
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     const SizedBox(height: 12),
+                    //     Divider(
+                    //       indent: 18,
+                    //       endIndent: 18,
+                    //       color: ColorRes.leadGreyColor.shade300,
+                    //     ),
+                    //   ] else ...[
+                    //     SizedBox.shrink(),
+                    //   ],
+                    // ],
+                    // if ((currentProperty
+                    //             .propertyDetails
+                    //             ?.financialInfo
+                    //             ?.is_for_sellorrent ??
+                    //         false) &&
+                    //     (currentProperty.listingType?.toLowerCase() ==
+                    //         'rent')) ...[
+                    //   if (currentProperty
+                    //           .propertyDetails
+                    //           ?.financialInfo
+                    //           ?.price !=
+                    //       null) ...[
+                    //     const SizedBox(height: 12),
+                    //     Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         const TitleWithViewAll(title: 'Also for Sell'),
+                    //         const SizedBox(height: 8),
+                    //         Padding(
+                    //           padding: const EdgeInsets.symmetric(
+                    //             horizontal: 16,
+                    //           ),
+                    //           child: Container(
+                    //             padding: const EdgeInsets.all(12),
+                    //             decoration: BoxDecoration(
+                    //               color: ColorRes.white,
+                    //               borderRadius: BorderRadius.circular(12),
+                    //               border: Border.all(
+                    //                 color: ColorRes.leadGreyColor.shade300,
+                    //                 width: 0.8,
+                    //               ),
+                    //               boxShadow: [
+                    //                 BoxShadow(
+                    //                   color: Colors.grey.withOpacity(0.1),
+                    //                   blurRadius: 6,
+                    //                   offset: const Offset(0, 2),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //             child: Row(
+                    //               crossAxisAlignment: CrossAxisAlignment.center,
+                    //               children: [
+                    //                 Expanded(
+                    //                   child: Text.rich(
+                    //                     TextSpan(
+                    //                       text:
+                    //                           'This property is also available for sell at ',
+                    //                       style: TextStyle(
+                    //                         fontSize: AppFontSizes.caption,
+                    //                         fontWeight: AppFontWeights.medium,
+                    //                         color: ColorRes.leadGreyColor[700],
+                    //                       ),
+                    //                       children: [
+                    //                         TextSpan(
+                    //                           text:
+                    //                               '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
+                    //                           style: const TextStyle(
+                    //                             fontSize:
+                    //                                 AppFontSizes.bodySmall,
+                    //                             fontWeight:
+                    //                                 AppFontWeights.semiBold,
+                    //                             color: ColorRes.textPrimary,
+                    //                           ),
+                    //                         ),
+                    //                         const TextSpan(text: '.'),
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //
+                    //     const SizedBox(height: 12),
+                    //     Divider(
+                    //       indent: 18,
+                    //       endIndent: 18,
+                    //       color: ColorRes.leadGreyColor.shade300,
+                    //     ),
+                    //   ] else ...[
+                    //     SizedBox.shrink(),
+                    //   ],
+                    // ],
+
                     if (currentProperty
                             .propertyDetails
                             ?.furnishInfo
@@ -4189,31 +4431,181 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         return widget;
                       },
                     ),
-
                     Divider(
                       indent: 18,
                       endIndent: 18,
                       color: ColorRes.leadGreyColor.shade300,
                     ),
                     const SizedBox(height: 12),
-                    const TitleWithViewAll(
-                      title: 'Recommended Properties',
-                      showViewAll: true,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const TitleWithViewAll(title: 'Limited Time Offer!'),
+                        const SizedBox(height: 8),
+
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorRes.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Offer Text
+                              const Text(
+                                'Limited-time! Get an exclusive offer on this property.',
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.medium,
+                                  color: ColorRes.textPrimary,
+                                  height: 1.3,
+                                ),
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              // Conditional Area
+                              Obx(() {
+                                if (controller.hasSubmittedInquiry.value) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.success.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: ColorRes.success,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.check_circle_outline,
+                                          color: ColorRes.success,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          'Submitted',
+                                          style: TextStyle(
+                                            color: ColorRes.success,
+                                            fontSize: AppFontSizes.small,
+                                            fontWeight: AppFontWeights.semiBold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  return NesticoPeButton(
+                                    title: 'Get Offer',
+                                    backgroundColor: ColorRes.error,
+                                    height: 36,
+                                    onTap: () async {
+                                      try {
+                                        final user =
+                                            await SecureStorage.getUserData();
+
+                                        if (user == null) {
+                                          Get.snackbar(
+                                            'Error',
+                                            'No user data found. Please log in.',
+                                            snackPosition: SnackPosition.BOTTOM,
+                                            backgroundColor: ColorRes.error
+                                                .withOpacity(0.1),
+                                            colorText: ColorRes.error,
+                                          );
+                                          return;
+                                        }
+
+                                        final fullName =
+                                            user.user?.fullName ?? '';
+                                        final firstName =
+                                            user.user?.firstName ?? '';
+                                        final username =
+                                            user.user?.username ?? '';
+                                        final email = user.user?.email ?? '';
+                                        final phone = user.user?.phone ?? '';
+
+                                        final displayName =
+                                            (firstName.isEmpty
+                                                    ? username
+                                                    : fullName)
+                                                .trim();
+
+                                        if (Get.context == null) {
+                                          Get.snackbar(
+                                            'Error',
+                                            'UI not ready to show dialog.',
+                                            snackPosition: SnackPosition.BOTTOM,
+                                            backgroundColor: ColorRes.error
+                                                .withOpacity(0.1),
+                                            colorText: ColorRes.error,
+                                          );
+                                          return;
+                                        }
+
+                                        addInquiryFromApp(
+                                          displayName,
+                                          email,
+                                          phone,
+                                          currentProperty.id ?? '',
+                                        );
+                                      } catch (e, s) {
+                                        debugPrint(
+                                          '❌ Error in Get Offer button: $e',
+                                        );
+                                        debugPrint('$s');
+                                        Get.snackbar(
+                                          'Error',
+                                          'Something went wrong. Please try again.',
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: ColorRes.error
+                                              .withOpacity(0.1),
+                                          colorText: ColorRes.error,
+                                        );
+                                      }
+                                    },
+                                  );
+                                }
+                              }),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Builder(
-                      builder: (context) {
-                        log(
-                          '[PropertyDetail] 🏘️ Building RecommendedProperty - START',
-                        );
-                        const widget = RecommendedProperty();
-                        log(
-                          '[PropertyDetail] 🏘️ Building RecommendedProperty - END',
-                        );
-                        return widget;
-                      },
-                    ),
-                    const SizedBox(height: 12),
+
+                    if (controller.items.isNotEmpty) ...[
+                      Divider(
+                        indent: 18,
+                        endIndent: 18,
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'Recommended Properties'),
+                      const SizedBox(height: 12),
+                      Builder(
+                        builder: (context) {
+                          log(
+                            '[PropertyDetail] 🏘️ Building RecommendedProperty - START',
+                          );
+                          const widget = RecommendedProperty();
+                          log(
+                            '[PropertyDetail] 🏘️ Building RecommendedProperty - END',
+                          );
+                          return widget;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                   ],
                 ),
               ),
@@ -4288,6 +4680,13 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   top: 16,
                                 ),
                                 child: ContactOwnerBottom(
+                                  pgRoomData:
+                                      currentProperty
+                                          .propertyDetails
+                                          ?.pgInfo
+                                          ?.pgRoomInfo ??
+                                      [],
+
                                   price: priceManager.actualPrice,
                                   listingType:
                                       currentProperty.listingType
@@ -4335,12 +4734,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     price,
                                     isNegotiable,
 
+
                                     isAllowAllCondition,
                                     inquiryListing,
                                     isBookSiteVisit,
                                     planningToBuy,
                                     date,
                                     time,
+                                      roomInfo,
                                   ) async {
                                     final inquiry = {
                                       "name": name ?? "",
@@ -4363,6 +4764,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                         if (date != null)
                                           "visitDate":
                                               '${date.day}-${date.month}-${date.year}',
+                                        if (roomInfo != null)
+                                          "selectedRoomType":roomInfo,
                                         if (time != null)
                                           "visitTime":
                                               '${time.hour.toString().padLeft(2, '0')}:'
@@ -4416,6 +4819,261 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       }),
     );
   }
+
+  void addInquiryFromApp(
+    String name,
+    String email,
+    String phone,
+    String propertyID,
+  ) {
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+    final _nameController = TextEditingController(text: name);
+    final _emailController = TextEditingController(text: email);
+    final _phoneController = TextEditingController(text: phone);
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: ColorRes.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+          decoration: BoxDecoration(
+            color: ColorRes.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ColorRes.primary,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          "Get Offer Price",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.white,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => Get.back(),
+                        borderRadius: BorderRadius.circular(50),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: ColorRes.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Body
+                Flexible(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        NesticoPeTextField(
+                          controller: _nameController,
+                          title: "Name",
+                          hintText: 'Enter your name',
+                          prefixIcon: Icons.person_outline,
+                          isRequired: true,
+                          validator:
+                              (value) =>
+                                  value == null || value.trim().isEmpty
+                                      ? 'Name is required'
+                                      : null,
+                        ),
+                        const SizedBox(height: 16),
+
+                        NesticoPeTextField(
+                          controller: _emailController,
+                          hintText: 'Enter your email',
+                          prefixIcon: Icons.email_outlined,
+                          title: "Email",
+                          keyboardType: TextInputType.emailAddress,
+                          isRequired: true,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Email is required';
+                            }
+                            if (!GetUtils.isEmail(value.trim())) {
+                              return 'Enter a valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        NesticoPeTextField(
+                          controller: _phoneController,
+                          hintText: 'Enter your phone number',
+                          title: "Phone",
+                          prefixIcon: Icons.phone_outlined,
+                          keyboardType: TextInputType.phone,
+                          isRequired: true,
+                          maxLength: 10,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Phone is required';
+                            }
+                            if (!GetUtils.isPhoneNumber(value.trim())) {
+                              return 'Enter a valid phone number';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Footer Buttons
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: ColorRes.white,
+                    border: Border(
+                      top: BorderSide(
+                        color: ColorRes.grey.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Get.back(),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            side: const BorderSide(color: ColorRes.primary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              // perform your submission logic here
+                              final inquiry = {
+                                "name": name ?? "",
+                                "phone": phone ?? "",
+                                "email": email ?? "",
+                              };
+
+                              print('Submitting inquiry: ${inquiry}');
+
+                              final success = await controller.addInquiry(
+                                inquiry,
+                                propertyID ?? '',
+                              );
+
+                              if (success) {
+                                controller.hasSubmittedInquiry.value = true;
+                                CustomSnackBar.show(
+                                  Get.overlayContext!,
+                                  message: "Inquiry Added Successfully",
+                                  type: SnackBarType.success,
+                                );
+                                Get.back();
+                                await controller.getAllInQuireData(
+                                  widget.propertyId ?? '',
+                                );
+                              } else {
+                                Get.back();
+                                CustomSnackBar.show(
+                                  Get.overlayContext!,
+                                  message: "Failed to Submit Inquiry",
+                                  type: SnackBarType.error,
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorRes.primary,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.send, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                'Request Offer Price',
+
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.medium,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    );
+  }
+
+  Widget _buildFieldLabel(String label) {
+    return Text(
+      label,
+      style: const TextStyle(
+        fontSize: AppFontSizes.medium,
+        fontWeight: AppFontWeights.semiBold,
+        color: ColorRes.textPrimary,
+      ),
+    );
+  }
+
+  // Also remove this getter since we're using _property.value directly
+  // Items? get property => _property.value;
 
   Widget _buildMediaBanner(PropertyMedia media, String id) {
     final PageController pageController = PageController();

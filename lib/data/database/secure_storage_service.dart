@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
@@ -14,10 +16,28 @@ class SecureStorage {
   static const String _keyClientId = 'clientId';
   static const _selectedCityKey = 'selected_city';
   static const String _keyUpdatePhoneToken = 'updatePhoneToken';
+  static const String _termsAndConditionApply = "termAndConditionApply";
 
   // Token
   static Future<void> saveToken(String token) async {
     await _storage.write(key: _keyToken, value: token.toString());
+  }
+
+  static Future<void> saveTermAndConditionValue(String? condition) async {
+    log("Terms and condition apply $condition");
+
+    await _storage.write(key: _termsAndConditionApply, value: condition);
+  }
+
+  static Future<String?> getTermAndConditionValue() async {
+    final value = await _storage.read(key: _termsAndConditionApply);
+    log("Terms and condition get apply $value");
+    return value; // ✅ just return the stored value, don’t overwrite it
+  }
+
+
+  static Future<void> deletedTermsAndConditionApply() async {
+    await _storage.delete(key: _termsAndConditionApply);
   }
 
   static Future<String?> getToken() async {

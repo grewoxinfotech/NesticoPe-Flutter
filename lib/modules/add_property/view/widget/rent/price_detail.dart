@@ -859,7 +859,7 @@ class RentPriceDetail extends StatelessWidget {
                   controller.selectedIndex.value != "Showroom" &&
                   controller.selectedIndex.value != "Warehouse") ...[
                 SizedBox(height: 8),
-                buildSectionTitle('Excepted Rent'),
+                buildSectionTitle('Plot Price'),
                 SizedBox(height: 8),
                 buildTextField(
                   'Enter rent',

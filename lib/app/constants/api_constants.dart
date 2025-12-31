@@ -6,7 +6,7 @@ class ApiConstants {
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
 
 
-  static const String url = "http://192.168.1.2:19725";
+  static const String url = "http://192.168.1.3:19725";
   // static const String url = "https://sympathy-resolve-tampa-bra.trycloudflare.com";
 
 
@@ -53,6 +53,7 @@ class ApiConstants {
   static String get subscriptionPlan => "$baseURL/subscriptionPlan";
 
   static String get subscription => "$baseURL/subscription";
+  static String get subscriptionPlanInquiry => "$baseURL/subscriptionPlanInquiry";
 
   // Lead
   static String get leads => "$baseURL/lead";

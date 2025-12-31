@@ -23,6 +23,7 @@ dependencies:
   dropdown_search:
   path_provider:
   video_thumbnail:
+  shared_preferences:
   get:
   connectivity_plus:
   internet_connection_checker_plus:

@@ -148,6 +148,7 @@ class HomeScreen extends StatefulWidget {
         "image":
             "https://img.etimg.com/thumb/width-1200,height-1200,imgsize-76402,resizemode-75,msid-111456711/industry/services/property-/-cstruction/india-office-property-market-surges-with-record-gross-leasing-in-2024-first-half.jpg",
       },
+
       {
         "title": "Retail Shop",
         "image":
@@ -169,7 +170,7 @@ class HomeScreen extends StatefulWidget {
             "https://pgproperty.sg/wp-content/uploads/2022/11/the-crest-488x326.jpg",
       },
       {
-        "title": "Others",
+        "title": "Other",
         "image":
             "https://www.ashwinshethgroup.com/wp-content/uploads/2022/11/Commercial-property-buying-guidelines-1400x700-1.webp",
       },
@@ -1400,11 +1401,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                         return Column(
                           children: [
-                            const SizedBox(height: 20),
-                            TitleWithViewAll(
-                              title: "Recommended Sellers",
-                              showViewAll: true,
-                            ),
+                            const SizedBox(height: 8),
+                            TitleWithViewAll(title: "Recommended Sellers"),
                             const SizedBox(height: 12),
 
                             SellerListWidget(

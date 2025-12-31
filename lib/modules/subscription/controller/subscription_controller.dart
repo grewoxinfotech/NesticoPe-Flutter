@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 
 import '../../../data/network/subscription/model/subscription_model.dart';
 import '../../../data/network/subscription/services/subscription_services.dart';
@@ -18,7 +21,14 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
   /// --- Constructor ---
   SubscriptionPlanController({required this.userRole}) {
     /// Apply default always-on filter
-    filters!["plansFor"] = userRole;
+    log("Subscription Plan for ${userRole}");
+   if(UserHelper.isSellerBuilder){
+     log("Subscription Plan for ${userRole}");
+     filters!["plansFor"] = "sellerBuilder";
+   }
+   else{
+     filters!["plansFor"] = userRole;
+   }
   }
 
   @override
@@ -98,6 +108,14 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
   Future<bool> buySubscriptionPlan(String planId) async {
     try {
       return await _service.buySubscriptionPlan(planId);
+    } catch (e) {
+      print("Exception in BuyPlan: $e");
+      return false;
+    }
+  }
+  Future<bool> subscriptionPlanInquiry(Map<String,dynamic> payload) async {
+    try {
+      return await _service.subscriptionInquiryPlan(payload);
     } catch (e) {
       print("Exception in BuyPlan: $e");
       return false;

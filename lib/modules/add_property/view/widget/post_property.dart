@@ -1648,7 +1648,7 @@ class PostProperty extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
               ],
-              if ((controller.selectedIndex.value == 'Plot') ||(controller.selectedIndex.value == 'Office')||(controller.selectedIndex.value == 'Shop')||(controller.selectedIndex.value == 'Showroom')||(controller.selectedIndex.value == 'Warehouse')) ...[
+              if ((controller.selectedIndex.value == 'Office')||(controller.selectedIndex.value == 'Shop')||(controller.selectedIndex.value == 'Showroom')||(controller.selectedIndex.value == 'Warehouse')) ...[
                 SizedBox(height: 16),
                 Text(
                   'POSSESSTION INFO',
@@ -1700,6 +1700,111 @@ class PostProperty extends StatelessWidget {
                 ),
             if( controller
                 .commercial_rent_posessionStatus.value=="Under Construction")...[
+              SizedBox(height: 16),
+              Text('Available From'),
+              SizedBox(height: 8),
+              buildTextField(
+                'Enter Available From',
+                Icons.calendar_month_outlined,
+                controller.commercial_rent_AvailableFrom,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter valid date';
+                  }
+                  return null;
+                },
+                isEnable: false,
+                onTap: () async {
+                  FocusScope.of(context).unfocus();
+                  DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: ColorScheme.light(
+                            primary: ColorRes.primary,
+                            // header background color
+                            onPrimary: ColorRes.white,
+                            // header text color
+                            onSurface: ColorRes.black, // body text color
+                          ),
+                          textButtonTheme: TextButtonThemeData(
+                            style: TextButton.styleFrom(
+                              foregroundColor: ColorRes.primary,
+                            ),
+                          ),
+                        ),
+
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (picked != null) {
+                    controller.commercial_rent_AvailableFrom.text =
+                    "${picked.day}/${picked.month}/${picked.year}";
+                  }
+                },
+                isPhoneKey: true,
+              ),
+
+            ]
+              ],
+              if ((controller.selectedIndex.value == 'Plot')) ...[
+                SizedBox(height: 16),
+                Text(
+                  'POSSESSTION INFO',
+                  style: TextStyle(
+                    color: ColorRes.black,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle('Posession status'),
+                SizedBox(height: 8),
+                Obx(
+                      () => Wrap(
+                    spacing: 12,
+                    children:
+                    ['Immediate','In Future'].map((e) {
+                      return buildChoice(
+                        title: e,
+                        selected:
+                        controller
+                            .commercial_rent_posessionStatus
+                            .value ==
+                            e,
+                        onTap: () {
+                          controller.setValue(
+                            controller.commercial_rent_posessionStatus,
+                            e,
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Obx(
+                      () =>
+                  controller.selectedPossessionStatus.value
+                      ? Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 4),
+                    child: Text(
+                      'Please select possession type',
+                      style: TextStyle(
+                        color: ColorRes.error.shade700,
+                        // fontSize: 12,
+                        fontSize: AppFontSizes.bodySmall,
+                      ),
+                    ),
+                  )
+                      : const SizedBox.shrink(),
+                ),
+            if( controller
+                .commercial_rent_posessionStatus.value=="Under Construction" ||controller
+                .commercial_rent_posessionStatus.value=="In Future" )...[
               SizedBox(height: 16),
               Text('Available From'),
               SizedBox(height: 8),

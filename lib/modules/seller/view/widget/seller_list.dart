@@ -20,7 +20,7 @@ class SellerListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     print("[TopSeller] topSeller : ${topSeller.map((e) => e.firstName)}");
     return SizedBox(
-      height: 175,
+      height: 163,
       // smaller height
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -219,10 +219,9 @@ class SellerCard extends StatelessWidget {
           if (state != null && state!.isNotEmpty) state!,
         ].join(', ');
 
-    final inventoryText =
-        sellerType?.toLowerCase() == 'builder'
-            ? '${projects ?? 0} Projects Listed'
-            : '${properties ?? 0} Properties Listed';
+    final inventoryText = sellerType?.toLowerCase() == 'builder'
+        ? '${projects ?? 0} Projects'
+        : '${properties ?? 0} Properties';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6),
@@ -417,13 +416,13 @@ class SellerCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Inventory",
-                        style: TextStyle(
-                          fontSize: AppFontSizes.caption,
-                          color: ColorRes.textSecondary,
-                        ),
-                      ),
+                      // const Text(
+                      //   "Inventory",
+                      //   style: TextStyle(
+                      //     fontSize: AppFontSizes.caption,
+                      //     color: ColorRes.textSecondary,
+                      //   ),
+                      // ),
                       Text(
                         inventoryText,
                         style: const TextStyle(

@@ -262,6 +262,7 @@ class Meta {
   final bool? isNegotiable;
   final String? timePeriod;
 
+
   Meta({this.negotiablePrice, this.isNegotiable, this.timePeriod});
 
   factory Meta.fromJson(Map<String, dynamic> json) {
@@ -314,6 +315,20 @@ class InquiryDetails {
   });
 
   factory InquiryDetails.fromJson(Map<String, dynamic> json) {
+    // Handle both numeric and range-style price fields safely
+    final dynamic priceData = json['price'];
+
+    PriceRange? priceRange;
+    num? singlePrice;
+
+    if (priceData is Map<String, dynamic>) {
+      // it's an object like {"minPrice":6500,"maxPrice":8000}
+      priceRange = PriceRange.fromJson(priceData);
+    } else if (priceData is num) {
+      // it's a single number like 1234567
+      singlePrice = priceData;
+    }
+
     return InquiryDetails(
       id: json['id'] ?? '',
       projectName: json['projectName'],
@@ -324,14 +339,12 @@ class InquiryDetails {
       location: json['location'],
       city: json['city'],
       status: json['status'],
-      priceRange:
-          json['priceRange'] != null
-              ? PriceRange.fromJson(json['priceRange'])
-              : null,
-      price: json['price'],
+      priceRange: priceRange,
+      price: singlePrice,
       priceType: json['priceType'],
     );
   }
+
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -343,10 +356,11 @@ class InquiryDetails {
     'location': location,
     'city': city,
     'status': status,
-    'priceRange': priceRange?.toJson(),
-    'price': price,
+    // Only include whichever price representation exists
+    'price': price != null ? price : priceRange?.toJson(),
     'priceType': priceType,
   };
+
 }
 
 class PriceRange {
