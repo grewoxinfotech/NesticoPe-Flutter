@@ -19,6 +19,7 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
+import '../../aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../builder/controller/builder_form_controller.dart';
 import '../../builder/view/builder_form_screen.dart';
 import '../../profile/controllers/buyer_profiledata.dart';
@@ -267,14 +268,91 @@ class _HomeHeaderState extends State<HomeHeader> {
               if (UserHelper.isSeller) ...[
                 SizedBox(width: 8),
                 GestureDetector(
+                  // onTap: () async {
+                  //   print("Mic tapped");
+                  //
+                  //   try {
+                  //     // Get cached user type (sync, since you initialized it in splash)
+                  //     final userType = UserHelper.userType;
+                  //
+                  //     // If not initialized, fetch directly from secure storage (fallback)
+                  //     if (userType == null) {
+                  //       final user = await SecureStorage.getUserData();
+                  //       final role = user?.user?.userType?.toLowerCase() ?? '';
+                  //       UserHelper.setUserType(role);
+                  //     }
+                  //
+                  //     print(
+                  //       "DEBUG >> Current UserType: ${UserHelper.userType}",
+                  //     );
+                  //
+                  //     if (UserHelper.isGuest) {
+                  //       if (!Get.isRegistered<AuthController>()) {
+                  //         Get.put(AuthController());
+                  //       }
+                  //       Get.to(
+                  //         () => const RegisterScreen(role: UserRole.seller),
+                  //       );
+                  //     }
+                  //
+                  //     if (UserHelper.isBuyer) {
+                  //       Get.to(() => const SellerConversionScreen());
+                  //     }
+                  //
+                  //     // Handle behavior by role
+                  //     if (UserHelper.isSeller) {
+                  //       // ✅ Seller → can create property directly
+                  //       if (!UserHelper.isAadharVerified) {
+                  //         Get.to(() => AadharAuthScreen());
+                  //       } else {
+                  //         if (UserHelper.isSellerOwner) {
+                  //           Get.to(
+                  //             () => CreatePropertyScreen(
+                  //               // sellerType: mapUserRoleToSellerType(
+                  //               //   UserRole.seller,
+                  //               // ),
+                  //               isLogin: true,
+                  //             ),
+                  //           );
+                  //         }
+                  //       }
+                  //
+                  //       if (!UserHelper.isAadharVerified) {
+                  //         Get.to(() => AadharAuthScreen());
+                  //       } else {
+                  //         if (UserHelper.isSellerBuilder) {
+                  //           if (Get.isRegistered<ProjectWizardController>(
+                  //             tag: "builder",
+                  //           )) {
+                  //             Get.find<ProjectWizardController>(tag: "builder");
+                  //           } else {
+                  //             Get.lazyPut(
+                  //               () => ProjectWizardController(
+                  //                 isBuilderView: true,
+                  //               ),
+                  //               tag: "builder",
+                  //             );
+                  //           }
+                  //           Get.to(() => CreateProjectScreen());
+                  //         }
+                  //       }
+                  //     }
+                  //   } catch (e) {
+                  //     print("Error checking user type: $e");
+                  //     Get.snackbar(
+                  //       "Error",
+                  //       "Something went wrong. Please try again.",
+                  //       snackPosition: SnackPosition.BOTTOM,
+                  //     );
+                  //   }
+                  // },
                   onTap: () async {
                     print("Mic tapped");
 
                     try {
-                      // Get cached user type (sync, since you initialized it in splash)
-                      final userType = UserHelper.userType;
+                      /// 1️⃣ Ensure UserType is initialized
+                      var userType = UserHelper.userType;
 
-                      // If not initialized, fetch directly from secure storage (fallback)
                       if (userType == null) {
                         final user = await SecureStorage.getUserData();
                         final role = user?.user?.userType?.toLowerCase() ?? '';
@@ -285,6 +363,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                         "DEBUG >> Current UserType: ${UserHelper.userType}",
                       );
 
+                      /// 2️⃣ Guest → Register
                       if (UserHelper.isGuest) {
                         if (!Get.isRegistered<AuthController>()) {
                           Get.put(AuthController());
@@ -292,43 +371,51 @@ class _HomeHeaderState extends State<HomeHeader> {
                         Get.to(
                           () => const RegisterScreen(role: UserRole.seller),
                         );
+                        return;
                       }
 
+                      /// 3️⃣ Buyer → Seller conversion
                       if (UserHelper.isBuyer) {
                         Get.to(() => const SellerConversionScreen());
+                        return;
                       }
 
-                      // Handle behavior by role
+                      /// 4️⃣ Seller flow
                       if (UserHelper.isSeller) {
-                        // ✅ Seller → can create property directly
-                        if (UserHelper.isSellerOwner) {
-                          Get.to(
-                            () => CreatePropertyScreen(
-                              // sellerType: mapUserRoleToSellerType(
-                              //   UserRole.seller,
-                              // ),
-                              isLogin: true,
-                            ),
-                          );
+                        /// Aadhar check (common for all sellers)
+                        if (!UserHelper.isAadharVerified) {
+                          Get.to(() => AadharAuthScreen());
+                          return;
                         }
 
+                        /// 4A️⃣ Seller → Owner
+                        if (UserHelper.isSellerOwner) {
+                          Get.to(
+                            () => const CreatePropertyScreen(isLogin: true),
+                          );
+                          return;
+                        }
+
+                        /// 4B️⃣ Seller → Builder
                         if (UserHelper.isSellerBuilder) {
-                          if (Get.isRegistered<ProjectWizardController>(
+                          if (!Get.isRegistered<ProjectWizardController>(
                             tag: "builder",
                           )) {
-                            Get.find<ProjectWizardController>(tag: "builder");
-                          } else {
                             Get.lazyPut(
                               () =>
                                   ProjectWizardController(isBuilderView: true),
                               tag: "builder",
                             );
                           }
+
                           Get.to(() => CreateProjectScreen());
+                          return;
                         }
                       }
-                    } catch (e) {
+                    } catch (e, s) {
                       print("Error checking user type: $e");
+                      print(s);
+
                       Get.snackbar(
                         "Error",
                         "Something went wrong. Please try again.",
@@ -336,6 +423,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                       );
                     }
                   },
+
                   child: Container(
                     height: 52,
                     padding: const EdgeInsets.symmetric(

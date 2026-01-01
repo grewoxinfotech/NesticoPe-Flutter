@@ -1,12 +1,15 @@
 import '../../../../data/database/secure_storage_service.dart';
 
-enum UserType { reseller, seller, buyer,contractor }
+enum UserType { reseller, seller, buyer, contractor }
 
 enum SellerType { owner, builder }
 
 class UserHelper {
   static UserType? _cachedUserType;
   static SellerType? _cachedSellerType;
+
+  /// Aadhar verification cache
+  static bool _cachedIsAadharVerified = false;
 
   /// Initialize once at app start (guest by default)
   static Future<void> initUserType() async {
@@ -18,6 +21,8 @@ class UserHelper {
       _cachedUserType = _mapRoleStringToEnum(roleString);
       _cachedSellerType = _mapSellerStringToEnum(sellerTypeString);
 
+      _cachedIsAadharVerified = user?.user?.isAadharVerified ?? false;
+
       print(
         'User type initialized: ${userTypeString} (${sellerTypeStringValue})',
       );
@@ -25,6 +30,7 @@ class UserHelper {
       print('Error initializing user type: $e');
       _cachedUserType = null;
       _cachedSellerType = null;
+      _cachedIsAadharVerified = false;
     }
   }
 
@@ -32,9 +38,14 @@ class UserHelper {
   static Future<void> setUserType(
     String? roleString, {
     String? sellerType,
+    bool? isAadharVerified,
   }) async {
     _cachedUserType = _mapRoleStringToEnum(roleString);
     _cachedSellerType = _mapSellerStringToEnum(sellerType);
+
+    if (isAadharVerified != null) {
+      _cachedIsAadharVerified = isAadharVerified;
+    }
 
     print('User type set: ${userTypeString} (${sellerTypeStringValue})');
   }
@@ -50,7 +61,7 @@ class UserHelper {
         return UserType.seller;
       case 'buyer':
         return UserType.buyer;
-        case 'contractor':
+      case 'contractor':
         return UserType.contractor;
       default:
         return null;
@@ -74,6 +85,12 @@ class UserHelper {
   static void clearUserType() {
     _cachedUserType = null;
     _cachedSellerType = null;
+    _cachedIsAadharVerified = false;
+  }
+
+  static Future<void> setAadharVerified(bool isVerified) async {
+    _cachedIsAadharVerified = isVerified;
+    await SecureStorage.updateAadharVerified(value: isVerified);
   }
 
   // ─────────────────────────────────────────────
@@ -88,7 +105,8 @@ class UserHelper {
       case UserType.seller:
         return "seller";
       case UserType.buyer:
-        return "buyer";  case UserType.contractor:
+        return "buyer";
+      case UserType.contractor:
         return "contractor";
       default:
         return null;
@@ -106,16 +124,23 @@ class UserHelper {
     }
   }
 
+  static bool get isAadharVerified => _cachedIsAadharVerified;
+
   /// Retain enum getters too (for logic use)
   static UserType? get userType => _cachedUserType;
+
   static SellerType? get sellerType => _cachedSellerType;
 
   /// Quick role checks
   static bool get isSeller => _cachedUserType == UserType.seller;
+
   static bool get isReseller => _cachedUserType == UserType.reseller;
+
   static bool get isBuyer => _cachedUserType == UserType.buyer;
+
   static bool get isGuest => _cachedUserType == null;
-  static bool get isContractor=>_cachedUserType==UserType.contractor;
+
+  static bool get isContractor => _cachedUserType == UserType.contractor;
 
   static bool get isSellerOwner =>
       _cachedUserType == UserType.seller &&

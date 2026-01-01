@@ -17,6 +17,7 @@ class SecureStorage {
   static const _selectedCityKey = 'selected_city';
   static const String _keyUpdatePhoneToken = 'updatePhoneToken';
   static const String _termsAndConditionApply = "termAndConditionApply";
+  static const String _keyAadharVerified = 'isAadharVerified';
 
   // Token
   static Future<void> saveToken(String token) async {
@@ -34,7 +35,6 @@ class SecureStorage {
     log("Terms and condition get apply $value");
     return value; // ✅ just return the stored value, don’t overwrite it
   }
-
 
   static Future<void> deletedTermsAndConditionApply() async {
     await _storage.delete(key: _termsAndConditionApply);
@@ -131,5 +131,20 @@ class SecureStorage {
   // Clear everything
   static Future<void> clearAll() async {
     await _storage.deleteAll();
+  }
+
+  static Future<void> updateAadharVerified({required bool value}) async {
+    log('Updating Aadhaar verified status: $value');
+
+    // Update standalone flag (safe fallback)
+    await _storage.write(key: _keyAadharVerified, value: value.toString());
+
+    // Also update inside user model if exists
+    final userData = await getUserData();
+    if (userData == null || userData.user == null) return;
+    userData.user!.isAadharVerified = value;
+    final updatedUser = userData;
+
+    await saveUserData(updatedUser);
   }
 }

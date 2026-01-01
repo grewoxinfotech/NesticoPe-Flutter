@@ -34,6 +34,11 @@ class ApiConstants {
 
   static String get convertToContractor => "$auth/convert-buyer-to-contractor";
 
+  static String get aadharInitiateVerification =>
+      "$auth/initiate-aadhaar-verification";
+
+  static String get aadharVerifyOtp => "$auth/verify-aadhaar-otp";
+
   static String get referralGet => "$baseURL/referral/my-stats";
 
   static String get generateReferCode => "$baseURL/referral/generate-code";

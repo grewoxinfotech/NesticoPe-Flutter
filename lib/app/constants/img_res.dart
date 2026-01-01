@@ -48,5 +48,6 @@ class IMGRes {
   static const String user_4 = "assets/images/user_4.jpg";
 
   /// Third Party
-static const String whatsapp = "assets/icons/third_party/whatsapp.svg";
+  static const String whatsapp = "assets/icons/third_party/whatsapp.svg";
+  static const String aadhaar = "assets/logo/aadhaar.png";
 }

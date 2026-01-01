@@ -328,7 +328,13 @@ class PropertyDetailManager {
               details.add({"Plot Type": plot.zoneType!});
             }
             if (plot.possessionStatus != null) {
-              details.add({"Possession": plot.possessionStatus!});
+              details.add({
+                "Possession":
+                    plot.possessionStatus!
+                        .replaceAll("_", " ")
+                        .capitalize
+                        .toString(),
+              });
             }
             if (property.propertyType != null) {
               details.add({
@@ -388,10 +394,19 @@ class PropertyDetailManager {
 
     if (pd.propertyFacing != null) details.add({"Facing": pd.propertyFacing!});
     if (pd.propertyCondition != null) {
-      details.add({"Condition": pd.propertyCondition!});
+      details.add({
+        "Condition":
+            pd.propertyCondition!.replaceAll('_', ' ').capitalize.toString(),
+      });
     }
     if (pd.possessionInfo?.possessionStatus != null) {
-      details.add({"Possession": pd.possessionInfo!.possessionStatus!});
+      details.add({
+        "Possession":
+            pd.possessionInfo!.possessionStatus!
+                .replaceAll("_", " ")
+                .capitalize
+                .toString(),
+      });
     }
     if (pd.possessionInfo?.propertyAgeInYear != null) {
       details.add({
