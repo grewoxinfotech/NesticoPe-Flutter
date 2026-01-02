@@ -14,6 +14,9 @@ import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dar
 
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
+import 'package:housing_flutter_app/modules/builder/view/builder_dashboard.dart';
+import 'package:housing_flutter_app/modules/contractor/view/dashboard/contractor_dashboard.dart';
+import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
@@ -22,6 +25,8 @@ import '../../../data/network/auth/model/user_model.dart';
 import '../../aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../builder/controller/builder_form_controller.dart';
 import '../../builder/view/builder_form_screen.dart';
+import '../../builder/view/builder_main_screen.dart';
+import '../../contractor/view/contractor_main.dart';
 import '../../profile/controllers/buyer_profiledata.dart';
 import '../../property/controllers/property_controller.dart';
 
@@ -265,17 +270,16 @@ class _HomeHeaderState extends State<HomeHeader> {
                   }
                 }),
               ),
-              if (UserHelper.isSeller) ...[
+              if (UserHelper.isSeller || UserHelper.isContractor) ...[
                 SizedBox(width: 8),
                 GestureDetector(
                   // onTap: () async {
                   //   print("Mic tapped");
                   //
                   //   try {
-                  //     // Get cached user type (sync, since you initialized it in splash)
-                  //     final userType = UserHelper.userType;
+                  //     /// 1️⃣ Ensure UserType is initialized
+                  //     var userType = UserHelper.userType;
                   //
-                  //     // If not initialized, fetch directly from secure storage (fallback)
                   //     if (userType == null) {
                   //       final user = await SecureStorage.getUserData();
                   //       final role = user?.user?.userType?.toLowerCase() ?? '';
@@ -286,6 +290,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                   //       "DEBUG >> Current UserType: ${UserHelper.userType}",
                   //     );
                   //
+                  //     /// 2️⃣ Guest → Register
                   //     if (UserHelper.isGuest) {
                   //       if (!Get.isRegistered<AuthController>()) {
                   //         Get.put(AuthController());
@@ -293,52 +298,51 @@ class _HomeHeaderState extends State<HomeHeader> {
                   //       Get.to(
                   //         () => const RegisterScreen(role: UserRole.seller),
                   //       );
+                  //       return;
                   //     }
                   //
+                  //     /// 3️⃣ Buyer → Seller conversion
                   //     if (UserHelper.isBuyer) {
                   //       Get.to(() => const SellerConversionScreen());
+                  //       return;
                   //     }
                   //
-                  //     // Handle behavior by role
+                  //     /// 4️⃣ Seller flow
                   //     if (UserHelper.isSeller) {
-                  //       // ✅ Seller → can create property directly
+                  //       /// Aadhar check (common for all sellers)
                   //       if (!UserHelper.isAadharVerified) {
                   //         Get.to(() => AadharAuthScreen());
-                  //       } else {
-                  //         if (UserHelper.isSellerOwner) {
-                  //           Get.to(
-                  //             () => CreatePropertyScreen(
-                  //               // sellerType: mapUserRoleToSellerType(
-                  //               //   UserRole.seller,
-                  //               // ),
-                  //               isLogin: true,
-                  //             ),
+                  //         return;
+                  //       }
+                  //
+                  //       /// 4A️⃣ Seller → Owner
+                  //       if (UserHelper.isSellerOwner) {
+                  //         Get.to(
+                  //           () => const CreatePropertyScreen(isLogin: true),
+                  //         );
+                  //         return;
+                  //       }
+                  //
+                  //       /// 4B️⃣ Seller → Builder
+                  //       if (UserHelper.isSellerBuilder) {
+                  //         if (!Get.isRegistered<ProjectWizardController>(
+                  //           tag: "builder",
+                  //         )) {
+                  //           Get.lazyPut(
+                  //             () =>
+                  //                 ProjectWizardController(isBuilderView: true),
+                  //             tag: "builder",
                   //           );
                   //         }
-                  //       }
                   //
-                  //       if (!UserHelper.isAadharVerified) {
-                  //         Get.to(() => AadharAuthScreen());
-                  //       } else {
-                  //         if (UserHelper.isSellerBuilder) {
-                  //           if (Get.isRegistered<ProjectWizardController>(
-                  //             tag: "builder",
-                  //           )) {
-                  //             Get.find<ProjectWizardController>(tag: "builder");
-                  //           } else {
-                  //             Get.lazyPut(
-                  //               () => ProjectWizardController(
-                  //                 isBuilderView: true,
-                  //               ),
-                  //               tag: "builder",
-                  //             );
-                  //           }
-                  //           Get.to(() => CreateProjectScreen());
-                  //         }
+                  //         Get.to(() => CreateProjectScreen());
+                  //         return;
                   //       }
                   //     }
-                  //   } catch (e) {
+                  //   } catch (e, s) {
                   //     print("Error checking user type: $e");
+                  //     print(s);
+                  //
                   //     Get.snackbar(
                   //       "Error",
                   //       "Something went wrong. Please try again.",
@@ -383,34 +387,26 @@ class _HomeHeaderState extends State<HomeHeader> {
                       /// 4️⃣ Seller flow
                       if (UserHelper.isSeller) {
                         /// Aadhar check (common for all sellers)
-                        if (!UserHelper.isAadharVerified) {
-                          Get.to(() => AadharAuthScreen());
-                          return;
-                        }
+                        // if (!UserHelper.isAadharVerified) {
+                        //   Get.to(() => AadharAuthScreen());
+                        //   return;
+                        // }
 
                         /// 4A️⃣ Seller → Owner
                         if (UserHelper.isSellerOwner) {
-                          Get.to(
-                            () => const CreatePropertyScreen(isLogin: true),
-                          );
+                          Get.to(() => const SellerDashboardScreen());
                           return;
                         }
 
                         /// 4B️⃣ Seller → Builder
                         if (UserHelper.isSellerBuilder) {
-                          if (!Get.isRegistered<ProjectWizardController>(
-                            tag: "builder",
-                          )) {
-                            Get.lazyPut(
-                              () =>
-                                  ProjectWizardController(isBuilderView: true),
-                              tag: "builder",
-                            );
-                          }
-
-                          Get.to(() => CreateProjectScreen());
+                          Get.to(() => BuilderMainScreen());
                           return;
                         }
+                      }
+
+                      if (UserHelper.isContractor) {
+                        Get.to(() => ContractorMainScreen());
                       }
                     } catch (e, s) {
                       print("Error checking user type: $e");
@@ -436,7 +432,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                       border: Border.all(color: ColorRes.grey.withOpacity(0.2)),
                     ),
                     child: const Icon(
-                      Icons.add,
+                      Icons.dashboard_outlined,
                       color: ColorRes.primary,
                       size: 24,
                     ),

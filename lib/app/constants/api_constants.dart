@@ -62,6 +62,8 @@ class ApiConstants {
   // Lead
   static String get leads => "$baseURL/lead";
 
+  static String get visit => "$baseURL/visit";
+
   static String get news => "$baseURL/newsArticle";
 
   static String get platformService => "$baseURL/platformService";

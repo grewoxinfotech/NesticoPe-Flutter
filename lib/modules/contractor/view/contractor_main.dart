@@ -9,14 +9,12 @@ import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_in
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
 
-
 import 'package:get/get.dart';
 
 import '../controller/contractor_navigate_controller.dart';
 import 'contractor_plan/contractor_plan_screen.dart';
 import 'dashboard/contractor_dashboard.dart';
 import 'lead/contractor_lead.dart';
-
 
 class ContractorMainScreen extends StatelessWidget {
   const ContractorMainScreen({Key? key}) : super(key: key);
@@ -32,22 +30,21 @@ class ContractorMainScreen extends StatelessWidget {
       // ContractorService(),
       ContractorLeadScreen(),
       ContractorInquiryScreen(),
-      ContractorProfileScreen()
+      ContractorProfileScreen(),
       // BuilderSubscriptionPlanScreen(),
       // SellerProfileScreen(),
     ];
 
     return Scaffold(
       body: Obx(
-            () => IndexedStack(
+        () => IndexedStack(
           index: navigationController.currentIndex.value,
           children: screens,
         ),
       ),
 
-
       bottomNavigationBar: Obx(
-            () => SafeArea(
+        () => SafeArea(
           child: BottomNavigationBar(
             currentIndex: navigationController.currentIndex.value,
             onTap: navigationController.changeTabIndex,
@@ -67,36 +64,40 @@ class ContractorMainScreen extends StatelessWidget {
             items: const [
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.dashboard, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.dashboard_outlined, size: 22),
                 ),
                 label: 'Dashboard',
               ),
+
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.inventory, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.location_city_outlined, size: 22),
                 ),
                 label: 'Project',
               ),
+
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.people, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.groups_outlined, size: 22),
                 ),
                 label: 'Leads',
               ),
+
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.disc_full_rounded, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.support_agent_outlined, size: 22),
                 ),
                 label: 'Inquiry',
               ),
+
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.person, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.person_outline_rounded, size: 22),
                 ),
                 label: 'Profile',
               ),

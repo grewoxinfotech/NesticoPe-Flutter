@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../dashboard_screen.dart';
 import 'dashboard_header.dart';
 
-class DashboardLayout extends StatelessWidget{
+class DashboardLayout extends StatelessWidget {
   final Widget? floatingButton;
   final Widget child;
 
-  const DashboardLayout({super.key,  this.floatingButton, required this.child});
-
+  DashboardLayout({super.key, this.floatingButton, required this.child});
+  RxString name = ''.obs;
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final user = await SecureStorage.getUserData();
+      if (user != null) {
+        if (user.user?.firstName != null && user.user?.lastName != null) {
+          name.value = '${user.user!.firstName} ${user.user!.lastName}';
+        } else {
+          if (user.user?.username != null) {
+            name.value = user.user!.username!;
+          }
+        }
+      }
+    });
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
@@ -31,10 +44,12 @@ class DashboardLayout extends StatelessWidget{
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            DashboardHeader(
-              title: 'Welcome Back!',
-              subtitle: 'Manage your properties efficiently',
-              icon: Icons.home_work_rounded,
+            Obx(
+              () => DashboardHeader(
+                title: 'Welcome, ${name.value}',
+                subtitle: 'Manage your properties efficiently',
+                // icon: Icons.home_work_rounded,
+              ),
             ),
             const SizedBox(height: 20),
             child,
@@ -49,5 +64,4 @@ class DashboardLayout extends StatelessWidget{
       floatingActionButton: floatingButton,
     );
   }
-
 }

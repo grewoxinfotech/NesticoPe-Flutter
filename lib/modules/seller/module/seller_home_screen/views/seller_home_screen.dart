@@ -14,9 +14,11 @@ import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/vie
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/utils/formater/formater.dart';
+import '../../../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../../app/widgets/texts/headline_text.dart';
 import '../../../../../data/network/property/models/property_model.dart';
 import '../../../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
+import '../../../../aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../../../builder/view/builder_dashboard.dart';
 import '../../../../dashboard/views/widget/dashboard_layout.dart';
 import '../../../../profile/controllers/buyer_profiledata.dart';
@@ -216,7 +218,7 @@ class SellerHomeScreen extends StatefulWidget {
 
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
   final controller = Get.find<PropertyController>();
-  final profileController = Get.find<BuyerProfileDataController>();
+  final profileController = Get.put(BuyerProfileDataController());
 
   @override
   void initState() {
@@ -562,7 +564,11 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
     return DashboardLayout(
       floatingButton: FloatingActionButton.extended(
         onPressed: () {
-          Get.to(CreatePropertyScreen());
+          if (!UserHelper.isAadharVerified) {
+            Get.to(() => AadharAuthScreen());
+          } else {
+            Get.to(CreatePropertyScreen(isLogin: true));
+          }
         },
         label: Text(
           '+ Add Property',
@@ -638,7 +644,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                               // ),
                             ],
                           ),
-                          SizedBox(height: 10,),
+                          SizedBox(height: 10),
                           OverViewCard(
                             property: controller.items,
                             overview: overview,
@@ -650,7 +656,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           }),
 
           Padding(
-            padding: EdgeInsets.symmetric( vertical: 12),
+            padding: EdgeInsets.symmetric(vertical: 12),
             child: Column(
               children: [
                 Obx(() => buildSellerLeadGraph(overviewController)),
@@ -1583,7 +1589,11 @@ Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyBarChart(monthlyData: monthlyData, months: months,color: ColorRes.green,),
+          child: MonthlyBarChart(
+            monthlyData: monthlyData,
+            months: months,
+            color: ColorRes.green,
+          ),
         ),
       ],
     ),

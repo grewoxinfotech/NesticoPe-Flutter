@@ -7,9 +7,11 @@ import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_lay
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 
 import '../../../app/utils/formater/formater.dart';
+import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../app/widgets/texts/headline_text.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
+import '../../aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../property/controllers/property_controller.dart';
 import '../../reseller/view/property_reseller.dart';
@@ -52,15 +54,16 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
     return DashboardLayout(
       floatingButton: FloatingActionButton.extended(
         onPressed: () {
-          final controller = Get.put(
-            ProjectWizardController(isBuilderView: false),
-            tag: "builder",
-          );
-          controller.resetForm();
-          Get.to(CreateProjectScreen());
-          // Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
-          //     Get.put(ProjectWizardController());
-          //   },));
+          if (!UserHelper.isAadharVerified) {
+            Get.to(() => AadharAuthScreen());
+          } else {
+            final controller = Get.put(
+              ProjectWizardController(isBuilderView: false),
+              tag: "builder",
+            );
+            controller.resetForm();
+            Get.to(CreateProjectScreen());
+          }
         },
         label: Text(
           '+ Add Project',

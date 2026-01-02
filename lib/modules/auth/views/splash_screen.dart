@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/database/secure_storage_service.dart';
+import '../../builder/view/builder_main_screen.dart';
+import '../../contractor/view/contractor_main.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../home/views/select_city_screen/select_city_screen.dart';
 
@@ -59,16 +62,14 @@ class _SplashScreenState extends State<SplashScreen>
       final String? token = await SecureStorage.getToken();
       final String? selectedCity =
           await SecureStorage.getSelectedCity(); // 🆕 store selected city locally
-      if(!isLogin)
-        {
-          final data = await SecureStorage.getTermAndConditionValue();
-          log("Sjhdshuh $data");
-          bool isAcceptable=data=="true";
-          if(!isAcceptable) {
-            await SecureStorage.saveTermAndConditionValue(false.toString());
-          }
-
+      if (!isLogin) {
+        final data = await SecureStorage.getTermAndConditionValue();
+        log("Sjhdshuh $data");
+        bool isAcceptable = data == "true";
+        if (!isAcceptable) {
+          await SecureStorage.saveTermAndConditionValue(false.toString());
         }
+      }
 
       print(
         "DEBUG >> isLogin=$isLogin, token=$token, role=${UserHelper.userType}, city=$selectedCity",
@@ -94,6 +95,23 @@ class _SplashScreenState extends State<SplashScreen>
 
       // ✅ Continue to dashboard (guest or logged in)
       Get.put(PropertyFavoriteController(), permanent: true);
+
+      if (UserHelper.isBuyer) {
+        Get.offAll(() => const DashboardScreen());
+        return;
+      }
+      if (UserHelper.isSellerOwner) {
+        Get.offAll(() => const SellerDashboardScreen());
+        return;
+      }
+      if (UserHelper.isSellerBuilder) {
+        Get.offAll(() => const BuilderMainScreen());
+        return;
+      }
+      if (UserHelper.isContractor) {
+        Get.offAll(() => const ContractorMainScreen());
+        return;
+      }
       Get.offAll(() => const DashboardScreen());
     } catch (e) {
       print("❌ Error during splash init: $e");

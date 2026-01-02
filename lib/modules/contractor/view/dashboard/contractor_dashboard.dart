@@ -7,10 +7,13 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../app/utils/formater/formater.dart';
+import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
+import '../../../aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../../dashboard/views/dashboard_screen.dart';
 import '../../../reseller/view/property_reseller.dart';
 import '../../../reseller/widget/graph/linear_graph.dart';
 import '../../controller/contractor_my_service_controller.dart';
+import '../widget/create_service_from.dart';
 
 class ContractorDashboard extends StatefulWidget {
   const ContractorDashboard({super.key});
@@ -358,6 +361,23 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
             );
           });
         },
+      ),
+      floatingButton: FloatingActionButton.extended(
+        onPressed: () {
+          if (!UserHelper.isAadharVerified) {
+            Get.to(() => AadharAuthScreen());
+          } else {
+            controller.clearForm();
+            Get.to(() => AddServiceScreen());
+          }
+        },
+        label: Text(
+          '+ Add Service',
+          style: TextStyle(
+            color: ColorRes.white,
+            fontWeight: AppFontWeights.semiBold,
+          ),
+        ),
       ),
     );
   }

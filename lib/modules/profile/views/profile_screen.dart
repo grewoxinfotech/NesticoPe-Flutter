@@ -614,6 +614,7 @@ import '../../builder/view/builder_main_screen.dart';
 import '../../contractor/view/contractor_main.dart';
 import '../../property/controllers/property_controller.dart';
 
+import '../../visit/screen/visit_screen.dart';
 import '../controllers/buyer_profiledata.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -704,11 +705,17 @@ class ProfileScreen extends StatelessWidget {
                         onTap: () => Get.to(() => UserActivityScreen()),
                       ),
                       SettingsMenuTile(
-                        icon: Icons.subscriptions_outlined,
-                        title: "My Subscription",
-                        subTitle: "show your all plan",
-                        onTap: () => Get.to(() => UserSubscriptionDetails()),
+                        icon: Icons.travel_explore,
+                        title: "Visits",
+                        subTitle: "Track your Visit",
+                        onTap: () => Get.to(() => VisitScreen()),
                       ),
+                      // SettingsMenuTile(
+                      //   icon: Icons.subscriptions_outlined,
+                      //   title: "My Subscription",
+                      //   subTitle: "show your all plan",
+                      //   onTap: () => Get.to(() => UserSubscriptionDetails()),
+                      // ),
                       if (!UserHelper.isGuest) ...[
                         SettingsMenuTile(
                           icon: Icons.card_giftcard,

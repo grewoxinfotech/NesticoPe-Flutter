@@ -35,6 +35,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
       final plans = controller.items;
 
       return ListView.separated(
+        physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: plans.length,
         padding: const EdgeInsets.all(12),
@@ -60,9 +61,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
 
       return GestureDetector(
         onTap: () async {
-
-
-            selectedPlanIndex.value = index;
+          selectedPlanIndex.value = index;
         },
         child: Container(
           decoration: BoxDecoration(
@@ -80,7 +79,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(plan),
-              _buildPriceSection(plan),
+              // _buildPriceSection(plan),
               const SizedBox(height: 8),
               _buildFeaturePreview(plan),
               _buildShowMore(plan, index),
@@ -191,7 +190,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children:
-              plan.features.toFeatureList().take(3).map((f) {
+              plan.features.toFeatureList().take(5).map((f) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
@@ -262,88 +261,75 @@ class SubscriptionPlansWidget extends StatelessWidget {
           onPressed:
               isSelected
                   ? () async {
-                   if(UserHelper.isSellerBuilder)
-                     {
-                       log("Plan buy or not ");
-                       selectedPlanIndex.value = index;
-                       try {
-                         final user =
-                         await SecureStorage.getUserData();
+                    if (UserHelper.isSellerBuilder) {
+                      log("Plan buy or not ");
+                      selectedPlanIndex.value = index;
+                      try {
+                        final user = await SecureStorage.getUserData();
 
-                         if (user == null) {
-                           Get.snackbar(
-                             'Error',
-                             'No user data found. Please log in.',
-                             snackPosition: SnackPosition.BOTTOM,
-                             backgroundColor: ColorRes.error
-                                 .withOpacity(0.1),
-                             colorText: ColorRes.error,
-                           );
-                           return;
-                         }
+                        if (user == null) {
+                          Get.snackbar(
+                            'Error',
+                            'No user data found. Please log in.',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: ColorRes.error.withOpacity(0.1),
+                            colorText: ColorRes.error,
+                          );
+                          return;
+                        }
 
-                         final fullName =
-                             user.user?.fullName ?? '';
-                         final firstName =
-                             user.user?.firstName ?? '';
-                         final username =
-                             user.user?.username ?? '';
-                         final email = user.user?.email ?? '';
-                         final phone = user.user?.phone ?? '';
+                        final fullName = user.user?.fullName ?? '';
+                        final firstName = user.user?.firstName ?? '';
+                        final username = user.user?.username ?? '';
+                        final email = user.user?.email ?? '';
+                        final phone = user.user?.phone ?? '';
 
-                         final displayName =
-                         (firstName.isEmpty
-                             ? username
-                             : fullName)
-                             .trim();
+                        final displayName =
+                            (firstName.isEmpty ? username : fullName).trim();
 
-                         if (Get.context == null) {
-                           Get.snackbar(
-                             'Error',
-                             'UI not ready to show dialog.',
-                             snackPosition: SnackPosition.BOTTOM,
-                             backgroundColor: ColorRes.error
-                                 .withOpacity(0.1),
-                             colorText: ColorRes.error,
-                           );
-                           return;
-                         }
+                        if (Get.context == null) {
+                          Get.snackbar(
+                            'Error',
+                            'UI not ready to show dialog.',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: ColorRes.error.withOpacity(0.1),
+                            colorText: ColorRes.error,
+                          );
+                          return;
+                        }
 
-                         addInquiryForPlanBuy(
-                           displayName,
-                           email,
-                           phone,
-                           plan.id,
-                           user.user?.id??''
-                         );
-                       } catch (e, s) {
-                         debugPrint(
-                           '❌ Error in Get Offer button: $e',
-                         );
-                         debugPrint('$s');
-                         Get.snackbar(
-                           'Error',
-                           'Something went wrong. Please try again.',
-                           snackPosition: SnackPosition.BOTTOM,
-                           backgroundColor: ColorRes.error
-                               .withOpacity(0.1),
-                           colorText: ColorRes.error,
-                         );
-                       }
-                     }
-                   else{
-                     final controller = Get.find<SubscriptionPlanController>();
-                     final success = await controller.buySubscriptionPlan(
-                       plan.id,
-                     );
-                     if (success) {
-                       NesticoPeSnackBar.showAwesomeSnackbar(
-                         title: 'Success',
-                         message: "Plan purchased successfully",
-                         contentType: ContentType.success,
-                       );
-                     }
-                   }
+                        addInquiryForPlanBuy(
+                          displayName,
+                          email,
+                          phone,
+                          plan.id,
+                          user.user?.id ?? '',
+                          isPlanInquiry: true,
+                        );
+                      } catch (e, s) {
+                        debugPrint('❌ Error in Get Offer button: $e');
+                        debugPrint('$s');
+                        Get.snackbar(
+                          'Error',
+                          'Something went wrong. Please try again.',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: ColorRes.error.withOpacity(0.1),
+                          colorText: ColorRes.error,
+                        );
+                      }
+                    } else {
+                      final controller = Get.find<SubscriptionPlanController>();
+                      final success = await controller.buySubscriptionPlan(
+                        plan.id,
+                      );
+                      if (success) {
+                        NesticoPeSnackBar.showAwesomeSnackbar(
+                          title: 'Success',
+                          message: "Plan purchased successfully",
+                          contentType: ContentType.success,
+                        );
+                      }
+                    }
                   }
                   : () => selectedPlanIndex.value = index,
           style: ElevatedButton.styleFrom(
@@ -383,7 +369,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(plan),
-            _buildPriceSection(plan),
+            // _buildPriceSection(plan),
             const SizedBox(height: 12),
 
             // Full feature list
@@ -422,14 +408,15 @@ class SubscriptionPlansWidget extends StatelessWidget {
     );
   }
 }
-void addInquiryForPlanBuy(
-    String name,
-    String email,
-    String phone,
-    String plan,
-    String userId,
 
-    ) {
+void addInquiryForPlanBuy(
+  String name,
+  String email,
+  String phone,
+  String plan,
+  String userId, {
+  bool isPlanInquiry = false,
+}) {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController(text: name);
@@ -467,9 +454,11 @@ void addInquiryForPlanBuy(
                 ),
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        "Get Offer Price",
+                        isPlanInquiry
+                            ? "Request Plan Upgrade"
+                            : "Get Offer Price",
                         style: TextStyle(
                           fontSize: AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
@@ -506,9 +495,9 @@ void addInquiryForPlanBuy(
                         isRequired: true,
                         validator:
                             (value) =>
-                        value == null || value.trim().isEmpty
-                            ? 'Name is required'
-                            : null,
+                                value == null || value.trim().isEmpty
+                                    ? 'Name is required'
+                                    : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -594,7 +583,8 @@ void addInquiryForPlanBuy(
                       child: ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            final controller = Get.find<SubscriptionPlanController>();
+                            final controller =
+                                Get.find<SubscriptionPlanController>();
 
                             // perform your submission logic here
                             final inquiry = {
@@ -603,21 +593,18 @@ void addInquiryForPlanBuy(
                               "name": name,
                               "email": email,
                               "phone": phone,
-                              "status": "pending"
+                              "status": "pending",
                             };
-                            final success = await controller.subscriptionPlanInquiry(
-                             inquiry
-                            );
+                            final success = await controller
+                                .subscriptionPlanInquiry(inquiry);
 
                             if (success) {
-
                               CustomSnackBar.show(
                                 Get.overlayContext!,
                                 message: "Inquiry submitted Successfully",
                                 type: SnackBarType.success,
                               );
                               Get.back();
-
                             }
                             // if (success) {
                             //   NesticoPeSnackBar.showAwesomeSnackbar(
@@ -626,7 +613,6 @@ void addInquiryForPlanBuy(
                             //     contentType: ContentType.success,
                             //   );
                             // }
-
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -636,13 +622,15 @@ void addInquiryForPlanBuy(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.send, size: 20),
                             SizedBox(width: 8),
                             Text(
-                              'Request Offer Price',
+                              isPlanInquiry
+                                  ? 'Submit Inquiry'
+                                  : 'Request Offer Price',
 
                               style: TextStyle(
                                 fontSize: AppFontSizes.medium,
@@ -664,4 +652,3 @@ void addInquiryForPlanBuy(
     barrierDismissible: true,
   );
 }
-

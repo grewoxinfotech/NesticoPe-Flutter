@@ -99,6 +99,7 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
 import 'package:housing_flutter_app/modules/builder/view/builder_form_screen.dart';
 import 'package:housing_flutter_app/modules/builder/view/subscription_plan/builder_sunbscription_plan.dart';
+import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
@@ -118,6 +119,7 @@ class BuilderMainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final navigationController = Get.put(BuilderNavigationController());
     Get.put(ProjectWizardController(isBuilderView: true), tag: "builder");
+    Get.lazyPut(() => PropertyController());
 
     final screens = [
       const BuilderDashboard(),
@@ -156,36 +158,40 @@ class BuilderMainScreen extends StatelessWidget {
             items: const [
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.dashboard, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.dashboard_outlined, size: 22),
                 ),
                 label: 'Dashboard',
               ),
+
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.inventory, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.location_city_outlined, size: 22),
                 ),
                 label: 'Projects',
               ),
+
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.people, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.groups_outlined, size: 22),
                 ),
                 label: 'Leads',
               ),
+
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.card_giftcard_outlined, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.workspace_premium_outlined, size: 22),
                 ),
                 label: 'Plans',
               ),
+
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.person, size: 22),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.person_outline_rounded, size: 22),
                 ),
                 label: 'Profile',
               ),
