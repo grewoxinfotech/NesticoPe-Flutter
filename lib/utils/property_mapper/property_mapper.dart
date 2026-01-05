@@ -198,10 +198,10 @@ extension ItemsMapper on Items.Items {
       pricePerSqft: source.pricePerSqft,
       brokerCommission: source.brokerCommission,
       is_for_sellorrent: source.is_for_sellorrent,
-      propertyPriceFuture:
-      _mapPropertyPriceYearlyList(source.priceFuture),
-      propertyPricePast:
-      _mapPropertyPriceYearlyList(source.pricePast),
+      propertyPriceFuture: _mapPropertyPriceYearlyList(
+        source.propertyPriceTrend,
+      ),
+      propertyPricePast: _mapPropertyPriceYearlyList(source.propertyPriceTrend),
       // brokerNegotiable: source.brokerNegotiable,
       propertySecurityDeposit: source.propertySecurityDeposit,
       lockInPeriod: source.lockInPeriod,
@@ -213,16 +213,17 @@ extension ItemsMapper on Items.Items {
   }
 
   List<AddPropertyModel.PropertyPriceYearly> _mapPropertyPriceYearlyList(
-      List<Items.PropertyPriceYear> source,
-      ) {
+    List<Items.PropertyPriceYear> source,
+  ) {
     return source
-        .map((e) => AddPropertyModel.PropertyPriceYearly(
-      year: e.year,
-      price: e.price,
-    ))
+        .map(
+          (e) => AddPropertyModel.PropertyPriceYearly(
+            year: e.year,
+            price: e.price,
+          ),
+        )
         .toList();
   }
-
 
   AddPropertyModel.PossessionInfo _mapPossessionInfo(
     Items.PossessionInfo source,

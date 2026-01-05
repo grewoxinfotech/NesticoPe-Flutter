@@ -1656,32 +1656,51 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
     ).format(value);
   }
 
+  // List<_ChartPoint> _generateChartData({
+  //   required List<PropertyPriceYear> past,
+  //   required List<PropertyPriceYear> future,
+  //   required PropertyPriceYear current,
+  // }) {
+  //   final List<_ChartPoint> data = [];
+  //
+  //   // Sort and add past data
+  //   final sortedPast = List<PropertyPriceYear>.from(past)
+  //     ..sort((a, b) => a.year.compareTo(b.year));
+  //
+  //   for (final p in sortedPast) {
+  //     data.add(_ChartPoint(p.year, p.pricePerSqft, true));
+  //   }
+  //
+  //   data.add(_ChartPoint(current.year, current.pricePerSqft, true));
+  //
+  //   // Sort and add future data
+  //   final sortedFuture = List<PropertyPriceYear>.from(future)
+  //     ..sort((a, b) => a.year.compareTo(b.year));
+  //
+  //   for (final f in sortedFuture) {
+  //     data.add(_ChartPoint(f.year, f.pricePerSqft, false));
+  //   }
+  //
+  //   return data;
+  // }
+
   List<_ChartPoint> _generateChartData({
-    required List<PropertyPriceYear> past,
-    required List<PropertyPriceYear> future,
-    required PropertyPriceYear current,
+    required List<PropertyPriceYear> priceTrend,
   }) {
-    final List<_ChartPoint> data = [];
+    final int currentYear = DateTime.now().year;
 
-    // Sort and add past data
-    final sortedPast = List<PropertyPriceYear>.from(past)
+    final sortedTrend = List<PropertyPriceYear>.from(priceTrend)
       ..sort((a, b) => a.year.compareTo(b.year));
 
-    for (final p in sortedPast) {
-      data.add(_ChartPoint(p.year, p.pricePerSqft, true));
-    }
-
-    data.add(_ChartPoint(current.year, current.pricePerSqft, true));
-
-    // Sort and add future data
-    final sortedFuture = List<PropertyPriceYear>.from(future)
-      ..sort((a, b) => a.year.compareTo(b.year));
-
-    for (final f in sortedFuture) {
-      data.add(_ChartPoint(f.year, f.pricePerSqft, false));
-    }
-
-    return data;
+    return sortedTrend
+        .map(
+          (p) => _ChartPoint(
+            p.year,
+            p.pricePerSqft,
+            p.year <= currentYear, // past + current
+          ),
+        )
+        .toList();
   }
 
   PropertyTypeData? _getPropertyTypeData() {
@@ -1769,9 +1788,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   Widget build(BuildContext context) {
     final financialInfo = widget.currentProperty.propertyDetails?.financialInfo;
 
-    if (financialInfo == null ||
-        financialInfo.pricePast.isEmpty ||
-        financialInfo.priceFuture.isEmpty) {
+    if (financialInfo == null || financialInfo.propertyPriceTrend.isEmpty) {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(24.0),
@@ -1785,18 +1802,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
       _matrixController.marketInsight.value;
 
       final myPropertyData = _generateChartData(
-        past: financialInfo.pricePast,
-        future: financialInfo.priceFuture,
-        current: PropertyPriceYear(
-          year: DateTime.parse(widget.currentProperty.createdAt!).year,
-          price: widget.currentProperty.propertyDetails!.financialInfo!.price,
-          pricePerSqft:
-              widget
-                  .currentProperty
-                  .propertyDetails!
-                  .financialInfo!
-                  .pricePerSqft,
-        ),
+        priceTrend: financialInfo.propertyPriceTrend,
       );
 
       // Validate main property data
@@ -1864,14 +1870,14 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
               .toDouble();
 
       // Calculate metrics with null safety
-      final pastStart = financialInfo.pricePast.first.pricePerSqft;
-      final pastEnd = financialInfo.pricePast.last.pricePerSqft;
-      final futureEnd = financialInfo.priceFuture.last.pricePerSqft;
+      // final pastStart = financialInfo.pricePast.first.pricePerSqft;
+      // final pastEnd = financialInfo.pricePast.last.pricePerSqft;
+      // final futureEnd = financialInfo.priceFuture.last.pricePerSqft;
 
-      final pastGrowth =
-          pastStart > 0 ? ((pastEnd - pastStart) / pastStart) * 100 : 0.0;
-      final futureROI =
-          pastEnd > 0 ? ((futureEnd - pastEnd) / pastEnd) * 100 : 0.0;
+      // final pastGrowth =
+      //     pastStart > 0 ? ((pastEnd - pastStart) / pastStart) * 100 : 0.0;
+      // final futureROI =
+      //     pastEnd > 0 ? ((futureEnd - pastEnd) / pastEnd) * 100 : 0.0;
 
       return _buildChartUI(
         context,
@@ -1879,8 +1885,8 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
         minY,
         maxY,
         yInterval,
-        pastGrowth,
-        futureROI,
+        // pastGrowth,
+        // futureROI,
       );
     });
   }
@@ -1891,8 +1897,8 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
     double minY,
     double maxY,
     double yInterval,
-    double pastGrowth,
-    double futureROI,
+    // double pastGrowth,
+    // double futureROI,
   ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -2110,15 +2116,12 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   Widget _buildPriceSummary() {
     /// My property summary
     final myChart = _generateChartData(
-      past: widget.currentProperty.propertyDetails!.financialInfo!.pricePast,
-      future:
-          widget.currentProperty.propertyDetails!.financialInfo!.priceFuture,
-      current: PropertyPriceYear(
-        year: DateTime.parse(widget.currentProperty.createdAt!).year,
-        price: widget.currentProperty.propertyDetails!.financialInfo!.price,
-        pricePerSqft:
-            widget.currentProperty.propertyDetails!.financialInfo!.pricePerSqft,
-      ),
+      priceTrend:
+          widget
+              .currentProperty
+              .propertyDetails!
+              .financialInfo!
+              .propertyPriceTrend,
     );
     final mySummary = _summaryFromChart(myChart);
 
@@ -3039,31 +3042,13 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
                                 property.propertyDetails!.financialInfo!;
 
                             // Validate financial data
-                            if (financialInfo.pricePast.isEmpty ||
-                                financialInfo.priceFuture.isEmpty) {
+                            if (financialInfo.propertyPriceTrend.isEmpty) {
                               continue; // Skip properties with incomplete data
                             }
 
                             // Generate chart data for this property
                             final chartData = _generateChartData(
-                              past: financialInfo.pricePast,
-                              future: financialInfo.priceFuture,
-                              current: PropertyPriceYear(
-                                year:
-                                    DateTime.parse(
-                                      widget.currentProperty.createdAt!,
-                                    ).year,
-                                price:
-                                    property
-                                        .propertyDetails!
-                                        .financialInfo!
-                                        .price,
-                                pricePerSqft:
-                                    property
-                                        .propertyDetails!
-                                        .financialInfo!
-                                        .pricePerSqft,
-                              ),
+                              priceTrend: financialInfo.propertyPriceTrend,
                             );
 
                             // Validate chart data
@@ -3073,8 +3058,11 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
 
                             // Calculate average price
                             final avgPrice =
-                                financialInfo.pricePast.isNotEmpty
-                                    ? financialInfo.pricePast.last.pricePerSqft
+                                financialInfo.propertyPriceTrend.isNotEmpty
+                                    ? financialInfo
+                                        .propertyPriceTrend
+                                        .last
+                                        .pricePerSqft
                                     : 0;
 
                             _selectedProperties.add(

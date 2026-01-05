@@ -1010,61 +1010,6 @@ class ParkingInfo {
   };
 }
 
-// class FinancialInfo {
-//   double price;
-//   double? maintenance;
-//   double propertyRentPerMonth;
-//   final double? monthlyRent;
-//   double pricePerSqft;
-//   double brokerCommission;
-//   double propertySecurityDeposit;
-//   bool negotiable;
-//   int? noticePeriod; // For PG properties
-//   int? lockInPeriod; // For PG properties
-//
-//   FinancialInfo({
-//     this.price = 0,
-//     this.maintenance,
-//     this.propertyRentPerMonth = 0,
-//     this.monthlyRent,
-//     this.pricePerSqft = 0,
-//     this.brokerCommission = 0,
-//     this.propertySecurityDeposit = 0,
-//     this.negotiable = false,
-//     this.noticePeriod,
-//     this.lockInPeriod,
-//   });
-//
-//   FinancialInfo.fromJson(Map<String, dynamic> json)
-//     : price = TypeConverter.parseDouble(json['property_price']) ?? 0,
-//       maintenance = TypeConverter.parseDouble(json['maintenance']) ?? 0,
-//       propertyRentPerMonth =
-//           TypeConverter.parseDouble(json['property_rent_per_month']) ?? 0,
-//       pricePerSqft = TypeConverter.parseDouble(json['price_per_sqft']) ?? 0,
-//       brokerCommission =
-//           TypeConverter.parseDouble(json['broker_commission']) ?? 0,
-//       propertySecurityDeposit =
-//           TypeConverter.parseDouble(json['property_security_deposit']) ?? 0,
-//       monthlyRent = TypeConverter.parseDouble(json['monthlyRent']) ?? 0,
-//       negotiable = json['negotiable'] ?? false,
-//       noticePeriod = TypeConverter.parseInt(json['notice_period']),
-//       lockInPeriod = TypeConverter.parseInt(json['lock_in_period']);
-//
-//   Map<String, dynamic> toJson() {
-//     return {
-//       "property_price": price,
-//       "property_rent_per_month": propertyRentPerMonth,
-//       "maintenance": maintenance,
-//       "price_per_sqft": pricePerSqft,
-//       "broker_commission": brokerCommission,
-//       "property_security_deposit": propertySecurityDeposit,
-//       "negotiable": negotiable,
-//       if (noticePeriod != null) "notice_period": noticePeriod,
-//       if (lockInPeriod != null) "lock_in_period": lockInPeriod,
-//     };
-//   }
-// }
-
 class FinancialInfo {
   /// Sell price
   double price;
@@ -1097,11 +1042,8 @@ class FinancialInfo {
   /// Sell or Rent flag
   bool isForSellOrRent;
 
-  /// Historical prices
-  List<PropertyPriceYear> pricePast;
-
-  /// Future price projection
-  List<PropertyPriceYear> priceFuture;
+  /// Property price trend (past + future combined)
+  final List<PropertyPriceYear> propertyPriceTrend;
   final bool? is_for_sellorrent;
 
   FinancialInfo({
@@ -1116,8 +1058,7 @@ class FinancialInfo {
     this.noticePeriod,
     this.lockInPeriod,
     this.isForSellOrRent = false,
-    this.pricePast = const [],
-    this.priceFuture = const [],
+    this.propertyPriceTrend = const [],
     this.is_for_sellorrent,
   });
 
@@ -1141,13 +1082,8 @@ class FinancialInfo {
       noticePeriod: TypeConverter.parseInt(json['notice_period']),
       lockInPeriod: TypeConverter.parseInt(json['lock_in_period']),
       isForSellOrRent: json['is_for_sellorrent'] ?? false,
-      pricePast:
-          (json['property_price_past'] as List<dynamic>?)
-              ?.map((e) => PropertyPriceYear.fromJson(e))
-              .toList() ??
-          [],
-      priceFuture:
-          (json['property_price_future'] as List<dynamic>?)
+      propertyPriceTrend:
+          (json['property_price_trend'] as List<dynamic>?)
               ?.map((e) => PropertyPriceYear.fromJson(e))
               .toList() ??
           [],
@@ -1167,8 +1103,8 @@ class FinancialInfo {
       "notice_period": noticePeriod,
       "lock_in_period": lockInPeriod,
       "is_for_sellorrent": isForSellOrRent,
-      "property_price_past": pricePast.map((e) => e.toJson()).toList(),
-      "property_price_future": priceFuture.map((e) => e.toJson()).toList(),
+      "property_price_trend":
+          propertyPriceTrend.map((e) => e.toJson()).toList(),
       if (is_for_sellorrent != null) 'is_for_sellorrent': is_for_sellorrent,
     };
   }

@@ -4285,12 +4285,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     if (currentProperty
                                 .propertyDetails
                                 ?.financialInfo
-                                ?.pricePast !=
-                            null &&
-                        currentProperty
-                                .propertyDetails
-                                ?.financialInfo
-                                ?.priceFuture !=
+                                ?.propertyPriceTrend !=
                             null &&
                         currentProperty.investmentInsightModel != null) ...[
                       const SizedBox(height: 12),

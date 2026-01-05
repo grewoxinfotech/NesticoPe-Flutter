@@ -517,7 +517,8 @@ class CommonSearchField extends StatefulWidget {
 }
 
 class _CommonSearchFieldState extends State<CommonSearchField> {
-  final MicController micController = Get.find<MicController>();
+  // final MicController micController = Get.find<MicController>();
+  final MicController micController = Get.put(MicController());
   final GoogleMapSearchController controller =
       Get.find<GoogleMapSearchController>(tag: 'city');
 
