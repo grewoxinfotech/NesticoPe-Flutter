@@ -1048,6 +1048,7 @@ class FinancialInfo {
   final List<PropertyPriceYear> propertyPriceTrend;
 
   final bool? is_for_sellorrent;
+  final bool? isForSellOrRent;
 
   FinancialInfo({
     this.price = 0,
