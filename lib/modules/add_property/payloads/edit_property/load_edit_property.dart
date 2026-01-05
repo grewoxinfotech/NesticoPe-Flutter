@@ -18,7 +18,6 @@ class LoadEditPropertyPayload extends GetxController {
     AppLogger.structured("property Edit Payload for :  ", property.toJson());
     controller.propertyType.value =
         (property.type != null && property.type!.isNotEmpty)
-
             ? property.type!.capitalize.toString()
             : "";
     controller.lookingTo.value =
@@ -409,49 +408,54 @@ class LoadEditPropertyPayload extends GetxController {
     // controller.rent_MonthilyRent.text=property.propertyDetails?.financialInfo?.monthlyRent.toString()??'0.0';
     // controller.sell_ExpectedPrice.text=property.propertyDetails?.financialInfo?.propertyPrice.toString()??'0.0';
 
-    if (property.propertyDetails?.financialInfo?.propertyPricePast != null &&
-        property
-            .propertyDetails!
-            .financialInfo!
-            .propertyPricePast!
-            .isNotEmpty) {
-      final pastList =
-          property.propertyDetails!.financialInfo!.propertyPricePast!;
-      for (int i = 0; i < controller.pastPrices.length; i++) {
-        if (i < pastList.length) {
-          controller.pastPrices[i].text = (pastList[i].price ?? 0)
-              .toStringAsFixed(0);
-        } else {
-          controller.pastPrices[i].text = '0';
-        }
-      }
-    } else {
-      for (var textCtrl in controller.pastPrices) {
-        textCtrl.text = '0';
-      }
+    final trend =
+        property.propertyDetails?.financialInfo?.propertyPriceTrend
+            as List<PropertyPriceYearly>? ??
+        [];
+
+    final int currentYear = DateTime.now().year;
+
+    final int createdYear =
+        property.createdAt != null
+            ? DateTime.tryParse(property.createdAt!)?.year ?? 0
+            : 0;
+
+    // ✅ Sort correctly
+    final sortedTrend = List<PropertyPriceYearly>.from(trend)
+      ..sort((a, b) => a.year!.compareTo(b.year!));
+
+    // ✅ Remove created year
+    final filteredTrend =
+        sortedTrend.where((e) => e.year != createdYear).toList();
+
+    // ✅ Split
+    final pastTrend =
+        filteredTrend.where((e) => e.year! < currentYear).toList();
+
+    final futureTrend =
+        filteredTrend.where((e) => e.year! > currentYear).toList();
+
+    // ✅ Limit to 5
+    final last5Past =
+        pastTrend.length > 5
+            ? pastTrend.sublist(pastTrend.length - 5)
+            : pastTrend;
+
+    final next5Future =
+        futureTrend.length > 5 ? futureTrend.sublist(0, 5) : futureTrend;
+
+    /// 🏠 Past Prices
+    for (int i = 0; i < controller.pastPrices.length; i++) {
+      controller.pastPrices[i].text =
+          i < last5Past.length ? last5Past[i].price!.toStringAsFixed(0) : '0';
     }
 
-    // 🔮 Future 5 Years Prices
-    if (property.propertyDetails?.financialInfo?.propertyPriceFuture != null &&
-        property
-            .propertyDetails!
-            .financialInfo!
-            .propertyPriceFuture!
-            .isNotEmpty) {
-      final futureList =
-          property.propertyDetails!.financialInfo!.propertyPriceFuture!;
-      for (int i = 0; i < controller.futurePrices.length; i++) {
-        if (i < futureList.length) {
-          controller.futurePrices[i].text = (futureList[i].price ?? 0)
-              .toStringAsFixed(0);
-        } else {
-          controller.futurePrices[i].text = '0';
-        }
-      }
-    } else {
-      for (var textCtrl in controller.futurePrices) {
-        textCtrl.text = '0';
-      }
+    /// 🔮 Future Prices
+    for (int i = 0; i < controller.futurePrices.length; i++) {
+      controller.futurePrices[i].text =
+          i < next5Future.length
+              ? next5Future[i].price!.toStringAsFixed(0)
+              : '0';
     }
 
     /// Security Deposit

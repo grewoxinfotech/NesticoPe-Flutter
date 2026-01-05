@@ -30,6 +30,7 @@ extension ItemsMapper on Items.Items {
       ownerPhone: ownerPhone,
       ownerName: ownerName,
       ownerEmail: ownerEmail,
+      createdAt: createdAt,
     );
   }
 
@@ -200,10 +201,10 @@ extension ItemsMapper on Items.Items {
 
       brokerCommission: source.brokerCommission,
       is_for_sellorrent: source.is_for_sellorrent,
-      propertyPriceFuture: _mapPropertyPriceYearlyList(
+      propertyPriceTrend: _mapPropertyPriceYearlyList(
         source.propertyPriceTrend,
       ),
-      propertyPricePast: _mapPropertyPriceYearlyList(source.propertyPriceTrend),
+
       // brokerNegotiable: source.brokerNegotiable,
       propertySecurityDeposit: source.propertySecurityDeposit,
 

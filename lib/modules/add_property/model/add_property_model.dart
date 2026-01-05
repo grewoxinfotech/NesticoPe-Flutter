@@ -22,6 +22,7 @@ class AddPropertyModel {
   final String? ownerPhone;
   final String? ownerName;
   final String? ownerEmail;
+  final String? createdAt;
 
   AddPropertyModel({
     this.buildingName,
@@ -47,6 +48,7 @@ class AddPropertyModel {
     this.ownerPhone,
     this.ownerName,
     this.ownerEmail,
+    this.createdAt,
   });
 
   Map<String, dynamic> toJson() {
@@ -77,6 +79,7 @@ class AddPropertyModel {
     if (ownerPhone != null) data['ownerPhone'] = ownerPhone;
     if (ownerName != null) data['ownerName'] = ownerName;
     if (ownerEmail != null) data['ownerEmail'] = ownerEmail;
+    if (createdAt != null) data['created_at'] = createdAt;
 
     return data;
   }
@@ -466,12 +469,11 @@ class FinancialInfo {
   final int? noticePeriod;
   final bool? negotiable;
   final double? maintenanceCharges;
-  final List<PropertyPriceYearly>? propertyPricePast;
-  final List<PropertyPriceYearly>? propertyPriceFuture;
+  final List<PropertyPriceYearly>? propertyPriceTrend;
 
   final dynamic parkingCharges; // can be string or number
 
-  FinancialInfo( {
+  FinancialInfo({
     this.platformFees,
     this.is_for_sellorrent,
     this.propertyPrice,
@@ -484,8 +486,7 @@ class FinancialInfo {
     this.lockInPeriod,
     this.noticePeriod,
     this.negotiable,
-    this.propertyPriceFuture,
-    this.propertyPricePast,
+    this.propertyPriceTrend,
     this.maintenanceCharges,
     this.parkingCharges,
   });
@@ -503,13 +504,12 @@ class FinancialInfo {
           json['is_for_sellorrent'] is bool
               ? json['is_for_sellorrent']
               : (json['is_for_sellorrent']?.toString().toLowerCase() == 'true'),
-      propertyPriceFuture: json['property_price_future'] ?? 0.0,
-      propertyPricePast: json['property_price_past'] ?? 0.0,
+      propertyPriceTrend: json['property_price_trend'] ?? 0.0,
       brokerNegotiable:
           json['broker_negotiable'] is bool
               ? json['broker_negotiable']
               : (json['broker_negotiable']?.toString().toLowerCase() == 'true'),
-     platformFees: (json['platform_fees'] as num?)?.toDouble(),
+      platformFees: (json['platform_fees'] as num?)?.toDouble(),
       propertySecurityDeposit:
           (json['property_security_deposit'] as num?)?.toDouble(),
       lockInPeriod:
@@ -552,28 +552,21 @@ class FinancialInfo {
       data['maintenance_charges'] = maintenanceCharges;
     if (parkingCharges != null) data['parking_charges'] = parkingCharges;
 
-    // --- 🏠 Past 5-Year Price Data ---
-    if (propertyPricePast != null && propertyPricePast!.isNotEmpty) {
-      data['property_price_past'] =
-          propertyPricePast!.map((e) => e.toJson()).toList();
-    }
-
     // --- 🔮 Future 5-Year Price Data ---
-    if (propertyPriceFuture != null &&
-        propertyPriceFuture!.isNotEmpty &&
-        propertyPriceFuture!.any((e) => e.price != null && e.price != 0)) {
+    if (propertyPriceTrend != null &&
+        propertyPriceTrend!.isNotEmpty &&
+        propertyPriceTrend!.any((e) => e.price != null && e.price != 0)) {
       // Only include items where price is not 0 or null
-      final priceList = propertyPriceFuture!
-          .where((e) => e.price != null && e.price != 0)
-          .map((e) => e.toJson())
-          .toList();
+      final priceList =
+          propertyPriceTrend!
+              .where((e) => e.price != null && e.price != 0)
+              .map((e) => e.toJson())
+              .toList();
 
       if (priceList.isNotEmpty) {
-        data['property_price_future'] = priceList;
+        data['property_price_trend'] = priceList;
       }
     }
-
-
 
     return data;
   }
