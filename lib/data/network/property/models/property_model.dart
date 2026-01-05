@@ -1028,6 +1028,7 @@ class FinancialInfo {
 
   /// Broker commission
   double brokerCommission;
+  double plateFromFees;
 
   /// Security deposit
   double propertySecurityDeposit;
@@ -1040,10 +1041,12 @@ class FinancialInfo {
   int? lockInPeriod;
 
   /// Sell or Rent flag
-  bool isForSellOrRent;
+
+
 
   /// Property price trend (past + future combined)
   final List<PropertyPriceYear> propertyPriceTrend;
+
   final bool? is_for_sellorrent;
 
   FinancialInfo({
@@ -1053,13 +1056,17 @@ class FinancialInfo {
     this.maintenance,
     this.pricePerSqft = 0,
     this.brokerCommission = 0,
+    this.plateFromFees=0,
     this.propertySecurityDeposit = 0,
     this.negotiable = false,
     this.noticePeriod,
     this.lockInPeriod,
+
     this.isForSellOrRent = false,
     this.propertyPriceTrend = const [],
+
     this.is_for_sellorrent,
+
   });
 
   factory FinancialInfo.fromJson(Map<String, dynamic> json) {
@@ -1076,14 +1083,17 @@ class FinancialInfo {
       pricePerSqft: TypeConverter.parseDouble(json['price_per_sqft']) ?? 0,
       brokerCommission:
           TypeConverter.parseDouble(json['broker_commission']) ?? 0,
+      plateFromFees:TypeConverter.parseDouble(json['platform_fees']) ?? 0 ,
       propertySecurityDeposit:
           TypeConverter.parseDouble(json['property_security_deposit']) ?? 0,
       negotiable: json['negotiable'] ?? false,
       noticePeriod: TypeConverter.parseInt(json['notice_period']),
       lockInPeriod: TypeConverter.parseInt(json['lock_in_period']),
+
       isForSellOrRent: json['is_for_sellorrent'] ?? false,
       propertyPriceTrend:
           (json['property_price_trend'] as List<dynamic>?)
+
               ?.map((e) => PropertyPriceYear.fromJson(e))
               .toList() ??
           [],
@@ -1098,6 +1108,7 @@ class FinancialInfo {
       "maintenance": maintenance,
       "price_per_sqft": pricePerSqft,
       "broker_commission": brokerCommission,
+      "platform_fees":plateFromFees,
       "property_security_deposit": propertySecurityDeposit,
       "negotiable": negotiable,
       "notice_period": noticePeriod,

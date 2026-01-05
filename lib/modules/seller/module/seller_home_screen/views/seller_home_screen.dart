@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/modules/seller/controllers/seller_overview_c
 import 'package:housing_flutter_app/modules/seller/model/overview_model.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
+import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/utils/formater/formater.dart';
@@ -662,6 +663,10 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 Obx(() => buildSellerLeadGraph(overviewController)),
                 const SizedBox(height: 12),
                 Obx(() => buildSellerCommissionGraph(overviewController)),
+                const SizedBox(height: 12),
+                Obx(() => buildPropertyDistributionGraph(overviewController)),
+                const SizedBox(height: 12),
+                Obx(() => buildLeadSourceDistributionGraph(overviewController)),
               ],
             ),
           ),
@@ -671,6 +676,140 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
             phone: "+91 234 567 890",
           ),
           const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget buildPropertyDistributionGraph(SellerOverviewController overviewController) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.area_chart_outlined, color: ColorRes.green, size: 24),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Property Distribution',
+                      style: TextStyle(
+                        color: ColorRes.green,
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: ColorRes.primary.withOpacity(0.2)
+                ),
+                child: Text(
+                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data.propertyMetrics.totalProperties??0)}',
+
+                  style: TextStyle(
+                    color: ColorRes.primary,
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // --- Chart section ---
+          SizedBox(
+            height: 300,
+            width: double.infinity,
+            child: PropertyDistributionPieGraph(breakdown: {
+              'active':overviewController.overviewData.value?.data?.propertyMetrics?.activeListings,
+              'pending':overviewController.overviewData.value?.data?.propertyMetrics?.pendingListings,
+              'rejected':overviewController.overviewData.value?.data?.propertyMetrics?.rejectedListings,
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget buildLeadSourceDistributionGraph(SellerOverviewController overviewController) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.area_chart_outlined, color: ColorRes.leadTealColor, size: 24),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Lead Source Distribution',
+                      style: TextStyle(
+                        color: ColorRes.leadTealColor,
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: ColorRes.primary.withOpacity(0.2)
+                ),
+                child: Text(
+                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data.leadAnalytics.totalLeads??0)}',
+
+                  style: TextStyle(
+                    color: ColorRes.primary,
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // --- Chart section ---
+          SizedBox(
+            height: 300,
+            width: double.infinity,
+            child: LeadSourceDistributionPieGraph(
+              breakdown: overviewController.overviewData.value?.data.leadAnalytics.sourceDistribution??{},
+            )
+            ,
+          ),
         ],
       ),
     );
@@ -704,7 +843,7 @@ class OverViewCard extends StatelessWidget {
           children: [
             buildMetricCard(
               'Total Properties',
-              data.propertyMetrics.totalProperties.toString() ?? '',
+              data?.propertyMetrics?.totalProperties.toString() ?? '',
               Icons.home_work,
               ColorRes.blueColor,
             ),

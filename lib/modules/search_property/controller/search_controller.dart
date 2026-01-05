@@ -281,6 +281,63 @@ class GoogleMapSearchController extends GetxController {
     }
   }
 
+  Future<void> fetchBuildingsAndSocieties(String locality, String city) async {
+    if (city.trim().isEmpty && locality.trim().isEmpty) return;
+
+    try {
+      isLoading.value = true;
+
+      final response = await GoogleMapApi.instance.getBuildingsAndSocieties(
+        city,
+        locality,
+      );
+
+      print("🏗 Google TextSearch API Response: $response");
+
+      // ✅ Handle null or unexpected formats
+      if (response == null) {
+        print("⚠️ API returned null response");
+        predictions.clear();
+        return;
+      }
+
+      // ✅ Some APIs return 'results', others return 'predictions'
+      final List<dynamic> results = (response['results'] ??
+          response['predictions'] ??
+          []) as List<dynamic>;
+
+      if (results.isEmpty) {
+        print("⚠️ No buildings found for '$locality' in $city");
+        predictions.clear();
+        return;
+      }
+
+      // ✅ Map results safely
+      predictions.value = results.map((place) {
+        return Prediction(
+          description: place['name'] ?? '',
+          placeId: place['place_id'] ?? '',
+          structuredFormatting: StructuredFormatting(
+            mainText: place['name'] ?? '',
+            secondaryText: place['formatted_address'] ??
+                place['description'] ??
+                '',
+          ),
+        );
+      }).toList();
+
+      print("✅ Found ${predictions.length} buildings/societies in $city");
+    } catch (e, st) {
+      print("❌ Error fetching buildings: $e");
+      print(st);
+      predictions.clear();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+
   /// Fetch nearby places by category
   var categoryPlaces = <Map<String, dynamic>>[].obs;
   var isCategoryLoading = false.obs;

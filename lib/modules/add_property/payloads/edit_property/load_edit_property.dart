@@ -15,9 +15,10 @@ class LoadEditPropertyPayload extends GetxController {
   Rxn<AddPropertyModel> property = Rxn<AddPropertyModel>(null);
 
   void onLoad(CreatePropertyController controller, AddPropertyModel property) {
-    AppLogger.structured("property", property.toJson());
+    AppLogger.structured("property Edit Payload for :  ", property.toJson());
     controller.propertyType.value =
         (property.type != null && property.type!.isNotEmpty)
+
             ? property.type!.capitalize.toString()
             : "";
     controller.lookingTo.value =
@@ -173,12 +174,20 @@ class LoadEditPropertyPayload extends GetxController {
         (property.location != null && property.location!.isNotEmpty)
             ? property.location!
             : '';
+    controller.localityController.text =
+        (property.location != null && property.location!.isNotEmpty)
+            ? property.location!
+            : '';
 
     controller.commercial_rent_Loaclity_Name.text =
+        (property.location != null && property.location!.isNotEmpty)
+            ? property.location!
+            : '';
+
+    controller.sell_rent_Address.text =
         (property.address != null && property.address!.isNotEmpty)
             ? property.address!
             : '';
-
     controller.commercial_ZoneType.value =
         (property.propertyDetails?.zoneType != null &&
                 property.propertyDetails!.zoneType!.isNotEmpty)
@@ -277,6 +286,18 @@ class LoadEditPropertyPayload extends GetxController {
             ? property.propertyDetails!.plotInfo!.plotLength!.toStringAsFixed(0)
             : '0';
 
+    controller.commercial_rent_posessionStatus.value =
+        property.propertyDetails?.plotInfo?.possessionStatus ?? '';
+    controller.commercial_rent_AvailableFrom.text =
+        (property.propertyDetails?.plotInfo?.possessionDate != null &&
+                property.propertyDetails!.plotInfo!.possessionDate!.isNotEmpty)
+            ? DateFormat('dd/MM/yyyy').format(
+              DateTime.tryParse(
+                property.propertyDetails!.plotInfo!.possessionDate!.toString(),
+              )!,
+            )
+            : '0';
+
     controller.plotWidth.text =
         (property.propertyDetails?.plotInfo?.plotWidth != null &&
                 property.propertyDetails!.plotInfo!.plotWidth != 0)
@@ -289,10 +310,17 @@ class LoadEditPropertyPayload extends GetxController {
     AddPropertyModel property,
   ) {
     /// commercial financial info
+
     controller.commercial_rent_cost.text =
         (property.propertyDetails?.financialInfo?.propertyPrice != null &&
                 property.propertyDetails!.financialInfo!.propertyPrice != 0)
             ? property.propertyDetails!.financialInfo!.propertyPrice!
+                .toStringAsFixed(0)
+            : '0';
+    controller.platformFees.text =
+        (property.propertyDetails?.financialInfo?.platformFees != null &&
+                property.propertyDetails!.financialInfo!.platformFees != 0)
+            ? property.propertyDetails!.financialInfo!.platformFees!
                 .toStringAsFixed(0)
             : '0';
 
@@ -376,16 +404,23 @@ class LoadEditPropertyPayload extends GetxController {
     // monthlyRent:double.tryParse(
     // rent_MonthilyRent.text.trim(),
     // ),
-    controller.isPredefinedCostEnabled.value=property.propertyDetails?.financialInfo?.is_for_sellorrent??false;
+    controller.isPredefinedCostEnabled.value =
+        property.propertyDetails?.financialInfo?.is_for_sellorrent ?? false;
     // controller.rent_MonthilyRent.text=property.propertyDetails?.financialInfo?.monthlyRent.toString()??'0.0';
     // controller.sell_ExpectedPrice.text=property.propertyDetails?.financialInfo?.propertyPrice.toString()??'0.0';
 
     if (property.propertyDetails?.financialInfo?.propertyPricePast != null &&
-        property.propertyDetails!.financialInfo!.propertyPricePast!.isNotEmpty) {
-      final pastList = property.propertyDetails!.financialInfo!.propertyPricePast!;
+        property
+            .propertyDetails!
+            .financialInfo!
+            .propertyPricePast!
+            .isNotEmpty) {
+      final pastList =
+          property.propertyDetails!.financialInfo!.propertyPricePast!;
       for (int i = 0; i < controller.pastPrices.length; i++) {
         if (i < pastList.length) {
-          controller.pastPrices[i].text = (pastList[i].price ?? 0).toStringAsFixed(0);
+          controller.pastPrices[i].text = (pastList[i].price ?? 0)
+              .toStringAsFixed(0);
         } else {
           controller.pastPrices[i].text = '0';
         }
@@ -396,13 +431,19 @@ class LoadEditPropertyPayload extends GetxController {
       }
     }
 
-// 🔮 Future 5 Years Prices
+    // 🔮 Future 5 Years Prices
     if (property.propertyDetails?.financialInfo?.propertyPriceFuture != null &&
-        property.propertyDetails!.financialInfo!.propertyPriceFuture!.isNotEmpty) {
-      final futureList = property.propertyDetails!.financialInfo!.propertyPriceFuture!;
+        property
+            .propertyDetails!
+            .financialInfo!
+            .propertyPriceFuture!
+            .isNotEmpty) {
+      final futureList =
+          property.propertyDetails!.financialInfo!.propertyPriceFuture!;
       for (int i = 0; i < controller.futurePrices.length; i++) {
         if (i < futureList.length) {
-          controller.futurePrices[i].text = (futureList[i].price ?? 0).toStringAsFixed(0);
+          controller.futurePrices[i].text = (futureList[i].price ?? 0)
+              .toStringAsFixed(0);
         } else {
           controller.futurePrices[i].text = '0';
         }
@@ -412,7 +453,6 @@ class LoadEditPropertyPayload extends GetxController {
         textCtrl.text = '0';
       }
     }
-
 
     /// Security Deposit
     controller.rent_SecurityDeposit.text =
@@ -452,7 +492,7 @@ class LoadEditPropertyPayload extends GetxController {
             ? 'Yes'
             : 'No';
 
-    controller.brokerageCharge.text =
+    controller.brokerRageCommission.text =
         (property.propertyDetails?.financialInfo?.brokerCommission != null &&
                 property.propertyDetails!.financialInfo!.brokerCommission != 0)
             ? property.propertyDetails!.financialInfo!.brokerCommission!

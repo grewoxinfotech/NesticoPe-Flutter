@@ -265,7 +265,6 @@ class PostProperty extends StatelessWidget {
                             MaterialPageRoute(
                               builder:
                                   (context) => CommonSearchField(
-
                                     selectedCity:
                                         controller.cityController.text,
                                     isLocality: true,
@@ -1024,6 +1023,65 @@ class PostProperty extends StatelessWidget {
                   dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
                   isPhoneKey: true,
                 ),
+                const Text('Locality'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Locality',
+                  Icons.location_on,
+                  controller.localityController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter locality';
+                    }
+                    return null;
+                  },
+                  onTap:
+                      (controller.localityController.text.trim().isEmpty)
+                          ? () async {
+                            Prediction selectedCity = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => CommonSearchField(
+                                      selectedCity:
+                                          controller.cityController.text,
+                                      isLocality: true,
+                                      onCitySelected: (city) {
+                                        Navigator.pop(context, city);
+                                      },
+                                      isFromAddProperty: true,
+                                      initialSearchText:
+                                          controller.localityController.text,
+                                      hintText: 'Locality',
+                                    ),
+                              ),
+                            );
+
+                            controller.localityController.text =
+                                selectedCity.description ?? '';
+                            controller.sell_rent_Address.text =
+                                selectedCity.description ?? '';
+                            print("city ${controller.localityController.text}");
+                          }
+                          : null,
+                  isEnable: false,
+                ),
+                SizedBox(height: 16),
+                const Text('Full Address'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'exact Address',
+                  Icons.apartment_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter complete address';
+                    }
+                    return null;
+                  },
+                  controller.sell_rent_Address,
+                  maxLines: 2,
+                  minLines: 1,
+                ),
 
                 SizedBox(height: 16),
                 Text("Length"),
@@ -1537,51 +1595,58 @@ class PostProperty extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 24),
-              if(controller.selectedIndex.value!="Plot")...[const Text('Building'),
-                SizedBox(height: 8),
-                buildTextField(
-                  'Building / Project / Society',
-                  Icons.apartment_outlined,
-                  controller.commercial_rent_building_Name,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
-                    }
-                    return null;
-                  },
-                  onTap: () async {
-                    Prediction selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => CommonSearchField(
-                          onCitySelected: (city) {
-                            Navigator.pop(context, city);
-                          },
-                          isFromAddProperty: true,
-                          initialSearchText:
-                          controller.commercial_rent_Loaclity_Name.text,
-                          hintText: 'Building / Project / Society',
-                        ),
-                      ),
-                    );
 
-                    controller.commercial_rent_building_Name.text =
-                        selectedCity.structuredFormatting?.mainText ?? '';
-                    if (controller
-                        .commercial_rent_building_Name
-                        .text
-                        .isNotEmpty) {
-                      controller.commercial_rent_Loaclity_Name.text =
-                          selectedCity.structuredFormatting?.secondaryText ?? '';
-                    }
-                    print(
-                      "city ${controller.commercial_rent_Loaclity_Name.text}",
-                    );
-                  },
-                  isEnable: false,
-                ),
-                SizedBox(height: 16),],
+              const Text('Building'),
+              SizedBox(height: 8),
+              buildTextField(
+                'Building / Project / Society',
+                Icons.apartment_outlined,
+                controller.commercial_rent_building_Name,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter building name';
+                  }
+                  return null;
+                },
+                onTap: () async {
+                  Prediction selectedCity = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => CommonSearchField(
+
+                            onCitySelected: (city) {
+                              Navigator.pop(context, city);
+                            },
+
+                            isSearchForBuilding: true,
+                            isFromAddProperty: true,
+                            initialSearchText:
+                                controller.commercial_rent_Loaclity_Name.text,
+                            hintText: 'Building / Project / Society',
+                          ),
+                    ),
+                  );
+
+                  controller.commercial_rent_building_Name.text =
+                      selectedCity.structuredFormatting?.mainText ?? '';
+                  if (controller
+                      .commercial_rent_building_Name
+                      .text
+                      .isNotEmpty) {
+                    controller.commercial_rent_Loaclity_Name.text =
+                        selectedCity.structuredFormatting?.secondaryText ?? '';
+                    controller.sell_rent_Address.text =
+                        selectedCity.structuredFormatting?.secondaryText ?? '';
+                  }
+                  print(
+                    "city ${controller.commercial_rent_Loaclity_Name.text}",
+                  );
+                },
+                isEnable: false,
+              ),
+              SizedBox(height: 16),
+
               const Text('Locality'),
               SizedBox(height: 8),
               buildTextField(
@@ -1622,6 +1687,8 @@ class PostProperty extends StatelessWidget {
 
                           controller.commercial_rent_Loaclity_Name.text =
                               selectedCity.description ?? '';
+                          controller.sell_rent_Address.text =
+                              selectedCity.description ?? '';
 
                           print(
                             "city ${controller.commercial_rent_Loaclity_Name.text}",
@@ -1629,6 +1696,22 @@ class PostProperty extends StatelessWidget {
                         }
                         : null,
                 isEnable: false,
+              ),
+              SizedBox(height: 16),
+              const Text('Full Address'),
+              SizedBox(height: 8),
+              buildTextField(
+                'exact Address',
+                Icons.apartment_outlined,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter complete address';
+                  }
+                  return null;
+                },
+                controller.sell_rent_Address,
+                maxLines: 2,
+                minLines: 1,
               ),
 
               if (controller.selectedIndex.value == 'Other') ...[
@@ -1648,7 +1731,11 @@ class PostProperty extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
               ],
-              if ((controller.selectedIndex.value == 'Office')||(controller.selectedIndex.value == 'Shop')||(controller.selectedIndex.value == 'Showroom')||(controller.selectedIndex.value == 'Warehouse')) ...[
+              if ((controller.selectedIndex.value == 'Office') ||
+                  (controller.selectedIndex.value == 'Shop') ||
+                  (controller.selectedIndex.value == 'Showroom') ||
+                  (controller.selectedIndex.value == 'Warehouse') ||
+                  (controller.selectedIndex.value == 'Other')) ...[
                 SizedBox(height: 16),
                 Text(
                   'POSSESSTION INFO',
@@ -1661,96 +1748,95 @@ class PostProperty extends StatelessWidget {
                 buildSectionTitle('Posession status'),
                 SizedBox(height: 8),
                 Obx(
-                      () => Wrap(
+                  () => Wrap(
                     spacing: 12,
                     children:
-                    posession_Status.map((e) {
-                      return buildChoice(
-                        title: e,
-                        selected:
-                        controller
-                            .commercial_rent_posessionStatus
-                            .value ==
-                            e,
-                        onTap: () {
-                          controller.setValue(
-                            controller.commercial_rent_posessionStatus,
-                            e,
+                        posession_Status.map((e) {
+                          return buildChoice(
+                            title: e,
+                            selected:
+                                controller
+                                    .commercial_rent_posessionStatus
+                                    .value ==
+                                e,
+                            onTap: () {
+                              controller.setValue(
+                                controller.commercial_rent_posessionStatus,
+                                e,
+                              );
+                            },
                           );
-                        },
-                      );
-                    }).toList(),
+                        }).toList(),
                   ),
                 ),
                 Obx(
-                      () =>
-                  controller.selectedPossessionStatus.value
-                      ? Padding(
-                    padding: const EdgeInsets.only(top: 8, left: 4),
-                    child: Text(
-                      'Please select possession type',
-                      style: TextStyle(
-                        color: ColorRes.error.shade700,
-                        // fontSize: 12,
-                        fontSize: AppFontSizes.bodySmall,
-                      ),
-                    ),
-                  )
-                      : const SizedBox.shrink(),
-                ),
-            if( controller
-                .commercial_rent_posessionStatus.value=="Under Construction")...[
-              SizedBox(height: 16),
-              Text('Available From'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Enter Available From',
-                Icons.calendar_month_outlined,
-                controller.commercial_rent_AvailableFrom,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter valid date';
-                  }
-                  return null;
-                },
-                isEnable: false,
-                onTap: () async {
-                  FocusScope.of(context).unfocus();
-                  DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2100),
-                    builder: (context, child) {
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: ColorScheme.light(
-                            primary: ColorRes.primary,
-                            // header background color
-                            onPrimary: ColorRes.white,
-                            // header text color
-                            onSurface: ColorRes.black, // body text color
-                          ),
-                          textButtonTheme: TextButtonThemeData(
-                            style: TextButton.styleFrom(
-                              foregroundColor: ColorRes.primary,
+                  () =>
+                      controller.selectedPossessionStatus.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select possession type',
+                              style: TextStyle(
+                                color: ColorRes.error.shade700,
+                                // fontSize: 12,
+                                fontSize: AppFontSizes.bodySmall,
+                              ),
                             ),
-                          ),
-                        ),
-
-                        child: child!,
-                      );
+                          )
+                          : const SizedBox.shrink(),
+                ),
+                if (controller.commercial_rent_posessionStatus.value ==
+                    "Under Construction") ...[
+                  SizedBox(height: 16),
+                  Text('Available From'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    'Enter Available From',
+                    Icons.calendar_month_outlined,
+                    controller.commercial_rent_AvailableFrom,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter valid date';
+                      }
+                      return null;
                     },
-                  );
-                  if (picked != null) {
-                    controller.commercial_rent_AvailableFrom.text =
-                    "${picked.day}/${picked.month}/${picked.year}";
-                  }
-                },
-                isPhoneKey: true,
-              ),
+                    isEnable: false,
+                    onTap: () async {
+                      FocusScope.of(context).unfocus();
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2100),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: ColorRes.primary,
+                                // header background color
+                                onPrimary: ColorRes.white,
+                                // header text color
+                                onSurface: ColorRes.black, // body text color
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: ColorRes.primary,
+                                ),
+                              ),
+                            ),
 
-            ]
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (picked != null) {
+                        controller.commercial_rent_AvailableFrom.text =
+                            "${picked.day}/${picked.month}/${picked.year}";
+                      }
+                    },
+                    isPhoneKey: true,
+                  ),
+                ],
               ],
               if ((controller.selectedIndex.value == 'Plot')) ...[
                 SizedBox(height: 16),
@@ -1765,97 +1851,97 @@ class PostProperty extends StatelessWidget {
                 buildSectionTitle('Posession status'),
                 SizedBox(height: 8),
                 Obx(
-                      () => Wrap(
+                  () => Wrap(
                     spacing: 12,
                     children:
-                    ['Immediate','In Future'].map((e) {
-                      return buildChoice(
-                        title: e,
-                        selected:
-                        controller
-                            .commercial_rent_posessionStatus
-                            .value ==
-                            e,
-                        onTap: () {
-                          controller.setValue(
-                            controller.commercial_rent_posessionStatus,
-                            e,
+                        ['Immediate', 'In Future'].map((e) {
+                          return buildChoice(
+                            title: e,
+                            selected:
+                                controller
+                                    .commercial_rent_posessionStatus
+                                    .value ==
+                                e,
+                            onTap: () {
+                              controller.setValue(
+                                controller.commercial_rent_posessionStatus,
+                                e,
+                              );
+                            },
                           );
-                        },
-                      );
-                    }).toList(),
+                        }).toList(),
                   ),
                 ),
                 Obx(
-                      () =>
-                  controller.selectedPossessionStatus.value
-                      ? Padding(
-                    padding: const EdgeInsets.only(top: 8, left: 4),
-                    child: Text(
-                      'Please select possession type',
-                      style: TextStyle(
-                        color: ColorRes.error.shade700,
-                        // fontSize: 12,
-                        fontSize: AppFontSizes.bodySmall,
-                      ),
-                    ),
-                  )
-                      : const SizedBox.shrink(),
-                ),
-            if( controller
-                .commercial_rent_posessionStatus.value=="Under Construction" ||controller
-                .commercial_rent_posessionStatus.value=="In Future" )...[
-              SizedBox(height: 16),
-              Text('Available From'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Enter Available From',
-                Icons.calendar_month_outlined,
-                controller.commercial_rent_AvailableFrom,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter valid date';
-                  }
-                  return null;
-                },
-                isEnable: false,
-                onTap: () async {
-                  FocusScope.of(context).unfocus();
-                  DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2100),
-                    builder: (context, child) {
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: ColorScheme.light(
-                            primary: ColorRes.primary,
-                            // header background color
-                            onPrimary: ColorRes.white,
-                            // header text color
-                            onSurface: ColorRes.black, // body text color
-                          ),
-                          textButtonTheme: TextButtonThemeData(
-                            style: TextButton.styleFrom(
-                              foregroundColor: ColorRes.primary,
+                  () =>
+                      controller.selectedPossessionStatus.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select possession type',
+                              style: TextStyle(
+                                color: ColorRes.error.shade700,
+                                // fontSize: 12,
+                                fontSize: AppFontSizes.bodySmall,
+                              ),
                             ),
-                          ),
-                        ),
-
-                        child: child!,
-                      );
+                          )
+                          : const SizedBox.shrink(),
+                ),
+                if (controller.commercial_rent_posessionStatus.value ==
+                        "Under Construction" ||
+                    controller.commercial_rent_posessionStatus.value ==
+                        "In Future") ...[
+                  SizedBox(height: 16),
+                  Text('Available From'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    'Enter Available From',
+                    Icons.calendar_month_outlined,
+                    controller.commercial_rent_AvailableFrom,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter valid date';
+                      }
+                      return null;
                     },
-                  );
-                  if (picked != null) {
-                    controller.commercial_rent_AvailableFrom.text =
-                    "${picked.day}/${picked.month}/${picked.year}";
-                  }
-                },
-                isPhoneKey: true,
-              ),
+                    isEnable: false,
+                    onTap: () async {
+                      FocusScope.of(context).unfocus();
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2100),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: ColorRes.primary,
+                                // header background color
+                                onPrimary: ColorRes.white,
+                                // header text color
+                                onSurface: ColorRes.black, // body text color
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: ColorRes.primary,
+                                ),
+                              ),
+                            ),
 
-            ]
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (picked != null) {
+                        controller.commercial_rent_AvailableFrom.text =
+                            "${picked.day}/${picked.month}/${picked.year}";
+                      }
+                    },
+                    isPhoneKey: true,
+                  ),
+                ],
               ],
 
               SizedBox(height: 16),
@@ -1886,9 +1972,7 @@ class PostProperty extends StatelessWidget {
                   // fontWeight: AppFontWeights.medium,
                 ),
               ),
-              if (
-                  controller.selectedIndex.value == 'Plot' ||
-                  controller.selectedIndex.value == 'Other') ...[
+              if (controller.selectedIndex.value == 'Plot') ...[
                 SizedBox(height: 16),
                 buildSectionTitle("Zone Type"),
                 SizedBox(height: 8),
@@ -1933,8 +2017,11 @@ class PostProperty extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
               ],
-              if (controller.selectedIndex.value != 'Plot' && controller.selectedIndex.value!="Office"&& controller.selectedIndex.value!="Shop"&& controller.selectedIndex.value!="Showroom"&& controller.selectedIndex.value!="Warehouse") ...[
-
+              if (controller.selectedIndex.value != 'Plot' &&
+                  controller.selectedIndex.value != "Office" &&
+                  controller.selectedIndex.value != "Shop" &&
+                  controller.selectedIndex.value != "Showroom" &&
+                  controller.selectedIndex.value != "Warehouse" && controller.selectedIndex.value != 'Other') ...[
                 SizedBox(height: 16),
                 buildSectionTitle('Location Hub'),
                 SizedBox(height: 8),
@@ -1960,7 +2047,6 @@ class PostProperty extends StatelessWidget {
                             )
                             .toList(),
                   ),
-
                 ),
               ],
 
@@ -2087,8 +2173,8 @@ class PostProperty extends StatelessWidget {
               if (controller.selectedIndex.value == 'Shop' ||
                   controller.selectedIndex.value == 'Showroom' ||
                   controller.selectedIndex.value == "Warehouse" ||
-                  controller.selectedIndex.value == "Office") ...[
-                    SizedBox(height: 16,),
+                  controller.selectedIndex.value == "Office"||controller.selectedIndex.value == 'Other') ...[
+                SizedBox(height: 16),
                 Text("Carpet Area"),
                 SizedBox(height: 8),
                 TextFieldWithDropdown(
@@ -2148,51 +2234,53 @@ class PostProperty extends StatelessWidget {
                 ),
               ],
 
-             if(controller.selectedIndex.value!="Office" && controller.selectedIndex.value!="Shop"&& controller.selectedIndex.value!="Showroom"&& controller.selectedIndex.value!="Warehouse")
-               ...[
-                 SizedBox(height: 16),
-                 buildSectionTitle("Ownership"),
-                 SizedBox(height: 8),
-                 Obx(
-                       () => Wrap(
-                     spacing: 12,
-                     runSpacing: 12,
-                     children:
-                     commercial_ownerShipList
-                         .map(
-                           (e) => buildChoice(
-                         title: e,
-                         selected:
-                         controller.commercial_ownerShipList.value ==
-                             e,
-                         onTap: () {
-                           controller.setValue(
-                             controller.commercial_ownerShipList,
-                             e,
-                           );
-                         },
-                       ),
-                     )
-                         .toList(),
-                   ),
-                 ),
-                 Obx(
-                       () =>
-                   controller.seletedOwnerShipInCommercial.value
-                       ? Padding(
-                     padding: const EdgeInsets.only(top: 8, left: 4),
-                     child: Text(
-                       'Please select OwnerShip type',
-                       style: TextStyle(
-                         color: ColorRes.error.shade700,
-                         fontSize: AppFontSizes.small,
-                         // fontSize: 12,
-                       ),
-                     ),
-                   )
-                       : const SizedBox.shrink(),
-                 ),
-               ],
+              if (controller.selectedIndex.value != "Office" &&
+                  controller.selectedIndex.value != "Shop" &&
+                  controller.selectedIndex.value != "Showroom" &&
+                  controller.selectedIndex.value != "Warehouse"&&controller.selectedIndex.value != 'Other') ...[
+                SizedBox(height: 16),
+                buildSectionTitle("Ownership"),
+                SizedBox(height: 8),
+                Obx(
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
+                        commercial_ownerShipList
+                            .map(
+                              (e) => buildChoice(
+                                title: e,
+                                selected:
+                                    controller.commercial_ownerShipList.value ==
+                                    e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.commercial_ownerShipList,
+                                    e,
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
+                  ),
+                ),
+                Obx(
+                  () =>
+                      controller.seletedOwnerShipInCommercial.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select OwnerShip type',
+                              style: TextStyle(
+                                color: ColorRes.error.shade700,
+                                fontSize: AppFontSizes.small,
+                                // fontSize: 12,
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
+                ),
+              ],
 
               if (controller.commercial_property_condition.value ==
                   "Bare shell") ...[
@@ -2303,86 +2391,86 @@ class PostProperty extends StatelessWidget {
                 ),
               ],
 
-             if(controller.selectedIndex.value!="Plot")
-               ...[
-                 SizedBox(height: 16),
-                 Text('Floor Available'),
-                 SizedBox(height: 8),
-                 buildTextField(
-                   'Total Floor',
-                   Icons.elevator_outlined,
-                   controller.commercial_total_floor,
-                   isPhoneKey: true,
-                   validator: (value) {
-                     if (value == null || value.isEmpty) {
-                       return 'Please enter total floor';
-                     }
+              if (controller.selectedIndex.value != "Plot") ...[
+                SizedBox(height: 16),
+                Text('Floor Available'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Total Floor',
+                  Icons.elevator_outlined,
+                  controller.commercial_total_floor,
+                  isPhoneKey: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter total floor';
+                    }
 
-                     final totalFloor = int.tryParse(value);
-                     if (totalFloor == null) {
-                       return 'Please enter a valid number';
-                     }
+                    final totalFloor = int.tryParse(value);
+                    if (totalFloor == null) {
+                      return 'Please enter a valid number';
+                    }
 
-                     if (totalFloor < 1 || totalFloor > 200) {
-                       // you can decide your valid range
-                       return 'Total floor should be between 1 and 200';
-                     }
+                    if (totalFloor < 1 || totalFloor > 200) {
+                      // you can decide your valid range
+                      return 'Total floor should be between 1 and 200';
+                    }
 
-                     return null;
-                   },
-                 ),
+                    return null;
+                  },
+                ),
 
-                 SizedBox(height: 16),
-                 Text('Your Floor'),
-                 SizedBox(height: 8),
+                SizedBox(height: 16),
+                Text('Your Floor'),
+                SizedBox(height: 8),
 
-                 GestureDetector(
-                   onTap: () {
-                     int totalFloor =
-                         int.tryParse(controller.commercial_total_floor.text) ?? 0;
-                     List<String> floorOptions = ['-2', '-1', 'Ground'];
-                     for (int i = 1; i <= totalFloor; i++) {
-                       floorOptions.add(i.toString());
-                     }
-                     _showFloorSelectionBottomSheet(
-                       context,
-                       controller,
-                       floorOptions,
-                     );
-                   },
-                   child: AbsorbPointer(
-                     child: buildTextField(
-                       'Select Your Floor',
-                       Icons.elevator_outlined,
-                       controller.commercial_your_floor,
-                       isEnable: false,
-                       validator: (value) {
-                         if (value == null || value.isEmpty) {
-                           return 'Please select your floor';
-                         }
-                         return null;
-                       },
-                     ),
-                   ),
-                 ),
-                 SizedBox(height: 16),
-                 Text('Property Description'),
-                 SizedBox(height: 8),
-                 buildTextField(
-                   'Enter Property Description',
-                   maxLines: 3,
-                   minLines: 1,
-                   Icons.elevator_outlined,
-                   controller.commercial_rent_description,
-                   // isPhoneKey: true,
-                   validator: (value) {
-                     if (value == null || value.isEmpty) {
-                       return 'Please enter Property description';
-                     }
-                     return null;
-                   },
-                 ),
-               ]
+                GestureDetector(
+                  onTap: () {
+                    int totalFloor =
+                        int.tryParse(controller.commercial_total_floor.text) ??
+                        0;
+                    List<String> floorOptions = ['-2', '-1', 'Ground'];
+                    for (int i = 1; i <= totalFloor; i++) {
+                      floorOptions.add(i.toString());
+                    }
+                    _showFloorSelectionBottomSheet(
+                      context,
+                      controller,
+                      floorOptions,
+                    );
+                  },
+                  child: AbsorbPointer(
+                    child: buildTextField(
+                      'Select Your Floor',
+                      Icons.elevator_outlined,
+                      controller.commercial_your_floor,
+                      isEnable: false,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select your floor';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text('Property Description'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter Property Description',
+                  maxLines: 3,
+                  minLines: 1,
+                  Icons.elevator_outlined,
+                  controller.commercial_rent_description,
+                  // isPhoneKey: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter Property description';
+                    }
+                    return null;
+                  },
+                ),
+              ],
             ],
           ),
         );
@@ -2395,55 +2483,70 @@ class PostProperty extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            if(controller.selectedIndex.value!="Plot")
-              ...[
-                SizedBox(height: 24),
-                const Text('Building'),
-                SizedBox(height: 8),
-                buildTextField(
-                  'Building / Project / Society',
-                  Icons.apartment_outlined,
-                  controller.commercial_rent_building_Name,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
-                    }
-                    return null;
-                  },
-                  onTap: () async {
-                    Prediction selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => CommonSearchField(
-                          onCitySelected: (city) {
-                            Navigator.pop(context, city);
-                          },
-                          isFromAddProperty: true,
-                          initialSearchText:
-                          controller.commercial_rent_building_Name.text,
-                          hintText: 'Building / Project / Society',
-                        ),
-                      ),
-                    );
+              SizedBox(height: 24),
+              const Text('Building'),
+              SizedBox(height: 8),
+              buildTextField(
+                'Building / Project / Society',
+                Icons.apartment_outlined,
+                controller.commercial_rent_building_Name,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter building name';
+                  }
+                  return null;
+                },
+                onTap: () async {
+                  Prediction selectedCity = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => CommonSearchField(
+                            onCitySelected: (city) {
+                              Navigator.pop(context, city);
+                            },
+                            isFromAddProperty: true,
+                            isSearchForBuilding: true, // 👈 enable building search mode
+                            selectedCity: controller.cityController.text, // current city filter
+                            initialSearchText:
+                                controller.commercial_rent_building_Name.text,
+                            hintText: 'Building / Project / Society',
+                          ),
+                    ),
+                  );
 
-                    controller.commercial_rent_building_Name.text =
-                        selectedCity.structuredFormatting?.mainText ?? '';
-                    if (controller
-                        .commercial_rent_building_Name
-                        .text
-                        .isNotEmpty) {
-                      controller.commercial_rent_Loaclity_Name.text =
-                          selectedCity.structuredFormatting?.secondaryText ?? '';
-                    }
+                  // controller.commercial_rent_building_Name.text =
+                  //     selectedCity.structuredFormatting?.mainText ?? '';
+                  // if (controller
+                  //     .commercial_rent_building_Name
+                  //     .text
+                  //     .isNotEmpty) {
+                  //   controller.commercial_rent_Loaclity_Name.text =
+                  //       selectedCity.structuredFormatting?.secondaryText ?? '';
+                  //   controller.sell_rent_Address.text =
+                  //       selectedCity.structuredFormatting?.secondaryText ?? '';
+                  // }
+                  controller.commercial_rent_building_Name.text =
+                      selectedCity.structuredFormatting?.mainText ??
+                          selectedCity.description ??
+                          '';
 
-                    print(
-                      "city ${controller.commercial_rent_building_Name.text}",
-                    );
-                  },
-                  isEnable: false,
-                ),
-              ],
+                  // ✅ Fill Locality & Address (secondary text)
+                  if (controller.commercial_rent_building_Name.text.isNotEmpty) {
+                    controller.commercial_rent_Loaclity_Name.text =
+                        selectedCity.structuredFormatting?.secondaryText ?? '';
+                    controller.sell_rent_Address.text =
+                        selectedCity.structuredFormatting?.secondaryText ?? '';
+                  }
+
+
+                  print(
+                    "city ${controller.commercial_rent_building_Name.text}",
+                  );
+                },
+                isEnable: false,
+              ),
+
               SizedBox(height: 16),
               const Text('Locality'),
               SizedBox(height: 8),
@@ -2485,13 +2588,30 @@ class PostProperty extends StatelessWidget {
 
                           controller.commercial_rent_Loaclity_Name.text =
                               selectedCity.description ?? '';
-
+                          controller.sell_rent_Address.text =
+                              selectedCity.description ?? '';
                           print(
                             "city ${controller.commercial_rent_Loaclity_Name.text}",
                           );
                         }
                         : null,
                 isEnable: false,
+              ),
+              SizedBox(height: 16),
+              const Text('Full Address'),
+              SizedBox(height: 8),
+              buildTextField(
+                'exact Address',
+                Icons.apartment_outlined,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter complete address';
+                  }
+                  return null;
+                },
+                controller.sell_rent_Address,
+                maxLines: 2,
+                minLines: 1,
               ),
 
               // SizedBox(height: 16),
@@ -2521,7 +2641,11 @@ class PostProperty extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
               ],
-              if ((controller.selectedIndex.value == 'Plot') ||(controller.selectedIndex.value == 'Office')||(controller.selectedIndex.value == 'Shop')||(controller.selectedIndex.value == 'Showroom')||(controller.selectedIndex.value == 'Warehouse')) ...[
+              if ((controller.selectedIndex.value == 'Office') ||
+                  (controller.selectedIndex.value == 'Shop') ||
+                  (controller.selectedIndex.value == 'Showroom') ||
+                  (controller.selectedIndex.value == 'Warehouse') ||
+                  (controller.selectedIndex.value == 'Other')) ...[
                 SizedBox(height: 16),
                 Text(
                   'POSSESSTION INFO',
@@ -2626,6 +2750,111 @@ class PostProperty extends StatelessWidget {
                   isPhoneKey: true,
                 ),
               ],
+              if ((controller.selectedIndex.value == 'Plot')) ...[
+                SizedBox(height: 16),
+                Text(
+                  'POSSESSTION INFO',
+                  style: TextStyle(
+                    color: ColorRes.black,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle('Posession status'),
+                SizedBox(height: 8),
+                Obx(
+                      () => Wrap(
+                    spacing: 12,
+                    children:
+                    ['Immediate', 'In Future'].map((e) {
+                      return buildChoice(
+                        title: e,
+                        selected:
+                        controller
+                            .commercial_rent_posessionStatus
+                            .value ==
+                            e,
+                        onTap: () {
+                          controller.setValue(
+                            controller.commercial_rent_posessionStatus,
+                            e,
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Obx(
+                      () =>
+                  controller.selectedPossessionStatus.value
+                      ? Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 4),
+                    child: Text(
+                      'Please select possession type',
+                      style: TextStyle(
+                        color: ColorRes.error.shade700,
+                        // fontSize: 12,
+                        fontSize: AppFontSizes.bodySmall,
+                      ),
+                    ),
+                  )
+                      : const SizedBox.shrink(),
+                ),
+                if (controller.commercial_rent_posessionStatus.value ==
+                    "Under Construction" ||
+                    controller.commercial_rent_posessionStatus.value ==
+                        "In Future") ...[
+                  SizedBox(height: 16),
+                  Text('Available From'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    'Enter Available From',
+                    Icons.calendar_month_outlined,
+                    controller.commercial_rent_AvailableFrom,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter valid date';
+                      }
+                      return null;
+                    },
+                    isEnable: false,
+                    onTap: () async {
+                      FocusScope.of(context).unfocus();
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2100),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: ColorRes.primary,
+                                // header background color
+                                onPrimary: ColorRes.white,
+                                // header text color
+                                onSurface: ColorRes.black, // body text color
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: ColorRes.primary,
+                                ),
+                              ),
+                            ),
+
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (picked != null) {
+                        controller.commercial_rent_AvailableFrom.text =
+                        "${picked.day}/${picked.month}/${picked.year}";
+                      }
+                    },
+                    isPhoneKey: true,
+                  ),
+                ],
+              ],
 
               SizedBox(height: 16),
               if (controller.commercial_rent_posessionStatus.value ==
@@ -2656,9 +2885,7 @@ class PostProperty extends StatelessWidget {
                 ),
               ),
 
-              if (
-                  controller.selectedIndex.value == 'Plot' ||
-                  controller.selectedIndex.value == 'Other') ...[
+              if (controller.selectedIndex.value == 'Plot') ...[
                 SizedBox(height: 16),
 
                 buildSectionTitle("Zone Type"),
@@ -2704,7 +2931,11 @@ class PostProperty extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
               ],
-              if (controller.selectedIndex.value != 'Plot' && controller.selectedIndex.value!="Office"&& controller.selectedIndex.value!="Shop"&& controller.selectedIndex.value!="Showroom"&& controller.selectedIndex.value!="Warehouse") ...[
+              if (controller.selectedIndex.value != 'Plot' &&
+                  controller.selectedIndex.value != "Office" &&
+                  controller.selectedIndex.value != "Shop" &&
+                  controller.selectedIndex.value != "Showroom" &&
+                  controller.selectedIndex.value != "Warehouse"&&controller.selectedIndex.value != "Other") ...[
                 SizedBox(height: 16),
                 buildSectionTitle('Location Hub'),
                 SizedBox(height: 8),
@@ -2857,7 +3088,7 @@ class PostProperty extends StatelessWidget {
               if (controller.selectedIndex.value == 'Shop' ||
                   controller.selectedIndex.value == 'Showroom' ||
                   controller.selectedIndex.value == "Warehouse" ||
-                  controller.selectedIndex.value == "Other") ...[
+                  controller.selectedIndex.value == "Office"||controller.selectedIndex.value == "Other") ...[
                 SizedBox(height: 16),
                 Text("Carpet Area"),
                 SizedBox(height: 8),
@@ -2913,51 +3144,53 @@ class PostProperty extends StatelessWidget {
                 ),
               ],
 
-              if(controller.selectedIndex.value!="Office" && controller.selectedIndex.value!="Shop"&& controller.selectedIndex.value!="Showroom"&& controller.selectedIndex.value!="Warehouse")
-                ...[
-                  SizedBox(height: 16),
-                  buildSectionTitle("Ownership"),
-                  SizedBox(height: 8),
-                  Obx(
-                        () => Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children:
-                      commercial_ownerShipList
-                          .map(
-                            (e) => buildChoice(
-                          title: e,
-                          selected:
-                          controller.commercial_ownerShipList.value ==
-                              e,
-                          onTap: () {
-                            controller.setValue(
-                              controller.commercial_ownerShipList,
-                              e,
-                            );
-                          },
-                        ),
-                      )
-                          .toList(),
-                    ),
+              if (controller.selectedIndex.value != "Office" &&
+                  controller.selectedIndex.value != "Shop" &&
+                  controller.selectedIndex.value != "Showroom" &&
+                  controller.selectedIndex.value != "Warehouse"&&  controller.selectedIndex.value != "Other") ...[
+                SizedBox(height: 16),
+                buildSectionTitle("Ownership"),
+                SizedBox(height: 8),
+                Obx(
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
+                        commercial_ownerShipList
+                            .map(
+                              (e) => buildChoice(
+                                title: e,
+                                selected:
+                                    controller.commercial_ownerShipList.value ==
+                                    e,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.commercial_ownerShipList,
+                                    e,
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
-                  Obx(
-                        () =>
-                    controller.seletedOwnerShipInCommercial.value
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 8, left: 4),
-                      child: Text(
-                        'Please select OwnerShip type',
-                        style: TextStyle(
-                          color: ColorRes.error.shade700,
-                          fontSize: AppFontSizes.small,
-                          // fontSize: 12,
-                        ),
-                      ),
-                    )
-                        : const SizedBox.shrink(),
-                  ),
-                ],
+                ),
+                Obx(
+                  () =>
+                      controller.seletedOwnerShipInCommercial.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select OwnerShip type',
+                              style: TextStyle(
+                                color: ColorRes.error.shade700,
+                                fontSize: AppFontSizes.small,
+                                // fontSize: 12,
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
+                ),
+              ],
               if (controller.commercial_property_condition.value ==
                   "Bare shell") ...[
                 SizedBox(height: 16),
@@ -3070,86 +3303,86 @@ class PostProperty extends StatelessWidget {
                 ),
               ],
 
-              if(controller.selectedIndex.value!="Plot")
-                ...[
-                  SizedBox(height: 16),
-                  Text('Floor Available'),
-                  SizedBox(height: 8),
-                  buildTextField(
-                    'Total Floor',
-                    Icons.elevator_outlined,
-                    controller.commercial_total_floor,
-                    isPhoneKey: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter total floor';
-                      }
+              if (controller.selectedIndex.value != "Plot") ...[
+                SizedBox(height: 16),
+                Text('Floor Available'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Total Floor',
+                  Icons.elevator_outlined,
+                  controller.commercial_total_floor,
+                  isPhoneKey: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter total floor';
+                    }
 
-                      final totalFloor = int.tryParse(value);
-                      if (totalFloor == null) {
-                        return 'Please enter a valid number';
-                      }
+                    final totalFloor = int.tryParse(value);
+                    if (totalFloor == null) {
+                      return 'Please enter a valid number';
+                    }
 
-                      if (totalFloor < 1 || totalFloor > 200) {
-                        // you can decide your valid range
-                        return 'Total floor should be between 1 and 200';
-                      }
+                    if (totalFloor < 1 || totalFloor > 200) {
+                      // you can decide your valid range
+                      return 'Total floor should be between 1 and 200';
+                    }
 
-                      return null;
-                    },
-                  ),
+                    return null;
+                  },
+                ),
 
-                  SizedBox(height: 16),
-                  Text('Your Floor'),
-                  SizedBox(height: 8),
+                SizedBox(height: 16),
+                Text('Your Floor'),
+                SizedBox(height: 8),
 
-                  GestureDetector(
-                    onTap: () {
-                      int totalFloor =
-                          int.tryParse(controller.commercial_total_floor.text) ?? 0;
-                      List<String> floorOptions = ['-2', '-1', 'Ground'];
-                      for (int i = 1; i <= totalFloor; i++) {
-                        floorOptions.add(i.toString());
-                      }
-                      _showFloorSelectionBottomSheet(
-                        context,
-                        controller,
-                        floorOptions,
-                      );
-                    },
-                    child: AbsorbPointer(
-                      child: buildTextField(
-                        'Select Your Floor',
-                        Icons.elevator_outlined,
-                        controller.commercial_your_floor,
-                        isEnable: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select your floor';
-                          }
-                          return null;
-                        },
-                      ),
+                GestureDetector(
+                  onTap: () {
+                    int totalFloor =
+                        int.tryParse(controller.commercial_total_floor.text) ??
+                        0;
+                    List<String> floorOptions = ['-2', '-1', 'Ground'];
+                    for (int i = 1; i <= totalFloor; i++) {
+                      floorOptions.add(i.toString());
+                    }
+                    _showFloorSelectionBottomSheet(
+                      context,
+                      controller,
+                      floorOptions,
+                    );
+                  },
+                  child: AbsorbPointer(
+                    child: buildTextField(
+                      'Select Your Floor',
+                      Icons.elevator_outlined,
+                      controller.commercial_your_floor,
+                      isEnable: false,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select your floor';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  SizedBox(height: 16),
-                  Text('Property Description'),
-                  SizedBox(height: 8),
-                  buildTextField(
-                    'Enter Property Description',
-                    maxLines: 3,
-                    minLines: 1,
-                    Icons.elevator_outlined,
-                    controller.commercial_rent_description,
-                    // isPhoneKey: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter Property description';
-                      }
-                      return null;
-                    },
-                  ),
-                ]
+                ),
+                SizedBox(height: 16),
+                Text('Property Description'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Enter Property Description',
+                  maxLines: 3,
+                  minLines: 1,
+                  Icons.elevator_outlined,
+                  controller.commercial_rent_description,
+                  // isPhoneKey: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter Property description';
+                    }
+                    return null;
+                  },
+                ),
+              ],
             ],
           ),
         );

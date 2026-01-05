@@ -196,6 +196,8 @@ extension ItemsMapper on Items.Items {
       propertyRentPerMonth: source.propertyRentPerMonth,
       monthlyRent: source.monthlyRent,
       pricePerSqft: source.pricePerSqft,
+      platformFees: source.plateFromFees,
+
       brokerCommission: source.brokerCommission,
       is_for_sellorrent: source.is_for_sellorrent,
       propertyPriceFuture: _mapPropertyPriceYearlyList(
@@ -204,6 +206,7 @@ extension ItemsMapper on Items.Items {
       propertyPricePast: _mapPropertyPriceYearlyList(source.propertyPriceTrend),
       // brokerNegotiable: source.brokerNegotiable,
       propertySecurityDeposit: source.propertySecurityDeposit,
+
       lockInPeriod: source.lockInPeriod,
       noticePeriod: source.noticePeriod,
       negotiable: source.negotiable,

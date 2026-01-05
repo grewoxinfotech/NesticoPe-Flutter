@@ -196,7 +196,7 @@ class PropertyService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      debugPrint("Create property response: ${response.body}");
+      AppLogger.structured("Create property response: ",response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Success",

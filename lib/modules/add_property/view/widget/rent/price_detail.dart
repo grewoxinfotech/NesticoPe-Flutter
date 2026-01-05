@@ -20,7 +20,7 @@ class RentPriceDetail extends StatelessWidget {
     return Obx(() {
       if (controller.lookingTo.value == "Rent" &&
           controller.propertyType.value == "Residential") {
-        return  Form(
+        return Form(
           key: formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
@@ -44,12 +44,15 @@ class RentPriceDetail extends StatelessWidget {
                   if (rent > 0) {
                     // Calculate 5% of rent as Platform Fees
                     final platformFee = rent * 0.05;
-                    controller.platformFees.text = platformFee.toStringAsFixed(1);
+                    controller.platformFees.text = platformFee.toStringAsFixed(
+                      1,
+                    );
 
                     // Calculate 2% of platform fees as Broker Commission
+
                     final brokerCommission = platformFee * 0.02;
-                    controller.brokerRageCommission.text =
-                        brokerCommission.toStringAsFixed(1);
+                    controller.brokerRageCommission.text = brokerCommission
+                        .toStringAsFixed(1);
                   } else {
                     controller.platformFees.text = "0";
                     controller.brokerRageCommission.text = "0";
@@ -85,65 +88,71 @@ class RentPriceDetail extends StatelessWidget {
               buildSectionTitle('Also for Sell?'),
               const SizedBox(height: 8),
               // ---------------- CHECKBOX + CONDITIONAL FIELD ----------------
-              Obx(() => Row(
-                children: [
-                  Checkbox(
-                    value: controller.isPredefinedCostEnabled.value,
-                    activeColor: ColorRes.primary,
-                    onChanged: (val) {
-                      controller.isPredefinedCostEnabled.value = val ?? false;
-                    },
-                  ),
-                  const Text(
-                    "You want to sell",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: ColorRes.textColor,
+              Obx(
+                () => Row(
+                  children: [
+                    Checkbox(
+                      value: controller.isPredefinedCostEnabled.value,
+                      activeColor: ColorRes.primary,
+                      onChanged: (val) {
+                        controller.isPredefinedCostEnabled.value = val ?? false;
+                      },
                     ),
-                  ),
-                ],
-              )),
+                    const Text(
+                      "You want to sell",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 8),
 
-              Obx(() => controller.isPredefinedCostEnabled.value
-                  ? buildTextField(
-                "Enter Cost",
-                Icons.currency_rupee_outlined,
-                controller.sell_ExpectedPrice,
-                isPhoneKey: true,
-                validator: (value) {
-                  if (controller.isPredefinedCostEnabled.value &&
-                      (value == null || value.isEmpty)) {
-                    return 'Please enter cost';
-                  }
-                  return null;
-                },
-              )
-                  : const SizedBox.shrink()),
+              Obx(
+                () =>
+                    controller.isPredefinedCostEnabled.value
+                        ? buildTextField(
+                          "Enter Cost",
+                          Icons.currency_rupee_outlined,
+                          controller.sell_ExpectedPrice,
+                          isPhoneKey: true,
+                          validator: (value) {
+                            if (controller.isPredefinedCostEnabled.value &&
+                                (value == null || value.isEmpty)) {
+                              return 'Please enter cost';
+                            }
+                            return null;
+                          },
+                        )
+                        : const SizedBox.shrink(),
+              ),
 
               // -------------------- PAST 5 YEARS PRICES --------------------
               // -------------------- PAST 5 YEARS PRICES ------------------
-
               const SizedBox(height: 24),
               buildSectionTitle('Rent Negotiable'),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
-                children: ["Yes", "No"]
-                    .map(
-                      (type) => buildChoice(
-                    title: type,
-                    selected: controller.negotiablePriceOrNot.value == type,
-                    onTap: () {
-                      controller.setValue(
-                        controller.negotiablePriceOrNot,
-                        type,
-                      );
-                    },
-                  ),
-                )
-                    .toList(),
+                children:
+                    ["Yes", "No"]
+                        .map(
+                          (type) => buildChoice(
+                            title: type,
+                            selected:
+                                controller.negotiablePriceOrNot.value == type,
+                            onTap: () {
+                              controller.setValue(
+                                controller.negotiablePriceOrNot,
+                                type,
+                              );
+                            },
+                          ),
+                        )
+                        .toList(),
               ),
 
               const SizedBox(height: 16),
@@ -187,7 +196,7 @@ class RentPriceDetail extends StatelessWidget {
                   );
                   if (picked != null) {
                     controller.rent_AvailableFrom.text =
-                    "${picked.day}/${picked.month}/${picked.year}";
+                        "${picked.day}/${picked.month}/${picked.year}";
                   }
                 },
               ),
@@ -213,7 +222,6 @@ class RentPriceDetail extends StatelessWidget {
             ],
           ),
         );
-
       } else if (controller.lookingTo.value == "Sell" &&
           controller.propertyType.value == "Residential") {
         return Form(
@@ -237,96 +245,94 @@ class RentPriceDetail extends StatelessWidget {
                   if (rent == null) {
                     return 'Please enter a valid amount';
                   }
-                  if (rent > 5000000000 || rent < 2000000) {
-                    return 'Please enter rent between  2000000 to 500000000';
+
+                  if (rent > 0) {
+                    // Calculate 5% of rent as Platform Fees
+                    final platformFee = rent * 0.05;
+                    controller.platformFees.text = platformFee.toStringAsFixed(
+                      1,
+                    );
+
+                    // Calculate 2% of platform fees as Broker Commission
+
+                    final brokerCommission = platformFee * 0.02;
+                    controller.brokerRageCommission.text = brokerCommission
+                        .toStringAsFixed(1);
+                  } else {
+                    controller.platformFees.text = "0";
+                    controller.brokerRageCommission.text = "0";
                   }
+
                   return null;
                 },
                 isPhoneKey: true,
               ),
-              // SizedBox(height: 16),
-              // Text("Past 5 years Price"),
-              // SizedBox(height: 8),
-              // buildTextField(
-              //   "Enter Past 5 years Price",
-              //   Icons.currency_rupee_outlined,
-              //   controller.pastFiveYearPrice,
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return 'Please enter expected price';
-              //     }
-              //     final rent = int.tryParse(value); // parse once
-              //     if (rent == null) {
-              //       return 'Please enter a valid amount';
-              //     }
-              //     if (rent > 5000000000 || rent < 2000000) {
-              //       return 'Please enter rent between  2000000 to 500000000';
-              //     }
-              //     return null;
-              //   },
-              //   isPhoneKey: true,
-              // ),
-              // SizedBox(height: 16),
-              // Text("Future 5 years Price (₹)"),
-              // SizedBox(height: 8),
-              // buildTextField(
-              //   "Enter Future 5 years Price (₹)",
-              //   Icons.currency_rupee_outlined,
-              //   controller.futureFiveYearPrice,
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return 'Please enter expected price';
-              //     }
-              //     final rent = int.tryParse(value); // parse once
-              //     if (rent == null) {
-              //       return 'Please enter a valid amount';
-              //     }
-              //     if (rent > 5000000000 || rent < 2000000) {
-              //       return 'Please enter rent between  2000000 to 500000000';
-              //     }
-              //     return null;
-              //   },
-              //   isPhoneKey: true,
-              // ),
+              const SizedBox(height: 16),
+              const Text("Platform Fees (5%)"),
+              const SizedBox(height: 8),
+              buildTextField(
+                "Platform Fees",
+                Icons.currency_rupee_outlined,
+                controller.platformFees,
+                isPhoneKey: true,
+                isEnable: false,
+              ),
+
+              const SizedBox(height: 16),
+              const Text("Broker Commission (2%) of Platform Fees"),
+              const SizedBox(height: 8),
+              buildTextField(
+                "Broker Commission",
+                Icons.currency_rupee_outlined,
+                controller.brokerRageCommission,
+                isPhoneKey: true,
+                isEnable: false,
+              ),
+
               const SizedBox(height: 16),
               buildSectionTitle('Also for Rent?'),
               const SizedBox(height: 8),
               // ---------------- CHECKBOX + CONDITIONAL FIELD ----------------
-              Obx(() => Row(
-                children: [
-                  Checkbox(
-                    value: controller.isPredefinedCostEnabled.value,
-                    activeColor: ColorRes.primary,
-                    onChanged: (val) {
-                      controller.isPredefinedCostEnabled.value = val ?? false;
-                    },
-                  ),
-                  const Text(
-                    "You want to Rent",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: ColorRes.textColor,
+              Obx(
+                () => Row(
+                  children: [
+                    Checkbox(
+                      value: controller.isPredefinedCostEnabled.value,
+                      activeColor: ColorRes.primary,
+                      onChanged: (val) {
+                        controller.isPredefinedCostEnabled.value = val ?? false;
+                      },
                     ),
-                  ),
-                ],
-              )),
+                    const Text(
+                      "You want to Rent",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 8),
 
-              Obx(() => controller.isPredefinedCostEnabled.value
-                  ? buildTextField(
-                "Enter Rent",
-                Icons.currency_rupee_outlined,
-                controller.rent_MonthilyRent,
-                isPhoneKey: true,
-                validator: (value) {
-                  if (controller.isPredefinedCostEnabled.value &&
-                      (value == null || value.isEmpty)) {
-                    return 'Please enter Rent';
-                  }
-                  return null;
-                },
-              )
-                  : const SizedBox.shrink()),
+              Obx(
+                () =>
+                    controller.isPredefinedCostEnabled.value
+                        ? buildTextField(
+                          "Enter Rent",
+                          Icons.currency_rupee_outlined,
+                          controller.rent_MonthilyRent,
+                          isPhoneKey: true,
+                          validator: (value) {
+                            if (controller.isPredefinedCostEnabled.value &&
+                                (value == null || value.isEmpty)) {
+                              return 'Please enter Rent';
+                            }
+                            return null;
+                          },
+                        )
+                        : const SizedBox.shrink(),
+              ),
 
               // -------------------- PAST 5 YEARS PRICES --------------------
               // -------------------- PAST 5 YEARS PRICES --------------------
@@ -334,7 +340,7 @@ class RentPriceDetail extends StatelessWidget {
               buildSectionTitle("Past 5 Years Prices (Required)"),
               const SizedBox(height: 8),
 
-// Responsive grid layout
+              // Responsive grid layout
               Column(
                 children: [
                   // First 4 fields (2 per row)
@@ -342,15 +348,18 @@ class RentPriceDetail extends StatelessWidget {
                     spacing: 12,
                     runSpacing: 12,
                     children: List.generate(5, (index) {
-                      int year = DateTime.now().year - (index+1);
+                      int year = DateTime.now().year - (index + 1);
                       return SizedBox(
-                        width: (MediaQuery.of(context).size.width - 45) / 2, // 2 per row
+                        width:
+                            (MediaQuery.of(context).size.width - 45) /
+                            2, // 2 per row
                         child: buildTextField(
                           "$year",
                           Icons.currency_rupee_outlined,
                           onChanged: (value) {
-                            log("Past year 5 ${controller.pastPrices.map((e) => e,)}");
-                            
+                            log(
+                              "Past year 5 ${controller.pastPrices.map((e) => e)}",
+                            );
                           },
                           controller.pastPrices[index],
                           isPhoneKey: true,
@@ -368,32 +377,12 @@ class RentPriceDetail extends StatelessWidget {
                     }),
                   ),
                   const SizedBox(height: 12),
-                  // // Last field (full width)
-                  // Builder(builder: (context) {
-                  //   int year = DateTime.now().year - 5;
-                  //   return buildTextField(
-                  //     "Price for $year",
-                  //     Icons.currency_rupee_outlined,
-                  //     controller.pastPrices[4],
-                  //     isPhoneKey: true,
-                  //     validator: (value) {
-                  //       if (value == null || value.isEmpty) {
-                  //         return 'Enter price for $year';
-                  //       }
-                  //       if (int.tryParse(value) == null) {
-                  //         return 'Enter valid number';
-                  //       }
-                  //       return null;
-                  //     },
-                  //   );
-                  // }),
                 ],
               ),
 
-
               // -------------------- FUTURE 5 YEARS PRICES --------------------
               // -------------------- FUTURE 5 YEARS PRICES --------------------
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               buildSectionTitle("Future 5 Years Prices (Optional)"),
               const SizedBox(height: 8),
 
@@ -404,11 +393,10 @@ class RentPriceDetail extends StatelessWidget {
                     spacing: 12,
                     runSpacing: 12,
                     children: List.generate(5, (index) {
-                      int year = DateTime.now().year + (index+1);
+                      int year = DateTime.now().year + (index + 1);
                       return SizedBox(
                         width: (MediaQuery.of(context).size.width - 45) / 2,
                         child: buildTextField(
-
                           "$year",
                           Icons.currency_rupee_outlined,
                           controller.futurePrices[index],
@@ -472,46 +460,108 @@ class RentPriceDetail extends StatelessWidget {
                         )
                         .toList(),
               ),
-              SizedBox(height: 16),
-              buildSectionTitle("Construction status"),
-              SizedBox(height: 8),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children:
-                    ["Ready to move", "Under Construction"]
-                        .map(
-                          (type) => buildChoice(
-                            title: type,
-                            selected:
-                                controller.sell_constructionStatus.value ==
-                                type,
-                            onTap: () {
-                              controller.setValue(
-                                controller.sell_constructionStatus,
-                                type,
-                              );
-                            },
-                          ),
-                        )
-                        .toList(),
-              ),
-              Obx(() {
-                print('${controller.sell_constructionStatus.value}');
-                return controller.selectedSellFromPriceDetail.value
-                    ? Padding(
-                      padding: const EdgeInsets.only(top: 8, left: 4),
-                      child: Text(
-                        'Please select Status',
-                        style: TextStyle(
-                          color: ColorRes.error.shade700,
-                          fontSize: AppFontSizes.small,
-                          // fontSize: 12,
-                        ),
-                      ),
-                    )
-                    : const SizedBox.shrink();
-              }),
+             if(controller.rent_propertyType.value == "Plot" || controller.rent_propertyType.value.toLowerCase() == "agricultural land")...[
+               SizedBox(height: 16),
+               buildSectionTitle("Construction status"),
+               SizedBox(height: 8),
+               Wrap(
+                 spacing: 12,
+                 runSpacing: 12,
+                 children:
+                 ["Immediate", "In Future"]
+                     .map(
+                       (type) => buildChoice(
+                     title: type,
+                     selected:
+                     controller.sell_constructionStatus.value ==
+                         type,
+                     onTap: () {
+                       controller.setValue(
+                         controller.sell_constructionStatus,
+                         type,
+                       );
+                     },
+                   ),
+                 )
+                     .toList(),
+               ),
+               if (controller.sell_constructionStatus.value ==
+                   "In Future") ...[
+                 SizedBox(height: 16),
+                 Text("Available From"),
+                 SizedBox(height: 8),
+                 buildTextField(
+                   "Enter Available From",
+                   Icons.calendar_month_outlined,
+                   controller.sell_AvailableFrom,
+                   isEnable: false,
+                   validator: (value) {
+                     if (value == null || value.isEmpty) {
+                       return 'Please enter valid month';
+                     }
+                     return null;
+                   },
+                   onTap: () async {
+                     FocusScope.of(context).unfocus();
+                     DateTime? picked = await showDatePicker(
+                       context: context,
+                       initialDate: DateTime.now(),
+                       firstDate: DateTime.now(),
+                       lastDate: DateTime(2100),
+                       builder: (context, child) {
+                         return Theme(
+                           data: Theme.of(context).copyWith(
+                             colorScheme: ColorScheme.light(
+                               primary: ColorRes.primary,
+                               // header background color
+                               onPrimary: ColorRes.white,
+                               // header text color
+                               onSurface: ColorRes.black, // body text color
+                             ),
+                             textButtonTheme: TextButtonThemeData(
+                               style: TextButton.styleFrom(
+                                 foregroundColor: ColorRes.primary,
+                               ),
+                             ),
+                           ),
+                           child: child!,
+                         );
+                       },
+                     );
+                     if (picked != null) {
+                       controller.sell_AvailableFrom.text =
+                       "${picked.day}/${picked.month}/${picked.year}";
+                     }
+                   },
+                 ),
+               ],
+             ]else...[
+               SizedBox(height: 16),
+               buildSectionTitle("Construction status"),
+               SizedBox(height: 8),
+               Wrap(
+                 spacing: 12,
+                 runSpacing: 12,
+                 children:
+                 ["Ready to move", "Under Construction"]
+                     .map(
+                       (type) => buildChoice(
+                     title: type,
+                     selected:
+                     controller.sell_constructionStatus.value ==
+                         type,
+                     onTap: () {
+                       controller.setValue(
+                         controller.sell_constructionStatus,
+                         type,
+                       );
+                     },
+                   ),
+                 )
+                     .toList(),
+               ),
+             ],
+
 
               if (controller.sell_constructionStatus.value ==
                   "Under Construction") ...[
@@ -614,8 +664,21 @@ class RentPriceDetail extends StatelessWidget {
                     if (rent == null) {
                       return 'Please enter a valid amount';
                     }
-                    if (rent > 1500000 || rent < 20000) {
-                      return 'Please enter rent between  20000 to 1500000';
+
+                    if (rent > 0) {
+                      // Calculate 5% of rent as Platform Fees
+                      final platformFee = rent * 0.05;
+                      controller.platformFees.text = platformFee
+                          .toStringAsFixed(1);
+
+                      // Calculate 2% of platform fees as Broker Commission
+
+                      final brokerCommission = platformFee * 0.02;
+                      controller.brokerRageCommission.text = brokerCommission
+                          .toStringAsFixed(1);
+                    } else {
+                      controller.platformFees.text = "0";
+                      controller.brokerRageCommission.text = "0";
                     }
 
                     return null;
@@ -625,6 +688,96 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
+                const SizedBox(height: 16),
+                const Text("Platform Fees (5%)"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Platform Fees",
+                  Icons.currency_rupee_outlined,
+                  controller.platformFees,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
+
+                const SizedBox(height: 16),
+                const Text("Broker Commission (2%) of Platform Fees"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Broker Commission",
+                  Icons.currency_rupee_outlined,
+                  controller.brokerRageCommission,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
+                const SizedBox(height: 16),
+                buildSectionTitle('Also for Sell?'),
+                const SizedBox(height: 8),
+                // ---------------- CHECKBOX + CONDITIONAL FIELD ----------------
+                Obx(
+                  () => Row(
+                    children: [
+                      Checkbox(
+                        value: controller.isPredefinedCostEnabled.value,
+                        activeColor: ColorRes.primary,
+                        onChanged: (val) {
+                          controller.isPredefinedCostEnabled.value =
+                              val ?? false;
+                        },
+                      ),
+                      const Text(
+                        "You want to sell",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: ColorRes.textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                Obx(
+                  () =>
+                      controller.isPredefinedCostEnabled.value
+                          ? buildTextField(
+                            "Enter Cost",
+                            Icons.currency_rupee_outlined,
+                            controller.sell_ExpectedPrice,
+                            isPhoneKey: true,
+                            validator: (value) {
+                              if (controller.isPredefinedCostEnabled.value &&
+                                  (value == null || value.isEmpty)) {
+                                return 'Please enter cost';
+                              }
+                              return null;
+                            },
+                          )
+                          : const SizedBox.shrink(),
+                ),
+                SizedBox(height: 8),
+                buildSectionTitle('Rent Negotiable'),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                      ["Yes", "No"]
+                          .map(
+                            (type) => buildChoice(
+                              title: type,
+                              selected:
+                                  controller.negotiablePriceOrNot.value == type,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.negotiablePriceOrNot,
+                                  type,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+
                 SizedBox(height: 16),
                 buildSectionTitle('Security Deposit'),
                 SizedBox(height: 8),
@@ -667,10 +820,21 @@ class RentPriceDetail extends StatelessWidget {
                     if (rent == null) {
                       return 'Please enter a valid amount';
                     }
-                    if (rent > 1500000 || rent < 20000) {
-                      return 'Please enter rent between  20000 to 1500000';
-                    }
+                    if (rent > 0) {
+                      // Calculate 5% of rent as Platform Fees
+                      final platformFee = rent * 0.05;
+                      controller.platformFees.text = platformFee
+                          .toStringAsFixed(1);
 
+                      // Calculate 2% of platform fees as Broker Commission
+
+                      final brokerCommission = platformFee * 0.02;
+                      controller.brokerRageCommission.text = brokerCommission
+                          .toStringAsFixed(1);
+                    } else {
+                      controller.platformFees.text = "0";
+                      controller.brokerRageCommission.text = "0";
+                    }
                     return null;
                   },
 
@@ -678,6 +842,73 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
+                const SizedBox(height: 16),
+                const Text("Platform Fees (5%)"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Platform Fees",
+                  Icons.currency_rupee_outlined,
+                  controller.platformFees,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
+
+                const SizedBox(height: 16),
+                const Text("Broker Commission (2%) of Platform Fees"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Broker Commission",
+                  Icons.currency_rupee_outlined,
+                  controller.brokerRageCommission,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
+                const SizedBox(height: 16),
+                buildSectionTitle('Also for Sell?'),
+                const SizedBox(height: 8),
+                // ---------------- CHECKBOX + CONDITIONAL FIELD ----------------
+                Obx(
+                  () => Row(
+                    children: [
+                      Checkbox(
+                        value: controller.isPredefinedCostEnabled.value,
+                        activeColor: ColorRes.primary,
+                        onChanged: (val) {
+                          controller.isPredefinedCostEnabled.value =
+                              val ?? false;
+                        },
+                      ),
+                      const Text(
+                        "You want to sell",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: ColorRes.textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                Obx(
+                  () =>
+                      controller.isPredefinedCostEnabled.value
+                          ? buildTextField(
+                            "Enter Cost",
+                            Icons.currency_rupee_outlined,
+                            controller.sell_ExpectedPrice,
+                            isPhoneKey: true,
+                            validator: (value) {
+                              if (controller.isPredefinedCostEnabled.value &&
+                                  (value == null || value.isEmpty)) {
+                                return 'Please enter cost';
+                              }
+                              return null;
+                            },
+                          )
+                          : const SizedBox.shrink(),
+                ),
+
                 SizedBox(height: 16),
                 buildSectionTitle('Price Negotiable'),
                 SizedBox(height: 8),
@@ -862,19 +1093,29 @@ class RentPriceDetail extends StatelessWidget {
                 buildSectionTitle('Plot Price'),
                 SizedBox(height: 8),
                 buildTextField(
-                  'Enter rent',
+                  'Enter Price',
 
                   Icons.currency_rupee_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter Excepted rent';
+                      return 'Please enter Excepted price';
                     }
-                    final rent = int.tryParse(value); // parse once
-                    if (rent == null) {
-                      return 'Please enter a valid amount';
-                    }
-                    if (rent > 1500000 || rent < 20000) {
-                      return 'Please enter rent between  20000 to 1500000';
+                    final rent = int.tryParse(value) ?? 0;
+
+                    if (rent > 0) {
+                      // Calculate 5% of rent as Platform Fees
+                      final platformFee = rent * 0.05;
+                      controller.platformFees.text = platformFee
+                          .toStringAsFixed(1);
+
+                      // Calculate 2% of platform fees as Broker Commission
+
+                      final brokerCommission = platformFee * 0.02;
+                      controller.brokerRageCommission.text = brokerCommission
+                          .toStringAsFixed(1);
+                    } else {
+                      controller.platformFees.text = "0";
+                      controller.brokerRageCommission.text = "0";
                     }
 
                     return null;
@@ -884,32 +1125,196 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
-                // SizedBox(height: 16),
-                // buildSectionTitle('Security Deposit'),
-                // SizedBox(height: 8),
-                // buildTextField(
-                //   'Enter deposit',
-                //
-                //   Icons.currency_rupee_outlined,
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Please enter Excepted deposit';
-                //     }
-                //     final rent = int.tryParse(value); // parse once
-                //     if (rent == null) {
-                //       return 'Please enter a valid amount';
-                //     }
-                //     if (rent > 1500000 || rent < 20000) {
-                //       return 'Please enter rent between  20000 to 1500000';
-                //     }
-                //
-                //     return null;
-                //   },
-                //
-                //   controller.commercial_rent_security_deposite,
-                //
-                //   isPhoneKey: true,
-                // ),
+                const SizedBox(height: 16),
+                const Text("Platform Fees (5%)"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Platform Fees",
+                  Icons.currency_rupee_outlined,
+                  controller.platformFees,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
+
+                const SizedBox(height: 16),
+                const Text("Broker Commission (2%) of Platform Fees"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Broker Commission",
+                  Icons.currency_rupee_outlined,
+                  controller.brokerRageCommission,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
+                const SizedBox(height: 16),
+                buildSectionTitle('Also for Rent?'),
+                const SizedBox(height: 8),
+                // ---------------- CHECKBOX + CONDITIONAL FIELD ----------------
+                Obx(
+                  () => Row(
+                    children: [
+                      Checkbox(
+                        value: controller.isPredefinedCostEnabled.value,
+                        activeColor: ColorRes.primary,
+                        onChanged: (val) {
+                          controller.isPredefinedCostEnabled.value =
+                              val ?? false;
+                        },
+                      ),
+                      const Text(
+                        "You want to Rent",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: ColorRes.textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                Obx(
+                  () =>
+                      controller.isPredefinedCostEnabled.value
+                          ? buildTextField(
+                            "Enter Rent",
+                            Icons.currency_rupee_outlined,
+                            controller.rent_MonthilyRent,
+                            isPhoneKey: true,
+                            validator: (value) {
+                              if (controller.isPredefinedCostEnabled.value &&
+                                  (value == null || value.isEmpty)) {
+                                return 'Please enter Rent';
+                              }
+                              return null;
+                            },
+                          )
+                          : const SizedBox.shrink(),
+                ),
+
+                const SizedBox(height: 24),
+                buildSectionTitle("Past 5 Years Prices (Required)"),
+                const SizedBox(height: 8),
+
+                // Responsive grid layout
+                Column(
+                  children: [
+                    // First 4 fields (2 per row)
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List.generate(5, (index) {
+                        int year = DateTime.now().year - (index + 1);
+                        return SizedBox(
+                          width:
+                              (MediaQuery.of(context).size.width - 45) /
+                              2, // 2 per row
+                          child: buildTextField(
+                            "$year",
+                            Icons.currency_rupee_outlined,
+                            onChanged: (value) {
+                              log(
+                                "Past year 5 ${controller.pastPrices.map((e) => e)}",
+                              );
+                            },
+                            controller.pastPrices[index],
+                            isPhoneKey: true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Enter price for $year';
+                              }
+                              if (int.tryParse(value) == null) {
+                                return 'Enter valid number';
+                              }
+                              return null;
+                            },
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+
+                // -------------------- FUTURE 5 YEARS PRICES --------------------
+                // -------------------- FUTURE 5 YEARS PRICES --------------------
+                const SizedBox(height: 12),
+                buildSectionTitle("Future 5 Years Prices (Optional)"),
+                const SizedBox(height: 8),
+
+                Column(
+                  children: [
+                    // First 4 fields → 2 in each row
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List.generate(5, (index) {
+                        int year = DateTime.now().year + (index + 1);
+                        return SizedBox(
+                          width: (MediaQuery.of(context).size.width - 45) / 2,
+                          child: buildTextField(
+                            "$year",
+                            Icons.currency_rupee_outlined,
+                            controller.futurePrices[index],
+                            isPhoneKey: true,
+                            validator: (value) {
+                              if (value != null && value.isNotEmpty) {
+                                if (int.tryParse(value) == null) {
+                                  return 'Enter a valid number';
+                                }
+                              }
+                              return null;
+                            },
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 12),
+                    //
+                    // // Last field → full width
+                    // Builder(builder: (context) {
+                    //   int year = DateTime.now().year + 5;
+                    //   return buildTextField(
+                    //     "Price for $year ",
+                    //     Icons.currency_rupee_outlined,
+                    //     controller.futurePrices[4],
+                    //     isPhoneKey: true,
+                    //     validator: (value) {
+                    //       if (value != null && value.isNotEmpty) {
+                    //         if (int.tryParse(value) == null) {
+                    //           return 'Enter a valid number';
+                    //         }
+                    //       }
+                    //       return null;
+                    //     },
+                    //   );
+                    // }),
+                  ],
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle('Price  Negotiable'),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+
+                  children:
+                      ["Yes", "No"]
+                          .map(
+                            (type) => buildChoice(
+                              title: type,
+                              selected:
+                                  controller.negotiablePriceOrNot.value == type,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.negotiablePriceOrNot,
+                                  type,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
               ] else ...[
                 SizedBox(height: 8),
                 buildSectionTitle('Property Price'),
@@ -922,12 +1327,21 @@ class RentPriceDetail extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return 'Please enter Excepted price';
                     }
-                    final rent = int.tryParse(value); // parse once
-                    if (rent == null) {
-                      return 'Please enter a valid amount';
-                    }
-                    if (rent > 1500000 || rent < 20000) {
-                      return 'Please enter rent between  20000 to 1500000';
+                    final rent = int.tryParse(value) ?? 0; // parse once
+                    if (rent > 0) {
+                      // Calculate 5% of rent as Platform Fees
+                      final platformFee = rent * 0.05;
+                      controller.platformFees.text = platformFee
+                          .toStringAsFixed(1);
+
+                      // Calculate 2% of platform fees as Broker Commission
+
+                      final brokerCommission = platformFee * 0.02;
+                      controller.brokerRageCommission.text = brokerCommission
+                          .toStringAsFixed(1);
+                    } else {
+                      controller.platformFees.text = "0";
+                      controller.brokerRageCommission.text = "0";
                     }
 
                     return null;
@@ -936,6 +1350,171 @@ class RentPriceDetail extends StatelessWidget {
                   controller.commercial_rent_cost,
 
                   isPhoneKey: true,
+                ),
+                const SizedBox(height: 16),
+                const Text("Platform Fees (5%)"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Platform Fees",
+                  Icons.currency_rupee_outlined,
+                  controller.platformFees,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
+
+                const SizedBox(height: 16),
+                const Text("Broker Commission (2%) of Platform Fees"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Broker Commission",
+                  Icons.currency_rupee_outlined,
+                  controller.brokerRageCommission,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
+                const SizedBox(height: 16),
+                buildSectionTitle('Also for Rent?'),
+                const SizedBox(height: 8),
+                // ---------------- CHECKBOX + CONDITIONAL FIELD ----------------
+                Obx(
+                  () => Row(
+                    children: [
+                      Checkbox(
+                        value: controller.isPredefinedCostEnabled.value,
+                        activeColor: ColorRes.primary,
+                        onChanged: (val) {
+                          controller.isPredefinedCostEnabled.value =
+                              val ?? false;
+                        },
+                      ),
+                      const Text(
+                        "You want to Rent",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: ColorRes.textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                Obx(
+                  () =>
+                      controller.isPredefinedCostEnabled.value
+                          ? buildTextField(
+                            "Enter Rent",
+                            Icons.currency_rupee_outlined,
+                            controller.rent_MonthilyRent,
+                            isPhoneKey: true,
+                            validator: (value) {
+                              if (controller.isPredefinedCostEnabled.value &&
+                                  (value == null || value.isEmpty)) {
+                                return 'Please enter Rent';
+                              }
+                              return null;
+                            },
+                          )
+                          : const SizedBox.shrink(),
+                ),
+                const SizedBox(height: 24),
+                buildSectionTitle("Past 5 Years Prices (Required)"),
+                const SizedBox(height: 8),
+
+                // Responsive grid layout
+                Column(
+                  children: [
+                    // First 4 fields (2 per row)
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List.generate(5, (index) {
+                        int year = DateTime.now().year - (index + 1);
+                        return SizedBox(
+                          width:
+                              (MediaQuery.of(context).size.width - 45) /
+                              2, // 2 per row
+                          child: buildTextField(
+                            "$year",
+                            Icons.currency_rupee_outlined,
+                            onChanged: (value) {
+                              log(
+                                "Past year 5 ${controller.pastPrices.map((e) => e)}",
+                              );
+                            },
+                            controller.pastPrices[index],
+                            isPhoneKey: true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Enter price for $year';
+                              }
+                              if (int.tryParse(value) == null) {
+                                return 'Enter valid number';
+                              }
+                              return null;
+                            },
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+
+                // -------------------- FUTURE 5 YEARS PRICES --------------------
+                // -------------------- FUTURE 5 YEARS PRICES --------------------
+                const SizedBox(height: 12),
+                buildSectionTitle("Future 5 Years Prices (Optional)"),
+                const SizedBox(height: 8),
+
+                Column(
+                  children: [
+                    // First 4 fields → 2 in each row
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List.generate(5, (index) {
+                        int year = DateTime.now().year + (index + 1);
+                        return SizedBox(
+                          width: (MediaQuery.of(context).size.width - 45) / 2,
+                          child: buildTextField(
+                            "$year",
+                            Icons.currency_rupee_outlined,
+                            controller.futurePrices[index],
+                            isPhoneKey: true,
+                            validator: (value) {
+                              if (value != null && value.isNotEmpty) {
+                                if (int.tryParse(value) == null) {
+                                  return 'Enter a valid number';
+                                }
+                              }
+                              return null;
+                            },
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 12),
+                    //
+                    // // Last field → full width
+                    // Builder(builder: (context) {
+                    //   int year = DateTime.now().year + 5;
+                    //   return buildTextField(
+                    //     "Price for $year ",
+                    //     Icons.currency_rupee_outlined,
+                    //     controller.futurePrices[4],
+                    //     isPhoneKey: true,
+                    //     validator: (value) {
+                    //       if (value != null && value.isNotEmpty) {
+                    //         if (int.tryParse(value) == null) {
+                    //           return 'Enter a valid number';
+                    //         }
+                    //       }
+                    //       return null;
+                    //     },
+                    //   );
+                    // }),
+                  ],
                 ),
                 SizedBox(height: 16),
                 buildSectionTitle('Price Negotiable'),
@@ -1042,63 +1621,6 @@ class RentPriceDetail extends StatelessWidget {
                             .toList(),
                   ),
                 ],
-                // SizedBox(height: 16),
-                // buildSectionTitle('Maintenance Charges'),
-                // SizedBox(height: 8),
-                // Wrap(
-                //   spacing: 12,
-                //   runSpacing: 12,
-                //   children:
-                //   ["Included in Rent", "Separate"]
-                //       .map(
-                //         (type) => buildChoice(
-                //       title: type,
-                //       selected:
-                //       controller
-                //           .commercial_rent_maintainance_charge
-                //           .value ==
-                //           type,
-                //       onTap: () {
-                //         controller.setValue(
-                //           controller
-                //               .commercial_rent_maintainance_charge,
-                //           type,
-                //         );
-                //       },
-                //     ),
-                //   )
-                //       .toList(),
-                // ),
-                //
-                // if (controller.commercial_rent_maintainance_charge.value ==
-                //     "Separate") ...[
-                //   SizedBox(height: 16),
-                //   buildSectionTitle('Maintenance Amount'),
-                //   SizedBox(height: 8),
-                //   buildTextField(
-                //     'Enter maintenance amount',
-                //
-                //     Icons.currency_rupee_outlined,
-                //     validator: (value) {
-                //       if (value == null || value.isEmpty) {
-                //         return 'Please enter Excepted rent';
-                //       }
-                //       final rent = int.tryParse(value); // parse once
-                //       if (rent == null) {
-                //         return 'Please enter a valid amount';
-                //       }
-                //       if (rent > 1500000 || rent < 20000) {
-                //         return 'Please enter rent between  20000 to 1500000';
-                //       }
-                //
-                //       return null;
-                //     },
-                //
-                //     controller.commercial_rent_mainatainance_charge,
-                //
-                //     isPhoneKey: true,
-                //   ),
-                // ],
               ],
             ],
           ),

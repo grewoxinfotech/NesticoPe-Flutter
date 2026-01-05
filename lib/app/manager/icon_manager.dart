@@ -21,11 +21,11 @@ class IconManager {
 
   static final List<IconItem> items = [
     IconItem(key: AppSvgRes.area, title: "Plot", icon: Icons.square_foot),
-    // IconItem(
-    //   key: AppSvgRes.circleDots,
-    //   title: "Other",
-    //   icon: Icons.blur_circular,
-    // ),
+    IconItem(
+      key: AppSvgRes.circleDots,
+      title: "Other",
+      icon: Icons.blur_circular,
+    ),
     IconItem(key: AppSvgRes.office, title: "Office", icon: Icons.business),
     IconItem(
       key: AppSvgRes.showroom,

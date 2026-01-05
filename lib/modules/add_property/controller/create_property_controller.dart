@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -31,6 +32,7 @@ import 'package:housing_flutter_app/modules/add_property/model/photo_model.dart'
 import 'package:housing_flutter_app/modules/add_property/model/review_property_model.dart';
 import 'package:housing_flutter_app/modules/add_property/model/room_detail_model.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -49,10 +51,6 @@ class CreatePropertyController extends GetxController {
   ImagePicker picker = ImagePicker();
   RxBool isLoading = false.obs;
 
-
-
-
-
   ///=======================================26-12-2025=============================================================
   final isPredefinedCostEnabled = false.obs;
 
@@ -68,13 +66,9 @@ class CreatePropertyController extends GetxController {
       final priceText = pastPrices[index].text.trim();
       final price = double.tryParse(priceText) ?? 0.0;
 
-      return PropertyPriceYearly(
-        year: year,
-        price: price,
-      );
+      return PropertyPriceYearly(year: year, price: price);
     });
   }
-
 
   /// 🔮 Future 5 Years Prices (Optional)
   List<PropertyPriceYearly> getFuturePriceData() {
@@ -85,16 +79,9 @@ class CreatePropertyController extends GetxController {
       final priceText = futurePrices[index].text.trim();
       final price = double.tryParse(priceText.isEmpty ? "0" : priceText) ?? 0;
 
-      return PropertyPriceYearly(
-        year: year,
-        price: price,
-      );
+      return PropertyPriceYearly(year: year, price: price);
     });
   }
-
-
-
-
 
   ////////////document upload //////////////////
 
@@ -129,7 +116,6 @@ class CreatePropertyController extends GetxController {
   var doYouWantBrokerage = "".obs;
   var lift_info = "".obs;
   var brokerageChargeNegotiable = "".obs;
-  var brokerageCharge = TextEditingController();
   var tenantType = ''.obs;
 
   ///============================Main variable=============================
@@ -437,6 +423,7 @@ class CreatePropertyController extends GetxController {
   final areaController = TextEditingController();
   final carpetAreaController = TextEditingController();
   final commercial_rent_cost = TextEditingController();
+
   var commercial_rent_posessionStatus = "".obs;
   var commercial_rent_building_Name = TextEditingController();
   var commercial_rent_Loaclity_Name = TextEditingController();
@@ -1922,9 +1909,15 @@ class CreatePropertyController extends GetxController {
   Future<void> addProperty() async {
     try {
       isLoading.value = true;
+      log('🧩 addProperty() called');
+      final subtypeSection=rent_propertyType.value.toLowerCase();
+
+      log('steps length: ${stepsList.length}');
+      log('propertyType: ${propertyType.value}, lookingTo: ${lookingTo.value},subtype: ${subtypeSection} ');
 
       final type = propertyType.value.toLowerCase();
       final action = lookingTo.value.toLowerCase();
+
       final subtype = selectedIndex.value.toLowerCase(); // For commercial cases
 
       if (type.isEmpty || action.isEmpty) {
@@ -1940,8 +1933,13 @@ class CreatePropertyController extends GetxController {
             success = await _addPropertyResidentialRent();
             break;
           case "sell":
-            success = await _addPropertyResidentialSell();
+            if ((subtypeSection == "plot") || (subtypeSection=="agricultural land")) {
+              success = await _addPropertyResidentialSellPlot();
+            } else {
+              success = await _addPropertyResidentialSell();
+            }
             break;
+
           case "pg/co-living":
             success = await _addPropertyResidentialPg();
             break;
@@ -1968,10 +1966,40 @@ class CreatePropertyController extends GetxController {
       } else {
         print("Failed to add property ❌");
       }
-    } catch (e) {
-      print("Error adding property: $e");
+    } catch (e,s) {
+      log('❌ addProperty error: $e');
+      log('Stacktrace: $s');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<bool> _addPropertyResidentialSellPlot({
+    bool isEdit = false,
+    String? propertyId,
+  })async{
+    try {
+      final payload = await buildPropertyPayloadResidentialSellPlot();
+      AppLogger.structured("Payload : ",payload.toJson());
+      final success =
+      isEdit
+          ? await _propertyService.updateProperty(
+        propertyId ?? '',
+        payload.toJson(),
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
+      )
+          : await _propertyService.createProperty(
+        payload.toJson(),
+        imageList.map((element) => File(element)).toList(),
+        videoList.map((element) => File(element)).toList(),
+        documentList.map((element) => File(element)).toList(),
+      );
+      return success;
+    } catch (e) {
+      print("Error adding residential sell: $e");
+      return false;
     }
   }
 
@@ -1983,64 +2011,6 @@ class CreatePropertyController extends GetxController {
     String? propertyId,
   }) async {
     try {
-      // print("Adding Residential Property for Rent...");
-      // debugPrint("Property Type : ${propertyType.value}");
-      // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("City Controller : ${cityController.text.trim()}");
-      // debugPrint("Sub Property Type : ${rent_propertyType.value}");
-      // debugPrint("Building : ${rentBuildingController.text.trim()}");
-      // debugPrint("Locality : ${localityController.text.trim()}");
-      // debugPrint("BHK : ${bhkType.value}");
-      // debugPrint("BuiltUpo area : ${areaController.text.trim()}");
-      // debugPrint("BuiltUpo area Size : ${areaUnit.value}");
-      // debugPrint("Notice Period : ${noticPeriodController.text.trim()}");
-      // debugPrint("Locked in period: ${lockPeriodController.text.trim()}");
-      // debugPrint("Furnishing  : ${furnishingType.value}");
-      // debugPrint("Monthly Rent  : ${rent_MonthilyRent.text.trim()}");
-      // debugPrint("Rent Negotiation  : ${negotiablePriceOrNot.value}");
-      // debugPrint("Available From  : ${rent_AvailableFrom.text.trim()}");
-      // debugPrint("Deposit  : ${rent_SecurityDeposit.text.trim()}");
-      // debugPrint("Bathroom  : ${rent_Bathroom.value}");
-      // debugPrint("Balcony  : ${rent_Balcony.value}");
-      // debugPrint("Covered Parking  : ${rent_CoveredParking.value}");
-      // debugPrint("Open Parking  : ${rent_OpenParking.value}");
-      // debugPrint("Lift Info  : ${lift_info.value}");
-      // debugPrint("Pet Friendly : ${lift_info.value}");
-      // debugPrint("Charge Brokerage? : ${doYouWantBrokerage.value}");
-      // if (doYouWantBrokerage.value == "yes") {
-      //   debugPrint("Brokerage Charge : ${brokerageCharge.text.trim()}");
-      //   debugPrint("Brokerage Negotiable : ${brokerageChargeNegotiable.value}");
-      // }
-      // debugPrint("Floor Number : ${sell_rent_Floor_No.text.trim()}");
-      // debugPrint("Total Floor : ${sell_rent_Total_Floor.text.trim()}");
-      // debugPrint("Maintenance Charge : ${rent_maintenanceChargeType.value}");
-      // if (rent_maintenanceChargeType.value.toLowerCase() == 'separate') {
-      //   debugPrint(
-      //     "Maintenance Charge : ${sell_rent_Maintenance_Charges.text.trim()}",
-      //   );
-      // }
-      // debugPrint("Parking Charge : ${rent_Parking_Charges.value}");
-      // if (rent_Parking_Charges.value.toLowerCase() == 'separate') {
-      //   debugPrint(
-      //     "Maintenance Charge : ${rent_Custom_Parking_Charges.text.trim()}",
-      //   );
-      // }
-      // debugPrint("Facing : ${rent_facing.value}");
-      // debugPrint("Address : ${sell_rent_Address.text.trim()}");
-      // debugPrint("Servant Room : ${sell_rent_Servent_Room.value}");
-      // debugPrint(
-      //   "Property Description : ${sell_rent_propertyDescriptionController.text.trim()}",
-      // );
-      // debugPrint(
-      //   "Flat Furnishing: ${selectedFurnishing.entries.map((e) => "${e.key}: ${e.value.title}").toList()}",
-      // );
-      // debugPrint(
-      //   "amenities Types  : ${sell_Amenities_Furniture.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-      // debugPrint(
-      //   "amenities Types  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-
       final payload = await buildPropertyPayloadResidentialRent();
       debugPrint("Payload : ${payload.toJson()}");
       final success =
@@ -2070,55 +2040,8 @@ class CreatePropertyController extends GetxController {
     String? propertyId,
   }) async {
     try {
-      // print("Adding Residential Property for Sell...");
-      // debugPrint("Property Type : ${propertyType.value}");
-      // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("Selected Index : ${cityController.text.trim()}");
-      // debugPrint("Sub Property Type : ${rent_propertyType.value}");
-      // debugPrint("Building : ${rentBuildingController.text.trim()}");
-      // debugPrint("Locality : ${localityController.text.trim()}");
-      // debugPrint("BHK : ${bhkType.value}");
-      // debugPrint("Transaction Type : ${transactionType.value}");
-      // debugPrint("BuiltUpo area : ${areaController.text.trim()}");
-      // debugPrint("BuiltUpo area Size : ${areaUnit.value}");
-      // debugPrint("Furnishing  : ${furnishingType.value}");
-      // debugPrint("Expected Price  : ${sell_ExpectedPrice.text.trim()}");
-      // debugPrint("Price Negotiable : ${negotiablePriceOrNot.value}");
-      //
-      // debugPrint("Construction Status  : ${sell_constructionStatus.value}");
-      //
-      // if (sell_constructionStatus.value.toLowerCase() == "under construction") {
-      //   debugPrint("Available from  : ${sell_AvailableFrom.value}");
-      // } else {
-      //   debugPrint("Age Of Property : ${ageOfPropertyController.value}");
-      // }
-      //
-      // debugPrint("Bathroom  : ${rent_Bathroom.value}");
-      // debugPrint("Balcony  : ${rent_Balcony.value}");
-      // debugPrint("Covered Parking  : ${rent_CoveredParking.value}");
-      // debugPrint("Open Parking  : ${rent_OpenParking.value}");
-      // debugPrint("Lift Info  : ${lift_info.value}");
-      // debugPrint("Charge Brokerage? : ${doYouWantBrokerage.value}");
-      // if (doYouWantBrokerage.value == "yes") {
-      //   debugPrint("Brokerage Charge : ${brokerageCharge.text.trim()}");
-      //   debugPrint("Brokerage Negotiable : ${brokerageChargeNegotiable.value}");
-      // }
-      // debugPrint("Floor Number : ${sell_rent_Floor_No.text.trim()}");
-      // debugPrint("Total Floor : ${sell_rent_Total_Floor.text.trim()}");
-      // debugPrint("Maintenance Charge : ${rent_maintenanceChargeType.value}");
-      // debugPrint("Facing : ${rent_facing.value}");
-      // debugPrint("Address : ${sell_rent_Address.text.trim()}");
-      // debugPrint("Servant Room : ${sell_rent_Servent_Room.value}");
-      // debugPrint("RERA ID : ${sell_Rera_Id.text.trim()}");
-      // debugPrint(
-      //   "Flat Furnishing: ${selectedFurnishing.entries.map((e) => "${e.key}: ${e.value.title}").toList()}",
-      // );
-      // debugPrint(
-      //   "amenities Types  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      // );
-
       final payload = await buildPropertyPayloadResidentialSell();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2146,58 +2069,10 @@ class CreatePropertyController extends GetxController {
     String? propertyId,
   }) async {
     try {
-      // debugPrint("Property Type : ${propertyType.value}");
-      // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("City : ${cityController.text.trim()}");
-      // debugPrint("Locality : ${localityController.text.trim()}");
-      // debugPrint("PG Name : ${pgNameController.text.trim()}");
-      // debugPrint("Total Beds : ${totalRoomsController.text.trim()}");
-      // debugPrint("PG For Gender : ${pgFor.value}");
-      // debugPrint("Best Suit For : ${bestSuitedList.join(", ")}");
-      // debugPrint("Meal available : ${mealAvailable.value}");
-      // debugPrint("Meal offering : ${mealAvailableList.join(", ")}");
-      // debugPrint("Meal Charge : ${mealCharges.value}");
-      // if (mealCharges.value.toLowerCase() == "separate") {
-      //   debugPrint("Meal Charge : ${mealChargesTextFiled.text.trim()}");
-      // }
-      // debugPrint("Electricity Charge : ${electricityCharges.value}");
-      //
-      // if (electricityCharges.value.toLowerCase() == "separate") {
-      //   debugPrint(
-      //     "Electricity Charge : ${electricityChargesTextFiled.text.trim()}",
-      //   );
-      // }
-      //
-      // debugPrint("PG Rule : ${pgRulesAvailable.value}");
-      //
-      // if (pgRulesAvailable.value.toLowerCase() == "yes") {
-      //   debugPrint("Non-veg : ${nonVegAllowed.value}");
-      //   debugPrint("smoking : ${smokingAllowed.value}");
-      //   debugPrint("drinking : ${drinkingAllowed.value}");
-      //   debugPrint("pets : ${petAllowed.value}");
-      //   debugPrint("Late entry : ${letEntryAllowed.value}");
-      //   debugPrint("visitor : ${visitorsAllowed.value}");
-      // }
-      // debugPrint("Property Managed By : ${propertyManagedBy.value}");
-      // debugPrint(
-      //   "Property Manager stays at property : ${managerStaysAtProperty.value}",
-      // );
-      // debugPrint("Notice Period : ${noticPeriodController.text.trim()}");
-      // debugPrint("Lock in period : ${lockPeriodController.text.trim()}");
-      // debugPrint("Floor Numbers : ${pgFloorNumber.text.trim()}");
-      // debugPrint("Total Floor : ${pgTotalFloor.text.trim()}");
-      // debugPrint("Common Areas : ${commonAreasList.join(", ")}");
-      // debugPrint("roomList Areas : ${rooms.map((element) => element.toMap())}");
-      // debugPrint(
-      //   "amenities Types: ${selectedFurnishing.entries.map((e) => '${e.key}: ${e.value.title} = ${e.value.quantity}').join(', ')}",
-      // );
-      //
-      // debugPrint(
-      //   "Flat Furnishing  : ${selectedRoomAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      // );
+
 
       final payload = await buildPropertyPayloadResidentialPG();
-      debugPrint("Payload : ${payload.propertyDetails?.furnishInfo?.toJson()}");
+      AppLogger.structured("Payload : ",payload.propertyDetails?.furnishInfo?.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2328,28 +2203,10 @@ class CreatePropertyController extends GetxController {
     String? propertyId,
   }) async {
     try {
-      // debugPrint("Property Type : ${propertyType.value}");
-      // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("City : ${cityController.text.trim()}");
-      // debugPrint("Sub Category : ${selectedIndex.value}");
-      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
-      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
-      // debugPrint(
-      //   "Available From : ${commercial_rent_AvailableFrom.text.trim()}",
-      // );
-      // debugPrint("Zone Type : ${commercial_ZoneType.value}");
-      // debugPrint("Plot area: ${commercial_plot.text.trim()}");
-      // debugPrint("Plot area Unit : ${commercial_plotArea.value}");
-      // debugPrint("OwnerShip : ${commercial_ownerShipList.value}");
-      // debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
-      // debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
-      // debugPrint("Expected Rent : ${commercial_rent_cost.text.trim()}");
-      // debugPrint(
-      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      // );
+
 
       final payload = await buildPropertyPayloadCommercialRentPlot();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload Rent Plot In Commercial  : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2377,36 +2234,10 @@ class CreatePropertyController extends GetxController {
     String? propertyId,
   }) async {
     try {
-      // debugPrint("Property Type : ${propertyType.value}");
-      // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("City : ${cityController.text.trim()}");
-      // debugPrint("Sub Category : ${selectedIndex.value}");
-      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
-      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
-      // debugPrint("Property Name : ${commercial_Property_Name.text.trim()}");
-      // debugPrint(
-      //   "Possession status : ${commercial_rent_posessionStatus.value}",
-      // );
-      // debugPrint(
-      //   "Available From : ${commercial_rent_AvailableFrom.text.trim()}",
-      // );
-      // if (commercial_rent_posessionStatus.value == "Ready To Move") {
-      //   debugPrint("Age of Property : ${ageOfPropertyController.text.trim()}");
-      // }
-      // debugPrint("Zone Type : ${commercial_ZoneType.value}");
-      // debugPrint("Location Hub : ${commercial_LocationHub.value}");
-      // debugPrint("Carpet Area : ${commercial_Square_CarpetArea.text.trim()}");
-      // debugPrint("Built Up Area : ${commercial_Square_BuildArea.text.trim()}");
-      // debugPrint("ownership : ${commercial_ownerShipList.value}");
-      // debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
-      // debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
-      // debugPrint("Expected Rent : ${commercial_rent_cost.text.trim()}");
-      // debugPrint(
-      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      // );
+
 
       final payload = await buildPropertyPayloadCommercialRentOther();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload for Commercial other : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2478,7 +2309,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialRentOffice();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2535,7 +2366,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialRentShowRoom();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2592,7 +2423,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialRentShop();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2650,7 +2481,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialRentWarehouse();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2774,34 +2605,9 @@ class CreatePropertyController extends GetxController {
     String? propertyId,
   }) async {
     try {
-      // debugPrint("Property Type : ${propertyType.value}");
-      // debugPrint("Looking to Type : ${lookingTo.value}");
-      // debugPrint("City : ${cityController.text.trim()}");
-      // debugPrint("Sub Category : ${selectedIndex.value}");
-      // debugPrint("Building : ${commercial_rent_building_Name.text.trim()}");
-      // debugPrint("Locality : ${commercial_rent_Loaclity_Name.text.trim()}");
-      // debugPrint("Zone Type : ${commercial_ZoneType.value}");
-      // debugPrint("Plot area: ${commercial_plot.text.trim()}");
-      // debugPrint("Plot area Unit : ${commercial_plotArea.value}");
-      // debugPrint("OwnerShip : ${commercial_ownerShipList.value}");
-      // debugPrint("Floor Available : ${commercial_total_floor.text.trim()}");
-      // debugPrint("Your Floor : ${commercial_your_floor.text.trim()}");
-      // debugPrint("Expected cost : ${commercial_rent_cost.text.trim()}");
-      // debugPrint("is Pre leased : ${commercial_isPreLeased.value}");
-      // if (commercial_isPreLeased.value.toLowerCase() == "yes") {
-      //   debugPrint(
-      //     "current rent per month ${commercial_current_rent_preLeasedTill.text.trim()}",
-      //   );
-      //   debugPrint("Lease Year ${commercial_lease_years.text.trim()}");
-      // } else {
-      //   debugPrint("Expected R.O.I % ${commercial_returned_RIO.text.trim()}");
-      // }
-      // debugPrint(
-      //   "Amenities : ${selectedCommercialAmenities.map((element) => element.toLowerCase()).join(", ")}",
-      // );
 
       final payload = await buildPropertyPayloadCommercialSellPlot();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload Commercial Sell Plot : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2865,7 +2671,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellOther();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success = await _propertyService.createProperty(
         payload.toJson(),
         imageList.map((element) => File(element)).toList(),
@@ -2929,7 +2735,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellOffice();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2988,7 +2794,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellShowRoom();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -3047,7 +2853,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellShop();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -3107,7 +2913,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellWarehouse();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload : ",payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -3155,6 +2961,7 @@ class CreatePropertyController extends GetxController {
         bhk: int.tryParse(bhkType.value.substring(0, 1)),
         bathroom: rent_Bathroom.value,
         balcony: rent_Balcony.value,
+
         petFriendly:
             rent_Pet_Friendly.value.toLowerCase() == 'yes' ? true : false,
         propertyBuiltUpArea:
@@ -3221,8 +3028,8 @@ class CreatePropertyController extends GetxController {
                   propertySecurityDeposit: double.tryParse(
                     rent_SecurityDeposit.text.trim(),
                   ),
-                  is_for_sellorrent:isPredefinedCostEnabled.value,
-                  propertyPrice:double.tryParse(
+                  is_for_sellorrent: isPredefinedCostEnabled.value,
+                  propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
                   negotiable:
@@ -3237,10 +3044,10 @@ class CreatePropertyController extends GetxController {
                       noticPeriodController.text.isNotEmpty
                           ? int.tryParse(noticPeriodController.text.trim())
                           : null,
-                  brokerCommission:
-                      doYouWantBrokerage.value.toLowerCase() == 'yes'
-                          ? double.tryParse(brokerageCharge.text.trim())
-                          : null,
+                  brokerCommission: double.tryParse(
+                    brokerRageCommission.text.trim(),
+                  ),
+                  platformFees: double.tryParse(platformFees.text.trim()),
                   maintenanceCharges:
                       rent_maintenanceChargeType.value.toLowerCase() ==
                               "separate"
@@ -3370,7 +3177,10 @@ class CreatePropertyController extends GetxController {
     final parsedDate = DateFormat(
       'dd/MM/yyyy',
     ).tryParse(sell_AvailableFrom.text.trim());
-    final formattedDate =(parsedDate!=null)? DateFormat('yyyy-MM-dd').format(parsedDate):null;
+    final formattedDate =
+        (parsedDate != null)
+            ? DateFormat('yyyy-MM-dd').format(parsedDate)
+            : null;
     final data = AddPropertyModel(
       type:
           propertyType.value.isNotEmpty
@@ -3387,11 +3197,17 @@ class CreatePropertyController extends GetxController {
               ? sell_rent_propertyDescriptionController.text.trim()
               : null,
       propertyDetails: PropertyDetails(
-        bhk: int.tryParse(bhkType.value.substring(0, 1)),
-        transactionType: transactionType.value.toLowerCase().replaceAll(
+        bhk: int.tryParse(
+          bhkType.value.split(RegExp(r'\D')).firstWhere(
+                (e) => e.isNotEmpty,
+            orElse: () => '',
+          ),
+        ),
+
+        transactionType:  transactionType.value.isNotEmpty ? transactionType.value.toLowerCase().replaceAll(
           " ",
           "_",
-        ),
+        ) : null ,
         bathroom: rent_Bathroom.value,
         balcony: rent_Balcony.value,
         serventRoom: sell_rent_Servent_Room.value.toLowerCase() == 'yes',
@@ -3434,7 +3250,8 @@ class CreatePropertyController extends GetxController {
           possessionDate:
               sell_constructionStatus.value.toLowerCase() ==
                       'under construction'
-                  ? ((sell_AvailableFrom.text.trim().isNotEmpty) && (formattedDate!=null))
+                  ? ((sell_AvailableFrom.text.trim().isNotEmpty) &&
+                          (formattedDate != null))
                       ? formattedDate
                       : null
                   : null,
@@ -3463,36 +3280,36 @@ class CreatePropertyController extends GetxController {
                   propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
-              is_for_sellorrent:isPredefinedCostEnabled.value,
-              propertyRentPerMonth:double.tryParse(
-                rent_MonthilyRent.text.trim(),
-              ),
-              // propertyPricePast: List.generate(5, (index) {
-              //   final currentYear = DateTime.now().year;
-              //   final year = currentYear - (index + 1);
-              //   final priceText = pastPrices[index].text.trim();
-              //   final price = double.tryParse(priceText) ?? 0.0;
-              //   return PropertyPriceYearly(
-              //     year: year,
-              //     price: price,
-              //
-              //   );
-              // }),
-              propertyPricePast: getPastPriceData(),
+                  is_for_sellorrent: isPredefinedCostEnabled.value,
+                  propertyRentPerMonth: double.tryParse(
+                    rent_MonthilyRent.text.trim(),
+                  ),
+                  // propertyPricePast: List.generate(5, (index) {
+                  //   final currentYear = DateTime.now().year;
+                  //   final year = currentYear - (index + 1);
+                  //   final priceText = pastPrices[index].text.trim();
+                  //   final price = double.tryParse(priceText) ?? 0.0;
+                  //   return PropertyPriceYearly(
+                  //     year: year,
+                  //     price: price,
+                  //
+                  //   );
+                  // }),
+                  propertyPricePast: getPastPriceData(),
 
-              // 🔮 Future 5 Years Prices
-              // propertyPriceFuture: List.generate(5, (index) {
-              //   final currentYear = DateTime.now().year;
-              //   final year = currentYear + (index + 1);
-              //   final priceText = futurePrices[index].text.trim();
-              //   final price = double.tryParse(priceText) ?? 0.0;
-              //   return PropertyPriceYearly(
-              //     year: year,
-              //     price: price,
-              //
-              //   );
-              // }),
-              propertyPriceFuture: getFuturePriceData(),
+                  // 🔮 Future 5 Years Prices
+                  // propertyPriceFuture: List.generate(5, (index) {
+                  //   final currentYear = DateTime.now().year;
+                  //   final year = currentYear + (index + 1);
+                  //   final priceText = futurePrices[index].text.trim();
+                  //   final price = double.tryParse(priceText) ?? 0.0;
+                  //   return PropertyPriceYearly(
+                  //     year: year,
+                  //     price: price,
+                  //
+                  //   );
+                  // }),
+                  propertyPriceFuture: getFuturePriceData(),
                   negotiable:
                       negotiablePriceOrNot.value.toLowerCase() == 'yes'
                           ? true
@@ -3504,10 +3321,10 @@ class CreatePropertyController extends GetxController {
                             sell_rent_Maintenance_Charges.text.trim(),
                           )
                           : null,
-                  brokerCommission:
-                      doYouWantBrokerage.value.toLowerCase() == 'yes'
-                          ? double.tryParse(brokerageCharge.text.trim())
-                          : null,
+                  brokerCommission: double.tryParse(
+                    brokerRageCommission.text.trim(),
+                  ),
+                  platformFees: double.tryParse(platformFees.text.trim()),
                   brokerNegotiable:
                       doYouWantBrokerage.value.toLowerCase() == 'yes'
                           ? brokerageChargeNegotiable.value.toLowerCase() ==
@@ -3619,6 +3436,286 @@ class CreatePropertyController extends GetxController {
           user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
       reraId:
           sell_Rera_Id.text.trim().isNotEmpty ? sell_Rera_Id.text.trim() : null,
+    );
+    print("Data of residential sale : ${data.toJson()}");
+    return data;
+  }
+
+  Future<AddPropertyModel> buildPropertyPayloadResidentialSellPlot() async {
+    log("Containetr check any missimn");
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? "";
+    final parsedDate = DateFormat(
+      'dd/MM/yyyy',
+    ).tryParse(sell_AvailableFrom.text.trim());
+    final formattedDate =
+    (parsedDate != null)
+        ? DateFormat('yyyy-MM-dd').format(parsedDate)
+        : null;
+    final data = AddPropertyModel(
+      type:
+      propertyType.value.isNotEmpty
+          ? propertyType.value.toLowerCase()
+          : null,
+      listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
+
+
+      propertyType:
+
+      rent_propertyType.value.isNotEmpty
+          ? rent_propertyType.value.toLowerCase().replaceAll(" ", "_")
+          : null,
+      propertyDescription:
+      sell_rent_propertyDescriptionController.text.trim().isNotEmpty
+          ? sell_rent_propertyDescriptionController.text.trim()
+          : null,
+      propertyDetails: PropertyDetails(
+        bhk: int.tryParse(
+          bhkType.value.split(RegExp(r'\D')).firstWhere(
+                (e) => e.isNotEmpty,
+            orElse: () => '',
+          ),
+        ),
+
+        transactionType:  transactionType.value.isNotEmpty ? transactionType.value.toLowerCase().replaceAll(
+          " ",
+          "_",
+        ) : null ,
+        bathroom: rent_Bathroom.value,
+        balcony: rent_Balcony.value,
+        serventRoom: sell_rent_Servent_Room.value.toLowerCase() == 'yes',
+
+        propertyBuiltUpArea:
+        areaController.text.trim().isNotEmpty
+            ? double.tryParse(areaController.text.trim())
+            : null,
+        propertyCarpetArea:
+        carpetAreaController.text.trim().isNotEmpty
+            ? double.tryParse(carpetAreaController.text.trim())
+            : null,
+        propertyBuiltUpAreaUnit:
+        areaUnit.value.isNotEmpty ? removeDots(areaUnit.value) : null,
+        propertyCarpetAreaUnit:
+        carpetAreaUnit.value.isNotEmpty
+            ? removeDots(carpetAreaUnit.value)
+            : null,
+        propertyFacing: rent_facing.value.isNotEmpty ? rent_facing.value : null,
+        amenities:
+        selectedRoomAmenities.value.isNotEmpty
+            ? selectedRoomAmenities.value
+            : null,
+
+        floorInfo:
+        (sell_rent_Floor_No.text.trim().isNotEmpty ||
+            sell_rent_Total_Floor.text.trim().isNotEmpty)
+            ? FloorInfo(
+          floorNumber: int.tryParse(sell_rent_Floor_No.text.trim()),
+          totalFloors: int.tryParse(sell_rent_Total_Floor.text.trim()),
+        )
+            : null,
+        parkingInfo:
+        (rent_CoveredParking.value.isNotEmpty ||
+            rent_OpenParking.value.isNotEmpty)
+            ? ParkingInfo(
+          coveredParking:
+          int.tryParse(rent_CoveredParking.value) != null &&
+              int.tryParse(rent_CoveredParking.value)! > 0,
+          openParking:
+          int.tryParse(rent_OpenParking.value) != null &&
+              int.tryParse(rent_OpenParking.value)! > 0,
+        )
+            : null,
+        lifInfo: LiftInfo(
+          serviceLift: lift_info.value.toLowerCase() == 'yes' ? true : false,
+        ),
+        financialInfo:
+        (sell_ExpectedPrice.text.trim().isNotEmpty)
+            ? FinancialInfo(
+          propertyPrice: double.tryParse(
+            sell_ExpectedPrice.text.trim(),
+          ),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyRentPerMonth: double.tryParse(
+            rent_MonthilyRent.text.trim(),
+          ),
+          // propertyPricePast: List.generate(5, (index) {
+          //   final currentYear = DateTime.now().year;
+          //   final year = currentYear - (index + 1);
+          //   final priceText = pastPrices[index].text.trim();
+          //   final price = double.tryParse(priceText) ?? 0.0;
+          //   return PropertyPriceYearly(
+          //     year: year,
+          //     price: price,
+          //
+          //   );
+          // }),
+          propertyPricePast: getPastPriceData(),
+
+          // 🔮 Future 5 Years Prices
+          // propertyPriceFuture: List.generate(5, (index) {
+          //   final currentYear = DateTime.now().year;
+          //   final year = currentYear + (index + 1);
+          //   final priceText = futurePrices[index].text.trim();
+          //   final price = double.tryParse(priceText) ?? 0.0;
+          //   return PropertyPriceYearly(
+          //     year: year,
+          //     price: price,
+          //
+          //   );
+          // }),
+          propertyPriceFuture: getFuturePriceData(),
+          negotiable:
+          negotiablePriceOrNot.value.toLowerCase() == 'yes'
+              ? true
+              : false,
+
+          maintenanceCharges:
+          sell_rent_Maintenance_Charges.text.trim().isNotEmpty
+              ? double.tryParse(
+            sell_rent_Maintenance_Charges.text.trim(),
+          )
+              : null,
+          brokerCommission: double.tryParse(
+            brokerRageCommission.text.trim(),
+          ),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          brokerNegotiable:
+          doYouWantBrokerage.value.toLowerCase() == 'yes'
+              ? brokerageChargeNegotiable.value.toLowerCase() ==
+              'yes'
+              : null,
+        )
+            : null,
+        plotInfo: PlotInfo(
+      // TODO: Dynamic
+      plotLength:
+      plotLength.text.trim().isNotEmpty
+          ? double.tryParse(plotLength.text.trim())
+          : null,
+      plotWidth:
+      plotWidth.text.trim().isNotEmpty
+          ? double.tryParse(plotWidth.text.trim())
+          : null,
+      possessionStatus: sell_constructionStatus.value,
+
+      plotArea:
+      commercial_plot.text.trim().isNotEmpty
+          ? double.tryParse(commercial_plot.text.trim())
+          : null,
+      plotAreaUnit:
+      commercial_plotArea.value.isNotEmpty
+          ? commercial_plotArea.value
+          : null,
+
+          possessionDate: sell_constructionStatus.value.toLowerCase() == 'in future' &&
+              sell_AvailableFrom.text.trim().isNotEmpty
+              ? formatDateForBackend(sell_AvailableFrom.text.trim())
+              : null,
+
+        ), furnishInfo:
+        furnishingType.value.isNotEmpty
+            ? PropertyFurnishInfo(
+          furnishType: furnishingType.value,
+          furnishDetails: FurnishDetails(
+            // ---------- Multi-choice (int) ----------
+            fan: int.tryParse(
+              selectedFurnishing.value['fan']?.quantity.toString() ??
+                  '',
+            ),
+            light: int.tryParse(
+              selectedFurnishing.value['light']?.quantity.toString() ??
+                  '',
+            ),
+            ac: int.tryParse(
+              selectedFurnishing.value['ac']?.quantity.toString() ?? '',
+            ),
+            wardrobe: int.tryParse(
+              selectedFurnishing.value['wardrobe']?.quantity
+                  .toString() ??
+                  '',
+            ),
+            tv: int.tryParse(
+              selectedFurnishing.value['tv']?.quantity.toString() ?? '',
+            ),
+            bed: int.tryParse(
+              selectedFurnishing.value['bed']?.quantity.toString() ??
+                  '',
+            ),
+            geyser: int.tryParse(
+              selectedFurnishing.value['geyser']?.quantity.toString() ??
+                  '',
+            ),
+
+            // ---------- Boolean Furnishings ----------
+            diningTable:
+            selectedFurnishing.value['table']?.quantity == 1
+                ? true
+                : false,
+            washingMachine:
+            selectedFurnishing.value['washing']?.quantity == 1
+                ? true
+                : false,
+            cupboard:
+            selectedFurnishing.value['cupboard']?.quantity == 1
+                ? true
+                : false,
+            sofa:
+            selectedFurnishing.value['sofa']?.quantity == 1
+                ? true
+                : false,
+            microwave:
+            selectedFurnishing.value['microwave']?.quantity == 1
+                ? true
+                : false,
+            stove:
+            selectedFurnishing.value['stove']?.quantity == 1
+                ? true
+                : false,
+            fridge:
+            selectedFurnishing.value['refrigerate']?.quantity == 1
+                ? true
+                : false,
+            waterPurifier:
+            selectedFurnishing.value['water-purifier']?.quantity ==
+                1
+                ? true
+                : false,
+            gasPipeline:
+            selectedFurnishing.value['gas-pipline']?.quantity == 1
+                ? true
+                : false,
+            chimney:
+            selectedFurnishing.value['chimeny']?.quantity == 1
+                ? true
+                : false,
+            modularKitchen:
+            selectedFurnishing.value['modular-kitchen']?.quantity ==
+                1
+                ? true
+                : false,
+          ),
+        )
+            : null,
+      ),
+      location:
+      localityController.text.trim().isNotEmpty
+          ? localityController.text.trim()
+          : null,
+      city:
+      cityController.text.trim().isNotEmpty
+          ? cityController.text.trim()
+          : null,
+      state: extractState(localityController.text.trim()),
+      address:
+      sell_rent_Address.text.trim().isNotEmpty
+          ? sell_rent_Address.text.trim()
+          : null,
+      ownerEmail: user != null ? user.user?.email : "",
+      ownerPhone: user != null ? user.user?.phone : "",
+      ownerName:
+      user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
+      reraId:
+      sell_Rera_Id.text.trim().isNotEmpty ? sell_Rera_Id.text.trim() : null,
     );
     print("Data of residential sale : ${data.toJson()}");
     return data;
@@ -3855,14 +3952,14 @@ class CreatePropertyController extends GetxController {
               ? selectedIndex.value.toLowerCase()
               : null,
       propertyDetails: PropertyDetails(
-        possessionInfo: PossessionInfo(
-          possessionDate:
-              commercial_rent_AvailableFrom.text.trim().isNotEmpty
-                  ? formatDateForBackend(
-                    commercial_rent_AvailableFrom.text.trim(),
-                  )
-                  : null,
-        ),
+        // possessionInfo: PossessionInfo(
+        //   possessionDate:
+        //       commercial_rent_AvailableFrom.text.trim().isNotEmpty
+        //           ? formatDateForBackend(
+        //             commercial_rent_AvailableFrom.text.trim(),
+        //           )
+        //           : null,
+        // ),
         zoneType:
             commercial_ZoneType.value.isNotEmpty
                 ? commercial_ZoneType.value
@@ -3877,6 +3974,10 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -3892,7 +3993,7 @@ class CreatePropertyController extends GetxController {
               plotWidth.text.trim().isNotEmpty
                   ? double.tryParse(plotWidth.text.trim())
                   : null,
-          possessionStatus: "In Future",
+          possessionStatus: commercial_rent_posessionStatus.value,
           plotArea:
               commercial_plot.text.trim().isNotEmpty
                   ? double.tryParse(commercial_plot.text.trim())
@@ -3901,21 +4002,25 @@ class CreatePropertyController extends GetxController {
               commercial_plotArea.value.isNotEmpty
                   ? commercial_plotArea.value
                   : null,
-          possessionDate: formatDateForBackend(
-            commercial_rent_AvailableFrom.text.trim(),
-          ),
+          // possessionDate: formatDateForBackend(
+          //   commercial_rent_AvailableFrom.text.trim(),
+          // ),
+          possessionDate: commercial_rent_posessionStatus.value.toLowerCase() == 'in future' &&
+              commercial_rent_AvailableFrom.text.trim().isNotEmpty
+              ? formatDateForBackend(commercial_rent_AvailableFrom.text.trim())
+              : null,
         ),
       ),
-
       location:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
+      commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+              ? commercial_rent_Loaclity_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
+
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
 
       address:
-          commercial_rent_Loaclity_Name.text.trim().isNotEmpty
-              ? commercial_rent_Loaclity_Name.text.trim()
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -3983,6 +4088,10 @@ class CreatePropertyController extends GetxController {
 
         financialInfo: FinancialInfo(
           //TODO: Implement Remain
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4001,20 +4110,24 @@ class CreatePropertyController extends GetxController {
         //   int.tryParse(commercial_total_floor.text.trim()):null,
         // )
       ),
-      state: extractState(localityController.text.trim()),
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
 
       city:
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
               : null,
       location:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
+          commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+              ? commercial_rent_Loaclity_Name.text.trim()
               : null,
 
       address:
-          commercial_rent_Loaclity_Name.text.trim().isNotEmpty
-              ? commercial_rent_Loaclity_Name.text.trim()
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -4141,6 +4254,8 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
           negotiable:
               commercial_rent_price_negotiable.value.toLowerCase() == 'yes'
                   ? true
@@ -4149,10 +4264,8 @@ class CreatePropertyController extends GetxController {
               commercial_rent_brokage_negotiable.value.toLowerCase() == 'yes'
                   ? true
                   : false,
-          brokerCommission:
-              commercial_rent_brokage.value.toLowerCase() == 'yes'
-                  ? double.tryParse(commercial_rent_brokerage.text.trim())
-                  : null,
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
           maintenanceCharges:
               commercial_rent_maintainance_charge.value.toLowerCase() ==
                       'separate'
@@ -4162,17 +4275,21 @@ class CreatePropertyController extends GetxController {
                   : null,
         ),
       ),
-
-      location:
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
 
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
+
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
       ownerName:
@@ -4252,21 +4369,28 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
         ),
       ),
-
-      location:
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -4344,6 +4468,10 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4351,15 +4479,28 @@ class CreatePropertyController extends GetxController {
         ),
       ),
 
-      location:
+      // location:
+      //     commercial_rent_building_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_building_Name.text.trim()
+      //         : null,
+      // state: extractState(localityController.text.trim()),
+      //
+      // address:
+      //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_Loaclity_Name.text.trim()
+      //         : null,
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
-
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -4443,6 +4584,10 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4450,14 +4595,27 @@ class CreatePropertyController extends GetxController {
         ),
       ),
 
-      location:
+      // location:
+      //     commercial_rent_building_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_building_Name.text.trim()
+      //         : null,
+      // state: extractState(localityController.text.trim()),
+      // address:
+      //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_Loaclity_Name.text.trim()
+      //         : null,
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -4495,30 +4653,14 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          propertyPricePast: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear - (index + 1);
-            final priceText = pastPrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPricePast: getPastPriceData(),
 
           // 🔮 Future 5 Years Prices
-          propertyPriceFuture: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear + (index + 1);
-            final priceText = futurePrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPriceFuture: getFuturePriceData(),
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4565,15 +4707,28 @@ class CreatePropertyController extends GetxController {
         ),
       ),
 
-      location:
+      // location:
+      //     commercial_rent_building_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_building_Name.text.trim()
+      //         : null,
+      // state: extractState(localityController.text.trim()),
+      //
+      // address:
+      //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_Loaclity_Name.text.trim()
+      //         : null,
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
-
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -4651,47 +4806,31 @@ class CreatePropertyController extends GetxController {
                   : null,
         ),
         financialInfo: FinancialInfo(
-          propertyPricePast: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear - (index + 1);
-            final priceText = pastPrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPricePast: getPastPriceData(),
 
           // 🔮 Future 5 Years Prices
-          propertyPriceFuture: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear + (index + 1);
-            final priceText = futurePrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPriceFuture: getFuturePriceData(),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
           // TODO: Lease Year
-          propertyRentPerMonth:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
-          monthlyRent:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
+          // propertyRentPerMonth:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          // monthlyRent:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
           // TODO: R.O.I
         ),
 
@@ -4701,15 +4840,28 @@ class CreatePropertyController extends GetxController {
                 : null,
       ),
 
-      location:
+      // location:
+      //     commercial_rent_building_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_building_Name.text.trim()
+      //         : null,
+      // state: extractState(localityController.text.trim()),
+      //
+      // address:
+      //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_Loaclity_Name.text.trim()
+      //         : null,
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
-
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -4834,61 +4986,58 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          propertyPricePast: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear - (index + 1);
-            final priceText = pastPrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPricePast: getPastPriceData(),
 
           // 🔮 Future 5 Years Prices
-          propertyPriceFuture: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear + (index + 1);
-            final priceText = futurePrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPriceFuture: getFuturePriceData(),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
 
           // TODO: Lease Year
-          propertyRentPerMonth:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
-          monthlyRent:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
+          // propertyRentPerMonth:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          // monthlyRent:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
           // TODO: R.O.I
         ),
       ),
 
-      location:
+      // location:
+      //     commercial_rent_building_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_building_Name.text.trim()
+      //         : null,
+      // state: extractState(localityController.text.trim()),
+      //
+      // address:
+      //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_Loaclity_Name.text.trim()
+      //         : null,
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
-
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -4971,60 +5120,57 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          propertyPricePast: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear - (index + 1);
-            final priceText = pastPrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPricePast: getPastPriceData(),
 
           // 🔮 Future 5 Years Prices
-          propertyPriceFuture: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear + (index + 1);
-            final priceText = futurePrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPriceFuture: getFuturePriceData(),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
           // TODO: Lease Year
-          propertyRentPerMonth:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
-          monthlyRent:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
+          // propertyRentPerMonth:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          // monthlyRent:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
           // TODO: R.O.I
         ),
       ),
 
-      location:
+      // location:
+      //     commercial_rent_building_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_building_Name.text.trim()
+      //         : null,
+      // state: extractState(localityController.text.trim()),
+      //
+      // address:
+      //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_Loaclity_Name.text.trim()
+      //         : null,
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
-
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -5104,60 +5250,57 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          propertyPricePast: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear - (index + 1);
-            final priceText = pastPrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPricePast: getPastPriceData(),
 
           // 🔮 Future 5 Years Prices
-          propertyPriceFuture: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear + (index + 1);
-            final priceText = futurePrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPriceFuture: getFuturePriceData(),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
           // TODO: Lease Year
-          propertyRentPerMonth:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
-          monthlyRent:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
+          // propertyRentPerMonth:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          // monthlyRent:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
           // TODO: R.O.I
         ),
       ),
 
-      location:
+      // location:
+      //     commercial_rent_building_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_building_Name.text.trim()
+      //         : null,
+      // state: extractState(localityController.text.trim()),
+      //
+      // address:
+      //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_Loaclity_Name.text.trim()
+      //         : null,
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
-
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
@@ -5243,60 +5386,57 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          propertyPricePast: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear - (index + 1);
-            final priceText = pastPrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPricePast: getPastPriceData(),
 
           // 🔮 Future 5 Years Prices
-          propertyPriceFuture: List.generate(5, (index) {
-            final currentYear = DateTime.now().year;
-            final year = currentYear + (index + 1);
-            final priceText = futurePrices[index].text.trim();
-            final price = double.tryParse(priceText) ?? 0.0;
-            return PropertyPriceYearly(
-              year: year,
-              price: price,
-
-            );
-          }),
+          propertyPriceFuture: getFuturePriceData(),
           propertyPrice:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
           // TODO: Lease Year
-          propertyRentPerMonth:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
-          monthlyRent:
-              (commercial_isPreLeased.value.toLowerCase() == "yes")
-                  ? double.tryParse(
-                    commercial_current_rent_preLeasedTill.text.trim(),
-                  )
-                  : null,
+          // propertyRentPerMonth:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          // monthlyRent:
+          //     (commercial_isPreLeased.value.toLowerCase() == "yes")
+          //         ? double.tryParse(
+          //           commercial_current_rent_preLeasedTill.text.trim(),
+          //         )
+          //         : null,
+          brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
+          platformFees: double.tryParse(platformFees.text.trim()),
+          is_for_sellorrent: isPredefinedCostEnabled.value,
+          propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
           // TODO: R.O.I
         ),
       ),
 
-      location:
+      // location:
+      //     commercial_rent_building_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_building_Name.text.trim()
+      //         : null,
+      // state: extractState(localityController.text.trim()),
+      //
+      // address:
+      //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
+      //         ? commercial_rent_Loaclity_Name.text.trim()
+      //         : null,
+      buildingName:
           commercial_rent_building_Name.text.trim().isNotEmpty
               ? commercial_rent_building_Name.text.trim()
               : null,
-      state: extractState(localityController.text.trim()),
-
-      address:
+      location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
+              : null,
+      state: extractState(commercial_rent_Loaclity_Name.text.trim()),
+      address:
+          sell_rent_Address.text.trim().isNotEmpty
+              ? sell_rent_Address.text.trim()
               : null,
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",

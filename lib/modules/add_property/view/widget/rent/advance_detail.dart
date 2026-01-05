@@ -101,9 +101,9 @@ class RentAdvanceDetail extends StatelessWidget {
     ];
     final rent_Parking_Charges = ['Included in rent', 'Separate'];
     return Obx(() {
-      print("Propwerty type${controller.rent_propertyType.value}  ${((controller.rent_propertyType.value != 'Independent House' &&
-          controller.rent_propertyType.value != 'Duplex' )&&
-          controller.rent_propertyType.value != 'Farmhouse')}");
+      print(
+        "Propwerty type${controller.rent_propertyType.value}  ${((controller.rent_propertyType.value != 'Independent House' && controller.rent_propertyType.value != 'Duplex') && controller.rent_propertyType.value != 'Farmhouse')}",
+      );
       if ((controller.lookingTo.value == "Rent" ||
               controller.lookingTo.value == 'Sell') &&
           controller.propertyType.value == "Residential") {
@@ -113,343 +113,214 @@ class RentAdvanceDetail extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-
-              SizedBox(height: 16),
-              buildSectionTitle("Bathrooms"),
-              SizedBox(height: 8),
-              Obx(() {
-                int bhkCount = 1;
-                if (controller.bhkType.value.isNotEmpty) {
-                  bhkCount =
-                      int.tryParse(controller.bhkType.value.split(' ')[0]) ?? 1;
-                }
-                final bathroomOptions = List<int>.generate(
-                  bhkCount,
-                  (i) => i + 1, // Generates [1, 2, ..., bhkCount]
-                );
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    spacing: 12,
-                    children:
-                        bathroomOptions
-                            .map(
-                              (option) => buildChoice(
-                                title: option.toString(),
-                                selected:
-                                    controller.rent_Bathroom.value == option,
-                                onTap: () {
-                                  controller.setValue(
-                                    controller.rent_Bathroom,
-                                    option,
-                                  );
-                                },
-                              ),
-                            )
-                            .toList(),
-                  ),
-                );
-              }),
-              // SizedBox(height: 16),
-              SizedBox(height: 16),
-              buildSectionTitle("Balcony"),
-              SizedBox(height: 8),
-              Obx(() {
-                int bhkCount = 1;
-                if (controller.bhkType.value.isNotEmpty) {
-                  bhkCount =
-                      int.tryParse(controller.bhkType.value.split(' ')[0]) ?? 1;
-                }
-                final balconyOptions = List<int>.generate(
-                  bhkCount + 1,
-                  (i) => i, // Generates [0, 1, ..., bhkCount]
-                );
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    spacing: 12,
-                    children:
-                        balconyOptions
-                            .map(
-                              (option) => buildChoice(
-                                title: option.toString(),
-                                selected:
-                                    controller.rent_Balcony.value == option,
-                                onTap: () {
-                                  controller.setValue(
-                                    controller.rent_Balcony,
-                                    option,
-                                  );
-                                },
-                              ),
-                            )
-                            .toList(),
-                  ),
-                );
-              }),
-              if ((controller.rent_propertyType.value != 'Independent House' &&
-                  controller.rent_propertyType.value != 'Duplex' )&&
-                  controller.rent_propertyType.value != 'Farmhouse') ...[
+              if (controller.rent_propertyType.value != "Plot" &&
+                  controller.rent_propertyType.value.toLowerCase() !=
+                      "agricultural land") ...[
                 SizedBox(height: 16),
-                buildSectionTitle("Covered Parking"),
+                buildSectionTitle("Bathrooms"),
                 SizedBox(height: 8),
                 Obx(() {
-                  final coverParkingOptions = ['0', '1', '2', '3', '3+'];
+                  int bhkCount = 1;
+                  if (controller.bhkType.value.isNotEmpty) {
+                    bhkCount =
+                        int.tryParse(controller.bhkType.value.split(' ')[0]) ??
+                        1;
+                  }
+                  final bathroomOptions = List<int>.generate(
+                    bhkCount,
+                    (i) => i + 1, // Generates [1, 2, ..., bhkCount]
+                  );
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       spacing: 12,
                       children:
-                          coverParkingOptions.map((option) {
-                            return buildChoice(
-                              width: 80,
-                              title: option,
-                              selected:
-                                  controller.rent_CoveredParking.value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.rent_CoveredParking,
-                                  option,
-                                );
-                              },
-                            );
-                          }).toList(),
+                          bathroomOptions
+                              .map(
+                                (option) => buildChoice(
+                                  title: option.toString(),
+                                  selected:
+                                      controller.rent_Bathroom.value == option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.rent_Bathroom,
+                                      option,
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
+                // SizedBox(height: 16),
                 SizedBox(height: 16),
-                buildSectionTitle("Open Parking"),
+                buildSectionTitle("Balcony"),
                 SizedBox(height: 8),
                 Obx(() {
-                  final openParkingOptions = ['0', '1', '2', '3', '3+'];
+                  int bhkCount = 1;
+                  if (controller.bhkType.value.isNotEmpty) {
+                    bhkCount =
+                        int.tryParse(controller.bhkType.value.split(' ')[0]) ??
+                        1;
+                  }
+                  final balconyOptions = List<int>.generate(
+                    bhkCount + 1,
+                    (i) => i, // Generates [0, 1, ..., bhkCount]
+                  );
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       spacing: 12,
                       children:
-                          openParkingOptions.map((option) {
-                            return buildChoice(
-                              width: 80,
-                              title: option,
-                              selected:
-                                  controller.rent_OpenParking.value == option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.rent_OpenParking,
-                                  option,
-                                );
-                              },
-                            );
-                          }).toList(),
+                          balconyOptions
+                              .map(
+                                (option) => buildChoice(
+                                  title: option.toString(),
+                                  selected:
+                                      controller.rent_Balcony.value == option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.rent_Balcony,
+                                      option,
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
-              ],
-              if(((controller.rent_propertyType.value != 'Independent House' &&
-                  controller.rent_propertyType.value != 'Duplex' )&&
-                  controller.rent_propertyType.value != 'Villa'))
-                ...[
+                if ((controller.rent_propertyType.value !=
+                            'Independent House' &&
+                        controller.rent_propertyType.value != 'Duplex') &&
+                    controller.rent_propertyType.value != 'Farmhouse') ...[
                   SizedBox(height: 16),
-                  buildSectionTitle("Lift info"),
+                  buildSectionTitle("Covered Parking"),
                   SizedBox(height: 8),
-                  Obx(
-                        () => Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children:
-                      lift_info.map((option) {
-                        return buildChoice(
-                          title: option,
-                          selected: controller.lift_info.value == option,
-                          onTap: () {
-                            controller.setValue(controller.lift_info, option);
-                          },
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-
-              if (controller.lookingTo.value == 'Rent') ...[
-                SizedBox(height: 16),
-                buildSectionTitle("Pet Friendly? "),
-                SizedBox(height: 8),
-                Obx(
-                  () => Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children:
-                        rent_Pet_Friendly.map((option) {
-                          return buildChoice(
-                            title: option,
-                            selected:
-                                controller.rent_Pet_Friendly.value == option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.rent_Pet_Friendly,
-                                option,
-                              );
-                            },
-                          );
-                        }).toList(),
-                  ),
-                ),
-              ],
-              SizedBox(height: 16),
-              buildSectionTitle("Do you charge brokerage"),
-
-              SizedBox(height: 8),
-              Obx(
-                () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
-                      charge_brokerage.map((option) {
-                        return buildChoice(
-                          title: option,
-                          selected:
-                              controller.doYouWantBrokerage.value == option,
-                          onTap: () {
-                            controller.setValue(
-                              controller.doYouWantBrokerage,
-                              option,
-                            );
-                          },
-                        );
-                      }).toList(),
-                ),
-              ),
-              if (controller.doYouWantBrokerage.value == "Yes") ...[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 16),
-                    buildSectionTitle("Brokerage (in Rupees)"),
-
-                    SizedBox(height: 12),
-
-                    buildTextField(
-                      "Enter brokerage amount",
-                      Icons.currency_rupee_outlined,
-                      controller.brokerageCharge,
-                      isPhoneKey: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter brokerage';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16),
-                    buildSectionTitle("Brokerage Negotiable"),
-                    SizedBox(height: 12),
-
-                    Obx(
-                      () => Wrap(
+                  Obx(() {
+                    final coverParkingOptions = ['0', '1', '2', '3', '3+'];
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
                         spacing: 12,
-                        runSpacing: 12,
                         children:
-                            charge_brokerage_negotiable.map((option) {
+                            coverParkingOptions.map((option) {
                               return buildChoice(
+                                width: 80,
                                 title: option,
                                 selected:
-                                    controller
-                                        .brokerageChargeNegotiable
-                                        .value ==
+                                    controller.rent_CoveredParking.value ==
                                     option,
                                 onTap: () {
                                   controller.setValue(
-                                    controller.brokerageChargeNegotiable,
+                                    controller.rent_CoveredParking,
                                     option,
                                   );
                                 },
                               );
                             }).toList(),
                       ),
+                    );
+                  }),
+                  SizedBox(height: 16),
+                  buildSectionTitle("Open Parking"),
+                  SizedBox(height: 8),
+                  Obx(() {
+                    final openParkingOptions = ['0', '1', '2', '3', '3+'];
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 12,
+                        children:
+                            openParkingOptions.map((option) {
+                              return buildChoice(
+                                width: 80,
+                                title: option,
+                                selected:
+                                    controller.rent_OpenParking.value == option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.rent_OpenParking,
+                                    option,
+                                  );
+                                },
+                              );
+                            }).toList(),
+                      ),
+                    );
+                  }),
+                ],
+                if (((controller.rent_propertyType.value !=
+                            'Independent House' &&
+                        controller.rent_propertyType.value != 'Duplex') &&
+                    controller.rent_propertyType.value != 'Villa')) ...[
+                  SizedBox(height: 16),
+                  buildSectionTitle("Lift info"),
+                  SizedBox(height: 8),
+                  Obx(
+                    () => Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children:
+                          lift_info.map((option) {
+                            return buildChoice(
+                              title: option,
+                              selected: controller.lift_info.value == option,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.lift_info,
+                                  option,
+                                );
+                              },
+                            );
+                          }).toList(),
                     ),
+                  ),
+                ],
 
-                    SizedBox(height: 12),
-                  ],
-                ),
-              ],
-              // SizedBox(height: 16),
-              // buildSectionTitle("Flat No."),
-              // SizedBox(height: 8),
-              // buildTextField(
-              //   "Flat No.",
-              //   Icons.home_outlined,
-              //   controller.sell_rent_Flat_No,
-              //   isPhoneKey: true,
-              // ),
-              if (controller.rent_propertyType.value != 'Independent House' &&
-                  controller.rent_propertyType.value != 'Villa') ...[
+                if (controller.lookingTo.value == 'Rent') ...[
+                  SizedBox(height: 16),
+                  buildSectionTitle("Pet Friendly? "),
+                  SizedBox(height: 8),
+                  Obx(
+                    () => Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children:
+                          rent_Pet_Friendly.map((option) {
+                            return buildChoice(
+                              title: option,
+                              selected:
+                                  controller.rent_Pet_Friendly.value == option,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.rent_Pet_Friendly,
+                                  option,
+                                );
+                              },
+                            );
+                          }).toList(),
+                    ),
+                  ),
+                ],
                 SizedBox(height: 16),
-                buildSectionTitle('Floor No.'),
-                SizedBox(height: 8),
-                buildTextField(
-                  "Enter Floor No.",
-                  Icons.apartment_outlined,
-                  controller.sell_rent_Floor_No,
-                  isPhoneKey: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter floor number';
-                    }
-                    final floorNo = int.tryParse(value);
-                    final totalFloor = int.tryParse(controller.sell_rent_Total_Floor.text);
+                buildSectionTitle("Do you charge brokerage"),
 
-                    if (floorNo == null) {
-                      return 'Enter a valid number';
-                    }
-                    if (totalFloor != null && floorNo > totalFloor) {
-                      return 'Floor number cannot be greater than total floors';
-                    }
-                    return null;
-                  },
-                ),
-
-                SizedBox(height: 16),
-                buildSectionTitle('Total Floor'),
-                SizedBox(height: 8),
-                buildTextField(
-                  "Enter Total Floor",
-                  Icons.apartment_outlined,
-                  controller.sell_rent_Total_Floor,
-                  isPhoneKey: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter total floors';
-                    }
-                    final totalFloor = int.tryParse(value);
-                    if (totalFloor == null) {
-                      return 'Enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-              ],
-
-              SizedBox(height: 16),
-
-              if (controller.lookingTo.value == 'Rent') ...[
-                buildSectionTitle("Maintenance Charges"),
                 SizedBox(height: 8),
                 Obx(
                   () => Wrap(
                     spacing: 12,
                     runSpacing: 12,
                     children:
-                        rent_maintenanceChargeType.map((option) {
+                        charge_brokerage.map((option) {
                           return buildChoice(
                             title: option,
                             selected:
-                                controller.rent_maintenanceChargeType.value ==
-                                option,
+                                controller.doYouWantBrokerage.value == option,
                             onTap: () {
                               controller.setValue(
-                                controller.rent_maintenanceChargeType,
+                                controller.doYouWantBrokerage,
                                 option,
                               );
                             },
@@ -457,9 +328,140 @@ class RentAdvanceDetail extends StatelessWidget {
                         }).toList(),
                   ),
                 ),
-                if (controller.rent_maintenanceChargeType.value ==
-                    "Separate") ...[
+                if (controller.doYouWantBrokerage.value == "Yes") ...[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 16),
+                      buildSectionTitle("Brokerage Negotiable"),
+                      SizedBox(height: 12),
+
+                      Obx(
+                        () => Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children:
+                              charge_brokerage_negotiable.map((option) {
+                                return buildChoice(
+                                  title: option,
+                                  selected:
+                                      controller
+                                          .brokerageChargeNegotiable
+                                          .value ==
+                                      option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.brokerageChargeNegotiable,
+                                      option,
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                        ),
+                      ),
+
+                      SizedBox(height: 12),
+                    ],
+                  ),
+                ],
+                // SizedBox(height: 16),
+                // buildSectionTitle("Flat No."),
+                // SizedBox(height: 8),
+                // buildTextField(
+                //   "Flat No.",
+                //   Icons.home_outlined,
+                //   controller.sell_rent_Flat_No,
+                //   isPhoneKey: true,
+                // ),
+                if (controller.rent_propertyType.value != 'Independent House' &&
+                    controller.rent_propertyType.value != 'Villa') ...[
                   SizedBox(height: 16),
+                  buildSectionTitle('Floor No.'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    "Enter Floor No.",
+                    Icons.apartment_outlined,
+                    controller.sell_rent_Floor_No,
+                    isPhoneKey: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter floor number';
+                      }
+                      final floorNo = int.tryParse(value);
+                      final totalFloor = int.tryParse(
+                        controller.sell_rent_Total_Floor.text,
+                      );
+
+                      if (floorNo == null) {
+                        return 'Enter a valid number';
+                      }
+                      if (totalFloor != null && floorNo > totalFloor) {
+                        return 'Floor number cannot be greater than total floors';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  SizedBox(height: 16),
+                  buildSectionTitle('Total Floor'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    "Enter Total Floor",
+                    Icons.apartment_outlined,
+                    controller.sell_rent_Total_Floor,
+                    isPhoneKey: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter total floors';
+                      }
+                      final totalFloor = int.tryParse(value);
+                      if (totalFloor == null) {
+                        return 'Enter a valid number';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+
+                SizedBox(height: 16),
+
+                if (controller.lookingTo.value == 'Rent') ...[
+                  buildSectionTitle("Maintenance Charges"),
+                  SizedBox(height: 8),
+                  Obx(
+                    () => Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children:
+                          rent_maintenanceChargeType.map((option) {
+                            return buildChoice(
+                              title: option,
+                              selected:
+                                  controller.rent_maintenanceChargeType.value ==
+                                  option,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.rent_maintenanceChargeType,
+                                  option,
+                                );
+                              },
+                            );
+                          }).toList(),
+                    ),
+                  ),
+                  if (controller.rent_maintenanceChargeType.value ==
+                      "Separate") ...[
+                    SizedBox(height: 16),
+                    Text("Maintenance Charges"),
+                    SizedBox(height: 8),
+                    buildTextField(
+                      "Enter Maintenance Charges",
+                      Icons.currency_rupee_outlined,
+                      controller.sell_rent_Maintenance_Charges,
+                      isPhoneKey: true,
+                    ),
+                  ],
+                ] else if (controller.lookingTo.value == "Sell") ...[
                   Text("Maintenance Charges"),
                   SizedBox(height: 8),
                   buildTextField(
@@ -469,149 +471,144 @@ class RentAdvanceDetail extends StatelessWidget {
                     isPhoneKey: true,
                   ),
                 ],
-              ] else if (controller.lookingTo.value == "Sell") ...[
-                Text("Maintenance Charges"),
-                SizedBox(height: 8),
-                buildTextField(
-                  "Enter Maintenance Charges",
-                  Icons.currency_rupee_outlined,
-                  controller.sell_rent_Maintenance_Charges,
-                  isPhoneKey: true,
-                ),
-              ],
 
-              if (controller.lookingTo.value == 'Rent') ...[
-
-                if (controller.rent_propertyType.value != 'Independent House' ||
-                    controller.rent_propertyType.value != 'Duplex' ||
-                    controller.rent_propertyType.value != 'Villa' ||
-                    controller.rent_propertyType.value != 'Farmhouse') ...[
-                  SizedBox(height: 16),
-                  buildSectionTitle("Parking Charges"),
-                  SizedBox(height: 8),
-                  Obx(
-                    () => Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children:
-                          rent_Parking_Charges.map((option) {
-                            return buildChoice(
-                              title: option,
-                              selected:
-                                  controller.rent_Parking_Charges.value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.rent_Parking_Charges,
-                                  option,
-                                );
-                              },
-                            );
-                          }).toList(),
-                    ),
-                  ),
-                  if (controller.rent_Parking_Charges.value == "Separate") ...[
+                if (controller.lookingTo.value == 'Rent') ...[
+                  if (controller.rent_propertyType.value !=
+                          'Independent House' ||
+                      controller.rent_propertyType.value != 'Duplex' ||
+                      controller.rent_propertyType.value != 'Villa' ||
+                      controller.rent_propertyType.value != 'Farmhouse') ...[
                     SizedBox(height: 16),
-                    Text("Custom Parking Charges"),
+                    buildSectionTitle("Parking Charges"),
                     SizedBox(height: 8),
-
-                    buildTextField(
-                      "Enter Parking Charges",
-                      Icons.currency_rupee_outlined,
-                      controller.rent_Custom_Parking_Charges,
-                      isPhoneKey: true,
+                    Obx(
+                      () => Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children:
+                            rent_Parking_Charges.map((option) {
+                              return buildChoice(
+                                title: option,
+                                selected:
+                                    controller.rent_Parking_Charges.value ==
+                                    option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.rent_Parking_Charges,
+                                    option,
+                                  );
+                                },
+                              );
+                            }).toList(),
+                      ),
                     ),
-                    SizedBox(height: 16),
+                    if (controller.rent_Parking_Charges.value ==
+                        "Separate") ...[
+                      SizedBox(height: 16),
+                      Text("Custom Parking Charges"),
+                      SizedBox(height: 8),
+
+                      buildTextField(
+                        "Enter Parking Charges",
+                        Icons.currency_rupee_outlined,
+                        controller.rent_Custom_Parking_Charges,
+                        isPhoneKey: true,
+                      ),
+                      SizedBox(height: 16),
+                    ],
                   ],
                 ],
+                SizedBox(height: 16),
+                buildSectionTitle("Facing"),
+                SizedBox(height: 8),
+                Obx(
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
+                        sell_rent_facing.map((option) {
+                          return buildChoice(
+                            title: option,
+                            selected: controller.rent_facing.value == option,
+                            onTap: () {
+                              controller.setValue(
+                                controller.rent_facing,
+                                option,
+                              );
+                            },
+                          );
+                        }).toList(),
+                  ),
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle("Address"),
+                SizedBox(height: 8),
+                buildTextField(
+                  "Enter Address",
+                  Icons.location_on_outlined,
+                  controller.sell_rent_Address,
+                  maxLines: 3,
+                  minLines: 1,
+                  isEnable: false,
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+
+                              initialSearchText:
+                                  controller.sell_rent_Address.text,
+                            ),
+                      ),
+                    );
+
+                    controller.sell_rent_Address.text =
+                        selectedCity.description ?? '';
+
+                    print("city ${controller.sell_rent_Address.text}");
+                  },
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle("Servent Room"),
+                SizedBox(height: 8),
+                Obx(
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
+                        ['Yes', 'No'].map((option) {
+                          return buildChoice(
+                            title: option,
+                            selected:
+                                controller.sell_rent_Servent_Room.value ==
+                                option,
+                            onTap: () {
+                              controller.setValue(
+                                controller.sell_rent_Servent_Room,
+                                option,
+                              );
+                            },
+                          );
+                        }).toList(),
+                  ),
+                ),
+
 
               ],
               SizedBox(height: 16),
-              buildSectionTitle("Facing"),
-              SizedBox(height: 8),
-              Obx(
-                () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
-                      sell_rent_facing.map((option) {
-                        return buildChoice(
-                          title: option,
-                          selected: controller.rent_facing.value == option,
-                          onTap: () {
-                            controller.setValue(controller.rent_facing, option);
-                          },
-                        );
-                      }).toList(),
-                ),
-              ),
-              SizedBox(height: 16),
-              buildSectionTitle("Address"),
+              buildSectionTitle('RERA ID'),
               SizedBox(height: 8),
               buildTextField(
-                "Enter Address",
-                Icons.location_on_outlined,
-                controller.sell_rent_Address,
-                maxLines: 3,
-                minLines: 1,
-                isEnable: false,
-                onTap: () async {
-                  Prediction selectedCity = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => CommonSearchField(
-                            onCitySelected: (city) {
-                              Navigator.pop(context, city);
-                            },
-                            isFromAddProperty: true,
-
-                            initialSearchText:
-                                controller.sell_rent_Address.text,
-                          ),
-                    ),
-                  );
-
-                  controller.sell_rent_Address.text =
-                      selectedCity.description ?? '';
-
-                  print("city ${controller.sell_rent_Address.text}");
-                },
+                "Enter RERA id",
+                Icons.description_outlined,
+                controller.sell_Rera_Id,
               ),
               SizedBox(height: 16),
-              buildSectionTitle("Servent Room"),
-              SizedBox(height: 8),
-              Obx(
-                () => Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children:
-                      ['Yes', 'No'].map((option) {
-                        return buildChoice(
-                          title: option,
-                          selected:
-                              controller.sell_rent_Servent_Room.value == option,
-                          onTap: () {
-                            controller.setValue(
-                              controller.sell_rent_Servent_Room,
-                              option,
-                            );
-                          },
-                        );
-                      }).toList(),
-                ),
-              ),
-
-              SizedBox(height: 16),
-
-                buildSectionTitle('RERA ID'),
-                SizedBox(height: 8),
-                buildTextField(
-                  "Enter RERA id",
-                  Icons.description_outlined,
-                  controller.sell_Rera_Id,
-                ),
-                SizedBox(height: 16),
 
               buildSectionTitle('Property Description'),
               SizedBox(height: 8),

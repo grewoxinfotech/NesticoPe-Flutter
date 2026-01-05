@@ -17,12 +17,14 @@ class AddPropertyModel {
   final String? reraId;
   final String? propertyStatus;
   final String? builderName;
+  final String? buildingName;
   final String? projectName;
   final String? ownerPhone;
   final String? ownerName;
   final String? ownerEmail;
 
   AddPropertyModel({
+    this.buildingName,
     this.propertyMedia,
     this.id,
     this.createdBy,
@@ -70,6 +72,7 @@ class AddPropertyModel {
     if (reraId != null) data['reraId'] = reraId;
     if (propertyStatus != null) data['property_status'] = propertyStatus;
     if (builderName != null) data['builderName'] = builderName;
+    if (buildingName != null) data['buildingName'] = buildingName;
     if (projectName != null) data['projectName'] = projectName;
     if (ownerPhone != null) data['ownerPhone'] = ownerPhone;
     if (ownerName != null) data['ownerName'] = ownerName;
@@ -454,6 +457,8 @@ class FinancialInfo {
   final double? monthlyRent;
   final double? pricePerSqft;
   final double? brokerCommission;
+  final double? platformFees;
+
   final bool? brokerNegotiable;
   final bool? is_for_sellorrent;
   final double? propertySecurityDeposit;
@@ -466,7 +471,8 @@ class FinancialInfo {
 
   final dynamic parkingCharges; // can be string or number
 
-  FinancialInfo({
+  FinancialInfo( {
+    this.platformFees,
     this.is_for_sellorrent,
     this.propertyPrice,
     this.propertyRentPerMonth,
@@ -492,6 +498,7 @@ class FinancialInfo {
       monthlyRent: (json['monthlyRent'] as num?)?.toDouble(),
       pricePerSqft: (json['price_per_sqft'] as num?)?.toDouble(),
       brokerCommission: (json['broker_commission'] as num?)?.toDouble(),
+
       is_for_sellorrent:
           json['is_for_sellorrent'] is bool
               ? json['is_for_sellorrent']
@@ -502,6 +509,7 @@ class FinancialInfo {
           json['broker_negotiable'] is bool
               ? json['broker_negotiable']
               : (json['broker_negotiable']?.toString().toLowerCase() == 'true'),
+     platformFees: (json['platform_fees'] as num?)?.toDouble(),
       propertySecurityDeposit:
           (json['property_security_deposit'] as num?)?.toDouble(),
       lockInPeriod:
@@ -531,6 +539,7 @@ class FinancialInfo {
     if (monthlyRent != null) data['monthlyRent'] = monthlyRent;
     if (pricePerSqft != null) data['price_per_sqft'] = pricePerSqft;
     if (brokerCommission != null) data['broker_commission'] = brokerCommission;
+    if (platformFees != null) data['platform_fees'] = platformFees;
     if (brokerNegotiable != null) data['broker_negotiable'] = brokerNegotiable;
     if (is_for_sellorrent != null)
       data['is_for_sellorrent'] = is_for_sellorrent;
@@ -550,10 +559,21 @@ class FinancialInfo {
     }
 
     // --- 🔮 Future 5-Year Price Data ---
-    if (propertyPriceFuture != null && propertyPriceFuture!.isNotEmpty) {
-      data['property_price_future'] =
-          propertyPriceFuture!.map((e) => e.toJson()).toList();
+    if (propertyPriceFuture != null &&
+        propertyPriceFuture!.isNotEmpty &&
+        propertyPriceFuture!.any((e) => e.price != null && e.price != 0)) {
+      // Only include items where price is not 0 or null
+      final priceList = propertyPriceFuture!
+          .where((e) => e.price != null && e.price != 0)
+          .map((e) => e.toJson())
+          .toList();
+
+      if (priceList.isNotEmpty) {
+        data['property_price_future'] = priceList;
+      }
     }
+
+
 
     return data;
   }

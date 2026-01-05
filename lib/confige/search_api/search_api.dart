@@ -73,6 +73,46 @@ class GoogleMapApi {
       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 
   /// Common method to call the API
+  Future<Map<String, dynamic>?> getBuildingsAndSocieties(
+      String cityName,
+      String input,
+      ) async {
+    // Combine user input with keywords for better targeting
+    final query = Uri.encodeComponent(
+      '$input society OR apartment OR building in $cityName',
+    );
+
+    final url = Uri.parse(
+      'https://maps.googleapis.com/maps/api/place/textsearch/json'
+          '?query=$query'
+          '&type=establishment'
+          '&region=in'
+          '&key=${ApiConfig.mapkey}',
+    );
+
+    print('🔍 Google Places TextSearch URL: $url');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Optional: filter out results that don’t have a name/address
+      final validResults = (data['results'] as List)
+          .where((e) => e['name'] != null && e['formatted_address'] != null)
+          .toList();
+
+      print('✅ Found ${validResults.length} buildings/societies for "$input" in $cityName');
+
+      // Return modified map for convenience
+      return {'results': validResults};
+    } else {
+      print('❌ Failed to fetch buildings: ${response.statusCode}');
+      return null;
+    }
+  }
+
+
   Future<Map<String, dynamic>> _fetchPredictions(
     String input,
     String types, {
