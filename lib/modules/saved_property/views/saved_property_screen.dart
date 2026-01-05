@@ -444,7 +444,7 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                         Get.find<PropertyFavoriteController>();
 
                     final isFavorite = favoriteController.favorites.contains(
-                      property.details.id,
+                      property.details?.id,
                     );
 
                     // Calculate days ago
@@ -460,13 +460,13 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                     String formattedPrice = '';
                     if (property.entityType == 'property') {
                       // For properties - format monthly rent or sale price
-                      final price = property.details.price;
+                      final price = property.details?.price;
                       if (price != null) {
                         formattedPrice = Formatter.formatPrice(price);
                       }
                     } else {
                       // For projects - format price range
-                      final range = property.details.priceRange;
+                      final range = property.details?.priceRange;
                       if (range != null) {
                         final minPrice = range.minPrice;
                         final maxPrice = range.maxPrice;
@@ -487,48 +487,49 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                     String? displayBhk;
 
                     if (property.entityType == 'project') {
-                      displayPropertyType = property.details.projectName;
+                      displayPropertyType = property.details?.projectName;
                       displayBhk =
-                          property.details.propertyTypes?.toUpperCase();
+                          property.details?.propertyTypes?.toUpperCase();
                     } else {
                       displayPropertyType =
-                          property.details.propertyType?.toUpperCase();
-                      displayBhk = property.details.propertyType?.toUpperCase();
+                          property.details?.propertyType?.toUpperCase();
+                      displayBhk =
+                          property.details?.propertyType?.toUpperCase();
                     }
 
                     // Location formatting
-                    String displayLocation = property.details.location ?? '';
-                    if (property.details.city != null &&
-                        property.details.city!.isNotEmpty) {
+                    String displayLocation = property.details?.location ?? '';
+                    if (property.details?.city != null &&
+                        property.details!.city!.isNotEmpty) {
                       if (displayLocation.isNotEmpty) {
-                        displayLocation = '${property.details.city}';
+                        displayLocation = '${property.details?.city}';
                       } else {
-                        displayLocation = property.details.city!;
+                        displayLocation = property.details!.city!;
                       }
                     }
 
                     return HorizontalPropertyCard(
                       // Image
-                      imageUrl: property.details.images ?? '',
+                      imageUrl: property.details?.images ?? '',
 
                       // Basic info
-                      isForRent: property.details.listingType == 'Rent',
-                      location: property.details.location ?? '',
+                      isForRent: property.details?.listingType == 'Rent',
+                      location: property.details?.location ?? '',
                       price: formattedPrice,
 
                       // Entity type and names
                       entityType: property.entityType,
-                      projectName: property.details.projectName,
+                      projectName: property.details?.projectName,
                       propertyType: displayPropertyType,
 
                       // Listing details
-                      listingType: property.details.listingType,
-                      priceType: property.details.priceType,
-                      status: property.details.status,
-                      city: property.details.city,
+                      listingType: property.details?.listingType,
+                      priceType: property.details?.priceType,
+                      status: property.details?.status,
+                      city: property.details?.city,
 
                       // Verification and timing
-                      isVerified: property.details.status == 'approved',
+                      isVerified: property.details?.status == 'approved',
                       postedDaysAgo: daysAgo,
 
                       // Actions
@@ -537,22 +538,24 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                         if (property.entityType == "property") {
                           Get.to(
                             () => PropertyDetailScreen(
-                              propertyId: property.details.id,
+                              propertyId: property.details?.id,
                             ),
                           );
                         } else {
                           Get.to(
                             () => ProjectDetailsScreen(
-                              projectId: property.details.id,
+                              projectId: property.details?.id,
                             ),
                           );
                         }
                       },
                       onFavoritePressed: () {
-                        favoriteController.toggleFavorite(property.details.id);
+                        favoriteController.toggleFavorite(
+                          property.details?.id ?? '',
+                        );
                       },
                       onContactPressed: () async {
-                        generateInquiry(property.details.id);
+                        generateInquiry(property.details?.id ?? '');
                       },
                     );
                   });

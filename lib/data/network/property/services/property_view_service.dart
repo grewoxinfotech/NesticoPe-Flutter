@@ -14,7 +14,11 @@ class PropertyViewService {
   Future<ViewResponseModel?> fetchViewedPropertyIds(String userId) async {
     try {
       final uri = Uri.parse('$baseUrl/$userId/view');
+      print('Fetching viewed properties from: $uri');
+
       final response = await http.get(uri, headers: await headers());
+      print('Response status code: ${response.statusCode}');
+      print('Response body viewed Property:  ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);

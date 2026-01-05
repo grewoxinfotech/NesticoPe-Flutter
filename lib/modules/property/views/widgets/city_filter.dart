@@ -587,12 +587,6 @@ class _CityFilterListState extends State<CityFilterList> {
                       width: double.infinity,
                       height: double.infinity,
                     ),
-                    // child: Image.asset(
-                    //   images[index],
-                    //   fit: BoxFit.cover,
-                    //   width: double.infinity,
-                    //   height: double.infinity,
-                    // ),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -609,9 +603,14 @@ class _CityFilterListState extends State<CityFilterList> {
                   ),
                   Positioned(
                     bottom: 10,
+                    left: 8,
+                    right: 8, // 👈 gives width constraint
                     child: Text(
                       city.city,
-                      style: TextStyle(
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
                         color: ColorRes.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,

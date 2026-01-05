@@ -48,7 +48,7 @@ class PropertyView {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String entityType;
-  final PropertyDetails details;
+  final PropertyDetails? details;
 
   PropertyView({
     required this.id,
@@ -58,7 +58,7 @@ class PropertyView {
     required this.createdAt,
     required this.updatedAt,
     required this.entityType,
-    required this.details,
+    this.details,
   });
 
   factory PropertyView.fromJson(Map<String, dynamic> json) {
@@ -73,7 +73,10 @@ class PropertyView {
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       entityType: json['entityType'] ?? '',
-      details: PropertyDetails.fromJson(json['details'] ?? {}),
+      details:
+          json['details'] != null
+              ? PropertyDetails.fromJson(json['details'])
+              : null,
     );
   }
 
@@ -85,15 +88,20 @@ class PropertyView {
     'createdAt': createdAt?.toIso8601String(),
     'updatedAt': updatedAt?.toIso8601String(),
     'entityType': entityType,
-    'details': details.toJson(),
+    'details': details?.toJson(),
   };
 
+  /// ✅ SAFE display price
   String get displayPrice {
+    if (details == null) return '-';
+
     if (entityType == 'property') {
-      return details.price?.toString() ?? '-';
+      return details!.price?.toString() ?? '-';
     }
-    final range = details.priceRange;
+
+    final range = details!.priceRange;
     if (range == null) return '-';
+
     return (range.minPrice == range.maxPrice)
         ? range.maxPrice.toString()
         : "${range.minPrice} - ${range.maxPrice}";
@@ -101,7 +109,6 @@ class PropertyView {
 }
 
 class PropertyDetails {
-  // Common
   final String id;
   final String? projectName;
   final String? propertyTypes;
@@ -112,10 +119,8 @@ class PropertyDetails {
   final String? city;
   final String? status;
 
-  // For project type
   final PriceRange? priceRange;
 
-  // For property type
   final num? price;
   final String? priceType;
 
@@ -149,7 +154,7 @@ class PropertyDetails {
           json['priceRange'] != null
               ? PriceRange.fromJson(json['priceRange'])
               : null,
-      price: json['price'],
+      price: json['price'] is num ? json['price'] : null,
       priceType: json['priceType'],
     );
   }

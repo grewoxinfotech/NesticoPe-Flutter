@@ -38,7 +38,9 @@ class PropertyViewController extends GetxController {
       final userId = user?.user?.id ?? '';
       final data = await _service.fetchViewedPropertyIds(userId);
       if (data?.data?.property != null && data!.data!.property.isNotEmpty) {
-        viewedProperties.assignAll(data.data!.property);
+        viewedProperties.assignAll(
+          data.data!.property.where((element) => element.details != null),
+        );
       }
       properties.clear();
       currentIndex = 0;

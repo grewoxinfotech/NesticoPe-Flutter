@@ -5,8 +5,9 @@ class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
 
-  static const String url = "http://192.168.1.2:19725";
-  // static const String url = "https://sympathy-resolve-tampa-bra.trycloudflare.com";
+  // static const String url = "http://192.168.1.3:19725";
+  static const String url =
+      "https://jewelry-farmers-hydrocodone-placed.trycloudflare.com";
 
   // static const String url =
   //     "https://bow-dir-facility-adjusted.trycloudflare.com";

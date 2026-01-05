@@ -101,7 +101,7 @@ class HomeScreen extends StatefulWidget {
       {
         "title": "Independent House",
         "image":
-            "https://images.unsplash.com/photo-1600607687939-ce8a6c25118d?auto=format&fit=crop&w=600&q=80",
+            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
       },
       {
         "title": "Duplex",
@@ -109,34 +109,14 @@ class HomeScreen extends StatefulWidget {
             "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=600&q=80",
       },
       {
-        "title": "Independent Floor",
-        "image":
-            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
-      },
-      {
         "title": "Villa",
         "image":
             "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
       },
       {
-        "title": "Penthouse",
-        "image":
-            "https://images.unsplash.com/photo-1592833157880-bd19a966a1c7?auto=format&fit=crop&w=600&q=80",
-      },
-      {
-        "title": "Studio",
-        "image":
-            "https://homebazaar-blog.s3.ap-south-1.amazonaws.com/knowledge/wp-content/uploads/2022/10/24122439/FeatureImage_Overview-Of-A-Studio-Apartment.webp",
-      },
-      {
         "title": "Plot",
         "image":
             "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
-      },
-      {
-        "title": "Farm House",
-        "image":
-            "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=600&q=80",
       },
       {
         "title": "Agricultural Land",
@@ -163,11 +143,6 @@ class HomeScreen extends StatefulWidget {
         "title": "Warehouse",
         "image":
             "https://3.imimg.com/data3/SR/MV/MY-12088584/warehouses-for-sale-500x500.jpg",
-      },
-      {
-        "title": "PG",
-        "image":
-            "https://pgproperty.sg/wp-content/uploads/2022/11/the-crest-488x326.jpg",
       },
       {
         "title": "Other",
@@ -492,6 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           vertical: 4,
                         ),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: List.generate(widget.propertyTypes.length, (
                             index,
                           ) {
@@ -534,7 +510,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             : 0,
                                   ),
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
+                                    horizontal: 8,
                                     vertical: 12,
                                   ),
                                   decoration: BoxDecoration(
@@ -585,11 +561,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       const SizedBox(height: 8),
                                       SizedBox(
-                                        width: 65,
+                                        width:
+                                            76, // slightly larger than icon width
                                         child: Text(
                                           type['title'] ?? '',
                                           textAlign: TextAlign.center,
-                                          maxLines: 1,
+                                          maxLines: 2, // ✅ allow wrap
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontSize: AppFontSizes.caption,
@@ -602,6 +579,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ? ColorRes.primary
                                                     : ColorRes.black,
                                             letterSpacing: 0.4,
+                                            height: 1.2, // better line spacing
                                           ),
                                         ),
                                       ),
@@ -632,6 +610,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 )
                                 .toList();
 
+                        print(
+                          "Approved Property: ${activeTopProperties.length}",
+                        );
                         if (!controller.isLoading.value &&
                             activeTopProperties.isEmpty) {
                           return SizedBox.shrink();
@@ -707,12 +688,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 12),
-                            TitleWithViewAll(
-                              title: "Recommended Properties",
-                              showViewAll: true,
-
-                              onViewAll: () => Get.to(BuilderMainScreen()),
-                            ),
+                            TitleWithViewAll(title: "Recommended Properties"),
                             SizedBox(height: 4),
                             Padding(
                               padding: const EdgeInsets.only(left: 12),

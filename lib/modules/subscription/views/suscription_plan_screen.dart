@@ -36,7 +36,8 @@ class SubscriptionPlansScreen extends StatelessWidget {
                       ? currentPlanController.items.first
                       : null;
               if (item == null) {
-                return const Center(child: Text("No subscription found"));
+                // return const Center(child: Text("No subscription found"));
+                return SizedBox.shrink();
               }
 
               final plan = item.plan;
