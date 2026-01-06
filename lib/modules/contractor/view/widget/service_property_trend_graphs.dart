@@ -5,7 +5,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 
 import '../../../../../../app/constants/app_font_sizes.dart';
 
-class ServiceDistributionPieGraph extends StatelessWidget {
+class ServiceDistributionPieGraph extends StatefulWidget {
   final Map<String, dynamic> breakdown;
 
   final Color? color;
@@ -17,11 +17,29 @@ class ServiceDistributionPieGraph extends StatelessWidget {
   });
 
   @override
+  State<ServiceDistributionPieGraph> createState() => _ServiceDistributionPieGraphState();
+}
+
+class _ServiceDistributionPieGraphState extends State<ServiceDistributionPieGraph> {
+  int touchedIndex = -1;
+  @override
   Widget build(BuildContext context) {
-    final active = (breakdown["active"] as int?)?.toDouble() ?? 0.0;
-    final rejected = (breakdown["inactive"] as int?)?.toDouble() ?? 0.0;
+    final active = (widget.breakdown["active"] as int?)?.toDouble() ?? 0.0;
+    final rejected = (widget.breakdown["inactive"] as int?)?.toDouble() ?? 0.0;
 
     final total = active + rejected;
+    final sections = [
+      {
+        "value": active,
+        "color": ColorRes.green.shade600,
+        "title": active == 0 ? "" : "${(active / total * 100).toStringAsFixed(0)}%",
+      },
+      {
+        "value": rejected,
+        "color": ColorRes.error,
+        "title": rejected == 0 ? "" : "${(rejected / total * 100).toStringAsFixed(0)}%",
+      },
+    ];
 
     List<PieChartSectionData> _chartSections() {
       if (total == 0) {
@@ -40,37 +58,25 @@ class ServiceDistributionPieGraph extends StatelessWidget {
         ];
       }
 
-      return [
-        PieChartSectionData(
-          value: active,
-          title:
-          active == 0
-              ? ""
-              : "${(active / total * 100).toStringAsFixed(0)}%",
-          radius: 70,
-          color: ColorRes.green.shade600,
-          titleStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        PieChartSectionData(
-          value: rejected,
-          title:
-          rejected == 0
-              ? ""
-              : "${(rejected / total * 100).toStringAsFixed(0)}%",
-          radius: 70,
-          color: ColorRes.error,
-          titleStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+      return List.generate(sections.length, (i) {
+        final isTouched = i == touchedIndex;
+        final radius = isTouched ? 60.0 : 50.0;
+        final fontSize = isTouched ? 18.0 : 14.0;
 
-      ];
+
+        return PieChartSectionData(
+          value: sections[i]["value"] as double,
+          title: sections[i]["title"] as String,
+          radius: radius,
+          color: sections[i]["color"] as Color,
+          titleStyle: TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            shadows: const [Shadow(color: Colors.black38, blurRadius: 2)],
+          ),
+        );
+      });
     }
 
     return Column(
@@ -83,6 +89,20 @@ class ServiceDistributionPieGraph extends StatelessWidget {
               height: 240,
               child: PieChart(
                 PieChartData(
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions ||
+                            pieTouchResponse == null ||
+                            pieTouchResponse.touchedSection == null) {
+                          touchedIndex = -1;
+                          return;
+                        }
+                        touchedIndex =
+                            pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      });
+                    },
+                  ),
                   sectionsSpace: 2,
                   centerSpaceRadius: 36,
                   sections: _chartSections(),
@@ -96,10 +116,10 @@ class ServiceDistributionPieGraph extends StatelessWidget {
               children: [
                 _legendItem(
                   ColorRes.green.shade600,
-                  "Active",
+                  "Active Services",
                   active.toInt().toString(),
                 ),
-                _legendItem(ColorRes.error, "Inactive", rejected.toInt().toString()),
+                _legendItem(ColorRes.error, "Inactive Services", rejected.toInt().toString()),
               ],
             ),
 

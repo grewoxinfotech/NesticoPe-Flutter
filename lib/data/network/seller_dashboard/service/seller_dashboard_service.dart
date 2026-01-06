@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/confige/helper/api_helper.dart';
@@ -16,10 +17,16 @@ class SellerDashBoardService {
     return await ApiConstants.getHeaders();
   }
 
-  Future<Map<String, dynamic>?> getSellerDashBoard(String id) async {
+  Future<Map<String, dynamic>?> getSellerDashBoard(String id,{   int? leadsYear,}) async {
     try {
+      final queryParams = <String, String>{};
+      if (leadsYear != null) {
+        queryParams['year'] = leadsYear.toString();
+      }
+      final uri=Uri.parse('$_baseUrl/$id').replace(queryParameters: queryParams);
+      log("Seller Dss $uri");
       final response = await http.get(
-        Uri.parse('$_baseUrl/$id'),
+        uri,
         headers: await header(),
       );
       final decoded = jsonDecode(response.body);

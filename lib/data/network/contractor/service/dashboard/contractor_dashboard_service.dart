@@ -17,17 +17,15 @@ class ContractorDashboardService{
   Future<Map<String,dynamic>> getContractorDashboard(
       String id, {
         int? leadsYear,
-        int? inquiriesYear,
+
       }) async {
     try {
-      log("Contractor $leadsYear   $inquiriesYear");
+      log("Contractor $leadsYear   ");
       final queryParams = <String, String>{};
       if (leadsYear != null) {
-        queryParams['leadsYear'] = leadsYear.toString();
+        queryParams['year'] = leadsYear.toString();
       }
-      if (inquiriesYear != null) {
-        queryParams['inquiriesYear'] = inquiriesYear.toString();
-      }
+
 
       final uri = Uri.parse('$_baseUrl/$id').replace(queryParameters: queryParams);
 log("Uri Contractor $uri");

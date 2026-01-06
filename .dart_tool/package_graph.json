@@ -50,6 +50,7 @@
         "smooth_page_indicator",
         "socket_io_client",
         "speech_to_text",
+        "syncfusion_flutter_charts",
         "syncfusion_flutter_pdfviewer",
         "timeago",
         "url_launcher",
@@ -2095,6 +2096,16 @@
         "path",
         "sqflite_common",
         "sqflite_platform_interface"
+      ]
+    },
+    {
+      "name": "syncfusion_flutter_charts",
+      "version": "31.2.18",
+      "dependencies": [
+        "flutter",
+        "intl",
+        "syncfusion_flutter_core",
+        "vector_math"
       ]
     }
   ],

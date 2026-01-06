@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/dashboard/contractor_dashboard_model.dart';
@@ -11,12 +13,14 @@ class ContractorDashboardController extends GetxController {
       Rxn<ContractorInsightsModel>();
   final RxBool isLoading = false.obs;
   final RxBool isRefreshing = false.obs;
+  final RxInt createdUserYear = DateTime.now().year.obs;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    getContractorDashboard(leadsYear: selectedGraphYear.value,inquiriesYear: selectedGraphYear.value);
+    getCreatedYearOfUser();
+    getContractorDashboard(leadsYear: selectedGraphYear.value,);
   }
   // Add these observable variables
   final RxInt selectedGraphYear = DateTime.now().year.obs;
@@ -26,11 +30,26 @@ class ContractorDashboardController extends GetxController {
     final currentYear = DateTime.now().year;
     return [currentYear, currentYear - 1, currentYear - 2];
   }
+  Future<void> getCreatedYearOfUser() async {
+    final user = await SecureStorage.getUserData();
+    final createdDate = user?.user?.createdAt ?? '';
 
+    if (createdDate.isNotEmpty) {
+      try {
+        final parsedDate = DateTime.parse(createdDate);
+        createdUserYear.value = parsedDate.year;
+        log('Created year of user: ${createdUserYear.value}');
+      } catch (e) {
+        log('Error parsing createdAt date: $e');
+      }
+    } else {
+      log('User createdAt date is empty or null');
+    }
+  }
 
   Future<Rxn<ContractorInsightsModel>> getContractorDashboard({
     int? leadsYear,
-    int? inquiriesYear,
+
   }) async {
     isLoading.value = true;
     final user = await SecureStorage.getUserData();
@@ -45,7 +64,7 @@ class ContractorDashboardController extends GetxController {
         .getContractorDashboard(
       userId,
       leadsYear: leadsYear ?? selectedGraphYear.value,
-      inquiriesYear: inquiriesYear ?? selectedGraphYear.value,
+
     );
 
     contractorInsights.value = ContractorInsightsModel.fromJson(data);
@@ -57,14 +76,9 @@ class ContractorDashboardController extends GetxController {
 // Method to update leads year
   void updateLeadsYear(int year) {
     selectedGraphYear.value = year;
-    getContractorDashboard();
+    getContractorDashboard(leadsYear: year);
   }
 
-// Method to update inquiries year
-  void updateInquiriesYear(int year) {
-    selectedGraphYear.value = year;
-    getContractorDashboard();
-  }
   Future<void> refreshDashboard() async {
     try {
       isRefreshing.value = true;

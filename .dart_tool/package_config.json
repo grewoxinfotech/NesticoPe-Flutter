@@ -1052,6 +1052,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "syncfusion_flutter_charts",
+      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_charts-31.2.18",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "syncfusion_flutter_core",
       "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/syncfusion_flutter_core-31.2.18",
       "packageUri": "lib/",

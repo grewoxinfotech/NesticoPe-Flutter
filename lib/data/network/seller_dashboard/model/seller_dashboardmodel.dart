@@ -318,6 +318,7 @@ class PropertyMetrics {
   final List<ViewHistory> viewsHistory;
   final Map<String, dynamic> statusDistribution;
 
+
   PropertyMetrics({
     required this.totalProperties,
     required this.activeListings,
@@ -326,6 +327,7 @@ class PropertyMetrics {
     required this.selectedYear,
     required this.viewsHistory,
     required this.statusDistribution,
+
   });
 
   factory PropertyMetrics.fromJson(Map<String, dynamic> json) {
@@ -340,6 +342,7 @@ class PropertyMetrics {
           .toList() ??
           [],
       statusDistribution: json['statusDistribution'] ?? {},
+
     );
   }
 
@@ -352,6 +355,7 @@ class PropertyMetrics {
       'selectedYear': selectedYear,
       'viewsHistory': viewsHistory.map((e) => e.toMap()).toList(),
       'statusDistribution': statusDistribution,
+
     };
   }
 }
@@ -379,12 +383,14 @@ class LeadAnalytics {
   final Map<String, dynamic> sourceDistribution;
   final double conversionRate;
   final List<LeadsTimeline> leadsTimeline;
+  final Map<String, dynamic> stageBreakdown;
 
   LeadAnalytics({
     required this.totalLeads,
     required this.sourceDistribution,
     required this.conversionRate,
     required this.leadsTimeline,
+    required this.stageBreakdown,
   });
 
   factory LeadAnalytics.fromJson(Map<String, dynamic> json) {
@@ -392,6 +398,7 @@ class LeadAnalytics {
       totalLeads: json['totalLeads'] ?? 0,
       sourceDistribution: json['sourceDistribution'] ?? {},
       conversionRate: (json['conversionRate'] ?? 0).toDouble(),
+      stageBreakdown: json['stageBreakdown'] ?? {},
       leadsTimeline: (json['leadsTimeline'] as List?)
           ?.map((e) => LeadsTimeline.fromJson(e))
           .toList() ??
@@ -405,6 +412,7 @@ class LeadAnalytics {
       'sourceDistribution': sourceDistribution,
       'conversionRate': conversionRate,
       'leadsTimeline': leadsTimeline.map((e) => e.toMap()).toList(),
+      'stageBreakdown': stageBreakdown,
     };
   }
 }
@@ -498,7 +506,6 @@ class EngagementMetrics {
     };
   }
 }
-
 class SubscriptionInfo {
   final bool hasSubscription;
   final String? plan;
@@ -517,12 +524,17 @@ class SubscriptionInfo {
   });
 
   factory SubscriptionInfo.fromJson(Map<String, dynamic> json) {
+    dynamic planValue = json['plan'];
+    dynamic statusValue = json['status'];
+    dynamic startDateValue = json['startDate'];
+    dynamic endDateValue = json['endDate'];
+
     return SubscriptionInfo(
       hasSubscription: json['hasSubscription'] ?? false,
-      plan: json['plan'],
-      status: json['status'],
-      startDate: json['startDate'],
-      endDate: json['endDate'],
+      plan: planValue is Map ? planValue['name']?.toString() : planValue?.toString(),
+      status: statusValue is Map ? statusValue['code']?.toString() : statusValue?.toString(),
+      startDate: startDateValue?.toString(),
+      endDate: endDateValue?.toString(),
       isPremium: json['isPremium'] ?? false,
     );
   }
@@ -538,3 +550,43 @@ class SubscriptionInfo {
     };
   }
 }
+
+// class SubscriptionInfo {
+//   final bool hasSubscription;
+//   final String? plan;
+//   final String? status;
+//   final String? startDate;
+//   final String? endDate;
+//   final bool isPremium;
+//
+//   SubscriptionInfo({
+//     required this.hasSubscription,
+//     required this.plan,
+//     required this.status,
+//     required this.startDate,
+//     required this.endDate,
+//     required this.isPremium,
+//   });
+//
+//   factory SubscriptionInfo.fromJson(Map<String, dynamic> json) {
+//     return SubscriptionInfo(
+//       hasSubscription: json['hasSubscription'] ?? false,
+//       plan: json['plan'],
+//       status: json['status'],
+//       startDate: json['startDate'],
+//       endDate: json['endDate'],
+//       isPremium: json['isPremium'] ?? false,
+//     );
+//   }
+//
+//   Map<String, dynamic> toMap() {
+//     return {
+//       'hasSubscription': hasSubscription,
+//       'plan': plan,
+//       'status': status,
+//       'startDate': startDate,
+//       'endDate': endDate,
+//       'isPremium': isPremium,
+//     };
+//   }
+// }

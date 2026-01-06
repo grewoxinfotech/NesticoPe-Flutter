@@ -15,18 +15,22 @@ class SellerOverviewController extends GetxController {
 
   var isLoading = false.obs;
   var overviewData = Rxn<SellerInsightsModel>();
+  final RxInt selectedGraphYear = DateTime.now().year.obs;
+  final RxInt createdUserYear = DateTime.now().year.obs;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    getFetchSellerApi();
+    getCreatedYearOfUser();
+    getFetchSellerApi(selectedGraphYear.value);
   }
   Future<void> refreshSellerDashboard() async {
     try {
 
-      getFetchSellerApi();
+
       await Future.delayed(const Duration(seconds: 1));
+      getFetchSellerApi(selectedGraphYear.value);
 
       // Update metrics with new values
     } catch (e) {
@@ -40,69 +44,39 @@ class SellerOverviewController extends GetxController {
 
     }
   }
+  Future<void> getCreatedYearOfUser() async {
+    final user = await SecureStorage.getUserData();
+    final createdDate = user?.user?.createdAt ?? '';
 
-  // Future<void> loadOverview(String token) async {
-  //   try {
-  //     isLoading.value = true;
-  //     final data = await _service.fetchSellerOverview(token: token);
-  //     if (data != null) {
-  //       overviewData.value = data;
-  //     }
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
+    if (createdDate.isNotEmpty) {
+      try {
+        final parsedDate = DateTime.parse(createdDate);
+        createdUserYear.value = parsedDate.year;
+        log('Created year of user: ${createdUserYear.value}');
+      } catch (e) {
+        log('Error parsing createdAt date: $e');
+      }
+    } else {
+      log('User createdAt date is empty or null');
+    }
+  }
 
-  // final Map<String, dynamic> overview = {
-  //   "success": true,
-  //   "message": "Seller insights fetched successfully",
-  //   "data": {
-  //     "propertyMetrics": {
-  //       "activeListings": 10,
-  //       "viewsHistory": [
-  //         {"date": "2025-10-03", "views": 3},
-  //         {"date": "2025-10-04", "views": 1},
-  //       ],
-  //       "statusDistribution": {"active": 10, "sold": 1, "rented": 1},
-  //     },
-  //     "leadAnalytics": {
-  //       "totalLeads": 4,
-  //       "sourceDistribution": {"website": 4},
-  //       "conversionRate": 0,
-  //       "leadsTimeline": [
-  //         {"date": "2025-10-03", "count": 1},
-  //         {"date": "2025-10-04", "count": 2},
-  //         {"date": "2025-10-06", "count": 1},
-  //       ],
-  //     },
-  //     "financialMetrics": {
-  //       "totalRevenue": 0,
-  //       "averagePropertyValue": 0,
-  //       "revenueHistory": [
-  //         {"month": "2025-10", "revenue": 0},
-  //       ],
-  //     },
-  //     "engagementMetrics": {
-  //       "inquiryResponseRate": 0,
-  //       "averageResponseTime": 0,
-  //       "visitConversionRate": 0,
-  //       "totalVisits": 0,
-  //       "convertedVisits": 0,
-  //     },
-  //     "lastUpdated": "2025-10-06T09:20:09.593Z",
-  //   },
-  // };
-  //
-  // late final overviewModel = SellerOverviewModel.fromJson(overview);
 
-  Future<void> getFetchSellerApi() async {
+  Future<Rxn<SellerInsightsModel>> getFetchSellerApi(int leadyear) async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id;
     
-    final data = await SellerDashBoardService.sellerDashBoardService.getSellerDashBoard(userId??'');
+    final data = await SellerDashBoardService.sellerDashBoardService.getSellerDashBoard(userId??'',leadsYear: DateTime.now().year);
+
     overviewData.value=SellerInsightsModel.fromJson(data??{});
     log("Seller jdsgfdyuh ${overviewData.value?.data.propertyMetrics.totalProperties}");
+    return overviewData;
     
+  }
+  // Method to update leads year
+  void updateLeadsYear(int year) {
+    selectedGraphYear.value = year;
+    getFetchSellerApi( year);
   }
 
   Future<void> getSellerProfileData()

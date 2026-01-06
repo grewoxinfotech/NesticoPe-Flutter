@@ -56,37 +56,38 @@ class Formatter {
   }
 
 
-
   static String formatPrice(num price) {
+    const String prefix = '₹';
     String suffix = '';
     num value = price;
-    String prefix = '₹';
 
-    if (price >= 10000000 || price <= -10000000) {
-      // 1 Crore = 1 Cr = 10,000,000
+    if (price.abs() >= 10000000) {
+      // 1 Crore = 10,000,000
       value = price / 10000000;
       suffix = 'Cr';
-    } else if (price >= 100000 || price <= -100000) {
-      // 1 Lakh = 1 Lac = 100,000
+    } else if (price.abs() >= 100000) {
+      // 1 Lakh = 100,000
       value = price / 100000;
       suffix = 'L';
-    } else if (price >= 1000 || price <= -1000) {
-      // 1 Thousand
+    } else if (price.abs() >= 1000) {
+      // 1 Thousand = 1,000
       value = price / 1000;
       suffix = 'K';
     } else {
-      // Less than 1k, return with 2 decimal places
-      return '$prefix ${price}';
+      // Less than 1k
+      return '$prefix ${price.toStringAsFixed(0)}';
     }
 
-    // Remove trailing .0 for larger amounts
-    String formatted = value.toStringAsFixed(1);
-    if (formatted.endsWith('.0')) {
-      formatted = formatted.substring(0, formatted.length - 2);
+    // Keep up to 2 decimal places and remove unnecessary trailing zeros
+    String formatted = value.toStringAsFixed(2);
+    formatted = formatted.replaceAll(RegExp(r'0+$'), '');
+    if (formatted.endsWith('.')) {
+      formatted = formatted.substring(0, formatted.length - 1);
     }
 
     return '$prefix $formatted$suffix';
   }
+
   static String formatFullPrice(num price) {
     const String prefix = '₹';
     String suffix = '';
@@ -120,36 +121,67 @@ class Formatter {
     return '$prefix $formatted$suffix';
   }
 
+  // static String formatNumber(num price) {
+  //   String suffix = '';
+  //   num value = price;
+  //   String prefix = '₹';
+  //
+  //   if (price >= 10000000 || price <= -10000000) {
+  //     // 1 Crore = 1 Cr = 10,000,000
+  //     value = price / 10000000;
+  //     suffix = 'Cr';
+  //   } else if (price >= 100000 || price <= -100000) {
+  //     // 1 Lakh = 1 Lac = 100,000
+  //     value = price / 100000;
+  //     suffix = 'L';
+  //   } else if (price >= 1000 || price <= -1000) {
+  //     // 1 Thousand
+  //     value = price / 1000;
+  //     suffix = 'K';
+  //   } else {
+  //     // Less than 1k, return with 2 decimal places
+  //     return '${price}';
+  //   }
+  //
+  //   // Remove trailing .0 for larger amounts
+  //   String formatted = value.toStringAsFixed(1);
+  //   if (formatted.endsWith('.0')) {
+  //     formatted = formatted.substring(0, formatted.length - 2);
+  //   }
+  //
+  //   return '$formatted$suffix';
+  // }
   static String formatNumber(num price) {
     String suffix = '';
     num value = price;
-    String prefix = '₹';
 
-    if (price >= 10000000 || price <= -10000000) {
-      // 1 Crore = 1 Cr = 10,000,000
+    if (price.abs() >= 10000000) {
+      // 1 Crore = 10,000,000
       value = price / 10000000;
       suffix = 'Cr';
-    } else if (price >= 100000 || price <= -100000) {
-      // 1 Lakh = 1 Lac = 100,000
+    } else if (price.abs() >= 100000) {
+      // 1 Lakh = 100,000
       value = price / 100000;
       suffix = 'L';
-    } else if (price >= 1000 || price <= -1000) {
-      // 1 Thousand
+    } else if (price.abs() >= 1000) {
+      // 1 Thousand = 1,000
       value = price / 1000;
       suffix = 'K';
     } else {
-      // Less than 1k, return with 2 decimal places
-      return '${price}';
+      // Less than 1k
+      return price.toStringAsFixed(0);
     }
 
-    // Remove trailing .0 for larger amounts
-    String formatted = value.toStringAsFixed(1);
-    if (formatted.endsWith('.0')) {
-      formatted = formatted.substring(0, formatted.length - 2);
+    // Keep up to 2 decimals (e.g. 2.45Cr)
+    String formatted = value.toStringAsFixed(2);
+    formatted = formatted.replaceAll(RegExp(r'0+$'), '');
+    if (formatted.endsWith('.')) {
+      formatted = formatted.substring(0, formatted.length - 1);
     }
 
     return '$formatted$suffix';
   }
+
 
   static String formatPriceInternational(double value) {
     final formatter = NumberFormat.currency(

@@ -459,6 +459,7 @@ class ContractorPerformance {
   final int currentMonthInquiries;
   final int previousMonthInquiries;
   final int currentMonthLeads;
+  final Map<String, dynamic> stageBreakdown;
   final int previousMonthLeads;
 
   ContractorPerformance({
@@ -469,6 +470,7 @@ class ContractorPerformance {
     required this.totalLeads,
     required this.totalProjects,
     required this.activeProjects,
+    required this.stageBreakdown,
     required this.completedProjects,
     required this.conversionRate,
     required this.overallRating,
@@ -489,6 +491,7 @@ class ContractorPerformance {
       totalInquiries: json['totalInquiries'] ?? 0,
       totalLeads: json['totalLeads'] ?? 0,
       totalProjects: json['totalProjects'] ?? 0,
+      stageBreakdown: json['leadStageBreakdown'] ?? {},
       activeProjects: json['activeProjects'] ?? 0,
       completedProjects: json['completedProjects'] ?? 0,
       conversionRate: (json['conversionRate'] ?? 0).toDouble(),
@@ -512,6 +515,7 @@ class ContractorPerformance {
       'totalLeads': totalLeads,
       'totalProjects': totalProjects,
       'activeProjects': activeProjects,
+      'leadStageBreakdown': stageBreakdown,
       'completedProjects': completedProjects,
       'conversionRate': conversionRate,
       'overallRating': overallRating,
