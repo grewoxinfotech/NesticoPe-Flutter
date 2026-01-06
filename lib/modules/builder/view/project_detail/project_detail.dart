@@ -239,15 +239,17 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         _buildDocuments(controller, project!),
                       ],
                       _buildContactSection(controller, project!),
-                      if (project?.scoreBreakdown != null) ...[
-                        PerformanceScoreWidget(
-                          score: project!.scoreBreakdown!,
-                          showDivider: false,
-                          color: ColorRes.white,
-                          margin: 8,
-                        ),
+                      if (widget.isBuilder) ...[
+                        if (project?.scoreBreakdown != null) ...[
+                          PerformanceScoreWidget(
+                            score: project!.scoreBreakdown!,
+                            showDivider: false,
+                            color: ColorRes.white,
+                            margin: 8,
+                          ),
+                        ],
+                        SizedBox(height: 8),
                       ],
-                      SizedBox(height: 8),
 
                       if (widget.isBuilder) ...[
                         ListTile(

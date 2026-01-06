@@ -368,17 +368,20 @@ class ReferralProgramScreen extends StatelessWidget {
             }),
           ),
           SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.white.withOpacity(0.25)),
-            ),
-            child: Obx(() {
-              if (controller.isGenerated.value) {
-                final referral = controller.dummyReferral.value?.data?.first;
-                return Row(
+          Obx(() {
+            if (controller.isGenerated.value) {
+              final referral = controller.dummyReferral.value?.data?.first;
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white.withOpacity(0.25)),
+                ),
+                child: Row(
                   children: [
                     Expanded(
                       child: Column(
@@ -407,12 +410,12 @@ class ReferralProgramScreen extends StatelessWidget {
                       ],
                     ),
                   ],
-                );
-              } else {
-                return SizedBox.shrink();
-              }
-            }),
-          ),
+                ),
+              );
+            } else {
+              return SizedBox.shrink();
+            }
+          }),
         ],
       ),
     );

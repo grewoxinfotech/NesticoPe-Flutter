@@ -564,6 +564,16 @@
       ]
     },
     {
+      "name": "syncfusion_flutter_charts",
+      "version": "31.2.18",
+      "dependencies": [
+        "flutter",
+        "intl",
+        "syncfusion_flutter_core",
+        "vector_math"
+      ]
+    },
+    {
       "name": "cached_network_image",
       "version": "3.4.1",
       "dependencies": [
@@ -2096,16 +2106,6 @@
         "path",
         "sqflite_common",
         "sqflite_platform_interface"
-      ]
-    },
-    {
-      "name": "syncfusion_flutter_charts",
-      "version": "31.2.18",
-      "dependencies": [
-        "flutter",
-        "intl",
-        "syncfusion_flutter_core",
-        "vector_math"
       ]
     }
   ],

@@ -1495,24 +1495,24 @@ class SellerProfilePropertyCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'Visit',
-                            style: TextStyle(
-                              fontWeight: AppFontWeights.semiBold,
-                              fontSize: AppFontSizes.small,
-                              color: ColorRes.white,
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(
+                        //     horizontal: 14,
+                        //     vertical: 6,
+                        //   ),
+                        //   decoration: BoxDecoration(
+                        //     color: ColorRes.primary,
+                        //     borderRadius: BorderRadius.circular(6),
+                        //   ),
+                        //   child: Text(
+                        //     'Visit',
+                        //     style: TextStyle(
+                        //       fontWeight: AppFontWeights.semiBold,
+                        //       fontSize: AppFontSizes.small,
+                        //       color: ColorRes.white,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ],

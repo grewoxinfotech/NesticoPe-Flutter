@@ -177,7 +177,7 @@ class InquiryData {
 }
 
 class Inquiry {
-  final int id;
+  final String id;
   final String propertyId;
   final String userId;
   final String name;
@@ -215,7 +215,7 @@ class Inquiry {
 
   factory Inquiry.fromJson(Map<String, dynamic> json) {
     return Inquiry(
-      id: json['id'] ?? 0,
+      id: json['id'] ?? "0",
       propertyId: json['propertyId'] ?? '',
       userId: json['userId'] ?? '',
       name: json['name'] ?? '',
@@ -261,7 +261,6 @@ class Meta {
   final String? negotiablePrice;
   final bool? isNegotiable;
   final String? timePeriod;
-
 
   Meta({this.negotiablePrice, this.isNegotiable, this.timePeriod});
 
@@ -345,7 +344,6 @@ class InquiryDetails {
     );
   }
 
-
   Map<String, dynamic> toJson() => {
     'id': id,
     'projectName': projectName,
@@ -360,7 +358,6 @@ class InquiryDetails {
     'price': price != null ? price : priceRange?.toJson(),
     'priceType': priceType,
   };
-
 }
 
 class PriceRange {

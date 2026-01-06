@@ -43,6 +43,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
@@ -189,162 +190,170 @@ class PropertyCardForCompare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: ColorRes.white,
-      borderRadius: BorderRadius.circular(12),
-      elevation: 1,
-      shadowColor: ColorRes.black.withOpacity(0.06),
-      child: Container(
-        height: 115,
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => PropertyDetailScreen(propertyId: item.id ?? ''));
+      },
+      child: Material(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        elevation: 1,
+        shadowColor: ColorRes.black.withOpacity(0.06),
+        child: Container(
+          height: 115,
 
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
-        ),
-        child: Stack(
-          children: [
-            Row(
-              children: [
-                // Image Section
-                ClipRRect(
-                  borderRadius: BorderRadius.horizontal(
-                    left: Radius.circular(11),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: ColorRes.leadGreyColor.shade200,
+              width: 1,
+            ),
+          ),
+          child: Stack(
+            children: [
+              Row(
+                children: [
+                  // Image Section
+                  ClipRRect(
+                    borderRadius: BorderRadius.horizontal(
+                      left: Radius.circular(11),
+                    ),
+                    child:
+                        (_firstImage(item).isNotEmpty)
+                            ? CustomImage(
+                              type: CustomImageType.network,
+                              src: _firstImage(item),
+                              width: 120,
+                              height: 121,
+                              fit: BoxFit.cover,
+                            )
+                            : Container(
+                              width: 120,
+                              height: 121,
+                              color: ColorRes.leadGreyColor.shade200,
+                              child: const Icon(
+                                Icons.image,
+                                color: ColorRes.grey,
+                              ),
+                            ),
                   ),
-                  child:
-                      (_firstImage(item).isNotEmpty)
-                          ? CustomImage(
-                            type: CustomImageType.network,
-                            src: _firstImage(item),
-                            width: 120,
-                            height: 121,
-                            fit: BoxFit.cover,
-                          )
-                          : Container(
-                            width: 120,
-                            height: 121,
-                            color: ColorRes.leadGreyColor.shade200,
-                            child: const Icon(
-                              Icons.image,
-                              color: ColorRes.grey,
+
+                  // Content Section
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Title
+                          Text(
+                            _title(item),
+                            style: TextStyle(
+                              fontSize: AppFontSizes.bodyMedium,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.textColor,
+                              height: 1.2,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                ),
 
-                // Content Section
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Title
-                        Text(
-                          _title(item),
-                          style: TextStyle(
-                            fontSize: AppFontSizes.bodyMedium,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textColor,
-                            height: 1.2,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-
-                        // Address
-                        Text(
-                          item.address ?? '-',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            color: ColorRes.leadGreyColor[600],
-                            height: 1.3,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-
-                        // Property Typ
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.bed_outlined,
-                              size: 13,
-                              color: const Color(0xFF2563EB),
+                          // Address
+                          Text(
+                            item.address ?? '-',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.caption,
+                              color: ColorRes.leadGreyColor[600],
+                              height: 1.3,
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              (item.propertyDetails?.bhk ?? 0).toString() +
-                                  ' BHK',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.caption,
-                                fontWeight: AppFontWeights.medium,
-                                color: ColorRes.blackShade54,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+
+                          // Property Typ
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.bed_outlined,
+                                size: 13,
+                                color: const Color(0xFF2563EB),
                               ),
-                            ),
-                          ],
-                        ),
-
-                        // Price Row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                _price(item),
+                              const SizedBox(width: 4),
+                              Text(
+                                (item.propertyDetails?.bhk ?? 0).toString() +
+                                    ' BHK',
                                 style: TextStyle(
-                                  fontSize: AppFontSizes.medium,
-                                  fontWeight: AppFontWeights.bold,
-                                  color: ColorRes.textColor,
-                                  height: 1,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: ColorRes.primary,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                'Visit',
-                                style: TextStyle(
-                                  fontWeight: AppFontWeights.semiBold,
-                                  fontSize: AppFontSizes.small,
-                                  color: ColorRes.white,
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.medium,
+                                  color: ColorRes.blackShade54,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+
+                          // Price Row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _price(item),
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.medium,
+                                    fontWeight: AppFontWeights.bold,
+                                    color: ColorRes.textColor,
+                                    height: 1,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              // Container(
+                              //   padding: EdgeInsets.symmetric(
+                              //     horizontal: 14,
+                              //     vertical: 4,
+                              //   ),
+                              //   decoration: BoxDecoration(
+                              //     color: ColorRes.primary,
+                              //     borderRadius: BorderRadius.circular(6),
+                              //   ),
+                              //   child: Text(
+                              //     'Visit',
+                              //     style: TextStyle(
+                              //       fontWeight: AppFontWeights.semiBold,
+                              //       fontSize: AppFontSizes.small,
+                              //       color: ColorRes.white,
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // Remove button
+              if (onRemove != null)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: onRemove,
+                    child: const Icon(
+                      Icons.cancel,
+                      color: ColorRes.error,
+                      size: 16,
                     ),
                   ),
                 ),
-              ],
-            ),
-            // Remove button
-            if (onRemove != null)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: GestureDetector(
-                  onTap: onRemove,
-                  child: const Icon(
-                    Icons.cancel,
-                    color: ColorRes.error,
-                    size: 16,
-                  ),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

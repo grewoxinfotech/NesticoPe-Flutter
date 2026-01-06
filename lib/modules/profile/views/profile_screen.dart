@@ -730,7 +730,7 @@ class ProfileScreen extends StatelessWidget {
                         subtitle: "Service contractor",
                         onTap: () => Get.to(() => MyContractorScreen()),
                       ),
-                      if (!UserHelper.isGuest || !UserHelper.isBuyer) ...[
+                      if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
                         Obx(() {
                           final controller = Get.put(ReviewController());
                           final review = controller.appReview.value;

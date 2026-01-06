@@ -595,41 +595,125 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 10),
 
                       // NEWLY ADDED PROPERTIES SECTION
+                      // Obx(() {
+                      //   if (controller.isLoading.value &&
+                      //       controller.items.isEmpty) {
+                      //     return const Center(
+                      //       child: CircularProgressIndicator(),
+                      //     );
+                      //   }
+                      //   final activeTopProperties =
+                      //       controller.items
+                      //           .where(
+                      //             (element) =>
+                      //                 element.approvalStatus == "approved",
+                      //           )
+                      //           .toList();
+                      //
+                      //   print(
+                      //     "Approved Property: ${activeTopProperties.length}",
+                      //   );
+                      //   if (!controller.isLoading.value &&
+                      //       activeTopProperties.isEmpty) {
+                      //     return SizedBox.shrink();
+                      //   }
+                      //
+                      //   if (controller.isRefreshing.value &&
+                      //       activeTopProperties.isEmpty) {
+                      //     return const Center(
+                      //       child: CircularProgressIndicator(),
+                      //     );
+                      //   }
+                      //
+                      //   if (!controller.isRefreshing.value &&
+                      //       activeTopProperties.isEmpty) {
+                      //     return SizedBox.shrink();
+                      //   }
+                      //
+                      //   return Column(
+                      //     children: [
+                      //       TitleWithViewAll(
+                      //         title: "Newly added properties",
+                      //         showViewAll: true,
+                      //         onViewAll: () => Get.to(PropertyDetail()),
+                      //       ),
+                      //       const SizedBox(height: 12),
+                      //       Padding(
+                      //         padding: const EdgeInsets.symmetric(
+                      //           horizontal: 12,
+                      //         ),
+                      //         child: NotificationListener<ScrollNotification>(
+                      //           onNotification: (scrollEnd) {
+                      //             final metrics = scrollEnd.metrics;
+                      //             if (metrics.atEdge && metrics.pixels != 0) {
+                      //               controller.loadMore();
+                      //             }
+                      //             return false;
+                      //           },
+                      //           child: SizedBox(
+                      //             height: 310,
+                      //             child: ClipRRect(
+                      //               child: ListView.separated(
+                      //                 scrollDirection: Axis.horizontal,
+                      //                 itemCount: activeTopProperties.length,
+                      //                 separatorBuilder:
+                      //                     (_, __) => const SizedBox(width: 12),
+                      //                 itemBuilder: (context, index) {
+                      //                   if (index >=
+                      //                       activeTopProperties.length) {
+                      //                     return const SizedBox();
+                      //                   }
+                      //                   final data = activeTopProperties[index];
+                      //                   print("Newly ${data.city}");
+                      //                   return MediaQuery(
+                      //                     data: MediaQuery.of(context).copyWith(
+                      //                       textScaler: const TextScaler.linear(
+                      //                         1.0,
+                      //                       ),
+                      //                     ),
+                      //                     child: PropertyCard(property: data),
+                      //                   );
+                      //                 },
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   );
+                      // }),
                       Obx(() {
+                        // 1️⃣ Initial loading
                         if (controller.isLoading.value &&
                             controller.items.isEmpty) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
+
                         final activeTopProperties =
-                            controller.items
-                                .where(
-                                  (element) =>
-                                      element.approvalStatus == "approved",
-                                )
+                            controller.items.value
+                                .where((e) => e.approvalStatus == "approved")
                                 .toList();
 
-                        print(
-                          "Approved Property: ${activeTopProperties.length}",
-                        );
-                        if (!controller.isLoading.value &&
-                            activeTopProperties.isEmpty) {
-                          return SizedBox.shrink();
-                        }
-
-                        if (controller.isRefreshing.value &&
-                            activeTopProperties.isEmpty) {
+                        // 2️⃣ Refreshing (filter / pull-to-refresh)
+                        if (controller.isRefreshing.value) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
 
+                        // 3️⃣ No data after load/refresh
                         if (!controller.isRefreshing.value &&
                             activeTopProperties.isEmpty) {
-                          return SizedBox.shrink();
+                          return const SizedBox.shrink();
                         }
 
+                        if (activeTopProperties.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        // 4️⃣ Data available
                         return Column(
                           children: [
                             TitleWithViewAll(
@@ -652,29 +736,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 child: SizedBox(
                                   height: 310,
-                                  child: ClipRRect(
-                                    child: ListView.separated(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: activeTopProperties.length,
-                                      separatorBuilder:
-                                          (_, __) => const SizedBox(width: 12),
-                                      itemBuilder: (context, index) {
-                                        if (index >=
-                                            activeTopProperties.length) {
-                                          return const SizedBox();
-                                        }
-                                        final data = activeTopProperties[index];
-                                        print("Newly ${data.city}");
-                                        return MediaQuery(
-                                          data: MediaQuery.of(context).copyWith(
-                                            textScaler: const TextScaler.linear(
-                                              1.0,
-                                            ),
+                                  child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: activeTopProperties.length,
+                                    separatorBuilder:
+                                        (_, __) => const SizedBox(width: 12),
+                                    itemBuilder: (context, index) {
+                                      final data = activeTopProperties[index];
+                                      return MediaQuery(
+                                        data: MediaQuery.of(context).copyWith(
+                                          textScaler: const TextScaler.linear(
+                                            1.0,
                                           ),
-                                          child: PropertyCard(property: data),
-                                        );
-                                      },
-                                    ),
+                                        ),
+                                        child: PropertyCard(property: data),
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
