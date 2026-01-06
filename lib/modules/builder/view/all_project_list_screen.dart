@@ -20,12 +20,14 @@ class AllProjectListScreen extends StatefulWidget {
   final List<Map<String, String>>? filters;
   final bool isAppBarShow;
   final bool isFromSeeAll;
+  final bool isbuilder;
 
   const AllProjectListScreen({
     super.key,
     this.filters,
     this.isAppBarShow = true,
     this.isFromSeeAll = false,
+    this.isbuilder = true,
   });
 
   @override
@@ -201,7 +203,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                                 Get.to(
                                   () => ProjectDetailsScreen(
                                     projectItem: data,
-                                    isBuilder: true,
+                                    isBuilder: widget.isbuilder,
                                   ),
                                 );
                               },

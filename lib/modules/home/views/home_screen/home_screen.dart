@@ -98,16 +98,16 @@ class HomeScreen extends StatefulWidget {
         "image":
             "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80",
       },
-      {
-        "title": "Independent House",
-        "image":
-            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
-      },
-      {
-        "title": "Duplex",
-        "image":
-            "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=600&q=80",
-      },
+      // {
+      //   "title": "Independent House",
+      //   "image":
+      //       "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
+      // },
+      // {
+      //   "title": "Duplex",
+      //   "image":
+      //       "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=600&q=80",
+      // },
       {
         "title": "Villa",
         "image":
@@ -118,11 +118,11 @@ class HomeScreen extends StatefulWidget {
         "image":
             "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
       },
-      {
-        "title": "Agricultural Land",
-        "image":
-            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
-      },
+      // {
+      //   "title": "Agricultural Land",
+      //   "image":
+      //       "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
+      // },
       {
         "title": "Office",
         "image":
@@ -614,6 +614,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           "Approved Property: ${activeTopProperties.length}",
                         );
                         if (!controller.isLoading.value &&
+                            activeTopProperties.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+
+                        if (controller.isRefreshing.value &&
+                            activeTopProperties.isEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (!controller.isRefreshing.value &&
                             activeTopProperties.isEmpty) {
                           return SizedBox.shrink();
                         }

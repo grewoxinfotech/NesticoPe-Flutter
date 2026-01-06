@@ -249,49 +249,50 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       ],
                       SizedBox(height: 8),
 
-                      ListTile(
-                        tileColor: ColorRes.white,
-                        title: Text(
-                          'Approval History',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            fontWeight: AppFontWeights.semiBold,
-                          ),
-                        ),
-                        leading: Icon(Icons.history, color: ColorRes.primary),
-                        trailing: Icon(Icons.arrow_forward_ios_rounded),
-                        onTap: () {
-                          Get.to(
-                            () => SellerPropertyApprovalHistory(
-                              propertyId: project?.id ?? '',
-                              isProject: true,
+                      if (widget.isBuilder) ...[
+                        ListTile(
+                          tileColor: ColorRes.white,
+                          title: Text(
+                            'Approval History',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
                             ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 8),
-
-                      ListTile(
-                        tileColor: ColorRes.white,
-                        title: Text(
-                          'Leads',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            fontWeight: AppFontWeights.semiBold,
                           ),
+                          leading: Icon(Icons.history, color: ColorRes.primary),
+                          trailing: Icon(Icons.arrow_forward_ios_rounded),
+                          onTap: () {
+                            Get.to(
+                              () => SellerPropertyApprovalHistory(
+                                propertyId: project?.id ?? '',
+                                isProject: true,
+                              ),
+                            );
+                          },
                         ),
-                        leading: Icon(
-                          Icons.leaderboard_outlined,
-                          color: ColorRes.primary,
+                        const SizedBox(height: 8),
+                        ListTile(
+                          tileColor: ColorRes.white,
+                          title: Text(
+                            'Leads',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                            ),
+                          ),
+                          leading: Icon(
+                            Icons.leaderboard_outlined,
+                            color: ColorRes.primary,
+                          ),
+                          trailing: Icon(Icons.arrow_forward_ios_rounded),
+                          onTap: () {
+                            Get.to(
+                              () => BuilderLeads(projectId: project?.id ?? ''),
+                            );
+                          },
                         ),
-                        trailing: Icon(Icons.arrow_forward_ios_rounded),
-                        onTap: () {
-                          Get.to(
-                            () => BuilderLeads(projectId: project?.id ?? ''),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 8),
+                        const SizedBox(height: 8),
+                      ],
                     ],
                   ),
                 ),
@@ -372,7 +373,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                     planningToBuy,
                                     date,
                                     time,
-                                      roomInfo,
+                                    roomInfo,
                                   ) async {
                                     final inquiry = {
                                       "name": name ?? "",

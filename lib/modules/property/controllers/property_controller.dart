@@ -319,7 +319,7 @@ class PropertyController extends PaginatedController<Items> {
     totalPages.value = 1;
     hasMore.value = true;
     items.clear();
-
+    update();
     refreshList();
   }
 

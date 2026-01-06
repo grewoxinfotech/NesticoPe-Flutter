@@ -68,7 +68,7 @@ class DashboardScreen extends StatelessWidget {
           case 1:
             return PropertyDetail(isFromSeeAll: true);
           case 2:
-            return AllProjectListScreen(isFromSeeAll: true);
+            return AllProjectListScreen(isFromSeeAll: true, isbuilder: false);
           case 3:
             return InsightsScreen();
           case 4:
