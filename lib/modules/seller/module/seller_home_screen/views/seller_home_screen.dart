@@ -598,8 +598,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
             overviewController.overviewData = snapshot.data!;
 
             // Check if data exists before building
-            if (overviewController.overviewData.value ==
-                null) {
+            if (overviewController.overviewData.value == null) {
               return const Center(child: CircularProgressIndicator());
             }
 
@@ -623,161 +622,156 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 onRefresh: overviewController.refreshSellerDashboard,
                 color: ColorRes.primary,
                 child:
-                overview == null
-                    ? SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: SizedBox(
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height * 0.7,
-                    child: Center(
-                      child: Text(
-                        "No Dashboard Data available",
-                        style: TextStyle(
-                          fontSize: AppFontSizes.body,
-                          color: ColorRes.textSecondary,
-                          fontWeight: AppFontWeights.medium,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-                    : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Overview",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textColor,
-                          ),
-                        ),
-                        Obx(() {
-                          final baseYear = overviewController.createdUserYear
-                              .value;
-                          final currentYear = DateTime
-                              .now()
-                              .year;
-
-                          // Check if user created year and current year are same
-                          final List<int> years = (baseYear == currentYear)
-                              ? [currentYear]
-                              : List
-                              .generate(
-                            currentYear - baseYear + 1,
-                                (index) => baseYear + index,
-                          )
-                              .reversed
-                              .toList();
-
-                          return Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: ColorRes.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: ColorRes.leadGreyColor.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<int>(
-                                value: overviewController.selectedGraphYear
-                                    .value,
-                                icon: const Icon(
-                                    Icons.keyboard_arrow_down_rounded),
+                    overview == null
+                        ? SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: Center(
+                              child: Text(
+                                "No Dashboard Data available",
                                 style: TextStyle(
-                                  color: ColorRes.textColor,
-                                  fontSize: AppFontSizes.medium,
+                                  fontSize: AppFontSizes.body,
+                                  color: ColorRes.textSecondary,
                                   fontWeight: AppFontWeights.medium,
                                 ),
-                                items: years.map((year) {
-                                  return DropdownMenuItem<int>(
-                                    value: year,
-                                    child: Text("$year"),
-                                  );
-                                }).toList(),
-                                onChanged: (value) async {
-                                  if (value != null) {
-                                    overviewController.selectedGraphYear.value =
-                                        value;
-                                    // Refresh dashboard when year changes
-                                    overviewController.updateLeadsYear(value);
-                                  }
-                                },
                               ),
                             ),
-                          );
-                        })
+                          ),
+                        )
+                        : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Overview",
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.medium,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    color: ColorRes.textColor,
+                                  ),
+                                ),
+                                Obx(() {
+                                  final baseYear =
+                                      overviewController.createdUserYear.value;
+                                  final currentYear = DateTime.now().year;
 
+                                  // Check if user created year and current year are same
+                                  final List<int> years =
+                                      (baseYear == currentYear)
+                                          ? [currentYear]
+                                          : List.generate(
+                                            currentYear - baseYear + 1,
+                                            (index) => baseYear + index,
+                                          ).reversed.toList();
 
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    OverViewCard(
-                      property: controller.items,
-                      overview: overview,
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Column(
-                        children: [
-                          Obx(
-                                () =>
-                                buildSellerLeadGraph(overviewController),
-                          ),
-                          const SizedBox(height: 12),
-                          Obx(
-                                () =>
-                                buildSellerCommissionGraph(
-                                  overviewController,
-                                ),
-                          ),
-                          const SizedBox(height: 12),
-                          Obx(
-                                () =>
-                                buildPropertyDistributionGraph(
-                                  overviewController,
-                                ),
-                          ),
-                          const SizedBox(height: 12),
-                          Obx(
-                                () =>
-                                buildLeadSourceDistributionGraph(
-                                  overviewController,
-                                ),
-
-                          ),
-                          const SizedBox(height: 12),
-                          Obx(
-                                () =>
-                                    buildPropertyGrowthGraph(
-                                  overviewController,
-                                ),
-                          ),   const SizedBox(height: 12),
-                          Obx(
-                                () =>
-                                    leadLifecycleFunnel(
-                                  overviewController,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: ColorRes.leadGreyColor
+                                            .withOpacity(0.3),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<int>(
+                                        value:
+                                            overviewController
+                                                .selectedGraphYear
+                                                .value,
+                                        icon: const Icon(
+                                          Icons.keyboard_arrow_down_rounded,
+                                        ),
+                                        style: TextStyle(
+                                          color: ColorRes.textColor,
+                                          fontSize: AppFontSizes.medium,
+                                          fontWeight: AppFontWeights.medium,
+                                        ),
+                                        items:
+                                            years.map((year) {
+                                              return DropdownMenuItem<int>(
+                                                value: year,
+                                                child: Text("$year"),
+                                              );
+                                            }).toList(),
+                                        onChanged: (value) async {
+                                          if (value != null) {
+                                            overviewController
+                                                .selectedGraphYear
+                                                .value = value;
+                                            // Refresh dashboard when year changes
+                                            overviewController.updateLeadsYear(
+                                              value,
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            OverViewCard(
+                              property: controller.items,
+                              overview: overview,
+                            ),
+                            const SizedBox(height: 20),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Column(
+                                children: [
+                                  Obx(
+                                    () => buildSellerLeadGraph(
+                                      overviewController,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Obx(
+                                    () => buildSellerCommissionGraph(
+                                      overviewController,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Obx(
+                                    () => buildPropertyDistributionGraph(
+                                      overviewController,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Obx(
+                                    () => buildLeadSourceDistributionGraph(
+                                      overviewController,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Obx(
+                                    () => buildPropertyGrowthGraph(
+                                      overviewController,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Obx(
+                                    () =>
+                                        leadLifecycleFunnel(overviewController),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
               );
             });
-          },
-          );
-        }),
+          });
+        },
+      ),
     );
   }
 
@@ -877,9 +871,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       ),
     );
   }
-  Widget buildPropertyGrowthGraph(
-    SellerOverviewController overviewController,
-  ) {
+
+  Widget buildPropertyGrowthGraph(SellerOverviewController overviewController) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -973,9 +966,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       ),
     );
   }
-  Widget leadLifecycleFunnel(
-    SellerOverviewController overviewController,
-  ) {
+
+  Widget leadLifecycleFunnel(SellerOverviewController overviewController) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1026,17 +1018,20 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
 
           // --- Chart section ---
           SizedBox(
-            height: 400,
+            height: 350,
             width: double.infinity,
             child: LeadFunnelChart(
-              stageBreakdown: overviewController.overviewData.value?.data.leadAnalytics.stageBreakdown
-
+              stageBreakdown:
+                  overviewController
+                      .overviewData
+                      .value
+                      ?.data
+                      .leadAnalytics
+                      .stageBreakdown,
             ),
-
           ),
         ],
       ),

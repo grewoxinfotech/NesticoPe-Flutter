@@ -708,11 +708,8 @@ Widget contractorLeadFunnel(ContractorDashboardController overviewController) {
             ),
           ],
         ),
-        const SizedBox(height: 12),
-
-        // --- Chart section ---
         SizedBox(
-          height: 400,
+          height: 350,
           width: double.infinity,
           child: LeadFunnelChart(
             stageBreakdown:
@@ -721,7 +718,7 @@ Widget contractorLeadFunnel(ContractorDashboardController overviewController) {
                     .value
                     ?.data
                     ?.performance
-                    ?.stageBreakdown,
+                    ?.leadAnalytics?.leadStageBreakdown,
           ),
         ),
       ],

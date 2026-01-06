@@ -6,16 +6,15 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 
 import '../../../../../app/constants/color_res.dart';
+import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../auth/controllers/auth_controller.dart';
 import '../../../auth/views/login_screen.dart';
-
 
 class ConvertToContractorConversionScreen extends StatelessWidget {
   const ConvertToContractorConversionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     log("jsdfhudsf=============================================Contractor");
     Get.lazyPut(() => AuthController());
     final controller = Get.find<AuthController>();
@@ -39,7 +38,9 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
         children: [
           SingleChildScrollView(
             child: Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -146,77 +147,158 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
 
                         // What happens next section
                         buildContentContainer("What happens next?", options),
+                        SizedBox(height: 10),
+                        CitySelectionWidget(
+                          isEditing: true,
+                          controller: controller.selectedCityZ,
+                          color: ColorRes.primary,
+                          fillColor: ColorRes.white,
+
+                          onCitySelected: (selectedCity) {
+                            print(
+                              "✅ Selected city: ${selectedCity.description}",
+                            );
+                            controller.selectedCityZ.text =
+                                selectedCity.description ?? '';
+                            controller.setCity(controller.selectedCityZ.text);
+                            // You can also store city details in your controller here
+                          },
+                        ),
                         const SizedBox(height: 32),
 
                         // Convert Button
                         SizedBox(
                           width: double.infinity,
                           child: Obx(
-                                () => ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                controller.isLoading.value
-                                    ? ColorRes.primary.withOpacity(0.5)
-                                    : ColorRes.primary,
-                                foregroundColor: ColorRes.white,
-                                elevation: controller.isLoading.value ? 0 : 2,
-                                shadowColor: ColorRes.primary.withOpacity(0.3),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 18),
-                              ),
-                              onPressed:
-                              controller.isLoading.value
-                                  ? null
-                                  : () {
-                                controller.convertBuyerToContractor();
-                              },
-                              child:
-                              controller.isLoading.value
-                                  ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      valueColor:
-                                      AlwaysStoppedAnimation<Color>(
-                                        ColorRes.white.withOpacity(0.7),
+                            () =>
+                                (controller.city.value.isNotEmpty)
+                                    ? ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            controller.isLoading.value
+                                                ? ColorRes.primary.withOpacity(
+                                                  0.5,
+                                                )
+                                                : ColorRes.primary,
+                                        foregroundColor: ColorRes.white,
+                                        elevation:
+                                            controller.isLoading.value ? 0 : 2,
+                                        shadowColor: ColorRes.primary
+                                            .withOpacity(0.3),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 18,
+                                        ),
+                                      ),
+                                      onPressed:
+                                          controller.isLoading.value
+                                              ? null
+                                              : () {
+                                                controller
+                                                    .convertBuyerToContractor(
+                                                      controller
+                                                          .selectedCityZ
+                                                          .text,
+                                                    );
+                                              },
+                                      child:
+                                          controller.isLoading.value
+                                              ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2.5,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                            Color
+                                                          >(
+                                                            ColorRes.white
+                                                                .withOpacity(
+                                                                  0.7,
+                                                                ),
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 12),
+                                                  Text(
+                                                    "Converting...",
+                                                    style: TextStyle(
+                                                      fontFamily: 'Exo',
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      letterSpacing: 0.3,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                              : Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "Confirm - Convert to Contractor  ",
+                                                    style: TextStyle(
+                                                      fontFamily: 'Exo',
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      letterSpacing: 0.3,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Icon(
+                                                    Icons.arrow_forward,
+                                                    size: 20,
+                                                  ),
+                                                ],
+                                              ),
+                                    )
+                                    : ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: ColorRes.primary
+                                            .withOpacity(0.5),
+
+                                        foregroundColor: ColorRes.white,
+                                        elevation: 0,
+                                        shadowColor: ColorRes.primary
+                                            .withOpacity(0.3),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 18,
+                                        ),
+                                      ),
+                                      onPressed: () {},
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Confirm - Convert to Contractor  ",
+                                            style: TextStyle(
+                                              fontFamily: 'Exo',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 0.3,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Icon(Icons.arrow_forward, size: 20),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    "Converting...",
-                                    style: TextStyle(
-                                      fontFamily: 'Exo',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
-                                ],
-                              )
-                                  : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Confirm - Convert to Contractor  ",
-                                    style: TextStyle(
-                                      fontFamily: 'Exo',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Icon(Icons.arrow_forward, size: 20),
-                                ],
-                              ),
-                            ),
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -245,10 +327,10 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                                     // letterSpacing: 0.2,
                                   ),
                                   recognizer:
-                                  TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Get.to(() => const LoginScreen());
-                                    },
+                                      TapGestureRecognizer()
+                                        ..onTap = () {
+                                          Get.to(() => const LoginScreen());
+                                        },
                                 ),
                               ],
                             ),
@@ -314,7 +396,7 @@ Container buildContentContainer(String title, List<String> textList) {
         const SizedBox(height: 16),
         ...List.generate(
           textList.length,
-              (index) => Padding(
+          (index) => Padding(
             padding: EdgeInsets.only(
               bottom: index < textList.length - 1 ? 12 : 0,
             ),

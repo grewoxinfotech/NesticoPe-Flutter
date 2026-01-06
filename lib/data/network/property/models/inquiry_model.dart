@@ -258,17 +258,32 @@ class Inquiry {
 }
 
 class Meta {
-  final String? negotiablePrice;
+  final int? negotiablePrice;
   final bool? isNegotiable;
   final String? timePeriod;
+  final String? inquiryType;
+  final String? visitDate;
+  final String? visitTime;
 
-  Meta({this.negotiablePrice, this.isNegotiable, this.timePeriod});
+  Meta({
+    this.negotiablePrice,
+    this.isNegotiable,
+    this.timePeriod,
+    this.inquiryType,
+    this.visitDate,
+    this.visitTime,
+  });
 
   factory Meta.fromJson(Map<String, dynamic> json) {
     return Meta(
-      negotiablePrice: json['negotiablePrice'],
-      isNegotiable: json['isNegotiable'],
-      timePeriod: json['timePeriod'],
+      negotiablePrice: json['negotiablePrice'] is String
+          ? int.tryParse(json['negotiablePrice'])
+          : json['negotiablePrice'] ?? 0,
+      isNegotiable: json['isNegotiable'] ?? false,
+      timePeriod: json['timePeriod'] ?? '',
+      inquiryType: json['inquiryType'] ?? '',
+      visitDate: json['visitDate'] ?? '',
+      visitTime: json['visitTime'] ?? '',
     );
   }
 
@@ -276,8 +291,12 @@ class Meta {
     'negotiablePrice': negotiablePrice,
     'isNegotiable': isNegotiable,
     'timePeriod': timePeriod,
+    'inquiryType': inquiryType,
+    'visitDate': visitDate,
+    'visitTime': visitTime,
   };
 }
+
 
 class InquiryDetails {
   // Common

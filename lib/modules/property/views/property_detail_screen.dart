@@ -3295,6 +3295,7 @@ import 'package:housing_flutter_app/modules/property/controllers/share_property_
 import 'package:housing_flutter_app/modules/property/views/recommended_property.dart';
 import 'package:housing_flutter_app/modules/property/views/widgets/investment_insigths_graph.dart';
 import 'package:housing_flutter_app/modules/property/views/widgets/overall_rating_widget.dart';
+import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
 import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
@@ -4264,15 +4265,19 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Description'),
                       const SizedBox(height: 8),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      //   child: Text(
+                      //     currentProperty.propertyDescription ?? '-',
+                      //     style: const TextStyle(
+                      //       fontSize: 11,
+                      //       fontWeight: FontWeight.w400,
+                      //     ),
+                      //   ),
+                      // ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
-                          currentProperty.propertyDescription ?? '-',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
+                        child: ReadMoreClass(description:currentProperty.propertyDescription??'' , trimLines: 3, size:11 , colorClickableText: ColorRes.primary),
                       ),
                       const SizedBox(height: 12),
                       Divider(

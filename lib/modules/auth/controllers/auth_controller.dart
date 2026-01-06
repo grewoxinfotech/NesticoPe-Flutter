@@ -23,6 +23,9 @@ class AuthController extends GetxController {
   final AuthService authService = AuthService();
   final SecureStorage secureStorage = SecureStorage();
 
+  var selectedCityZ = TextEditingController();
+  RxString city = ''.obs;
+
   final authState = AuthState.initial.obs;
   final errorMessage = ''.obs;
   final verificationId = ''.obs;
@@ -77,6 +80,10 @@ class AuthController extends GetxController {
     /// Seller
     emailController.text = "s1@yopmail.com";
     passwordController.text = "s1@yopmail.com";
+  }
+
+  void setCity(String value) {
+    city.value = value;
   }
 
   void setRole(UserRole role) => selectedRole.value = role;
@@ -438,10 +445,10 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> convertBuyerToContractor() async {
+  Future<void> convertBuyerToContractor(String city) async {
     try {
       isLoading.value = true;
-      final user = await authService.convertBuyerToContractor();
+      final user = await authService.convertBuyerToContractor(city);
       if (user) {
         Get.offAll(() => LoginScreen());
       } else {
