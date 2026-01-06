@@ -79,7 +79,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(plan),
-              // _buildPriceSection(plan),
+              if (!UserHelper.isSellerBuilder) ...[_buildPriceSection(plan)],
               const SizedBox(height: 8),
               _buildFeaturePreview(plan),
               _buildShowMore(plan, index),
@@ -190,35 +190,42 @@ class SubscriptionPlansWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children:
-              plan.features.toFeatureList().take(5).map((f) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    children: [
-                      Icon(
-                        f.isIncluded ? Icons.check : Icons.close,
-                        size: 20,
-                        color: f.isIncluded ? ColorRes.primary : ColorRes.error,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          f.name,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.bodySmall,
-                            fontWeight: AppFontWeights.medium,
-
+              plan.features
+                  .toFeatureList()
+                  .take(!UserHelper.isSellerBuilder ? 3 : 5)
+                  .map((f) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            f.isIncluded ? Icons.check : Icons.close,
+                            size: 20,
                             color:
                                 f.isIncluded
-                                    ? ColorRes.textPrimary
-                                    : ColorRes.leadGreyColor,
+                                    ? ColorRes.primary
+                                    : ColorRes.error,
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              f.name,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.bodySmall,
+                                fontWeight: AppFontWeights.medium,
+
+                                color:
+                                    f.isIncluded
+                                        ? ColorRes.textPrimary
+                                        : ColorRes.leadGreyColor,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              }).toList(),
+                    );
+                  })
+                  .toList(),
         ),
       ),
     );
@@ -369,7 +376,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(plan),
-            // _buildPriceSection(plan),
+            if (!UserHelper.isSellerBuilder) ...[_buildPriceSection(plan)],
             const SizedBox(height: 12),
 
             // Full feature list

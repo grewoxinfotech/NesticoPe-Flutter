@@ -196,7 +196,7 @@ class PropertyService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      AppLogger.structured("Create property response: ",response.body);
+      AppLogger.structured("Create property response: ", response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Success",
@@ -351,7 +351,8 @@ class PropertyService {
         body: jsonEncode(data),
       );
       print("response : ${response.body}");
-      return response.statusCode == 200 || response.statusCode == 201;
+      print("Status code : ${response.statusCode}");
+      return (response.statusCode == 200 || response.statusCode == 201);
     } catch (e) {
       print("Delete property exception: $e");
       return false;

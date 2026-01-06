@@ -3282,21 +3282,21 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   Widget build(BuildContext context) {
     final financialInfo = widget.currentProperty.propertyDetails?.financialInfo;
 
-    if (financialInfo == null || financialInfo.propertyPriceTrend.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Text('No investment insight data available'),
-        ),
-      );
-    }
+    // if (financialInfo == null || financialInfo.propertyPriceTrend.isEmpty) {
+    //   return const Center(
+    //     child: Padding(
+    //       padding: EdgeInsets.all(24.0),
+    //       child: Text('No investment insight data available'),
+    //     ),
+    //   );
+    // }
 
     return Obx(() {
       _matrixController.marketInsight.value;
 
       // 1. Get Main Property Data
       final myPropertyData = _generateChartData(
-        priceTrend: financialInfo.propertyPriceTrend,
+        priceTrend: financialInfo!.propertyPriceTrend,
       );
 
       if (myPropertyData.isEmpty) {

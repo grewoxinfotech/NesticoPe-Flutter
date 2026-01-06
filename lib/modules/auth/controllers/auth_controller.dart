@@ -100,6 +100,7 @@ class AuthController extends GetxController {
       await UserHelper.setUserType(
         user.user?.userType,
         sellerType: user.user?.sellerType,
+        isAadharVerified: user.user?.isAadharVerified,
       );
 
       currentUser.value = user;

@@ -166,7 +166,6 @@ class ContractorProjectMilestoneController
   RxDouble milestoneAmount = 0.0.obs;
   RxDouble currentMilestoneAmount = 0.0.obs;
 
-
   /// Static data lists
   final List<String> milestoneType = ['Fixed', 'Percentage'];
   final List<String> workStatus = ['Not Started', 'In Progress'];
@@ -217,7 +216,8 @@ class ContractorProjectMilestoneController
     editingMilestoneId.value = milestone.id ?? '';
     log("isEditMode: ${isEditMode.value}");
     log("editingMilestoneId: ${editingMilestoneId.value}");
-    milestoneAmount.value= double.tryParse(milestone.milestoneAmount ?? '0') ?? 0.0;
+    milestoneAmount.value =
+        double.tryParse(milestone.milestoneAmount ?? '0') ?? 0.0;
     // Populate title and description
     titleController.text = milestone.title ?? '';
     descriptionController.text = milestone.description ?? '';
@@ -252,7 +252,7 @@ class ContractorProjectMilestoneController
     // Work status
     selectedWorkStatus.value =
         milestone.workStatus?.replaceAll("_", " ").capitalize.toString() ??
-            'Not Started';
+        'Not Started';
     log("selectedWorkStatus: ${selectedWorkStatus.value}");
 
     log("=== MILESTONE INITIALIZATION COMPLETE ===");
@@ -323,7 +323,11 @@ class ContractorProjectMilestoneController
       }
 
       if (milestoneAmount <= 0 || milestoneAmount > remainingAmount) {
-        Get.snackbar('Error', 'Milestone amount exceeds remaining budget');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Milestone amount exceeds remaining budget',
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }
@@ -344,8 +348,6 @@ class ContractorProjectMilestoneController
         workStatus: selectedWorkStatus.value.toLowerCase().replaceAll(" ", "_"),
       );
 
-
-
       final result = await _service.createMilestone(milestone);
       log("Creating Milestone: ${milestone.toJson()}");
       print('Result: $result');
@@ -360,7 +362,6 @@ class ContractorProjectMilestoneController
           message: 'Milestone created successfully',
           contentType: ContentType.success,
         );
-
 
         resetForm();
         // loadInitial();
@@ -415,7 +416,11 @@ class ContractorProjectMilestoneController
       }
 
       if (milestoneAmount <= 0 || milestoneAmount > remainingAmount) {
-        Get.snackbar('Error', 'Milestone amount exceeds remaining budget');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Milestone amount exceeds remaining budget',
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }

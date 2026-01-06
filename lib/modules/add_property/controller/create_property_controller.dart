@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/dummy_data.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart'
     hide
         PropertyDetails,
@@ -41,6 +42,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../model/add_property_model.dart';
 import '../model/commercial_model.dart';
 
@@ -565,10 +567,10 @@ class CreatePropertyController extends GetxController {
         }
         imageList.refresh();
 
-        Get.snackbar(
-          'Success',
-          '${files.length} image(s) added',
-          snackPosition: SnackPosition.BOTTOM,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: '${files.length} image(s) added',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {

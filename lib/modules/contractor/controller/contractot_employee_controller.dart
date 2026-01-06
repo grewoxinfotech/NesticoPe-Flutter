@@ -8,43 +8,45 @@ import '../../../app/constants/color_res.dart';
 import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
 import '../../../data/network/contractor/service/employee/contractor_employee_services.dart';
 
-class ContractorEmployeeController extends PaginatedController<ContractorEmployeeItem> {
-
-var txtName=TextEditingController();
-var txtPhone=TextEditingController();
-var txtExp=TextEditingController();
-var txtEmail=TextEditingController();
-final addEmployeeFormKey = GlobalKey<FormState>();
-var isEditing = false.obs;
-var employeeId = ''.obs;
+class ContractorEmployeeController
+    extends PaginatedController<ContractorEmployeeItem> {
+  var txtName = TextEditingController();
+  var txtPhone = TextEditingController();
+  var txtExp = TextEditingController();
+  var txtEmail = TextEditingController();
+  final addEmployeeFormKey = GlobalKey<FormState>();
+  var isEditing = false.obs;
+  var employeeId = ''.obs;
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
     loadInitial();
   }
-  @override
 
-  Future<PaginationResponse<ContractorEmployeeItem>> fetchItems(int page) async {
-    try{
-      final user=await SecureStorage.getUserData();
-      final createdBy=user?.user?.id??'';
+  @override
+  Future<PaginationResponse<ContractorEmployeeItem>> fetchItems(
+    int page,
+  ) async {
+    try {
+      final user = await SecureStorage.getUserData();
+      final createdBy = user?.user?.id ?? '';
       return await ContractorEmployeeServices.instance.fetchContractorEmployees(
         page: page,
         createdBy: createdBy,
       );
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
-
   }
-  void populateControllers(ContractorEmployeeItem item,bool editing){
-    txtName.text=item.name??'';
-    txtPhone.text=item.phone??'';
-    txtExp.text=item.experience?.toString()??'';
-    txtEmail.text=item.email??'';
-    employeeId.value=item.id??'';
-    isEditing.value=editing;
+
+  void populateControllers(ContractorEmployeeItem item, bool editing) {
+    txtName.text = item.name ?? '';
+    txtPhone.text = item.phone ?? '';
+    txtExp.text = item.experience?.toString() ?? '';
+    txtEmail.text = item.email ?? '';
+    employeeId.value = item.id ?? '';
+    isEditing.value = editing;
   }
 
   Future<void> refreshEmployee() async {
@@ -65,12 +67,14 @@ var employeeId = ''.obs;
       isRefreshing.value = false;
     }
   }
-Future<void> deletedContractorEmployeeData(String id) async {
-  final response = await ContractorEmployeeServices.instance.deleteContractorEmployee(id);
-  if (response) {
-    refreshList();
+
+  Future<void> deletedContractorEmployeeData(String id) async {
+    final response = await ContractorEmployeeServices.instance
+        .deleteContractorEmployee(id);
+    if (response) {
+      refreshList();
+    }
   }
-}
 
   void updateEmployee() async {
     try {
@@ -81,9 +85,9 @@ Future<void> deletedContractorEmployeeData(String id) async {
         'email': txtEmail.text,
       };
 
-      final success = await ContractorEmployeeServices.instance.updateContractorEmployee( employeeData,employeeId.value);
+      final success = await ContractorEmployeeServices.instance
+          .updateContractorEmployee(employeeData, employeeId.value);
       if (success) {
-
         Get.snackbar(
           'Success',
           'Employee updated successfully',
@@ -93,7 +97,6 @@ Future<void> deletedContractorEmployeeData(String id) async {
         clearControllers();
         refreshList();
       } else {
-
         clearControllers();
         Get.snackbar(
           'Error',
@@ -121,7 +124,8 @@ Future<void> deletedContractorEmployeeData(String id) async {
         'email': txtEmail.text,
       };
 
-      final success = await ContractorEmployeeServices.instance.addContractorEmployee(employeeData);
+      final success = await ContractorEmployeeServices.instance
+          .addContractorEmployee(employeeData);
       if (success) {
         Get.snackbar(
           'Success',
@@ -149,11 +153,12 @@ Future<void> deletedContractorEmployeeData(String id) async {
       );
     }
   }
-  void clearControllers(){
+
+  void clearControllers() {
     txtName.clear();
     txtPhone.clear();
     txtExp.clear();
     txtEmail.clear();
+    addEmployeeFormKey.currentState?.reset();
   }
-
 }

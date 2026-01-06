@@ -596,6 +596,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   final Rxn<UserModel> user = Rxn<UserModel>();
 
   Map<String, String>? filters = {};
+
   // var favoriteProjectIds = <String>{}.obs;
 
   final project =
@@ -927,10 +928,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         });
         project.refresh();
 
-        Get.snackbar(
-          'Success',
-          '${files.length} image(s) added',
-          snackPosition: SnackPosition.BOTTOM,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: '${files.length} image(s) added',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {

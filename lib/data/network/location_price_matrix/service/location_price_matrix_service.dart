@@ -25,7 +25,7 @@ class MarketInsightService {
     print("Matrix URI: $uri");
 
     final response = await http.get(uri, headers: await headers());
-
+    print("[DEBUG]=>Response ${response.body}");
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
       print("Decoded data: $decoded");

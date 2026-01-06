@@ -62,11 +62,11 @@ class LocationPriceMatrixController extends GetxController {
       marketInsight.value = response;
     } catch (e) {
       errorMessage.value = e.toString();
-      Get.snackbar(
-        'Error',
-        errorMessage.value!,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      // Get.snackbar(
+      //   'Error',
+      //   errorMessage.value!,
+      //   snackPosition: SnackPosition.BOTTOM,
+      // );
     } finally {
       if (showLoader) isLoading.value = false;
     }

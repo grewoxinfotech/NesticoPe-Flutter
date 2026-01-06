@@ -4277,7 +4277,13 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       // ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: ReadMoreClass(description:currentProperty.propertyDescription??'' , trimLines: 3, size:11 , colorClickableText: ColorRes.primary),
+                        child: ReadMoreClass(
+                          description:
+                              currentProperty.propertyDescription ?? '',
+                          trimLines: 3,
+                          size: 11,
+                          colorClickableText: ColorRes.primary,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Divider(
@@ -4292,7 +4298,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 ?.financialInfo
                                 ?.propertyPriceTrend !=
                             null &&
-                        currentProperty.investmentInsightModel != null) ...[
+                        currentProperty.investmentInsightModel != null &&
+                        currentProperty.listingType!.toLowerCase() ==
+                            "sell") ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Investment Insight'),
                       const SizedBox(height: 8),
