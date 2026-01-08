@@ -122,6 +122,45 @@ class AuthService {
     }
   }
 
+  ///==================== Contractor Registration ====================
+  Future<Map<String, dynamic>> contractorRegister({
+    required String userType,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final uri = Uri.parse(ApiConstants.registerEndpoint);
+
+      final payload = {
+        'userType': userType,
+        ...data,
+      };
+
+      debugPrint('[DEBUG] => Registration Payload: $payload');
+      debugPrint('[DEBUG] => API URL: $uri');
+
+      final response = await http.post(
+        uri,
+        headers: await ApiConstants.getHeadersWithoutToken(),
+        body: jsonEncode(payload),
+      );
+
+      debugPrint('[DEBUG] => Contractor Response: ${response.body}');
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return responseData;
+      } else {
+        throw Exception(
+          responseData['message'] ?? 'Contractor registration failed',
+        );
+      }
+    } catch (e) {
+      debugPrint('[ERROR] => Contractor registration exception: $e');
+      rethrow;
+    }
+  }
+
   Future<String?> sellerRegistrationComplete(Map<String, dynamic> data) async {
     try {
       final response = await http.post(
@@ -246,8 +285,7 @@ class AuthService {
     final response = await http.post(
       Uri.parse('${ApiConstants.convertToContractor}/$userId'),
       headers: await headers(),
-      body: jsonEncode({'city':city})
-
+      body: jsonEncode({'city': city}),
     );
     print(
       "Convert to Url Contractor ${Uri.parse('${ApiConstants.convertToContractor}/$userId')}",

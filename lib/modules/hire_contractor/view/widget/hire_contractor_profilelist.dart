@@ -654,51 +654,73 @@ class _AllContractorCardState extends State<AllContractorCard> {
 
             /// ===================== RATING ROW =====================
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  children: List.generate(5, (index) {
-                    final rating = double.tryParse(profile.overallRating) ?? 0;
-                    if (index < rating.floor()) {
-                      return const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 16,
-                      );
-                    } else if (index < rating) {
-                      return const Icon(
-                        Icons.star_half,
-                        color: Colors.amber,
-                        size: 16,
-                      );
-                    } else {
-                      return Icon(
-                        Icons.star_border,
-                        color: Colors.amber.shade400,
-                        size: 16,
-                      );
-                    }
-                  }),
+                  children: [
+                    Row(
+                      children: List.generate(5, (index) {
+                        final rating = double.tryParse(profile.overallRating) ?? 0;
+                        if (index < rating.floor()) {
+                          return const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                            size: 16,
+                          );
+                        } else if (index < rating) {
+                          return const Icon(
+                            Icons.star_half,
+                            color: Colors.amber,
+                            size: 16,
+                          );
+                        } else {
+                          return Icon(
+                            Icons.star_border,
+                            color: Colors.amber.shade400,
+                            size: 16,
+                          );
+                        }
+                      }),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      (double.tryParse(
+                            profile.overallRating,
+                          )?.toStringAsFixed(1)) ??
+                          '0.0',
+                      style: const TextStyle(
+                        fontWeight: AppFontWeights.semiBold,
+                        fontSize: AppFontSizes.bodySmall,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      "(${profile.totalReviews} review${profile.totalReviews == 1 ? '' : 's'})",
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 6),
-                Text(
-                  (double.tryParse(
-                        profile.overallRating,
-                      )?.toStringAsFixed(1)) ??
-                      '0.0',
-                  style: const TextStyle(
-                    fontWeight: AppFontWeights.semiBold,
-                    fontSize: AppFontSizes.bodySmall,
-                    color: ColorRes.textColor,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  "(${profile.totalReviews} review${profile.totalReviews == 1 ? '' : 's'})",
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.caption,
-                    color: ColorRes.textSecondary,
-                  ),
-                ),
+                if(profile.contractorType != null && profile.contractorType!.isNotEmpty)...[
+                  Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: ColorRes.primary.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: ColorRes.primary.withOpacity(0.3)),
+                      ),
+                      child: Text(
+                          profile.contractorType!,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.primary,
+                          ))
+                  )
+                ]
               ],
             ),
 

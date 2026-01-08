@@ -19,6 +19,7 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
 import 'package:housing_flutter_app/data/network/trending_area/model/trending_area_model.dart';
 import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
 import 'package:housing_flutter_app/modules/builder/view/all_project_list_screen.dart';
+import 'package:housing_flutter_app/modules/contractor/controller/top_contractor_service_category_controller.dart';
 
 //import 'package:housing_flutter_app/modules/home/controllers/home_controller/home_controller.dart';
 import 'package:housing_flutter_app/modules/home/widgets/city_card.dart';
@@ -61,6 +62,7 @@ import '../../../property/controllers/share_property_controller.dart';
 import '../../../search_property/controller/search_controller.dart';
 import '../../../search_property/model/search_model.dart';
 import '../../controllers/contractor_profile_controller/contractor_profile_controller.dart';
+import '../../widgets/top_categories_section.dart';
 import '../../widgets/unified_comparison_floating_button.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../../data/network/news/news_model.dart';
@@ -272,6 +274,10 @@ class _HomeScreenState extends State<HomeScreen> {
     TopSellerController(),
   );
   final CompareManager compare = Get.put(CompareManager(), permanent: true);
+
+  final TopCategoryController topCategoryController = Get.put(
+    TopCategoryController(),
+  );
 
   final List<Map<String, dynamic>> cities = [
     {
@@ -1546,6 +1552,33 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         );
                       }),
+
+                      Obx(() {
+                        if (topCategoryController.isLoading.value &&
+                            topCategoryController.categories.isEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (!topCategoryController.isLoading.value &&
+                            topCategoryController.categories.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+
+                        return Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            const TitleWithViewAll(
+                              title: "Top Categories",
+                              showViewAll: false,
+                            ),
+                            SizedBox(height: 12),
+                            TopCategoriesSection(categories: topCategoryController.categories,),
+                          ],
+                        );
+                      }),
+
                       Obx(() {
                         if (platformServicesController.isLoading.value &&
                             platformServicesController.items.isEmpty) {

@@ -7,8 +7,8 @@ class ApiConstants {
 
 
 
-   static const String url = "http://192.168.1.3:19725";
- // static const String url = "https://jewelry-farmers-hydrocodone-placed.trycloudflare.com";
+   // static const String url = "http://192.168.1.3:19725";
+ static const String url = "https://huge-remains-salary-peripheral.trycloudflare.com";
 
 
 
@@ -150,6 +150,8 @@ class ApiConstants {
   static String get contractorUserProfile => "$baseURL/user/profiles";
 
   static String get contractorEmployees => "$baseURL/employee";
+
+  static String get contractorTopServiceCategory => "$baseURL/contractorServiceCategory/top";
 
   //---------------------------------other-----------------------------//
 

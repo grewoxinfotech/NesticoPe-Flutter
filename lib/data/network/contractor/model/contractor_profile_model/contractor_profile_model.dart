@@ -79,6 +79,7 @@ class Contractor {
    int totalExperience;
   final String imageUrl;
    ProjectStats projectStats;
+   final String? contractorType;
   final Subscription subscription;
 
   Contractor({
@@ -92,6 +93,7 @@ class Contractor {
     required this.username,
     required this.totalExperience,
     required this.projectStats,
+     this.contractorType,
     required this.subscription,
   });
 
@@ -108,6 +110,8 @@ class Contractor {
       totalExperience: json['totalExperience'] ?? 0,
       projectStats: ProjectStats.fromJson(json['projectData'] ?? {}),
       subscription: Subscription.fromJson(json['subscription'] ?? {}),
+      contractorType: json['contractorType'] ?? null,
+
     );
   }
 
@@ -124,6 +128,7 @@ class Contractor {
       'totalExperience': totalExperience,
       'projectData': projectStats.toJson(),
       'subscription': subscription.toJson(),
+      'contractorType': contractorType,
     };
   }
 }

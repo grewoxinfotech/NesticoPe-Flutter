@@ -12,6 +12,7 @@ import 'contractor_add_inuiry_screen.dart';
 
 class ContractorProfileDetailsScreen extends StatelessWidget {
   final Contractor contractor;
+
   ContractorProfileDetailsScreen({super.key, required this.contractor});
 
   // Make this an instance variable accessible to the controller
@@ -80,107 +81,144 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Avatar
-                        Container(
-                          height: 60,
-                          width: 60,
-                          decoration: BoxDecoration(
-                            color: ColorRes.primary.withOpacity(0.3),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.build,
-                            size: 32,
-                            color: ColorRes.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-
-                        // Contractor Info
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
                             children: [
-                              // Name (only if available)
-                              if (contractor.username.isNotEmpty)
-                                Text(
-                                  contractor.username,
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.body,
-                                    fontWeight: AppFontWeights.semiBold,
-                                    color: ColorRes.primary,
-                                  ),
+                              // Avatar
+                              Container(
+                                height: 60,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  color: ColorRes.primary.withOpacity(0.3),
+                                  shape: BoxShape.circle,
                                 ),
+                                child: const Icon(
+                                  Icons.build,
+                                  size: 32,
+                                  color: ColorRes.primary,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
 
-                              // Rating (only if valid)
-                              if (contractor.overallRating != null &&
-                                  double.tryParse(
-                                        contractor.overallRating.toString(),
-                                      ) !=
-                                      null &&
-                                  contractor.totalReviews != null &&
-                                  contractor.totalReviews > 0)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star,
-                                        color: ColorRes.warning,
-                                        size: 18,
-                                      ),
-                                      const SizedBox(width: 4),
+                              // Contractor Info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Name (only if available)
+                                    if (contractor.username.isNotEmpty)
                                       Text(
-                                        "${contractor.overallRating} (${contractor.totalReviews})",
+                                        contractor.username,
                                         style: TextStyle(
-                                          fontSize: AppFontSizes.bodySmall,
-                                          fontWeight: AppFontWeights.medium,
-                                          color: Colors.grey,
+                                          fontSize: AppFontSizes.body,
+                                          fontWeight: AppFontWeights.semiBold,
+                                          color: ColorRes.primary,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
 
-                              // Location (only if city exists)
-                              if (contractorServiceController
-                                          .userData
-                                          .value
-                                          ?.city !=
-                                      null &&
-                                  contractorServiceController
-                                      .userData
-                                      .value!
-                                      .city!
-                                      .isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.location_on_outlined,
-                                        color: ColorRes.primary,
-                                        size: 18,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Expanded(
-                                        child: Text(
-                                          'Provides service in ${contractorServiceController.userData.value!.city}',
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.caption,
-                                            fontWeight: AppFontWeights.medium,
-                                            color:
-                                                ColorRes.leadGreyColor.shade600,
-                                          ),
+                                    // Rating (only if valid)
+                                    if (double.tryParse(
+                                          contractor.overallRating.toString(),
+                                        ) !=
+                                        null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 4),
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.star,
+                                              color: ColorRes.warning,
+                                              size: 18,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              "${contractor.overallRating} (${contractor.totalReviews})",
+                                              style: TextStyle(
+                                                fontSize:
+                                                    AppFontSizes.bodySmall,
+                                                fontWeight:
+                                                    AppFontWeights.medium,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
+
+                                    // Location (only if city exists)
+                                    Obx(() {
+                                      final city =
+                                          contractorServiceController
+                                              .userData
+                                              .value
+                                              ?.city;
+
+                                      if (city == null || city.isEmpty) {
+                                        return const SizedBox.shrink();
+                                      }
+
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 4),
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.location_on_outlined,
+                                              color: ColorRes.primary,
+                                              size: 18,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Expanded(
+                                              child: Text(
+                                                'Provides service in $city',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppFontSizes.caption,
+                                                  fontWeight:
+                                                      AppFontWeights.medium,
+                                                  color:
+                                                      ColorRes
+                                                          .leadGreyColor
+                                                          .shade600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                                  ],
                                 ),
+                              ),
                             ],
                           ),
                         ),
+                        if (contractor.contractorType != null &&
+                            contractor.contractorType!.isNotEmpty) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorRes.primary.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: ColorRes.primary.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Text(
+                              contractor.contractorType!,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.primary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

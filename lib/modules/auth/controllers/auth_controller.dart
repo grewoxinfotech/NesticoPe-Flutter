@@ -187,6 +187,55 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<void> contractorRegister({
+    required Map<String, dynamic> data,
+    // required String username,
+    required String phone,
+    // required String contractorType,
+    String? referralCode,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      final response = await authService.contractorRegister(
+        userType: "contractor",
+        data: data,
+        // phone: phone,
+        // referCode: referralCode,
+        // contractorType: contractorType,
+      );
+
+      if (response['success'] == true && response['data']['token'] != null) {
+        final token = response['data']['token'];
+        await SecureStorage.saveToken(token);
+
+        Get.to(
+          () => OtpVerificationScreen(
+            phone: phone,
+            token: token,
+            verifyOTPFor: VerifyOTPFor.registration,
+            data: data,
+            redirectAfterOtp: LoginScreen(),
+          ),
+        );
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Registration successful. Please verify OTP sent to $phone.',
+          contentType: ContentType.success,
+        );
+      } else {
+        throw Exception(
+          response['message'] ?? 'Registration failed - no token received',
+        );
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+    }finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> sellerRegister({
     required BuildContext context,
     required Map<String, dynamic>? data,

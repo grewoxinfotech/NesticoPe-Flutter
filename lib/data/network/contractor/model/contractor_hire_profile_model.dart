@@ -52,6 +52,7 @@ class HireContractorUserProfile {
   final bool isBlocked;
   final String? blockReason;
   final String? blockedAt;
+  final String? contractorType;
   final int activeServices;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -71,6 +72,7 @@ class HireContractorUserProfile {
     required this.activeServices,
     required this.createdAt,
     required this.updatedAt,
+    this.contractorType,
   });
 
   /// ✅ Create from Map
@@ -90,6 +92,7 @@ class HireContractorUserProfile {
       activeServices: map['activeServices'] ?? 0,
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
+      contractorType: map['contractorType'],
     );
   }
 
@@ -110,6 +113,7 @@ class HireContractorUserProfile {
       'activeServices': activeServices,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'contractorType': contractorType,
     };
   }
 

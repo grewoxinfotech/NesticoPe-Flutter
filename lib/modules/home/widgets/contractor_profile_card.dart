@@ -152,54 +152,76 @@ class ContractorCard extends StatelessWidget {
 
             /// ===================== RATING ROW =====================
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  children: List.generate(5, (index) {
-                    final rating =
-                        double.tryParse(contractor.overallRating) ?? 0;
-                    if (index < rating.floor()) {
-                      return const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 16,
-                      );
-                    } else if (index < rating) {
-                      return const Icon(
-                        Icons.star_half,
-                        color: Colors.amber,
-                        size: 16,
-                      );
-                    } else {
-                      return Icon(
-                        Icons.star_border,
-                        color: Colors.amber.shade400,
-                        size: 16,
-                      );
-                    }
-                  }),
-                ),
-                const SizedBox(width: 6),
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: List.generate(5, (index) {
+                        final rating =
+                            double.tryParse(contractor.overallRating) ?? 0;
+                        if (index < rating.floor()) {
+                          return const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                            size: 16,
+                          );
+                        } else if (index < rating) {
+                          return const Icon(
+                            Icons.star_half,
+                            color: Colors.amber,
+                            size: 16,
+                          );
+                        } else {
+                          return Icon(
+                            Icons.star_border,
+                            color: Colors.amber.shade400,
+                            size: 16,
+                          );
+                        }
+                      }),
+                    ),
+                    const SizedBox(width: 6),
 
-                Text(
-                  (double.tryParse(
-                        contractor.overallRating,
-                      )?.toStringAsFixed(1)) ??
-                      '0.0',
-                  style: const TextStyle(
-                    fontWeight: AppFontWeights.semiBold,
-                    fontSize: AppFontSizes.bodySmall,
-                    color: ColorRes.textColor,
-                  ),
+                    Text(
+                      (double.tryParse(
+                            contractor.overallRating,
+                          )?.toStringAsFixed(1)) ??
+                          '0.0',
+                      style: const TextStyle(
+                        fontWeight: AppFontWeights.semiBold,
+                        fontSize: AppFontSizes.bodySmall,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      "(${contractor.totalReviews} review${contractor.totalReviews == 1 ? '' : 's'})",
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  "(${contractor.totalReviews} review${contractor.totalReviews == 1 ? '' : 's'})",
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.caption,
-                    color: ColorRes.textSecondary,
-                  ),
-                ),
+               if(contractor.contractorType != null && contractor.contractorType!.isNotEmpty)...[
+                 Container(
+                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                     decoration: BoxDecoration(
+                       color: ColorRes.primary.withOpacity(0.05),
+                       borderRadius: BorderRadius.circular(6),
+                       border: Border.all(color: ColorRes.primary.withOpacity(0.3)),
+                     ),
+                     child: Text(
+                         contractor.contractorType!,
+                         style: TextStyle(
+                           fontSize: AppFontSizes.caption,
+                           fontWeight: AppFontWeights.medium,
+                           color: ColorRes.primary,
+                         ))
+                 )
+               ]
               ],
             ),
 

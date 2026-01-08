@@ -331,6 +331,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final authController = Get.put(AuthController());
 
   String? _selectedSellerType;
+  String? _contractorType;
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _firstNameController = TextEditingController();
@@ -522,6 +523,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  Future<void> _contractorRegister() async {
+    if (_formKey.currentState!.validate()) {
+      if (!_acceptTerms) {
+        _showErrorDialog('Please accept the terms and conditions');
+        return;
+      }
+
+      if (_contractorType == null) {
+        _showErrorDialog('Please select Contractor type');
+        return;
+      }
+
+      setState(() => _isLoading = true);
+
+      try {
+        final data = {
+          "password": _passwordController.text.trim(),
+          "email": _emailController.text.trim(),
+          "firstName": _firstNameController.text.trim(),
+          "lastName": _lastNameController.text.trim(),
+          "address": _addressController.text.trim(),
+          "city": _cityController.text.trim(),
+          "state": _stateController.text.trim(),
+          "zip_code": _zipCodeController.text.trim(),
+          "username": _usernameController.text.trim(),
+          "contractorType": _contractorType ?? 'Labour',
+          "phone": _phoneController.text.trim(),
+          "referralCode": _referralCodeController.text.trim(),
+        };
+
+        final success = await authController.contractorRegister(
+          // username: _usernameController.text.trim(),
+          phone: _phoneController.text.trim(),
+          // referralCode: _referralCodeController.text.trim(),
+          // contractorType: _contractorType?.toLowerCase() ?? 'labour',
+          data: data,
+        );
+
+
+      } catch (e) {
+        _showErrorDialog('Registration failed: ${e.toString()}');
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
+    }
+  }
+
   String _roleToString(UserRole role) {
     switch (role) {
       case UserRole.buyer:
@@ -603,24 +651,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (_selectedRole == UserRole.seller) ...[
-                  Text(
-                    "Select Seller Type",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: ColorRes.black,
-                      fontWeight: FontWeight.w600,
-                    ),
+                // if (_selectedRole == UserRole.seller) ...[
+                //   Text(
+                //     "Select Seller Type",
+                //     style: const TextStyle(
+                //       fontSize: 14,
+                //       color: ColorRes.black,
+                //       fontWeight: FontWeight.w600,
+                //     ),
+                //   ),
+                //   Row(
+                //     children: [
+                //       _buildRadioOption("Owner"),
+                //       const SizedBox(width: 24),
+                //       _buildRadioOption("Builder"),
+                //     ],
+                //   ),
+                //   const SizedBox(height: 10),
+                // ],
+                if (_selectedRole == UserRole.seller)
+                  CommonRadioGroup<String>(
+                    title: "Select Seller Type",
+                    options: const ["Owner", "Builder"],
+                    groupValue: _selectedSellerType,
+                    labelBuilder: (v) => v,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedSellerType = value;
+                      });
+                    },
                   ),
-                  Row(
-                    children: [
-                      _buildRadioOption("Owner"),
-                      const SizedBox(width: 24),
-                      _buildRadioOption("Builder"),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                ],
+
                 NesticoPeTextField(
                   title: "Username",
                   controller: _usernameController,
@@ -705,6 +766,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
 
                 const SizedBox(height: 10),
+                // if (_selectedRole == UserRole.contractor) ...[
+                //   Text(
+                //     "Contractor Type",
+                //     style: const TextStyle(
+                //       fontSize: 14,
+                //       color: ColorRes.black,
+                //       fontWeight: FontWeight.w600,
+                //     ),
+                //   ),
+                //   Row(
+                //     children: [
+                //       _buildRadioOption("Company"),
+                //       const SizedBox(width: 24),
+                //       _buildRadioOption("Labour"),
+                //     ],
+                //   ),
+                //   const SizedBox(height: 10),
+                // ],
+
+                if (_selectedRole == UserRole.contractor)
+                  CommonRadioGroup<String>(
+                    title: "Contractor Type",
+                    options: const ["Company", "Labour"],
+                    groupValue: _contractorType,
+                    labelBuilder: (v) => v,
+                    onChanged: (value) {
+                      setState(() {
+                        _contractorType = value;
+                      });
+                    },
+                  ),
+
+                // const SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
@@ -931,7 +1025,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       case UserRole.reseller:
         return _reSellerRegister;
       case UserRole.contractor:
-        return 'contractor';
+        return _contractorRegister;
     }
   }
 
@@ -950,6 +1044,97 @@ class _RegisterScreenState extends State<RegisterScreen> {
           },
         ),
         Text(label, style: const TextStyle(fontSize: 13)),
+      ],
+    );
+  }
+}
+
+
+
+class CommonRadioGroup<T> extends StatelessWidget {
+  final String title;
+  final List<T> options;
+  final T? groupValue;
+  final ValueChanged<T?> onChanged;
+  final String Function(T value) labelBuilder;
+  final double spacing;
+
+  const CommonRadioGroup({
+    super.key,
+    required this.title,
+    required this.options,
+    required this.groupValue,
+    required this.onChanged,
+    required this.labelBuilder,
+    this.spacing = 24,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            color: ColorRes.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: options.map((option) {
+            return Padding(
+              padding: EdgeInsets.only(right: spacing),
+              child: CommonRadioOption<T>(
+                value: option,
+                groupValue: groupValue,
+                label: labelBuilder(option),
+                onChanged: onChanged,
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+}
+
+class CommonRadioOption<T> extends StatelessWidget {
+  final T value;
+  final T? groupValue;
+  final String label;
+  final ValueChanged<T?> onChanged;
+  final double fontSize;
+  final Color? activeColor;
+
+  const CommonRadioOption({
+    super.key,
+    required this.value,
+    required this.groupValue,
+    required this.label,
+    required this.onChanged,
+    this.fontSize = 13,
+    this.activeColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Radio<T>(
+          value: value,
+          groupValue: groupValue,
+          activeColor: activeColor ?? ColorRes.primary,
+          onChanged: onChanged,
+        ),
+        Text(
+          label,
+          style: TextStyle(fontSize: fontSize),
+        ),
       ],
     );
   }
