@@ -324,6 +324,8 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     txtClientName.text = item.name ?? "";
     txtClientEmail.text = item.email ?? "";
     txtClientPhone.text = item.phone ?? "";
+    txtProjectPrice.text=item.customFields?.quotationPrice.toString()??'';
+
 
     selectedService.value = item.customFields?.serviceName ?? '';
 

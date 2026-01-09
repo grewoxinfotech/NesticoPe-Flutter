@@ -6,12 +6,14 @@ import 'package:http/http.dart' ;
 
 import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
+import '../model/contractor_quotation/contractor_quotation.dart';
 import '../model/contractot_service_model/contractor_inquiry_model.dart';
 
 class ContractorInquiryService{
   ContractorInquiryService._();
   static ContractorInquiryService contractorInquiryService=ContractorInquiryService._();
   final _baseUrl = ApiConstants.contractorInquiry;
+  final _baseUrlQutation = ApiConstants.contractorInquiryQuotation;
 
   static Future<Map<String, String>> headers() async {
     return await ApiConstants.getHeaders();
@@ -54,6 +56,51 @@ class ContractorInquiryService{
       rethrow;
     }
   }
+    Future<PaginationResponse<ContractorQuotation>> fetchContractorQuotation({
+    int page = 1,
+    Map<String, String>? filters,
+    required String id
+
+  }) async {
+    log("USer $id");
+    try {
+      final queryParams = {
+        'page': page.toString(),
+        if (filters != null) ...filters,
+
+      };
+
+      final uri = Uri.parse("$_baseUrlQutation").replace(queryParameters: queryParams);
+
+      log("Contractor Quotation Url $uri");
+      final response = await http.get(uri, headers: await headers());
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("Contractor Quotation data: $data");
+
+        return PaginationResponse<ContractorQuotation>.fromJson(
+          data,
+              (json) => ContractorQuotation.fromMap(json),
+        );
+      } else {
+        print("Failed to load Review: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to load Review");
+      }
+    } catch (e) {
+      print("Exception in Review: $e");
+      rethrow;
+    }
+  }
+
+
+
+
+
+
+
+
 
   Future<bool> updateStatusOfInquiry(String id,String status)
   async {
@@ -64,6 +111,31 @@ class ContractorInquiryService{
         {
           final data =jsonDecode(response.body);
           print("Contractor Inquiry Status Change : $data");
+          return data['success'];
+        }
+      else{
+        print("Failed to Change Status: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to Change Status");
+      }
+    }
+    catch(e)
+    {
+      print("Exception in Status: $e");
+      return false;
+    }
+  }
+
+
+  Future<bool> updateStatusOfQuotation(String id,String status)
+  async {
+    try{
+      final response=await http.put(Uri.parse('$_baseUrlQutation/$id'),headers:await headers(),body: jsonEncode({'status':status}));
+
+      if(response.statusCode==200)
+        {
+          final data =jsonDecode(response.body);
+          print("Contractor Quotation Status Change : $data");
           return data['success'];
         }
       else{
@@ -103,6 +175,29 @@ class ContractorInquiryService{
       return false;
     }
   }
+  Future<bool> deleteQuotation(String id)
+  async {
+    try{
+      final response=await http.delete(Uri.parse('$_baseUrlQutation/$id'),headers:await headers(),);
+
+      if(response.statusCode==200)
+      {
+        final data =jsonDecode(response.body);
+        print("Contractor Quotation Deleted : $data");
+        return data['success'];
+      }
+      else{
+        print("Failed to Delete Quotation: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to Delete Quotation");
+      }
+    }
+    catch(e)
+    {
+      print("Exception in Delete Quotation: $e");
+      return false;
+    }
+  }
 
   Future<bool> convertInquiryIntoLead(Map<String,dynamic> lead)
   async {
@@ -118,6 +213,49 @@ class ContractorInquiryService{
         print("Failed to convert Into Lead: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to Convert into lead");
+      }
+
+    }catch(e){
+      print("Exception Convert Into Lead $e");
+      return false;
+    }
+  }
+
+  Future<bool> convertInquiryQuotation(Map<String,dynamic> quotation)
+  async {
+    try{
+      final response=await http.post(Uri.parse(_baseUrlQutation),headers:await headers(),body: jsonEncode(quotation));
+      if(response.statusCode==200|| response.statusCode==201)
+      {
+        final data =jsonDecode(response.body);
+        print("Contractor Inquiry Send Quotation : $data");
+        return data['success'];
+      }
+      else{
+        print("Failed to Send Quotation: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to Send Quotation");
+      }
+
+    }catch(e){
+      print("Exception Convert Into Lead $e");
+      return false;
+    }
+  }
+  Future<bool> updateQuotation(Map<String,dynamic> quotation)
+  async {
+    try{
+      final response=await http.put(Uri.parse('$_baseUrlQutation/${quotation['id']}'),headers:await headers(),body: jsonEncode(quotation));
+      if(response.statusCode==200|| response.statusCode==201)
+      {
+        final data =jsonDecode(response.body);
+        print("Contractor Inquiry Send Quotation : $data");
+        return data['success'];
+      }
+      else{
+        print("Failed to Send Quotation: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to Send Quotation");
       }
 
     }catch(e){

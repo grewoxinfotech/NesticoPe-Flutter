@@ -862,12 +862,12 @@ class ProfileScreen extends StatelessWidget {
             onTap: () => Get.to(() => ConvertToContractorConversionScreen()),
           ),
 
-          SettingsMenuTile(
-            icon: Icons.engineering_outlined,
-            title: "Hire Contractor",
-            subTitle: "Hire top contractors",
-            onTap: () => Get.to(() => HireContractorScreen()),
-          ),
+          // SettingsMenuTile(
+          //   icon: Icons.engineering_outlined,
+          //   title: "Hire Contractor",
+          //   subTitle: "Hire top contractors",
+          //   onTap: () => Get.to(() => HireContractorScreen()),
+          // ),
         ],
 
         // 🏠 SELLER ACTIONS
@@ -886,12 +886,12 @@ class ProfileScreen extends StatelessWidget {
             },
           ),
 
-          _buildActionButton(
-            icon: Icons.engineering_outlined,
-            subtitle: "Hire top contractors",
-            label: "Hire Contractor",
-            onTap: () => Get.to(() => HireContractorScreen()),
-          ),
+          // _buildActionButton(
+          //   icon: Icons.engineering_outlined,
+          //   subtitle: "Hire top contractors",
+          //   label: "Hire Contractor",
+          //   onTap: () => Get.to(() => HireContractorScreen()),
+          // ),
 
           _buildActionButton(
             icon: Icons.support_agent_outlined,
@@ -913,12 +913,12 @@ class ProfileScreen extends StatelessWidget {
             onTap: () => Get.to(() => MainNavigationScreen()),
           ),
 
-          _buildActionButton(
-            icon: Icons.engineering_outlined,
-            label: "Hire Contractor",
-            subtitle: "Hire top contractors",
-            onTap: () => Get.to(() => HireContractorScreen()),
-          ),
+          // _buildActionButton(
+          //   icon: Icons.engineering_outlined,
+          //   label: "Hire Contractor",
+          //   subtitle: "Hire top contractors",
+          //   onTap: () => Get.to(() => HireContractorScreen()),
+          // ),
 
           _buildActionButton(
             icon: Icons.support_agent_outlined,
@@ -939,12 +939,12 @@ class ProfileScreen extends StatelessWidget {
             subtitle: 'Navigate to Contractor Panel',
             onTap: () => Get.to(() => ContractorMainScreen()),
           ),
-          _buildActionButton(
-            icon: Icons.engineering_outlined,
-            label: "Hire Contractor",
-            subtitle: "Hire top contractors",
-            onTap: () => Get.to(() => HireContractorScreen()),
-          ),
+          // _buildActionButton(
+          //   icon: Icons.engineering_outlined,
+          //   label: "Hire Contractor",
+          //   subtitle: "Hire top contractors",
+          //   onTap: () => Get.to(() => HireContractorScreen()),
+          // ),
           _buildActionButton(
             icon: Icons.support_agent_outlined,
             label: "Support Ticket",
@@ -965,12 +965,12 @@ class ProfileScreen extends StatelessWidget {
 
             onTap: () => Get.to(() => BuilderMainScreen()),
           ),
-          _buildActionButton(
-            icon: Icons.engineering_outlined,
-            label: "Hire Contractor",
-            subtitle: "Hire top contractors",
-            onTap: () => Get.to(() => HireContractorScreen()),
-          ),
+          // _buildActionButton(
+          //   icon: Icons.engineering_outlined,
+          //   label: "Hire Contractor",
+          //   subtitle: "Hire top contractors",
+          //   onTap: () => Get.to(() => HireContractorScreen()),
+          // ),
 
           _buildActionButton(
             icon: Icons.support_agent_outlined,

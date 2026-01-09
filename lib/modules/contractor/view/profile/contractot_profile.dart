@@ -21,6 +21,7 @@ import '../contractor_plan/contractor_plan_screen.dart';
 import '../employee/contractor_employee_screen.dart';
 import '../project/contractor_service.dart';
 import '../widget/my_service_screen.dart';
+import '../widget/contractor_quotation_list_screen.dart';
 
 class ContractorProfileScreen extends StatefulWidget {
   const ContractorProfileScreen({Key? key}) : super(key: key);
@@ -159,6 +160,14 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
 
                               onTap: () {
                                 Get.to(() => ContractorEmployeeScreen());
+                              },
+                            ),
+                            _buildActionButton(
+                              icon: Icons.receipt_long_outlined,
+                              label: "My Quotations",
+
+                              onTap: () {
+                                Get.to(() => const ContractorQuotationListScreen());
                               },
                             ),
                           ],

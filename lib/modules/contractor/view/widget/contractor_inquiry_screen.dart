@@ -373,6 +373,7 @@ import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../controller/contractor_inquiry_controller.dart';
 import '../filter/contractor_inquiry_filter.dart';
+import 'contractor_inquiry_quotation_screen.dart';
 
 class ContractorInquiryScreen extends StatefulWidget {
   const ContractorInquiryScreen({super.key});
@@ -500,7 +501,12 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                         onChangeStatus:
                             () => _showStatusDialog(context, controller, inquiry),
                         onLeadConvert:
-                            () => controller.convertToLead(inquiry, inquiry.services,inquiry.convertedServices),
+                            // () => controller.convertToLead(inquiry, inquiry.services,inquiry.convertedServices),
+                        () => Get.to(
+                              () => ContractorInquiryQuotationScreen(
+                            inquiry: inquiry,
+                          ),
+                        ),
                         onDelete:
                             () => controller.deleteInquiry(inquiry.id, inquiry.name),
                       ),
@@ -864,10 +870,8 @@ class InquiryCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          if(!controller.areAllServicesConverted(
-                            inquiry.convertedServices,
-                            inquiry.services,
-                          ))...[
+                          if(!inquiry.isConvertedToQuotation
+                          )...[
                             Expanded(
                               child: _buildActionButton(
                                 icon: Icons.swap_horiz,
@@ -880,10 +884,8 @@ class InquiryCard extends StatelessWidget {
                           ],
 
                           Expanded(
-                            child: (controller.areAllServicesConverted(
-                              inquiry.convertedServices,
-                              inquiry.services,
-                            ))
+                            child: (inquiry.isConvertedToQuotation
+                            )
                                 ? GestureDetector(
                               onTap: () {},
                               child: Container(
@@ -901,7 +903,7 @@ class InquiryCard extends StatelessWidget {
                                 ),
                                 alignment: Alignment.center,
                                 child: Text(
-                                  'All Converted',
+                                  'Converted',
                                   style: TextStyle(
                                     color: ColorRes.green,
                                     fontSize: AppFontSizes.bodySmall,
@@ -919,6 +921,24 @@ class InquiryCard extends StatelessWidget {
                           ),
                         ],
                       ),
+                      // const SizedBox(height: 8),
+                      //
+                      // // Submit Quotation Button
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   child: _buildActionButton(
+                      //     icon: Icons.request_quote_outlined,
+                      //     label: 'Submit Quotation',
+                      //     color: ColorRes.blueColor,
+                      //     onPressed: () {
+                      //       Get.to(
+                      //         () => ContractorInquiryQuotationScreen(
+                      //           inquiry: inquiry,
+                      //         ),
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
                       const SizedBox(height: 8),
 
                       SizedBox(

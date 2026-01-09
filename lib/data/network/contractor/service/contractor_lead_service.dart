@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/care/pagination/controller/pagination_co
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/confige/helper/api_helper.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
@@ -96,6 +97,7 @@ final _basurl=ApiConstants.leads;
 
      if (response.statusCode == 200 || response.statusCode == 201) {
        final data=jsonDecode(response.body);
+       AppLogger.structured("Convert Into Project Response", data);
        return data['success'];
      } else {
 

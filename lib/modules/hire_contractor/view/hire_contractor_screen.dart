@@ -20,12 +20,7 @@ class HireContractorScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
+        automaticallyImplyLeading: false,
         backgroundColor: ColorRes.white,
         elevation: 0,
         title: Text(

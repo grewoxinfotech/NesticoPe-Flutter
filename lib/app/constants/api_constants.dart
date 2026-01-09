@@ -5,12 +5,8 @@ class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
 
-
-
-   // static const String url = "http://192.168.1.3:19725";
- static const String url = "https://huge-remains-salary-peripheral.trycloudflare.com";
-
-
+  // static const String url = "http://192.168.1.3:19725";
+  static const String url = "https://carol-matthew-motorcycle-kevin.trycloudflare.com";
 
   // static const String url =
   //     "https://bow-dir-facility-adjusted.trycloudflare.com";
@@ -38,8 +34,7 @@ class ApiConstants {
 
   static String get convertToContractor => "$auth/convert-buyer-to-contractor";
 
-  static String get aadharInitiateVerification =>
-      "$auth/initiate-aadhaar-verification";
+  static String get aadharInitiateVerification => "$auth/initiate-aadhaar-verification";
 
   static String get aadharVerifyOtp => "$auth/verify-aadhaar-otp";
 
@@ -60,8 +55,7 @@ class ApiConstants {
   static String get subscriptionPlan => "$baseURL/subscriptionPlan";
 
   static String get subscription => "$baseURL/subscription";
-  static String get subscriptionPlanInquiry =>
-      "$baseURL/subscriptionPlanInquiry";
+  static String get subscriptionPlanInquiry => "$baseURL/subscriptionPlanInquiry";
 
   // Lead
   static String get leads => "$baseURL/lead";
@@ -72,8 +66,7 @@ class ApiConstants {
 
   static String get platformService => "$baseURL/platformService";
 
-  static String get propertyRecommend =>
-      "$baseURL/property/personalized-recommendations";
+  static String get propertyRecommend => "$baseURL/property/personalized-recommendations";
 
   static String get builderProject => "$baseURL/builderproject";
 
@@ -128,24 +121,21 @@ class ApiConstants {
 
   static String get contractorService => "$baseURL/contractorService";
 
-  static String get contractorServiceCategory =>
-      "$baseURL/contractorServiceCategory";
+  static String get contractorServiceCategory => "$baseURL/contractorServiceCategory";
 
   static String get contractorInquiry => "$baseURL/contractorInquiry";
+  static String get contractorInquiryQuotation => "$baseURL/contractorquotation";
 
   static String get contractorProject => "$baseURL/contractorProjects";
 
   static String get contractorProjectMilestone => "$baseURL/projectmilestone";
 
-  static String get contractorProjectMilestonePayment =>
-      "$baseURL/milestonepayment";
+  static String get contractorProjectMilestonePayment => "$baseURL/milestonepayment";
 
   static String get contractorLeadFollowUp => "$baseURL/followup";
-  static String get myContractorProfileReview =>
-      "$baseURL/review/check/contractor_service";
+  static String get myContractorProfileReview => "$baseURL/review/check/contractor_service";
 
-  static String get contractorCompare =>
-      "$baseURL/contractorService/contractor";
+  static String get contractorCompare => "$baseURL/contractorService/contractor";
 
   static String get contractorUserProfile => "$baseURL/user/profiles";
 

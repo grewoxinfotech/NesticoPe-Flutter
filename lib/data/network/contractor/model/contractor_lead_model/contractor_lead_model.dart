@@ -139,6 +139,8 @@ class ContractorLeadCustomFields {
   String? contractorId;
   String? contractorUsername;
   String? serviceDescription;
+  String? quotationId;
+  int? quotationPrice;
   bool? isConvertedToProject;
 
   ContractorLeadCustomFields({
@@ -147,6 +149,8 @@ class ContractorLeadCustomFields {
     this.contractorId,
     this.contractorUsername,
     this.serviceDescription,
+    this.quotationId,
+    this.quotationPrice,
     this.isConvertedToProject,
   });
 
@@ -157,6 +161,10 @@ class ContractorLeadCustomFields {
       contractorId: map['contractorId'],
       contractorUsername: map['contractorUsername'],
       serviceDescription: map['serviceDescription'],
+      quotationId: map['quotationId'],
+      quotationPrice: map['quotationPrice'] is int
+          ? map['quotationPrice']
+          : int.tryParse(map['quotationPrice']?.toString() ?? ''),
       isConvertedToProject: map['isConvertedToProject'],
     );
   }
@@ -168,7 +176,10 @@ class ContractorLeadCustomFields {
       'contractorId': contractorId,
       'contractorUsername': contractorUsername,
       'serviceDescription': serviceDescription,
+      'quotationId': quotationId,
+      'quotationPrice': quotationPrice,
       'isConvertedToProject': isConvertedToProject,
     };
   }
 }
+

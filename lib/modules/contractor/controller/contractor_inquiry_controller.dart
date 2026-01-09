@@ -37,12 +37,14 @@ class ContractorInquiryController
 
     loadInitial();
   }
+
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
     log("Apply Filter in Inquiry Contractor Section ${filters} ");
     // await loadInitial();
     refreshList();
   }
+
   Future<void> refreshInquiry() async {
     try {
       isRefreshing.value = true;
@@ -61,6 +63,7 @@ class ContractorInquiryController
       isRefreshing.value = false;
     }
   }
+
   void resetFilters() {
     txtStartDate.clear();
     txtEndDate.clear();
@@ -164,7 +167,7 @@ class ContractorInquiryController
         .convertInquiryIntoLead(payload);
     if (response) {
       refreshList();
-      getFilterData();
+
     }
   }
 
@@ -288,13 +291,16 @@ class ContractorInquiryController
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                 Text('Select one service to convert:',style: TextStyle(
-              fontSize: AppFontSizes.small,
-              fontWeight: AppFontWeights.medium,
-              color: ColorRes.textSecondary,
-            ),),
+                Text(
+                  'Select one service to convert:',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.medium,
+                    color: ColorRes.textSecondary,
+                  ),
+                ),
                 const SizedBox(height: 16),
-                  ...unconvertedServices.map(
+                ...unconvertedServices.map(
                   (service) => RadioListTile<String>(
                     title: Text(service.serviceName),
                     value: service.serviceId,
@@ -445,6 +451,65 @@ class ContractorInquiryController
   //     ),
   //   );
   // }
+
+  Future<void> submitQuotation({
+    required String inquiryId,
+    required int quotationPrice,
+    required String status,
+    required String note,
+    required ContractorInquiryItem inquiry,
+  }) async {
+    try {
+      // TODO: Implement API call to save quotation
+      // For now, just update the status
+      Map<String, dynamic> payload = {
+        "related_id": inquiryId,
+        "user": {
+          "id": inquiry.contractorId,
+          "name": inquiry.name,
+          "email": inquiry.email,
+          "phone": inquiry.phone,
+        },
+        "meta": {"notes": 'Generated from inquiry for: $note'},
+        "price": quotationPrice,
+        "status": status.toLowerCase().replaceAll(" ","_"),
+
+      };
+
+      final response = await ContractorInquiryService.contractorInquiryService
+          .convertInquiryQuotation(payload);
+
+      if (response) {
+
+        refreshList();
+        Get.snackbar(
+          'Success',
+          'Quotation submitted successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: ColorRes.success,
+          colorText: ColorRes.white,
+        );
+        refreshList();
+        getFilterData();
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to submit quotation',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: ColorRes.error,
+          colorText: ColorRes.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An error occurred: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: ColorRes.error,
+        colorText: ColorRes.white,
+      );
+    }
+  }
 
   @override
   Future<PaginationResponse<ContractorInquiryItem>> fetchItems(int page) async {

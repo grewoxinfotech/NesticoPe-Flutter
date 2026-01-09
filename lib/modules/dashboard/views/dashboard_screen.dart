@@ -72,7 +72,7 @@ class DashboardScreen extends StatelessWidget {
           case 3:
             return InsightsScreen();
           case 4:
-            return UserActivityScreen();
+            return HireContractorScreen();
 
           default:
             return const SizedBox();

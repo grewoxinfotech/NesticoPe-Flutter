@@ -47,6 +47,8 @@ dependencies:
   flutter_tts:
   persistent_bottom_nav_bar:
   http_parser:
+  pdf: ^3.10.8
+  printing: ^5.12.0
   mime:
   google_maps_flutter:
   

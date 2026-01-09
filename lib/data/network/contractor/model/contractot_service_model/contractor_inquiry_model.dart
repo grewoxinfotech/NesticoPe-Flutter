@@ -82,6 +82,7 @@ class ContractorInquiryItem {
   final String status;
   final String? submittedAt;
   final bool isConvertedToLead;
+  final bool isConvertedToQuotation;
   final String? convertedToLeadAt;
   final List<String> convertedServices;
   final InquiryMeta meta;
@@ -102,6 +103,7 @@ class ContractorInquiryItem {
     required this.status,
     this.submittedAt,
     required this.isConvertedToLead,
+    required this.isConvertedToQuotation,
     this.convertedToLeadAt,
     required this.convertedServices,
     required this.meta,
@@ -126,6 +128,7 @@ class ContractorInquiryItem {
       status: map['status'] ?? '',
       submittedAt: map['submittedAt'],
       isConvertedToLead: map['isConvertedToLead'] ?? false,
+      isConvertedToQuotation: map['isConvertedToQuotation'],
       convertedToLeadAt: map['convertedToLeadAt'],
       convertedServices: List<String>.from(map['convertedServices'] ?? []),
       meta: InquiryMeta.fromMap(map['meta'] ?? {}),
@@ -149,6 +152,7 @@ class ContractorInquiryItem {
       'status': status,
       'submittedAt': submittedAt,
       'isConvertedToLead': isConvertedToLead,
+      'isConvertedToQuotation': isConvertedToQuotation,
       'convertedToLeadAt': convertedToLeadAt,
       'convertedServices': convertedServices,
       'meta': meta.toMap(),
