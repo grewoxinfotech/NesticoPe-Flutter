@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+
+import '../model/referrel_model.dart';
 
 class Referral_Service {
   Referral_Service._();
@@ -15,28 +18,48 @@ class Referral_Service {
     return await ApiConstants.getHeaders();
   }
 
-  Future fetchReferrals() async {
+  // Future fetchReferrals() async {
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse(_baseUrl),
+  //       headers: await headers(),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final referrals = json.decode(response.body);
+  //       print('afsdgsyufgs $referrals');
+  //       return referrals;
+  //     } else {
+  //       final referrals = json.decode(response.body);
+  //
+  //       print('ysdgfgytytygy $referrals');
+  //       return referrals;
+  //     }
+  //   } on Exception catch (e) {
+  //     return {'error': e.toString()};
+  //   }
+  //
+  // }
+
+  Future<ReferralModel> fetchReferrals() async {
     try {
       final response = await http.get(
         Uri.parse(_baseUrl),
         headers: await headers(),
       );
 
+      final decoded = json.decode(response.body);
+      AppLogger.structured('Fetch Refreal Service Response',decoded);
       if (response.statusCode == 200) {
-        final referrals = json.decode(response.body);
-        print('afsdgsyufgs $referrals');
-        return referrals;
+        return ReferralModel.fromJson(decoded);
       } else {
-        final referrals = json.decode(response.body);
-
-        print('ysdgfgytytygy $referrals');
-        return referrals;
+        throw Exception(decoded['message'] ?? 'Failed to fetch referrals');
       }
-    } on Exception catch (e) {
-      return {'error': e.toString()};
+    } catch (e) {
+      throw Exception(e.toString());
     }
-
   }
+
 
   Future<bool> generateReferCode() async {
     try {

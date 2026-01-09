@@ -872,7 +872,7 @@ class DashboardController extends GetxController {
     try {
       isLoading.value = true;
       final data = await Referral_Service.instance.fetchReferrals();
-      dummyReferral.value = ReferralModel.fromJson(data);
+      dummyReferral.value = data;
       if (dummyReferral.value != null) isGenerated.value = true;
     } catch (e) {
       print(e);

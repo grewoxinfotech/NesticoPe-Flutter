@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -82,32 +84,6 @@ final List<Map<String, dynamic>> addonData = [
   },
 ];
 
-// final List<Map<String, String>> propertiesOverview = [
-//   {
-//     "title": "Luxury Villa",
-//     "location": "Beverly Hills",
-//     "price": "\$1,200,000",
-//     "views": "3.2K",
-//     "likes": "800",
-//     "inquiries": "45",
-//   },
-//   {
-//     "title": "Modern Apartment",
-//     "location": "Downtown",
-//     "price": "\$450,000",
-//     "views": "2.1K",
-//     "likes": "600",
-//     "inquiries": "30",
-//   },
-//   {
-//     "title": "Cozy Cottage",
-//     "location": "Countryside",
-//     "price": "\$320,000",
-//     "views": "1.5K",
-//     "likes": "300",
-//     "inquiries": "15",
-//   },
-// ];
 
 final List<Map<String, dynamic>> propertiesOverview = [
   {
@@ -220,11 +196,13 @@ class SellerHomeScreen extends StatefulWidget {
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
   final controller = Get.find<PropertyController>();
   final profileController = Get.put(BuyerProfileDataController());
+  late final SellerOverviewController overviewController;
 
   @override
   void initState() {
     loadPropertyBySeller();
     super.initState();
+    overviewController = Get.put(SellerOverviewController());
   }
 
   Future<void> loadPropertyBySeller() async {
@@ -237,331 +215,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController());
-
-    Get.lazyPut(() => SellerOverviewController());
-    final overviewController = Get.find<SellerOverviewController>();
-    // return Scaffold(
-    //   body: SafeArea(
-    //     top: false,
-    //     child: LayoutBuilder(
-    //       builder: (context, constraints) {
-    //         return Stack(
-    //           children: [
-    //             // 🔹 Background (header)
-    //             Container(
-    //               width: double.infinity,
-    //               // color: const Color(0xff091F48),
-    //               color: ColorRes.primary,
-    //               padding: const EdgeInsets.only(
-    //                 top: 30,
-    //                 left: 12,
-    //                 right: 12,
-    //                 bottom: 80, // extra space so overlap looks smooth
-    //               ),
-    //               child: Center(
-    //                 child: Column(
-    //                   crossAxisAlignment: CrossAxisAlignment.start,
-    //                   children: [
-    //                     // Top Bar
-    //                     Container(
-    //                       padding: const EdgeInsets.symmetric(
-    //                         horizontal: 12,
-    //                         vertical: 12,
-    //                       ),
-    //                       child: Row(
-    //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                         crossAxisAlignment: CrossAxisAlignment.start,
-    //                         children: [
-    //                           Column(
-    //                             crossAxisAlignment: CrossAxisAlignment.start,
-    //                             children: [
-    //                               Text(
-    //                                 "Welcome, Seller",
-    //                                 style: TextStyle(
-    //                                   color: ColorRes.white,
-    //                                   fontSize: AppFontSizes.body,
-    //                                   fontWeight: AppFontWeights.bold,
-    //                                 ),
-    //                               ),
-    //
-    //                               Text(
-    //                                 "Sell or rent your property faster",
-    //                                 style: TextStyle(
-    //                                   color: ColorRes.white,
-    //                                   fontSize: AppFontSizes.medium,
-    //                                   fontWeight: AppFontWeights.semiBold,
-    //                                 ),
-    //                               ),
-    //                               SizedBox(height: 8),
-    //                               GestureDetector(
-    //                                 onTap: () {
-    //                                   Get.offAll(() => DashboardScreen());
-    //                                 },
-    //                                 child: Container(
-    //                                   padding: EdgeInsets.symmetric(
-    //                                     horizontal: 20,
-    //                                     vertical: 6,
-    //                                   ),
-    //                                   decoration: BoxDecoration(
-    //                                     borderRadius: BorderRadius.circular(8),
-    //                                     border: Border.all(
-    //                                       color: ColorRes.leadGreyColor[300]!,
-    //                                     ),
-    //                                   ),
-    //                                   child: Text(
-    //                                     "Home",
-    //                                     style: TextStyle(color: ColorRes.white),
-    //                                   ),
-    //                                 ),
-    //                               ),
-    //                             ],
-    //                           ),
-    //
-    //                           // SizedBox(width: 8),
-    //                           GestureDetector(
-    //                             onTap: () {
-    //                               Get.to(
-    //                                 () => ProfileScreen(
-    //                                   imageUrl:
-    //                                       profileController
-    //                                           .userProfile
-    //                                           .value
-    //                                           ?.profilePic ??
-    //                                       "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-    //                                 ),
-    //                               );
-    //                             },
-    //                             child: Container(
-    //                               width: 45,
-    //                               height: 45,
-    //                               decoration: BoxDecoration(
-    //                                 border: Border.all(
-    //                                   color: ColorRes.grey.withOpacity(0.2),
-    //                                   width: 2,
-    //                                 ),
-    //                                 borderRadius: BorderRadius.circular(12),
-    //                               ),
-    //                               child: Obx(
-    //                                 () => ClipRRect(
-    //                                   borderRadius: BorderRadius.circular(10),
-    //                                   child: Image.network(
-    //                                     profileController
-    //                                             .userProfile
-    //                                             .value
-    //                                             ?.profilePic ??
-    //                                         "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-    //                                     fit: BoxFit.cover,
-    //
-    //                                     // 🔹 Add loading indicator
-    //                                     loadingBuilder: (
-    //                                       context,
-    //                                       child,
-    //                                       loadingProgress,
-    //                                     ) {
-    //                                       if (loadingProgress == null)
-    //                                         return child;
-    //                                       return const Center(
-    //                                         child: SizedBox(
-    //                                           width: 20,
-    //                                           height: 20,
-    //                                           child: CircularProgressIndicator(
-    //                                             strokeWidth: 2,
-    //                                             color: ColorRes.white,
-    //                                           ),
-    //                                         ),
-    //                                       );
-    //                                     },
-    //
-    //                                     // 🔹 Fallback if image fails
-    //                                     errorBuilder: (
-    //                                       context,
-    //                                       error,
-    //                                       stackTrace,
-    //                                     ) {
-    //                                       return Container(
-    //                                         color: ColorRes.grey.withOpacity(
-    //                                           0.1,
-    //                                         ),
-    //                                         child: const Icon(
-    //                                           Icons.person,
-    //                                           color: ColorRes.white,
-    //                                           size: 24,
-    //                                         ),
-    //                                       );
-    //                                     },
-    //                                   ),
-    //                                 ),
-    //                               ),
-    //                             ),
-    //                           ),
-    //                         ],
-    //                       ),
-    //                     ),
-    //                     const SizedBox(height: 20),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ),
-    //
-    //             // 🔹 Foreground (overlapping form card)
-    //             Positioned(
-    //               top: 140,
-    //               // adjust overlap distance
-    //               left: 0,
-    //               right: 0,
-    //               bottom: 0,
-    //               child: Container(
-    //                 padding: const EdgeInsets.only(top: 20),
-    //                 decoration: const BoxDecoration(
-    //                   color: ColorRes.white,
-    //                   borderRadius: BorderRadius.only(
-    //                     topLeft: Radius.circular(28),
-    //                     topRight: Radius.circular(28),
-    //                   ),
-    //                 ),
-    //                 child: SingleChildScrollView(
-    //                   child: Column(
-    //                     children: [
-    //                       Obx(() {
-    //                         if (controller.isLoading.value &&
-    //                             controller.items.isEmpty) {
-    //                           return const Center(
-    //                             child: CircularProgressIndicator(),
-    //                           );
-    //                         }
-    //
-    //                         if (!controller.isLoading.value &&
-    //                             controller.items.isEmpty) {
-    //                           return SizedBox.shrink();
-    //                         }
-    //                         final overview =
-    //                             overviewController.overviewData.value;
-    //                         if (overviewController.isLoading.value) {
-    //                           return const Center(
-    //                             child: CircularProgressIndicator(),
-    //                           );
-    //                         }
-    //                         if (overview == null) {
-    //                           return const SizedBox.shrink(); // or a loader/empty state
-    //                         }
-    //
-    //                         return RefreshIndicator(
-    //                           onRefresh:
-    //                               overviewController.refreshSellerDashboard,
-    //                           color: ColorRes.primary,
-    //                           child:
-    //                               overview == null
-    //                                   ? SingleChildScrollView(
-    //                                     physics:
-    //                                         const AlwaysScrollableScrollPhysics(),
-    //                                     child: SizedBox(
-    //                                       height:
-    //                                           MediaQuery.of(
-    //                                             context,
-    //                                           ).size.height *
-    //                                           0.7,
-    //                                       child: Center(
-    //                                         child: Text(
-    //                                           "No Dashboard Data available",
-    //                                           style: TextStyle(
-    //                                             fontSize: AppFontSizes.body,
-    //                                             color: ColorRes.textSecondary,
-    //                                             fontWeight:
-    //                                                 AppFontWeights.medium,
-    //                                           ),
-    //                                         ),
-    //                                       ),
-    //                                     ),
-    //                                   )
-    //                                   : Column(
-    //                                     crossAxisAlignment:
-    //                                         CrossAxisAlignment.start,
-    //                                     children: [
-    //                                       Padding(
-    //                                         padding: const EdgeInsets.symmetric(
-    //                                           horizontal: 4,
-    //                                         ),
-    //                                         child: Row(
-    //                                           children: [
-    //                                             TitleWithViewAll(
-    //                                               title: "Overview",
-    //                                               showViewAll: false,
-    //                                             ),
-    //                                             // TextButton(
-    //                                             //   onPressed: () {
-    //                                             //     Get.to(
-    //                                             //       () => PropertyOverviewScreen(
-    //                                             //         properties: controller.items,
-    //                                             //
-    //                                             //       ),
-    //                                             //     );
-    //                                             //   },
-    //                                             //   child: Text(
-    //                                             //     'Explore',
-    //                                             //     style: TextStyle(
-    //                                             //       fontSize: AppFontSizes.small,
-    //                                             //     ),
-    //                                             //   ),
-    //                                             // ),
-    //                                           ],
-    //                                         ),
-    //                                       ),
-    //                                       Padding(
-    //                                         padding: const EdgeInsets.symmetric(
-    //                                           horizontal: 16,
-    //                                         ),
-    //                                         child: OverViewCard(
-    //                                           property: controller.items,
-    //                                           overview: overview,
-    //                                         ),
-    //                                       ),
-    //                                       const SizedBox(height: 20),
-    //                                     ],
-    //                                   ),
-    //                         );
-    //                       }),
-    //
-    //                       Padding(
-    //                         padding: EdgeInsets.symmetric(
-    //                           horizontal: 16,
-    //                           vertical: 12,
-    //                         ),
-    //                         child: Column(
-    //                           children: [
-    //                             Obx(
-    //                               () =>
-    //                                   buildSellerLeadGraph(overviewController),
-    //                             ),
-    //                             const SizedBox(height: 20),
-    //                             Obx(
-    //                               () => buildSellerCommissionGraph(
-    //                                 overviewController,
-    //                               ),
-    //                             ),
-    //                             const SizedBox(height: 20),
-    //                           ],
-    //                         ),
-    //                       ),
-    //
-    //                       Padding(
-    //                         padding: const EdgeInsets.symmetric(horizontal: 16),
-    //                         child: const CustomerSupportCard(
-    //                           email: "abc@support.com",
-    //                           phone: "+91 234 567 890",
-    //                         ),
-    //                       ),
-    //                       const SizedBox(height: 20),
-    //                     ],
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           ],
-    //         );
-    //       },
-    //     ),
-    //   ),
-    // );
     return DashboardLayout(
       floatingButton: FloatingActionButton.extended(
         onPressed: () {
@@ -579,202 +232,168 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           ),
         ),
       ),
-      child: FutureBuilder(
-        future: overviewController.getFetchSellerApi(
-          overviewController.selectedGraphYear.value,
-        ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData) {
-            return const Center(child: Text('No data found'));
-          }
-          return Obx(() {
-            if (overviewController.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            overviewController.overviewData = snapshot.data!;
+      child: Obx(() {
+        log('UI Obx rebuilding - isLoading: ${overviewController.isLoading.value}, overviewData: ${overviewController.overviewData.value != null ? "HAS DATA" : "NULL"}');
 
-            // Check if data exists before building
-            if (overviewController.overviewData.value == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        // Show loading indicator
+        if (overviewController.isLoading.value) {
+          log('Showing loading indicator');
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        // Get overview data
+        final overview = overviewController.overviewData.value;
+        log('overview variable: ${overview != null ? "HAS DATA" : "NULL"}');
 
-            return Obx(() {
-              if (controller.isLoading.value && controller.items.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (!controller.isLoading.value && controller.items.isEmpty) {
-                return SizedBox.shrink();
-              }
-              final overview = overviewController.overviewData.value;
-              if (overviewController.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (overview == null) {
-                return const SizedBox.shrink(); // or a loader/empty state
-              }
-
-              return RefreshIndicator(
-                onRefresh: overviewController.refreshSellerDashboard,
-                color: ColorRes.primary,
-                child:
-                    overview == null
-                        ? SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.7,
-                            child: Center(
-                              child: Text(
-                                "No Dashboard Data available",
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.body,
-                                  color: ColorRes.textSecondary,
-                                  fontWeight: AppFontWeights.medium,
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                        : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Overview",
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.medium,
-                                    fontWeight: AppFontWeights.semiBold,
-                                    color: ColorRes.textColor,
-                                  ),
-                                ),
-                                Obx(() {
-                                  final baseYear =
-                                      overviewController.createdUserYear.value;
-                                  final currentYear = DateTime.now().year;
-
-                                  // Check if user created year and current year are same
-                                  final List<int> years =
-                                      (baseYear == currentYear)
-                                          ? [currentYear]
-                                          : List.generate(
-                                            currentYear - baseYear + 1,
-                                            (index) => baseYear + index,
-                                          ).reversed.toList();
-
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: ColorRes.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: ColorRes.leadGreyColor
-                                            .withOpacity(0.3),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<int>(
-                                        value:
-                                            overviewController
-                                                .selectedGraphYear
-                                                .value,
-                                        icon: const Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                        ),
-                                        style: TextStyle(
-                                          color: ColorRes.textColor,
-                                          fontSize: AppFontSizes.medium,
-                                          fontWeight: AppFontWeights.medium,
-                                        ),
-                                        items:
-                                            years.map((year) {
-                                              return DropdownMenuItem<int>(
-                                                value: year,
-                                                child: Text("$year"),
-                                              );
-                                            }).toList(),
-                                        onChanged: (value) async {
-                                          if (value != null) {
-                                            overviewController
-                                                .selectedGraphYear
-                                                .value = value;
-                                            // Refresh dashboard when year changes
-                                            overviewController.updateLeadsYear(
-                                              value,
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                }),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            OverViewCard(
-                              property: controller.items,
-                              overview: overview,
-                            ),
-                            const SizedBox(height: 20),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              child: Column(
-                                children: [
-                                  Obx(
-                                    () => buildSellerLeadGraph(
-                                      overviewController,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Obx(
-                                    () => buildSellerCommissionGraph(
-                                      overviewController,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Obx(
-                                    () => buildPropertyDistributionGraph(
-                                      overviewController,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Obx(
-                                    () => buildLeadSourceDistributionGraph(
-                                      overviewController,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Obx(
-                                    () => buildPropertyGrowthGraph(
-                                      overviewController,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Obx(
-                                    () =>
-                                        leadLifecycleFunnel(overviewController),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+        // Show empty state if no data
+        if (!overviewController.isLoading.value && overview == null) {
+          log('Showing empty state');
+          return RefreshIndicator(
+            onRefresh: overviewController.refreshSellerDashboard,
+            color: ColorRes.primary,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "No Dashboard Data available",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.body,
+                          color: ColorRes.textSecondary,
+                          fontWeight: AppFontWeights.medium,
                         ),
-              );
-            });
-          });
-        },
-      ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          log('Retry button pressed');
+                          overviewController.getFetchSellerApi(
+                            overviewController.selectedGraphYear.value,
+                          );
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
+        log('Showing main content');
+
+        if(overview == null){
+          return SizedBox.shrink();
+        }
+
+        // Main content
+        return RefreshIndicator(
+          onRefresh: overviewController.refreshSellerDashboard,
+          color: ColorRes.primary,
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Overview",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                    _buildYearDropdown(overviewController),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                OverViewCard(
+                  property: controller.items,
+                  overview: overview,
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    children: [
+                      buildSellerLeadGraph(overviewController),
+                      const SizedBox(height: 12),
+                      buildSellerCommissionGraph(overviewController),
+                      const SizedBox(height: 12),
+                      buildPropertyDistributionGraph(overviewController),
+                      const SizedBox(height: 12),
+                      buildLeadSourceDistributionGraph(overviewController),
+                      const SizedBox(height: 12),
+                      buildPropertyGrowthGraph(overviewController),
+                      const SizedBox(height: 12),
+                      leadLifecycleFunnel(overviewController),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+
     );
   }
 
+  Widget _buildYearDropdown(SellerOverviewController overviewController) {
+    final baseYear = overviewController.createdUserYear.value;
+    final currentYear = DateTime.now().year;
+
+    final List<int> years = (baseYear == currentYear)
+        ? [currentYear]
+        : List.generate(
+      currentYear - baseYear + 1,
+          (index) => baseYear + index,
+    ).reversed.toList();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<int>(
+          value: overviewController.selectedGraphYear.value,
+          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+          style: TextStyle(
+            color: ColorRes.textColor,
+            fontSize: AppFontSizes.medium,
+            fontWeight: AppFontWeights.medium,
+          ),
+          items: years.map((year) {
+            return DropdownMenuItem<int>(
+              value: year,
+              child: Text("$year"),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              log('Dropdown changed to: $value');
+              overviewController.updateLeadsYear(value);
+            }
+          },
+        ),
+      ),
+    );
+  }
   //
   // const CustomerSupportCard(
   //   email: "abc@support.com",

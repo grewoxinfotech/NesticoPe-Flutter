@@ -1192,8 +1192,13 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                     final referral = controller.dummyReferral.value;
                     final data = referral?.data;
 
-                    final hasData = data != null && data.isNotEmpty;
-                    final first = hasData ? data.first : null;
+                    // final hasData = data != null && data.isNotEmpty;
+                    // final first = hasData ? data.first : null;
+
+                    final referrals = controller.dummyReferral.value?.data?.referrals;
+                    final hasData = referrals != null && referrals.isNotEmpty;
+                    final first = hasData ? referrals.first : null;
+
 
                     return buildReferralProgram(
                       controller: controller,
@@ -3343,7 +3348,7 @@ Widget buildReferralProgram({
         const SizedBox(height: 20),
 
         // Two cards: points earned and total earnings
-        if (controller.dummyReferral.value?.data?.isNotEmpty ?? false) ...[
+        if (controller.dummyReferral.value?.data?.referrals?.isNotEmpty ?? false) ...[
           Row(
             children: [
               Expanded(

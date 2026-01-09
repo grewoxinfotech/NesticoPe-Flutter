@@ -42,17 +42,36 @@ class ReferralController extends GetxController {
     }
   }
 
+  // Future<void> fetchReferralService() async {
+  //   try {
+  //     log("fvhgdhgffdfh ");
+  //     isLoading.value = true;
+  //     final data = await Referral_Service.instance.fetchReferrals();
+  //     dummyReferral.value = data;
+  //     if (dummyReferral.value != null) isGenerated.value = true;
+  //   } catch (e) {
+  //     print(e);
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
+
   Future<void> fetchReferralService() async {
     try {
-      log("fvhgdhgffdfh ");
-      isLoading.value = true;
-      final data = await Referral_Service.instance.fetchReferrals();
-      dummyReferral.value = ReferralModel.fromJson(data);
-      if (dummyReferral.value != null) isGenerated.value = true;
+      final ReferralModel model =
+      await Referral_Service.instance.fetchReferrals();
+
+      // Save model to Rx variable
+      dummyReferral.value = model;
+
+      // Check if referrals list is not empty
+      isGenerated.value = (model.data?.referrals?.isNotEmpty ?? false);
+
+      print('Referrals fetched: ${model.data?.referrals?.length ?? 0}');
     } catch (e) {
-      print(e);
-    } finally {
-      isLoading.value = false;
+      print('fetchReferralService error: $e');
     }
   }
+
+
 }
