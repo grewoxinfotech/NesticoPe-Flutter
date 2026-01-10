@@ -319,6 +319,8 @@ class _PropertyDetailState extends State<PropertyDetail> {
                         subtitle: "Try adjusting your search criteria",
                       );
                     }
+                    
+                    final List<Items> approvedProperty = controller.items.value.where((element) => element.approvalStatus!.toLowerCase() == "approved" ,).toList();
 
                     return NotificationListener<ScrollNotification>(
                       onNotification: (scrollEnd) {
@@ -335,9 +337,9 @@ class _PropertyDetailState extends State<PropertyDetail> {
                             vertical: AppPadding.small,
                             horizontal: AppPadding.small,
                           ),
-                          itemCount: controller.items.length,
+                          itemCount: approvedProperty.length,
                           itemBuilder: (context, index) {
-                            final data = controller.items[index];
+                            final data = approvedProperty[index];
 
                             return PropertyCardWidget(
                               property: data,

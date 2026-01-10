@@ -4196,31 +4196,32 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     //     SizedBox.shrink(),
                     //   ],
                     // ],
-                    if (currentProperty
-                            .propertyDetails
-                            ?.furnishInfo
-                            ?.furnishDetails !=
-                        null) ...[
-                      const SizedBox(height: 12),
-                      const TitleWithViewAll(title: 'Furnishing'),
-                      Builder(
-                        builder: (context) {
-                          log(
-                            '[PropertyDetail] 🛋️ Building FurnishingDetails',
-                          );
-                          return FurnishingDetails(
-                            property: currentProperty,
-                            bgColor: ColorRes.propertyBg,
-                            txtColor: ColorRes.propertyText,
-                          );
-                        },
-                      ),
-                      Divider(
-                        indent: 18,
-                        endIndent: 18,
-                        color: ColorRes.leadGreyColor.shade300,
-                      ),
-                    ],
+                    // if (currentProperty
+                    //         .propertyDetails
+                    //         ?.furnishInfo
+                    //         ?.furnishDetails !=
+                    //     null) ...[
+                    //   const SizedBox(height: 12),
+                    //   const TitleWithViewAll(title: 'Furnishing'),
+                    //   Builder(
+                    //     builder: (context) {
+                    //       log(
+                    //         '[PropertyDetail] 🛋️ Building FurnishingDetails',
+                    //       );
+                    //       return FurnishingDetails(
+                    //         property: currentProperty,
+                    //         bgColor: ColorRes.propertyBg,
+                    //         txtColor: ColorRes.propertyText,
+                    //       );
+                    //     },
+                    //   ),
+                    //   Divider(
+                    //     indent: 18,
+                    //     endIndent: 18,
+                    //     color: ColorRes.leadGreyColor.shade300,
+                    //   ),
+                    // ],
+
 
                     if (currentProperty.listingType?.toUpperCase() == "PG" &&
                         currentProperty.propertyDetails?.pgInfo?.pgRules !=
@@ -4293,29 +4294,28 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if (currentProperty
-                                .propertyDetails
-                                ?.financialInfo
-                                ?.propertyPriceTrend !=
-                            null &&
+                    if (currentProperty.propertyDetails?.financialInfo?.propertyPriceTrend != null &&
                         currentProperty.investmentInsightModel != null &&
-                        currentProperty.listingType!.toLowerCase() ==
-                            "sell") ...[
+                        currentProperty.listingType!.toLowerCase() == "sell") ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Investment Insight'),
                       const SizedBox(height: 8),
                       Builder(
                         builder: (context) {
-                          log(
-                            '[PropertyDetail] 📊 Building InvestmentInsightChart',
-                          );
-                          return InvestmentInsightChart(
-                            currentProperty: currentProperty,
-                          );
+                          // ✅ Check if controller exists before building chart
+                          if (Get.isRegistered<LocationPriceMatrixController>(
+                            tag: 'matrix_${currentProperty.id}',
+                          )) {
+                            return InvestmentInsightChart(
+                              currentProperty: currentProperty,
+                            );
+                          }
+                          return const Center(child: CircularProgressIndicator());
                         },
                       ),
                       const SizedBox(height: 12),
                     ],
+
 
                     if (currentProperty.location?.isNotEmpty ?? false) ...[
                       const SizedBox(height: 12),

@@ -56,6 +56,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationController = Get.put(NavigationController());
+    Get.lazyPut(()=>ProjectWizardController(isBuilderView: false),tag: 'builder');
 
     return Scaffold(
       extendBody: true,

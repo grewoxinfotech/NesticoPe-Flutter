@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
+import '../../hire_contractor/controller/hire_contractor_controller.dart';
+import '../../hire_contractor/controller/hire_contractor_filter_controller.dart';
+import '../../hire_contractor/controller/hire_contractor_list_of_profile_controller.dart';
+import '../../hire_contractor/view/widget/hire_contractor_profilelist.dart';
 
 class TopCategoriesSection extends StatelessWidget {
   final List<TopCategoryItem> categories;
@@ -35,85 +40,94 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 260,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Top Blue Line
-          Container(
-            height: 4,
-            width: 60,
-            decoration: BoxDecoration(
-              color: ColorRes.primary,
-              borderRadius: BorderRadius.circular(8),
+    final controller = Get.put(HireContractorController());
+    final controllerProfileData = Get.put(HireContractorListOfProfileController());
+    final controllerFilterData = Get.put(HireContractorFilterProfileController());
+    return GestureDetector(
+      onTap: () {
+        controllerFilterData.fetchHireContractorByCategoryID(item.id, item.name);
+        Get.to(()=>HireContractorProfileList());
+      },
+      child: Container(
+        width: 260,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Top Blue Line
+            Container(
+              height: 4,
+              width: 60,
+              decoration: BoxDecoration(
+                color: ColorRes.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
-          ),
 
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-          /// Title
-          Text(
-            item.name.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: ColorRes.primary,
+            /// Title
+            Text(
+              item.name.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: ColorRes.primary,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          /// Description
-          Text(
-            item.description,
-            style: TextStyle(
-              fontSize: 13,
-              color: ColorRes.leadGreyColor,
-              height: 1.4,
+            /// Description
+            Text(
+              item.description,
+              style: TextStyle(
+                fontSize: 13,
+                color: ColorRes.leadGreyColor,
+                height: 1.4,
+              ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
 
-          const Spacer(),
+            const Spacer(),
 
-          /// Rating Row (only if available)
-          if (item.serviceCount > 0)
-            Row(
-              children: [
-                 Icon(
-                  Icons.star,
-                  color: ColorRes.homeYellowDark,
-                  size: 18,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  item.averageRating.toStringAsFixed(1),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
+            /// Rating Row (only if available)
+            if (item.serviceCount > 0)
+              Row(
+                children: [
+                   Icon(
+                    Icons.star,
+                    color: ColorRes.homeYellowDark,
+                    size: 18,
                   ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  '(${item.serviceCount} services)',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
+                  const SizedBox(width: 6),
+                  Text(
+                    item.averageRating.toStringAsFixed(1),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-              ],
-            ),
-        ],
+                  const SizedBox(width: 6),
+                  Text(
+                    '(${item.serviceCount} services)',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }
