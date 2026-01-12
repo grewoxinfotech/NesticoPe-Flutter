@@ -1,4 +1,7 @@
 class IMGRes {
+  /// App Logo
+  static const String appLogo = "assets/logo/nesticope.png";
+
   static const String banner1 = "assets/images/banner_1.jpg";
   static const String banner2 = "assets/images/banner_2.jpg";
   static const String banner3 = "assets/images/banner_3.jpg";
@@ -50,4 +53,13 @@ class IMGRes {
   /// Third Party
   static const String whatsapp = "assets/icons/third_party/whatsapp.svg";
   static const String aadhaar = "assets/logo/aadhaar.png";
+
+  /// propertyType
+  static const String apartment = "assets/images/apartment.jpg";
+  static const String villa = "assets/images/villa.jpg";
+  static const String plot = "assets/images/plot.jpg";
+  static const String office = "assets/images/office.jpg";
+  static const String showroom = "assets/images/showroom.jpg";
+  static const String warehouse = "assets/images/warehouse.jpeg";
+  static const String retail = "assets/images/retail_shop.jpg";
 }

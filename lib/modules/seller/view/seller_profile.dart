@@ -834,13 +834,27 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
                 children: [
                   CircleAvatar(
                     radius: 30,
+                    backgroundColor: ColorRes.primary.withOpacity(0.15),
                     backgroundImage:
                         (widget.profilePic != null &&
                                 widget.profilePic!.isNotEmpty)
                             ? NetworkImage(widget.profilePic!)
-                            : const AssetImage(IMGRes.user_1) as ImageProvider,
+                            : null,
+                    child:
+                        (widget.profilePic == null ||
+                                widget.profilePic!.isEmpty)
+                            ? Text(
+                              _getInitialLetterFromUser(user),
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: ColorRes.primary,
+                              ),
+                            )
+                            : null,
                   ),
-                  if (user.isVerified == true)
+
+                  if (user.isAadharVerified == true)
                     Positioned(
                       bottom: 0,
                       right: 0,
@@ -878,7 +892,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
                             ),
                           ),
                         ),
-                        _buildVerifiedBadge(user ?? User.fromJson({})),
+                        // _buildVerifiedBadge(user ?? User.fromJson({})),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -1211,6 +1225,18 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
         ),
       ),
     );
+  }
+
+  String _getInitialLetterFromUser(User user) {
+    if (user.firstName != null && user.firstName!.trim().isNotEmpty) {
+      return user.firstName!.trim()[0].toUpperCase();
+    }
+
+    if (user.username != null && user.username!.trim().isNotEmpty) {
+      return user.username!.trim()[0].toUpperCase();
+    }
+
+    return 'U';
   }
 }
 

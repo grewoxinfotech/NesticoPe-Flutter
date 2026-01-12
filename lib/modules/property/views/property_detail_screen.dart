@@ -4222,8 +4222,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     //     color: ColorRes.leadGreyColor.shade300,
                     //   ),
                     // ],
-
-
                     if (currentProperty.listingType?.toUpperCase() == "PG" &&
                         currentProperty.propertyDetails?.pgInfo?.pgRules !=
                             null) ...[
@@ -4295,9 +4293,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ],
 
-                    if (currentProperty.propertyDetails?.financialInfo?.propertyPriceTrend != null &&
+                    if (currentProperty
+                                .propertyDetails
+                                ?.financialInfo
+                                ?.propertyPriceTrend !=
+                            null &&
                         currentProperty.investmentInsightModel != null &&
-                        currentProperty.listingType!.toLowerCase() == "sell") ...[
+                        currentProperty.listingType!.toLowerCase() ==
+                            "sell") ...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Investment Insight'),
                       const SizedBox(height: 8),
@@ -4311,12 +4314,13 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                               currentProperty: currentProperty,
                             );
                           }
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
                         },
                       ),
                       const SizedBox(height: 12),
                     ],
-
 
                     if (currentProperty.location?.isNotEmpty ?? false) ...[
                       const SizedBox(height: 12),
@@ -4582,28 +4586,30 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ],
                     ),
 
-                    if (controller.items.isNotEmpty) ...[
-                      Divider(
-                        indent: 18,
-                        endIndent: 18,
-                        color: ColorRes.leadGreyColor.shade300,
-                      ),
-                      const SizedBox(height: 12),
-                      const TitleWithViewAll(title: 'Recommended Properties'),
-                      const SizedBox(height: 12),
-                      Builder(
-                        builder: (context) {
-                          log(
-                            '[PropertyDetail] 🏘️ Building RecommendedProperty - START',
-                          );
-                          const widget = RecommendedProperty();
-                          log(
-                            '[PropertyDetail] 🏘️ Building RecommendedProperty - END',
-                          );
-                          return widget;
-                        },
-                      ),
-                      const SizedBox(height: 12),
+                    if (!UserHelper.isGuest) ...[
+                      if (controller.items.isNotEmpty) ...[
+                        Divider(
+                          indent: 18,
+                          endIndent: 18,
+                          color: ColorRes.leadGreyColor.shade300,
+                        ),
+                        const SizedBox(height: 12),
+                        const TitleWithViewAll(title: 'Recommended Properties'),
+                        const SizedBox(height: 12),
+                        Builder(
+                          builder: (context) {
+                            log(
+                              '[PropertyDetail] 🏘️ Building RecommendedProperty - START',
+                            );
+                            const widget = RecommendedProperty();
+                            log(
+                              '[PropertyDetail] 🏘️ Building RecommendedProperty - END',
+                            );
+                            return widget;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                      ],
                     ],
                   ],
                 ),
@@ -4997,9 +5003,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 "phone": phone ?? "",
                                 "email": email ?? "",
                                 "agreeToContact": true,
-                                "meta": {
-                                  "inquiryType": "offer_request"
-                                },
+                                "meta": {"inquiryType": "offer_request"},
                               };
 
                               print('Submitting inquiry: ${inquiry}');
@@ -5019,7 +5023,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 Get.back();
                                 await controller.getAllInQuireData(
                                   widget.propertyId ?? '',
-                                );  await controller.getHasInQuireData(
+                                );
+                                await controller.getHasInQuireData(
                                   widget.propertyId ?? '',
                                 );
                               } else {

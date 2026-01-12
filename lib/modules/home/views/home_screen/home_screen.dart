@@ -2327,46 +2327,13 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
     this.propertyTypes = const [
-      {
-        "title": "Apartment",
-        "image":
-            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80",
-      },
-      {
-        "title": "Villa",
-        "image":
-            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
-      },
-      {
-        "title": "Plot",
-        "image":
-            "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
-      },
-      {
-        "title": "Office",
-        "image":
-            "https://img.etimg.com/thumb/width-1200,height-1200,imgsize-76402,resizemode-75,msid-111456711/industry/services/property-/-cstruction/india-office-property-market-surges-with-record-gross-leasing-in-2024-first-half.jpg",
-      },
-      {
-        "title": "Retail Shop",
-        "image":
-            "https://5.imimg.com/data5/XH/NE/SW/SELLER-48886426/shop-for-sale-in-jaipur-commercial.jpg",
-      },
-      {
-        "title": "Showroom",
-        "image":
-            "https://www.99acres.com/microsite/articles/files/2022/08/showroom.jpg",
-      },
-      {
-        "title": "Warehouse",
-        "image":
-            "https://3.imimg.com/data3/SR/MV/MY-12088584/warehouses-for-sale-500x500.jpg",
-      },
-      {
-        "title": "Other",
-        "image":
-            "https://www.ashwinshethgroup.com/wp-content/uploads/2022/11/Commercial-property-buying-guidelines-1400x700-1.webp",
-      },
+      {"title": "Apartment", "image": IMGRes.apartment},
+      {"title": "Villa", "image": IMGRes.villa},
+      {"title": "Plot", "image": IMGRes.plot},
+      {"title": "Office", "image": IMGRes.office},
+      {"title": "Retail Shop", "image": IMGRes.retail},
+      {"title": "Showroom", "image": IMGRes.showroom},
+      {"title": "Warehouse", "image": IMGRes.warehouse},
     ],
   });
 
@@ -2639,17 +2606,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Padding(
         padding: const EdgeInsets.all(2),
         child: ClipOval(
-          child: FadeInImage.assetNetwork(
-            placeholder: 'assets/logo/Avant.jpg',
-            image: type['image'] ?? '',
-            fit: BoxFit.cover,
-            imageErrorBuilder:
-                (context, error, stackTrace) => Icon(
-                  Icons.home_work_rounded,
-                  color: ColorRes.leadGreyColor.shade400,
-                  size: 32,
-                ),
-          ),
+          child: Image.asset(type['image'] ?? '', fit: BoxFit.cover),
         ),
       ),
     );

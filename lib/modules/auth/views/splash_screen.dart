@@ -160,16 +160,16 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'NesticoPe',
-                      style: TextStyle(
-                        color: theme.colorScheme.primary,
-                        fontSize: AppFontSizes.displaySmall,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                      ),
-                    ),
+                    // const SizedBox(height: 24),
+                    // Text(
+                    //   'NesticoPe',
+                    //   style: TextStyle(
+                    //     color: theme.colorScheme.primary,
+                    //     fontSize: AppFontSizes.displaySmall,
+                    //     fontWeight: FontWeight.bold,
+                    //     letterSpacing: 2,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -180,7 +180,7 @@ class _SplashScreenState extends State<SplashScreen>
             FadeTransition(
               opacity: _animation,
               child: Text(
-                'House Cleaning Service',
+                'NesticoPe',
                 style: TextStyle(
                   color: ColorRes.leadGreyColor.shade700,
                   fontSize: AppFontSizes.body,

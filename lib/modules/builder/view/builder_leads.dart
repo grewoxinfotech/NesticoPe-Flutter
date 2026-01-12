@@ -475,11 +475,40 @@ class _BuilderLeadsState extends State<BuilderLeads> {
                             final lead = currentLeads[index];
                             return LeadCardWidget(
                               lead: lead,
+                              // onTap: () {
+                              //   log("String builderLead Data ${lead.toJson()}");
+                              //   final project = controller.items.firstWhere(
+                              //     (prop) => prop.id == lead.propertyId,
+                              //   );
+                              //   Get.to(
+                              //     () => BuilderLeadOverView(
+                              //       lead: lead,
+                              //       project: project,
+                              //     ),
+                              //   );
+                              // },
                               onTap: () {
-                                log("String builderLead Data ${lead.toJson()}");
-                                final project = controller.items.firstWhere(
-                                  (prop) => prop.id == lead.propertyId,
-                                );
+                                log("BuilderLead Data ${lead.toJson()}");
+
+                                final project = controller.items.firstWhereOrNull((
+                                  prop,
+                                ) {
+                                  log(
+                                    "BuilderLead Data lead ${lead.propertyId}",
+                                  );
+                                  log("BuilderLead Data pro ${prop.id}");
+                                  return prop.id == lead.propertyId;
+                                });
+
+                                if (project == null) {
+                                  Get.snackbar(
+                                    "Project not found",
+                                    "This project is no longer available",
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
+                                  return;
+                                }
+
                                 Get.to(
                                   () => BuilderLeadOverView(
                                     lead: lead,
@@ -487,6 +516,7 @@ class _BuilderLeadsState extends State<BuilderLeads> {
                                   ),
                                 );
                               },
+
                               isCompact:
                                   MediaQuery.of(context).size.width < 600,
                               showDataMasking: false,
