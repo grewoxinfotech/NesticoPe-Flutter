@@ -16,6 +16,7 @@ class UserActivityScreen extends StatelessWidget {
       children: [
         // MAIN SCREEN
         const SavedPropertyScreen(),
+        
 
         // BLUR OVERLAY (only for guest)
         if (UserHelper.isGuest)

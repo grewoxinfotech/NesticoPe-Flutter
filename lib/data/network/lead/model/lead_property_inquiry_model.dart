@@ -163,7 +163,7 @@ class PropertyInquireItem {
 }
 
 class PropertyInquireMeta {
-  final String? negotiablePrice;
+  final int? negotiablePrice;
   final bool? isNegotiable;
   final String? timePeriod;
   final String? visitDate;
@@ -178,8 +178,13 @@ class PropertyInquireMeta {
   });
 
   factory PropertyInquireMeta.fromMap(Map<String, dynamic> map) {
+    final dynamic price = map['negotiablePrice'];
     return PropertyInquireMeta(
-      negotiablePrice: map['negotiablePrice'],
+      negotiablePrice: price == null
+          ? null
+          : price is int
+          ? price
+          : int.tryParse(price.toString()),
       isNegotiable: map['isNegotiable'],
       timePeriod: map['timePeriod'],
       visitDate: map['visitDate'],

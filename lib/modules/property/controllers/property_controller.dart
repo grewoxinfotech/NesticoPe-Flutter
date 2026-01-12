@@ -399,19 +399,6 @@ class PropertyController extends PaginatedController<Items> {
     }
   }
 
-  // Future<void> getRecommendedPropertyById(String id) async {
-  //   try {
-  //     final property = await _service.getRecommendedPropertyById(id);
-  //     if (property != null) {
-  //       recommendedProperties.add( Items.fromJson(property));
-  //       print("Recommended Property ** ${recommendedProperties.map((e) => e.toJson()).toList()}");
-  //       recommendedProperties.refresh();
-  //     }
-  //   } catch (e) {
-  //     print("Get property error: $e");
-  //   }
-  //
-  // }
 
   Future<void> getAllInQuireData(String propertyId) async {
     log('Property Id For Inquiry $propertyId');
@@ -433,24 +420,26 @@ class PropertyController extends PaginatedController<Items> {
       print("Error fetching inquiries: $e");
     }
   }
+  Future<void> getHasInQuireData(String propertyId) async {
+    log('Property Id For Inquiry $propertyId');
 
-  // /// Update property
-  //  Future<bool> updateProperty(String id, Items updatedProperty) async {
-  //    try {
-  //      final success = await _service.updateProperty(id, updatedProperty);
-  //      if (success) {
-  //        int index = items.indexWhere((item) => item.id == id);
-  //        if (index != -1) {
-  //          items[index] = updatedProperty;
-  //          items.refresh();
-  //        }
-  //      }
-  //      return success;
-  //    } catch (e) {
-  //      print("Update property error: $e");
-  //      return false;
-  //    }
-  //  }
+    try {
+      final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+      final userId = user.user?.id ?? '';
+      final inquiries = await _contactedService.fetchHasInquiries(userId,itemId: propertyId);
+
+
+      hasSubmittedInquiry.value = inquiries;
+      print(
+        "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${inquiries} ${hasSubmittedInquiry.value}",
+      );
+      print("Inquiry Response ** ${inquiries} ${hasSubmittedInquiry.value}");
+    } catch (e) {
+      print("Error fetching inquiries: $e");
+    }
+  }
+
+
 
   /// Delete property
   Future<bool> deleteProperty(String id) async {
@@ -516,6 +505,7 @@ class PropertyController extends PaginatedController<Items> {
   }
 
   Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
+    log("Add Inquiry Payload $data  ==== $id");
     final success = await _service.addInquiry(data, id);
     return success;
   }

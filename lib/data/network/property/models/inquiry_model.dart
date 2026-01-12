@@ -258,7 +258,7 @@ class Inquiry {
 }
 
 class Meta {
-  final int? negotiablePrice;
+  final String? negotiablePrice;
   final bool? isNegotiable;
   final String? timePeriod;
   final String? inquiryType;
@@ -275,10 +275,14 @@ class Meta {
   });
 
   factory Meta.fromJson(Map<String, dynamic> json) {
+    final dynamic price = json['negotiablePrice'];
+
     return Meta(
-      negotiablePrice: json['negotiablePrice'] is String
-          ? int.tryParse(json['negotiablePrice'])
-          : json['negotiablePrice'] ?? 0,
+      negotiablePrice: price == null
+          ? null
+          : price is int
+          ? price.toString()
+          : price.toString(),
       isNegotiable: json['isNegotiable'] ?? false,
       timePeriod: json['timePeriod'] ?? '',
       inquiryType: json['inquiryType'] ?? '',
@@ -296,6 +300,7 @@ class Meta {
     'visitTime': visitTime,
   };
 }
+
 
 
 class InquiryDetails {

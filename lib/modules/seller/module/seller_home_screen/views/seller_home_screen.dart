@@ -216,6 +216,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController());
     return DashboardLayout(
+      onRefresh: overviewController.refreshSellerDashboard,
+
       floatingButton: FloatingActionButton.extended(
         onPressed: () {
           if (!UserHelper.isAadharVerified) {
@@ -546,7 +548,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
           // --- Chart section ---
           SizedBox(
-            height: 300,
+            height: 350,
             width: double.infinity,
             child: PropertyGrowthPieGraph(
               breakdown: {
@@ -718,7 +720,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
           // --- Chart section ---
           SizedBox(
-            height: 300,
+            height: 350,
             width: double.infinity,
             child: LeadSourceDistributionPieGraph(
               breakdown:

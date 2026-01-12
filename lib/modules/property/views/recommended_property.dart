@@ -25,7 +25,7 @@ class RecommendedProperty extends StatelessWidget {
             child: SizedBox(
               height: 325,
               child: Obx(() {
-                final items = controller.items;
+                final items = controller.recommendedProperties;
                 if (items.isEmpty) {
                   return const Center(child: Text("No Property found."));
                 }

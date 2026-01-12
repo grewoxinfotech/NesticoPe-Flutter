@@ -122,6 +122,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       final projectId = widget.projectItem?.id ?? widget.projectId ?? '';
       await projectController.getAllInQuireData(
         widget.projectItem?.id ?? widget.projectId ?? '',
+      );  await projectController.getHasInQuireData(
+        widget.projectItem?.id ?? widget.projectId ?? '',
       );
 
       // Fetch project if only ID was provided
@@ -412,6 +414,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
                                       Get.back();
                                       await controller.getAllInQuireData(
+                                        project?.id ?? '',
+                                      );   await controller.getHasInQuireData(
                                         project?.id ?? '',
                                       );
                                     } else {

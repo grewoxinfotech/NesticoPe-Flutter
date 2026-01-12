@@ -131,4 +131,22 @@ class ProjectController extends GetxController {
       print("Error fetching inquiries: $e");
     }
   }
+  Future<void> getHasInQuireData(String propertyId) async {
+    try {
+      final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+      final userId = user.user?.id ?? '';
+      final inquiries = await _contactedService.fetchHasInquiries(userId,itemId:
+      propertyId);
+
+
+
+      hasSubmittedInquiry.value = inquiries;
+      print(
+        "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${inquiries} ${hasSubmittedInquiry.value}",
+      );
+      print("Inquiry Response ** ${inquiries} ${hasSubmittedInquiry.value}");
+    } catch (e) {
+      print("Error fetching inquiries: $e");
+    }
+  }
 }

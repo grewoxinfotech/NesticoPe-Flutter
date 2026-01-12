@@ -87,11 +87,12 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
         elevation: 0,
         backgroundColor: ColorRes.white,
         foregroundColor: ColorRes.textPrimary,
+        automaticallyImplyLeading: false,
         title: Text(
           "Property Overview",
           style: TextStyle(
             fontWeight: AppFontWeights.semiBold,
-            fontSize: AppFontSizes.subtitle,
+
           ),
         ),
         actions: [
@@ -155,6 +156,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
               priceRangeFormatter: (min, max) => formatPriceRange(min, max),
             );
           }),
+
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),

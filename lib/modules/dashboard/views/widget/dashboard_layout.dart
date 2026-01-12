@@ -9,8 +9,9 @@ import 'dashboard_header.dart';
 class DashboardLayout extends StatelessWidget {
   final Widget? floatingButton;
   final Widget child;
+  final RefreshCallback onRefresh;
 
-  DashboardLayout({super.key, this.floatingButton, required this.child});
+  DashboardLayout({super.key, this.floatingButton, required this.child,required this.onRefresh,});
   RxString name = ''.obs;
   @override
   Widget build(BuildContext context) {
@@ -40,25 +41,28 @@ class DashboardLayout extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Obx(
-              () => DashboardHeader(
-                title: 'Welcome, ${name.value}',
-                subtitle: 'Manage your properties efficiently',
-                // icon: Icons.home_work_rounded,
+      body: RefreshIndicator(
+        onRefresh: onRefresh,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Obx(
+                () => DashboardHeader(
+                  title: 'Welcome, ${name.value}',
+                  subtitle: 'Manage your properties efficiently',
+                  // icon: Icons.home_work_rounded,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            child,
-            // MetricGrid(metrics: metrics),
-            // const SizedBox(height: 20),
-            // Obx(() => buildSellerLeadGraph(overviewController)),
-            // const SizedBox(height: 20),
-            // Obx(() => buildSellerCommissionGraph(overviewController)),
-          ],
+              const SizedBox(height: 20),
+              child,
+              // MetricGrid(metrics: metrics),
+              // const SizedBox(height: 20),
+              // Obx(() => buildSellerLeadGraph(overviewController)),
+              // const SizedBox(height: 20),
+              // Obx(() => buildSellerCommissionGraph(overviewController)),
+            ],
+          ),
         ),
       ),
       floatingActionButton: floatingButton,

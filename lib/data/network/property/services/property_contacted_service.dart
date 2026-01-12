@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../../../app/constants/api_constants.dart';
 import '../models/inquiry_model.dart';
@@ -10,7 +12,8 @@ class PropertyContactedService {
     return await ApiConstants.getHeaders();
   }
 
-  /// Fetch contacted property inquiries for a given user
+  /// Fetch contacted property inquiries for a given user.
+
   Future<List<Inquiry>> fetchContactedInquiries(String userId) async {
     try {
       final uri = Uri.parse('$baseUrl/$userId/inquiry');
@@ -34,6 +37,46 @@ class PropertyContactedService {
       return [];
     }
   }
+
+
+  Future<bool> fetchHasInquiries(
+      String userId, {
+        String? itemId,
+      }) async {
+    try {
+      // Build the path dynamically
+      final idData = (itemId != null && itemId.isNotEmpty)
+          ? '$userId/$itemId'
+          : userId;
+
+      final uri = Uri.parse('$baseUrl/$idData/has-inquired');
+      final response = await http.get(uri, headers: await headers());
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+
+        // Safely check response structure
+        if (data is Map<String, dynamic> &&
+            data['success'] == true &&
+            data['data'] != null) {
+          return data['data']['hasInquired'];
+        } else {
+          print('Unexpected response format or empty data');
+          return false;
+        }
+      } else {
+        throw HttpException(
+          'Failed to fetch contacted inquiries (code: ${response.statusCode})',
+          uri: uri,
+        );
+      }
+    } catch (e, stack) {
+      debugPrint('Error fetching contacted inquiries: $e');
+      debugPrintStack(stackTrace: stack);
+      return false;
+    }
+  }
+
 
   /// Fetch only contacted property IDs for a given user
   Future<List<String>> fetchContactedPropertyIds(String userId) async {

@@ -104,43 +104,11 @@ class _PropertyCardState extends State<PropertyCard> {
                     width: double.infinity,
                   ),
 
-                  // widget.property.propertyMedia?.images?.isNotEmpty == true
-                  //     ? Image.network(
-                  //       widget.property.propertyMedia!.images!.first,
-                  //       height: 170,
-                  //       width: double.infinity,
-                  //       fit: BoxFit.cover,
-                  //     )
-                  //     : Image.asset(
-                  //       IMGRes.home1,
-                  //       height: 170,
-                  //       width: double.infinity,
-                  //       fit: BoxFit.cover,
-                  //     ),
-
-                  // Dark Gradient Overlay
-                  // Container(
-                  //   height: 170,
-                  //   decoration: BoxDecoration(
-                  //     gradient: LinearGradient(
-                  //       colors: [
-                  //         Colors.black.withOpacity(0.6),
-                  //         Colors.transparent,
-                  //       ],
-                  //       begin: Alignment.bottomCenter,
-                  //       end: Alignment.topCenter,
-                  //     ),
-                  //   ),
-                  // ),
-
-                  // 🔹 Rent/Sale Tag
                   Positioned(
                     top: 12,
                     left: 12,
                     child: _buildTag(widget.property.listingType ?? "-"),
                   ),
-
-                  // 🔹 Favorite & Compare Buttons
                   Positioned(
                     top: 12,
                     right: 12,

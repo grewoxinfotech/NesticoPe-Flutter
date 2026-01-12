@@ -2,6 +2,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 
 import '../../../../../../app/constants/app_font_sizes.dart';
 
@@ -151,7 +152,7 @@ class _ServiceDistributionPieGraphState extends State<ServiceDistributionPieGrap
             ],
           ),
           Text(
-            score,
+            Formatter.formatNumber(num.tryParse(score)??0),
             style: TextStyle(
               fontSize: 14,
               color: color,

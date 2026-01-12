@@ -722,7 +722,9 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DashboardLayout(child: FutureBuilder(
+    return DashboardLayout(
+      onRefresh: controller.refreshDashboard ,
+        child: FutureBuilder(
       future: controller.fetchResellerDashboardDataFromApi(),
       // <-- Your API call here
       builder: (context, snapshot) {

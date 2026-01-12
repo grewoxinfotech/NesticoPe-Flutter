@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
@@ -72,10 +73,12 @@ class NesticoPeNavigationBar extends StatelessWidget {
                 title: Text("Plans", style: style),
               ),
 
+            if(!UserHelper.isGuest)...[
               SalomonBottomBarItem(
                 icon: Icon(Icons.engineering_outlined, size: iconSize * 1.2),
                 title: Text("Hire Contractor", style: style),
               ),
+            ]
             ],
           ),
         ),

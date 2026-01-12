@@ -4,9 +4,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../../../../app/constants/app_font_sizes.dart';
+
 class PropertyDistributionPieGraph extends StatefulWidget {
   final Map<String, dynamic> breakdown;
   final Color? color;
@@ -55,17 +57,26 @@ class _PropertyDistributionPieGraphState
         {
           "value": active,
           "color": ColorRes.green.shade600,
-          "title": active == 0 ? "" : "${(active / total * 100).toStringAsFixed(0)}%",
+          "title":
+              active == 0
+                  ? ""
+                  : "${(active / total * 100).toStringAsFixed(0)}%",
         },
         {
           "value": rejected,
           "color": ColorRes.error,
-          "title": rejected == 0 ? "" : "${(rejected / total * 100).toStringAsFixed(0)}%",
+          "title":
+              rejected == 0
+                  ? ""
+                  : "${(rejected / total * 100).toStringAsFixed(0)}%",
         },
         {
           "value": pending,
           "color": ColorRes.homeAmber.shade600,
-          "title": pending == 0 ? "" : "${(pending / total * 100).toStringAsFixed(0)}%",
+          "title":
+              pending == 0
+                  ? ""
+                  : "${(pending / total * 100).toStringAsFixed(0)}%",
         },
       ];
 
@@ -73,7 +84,6 @@ class _PropertyDistributionPieGraphState
         final isTouched = i == touchedIndex;
         final radius = isTouched ? 65.0 : 50.0;
         final fontSize = isTouched ? 18.0 : 14.0;
-
 
         return PieChartSectionData(
           value: sections[i]["value"] as double,
@@ -110,7 +120,9 @@ class _PropertyDistributionPieGraphState
                           return;
                         }
                         touchedIndex =
-                            pieTouchResponse.touchedSection!.touchedSectionIndex;
+                            pieTouchResponse
+                                .touchedSection!
+                                .touchedSectionIndex;
                       });
                     },
                   ),
@@ -125,12 +137,21 @@ class _PropertyDistributionPieGraphState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _legendItem(ColorRes.green.shade600, "Active",
-                    active.toInt().toString()),
                 _legendItem(
-                    ColorRes.error, "Rejected", rejected.toInt().toString()),
-                _legendItem(ColorRes.homeAmber.shade600, "Pending",
-                    pending.toInt().toString()),
+                  ColorRes.green.shade600,
+                  "Active",
+                  active.toInt().toString(),
+                ),
+                _legendItem(
+                  ColorRes.error,
+                  "Rejected",
+                  rejected.toInt().toString(),
+                ),
+                _legendItem(
+                  ColorRes.homeAmber.shade600,
+                  "Pending",
+                  pending.toInt().toString(),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -156,13 +177,15 @@ class _PropertyDistributionPieGraphState
               const SizedBox(width: 5),
               Text(
                 title,
-                style:
-                const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
           Text(
-            score,
+            Formatter.formatNumber(num.tryParse(score) ?? 0),
             style: TextStyle(
               fontSize: 14,
               color: color,
@@ -174,6 +197,7 @@ class _PropertyDistributionPieGraphState
     );
   }
 }
+
 class PropertyGrowthPieGraph extends StatefulWidget {
   final Map<String, dynamic> breakdown;
   final Color? color;
@@ -202,7 +226,8 @@ class _PropertyGrowthPieGraphState extends State<PropertyGrowthPieGraph> {
     };
 
     // Remove empty or 0-value categories
-    final validCategories = categories.entries.where((e) => e.value > 0).toList();
+    // final validCategories = categories.entries.where((e) => e.value > 0).toList();
+    final validCategories = categories.entries.toList();
 
     final total = validCategories.fold<double>(0.0, (sum, e) => sum + e.value);
 
@@ -224,10 +249,10 @@ class _PropertyGrowthPieGraphState extends State<PropertyGrowthPieGraph> {
       }
 
       final colorList = [
-        ColorRes.green.shade600,        // Sold
-        ColorRes.orangeColor.shade600,  // Unsold
-        ColorRes.error,                 // Dead
-        ColorRes.homeAmber.shade600,    // Duplicate
+        ColorRes.green.shade600, // Sold
+        ColorRes.orangeColor.shade600, // Unsold
+        ColorRes.error, // Dead
+        ColorRes.homeAmber.shade600, // Duplicate
       ];
 
       return List.generate(validCategories.length, (i) {
@@ -272,7 +297,9 @@ class _PropertyGrowthPieGraphState extends State<PropertyGrowthPieGraph> {
                           return;
                         }
                         touchedIndex =
-                            pieTouchResponse.touchedSection!.touchedSectionIndex;
+                            pieTouchResponse
+                                .touchedSection!
+                                .touchedSectionIndex;
                       });
                     },
                   ),
@@ -310,10 +337,7 @@ class _PropertyGrowthPieGraphState extends State<PropertyGrowthPieGraph> {
             else
               const Text(
                 "No data available",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
             const SizedBox(height: 20),
           ],
@@ -338,7 +362,7 @@ class _PropertyGrowthPieGraphState extends State<PropertyGrowthPieGraph> {
         ),
         const SizedBox(width: 6),
         Text(
-          score,
+          Formatter.formatNumber(num.tryParse(score) ?? 0),
           style: TextStyle(
             fontSize: 13,
             color: color,
@@ -360,21 +384,26 @@ class LeadFunnelChart extends StatelessWidget {
     log("Funnel Chart Data: $stageBreakdown");
 
     // Safely read values with fallback to 0 - handles missing fields
-    final newLead = stageBreakdown != null && stageBreakdown!.containsKey('new_lead')
-        ? (stageBreakdown!['new_lead'] ?? 0).toInt()
-        : 0;
-    final contacted = stageBreakdown != null && stageBreakdown!.containsKey('contacted')
-        ? (stageBreakdown!['contacted'] ?? 0).toInt()
-        : 0;
-    final interested = stageBreakdown != null && stageBreakdown!.containsKey('interested')
-        ? (stageBreakdown!['interested'] ?? 0).toInt()
-        : 0;
-    final siteVisit = stageBreakdown != null && stageBreakdown!.containsKey('site_visit')
-        ? (stageBreakdown!['site_visit'] ?? 0).toInt()
-        : 0;
-    final sell = stageBreakdown != null && stageBreakdown!.containsKey('sell')
-        ? (stageBreakdown!['sell'] ?? 0).toInt()
-        : 0;
+    final newLead =
+        stageBreakdown != null && stageBreakdown!.containsKey('new_lead')
+            ? (stageBreakdown!['new_lead'] ?? 0).toInt()
+            : 0;
+    final contacted =
+        stageBreakdown != null && stageBreakdown!.containsKey('contacted')
+            ? (stageBreakdown!['contacted'] ?? 0).toInt()
+            : 0;
+    final interested =
+        stageBreakdown != null && stageBreakdown!.containsKey('interested')
+            ? (stageBreakdown!['interested'] ?? 0).toInt()
+            : 0;
+    final siteVisit =
+        stageBreakdown != null && stageBreakdown!.containsKey('site_visit')
+            ? (stageBreakdown!['site_visit'] ?? 0).toInt()
+            : 0;
+    final sell =
+        stageBreakdown != null && stageBreakdown!.containsKey('sell')
+            ? (stageBreakdown!['sell'] ?? 0).toInt()
+            : 0;
 
     // Reversed order - NEW LEAD at top, SELL at bottom
     final List<_FunnelStage> stages = [
@@ -406,29 +435,31 @@ class LeadFunnelChart extends StatelessWidget {
             spacing: 16,
             runSpacing: 8,
             alignment: WrapAlignment.center,
-            children: stages.map((stage) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: stage.color,
-                      shape: BoxShape.rectangle,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${stage.name}: ${stage.value}',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
+            children:
+                stages.map((stage) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: stage.color,
+                          shape: BoxShape.rectangle,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${stage.name}: ${Formatter.formatNumber(stage.value)}',
+
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
           ),
         ],
       ),
@@ -471,24 +502,27 @@ class _FunnelPainter extends CustomPainter {
       final bottomWidth = maxWidth * bottomWidthRatio;
 
       // Draw trapezoid
-      final path = Path()
-        ..moveTo(centerX - topWidth / 2, y)
-        ..lineTo(centerX + topWidth / 2, y)
-        ..lineTo(centerX + bottomWidth / 2, y + segmentHeight)
-        ..lineTo(centerX - bottomWidth / 2, y + segmentHeight)
-        ..close();
+      final path =
+          Path()
+            ..moveTo(centerX - topWidth / 2, y)
+            ..lineTo(centerX + topWidth / 2, y)
+            ..lineTo(centerX + bottomWidth / 2, y + segmentHeight)
+            ..lineTo(centerX - bottomWidth / 2, y + segmentHeight)
+            ..close();
 
-      final paint = Paint()
-        ..color = stage.color
-        ..style = PaintingStyle.fill;
+      final paint =
+          Paint()
+            ..color = stage.color
+            ..style = PaintingStyle.fill;
 
       canvas.drawPath(path, paint);
 
       // Border
-      final borderPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2;
+      final borderPaint =
+          Paint()
+            ..color = Colors.white
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2;
 
       canvas.drawPath(path, borderPaint);
 
@@ -520,10 +554,6 @@ class _FunnelPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-
-
-
-
 class LeadSourceDistributionPieGraph extends StatefulWidget {
   final Map<String, dynamic> breakdown;
   final Color? color;
@@ -535,11 +565,14 @@ class LeadSourceDistributionPieGraph extends StatefulWidget {
   });
 
   @override
-  State<LeadSourceDistributionPieGraph> createState() => _LeadSourceDistributionPieGraphState();
+  State<LeadSourceDistributionPieGraph> createState() =>
+      _LeadSourceDistributionPieGraphState();
 }
 
-class _LeadSourceDistributionPieGraphState extends State<LeadSourceDistributionPieGraph> {
+class _LeadSourceDistributionPieGraphState
+    extends State<LeadSourceDistributionPieGraph> {
   int touchedIndex = -1;
+
   @override
   Widget build(BuildContext context) {
     // Safely extract all possible sources
@@ -547,13 +580,15 @@ class _LeadSourceDistributionPieGraphState extends State<LeadSourceDistributionP
       "App": (widget.breakdown["app"] as num?)?.toDouble() ?? 0.0,
       "Website": (widget.breakdown["website"] as num?)?.toDouble() ?? 0.0,
       "Referral": (widget.breakdown["referral"] as num?)?.toDouble() ?? 0.0,
-      "Social Media": (widget.breakdown["social_media"] as num?)?.toDouble() ?? 0.0,
+      "Social Media":
+          (widget.breakdown["social_media"] as num?)?.toDouble() ?? 0.0,
       "Direct": (widget.breakdown["direct"] as num?)?.toDouble() ?? 0.0,
       "Other": (widget.breakdown["other"] as num?)?.toDouble() ?? 0.0,
     };
 
     // Filter out 0-value sources
-    final validSources = sources.entries.where((e) => e.value > 0).toList();
+    // final validSources = sources.entries.where((e) => e.value > 0).toList();
+    final validSources = sources.entries.toList();
 
     final total = validSources.fold<double>(0.0, (sum, e) => sum + e.value);
 
@@ -596,7 +631,7 @@ class _LeadSourceDistributionPieGraphState extends State<LeadSourceDistributionP
           title: "$percentage%",
           radius: radius,
           color: colorList[i % colorList.length],
-          titleStyle:  TextStyle(
+          titleStyle: TextStyle(
             fontSize: fontSize,
             fontWeight: FontWeight.w700,
             color: Colors.white,
@@ -615,9 +650,7 @@ class _LeadSourceDistributionPieGraphState extends State<LeadSourceDistributionP
               height: 240,
               child: PieChart(
                 PieChartData(
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
+                  borderData: FlBorderData(show: false),
                   pieTouchData: PieTouchData(
                     touchCallback: (FlTouchEvent event, pieTouchResponse) {
                       setState(() {
@@ -628,7 +661,9 @@ class _LeadSourceDistributionPieGraphState extends State<LeadSourceDistributionP
                           return;
                         }
                         touchedIndex =
-                            pieTouchResponse.touchedSection!.touchedSectionIndex;
+                            pieTouchResponse
+                                .touchedSection!
+                                .touchedSectionIndex;
                       });
                     },
                   ),
@@ -639,7 +674,6 @@ class _LeadSourceDistributionPieGraphState extends State<LeadSourceDistributionP
                 ),
                 duration: Duration(milliseconds: 150), // Optional
                 curve: Curves.linear,
-
               ),
             ),
             const SizedBox(height: 16),
@@ -672,10 +706,7 @@ class _LeadSourceDistributionPieGraphState extends State<LeadSourceDistributionP
             else
               const Text(
                 "No data available",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
             const SizedBox(height: 20),
           ],
@@ -700,7 +731,7 @@ class _LeadSourceDistributionPieGraphState extends State<LeadSourceDistributionP
         ),
         const SizedBox(width: 6),
         Text(
-          score,
+          Formatter.formatNumber(num.tryParse(score) ?? 0),
           style: TextStyle(
             fontSize: 13,
             color: color,
@@ -712,3 +743,191 @@ class _LeadSourceDistributionPieGraphState extends State<LeadSourceDistributionP
   }
 }
 
+class LeadStatusDistributionPieGraph extends StatefulWidget {
+  final Map<String, dynamic> breakdown;
+  final Color? color;
+
+  const LeadStatusDistributionPieGraph({
+    super.key,
+    required this.breakdown,
+    this.color,
+  });
+
+  @override
+  State<LeadStatusDistributionPieGraph> createState() =>
+      _LeadStatusDistributionPieGraphState();
+}
+
+class _LeadStatusDistributionPieGraphState
+    extends State<LeadStatusDistributionPieGraph> {
+  int touchedIndex = -1;
+
+  @override
+  Widget build(BuildContext context) {
+    // Safely extract all possible sources
+    final sources = {
+      "New": (widget.breakdown["new"] as num?)?.toDouble() ?? 0.0,
+      "Contacted": (widget.breakdown["contacted"] as num?)?.toDouble() ?? 0.0,
+      "Qualified": (widget.breakdown["qualified"] as num?)?.toDouble() ?? 0.0,
+      "Negotiation":
+          (widget.breakdown["negotiation"] as num?)?.toDouble() ?? 0.0,
+      "Lost": (widget.breakdown["lost"] as num?)?.toDouble() ?? 0.0,
+      "Converted": (widget.breakdown["converted"] as num?)?.toDouble() ?? 0.0,
+    };
+
+    // Filter out 0-value sources
+    // final validSources = sources.entries.where((e) => e.value > 0).toList();
+    final validSources = sources.entries.toList();
+
+    final total = validSources.fold<double>(0.0, (sum, e) => sum + e.value);
+
+    List<PieChartSectionData> _chartSections() {
+      if (total == 0) {
+        return [
+          PieChartSectionData(
+            value: 1,
+            title: "No Data",
+            color: Colors.grey.shade300,
+            radius: 50,
+            titleStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.black54,
+            ),
+          ),
+        ];
+      }
+
+      final colorList = [
+        ColorRes.leadTealColor.shade600,
+        ColorRes.blueColor.shade600,
+
+        ColorRes.orangeColor.shade600,
+        ColorRes.purpleColor.shade600,
+        ColorRes.error.shade400,
+
+        ColorRes.green.shade600,
+      ];
+
+      return List.generate(validSources.length, (i) {
+        final e = validSources[i];
+        final percentage = (e.value / total * 100).toStringAsFixed(0);
+        final isTouched = i == touchedIndex;
+        final radius = isTouched ? 65.0 : 50.0;
+        final fontSize = isTouched ? 18.0 : 14.0;
+        return PieChartSectionData(
+          value: e.value,
+          title: "$percentage%",
+          radius: radius,
+          color: colorList[i % colorList.length],
+          titleStyle: TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        );
+      });
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 240,
+              child: PieChart(
+                PieChartData(
+                  borderData: FlBorderData(show: false),
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions ||
+                            pieTouchResponse == null ||
+                            pieTouchResponse.touchedSection == null) {
+                          touchedIndex = -1;
+                          return;
+                        }
+                        touchedIndex =
+                            pieTouchResponse
+                                .touchedSection!
+                                .touchedSectionIndex;
+                      });
+                    },
+                  ),
+                  sectionsSpace: 2,
+                  centerSpaceRadius: 36,
+
+                  sections: _chartSections(),
+                ),
+                duration: Duration(milliseconds: 150), // Optional
+                curve: Curves.linear,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            /// Dynamic Legend
+            if (total > 0)
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 20,
+                runSpacing: 10,
+                children: List.generate(validSources.length, (i) {
+                  final e = validSources[i];
+                  final colorList = [
+                    ColorRes.leadTealColor.shade600,
+                    ColorRes.blueColor.shade600,
+
+                    ColorRes.orangeColor.shade600,
+                    ColorRes.purpleColor.shade600,
+                    ColorRes.error.shade400,
+
+                    ColorRes.green.shade600,
+                  ];
+                  return _legendItem(
+                    colorList[i % colorList.length],
+                    e.key,
+                    e.value.toInt().toString(),
+                  );
+                }),
+              )
+            else
+              const Text(
+                "No data available",
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+              ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _legendItem(Color color, String title, String score) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 10,
+          width: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 5),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          Formatter.formatNumber(num.tryParse(score) ?? 0),
+          style: TextStyle(
+            fontSize: 13,
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+}

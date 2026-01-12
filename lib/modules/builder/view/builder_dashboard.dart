@@ -52,6 +52,10 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
     final overviewController = Get.find<SellerOverviewController>();
 
     return DashboardLayout(
+      onRefresh:()async {
+
+      } ,
+
       floatingButton: FloatingActionButton.extended(
         onPressed: () {
           if (!UserHelper.isAadharVerified) {

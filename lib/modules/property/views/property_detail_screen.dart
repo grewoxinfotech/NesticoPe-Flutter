@@ -3403,6 +3403,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
       final propertyId = widget.propertyId ?? '';
       await controller.getAllInQuireData(propertyId);
+      await controller.getHasInQuireData(propertyId);
 
       final fetchedProperty = await controller.getPropertyById(
         widget.propertyId!,
@@ -4789,6 +4790,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                       await controller.getAllInQuireData(
                                         widget.propertyId ?? '',
                                       );
+                                      await controller.getHasInQuireData(
+                                        widget.propertyId ?? '',
+                                      );
                                     } else {
                                       CustomSnackBar.show(
                                         Get.overlayContext!,
@@ -5010,6 +5014,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 );
                                 Get.back();
                                 await controller.getAllInQuireData(
+                                  widget.propertyId ?? '',
+                                );  await controller.getHasInQuireData(
                                   widget.propertyId ?? '',
                                 );
                               } else {

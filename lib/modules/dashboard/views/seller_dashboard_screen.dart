@@ -118,6 +118,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:housing_flutter_app/modules/dashboard/views/widget/seller_property_screen.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -183,32 +184,33 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
     final screens = [
       const SellerHomeScreen(),
       const SellerLeadScreen(),
-      Obx(() {
-        if (controller.isLoading.value && controller.items.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (!controller.isLoading.value && controller.items.isEmpty) {
-          return const Center(child: Text("No Property found."));
-        }
-
-        return NotificationListener<ScrollEndNotification>(
-          onNotification: (notification) {
-            final metrics = notification.metrics;
-            if (metrics.pixels >= metrics.maxScrollExtent) {
-              controller.loadMore();
-            }
-            return true;
-          },
-          child: RefreshIndicator(
-            onRefresh: refreshPropertyBySeller,
-            child: PropertyOverviewScreen(
-              properties: controller.items,
-              onDelete: () => refreshPropertyBySeller(),
-            ),
-          ),
-        );
-      }),
+      // Obx(() {
+      //   if (controller.isLoading.value && controller.items.isEmpty) {
+      //     return const Center(child: CircularProgressIndicator());
+      //   }
+      //
+      //   if (!controller.isLoading.value && controller.items.isEmpty) {
+      //     return const Center(child: Text("No Property found."));
+      //   }
+      //
+      //   return NotificationListener<ScrollEndNotification>(
+      //     onNotification: (notification) {
+      //       final metrics = notification.metrics;
+      //       if (metrics.pixels >= metrics.maxScrollExtent) {
+      //         controller.loadMore();
+      //       }
+      //       return true;
+      //     },
+      //     child: RefreshIndicator(
+      //       onRefresh: refreshPropertyBySeller,
+      //       child: PropertyOverviewScreen(
+      //         properties: controller.items,
+      //         onDelete: () => refreshPropertyBySeller(),
+      //       ),
+      //     ),
+      //   );
+      // }),
+      SellerPropertyScreen(),
       SellerSubscriptionPlanScreen(),
       SellerProfileScreen(),
     ];
@@ -286,3 +288,5 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
     );
   }
 }
+
+

@@ -34,6 +34,7 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
   @override
   Widget build(BuildContext context) {
     return DashboardLayout(
+      onRefresh: contractorDashboardController.refreshDashboard,
       floatingButton: FloatingActionButton.extended(
         onPressed: () {
           if (!UserHelper.isAadharVerified) {
@@ -186,6 +187,17 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                     const SizedBox(height: 20),
                     Obx(
                       () => buildProjectsTrendGraph(
+                        contractorDashboardController,
+                      ),
+                    ), const SizedBox(height: 20),
+                    Obx(
+                      () => buildContractorLeadSourceDistributionGraph(
+                        contractorDashboardController,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Obx(
+                      () => buildContractorLeadStatusDistributionGraph(
                         contractorDashboardController,
                       ),
                     ),
@@ -546,6 +558,166 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
     );
   }
 }
+Widget buildContractorLeadSourceDistributionGraph(
+    ContractorDashboardController overviewController,
+    ) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.area_chart_outlined,
+              color: ColorRes.leadTealColor,
+              size: 24,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lead Source Distribution',
+                    style: TextStyle(
+                      color: ColorRes.leadTealColor,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: ColorRes.primary.withOpacity(0.2),
+              ),
+              child: Text(
+                'Total: ${Formatter.formatNumber(
+                  (overviewController.contractorInsights.value?.data?.leadAnalytics?.leadSourceBreakdown?.values
+                      ?.fold<int>(0, (sum, value) => sum + (value as int))) ?? 0,
+                )}',
+
+                style: TextStyle(
+                  color: ColorRes.primary,
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // --- Chart section ---
+        SizedBox(
+          height: 350,
+          width: double.infinity,
+          child: LeadSourceDistributionPieGraph(
+            breakdown:
+            overviewController
+                .contractorInsights
+                .value
+                ?.data
+                ?.leadAnalytics?.leadSourceBreakdown??
+                {},
+          ),
+        ),
+      ],
+    ),
+  );
+}
+Widget buildContractorLeadStatusDistributionGraph(
+    ContractorDashboardController overviewController,
+    ) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.area_chart_outlined,
+              color: ColorRes.leadTealColor,
+              size: 24,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lead Status Distribution',
+                    style: TextStyle(
+                      color: ColorRes.leadTealColor,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: ColorRes.primary.withOpacity(0.2),
+              ),
+              child: Text(
+                'Total: ${Formatter.formatNumber(
+                  (overviewController.contractorInsights.value?.data?.leadAnalytics?.leadStatusBreakdown?.values
+                      ?.fold<int>(0, (sum, value) => sum + (value as int))) ?? 0,
+                )}',
+
+                style: TextStyle(
+                  color: ColorRes.primary,
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // --- Chart section ---
+        SizedBox(
+          height: 350,
+          width: double.infinity,
+          child: LeadStatusDistributionPieGraph(
+            breakdown:
+            overviewController
+                .contractorInsights
+                .value
+                ?.data
+                ?.leadAnalytics?.leadStatusBreakdown??
+                {},
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
 Widget buildTopRatedServiceList({
   required BuildContext context,
@@ -717,8 +889,9 @@ Widget contractorLeadFunnel(ContractorDashboardController overviewController) {
                     .contractorInsights
                     .value
                     ?.data
-                    ?.performance
+
                     ?.leadAnalytics?.leadStageBreakdown,
+
           ),
         ),
       ],
