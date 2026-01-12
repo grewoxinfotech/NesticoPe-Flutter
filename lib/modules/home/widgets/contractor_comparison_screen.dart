@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
 import 'package:housing_flutter_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
+import 'package:intl/intl.dart';
 
 import '../../../data/network/contractor/model/contractor_compare_model/contractor_compare_model.dart';
 import '../../../data/network/contractor/service/contractor_compare_service.dart';
@@ -291,23 +292,19 @@ class _ContractorCardForCompare extends StatelessWidget {
                       left: Radius.circular(11),
                     ),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: CircleAvatar(
                       radius: 35,
                       backgroundColor: ColorRes.primary,
-                      child: Text(
-                        (c.username.isNotEmpty
-                            ? c.username[0].toUpperCase()
-                            : '?'),
-                        style: const TextStyle(
-                          color: ColorRes.white,
-                          fontSize: AppFontSizes.displaySmall,
-                          fontWeight: AppFontWeights.bold,
-                        ),
+                      child: Icon(
+                        Icons.engineering, // 👈 replace with any icon you like
+                        color: ColorRes.white,
+                        size: 35, // adjust as needed
                       ),
                     ),
                   ),
                 ),
+
 
                 // Content Section
                 Expanded(
@@ -451,18 +448,35 @@ class _ContractorCardForCompare extends StatelessWidget {
 }
 
 
-class _ContractorComparisonTable extends StatelessWidget {
+
+class _ContractorComparisonTable extends StatefulWidget {
   final ContractorDataResponse a;
   final ContractorDataResponse b;
 
   const _ContractorComparisonTable({required this.a, required this.b});
 
   @override
+  State<_ContractorComparisonTable> createState() =>
+      _ContractorComparisonTableState();
+}
+
+class _ContractorComparisonTableState
+    extends State<_ContractorComparisonTable> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Collect all unique services
     Map<String, Map<String, dynamic>> allServices = {};
 
-    for (var category in a.data.servicesByCategory) {
+    for (var category in widget.a.data.servicesByCategory) {
       for (var service in category.services) {
         String key = '${category.categoryName}|${service.serviceName}';
         if (!allServices.containsKey(key)) {
@@ -474,7 +488,7 @@ class _ContractorComparisonTable extends StatelessWidget {
       }
     }
 
-    for (var category in b.data.servicesByCategory) {
+    for (var category in widget.b.data.servicesByCategory) {
       for (var service in category.services) {
         String key = '${category.categoryName}|${service.serviceName}';
         if (!allServices.containsKey(key)) {
@@ -497,7 +511,115 @@ class _ContractorComparisonTable extends StatelessWidget {
       servicesByCategory[categoryName]!.add(entry);
     }
 
+    return Column(
+      children: [
+        SizedBox(
+          height: 550,
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+            children: [
+              // Contractor A Card
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: _ContractorServicesCard(
+                  contractor: widget.a,
+                  activeServices: widget.a.data.totalActiveServices.toString(),
+                  servicesByCategory: servicesByCategory,
+                  totalServices: widget.a.data.totalServices.toString(),
+                  contractorType: widget.a.data.profile.contractorType,
+                  location:widget.a.data.contractor.city??'' ,
+                  title: widget.a.data.contractor.username,
+                  membershipSince: formatMemberSince(widget.a.data.contractor.memberSince.toIso8601String()),
+                ),
+              ),
+              // Contractor B Card
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: _ContractorServicesCard(
+                  activeServices: widget.b.data.totalActiveServices.toString(),
+                  contractor: widget.b,
+                  servicesByCategory: servicesByCategory,
+                  totalServices: widget.b.data.totalServices.toString(),
+                  contractorType: widget.b.data.profile.contractorType,
+                  location:widget.b.data.contractor.city??'' ,
+
+                  membershipSince: formatMemberSince(widget.b.data.contractor.memberSince.toIso8601String()),
+                  title: widget.b.data.contractor.username,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Page Indicator Dots
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            2,
+                (index) => GestureDetector(
+              onTap: () {
+                _pageController.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                width: _currentPage == index ? 24 : 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: _currentPage == index
+                      ? ColorRes.primary
+                      : ColorRes.leadGreyColor[300],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ContractorServicesCard extends StatelessWidget {
+  final ContractorDataResponse contractor;
+  final Map<String, List<MapEntry<String, Map<String, dynamic>>>>
+  servicesByCategory;
+  final String title;
+  final String totalServices;
+  final String activeServices;
+  final String contractorType;
+  final String location;
+  final String membershipSince;
+
+  const _ContractorServicesCard({
+    required this.contractor,
+    required this.servicesByCategory,
+    required this.title, required this.totalServices, required this.activeServices, required this.contractorType, required this.location, required this.membershipSince,
+  });
+
+  Service _findService(String serviceName) {
+    for (var category in contractor.data.servicesByCategory) {
+      for (var service in category.services) {
+        if (service.serviceName == serviceName) {
+          return service;
+        }
+      }
+    }
+    return Service.fromJson({});
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width - 32,
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
@@ -505,84 +627,662 @@ class _ContractorComparisonTable extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _header(),
-          ...servicesByCategory.entries.expand((categoryEntry) {
-            String categoryName = categoryEntry.key;
-            List<MapEntry<String, Map<String, dynamic>>> services =
-                categoryEntry.value;
+          // Header with contractor name
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: ColorRes.primary,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(11),
+                topRight: Radius.circular(11),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.bold,
+                      color: ColorRes.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-            return [
-              // Category Header
-              _CategoryHeader(categoryName: categoryName),
-              // Services in this category
-              ...services.map((serviceEntry) {
-                String serviceName = serviceEntry.value['serviceName'];
-                return _ServiceComparisonRow(
-                  serviceName: serviceName,
-                  contractorA: a,
-                  contractorB: b,
-                  isLast: services.last == serviceEntry &&
-                      categoryEntry.key ==
-                          servicesByCategory.entries.last.key,
-                );
-              }).toList(),
-            ];
-          }).toList(),
+
+
+
+
+          // Services List in Slider
+          SizedBox(
+            height: 500,
+            child: ListView(
+              padding: const EdgeInsets.all(0),
+              children: [
+                contractorBasicDetails('Total Services',totalServices),
+                Divider(color: ColorRes.leadGreyColor.shade300,),
+                contractorBasicDetails('Active Services',activeServices),
+                Divider(color: ColorRes.leadGreyColor.shade300,),
+                contractorBasicDetails('Contractor Type',contractorType),
+                Divider(color: ColorRes.leadGreyColor.shade300,),
+                contractorBasicDetails('Location',location),
+                Divider(color: ColorRes.leadGreyColor.shade300,),
+                contractorBasicDetails('Member Since',membershipSince),
+
+
+                ...servicesByCategory.entries.expand((categoryEntry) {
+                  String categoryName = categoryEntry.key;
+                  List<MapEntry<String, Map<String, dynamic>>> services =
+                      categoryEntry.value;
+
+                  return [
+                    // Category Header
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: ColorRes.primary.withOpacity(0.1),
+                        border: Border(
+                          bottom: BorderSide(
+                              color: ColorRes.leadGreyColor[200]!, width: 1),
+                        ),
+                      ),
+                      child: Text(
+                        categoryName.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.bold,
+                          color: ColorRes.primary,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    // Services in this category
+                    ...services.map((serviceEntry) {
+                      String serviceName = serviceEntry.value['serviceName'];
+                      final service = _findService(serviceName);
+                      bool isLast = services.last == serviceEntry &&
+                          categoryEntry.key ==
+                              servicesByCategory.entries.last.key;
+
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
+                        decoration: BoxDecoration(
+                          border: isLast
+                              ? null
+                              : Border(
+                              bottom: BorderSide(color: Colors.grey[300]!)),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Service Name
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                serviceName,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.medium,
+                                  color: ColorRes.leadGreyColor[700],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Service Details
+                            Expanded(
+                              flex: 1,
+                              child: _buildServiceDetails(service),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ];
+                }).toList(),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _header() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: ColorRes.leadGreyColor[200]!),
+  Padding contractorBasicDetails(String title,String value) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Text(
+                title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    fontWeight: AppFontWeights.medium,
+                    color: ColorRes.leadGreyColor[700],
+                  ),
+                ),
+              ),
+              Text(
+                value,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.textColor,
+                ),
+              ),
+            ],
+          ),
+        );
+  }
+
+  Widget _buildServiceDetails(Service service) {
+    if (service == null) {
+      return const Center(
+        child: Text(
+          'N/A',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: AppFontSizes.small,
+            color: ColorRes.textDisabled,
+            fontWeight: AppFontWeights.medium,
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Expanded(
-            child: Text(
-              'Service Name',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.semiBold,
-              ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Rating
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.star,
+              color: ColorRes.homeYellow,
+              size: 13,
             ),
-          ),
-          Expanded(
-            child: Text(
-              a.data.contractor.username,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            const SizedBox(width: 3),
+            Text(
+              '${service.rating}',
               style: const TextStyle(
                 fontSize: AppFontSizes.small,
                 fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textColor,
               ),
             ),
+          ],
+        ),
+        Text(
+          '(${service.totalReviews})',
+          style: const TextStyle(
+            fontSize: AppFontSizes.extraSmall,
+            color: ColorRes.textSecondary,
           ),
-          Expanded(
-            child: Text(
-              b.data.contractor.username,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.semiBold,
-              ),
-            ),
+        ),
+        const SizedBox(height: 4),
+        // Price
+        Text(
+          '₹${service.meta.price}',
+          style: const TextStyle(
+            fontSize: AppFontSizes.medium,
+            fontWeight: AppFontWeights.bold,
+            color: ColorRes.primary,
           ),
-        ],
-      ),
+        ),
+        Text(
+          '/${service.meta.priceModel}',
+          style: const TextStyle(
+            fontSize: AppFontSizes.extraSmall,
+            color: ColorRes.textSecondary,
+          ),
+        ),
+      ],
     );
   }
 }
+
+// class _ContractorComparisonTable extends StatelessWidget {
+//   final ContractorDataResponse a;
+//   final ContractorDataResponse b;
+//
+//   const _ContractorComparisonTable({required this.a, required this.b});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     // Collect all unique services
+//     Map<String, Map<String, dynamic>> allServices = {};
+//
+//     for (var category in a.data.servicesByCategory) {
+//       for (var service in category.services) {
+//         String key = '${category.categoryName}|${service.serviceName}';
+//         if (!allServices.containsKey(key)) {
+//           allServices[key] = {
+//             'categoryName': category.categoryName,
+//             'serviceName': service.serviceName,
+//           };
+//         }
+//       }
+//     }
+//
+//     for (var category in b.data.servicesByCategory) {
+//       for (var service in category.services) {
+//         String key = '${category.categoryName}|${service.serviceName}';
+//         if (!allServices.containsKey(key)) {
+//           allServices[key] = {
+//             'categoryName': category.categoryName,
+//             'serviceName': service.serviceName,
+//           };
+//         }
+//       }
+//     }
+//
+//     // Group by category
+//     Map<String, List<MapEntry<String, Map<String, dynamic>>>>
+//     servicesByCategory = {};
+//     for (var entry in allServices.entries) {
+//       String categoryName = entry.value['categoryName'];
+//       if (!servicesByCategory.containsKey(categoryName)) {
+//         servicesByCategory[categoryName] = [];
+//       }
+//       servicesByCategory[categoryName]!.add(entry);
+//     }
+//
+//     return SizedBox(
+//       height: 400,
+//       child: ListView(
+//         scrollDirection: Axis.horizontal,
+//         children: [
+//           // Contractor A Card
+//           _ContractorServicesCard(
+//             contractor: a,
+//             servicesByCategory: servicesByCategory,
+//             title: a.data.contractor.username,
+//           ),
+//           const SizedBox(width: 12),
+//           // Contractor B Card
+//           _ContractorServicesCard(
+//             contractor: b,
+//             servicesByCategory: servicesByCategory,
+//             title: b.data.contractor.username,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// class _ContractorServicesCard extends StatelessWidget {
+//   final ContractorDataResponse contractor;
+//   final Map<String, List<MapEntry<String, Map<String, dynamic>>>>
+//   servicesByCategory;
+//   final String title;
+//
+//   const _ContractorServicesCard({
+//     required this.contractor,
+//     required this.servicesByCategory,
+//     required this.title,
+//   });
+//
+//   dynamic _findService(String serviceName) {
+//     for (var category in contractor.data.servicesByCategory) {
+//       for (var service in category.services) {
+//         if (service.serviceName == serviceName) {
+//           return service;
+//         }
+//       }
+//     }
+//     return null;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       width: MediaQuery.of(context).size.width - 32,
+//       decoration: BoxDecoration(
+//         color: ColorRes.white,
+//         borderRadius: BorderRadius.circular(12),
+//         border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 1),
+//       ),
+//       child: Column(
+//         children: [
+//           // Header with contractor name
+//           Container(
+//             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+//             decoration: BoxDecoration(
+//               color: ColorRes.primary,
+//               borderRadius: const BorderRadius.only(
+//                 topLeft: Radius.circular(11),
+//                 topRight: Radius.circular(11),
+//               ),
+//             ),
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Expanded(
+//                   child: Text(
+//                     title,
+//                     style: const TextStyle(
+//                       fontSize: AppFontSizes.medium,
+//                       fontWeight: AppFontWeights.bold,
+//                       color: ColorRes.white,
+//                     ),
+//                     maxLines: 1,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//
+//           // Services List in Slider
+//           SizedBox(
+//             height: 330,
+//             child: ListView(
+//               padding: const EdgeInsets.all(0),
+//               children: [
+//                 ...servicesByCategory.entries.expand((categoryEntry) {
+//                   String categoryName = categoryEntry.key;
+//                   List<MapEntry<String, Map<String, dynamic>>> services =
+//                       categoryEntry.value;
+//
+//                   return [
+//                     // Category Header
+//                     Container(
+//                       width: double.infinity,
+//                       padding: const EdgeInsets.symmetric(
+//                           horizontal: 16, vertical: 10),
+//                       decoration: BoxDecoration(
+//                         color: ColorRes.primary.withOpacity(0.1),
+//                         border: Border(
+//                           bottom: BorderSide(
+//                               color: ColorRes.leadGreyColor[200]!, width: 1),
+//                         ),
+//                       ),
+//                       child: Text(
+//                         categoryName.toUpperCase(),
+//                         style: const TextStyle(
+//                           fontSize: AppFontSizes.small,
+//                           fontWeight: AppFontWeights.bold,
+//                           color: ColorRes.primary,
+//                           letterSpacing: 0.5,
+//                         ),
+//                       ),
+//                     ),
+//                     // Services in this category
+//                     ...services.map((serviceEntry) {
+//                       String serviceName = serviceEntry.value['serviceName'];
+//                       final service = _findService(serviceName);
+//                       bool isLast = services.last == serviceEntry &&
+//                           categoryEntry.key ==
+//                               servicesByCategory.entries.last.key;
+//
+//                       return Container(
+//                         padding: const EdgeInsets.symmetric(
+//                             horizontal: 16, vertical: 14),
+//                         decoration: BoxDecoration(
+//                           border: isLast
+//                               ? null
+//                               : Border(
+//                               bottom: BorderSide(color: Colors.grey[300]!)),
+//                         ),
+//                         child: Row(
+//                           crossAxisAlignment: CrossAxisAlignment.center,
+//                           children: [
+//                             // Service Name
+//                             Expanded(
+//                               flex: 2,
+//                               child: Text(
+//                                 serviceName,
+//                                 maxLines: 2,
+//                                 overflow: TextOverflow.ellipsis,
+//                                 style: TextStyle(
+//                                   fontSize: AppFontSizes.caption,
+//                                   fontWeight: AppFontWeights.medium,
+//                                   color: ColorRes.leadGreyColor[700],
+//                                 ),
+//                               ),
+//                             ),
+//                             const SizedBox(width: 12),
+//                             // Service Details
+//                             Expanded(
+//                               flex: 1,
+//                               child: _buildServiceDetails(service),
+//                             ),
+//                           ],
+//                         ),
+//                       );
+//                     }).toList(),
+//                   ];
+//                 }).toList(),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _buildServiceDetails(dynamic service) {
+//     if (service == null) {
+//       return const Center(
+//         child: Text(
+//           'N/A',
+//           textAlign: TextAlign.center,
+//           style: TextStyle(
+//             fontSize: AppFontSizes.small,
+//             color: ColorRes.textDisabled,
+//             fontWeight: AppFontWeights.medium,
+//           ),
+//         ),
+//       );
+//     }
+//
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.center,
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         // Rating
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             const Icon(
+//               Icons.star,
+//               color: ColorRes.homeYellow,
+//               size: 13,
+//             ),
+//             const SizedBox(width: 3),
+//             Text(
+//               '${service.rating}',
+//               style: const TextStyle(
+//                 fontSize: AppFontSizes.small,
+//                 fontWeight: AppFontWeights.semiBold,
+//                 color: ColorRes.textColor,
+//               ),
+//             ),
+//           ],
+//         ),
+//         Text(
+//           '(${service.totalReviews})',
+//           style: const TextStyle(
+//             fontSize: AppFontSizes.extraSmall,
+//             color: ColorRes.textSecondary,
+//           ),
+//         ),
+//         const SizedBox(height: 4),
+//         // Price
+//         Text(
+//           '₹${service.meta.price}',
+//           style: const TextStyle(
+//             fontSize: AppFontSizes.medium,
+//             fontWeight: AppFontWeights.bold,
+//             color: ColorRes.primary,
+//           ),
+//         ),
+//         Text(
+//           '/${service.meta.priceModel}',
+//           style: const TextStyle(
+//             fontSize: AppFontSizes.extraSmall,
+//             color: ColorRes.textSecondary,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+// class _ContractorComparisonTable extends StatelessWidget {
+//   final ContractorDataResponse a;
+//   final ContractorDataResponse b;
+//
+//   const _ContractorComparisonTable({required this.a, required this.b});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     // Collect all unique services
+//     Map<String, Map<String, dynamic>> allServices = {};
+//
+//     for (var category in a.data.servicesByCategory) {
+//       for (var service in category.services) {
+//         String key = '${category.categoryName}|${service.serviceName}';
+//         if (!allServices.containsKey(key)) {
+//           allServices[key] = {
+//             'categoryName': category.categoryName,
+//             'serviceName': service.serviceName,
+//           };
+//         }
+//       }
+//     }
+//
+//     for (var category in b.data.servicesByCategory) {
+//       for (var service in category.services) {
+//         String key = '${category.categoryName}|${service.serviceName}';
+//         if (!allServices.containsKey(key)) {
+//           allServices[key] = {
+//             'categoryName': category.categoryName,
+//             'serviceName': service.serviceName,
+//           };
+//         }
+//       }
+//     }
+//
+//     // Group by category
+//     Map<String, List<MapEntry<String, Map<String, dynamic>>>>
+//     servicesByCategory = {};
+//     for (var entry in allServices.entries) {
+//       String categoryName = entry.value['categoryName'];
+//       if (!servicesByCategory.containsKey(categoryName)) {
+//         servicesByCategory[categoryName] = [];
+//       }
+//       servicesByCategory[categoryName]!.add(entry);
+//     }
+//
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: ColorRes.white,
+//         borderRadius: BorderRadius.circular(12),
+//         border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 1),
+//       ),
+//       child: Column(
+//         children: [
+//           _header(),
+//           ...servicesByCategory.entries.expand((categoryEntry) {
+//             String categoryName = categoryEntry.key;
+//             List<MapEntry<String, Map<String, dynamic>>> services =
+//                 categoryEntry.value;
+//
+//             return [
+//               // Category Header
+//               _CategoryHeader(categoryName: categoryName),
+//               // Services in this category
+//               ...services.map((serviceEntry) {
+//                 String serviceName = serviceEntry.value['serviceName'];
+//                 return _ServiceComparisonRow(
+//                   serviceName: serviceName,
+//                   contractorA: a,
+//                   contractorB: b,
+//                   isLast: services.last == serviceEntry &&
+//                       categoryEntry.key ==
+//                           servicesByCategory.entries.last.key,
+//                 );
+//               }).toList(),
+//             ];
+//           }).toList(),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _header() {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+//       decoration: BoxDecoration(
+//         border: Border(
+//           bottom: BorderSide(color: ColorRes.leadGreyColor[200]!),
+//         ),
+//       ),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           const Expanded(
+//             child: Text(
+//               'Service Name',
+//               textAlign: TextAlign.left,
+//               style: TextStyle(
+//                 fontSize: AppFontSizes.small,
+//                 fontWeight: AppFontWeights.semiBold,
+//               ),
+//             ),
+//           ),
+//           Expanded(
+//             child: Text(
+//               a.data.contractor.username,
+//               textAlign: TextAlign.center,
+//               maxLines: 1,
+//               overflow: TextOverflow.ellipsis,
+//               style: const TextStyle(
+//                 fontSize: AppFontSizes.small,
+//                 fontWeight: AppFontWeights.semiBold,
+//               ),
+//             ),
+//           ),
+//           Expanded(
+//             child: Text(
+//               b.data.contractor.username,
+//               textAlign: TextAlign.center,
+//               maxLines: 1,
+//               overflow: TextOverflow.ellipsis,
+//               style: const TextStyle(
+//                 fontSize: AppFontSizes.small,
+//                 fontWeight: AppFontWeights.semiBold,
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class _CategoryHeader extends StatelessWidget {
   final String categoryName;
@@ -672,9 +1372,9 @@ class _ServiceComparisonRow extends StatelessWidget {
           ),
 
           // Contractor B Details
-          Expanded(
-            child: _buildServiceDetails(serviceB),
-          ),
+          // Expanded(
+          //   child: _buildServiceDetails(serviceB),
+          // ),
         ],
       ),
     );
@@ -745,5 +1445,16 @@ class _ServiceComparisonRow extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+
+String formatMemberSince(String dateString) {
+  try {
+    final date = DateTime.parse(dateString);
+    // Format: Jan 2026
+    return DateFormat('MMM yyyy').format(date);
+  } catch (e) {
+    return '';
   }
 }

@@ -51,9 +51,13 @@ import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/size_manager.dart';
 import '../../../../app/widgets/image/custom_image.dart' hide ColorRes;
 import '../../../../app/manager/compare_manager.dart';
+import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
+import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
+import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../propert_detail/view/property_details.dart';
+import '../../../property/controllers/property_controller.dart';
 
 // class PropertyCardForCompare extends StatelessWidget {
 //   final String image;
@@ -164,6 +168,7 @@ class PropertyCardForCompare extends StatelessWidget {
   final Items item;
   final VoidCallback? onRemove;
 
+
   const PropertyCardForCompare({super.key, required this.item, this.onRemove});
 
   String _firstImage(Items i) {
@@ -185,11 +190,14 @@ class PropertyCardForCompare extends StatelessWidget {
       listingType: i.listingType ?? '',
       financialInfo: i.propertyDetails?.financialInfo,
     );
+
     return pm.displayPrice;
   }
 
+
   @override
   Widget build(BuildContext context) {
+     final PropertyController controller=Get.find<PropertyController>();
     return GestureDetector(
       onTap: () {
         Get.to(() => PropertyDetailScreen(propertyId: item.id ?? ''));
@@ -312,24 +320,92 @@ class PropertyCardForCompare extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(width: 10),
-                              // Container(
-                              //   padding: EdgeInsets.symmetric(
-                              //     horizontal: 14,
-                              //     vertical: 4,
-                              //   ),
-                              //   decoration: BoxDecoration(
-                              //     color: ColorRes.primary,
-                              //     borderRadius: BorderRadius.circular(6),
-                              //   ),
-                              //   child: Text(
-                              //     'Visit',
-                              //     style: TextStyle(
-                              //       fontWeight: AppFontWeights.semiBold,
-                              //       fontSize: AppFontSizes.small,
-                              //       color: ColorRes.white,
-                              //     ),
-                              //   ),
-                              // ),
+                              GestureDetector(
+                                onTap: () async {
+                                    try {
+                                      final user =
+                                          await SecureStorage.getUserData();
+
+                                      if (user == null) {
+                                        Get.snackbar(
+                                          'Error',
+                                          'No user data found. Please log in.',
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: ColorRes.error
+                                              .withOpacity(0.1),
+                                          colorText: ColorRes.error,
+                                        );
+                                        return;
+                                      }
+
+                                      final fullName =
+                                          user.user?.fullName ?? '';
+                                      final firstName =
+                                          user.user?.firstName ?? '';
+                                      final username =
+                                          user.user?.username ?? '';
+                                      final email = user.user?.email ?? '';
+                                      final phone = user.user?.phone ?? '';
+
+                                      final displayName =
+                                      (firstName.isEmpty
+                                          ? username
+                                          : fullName)
+                                          .trim();
+
+                                      if (Get.context == null) {
+                                        Get.snackbar(
+                                          'Error',
+                                          'UI not ready to show dialog.',
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: ColorRes.error
+                                              .withOpacity(0.1),
+                                          colorText: ColorRes.error,
+                                        );
+                                        return;
+                                      }
+
+                                      addInquiryFromApp(
+                                        displayName,
+                                        email,
+                                        phone, item.id ?? '',
+                                          controller,
+
+                                      );
+                                    } catch (e, s) {
+                                      debugPrint(
+                                        '❌ Error in Get Offer button: $e',
+                                      );
+                                      debugPrint('$s');
+                                      Get.snackbar(
+                                        'Error',
+                                        'Something went wrong. Please try again.',
+                                        snackPosition: SnackPosition.BOTTOM,
+                                        backgroundColor: ColorRes.error
+                                            .withOpacity(0.1),
+                                        colorText: ColorRes.error,
+                                      );
+                                    }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.primary,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    'Contact Now',
+                                    style: TextStyle(
+                                      fontWeight: AppFontWeights.semiBold,
+                                      fontSize: AppFontSizes.small,
+                                      color: ColorRes.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -359,7 +435,253 @@ class PropertyCardForCompare extends StatelessWidget {
     );
   }
 }
+void addInquiryFromApp(
+    String name,
+    String email,
+    String phone,
+    String propertyID,
+    PropertyController controller,
+    ) {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  final _nameController = TextEditingController(text: name);
+  final _emailController = TextEditingController(text: email);
+  final _phoneController = TextEditingController(text: phone);
+
+  Get.dialog(
+    Dialog(
+      backgroundColor: ColorRes.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        "Contact Seller",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.body,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.white,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => Get.back(),
+                      borderRadius: BorderRadius.circular(50),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: ColorRes.white,
+                        size: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Body
+              Flexible(
+                flex: 1,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      NesticoPeTextField(
+                        controller: _nameController,
+                        title: "Name",
+                        hintText: 'Enter your name',
+                        prefixIcon: Icons.person_outline,
+                        isRequired: true,
+                        validator:
+                            (value) =>
+                        value == null || value.trim().isEmpty
+                            ? 'Name is required'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+
+                      NesticoPeTextField(
+                        controller: _emailController,
+                        hintText: 'Enter your email',
+                        prefixIcon: Icons.email_outlined,
+                        title: "Email",
+                        keyboardType: TextInputType.emailAddress,
+                        isRequired: true,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Email is required';
+                          }
+                          if (!GetUtils.isEmail(value.trim())) {
+                            return 'Enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      NesticoPeTextField(
+                        controller: _phoneController,
+                        hintText: 'Enter your phone number',
+                        title: "Phone",
+                        prefixIcon: Icons.phone_outlined,
+                        keyboardType: TextInputType.phone,
+                        isRequired: true,
+                        maxLength: 10,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Phone is required';
+                          }
+                          if (!GetUtils.isPhoneNumber(value.trim())) {
+                            return 'Enter a valid phone number';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Footer Buttons
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  border: Border(
+                    top: BorderSide(
+                      color: ColorRes.grey.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Get.back(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: const BorderSide(color: ColorRes.primary),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            // perform your submission logic here
+                            final inquiry = {
+                              "name": name ?? "",
+                              "phone": phone ?? "",
+                              "email": email ?? "",
+                              "agreeToContact": true,
+                              "meta": {
+                                "inquiryType": "contact_seller"
+                              },
+                            };
+
+                            print('Submitting inquiry: ${inquiry}');
+
+                            final success = await controller.addInquiry(
+                              inquiry,
+                              propertyID ?? '',
+                            );
+
+                            if (success) {
+                              controller.hasSubmittedInquiry.value = true;
+                              CustomSnackBar.show(
+                                Get.overlayContext!,
+                                message: "Inquiry Added Successfully",
+                                type: SnackBarType.success,
+                              );
+                              Get.back();
+                              await controller.getAllInQuireData(
+                                propertyID ?? '',
+                              );  await controller.getHasInQuireData(
+                                propertyID ?? '',
+                              );
+                            } else {
+                              Get.back();
+                              CustomSnackBar.show(
+                                Get.overlayContext!,
+                                message: "Failed to Submit Inquiry",
+                                type: SnackBarType.error,
+                              );
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorRes.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.send, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Send Inquiry',
+
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+    barrierDismissible: true,
+  );
+}
 class CompareScreen extends StatelessWidget {
   const CompareScreen({super.key});
 

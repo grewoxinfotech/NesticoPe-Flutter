@@ -344,7 +344,7 @@ class PropertyService {
   Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
     try {
       print("data : ${data}");
-      print("baseUrl : ${baseUrl}/${id}");
+      print("baseUrl : $baseUrl/$id/inquiry");
       final response = await http.post(
         Uri.parse("$baseUrl/$id/inquiry"),
         headers: await headers(),

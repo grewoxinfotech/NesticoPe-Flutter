@@ -14,7 +14,7 @@ class PropertyContactedService {
 
   /// Fetch contacted property inquiries for a given user.
 
-  Future<List<Inquiry>> fetchContactedInquiries(String userId) async {
+    Future<List<Inquiry>> fetchContactedInquiries(String userId) async {
     try {
       final uri = Uri.parse('$baseUrl/$userId/inquiry');
       final response = await http.get(uri, headers: await headers());

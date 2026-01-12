@@ -19,7 +19,7 @@ class TopCategoriesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: 150,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
@@ -60,23 +60,23 @@ class _CategoryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Top Blue Line
-            Container(
-              height: 4,
-              width: 60,
-              decoration: BoxDecoration(
-                color: ColorRes.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-
-            const SizedBox(height: 16),
+            // Container(
+            //   height: 4,
+            //   width: 60,
+            //   decoration: BoxDecoration(
+            //     color: ColorRes.primary,
+            //     borderRadius: BorderRadius.circular(8),
+            //   ),
+            // ),
+            //
+            // const SizedBox(height: 16),
 
             /// Title
             Text(
               item.name.toUpperCase(),
               style: const TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 color: ColorRes.primary,
               ),
               maxLines: 2,
@@ -90,10 +90,10 @@ class _CategoryCard extends StatelessWidget {
               item.description,
               style: TextStyle(
                 fontSize: 13,
-                color: ColorRes.leadGreyColor,
+                color: ColorRes.leadGreyColor.shade600,
                 height: 1.4,
               ),
-              maxLines: 3,
+              maxLines:2,
               overflow: TextOverflow.ellipsis,
             ),
 
@@ -105,14 +105,15 @@ class _CategoryCard extends StatelessWidget {
                 children: [
                    Icon(
                     Icons.star,
-                    color: ColorRes.homeYellowDark,
+                    color: ColorRes.homeAmber,
                     size: 18,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     item.averageRating.toStringAsFixed(1),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: ColorRes.textColor,
                       fontSize: 14,
                     ),
                   ),
@@ -121,6 +122,7 @@ class _CategoryCard extends StatelessWidget {
                     '(${item.serviceCount} services)',
                     style: TextStyle(
                       fontSize: 12,
+                      fontWeight: FontWeight.w500,
                       color: Colors.grey.shade600,
                     ),
                   ),

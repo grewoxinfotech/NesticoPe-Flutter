@@ -130,8 +130,10 @@ class Profile {
   final int totalReviews;
   final bool isBlocked;
   final int warningCount;
+  final String contractorType;
 
-  Profile({
+  Profile( {
+    required this.contractorType,
     required this.totalServices,
     required this.activeServices,
     required this.overallRating,
@@ -142,6 +144,7 @@ class Profile {
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
+      contractorType:( json['contractorType']==null)? 'Not Provided': json['contractorType'],
       totalServices: json['totalServices'] ?? 0,
       activeServices: json['activeServices'] ?? 0,
       overallRating: (json['overallRating'] ?? 0).toDouble(),

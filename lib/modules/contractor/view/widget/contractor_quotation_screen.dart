@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_inquiry_quotation_screen.dart';
@@ -10,6 +14,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:timeago/timeago.dart' as currencyFormat;
 
 /// Screen for displaying quotation details with action buttons
 class ContractorQuotationScreen extends StatefulWidget {
@@ -131,7 +136,7 @@ class _ContractorQuotationScreenState
                 icon: Icons.receipt_outlined,
                 title: 'Quotation Details',
                 children: [
-                  _buildInfoRow('Price:', '₹ ${widget.quotation.price}'),
+                  _buildInfoRow('Price:', '${Formatter.formatPrice(num.tryParse(widget.quotation.price)??0)}'),
                   const SizedBox(height: 12),
                   _buildInfoRow('Notes:', widget.quotation.meta.notes),
                   const SizedBox(height: 12),
@@ -432,51 +437,84 @@ class _ContractorQuotationScreenState
     return Column(
       children: [
         // Edit Button
-        if (!widget.quotation.isConverted)
-          SizedBox(
+       Row(
+         children: [
+           if (!widget.quotation.isConverted)
+             Expanded(
+               child: ElevatedButton.icon(
+                 onPressed: _editQuotation,
+                 icon: const Icon(Icons.edit_outlined, color: ColorRes.white),
+                 label: const Text(
+                   'Edit Quotation',
+                   style: TextStyle(
+                     fontSize: AppFontSizes.medium,
+                     fontWeight: AppFontWeights.semiBold,
+                     color: ColorRes.white,
+                   ),
+                 ),
+                 style: ElevatedButton.styleFrom(
+                   backgroundColor: ColorRes.primary,
+                   padding: const EdgeInsets.symmetric(vertical: 16),
+                   shape: RoundedRectangleBorder(
+                     borderRadius: BorderRadius.circular(12),
+                   ),
+                 ),),
+             ),
+           if (!widget.quotation.isConverted) const SizedBox(width: 12),
+           // Delete Button
+           Expanded(
+             child: OutlinedButton.icon(
+               onPressed: _deleteQuotation,
+               icon: const Icon(Icons.delete_outline, color: ColorRes.error),
+               label: const Text(
+                 'Delete Quotation',
+                 style: TextStyle(
+                   fontSize: AppFontSizes.medium,
+                   fontWeight: AppFontWeights.semiBold,
+                   color: ColorRes.error,
+                 ),
+               ),
+               style: OutlinedButton.styleFrom(
+                 padding: const EdgeInsets.symmetric(vertical: 16),
+                 shape: RoundedRectangleBorder(
+                   borderRadius: BorderRadius.circular(12),
+                 ),
+                 side: const BorderSide(
+                   color: ColorRes.error,
+                   width: 1.5,
+                 ),
+               ),
+             ),
+           ),
+         ],
+       ),
+
+        SizedBox(height: 12),
+
+        // Download PDF Button
+        SafeArea(
+          child: SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _editQuotation,
-              icon: const Icon(Icons.edit_outlined, color: ColorRes.white),
+            child: OutlinedButton.icon(
+              onPressed: _downloadQuotationPDF,
+              icon: const Icon(Icons.picture_as_pdf_outlined, color: ColorRes.primary),
               label: const Text(
-                'Edit Quotation',
+                'Share Document PDF ',
                 style: TextStyle(
                   fontSize: AppFontSizes.medium,
                   fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.white,
+                  color: ColorRes.primary,
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorRes.primary,
+              style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-            ),
-          ),),),
-
-        if (!widget.quotation.isConverted) const SizedBox(height: 12),
-
-        // Download PDF Button
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: _downloadQuotationPDF,
-            icon: const Icon(Icons.picture_as_pdf_outlined, color: ColorRes.primary),
-            label: const Text(
-              'Share Document PDF ',
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.primary,
-              ),
-            ),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              side: const BorderSide(
-                color: ColorRes.primary,
-                width: 1.5,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                side: const BorderSide(
+                  color: ColorRes.primary,
+                  width: 1.5,
+                ),
               ),
             ),
           ),
@@ -486,58 +524,59 @@ class _ContractorQuotationScreenState
 
         // Convert to Lead Button
         if (!widget.quotation.isConverted)
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _convertToLead,
-              icon: const Icon(Icons.transform, color: ColorRes.white),
-              label: const Text(
-                'Convert to Lead',
-                style: TextStyle(
-                  fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.white,
+          SafeArea(
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _convertToLead,
+                icon: const Icon(Icons.transform, color: ColorRes.white),
+                label: const Text(
+                  'Convert to Lead',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.white,
+                  ),
                 ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
                 ),
-                elevation: 0,
               ),
             ),
           ),
 
-        if (!widget.quotation.isConverted) const SizedBox(height: 12),
 
         // Delete Button
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: _deleteQuotation,
-            icon: const Icon(Icons.delete_outline, color: ColorRes.error),
-            label: const Text(
-              'Delete Quotation',
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.error,
-              ),
-            ),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              side: const BorderSide(
-                color: ColorRes.error,
-                width: 1.5,
-              ),
-            ),
-          ),
-        ),
+        // SizedBox(
+        //   width: double.infinity,
+        //   child: OutlinedButton.icon(
+        //     onPressed: _deleteQuotation,
+        //     icon: const Icon(Icons.delete_outline, color: ColorRes.error),
+        //     label: const Text(
+        //       'Delete Quotation',
+        //       style: TextStyle(
+        //         fontSize: AppFontSizes.medium,
+        //         fontWeight: AppFontWeights.semiBold,
+        //         color: ColorRes.error,
+        //       ),
+        //     ),
+        //     style: OutlinedButton.styleFrom(
+        //       padding: const EdgeInsets.symmetric(vertical: 16),
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(12),
+        //       ),
+        //       side: const BorderSide(
+        //         color: ColorRes.error,
+        //         width: 1.5,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -739,9 +778,9 @@ class _ContractorQuotationScreenState
       return word[0].toUpperCase() + word.substring(1).toLowerCase();
     }).join(' ');
   }
-
-
   Future<void> _downloadQuotationPDF() async {
+    final user=await SecureStorage.getUserData();
+    log("user : $user");
     try {
       // Show loading dialog
       Get.dialog(
@@ -753,124 +792,236 @@ class _ContractorQuotationScreenState
 
       final pdf = pw.Document();
 
+      // Define colors matching the website
+      final primaryColor = PdfColor.fromInt(0xFF2980B9); // Professional Blue
+      final secondaryColor = PdfColors.black ; // Gray
+      final darkColor = PdfColor.fromInt(0xFF2C3E50); // Dark Navy
+
       // Add page to PDF
       pdf.addPage(
         pw.MultiPage(
           pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(32),
+          margin: const pw.EdgeInsets.all(0),
           build: (pw.Context context) {
             return [
-              // Header
-              _buildPDFHeader(),
-              pw.SizedBox(height: 30),
-
-              // Quotation ID and Date
-              _buildPDFQuotationInfo(),
-              pw.SizedBox(height: 20),
-
-              // Customer Details
-              _buildPDFSection('Customer Details', [
-                _buildPDFRow('Name', widget.quotation.user.name),
-                _buildPDFRow('Phone', widget.quotation.user.phone),
-                _buildPDFRow('Email', widget.quotation.user.email),
-              ]),
-              pw.SizedBox(height: 20),
-
-              // Property Details
-              _buildPDFSection('Property Details', [
-                _buildPDFRow('Type', widget.quotation.meta.propertyDetails?.propertyType??''),
-                _buildPDFRow('City', widget.quotation.meta.propertyDetails?.city??''),
-                _buildPDFRow('Location', widget.quotation.meta.propertyDetails?.location??''),
-                _buildPDFRow('State', widget.quotation.meta.propertyDetails?.state??''),
-                _buildPDFRow('Carpet Area', '${widget.quotation.meta.propertyDetails?.carpetArea} sq.ft'),
-                if (widget.quotation.meta.propertyDetails?.bhk != null)
-                  _buildPDFRow('BHK', '${widget.quotation.meta.propertyDetails?.bhk}'),
-              ]),
-              pw.SizedBox(height: 20),
-
-              // Service Details
-              _buildPDFSection('Service Details', [
-                _buildPDFRow('Services', widget.quotation.meta.serviceNames??''),
-                _buildPDFRow('Description', widget.quotation.meta.propertyDetails?.serviceDescription??''),
-              ]),
-              pw.SizedBox(height: 20),
-
-              // Notes
-              _buildPDFSection('Notes', [
-                pw.Text(
-                  widget.quotation.meta.notes,
-                  style: pw.TextStyle(fontSize: 11, color: PdfColors.grey800),
-                ),
-              ]),
-              pw.SizedBox(height: 30),
-
-              // Price Section
+              // Branding Strip (Top colored bar)
               pw.Container(
-                padding: const pw.EdgeInsets.all(16),
-                decoration: pw.BoxDecoration(
-                  color: PdfColor.fromHex('#E3F2FD'),
-                  borderRadius: pw.BorderRadius.circular(8),
-                ),
-                child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                width: double.infinity,
+                height: 3,
+                color: primaryColor,
+              ),
+
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(20),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
+                    // Header Section
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text('NesticoPe', style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold, color: primaryColor)),
+                            pw.SizedBox(height: 2),
+                            pw.Text('Buy - Sell - Rent', style: pw.TextStyle(fontSize: 10, color: primaryColor)),
+                          ],
+                        ),
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.end,
+                          children: [
+                            pw.Text('Contractor', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: darkColor)),
+                            pw.SizedBox(height: 2),
+                            pw.Text('${user?.user?.email ?? ''} | ${user?.user?.phone ?? ''}', style: pw.TextStyle(fontSize: 10, color: secondaryColor)),
+                          ],
+                        ),
+                      ],
+                    ),
+
+
+                    pw.SizedBox(height: 20),
+
+                    // QUOTATION Label (Right aligned)
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                      children: [
+                        pw.Text(
+                          'QUOTATION',
+                          style: pw.TextStyle(
+                            fontSize: 26,
+                            fontWeight: pw.FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    pw.SizedBox(height: 10),
+
+                    // Meta Info (Right aligned)
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                      children: [
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              'Quotation #:',
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                                color: darkColor,
+                              ),
+                            ),
+                            pw.SizedBox(height: 4),
+                            pw.Text(
+                              'Date:',
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                                color: darkColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        pw.SizedBox(width: 10),
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.end,
+                          children: [
+                            pw.Text(
+                              widget.quotation.id.substring(0, 8).toUpperCase(),
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                color: secondaryColor,
+                              ),
+                            ),
+                            pw.SizedBox(height: 4),
+                            pw.Text(
+                              _formatQuotationDate(widget.quotation.createdAt),
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                color: secondaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    pw.SizedBox(height: 20),
+
+                    // Divider
+                    pw.Container(
+                      width: double.infinity,
+                      height: 0.5,
+                      color: PdfColor.fromInt(0xFFE6E6E6),
+                    ),
+
+                    pw.SizedBox(height: 20),
+
+                    // Client & Property Grid
+                    pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        // Left: Bill To
+                        pw.Expanded(
+                          child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(
+                                'Bill To',
+                                style: pw.TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: primaryColor,
+                                ),
+                              ),
+                              pw.SizedBox(height: 8),
+                              pw.Text(
+                                widget.quotation.user.name,
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: darkColor,
+                                ),
+                              ),
+                              pw.SizedBox(height: 4),
+                              if (widget.quotation.user.phone.isNotEmpty)
+                                pw.Text(
+                                  widget.quotation.user.phone,
+                                  style: pw.TextStyle(
+                                    fontSize: 10,
+                                    color: secondaryColor,
+                                  ),
+                                ),
+                              pw.SizedBox(height: 2),
+                              if (widget.quotation.user.email.isNotEmpty)
+                                pw.Text(
+                                  widget.quotation.user.email,
+                                  style: pw.TextStyle(
+                                    fontSize: 10,
+                                    color: secondaryColor,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+
+                        pw.SizedBox(width: 20),
+
+                        // Right: Property Details
+                        pw.Expanded(
+                          child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(
+                                'Property Details',
+                                style: pw.TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: primaryColor,
+                                ),
+                              ),
+                              pw.SizedBox(height: 8),
+                              _buildPropertyRow('Type', widget.quotation.meta.propertyDetails?.propertyType ?? ''),
+                              _buildPropertyRow('City', widget.quotation.meta.propertyDetails?.city ?? ''),
+                              _buildPropertyRow('Location', widget.quotation.meta.propertyDetails?.location ?? ''),
+                              if (widget.quotation.meta.propertyDetails?.carpetArea != null && widget.quotation.meta.propertyDetails!.carpetArea > 0)
+                                _buildPropertyRow('Area', '${widget.quotation.meta.propertyDetails!.carpetArea} sqft'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    pw.SizedBox(height: 30),
+
+                    // Item Table
+                    _buildItemTable(primaryColor, darkColor, secondaryColor),
+
+                    pw.SizedBox(height: 30),
+
+                    // Terms & Notes
                     pw.Text(
-                      'Total Quotation Price',
+                      'Terms & Notes:',
                       style: pw.TextStyle(
-                        fontSize: 16,
+                        fontSize: 10,
                         fontWeight: pw.FontWeight.bold,
-                        color: PdfColor.fromHex('#1976D2'),
+                        color: darkColor,
                       ),
                     ),
+                    pw.SizedBox(height: 6),
                     pw.Text(
-                      '₹ ${widget.quotation.price}',
+                      _getFooterNotes(),
                       style: pw.TextStyle(
-                        fontSize: 20,
-                        fontWeight: pw.FontWeight.bold,
-                        color: PdfColor.fromHex('#1976D2'),
+                        fontSize: 9,
+                        color: secondaryColor,
                       ),
                     ),
                   ],
                 ),
-              ),
-
-              pw.SizedBox(height: 20),
-
-              // Status
-              pw.Row(
-                children: [
-                  pw.Text(
-                    'Status: ',
-                    style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
-                  ),
-                  pw.Container(
-                    padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: pw.BoxDecoration(
-                      color: _getPDFStatusColor(widget.quotation.status),
-                      borderRadius: pw.BorderRadius.circular(4),
-                    ),
-                    child: pw.Text(
-                      widget.quotation.status.toUpperCase(),
-                      style: const pw.TextStyle(fontSize: 10, color: PdfColors.white),
-                    ),
-                  ),
-                ],
-              ),
-
-              pw.Spacer(),
-
-              // Footer
-              pw.Divider(),
-              pw.SizedBox(height: 10),
-              pw.Text(
-                'Generated on ${_formatDate(DateTime.now())}',
-                style: pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
-                textAlign: pw.TextAlign.center,
-              ),
-              pw.Text(
-                'This is a system-generated quotation',
-                style: pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
-                textAlign: pw.TextAlign.center,
               ),
             ];
           },
@@ -879,151 +1030,630 @@ class _ContractorQuotationScreenState
 
       // Close loading dialog
       Get.back();
+      await _sharePDF(pdf);
 
-      // Show save/share dialog
-      await _showPDFOptions(pdf);
-    } catch (e) {
+    } catch (e, stackTrace) {
       Get.back(); // Close loading dialog
+      print('PDF Generation Error: $e');
+      print('Stack Trace: $stackTrace');
       Get.snackbar(
         'Error',
         'Failed to generate PDF: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: ColorRes.error,
         colorText: ColorRes.white,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 5),
       );
     }
   }
 
-  pw.Widget _buildPDFHeader() {
-    return pw.Container(
-      padding: const pw.EdgeInsets.all(16),
-      decoration: pw.BoxDecoration(
-        color: PdfColor.fromHex('#1976D2'),
-        borderRadius: pw.BorderRadius.circular(8),
-      ),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-            'QUOTATION',
-            style: pw.TextStyle(
-              fontSize: 28,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.white,
-            ),
-          ),
-          pw.SizedBox(height: 4),
-          pw.Text(
-            'Professional Service Quotation',
-            style: pw.TextStyle(
-              fontSize: 12,
-              color: PdfColors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  pw.Widget _buildPropertyRow(String label, String value) {
+    if (value.isEmpty) return pw.SizedBox();
 
-  pw.Widget _buildPDFQuotationInfo() {
-    return pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-      children: [
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text(
-              'Quotation ID',
-              style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
-            ),
-            pw.SizedBox(height: 4),
-            pw.Text(
-              '#${widget.quotation.id.substring(0, 12).toUpperCase()}',
-              style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
-            ),
-          ],
-        ),
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
-          children: [
-            pw.Text(
-              'Date',
-              style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
-            ),
-            pw.SizedBox(height: 4),
-            pw.Text(
-              _formatDate(widget.quotation.createdAt),
-              style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+    final secondaryColor = PdfColor.fromInt(0xFF7F8C8D);
+    final darkColor = PdfColor.fromInt(0xFF2C3E50);
 
-  pw.Widget _buildPDFSection(String title, List<pw.Widget> children) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Container(
-          padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          decoration: pw.BoxDecoration(
-            color: PdfColors.grey300,
-            borderRadius: pw.BorderRadius.circular(4),
-          ),
-          child: pw.Text(
-            title,
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.grey800,
-            ),
-          ),
-        ),
-        pw.SizedBox(height: 12),
-        pw.Container(
-          padding: const pw.EdgeInsets.all(12),
-          decoration: pw.BoxDecoration(
-            border: pw.Border.all(color: PdfColors.grey300),
-            borderRadius: pw.BorderRadius.circular(4),
-          ),
-          child: pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: children,
-          ),
-        ),
-      ],
-    );
-  }
-
-  pw.Widget _buildPDFRow(String label, String value) {
     return pw.Padding(
-      padding: const pw.EdgeInsets.only(bottom: 8),
+      padding: const pw.EdgeInsets.only(bottom: 5),
       child: pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.SizedBox(
-            width: 120,
+            width: 60,
             child: pw.Text(
               '$label:',
               style: pw.TextStyle(
-                fontSize: 11,
+                fontSize: 10,
                 fontWeight: pw.FontWeight.bold,
-                color: PdfColors.grey700,
+                color: darkColor,
               ),
             ),
           ),
           pw.Expanded(
             child: pw.Text(
               value,
-              style: pw.TextStyle(fontSize: 11, color: PdfColors.grey800),
+              style: pw.TextStyle(
+                fontSize: 10,
+                color: secondaryColor,
+              ),
             ),
           ),
         ],
       ),
     );
   }
+  pw.Widget _buildItemTable(
+      PdfColor primaryColor,
+      PdfColor darkColor,
+      PdfColor secondaryColor,
+      ) {
+    // Build description
+    String description = widget.quotation.meta.serviceNames ?? '';
+
+    if (widget.quotation.meta.notes.isNotEmpty) {
+      String cleanNotes = widget.quotation.meta.notes.replaceAll('Generated from inquiry for: ', '');
+      if (!description.contains(cleanNotes) && cleanNotes.isNotEmpty) {
+        description += description.isNotEmpty ? '\n\nNote: $cleanNotes' : cleanNotes;
+      }
+    }
+
+    if (description.isEmpty) description = 'General Service';
+
+    // Parse and format price
+    final price = double.tryParse(widget.quotation.price.toString().replaceAll(',', '')) ?? 0;
+
+    String formatIndianCurrency(double amount) {
+      final s = amount.toStringAsFixed(0);
+      final n = s.length;
+      if (n <= 3) return '₹ $s';
+      final last3 = s.substring(n - 3);
+      final rest = s.substring(0, n - 3);
+      final formatted = rest.replaceAllMapped(RegExp(r'(\d)(?=(\d\d)+\d$)'), (Match m) => '${m[1]},') + ',' + last3;
+      return 'Rs. $formatted';
+    }
+
+    return pw.Table(
+      border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.8),
+      columnWidths: {
+        0: const pw.FlexColumnWidth(3),
+        1: const pw.FlexColumnWidth(1),
+      },
+      defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
+      children: [
+        // Header Row
+        pw.TableRow(
+          decoration: pw.BoxDecoration(color: primaryColor),
+          children: [
+            pw.Padding(
+              padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+              child: pw.Text(
+                'Description',
+                style: pw.TextStyle(
+                  fontSize: 11,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.white,
+                ),
+              ),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+              child: pw.Text(
+                'Total',
+                textAlign: pw.TextAlign.right,
+                style: pw.TextStyle(
+                  fontSize: 11,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        // Body Row
+        pw.TableRow(
+          children: [
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(10),
+              child: pw.Text(
+                description,
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  color: darkColor,
+                ),
+              ),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(10),
+              child: pw.Align(
+                alignment: pw.Alignment.centerRight,
+                child: pw.Text(
+                  formatIndianCurrency(price),
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    color: darkColor,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        // Footer (Grand Total)
+        pw.TableRow(
+          decoration: pw.BoxDecoration(color: PdfColor.fromHex('#F5F5F5')),
+          children: [
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(10),
+              child: pw.Align(
+                alignment: pw.Alignment.centerRight,
+                child: pw.Text(
+                  'Grand Total:',
+                  style: pw.TextStyle(
+                    fontSize: 12,
+                    fontWeight: pw.FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(10),
+              child: pw.Align(
+                alignment: pw.Alignment.centerRight,
+                child: pw.Text(
+                  formatIndianCurrency(price),
+                  style: pw.TextStyle(
+                    fontSize: 12,
+                    fontWeight: pw.FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // pw.Widget _buildItemTable(PdfColor primaryColor, PdfColor darkColor, PdfColor secondaryColor) {
+  //   // Build description
+  //   String description = widget.quotation.meta.serviceNames ?? '';
+  //
+  //   if (widget.quotation.meta.notes.isNotEmpty) {
+  //     String cleanNotes = widget.quotation.meta.notes.replaceAll('Generated from inquiry for: ', '');
+  //     if (!description.contains(cleanNotes) && cleanNotes.isNotEmpty) {
+  //       description += description.isNotEmpty ? '\n\nNote: $cleanNotes' : cleanNotes;
+  //     }
+  //   }
+  //
+  //   if (description.isEmpty) description = 'General Service';
+  //
+  //   // Parse price from string to double
+  //   final price = double.tryParse(widget.quotation.price.toString().replaceAll(',', '')) ?? 0;
+  //
+  //   // Format price manually to avoid NumberFormat issues
+  //   String formatPrice(double amount) {
+  //     final intAmount = amount.toInt();
+  //     final formatted = intAmount.toString().replaceAllMapped(
+  //       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+  //           (Match m) => '${m[1]},',
+  //     );
+  //     return '₹ $formatted';
+  //   }
+  //
+  //   return pw.Table(
+  //     border: pw.TableBorder.all(color: PdfColors.grey400),
+  //     columnWidths: {
+  //       0: const pw.FlexColumnWidth(3),
+  //       1: const pw.FlexColumnWidth(1),
+  //     },
+  //     children: [
+  //       // Header
+  //       pw.TableRow(
+  //         decoration: pw.BoxDecoration(color: primaryColor),
+  //         children: [
+  //           pw.Padding(
+  //
+  //             padding: const pw.EdgeInsets.all(10),
+  //             child: pw.Text(
+  //               'Description',
+  //               style: pw.TextStyle(
+  //                 fontSize: 11,
+  //                 fontWeight: pw.FontWeight.bold,
+  //                 color: PdfColors.white,
+  //               ),
+  //             ),
+  //           ),
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(10),
+  //             child: pw.Text(
+  //               'Total',
+  //               textAlign: pw.TextAlign.right,
+  //               style: pw.TextStyle(
+  //                 fontSize: 11,
+  //                 fontWeight: pw.FontWeight.bold,
+  //                 color: PdfColors.white,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //
+  //       // Body
+  //       pw.TableRow(
+  //         children: [
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(10),
+  //             child: pw.Text(
+  //               description,
+  //               style: pw.TextStyle(
+  //                 fontSize: 10,
+  //                 color: darkColor,
+  //               ),
+  //             ),
+  //           ),
+  //
+  //
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(10),
+  //             child: pw.Text(
+  //               "Rs. ${widget.quotation.price}",
+  //               style: pw.TextStyle(
+  //                 fontSize: 10,
+  //                 color: darkColor,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //
+  //       // Footer (Grand Total)
+  //       pw.TableRow(
+  //         decoration: pw.BoxDecoration(color: PdfColor.fromInt(0xFFF5F5F5)),
+  //         children: [
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(10),
+  //             child: pw.Text(
+  //               'Grand Total:',
+  //               textAlign: pw.TextAlign.right,
+  //               style: pw.TextStyle(
+  //                 fontSize: 12,
+  //                 fontWeight: pw.FontWeight.bold,
+  //                 color: primaryColor,
+  //               ),
+  //             ),
+  //           ),
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(10),
+  //             child: pw.Text(
+  //             'Rs. ${price.toString()}',
+  //               textAlign: pw.TextAlign.right,
+  //               style: pw.TextStyle(
+  //                 fontSize: 12,
+  //                 fontWeight: pw.FontWeight.bold,
+  //                 color: primaryColor,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  String _getFooterNotes() {
+    String notes = 'Standard terms and conditions apply.';
+
+    try {
+      if (widget.quotation.meta.propertyDetails?.serviceDescription != null &&
+          widget.quotation.meta.propertyDetails!.serviceDescription.isNotEmpty) {
+        notes += '\nScope: ${widget.quotation.meta.propertyDetails!.serviceDescription}';
+      }
+    } catch (e) {
+      print('Error getting footer notes: $e');
+    }
+
+    return notes;
+  }
+
+// Helper method to format date safely
+  String _formatQuotationDate(DateTime date) {
+    try {
+      return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+    } catch (e) {
+      print('Error formatting date: $e');
+      return 'N/A';
+    }
+  }
+
+  // Future<void> _downloadQuotationPDF() async {
+  //   try {
+  //     // Show loading dialog
+  //     Get.dialog(
+  //       const Center(
+  //         child: CircularProgressIndicator(),
+  //       ),
+  //       barrierDismissible: false,
+  //     );
+  //     final primaryColor = PdfColor.fromInt(0xFF2980B9); // Professional Blue
+  //     final secondaryColor = PdfColor.fromInt(0xFF7F8C8D); // Gray
+  //     final darkColor = PdfColor.fromInt(0xFF2C3E50); // Dark Navy
+  //
+  //     final pdf = pw.Document();
+  //
+  //     // Add page to PDF
+  //     pdf.addPage(
+  //       pw.MultiPage(
+  //         pageFormat: PdfPageFormat.a4,
+  //         margin: const pw.EdgeInsets.all(32),
+  //         build: (pw.Context context) {
+  //           return [
+  //             // Header
+  //             _buildPDFHeader(),
+  //             pw.SizedBox(height: 30),
+  //
+  //             // Quotation ID and Date
+  //             _buildPDFQuotationInfo(),
+  //             pw.SizedBox(height: 20),
+  //
+  //             // Customer Details
+  //             _buildPDFSection('Customer Details', [
+  //               _buildPDFRow('Name', widget.quotation.user.name),
+  //               _buildPDFRow('Phone', widget.quotation.user.phone),
+  //               _buildPDFRow('Email', widget.quotation.user.email),
+  //             ]),
+  //             pw.SizedBox(height: 20),
+  //
+  //             // Property Details
+  //             _buildPDFSection('Property Details', [
+  //               _buildPDFRow('Type', widget.quotation.meta.propertyDetails?.propertyType??''),
+  //               _buildPDFRow('City', widget.quotation.meta.propertyDetails?.city??''),
+  //               _buildPDFRow('Location', widget.quotation.meta.propertyDetails?.location??''),
+  //               _buildPDFRow('State', widget.quotation.meta.propertyDetails?.state??''),
+  //               _buildPDFRow('Carpet Area', '${widget.quotation.meta.propertyDetails?.carpetArea} sq.ft'),
+  //               if (widget.quotation.meta.propertyDetails?.bhk != null)
+  //                 _buildPDFRow('BHK', '${widget.quotation.meta.propertyDetails?.bhk}'),
+  //             ]),
+  //             pw.SizedBox(height: 20),
+  //
+  //             // Service Details
+  //             _buildPDFSection('Service Details', [
+  //               _buildPDFRow('Services', widget.quotation.meta.serviceNames??''),
+  //               _buildPDFRow('Description', widget.quotation.meta.propertyDetails?.serviceDescription??''),
+  //             ]),
+  //             pw.SizedBox(height: 20),
+  //
+  //             // Notes
+  //             _buildPDFSection('Notes', [
+  //               pw.Text(
+  //                 widget.quotation.meta.notes,
+  //                 style: pw.TextStyle(fontSize: 11, color: PdfColors.grey800),
+  //               ),
+  //             ]),
+  //             pw.SizedBox(height: 30),
+  //
+  //             // Price Section
+  //             pw.Container(
+  //               padding: const pw.EdgeInsets.all(16),
+  //               decoration: pw.BoxDecoration(
+  //                 color: PdfColor.fromHex('#E3F2FD'),
+  //                 borderRadius: pw.BorderRadius.circular(8),
+  //               ),
+  //               child: pw.Row(
+  //                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   pw.Text(
+  //                     'Total Quotation Price',
+  //                     style: pw.TextStyle(
+  //                       fontSize: 16,
+  //                       fontWeight: pw.FontWeight.bold,
+  //                       color: PdfColor.fromHex('#1976D2'),
+  //                     ),
+  //                   ),
+  //                   pw.Text(
+  //                     '₹ ${widget.quotation.price}',
+  //                     style: pw.TextStyle(
+  //                       fontSize: 20,
+  //                       fontWeight: pw.FontWeight.bold,
+  //                       color: PdfColor.fromHex('#1976D2'),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //
+  //             pw.SizedBox(height: 20),
+  //
+  //             // Status
+  //             pw.Row(
+  //               children: [
+  //                 pw.Text(
+  //                   'Status: ',
+  //                   style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+  //                 ),
+  //                 pw.Container(
+  //                   padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+  //                   decoration: pw.BoxDecoration(
+  //                     color: _getPDFStatusColor(widget.quotation.status),
+  //                     borderRadius: pw.BorderRadius.circular(4),
+  //                   ),
+  //                   child: pw.Text(
+  //                     widget.quotation.status.toUpperCase(),
+  //                     style: const pw.TextStyle(fontSize: 10, color: PdfColors.white),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //
+  //             pw.Spacer(),
+  //
+  //             // Footer
+  //             pw.Divider(),
+  //             pw.SizedBox(height: 10),
+  //             pw.Text(
+  //               'Generated on ${_formatDate(DateTime.now())}',
+  //               style: pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
+  //               textAlign: pw.TextAlign.center,
+  //             ),
+  //             pw.Text(
+  //               'This is a system-generated quotation',
+  //               style: pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
+  //               textAlign: pw.TextAlign.center,
+  //             ),
+  //           ];
+  //         },
+  //       ),
+  //     );
+  //
+  //     // // Close loading dialog
+  //     Get.back();
+  //     await _sharePDF(pdf);
+  //
+  //     // Show save/share dialog
+  //     // await _showPDFOptions(pdf);
+  //   } catch (e) {
+  //     Get.back(); // Close loading dialog
+  //     Get.snackbar(
+  //       'Error',
+  //       'Failed to generate PDF: ${e.toString()}',
+  //       snackPosition: SnackPosition.BOTTOM,
+  //       backgroundColor: ColorRes.error,
+  //       colorText: ColorRes.white,
+  //       duration: const Duration(seconds: 3),
+  //     );
+  //   }
+  // }
+  //
+  // pw.Widget _buildPDFHeader() {
+  //   return pw.Container(
+  //     padding: const pw.EdgeInsets.all(16),
+  //     decoration: pw.BoxDecoration(
+  //       color: PdfColor.fromHex('#1976D2'),
+  //       borderRadius: pw.BorderRadius.circular(8),
+  //     ),
+  //     child: pw.Column(
+  //       crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //       children: [
+  //         pw.Text(
+  //           'QUOTATION',
+  //           style: pw.TextStyle(
+  //             fontSize: 28,
+  //             fontWeight: pw.FontWeight.bold,
+  //             color: PdfColors.white,
+  //           ),
+  //         ),
+  //         pw.SizedBox(height: 4),
+  //         pw.Text(
+  //           'Professional Service Quotation',
+  //           style: pw.TextStyle(
+  //             fontSize: 12,
+  //             color: PdfColors.white,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // pw.Widget _buildPDFQuotationInfo() {
+  //   return pw.Row(
+  //     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       pw.Column(
+  //         crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //         children: [
+  //           pw.Text(
+  //             'Quotation ID',
+  //             style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
+  //           ),
+  //           pw.SizedBox(height: 4),
+  //           pw.Text(
+  //             '#${widget.quotation.id.substring(0, 12).toUpperCase()}',
+  //             style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+  //           ),
+  //         ],
+  //       ),
+  //       pw.Column(
+  //         crossAxisAlignment: pw.CrossAxisAlignment.end,
+  //         children: [
+  //           pw.Text(
+  //             'Date',
+  //             style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
+  //           ),
+  //           pw.SizedBox(height: 4),
+  //           pw.Text(
+  //             _formatDate(widget.quotation.createdAt),
+  //             style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
+  //
+  // pw.Widget _buildPDFSection(String title, List<pw.Widget> children) {
+  //   return pw.Column(
+  //     crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //     children: [
+  //       pw.Container(
+  //         padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+  //         decoration: pw.BoxDecoration(
+  //           color: PdfColors.grey300,
+  //           borderRadius: pw.BorderRadius.circular(4),
+  //         ),
+  //         child: pw.Text(
+  //           title,
+  //           style: pw.TextStyle(
+  //             fontSize: 14,
+  //             fontWeight: pw.FontWeight.bold,
+  //             color: PdfColors.grey800,
+  //           ),
+  //         ),
+  //       ),
+  //       pw.SizedBox(height: 12),
+  //       pw.Container(
+  //         padding: const pw.EdgeInsets.all(12),
+  //         decoration: pw.BoxDecoration(
+  //           border: pw.Border.all(color: PdfColors.grey300),
+  //           borderRadius: pw.BorderRadius.circular(4),
+  //         ),
+  //         child: pw.Column(
+  //           crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //           children: children,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+  //
+  // pw.Widget _buildPDFRow(String label, String value) {
+  //   return pw.Padding(
+  //     padding: const pw.EdgeInsets.only(bottom: 8),
+  //     child: pw.Row(
+  //       crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //       children: [
+  //         pw.SizedBox(
+  //           width: 120,
+  //           child: pw.Text(
+  //             '$label:',
+  //             style: pw.TextStyle(
+  //               fontSize: 11,
+  //               fontWeight: pw.FontWeight.bold,
+  //               color: PdfColors.grey700,
+  //             ),
+  //           ),
+  //         ),
+  //         pw.Expanded(
+  //           child: pw.Text(
+  //             value,
+  //             style: pw.TextStyle(fontSize: 11, color: PdfColors.grey800),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   PdfColor _getPDFStatusColor(String status) {
     switch (status.toLowerCase()) {

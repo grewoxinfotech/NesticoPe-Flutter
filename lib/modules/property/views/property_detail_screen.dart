@@ -4996,6 +4996,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 "name": name ?? "",
                                 "phone": phone ?? "",
                                 "email": email ?? "",
+                                "agreeToContact": true,
+                                "meta": {
+                                  "inquiryType": "offer_request"
+                                },
                               };
 
                               print('Submitting inquiry: ${inquiry}');

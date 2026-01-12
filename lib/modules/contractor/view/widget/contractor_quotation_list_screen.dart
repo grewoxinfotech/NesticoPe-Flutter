@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 // import 'package:housing_flutter_app/app/care/pagination/view/pagination_list_view.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_quotation_screen.dart';
@@ -236,7 +237,7 @@ class _QuotationListItem extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '₹ ${quotation.price}',
+                          '${Formatter.formatPrice(num.tryParse(quotation.price)??0)}',
                           style: const TextStyle(
                             fontSize: AppFontSizes.medium,
                             color: ColorRes.primary,
