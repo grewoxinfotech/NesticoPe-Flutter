@@ -4074,9 +4074,9 @@ leadVisitController.getLeadId(lead.id);
                               propertyInquiryController.setLeadInquiryId(
                                 int.tryParse(newLead.inquiryId ?? '0') ?? 0,
                               );
-                              // log(
-                              //   'Inquiry ID set: ${propertyInquiryController.items.map((e) => e.toMap())}',
-                              // );
+                              log(
+                                'Inquiry ID set: ${propertyInquiryController.items.map((e) => e.toMap())}',
+                              );
                             }
 
                             // Navigate only after all data loaded

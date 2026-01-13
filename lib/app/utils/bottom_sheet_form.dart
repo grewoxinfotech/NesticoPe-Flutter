@@ -12,7 +12,9 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
 import 'package:intl/intl.dart';
 
+import '../../data/network/builder/model/builder_model.dart';
 import '../../modules/add_property/view/create_property.dart';
+import '../../modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../../widgets/New folder/inputs/dropdown_field.dart';
 import 'formater/formater.dart';
 
@@ -21,6 +23,7 @@ class ContactOwnerBottom extends StatefulWidget {
 
   // Titles & Labels
   final String titleText;
+  final String isProject;
   final String chatButtonText;
   final String formTitle;
   final bool isForSell;
@@ -63,6 +66,8 @@ class ContactOwnerBottom extends StatefulWidget {
     DateTime? selectedDate,
     TimeOfDay? selectedTime,
       Map<String,dynamic>? roomInfo,
+      Map<String,dynamic>? selectedVarient,
+
 
   )?
   onContactPressed;
@@ -73,14 +78,18 @@ class ContactOwnerBottom extends StatefulWidget {
   // Icons
   final IconData nameIcon;
   List<PgRoomInfo>? pgRoomData;
+  List<ProjectConfiguration>?  projectConfiguration;
+
   final IconData phoneIcon;
   final IconData emailIcon;
   final Icon chatButtonIcon;
+
 
   ContactOwnerBottom({
     super.key,
     // required this.property,
     this.pgRoomData,
+    this.projectConfiguration,
     this.price,
     this.titleText = "Contact Property Owner",
     this.chatButtonText = "Chat on WhatsApp",
@@ -109,7 +118,7 @@ class ContactOwnerBottom extends StatefulWidget {
     this.forRentPrice = 0.0,
     this.forSellPrice = 0,
     this.isForSell = false,
-    required this.listingType,
+    required this.listingType, required this.isProject,
   });
 
   @override
@@ -121,6 +130,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
 
   String dropdownValue = 'Option 1';
   Map<String, dynamic> roomDetail = {};
+  Map<String, dynamic> configuration = {};
   String selectedType = '';
   double miniPrice = 0.0;
   double currentPrice = 0.0;
@@ -142,28 +152,31 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
   void initState() {
     super.initState();
     setState(() {
-      if (widget.isForSell) {
-        if (widget.listingType == "sell") {
-          _negotiablePriceController.text = widget.forSellPrice.toString();
-          miniPrice = widget.forSellPrice * 0.98;
-          currentPrice = widget.forSellPrice;
-          log("Current price ${currentPrice} ${miniPrice}");
-        } else if (widget.listingType == "rent") {
-          _negotiablePriceController.text = widget.forRentPrice.toString();
-          miniPrice = widget.forRentPrice * 0.98;
-          currentPrice = widget.forRentPrice;
-        }
-      } else {
-        if (widget.listingType == "sell") {
-          _negotiablePriceController.text = widget.forSellPrice.toString();
-          miniPrice = widget.forSellPrice * 0.98;
-          currentPrice = widget.forSellPrice;
-        } else if (widget.listingType == "rent") {
-          _negotiablePriceController.text = widget.forRentPrice.toString();
-          miniPrice = widget.forRentPrice * 0.98;
-          currentPrice = widget.forRentPrice;
-        }
-      }
+     if(widget.isProject.toLowerCase()!="project")
+       {
+         if (widget.isForSell) {
+           if (widget.listingType == "sell") {
+             _negotiablePriceController.text = widget.forSellPrice.toString();
+             miniPrice = widget.forSellPrice * 0.98;
+             currentPrice = widget.forSellPrice;
+             log("Current price ${currentPrice} ${miniPrice}");
+           } else if (widget.listingType == "rent") {
+             _negotiablePriceController.text = widget.forRentPrice.toString();
+             miniPrice = widget.forRentPrice * 0.98;
+             currentPrice = widget.forRentPrice;
+           }
+         } else {
+           if (widget.listingType == "sell") {
+             _negotiablePriceController.text = widget.forSellPrice.toString();
+             miniPrice = widget.forSellPrice * 0.98;
+             currentPrice = widget.forSellPrice;
+           } else if (widget.listingType == "rent") {
+             _negotiablePriceController.text = widget.forRentPrice.toString();
+             miniPrice = widget.forRentPrice * 0.98;
+             currentPrice = widget.forRentPrice;
+           }
+         }
+       }
     });
     selectedType = widget.listingType;
     _nameController = TextEditingController();
@@ -215,6 +228,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
           _selectedDate,
           _selectedTime,
           roomDetail,
+          configuration
         );
       }
     } else {
@@ -655,6 +669,53 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
 
               const SizedBox(height: 20),
             ],
+            if (widget.isProject == 'project') ...[
+              NesticoPeDropdownField<String>(
+                value: configuration?['variantId'],
+                hintText: "Choose a variant",
+                prefixIcon: Icons.home_outlined,
+                items: widget.projectConfiguration
+                    ?.expand((config) => config.variants.map((variant) {
+                  return DropdownMenuItem<String>(
+                    value: variant.variantId ?? variant.name,
+                    child: Text(
+                      '${variant.name.isNotEmpty ? variant.name : '${config.bhk} BHK'} - ${Formatter.formatPrice(variant.price)}',
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                  );
+
+                }))
+                    .toList() ??
+                    [],
+                onChanged: (val) {
+                  setState(() {
+                    // Find the selected variant from nested configs
+                    final selectedConfig = widget.projectConfiguration!
+                        .firstWhere((c) => c.variants.any((v) => v.variantId == val || v.name == val));
+                    final selectedVariant = selectedConfig.variants.firstWhere(
+                            (v) => v.variantId == val || v.name == val);
+
+                    currentPrice = selectedVariant.price;
+                    miniPrice= selectedVariant.price *0.98;
+                    configuration = {
+                      'bhk': selectedConfig.bhk,
+                      'name': selectedVariant.name,
+                      'price': selectedVariant.price,
+                      'id': selectedVariant.variantId,
+                    };
+                    _negotiablePriceController.text = selectedVariant.price.toString();
+                  });
+                },
+                darkText: true,
+                validator: (value) => value == null ? "Required" : null,
+              ),
+
+              const SizedBox(height: 20),
+            ],
+
             Row(
               children: [
                 Checkbox(

@@ -8,6 +8,7 @@ import '../../../../../app/constants/app_font_sizes.dart';
 import 'package:get/get.dart';
 import '../../../../../data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
 import '../../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
+import '../../../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../follow_up/contractor_follow_up_screen.dart';
 
 class ContractorLeadOverview extends StatelessWidget {

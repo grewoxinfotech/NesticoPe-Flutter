@@ -109,6 +109,8 @@ class ProjectController extends GetxController {
   }
 
   Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
+    print("Inquiry Data Sent: $data ====$id");
+
     final success = await _propertyService.addInquiry(data, id);
     return success;
   }

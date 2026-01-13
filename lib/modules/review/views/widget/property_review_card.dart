@@ -9,6 +9,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/img_res.dart';
 import '../../../../app/constants/size_manager.dart';
+import '../../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
 // class PropertyReviewCard extends StatefulWidget {
 //   final ReviewItem reviewItem;

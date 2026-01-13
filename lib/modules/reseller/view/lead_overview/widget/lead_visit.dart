@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/controller
 
 import '../../../../../data/network/lead/model/lead_visit_model.dart';
 import '../../../../seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
+import 'lead_follow_up_screen.dart';
 
 class LeadVisit extends StatefulWidget {
   final LeadVisitController leadVisitController;
@@ -68,14 +69,14 @@ class _LeadVisitState extends State<LeadVisit> {
         'Setting visit ID for uservcgfd ${widget.buyerID} and property ${widget.propertyId}',
       );
       print(
-        'Setting visit ID for user ${selectedInquiry.toMap()} and property ${selectedInquiry.propertyId}',
+        'Setting USer ID for user ${selectedInquiry.toMap()} and property ${selectedInquiry.propertyId}',
       );
       leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
       print('Visit ID set: ${leadVisitController.items.map((e) => e.toMap())}');
     }
     else if(widget.propertyId!=null){
       print(
-        'Setting visit ID for uservcgfd ${widget.buyerID} and property ${widget.propertyId}',
+        'Setting Buyeer ID for uservcgfd ${widget.buyerID} and property ${widget.propertyId}',
       );
       leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
     }

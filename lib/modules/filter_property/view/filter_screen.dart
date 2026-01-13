@@ -97,6 +97,61 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Search by ID
+            Obx(() {
+              final chips = controllerForFilter.getSelectedFilterChips();
+              if (chips.isEmpty) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        buildCommonText(
+                          'Selected',
+                          AppFontSizes.medium,
+                          AppFontWeights.semiBold,
+                          ColorRes.textColor.withOpacity(0.7),
+                          1,
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: controllerForFilter.resetAllFilters,
+                          child: Text(
+                            'Clear all',
+                            style: TextStyle(
+                              color: ColorRes.primary,
+                              fontWeight: AppFontWeights.semiBold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final chip in chips)
+                          Chip(
+                            label: Text(chip['label'] ?? ''),
+                            deleteIcon: const Icon(Icons.close, size: 16),
+                            onDeleted: () {
+                              final key = chip['key'];
+                              if (key != null) {
+                                controllerForFilter.clearFilterByKey(key);
+                              }
+                            },
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }),
+
+            const SizedBox(height: 16),
+
             if (widget.showSearchById)
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 12, 10, 8),
@@ -447,60 +502,6 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
             const SizedBox(height: 16),
 
             // Selected filters as chips
-            Obx(() {
-              final chips = controllerForFilter.getSelectedFilterChips();
-              if (chips.isEmpty) return const SizedBox.shrink();
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        buildCommonText(
-                          'Selected',
-                          AppFontSizes.medium,
-                          AppFontWeights.semiBold,
-                          ColorRes.textColor.withOpacity(0.7),
-                          1,
-                        ),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: controllerForFilter.resetAllFilters,
-                          child: Text(
-                            'Clear all',
-                            style: TextStyle(
-                              color: ColorRes.primary,
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final chip in chips)
-                          Chip(
-                            label: Text(chip['label'] ?? ''),
-                            deleteIcon: const Icon(Icons.close, size: 16),
-                            onDeleted: () {
-                              final key = chip['key'];
-                              if (key != null) {
-                                controllerForFilter.clearFilterByKey(key);
-                              }
-                            },
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }),
-
-            const SizedBox(height: 16),
 
             // Dynamic Filter Content
             Obx(() {

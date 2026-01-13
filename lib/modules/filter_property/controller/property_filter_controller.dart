@@ -681,9 +681,38 @@ RxBool isPropertyHaveVideo=false.obs;
             'label': 'Verified: ${value == true ? 'Yes' : 'No'}',
           });
           break;
+        case "reraId":
+         if(value==true) {
+           chips.add({'key': key, 'label': 'RERA: Yes'});
+         }
+          break;
         case 'approval_status':
           chips.add({'key': key, 'label': 'Status: $value'});
           break;
+        case "hasPhotos":
+          if (value == true) {
+            chips.add({'key': key, 'label': 'Has Photos: Yes'});
+          }
+          break;
+
+        case "hasVideos":
+          if (value == true) {
+            chips.add({'key': key, 'label': 'Has Videos: Yes'});
+          }
+          break;
+        case "transaction_type":
+          chips.add({'key': key, 'label': 'Transaction: ${value.toString().toLowerCase().replaceAll(" ", "_")}'});
+          break;
+        case "amenities":
+          if (value is Iterable && value.isNotEmpty) {
+            final amenitiesList = value.toList();
+            chips.add({
+              'key': key,
+              'label': 'Amenities: ${amenitiesList.length} selected',
+            });
+          }
+          break;
+
         case 'propertyId':
           chips.add({'key': key, 'label': 'ID: $value'});
           break;
@@ -695,6 +724,7 @@ RxBool isPropertyHaveVideo=false.obs;
         case 'bhk':
           chips.add({'key': key, 'label': 'BHK: $value'});
           break;
+
         case 'propertyType':
           chips.add({'key': key, 'label': 'Type: $value'});
           break;

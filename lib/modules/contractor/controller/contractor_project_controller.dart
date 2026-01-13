@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
+import '../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
 class ContractorProjectController extends PaginatedController<ContractorProjectItem>{
   RxMap<String, String> filters = <String, String>{}.obs;

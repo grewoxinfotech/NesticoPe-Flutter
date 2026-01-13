@@ -197,7 +197,7 @@ class SellerOverviewController extends GetxController {
       // Update observable data
       if (data != null) {
         overviewData.value = SellerInsightsModel.fromJson(data);
-        log("Seller Dashboard - Total Properties: ${overviewData.value?.data.propertyMetrics.totalProperties}");
+        log("Seller Dashboard - Total Properties: ${overviewData.value?.data?.propertyMetrics?.totalProperties}");
         log('overviewData.value is now: ${overviewData.value != null ? "NOT NULL" : "NULL"}');
       } else {
         overviewData.value = null;
@@ -229,9 +229,9 @@ class SellerOverviewController extends GetxController {
       log('Year is same, skipping update');
       return; // No need to update if year is the same
     }
-
-    selectedGraphYear.value = year;
     await getFetchSellerApi(year);
+    selectedGraphYear.value = year;
+
   }
 
   @override

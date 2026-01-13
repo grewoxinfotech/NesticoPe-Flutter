@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/modules/contractor/view/lead/widget/contract
 import 'package:housing_flutter_app/modules/contractor/view/lead/widget/contractor_lead_overview.dart';
 import 'package:housing_flutter_app/modules/contractor/view/lead/widget/convert_to_project_form.dart';
 
+import '../../../../app/utils/formater/formater.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
@@ -286,6 +287,8 @@ class ContractorLeadCard extends StatelessWidget {
               _buildInfoRow(Icons.phone, item.phone ?? ''),
               const SizedBox(height: 8),
               _buildInfoRow(Icons.email, item.email ?? ''),
+              const SizedBox(height: 8),
+              _buildInfoRow(Icons.currency_rupee_outlined, Formatter.formatNumber(num.tryParse(item.customFields?.quotationPrice.toString()??'')??0) ?? ''),
 
               if (isExpanded) ...[
                 const SizedBox(height: 12),
@@ -372,6 +375,7 @@ SizedBox.shrink(),
                 const SizedBox(height: 12),
 
                 _infoRow("Source", item.source ?? "-"),
+
                 _infoRow(
                   "Created Date",
                   item.createdAt != null

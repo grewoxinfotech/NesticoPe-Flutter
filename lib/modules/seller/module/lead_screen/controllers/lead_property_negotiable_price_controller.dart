@@ -15,6 +15,8 @@ import '../../../../add_property/view/create_property.dart';
 
 class LeadPropertyNegotiablePriceController extends PaginatedController<NegotiableItem> {
   RxString leadInquiryId = ''.obs;
+  RxString leadBuyerId = ''.obs;
+
   RxMap<String, String> filters = <String, String>{}.obs;
   Rxn<PropertyInquireItem> selectedInquiry = Rxn<PropertyInquireItem>();
   var txtReason=TextEditingController();
@@ -268,18 +270,20 @@ final leadId=''.obs;
     txtReason.clear();
   }
 
-
+  final RxMap<String, User> buyerProfiles = <String, User>{}.obs;
 
   @override
   Future<PaginationResponse<NegotiableItem>> fetchItems(int page) async {
-    log("Fetching Negotiable Price for Lead ID: ${leadInquiryId.value}");
+    log("Fetching Negotiable Price for Lead ID: ${leadInquiryId.value}======= and Buyer ID: ${leadBuyerId.value}");
+
     log("Filters applied: ${filters.toString()}");
     log("Page number: $page");
 
     final response = await _leadService.fetchLeadPrice(
       page: page,
       filters: filters,
-      userId: leadInquiryId.value,
+      userId: leadInquiryId.value,buyerId: leadBuyerId.value,
+
     );
 
     log("Response received: ${response.toString()}");
@@ -287,14 +291,20 @@ final leadId=''.obs;
   }
   Future<void> getTheVisitersProfile(String visiterId) async {
     log("Fetching visiter profile for ID: $visiterId");
-    selectedVisit.value= await userService.getUserById(visiterId);
-    log('Show the data of all ${selectedVisit.value}');
+    final user = await userService.getUserById(visiterId);
+    buyerProfiles[visiterId] = user??User.fromJson({});
+    // Store by ID
+    buyerProfiles.refresh(); // Trigger UI update
+    log('✅ Loaded profile for ${user?.firstName}');
 
   }
+
   /// Set the currently active inquiry ID, then refresh the list.
-  void setLeadNegotiablePriceId(String id) {
+  void setLeadNegotiablePriceId(String id, {String? buyerID}) {
     log("Setting Lead Negotiable Price ID to: $id");
     leadInquiryId.value = id;
+    leadBuyerId.value=buyerID??'';
+
     loadInitial();
   }
 

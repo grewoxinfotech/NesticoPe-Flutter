@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/modules/contractor/controller/contractor_lea
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
+import '../../../modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
 class FilterChipsBar extends StatelessWidget {
   final Map<String, String> filters;

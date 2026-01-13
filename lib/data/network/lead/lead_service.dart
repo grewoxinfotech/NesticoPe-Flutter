@@ -279,6 +279,7 @@ class LeadService {
   Future<PaginationResponse<NegotiableItem>> fetchLeadPrice({
     int page = 1,
     String? userId,
+    String? buyerId,
     Map<String, String>? filters,
 
   }) async {
@@ -291,6 +292,7 @@ class LeadService {
         queryParameters = {
           'page': page.toString(),
           if (userId != null) 'propertyId': userId.toString(),
+          if (buyerId != null) 'buyerId': buyerId.toString(),
 
           if (filters != null) ...filters,
         };

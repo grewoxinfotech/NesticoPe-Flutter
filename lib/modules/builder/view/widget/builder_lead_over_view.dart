@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart' hide capitalizeEachWord;
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/svg_res.dart';
@@ -10,6 +11,11 @@ import '../../../../app/utils/svg_widget.dart';
 import '../../../../app/widgets/media/media_preview.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../common/lead_components/lead_helpers.dart';
+import '../../../reseller/view/lead_overview/widget/lead_negotiable_price_screen.dart';
+import '../../../reseller/view/lead_overview/widget/lead_visit.dart';
+import '../../../seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
+import '../../../seller/module/lead_screen/controllers/lead_property_negotiable_price_controller.dart';
+import '../../../seller/module/lead_screen/controllers/lead_visit_controller.dart';
 import '../../../seller/module/lead_screen/model/lead_model.dart';
 import '../../controller/builder_lead_over_view_controller.dart';
 import '../../controller/project_controller.dart';
@@ -24,6 +30,9 @@ class BuilderLeadOverView extends StatelessWidget {
   final BuilderLeadOverviewController controller = Get.put(
     BuilderLeadOverviewController(),
   );
+  final LeadPropertyInquiryController leadPropertyInquiryController=Get.find<LeadPropertyInquiryController>();
+  final LeadVisitController leadVisitController=Get.find<LeadVisitController>();
+  final LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController=Get.find<LeadPropertyNegotiablePriceController>();
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +96,113 @@ class BuilderLeadOverView extends StatelessWidget {
 
             /// ================= Interest & Documents =================
             _buildInterestSection(),
+            const SizedBox(height: 8),
+            ListTile(
+              tileColor: ColorRes.white,
+              title: Text(
+                'Visit',
+                style: TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  fontWeight: AppFontWeights.semiBold,
+                ),
+              ),
+              leading: Icon(Icons.history, color: ColorRes.primary),
+              trailing: Icon(Icons.arrow_forward_ios_rounded),
+              onTap: () {
+                debugPrint('Fetching lead details for ${lead.id}');
+                leadVisitController.getLeadId(lead.id);
+
+
+                // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
+                // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
+
+                print(
+                  "Buyer Data ${leadPropertyInquiryController?.selectedInquiry.value?.userId}============== ${leadPropertyInquiryController?.selectedInquiry.value?.propertyId}",
+                );
+
+                Get.to(
+                      () => LeadVisit(
+                    leadVisitController: leadVisitController,
+                    propertyInquiryController:
+
+                    leadPropertyInquiryController,
+                    buyerID: leadPropertyInquiryController?.selectedInquiry.value?.userId,
+                    propertyId:
+                    project.id,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              tileColor: ColorRes.white,
+              title: Text(
+                'Negotiable',
+                style: TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  fontWeight: AppFontWeights.semiBold,
+                ),
+              ),
+              leading: Icon(Icons.currency_rupee_outlined, color: ColorRes.primary),
+              trailing: Icon(Icons.arrow_forward_ios_rounded),
+              onTap: () {
+                final selectedInquiry =
+                    leadPropertyInquiryController?.selectedInquiry.value;
+
+                if (selectedInquiry != null) {
+                  // Set visit id
+                  print(
+                    'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+                  );
+                  leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                    selectedInquiry.propertyId ?? '',
+                   buyerID:  selectedInquiry.userId ?? '',
+                  );
+                  print(
+                    'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+                  );
+                }
+                Get.to(
+                      () => LeadNegotiablePriceScreen(
+                    controller: leadPropertyNegotiablePriceController,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            SafeArea(
+
+              child: ListTile(
+                tileColor: ColorRes.white,
+                title: Text(
+                  'Follow Ups',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                  ),
+                ),
+                leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
+                trailing: Icon(Icons.arrow_forward_ios_rounded),
+                onTap: () {
+                  final selectedInquiry =
+                      leadPropertyInquiryController?.selectedInquiry.value;
+                  if (selectedInquiry != null) {
+                    // Set visit id
+                    print(
+                      'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+                    );
+                    leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                      selectedInquiry.propertyId ?? '',
+                      buyerID:   selectedInquiry.userId??'',
+                    );
+                    print(
+                      'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+                    );
+                  }
+                  Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
+                },
+              ),
+            ),
 
             const SizedBox(height: 32),
           ],

@@ -527,6 +527,7 @@ class LeadController extends PaginatedController<LeadItem> {
     newUpdatedLeadModel.value=await _service.getLeadDataByID(id);
     newUpdatedLeadModel.refresh();
 
+
     log('Lead Details From data : ${newUpdatedLeadModel.value?.toJson()}');
   }
 

@@ -14,6 +14,7 @@ import '../../../../app/constants/color_res.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../../add_property/view/create_property.dart';
+import '../../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../../controller/contractor_project_controller.dart';
 
 class ContractorProjectScreen extends StatelessWidget {
@@ -143,7 +144,7 @@ class ContractorProjectScreen extends StatelessWidget {
                             ),
                             itemCount: projects.length,
                             separatorBuilder:
-                                (_, __) => const SizedBox(height: 2),
+                                (_, _) => const SizedBox(height: 2),
                             itemBuilder: (context, index) {
                               final project = projects[index];
                               return GestureDetector(
@@ -289,6 +290,7 @@ class ProjectCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
+                      fontWeight: AppFontWeights.medium
                   ),
                 ),
               ],
@@ -306,15 +308,64 @@ class ProjectCard extends StatelessWidget {
 
                 /// print formated price by comma separator
                 Text(
-                  Formatter.formatPrice(double.parse(p.projectPrice)),
-                  style: const TextStyle(
+                  Formatter.formatNumber(double.parse(p.projectPrice)),
+                  style:  TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
+                    fontWeight: AppFontWeights.medium
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
+
+
+// ----------- PROGRESS INDICATOR -----------
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Progress",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.textSecondary,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                    Text(
+                      "${p.progress.toStringAsFixed(0)}%",
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.textPrimary,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    // Ensure progress stays between 0.0 and 1.0
+                    value: (p.progress.clamp(0, 100)) / 100,
+                    minHeight: 8,
+                    backgroundColor: ColorRes.leadGreyColor.shade200,
+
+                    // Dynamic color: orange for active, blue for others
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      p.status.toLowerCase() == 'in_progress'
+                          ? ColorRes.orangeColor
+                          : Colors.blueAccent,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+
 
             /// ---------------- EXPANDED DETAILS ----------------
             // if (isExpanded) ...[

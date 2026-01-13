@@ -95,31 +95,55 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../data/network/property/models/analytics_model.dart';
 import '../../../../data/network/property/models/property_model.dart';
-
-class EngagementPieChart extends StatelessWidget {
+class EngagementPieChart extends StatefulWidget {
   final Map<String, SubBreakdown> breakdown;
   final Color? color;
 
-  const EngagementPieChart({super.key, required this.breakdown, this.color});
+  const EngagementPieChart({
+    super.key,
+    required this.breakdown,
+    this.color,
+  });
+
+  @override
+  State<EngagementPieChart> createState() => _EngagementPieChartState();
+}
+
+class _EngagementPieChartState extends State<EngagementPieChart> {
+  int touchedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
-    final favorites = breakdown["favorites"]?.count.toDouble() ?? 0;
-    final inquiries = breakdown["inquiries"]?.count.toDouble() ?? 0;
-    final views = breakdown["views"]?.count.toDouble() ?? 0;
+    /// Normalize engagement data
+    final engagement = {
+      "Favorites": widget.breakdown["favorites"]?.count.toDouble() ?? 0,
+      "Inquiries": widget.breakdown["inquiries"]?.count.toDouble() ?? 0,
+      "Views": widget.breakdown["views"]?.count.toDouble() ?? 0,
+      "Visits": widget.breakdown["visits"]?.count.toDouble() ?? 0,
+      "Shares": widget.breakdown["shares"]?.count.toDouble() ?? 0,
+    };
 
-    final total = favorites + inquiries + views;
+    final entries = engagement.entries.toList();
+    final total = entries.fold<double>(0, (sum, e) => sum + e.value);
 
-    List<PieChartSectionData> _chartSections() {
+    final colors = [
+      ColorRes.primary,
+      ColorRes.leadTealColor,
+      ColorRes.purpleColor,
+      ColorRes.orangeColor,
+      ColorRes.green,
+    ];
+
+    List<PieChartSectionData> _sections() {
       if (total == 0) {
         return [
           PieChartSectionData(
             value: 1,
             title: "No Data",
+            radius: 55,
             color: Colors.grey.shade300,
-            radius: 70,
             titleStyle: const TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: Colors.black54,
             ),
@@ -127,53 +151,28 @@ class EngagementPieChart extends StatelessWidget {
         ];
       }
 
-      return [
-        PieChartSectionData(
-          value: favorites,
-          title:
-              favorites == 0
-                  ? ""
-                  : "${(favorites / total * 100).toStringAsFixed(0)}%",
-          radius: 70,
-          color: ColorRes.primary,
-          titleStyle: const TextStyle(
-            fontSize: 12,
+      return List.generate(entries.length, (i) {
+        final e = entries[i];
+        final isTouched = i == touchedIndex;
+        final percentage = (e.value / total * 100).toStringAsFixed(0);
+
+        return PieChartSectionData(
+          value: e.value,
+          title: e.value == 0 ? "" : "$percentage%",
+          radius: isTouched ? 75 : 65,
+          color: colors[i % colors.length],
+          titleStyle: TextStyle(
+            fontSize: isTouched ? 16 : 12,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
-        ),
-        PieChartSectionData(
-          value: inquiries,
-          title:
-              inquiries == 0
-                  ? ""
-                  : "${(inquiries / total * 100).toStringAsFixed(0)}%",
-          radius: 70,
-          color: ColorRes.leadTealColor,
-          titleStyle: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        PieChartSectionData(
-          value: views,
-          title:
-              views == 0 ? "" : "${(views / total * 100).toStringAsFixed(0)}%",
-          radius: 70,
-          color: ColorRes.purpleColor,
-          titleStyle: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ];
+        );
+      });
     }
 
     return Container(
-      color: color,
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      color: widget.color,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -185,7 +184,7 @@ class EngagementPieChart extends StatelessWidget {
               color: ColorRes.leadGreyColor[800],
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -194,24 +193,50 @@ class EngagementPieChart extends StatelessWidget {
                 height: 240,
                 child: PieChart(
                   PieChartData(
+                    borderData: FlBorderData(show: false),
                     sectionsSpace: 2,
                     centerSpaceRadius: 36,
-                    sections: _chartSections(),
+                    pieTouchData: PieTouchData(
+                      touchCallback: (event, response) {
+                        setState(() {
+                          if (!event.isInterestedForInteractions ||
+                              response?.touchedSection == null) {
+                            touchedIndex = -1;
+                            return;
+                          }
+                          touchedIndex =
+                              response!.touchedSection!.touchedSectionIndex;
+                        });
+                      },
+                    ),
+                    sections: _sections(),
                   ),
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              /// Legend
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _legendItem(ColorRes.primary, "Favorites"),
-                  _legendItem(ColorRes.leadTealColor, "Inquiries"),
-                  _legendItem(ColorRes.purpleColor, "Views"),
-                ],
-              ),
+              /// Dynamic Legend (perfectly centered)
+              if (total > 0)
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  runAlignment: WrapAlignment.center,
+                  spacing: 18,
+                  runSpacing: 10,
+                  children: List.generate(entries.length, (i) {
+                    final e = entries[i];
+                    return _legendItem(
+                      colors[i % colors.length],
+                      e.key,
+                      e.value.toInt(),
+                    );
+                  }),
+                )
+              else
+                const Text(
+                  "No data available",
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
 
               const SizedBox(height: 20),
             ],
@@ -221,20 +246,206 @@ class EngagementPieChart extends StatelessWidget {
     );
   }
 
-  Widget _legendItem(Color color, String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Row(
-        children: [
-          Container(
-            height: 10,
-            width: 10,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  Widget _legendItem(Color color, String title, int value) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 10,
+          width: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          value.toString(),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: color,
           ),
-          const SizedBox(width: 5),
-          Text(title, style: const TextStyle(fontSize: 12)),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
+
+// class EngagementPieChart extends StatelessWidget {
+//   final Map<String, SubBreakdown> breakdown;
+//   final Color? color;
+//
+//   const EngagementPieChart({super.key, required this.breakdown, this.color});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final favorites = breakdown["favorites"]?.count.toDouble() ?? 0;
+//     final inquiries = breakdown["inquiries"]?.count.toDouble() ?? 0;
+//     final views = breakdown["views"]?.count.toDouble() ?? 0;
+//     final visits = breakdown["visits"]?.count.toDouble() ?? 0;
+//     final share = breakdown["shares"]?.count.toDouble() ?? 0;
+//
+//
+//     final total = favorites + inquiries + views+ visits + share;
+//
+//     List<PieChartSectionData> _chartSections() {
+//       if (total == 0) {
+//         return [
+//           PieChartSectionData(
+//             value: 1,
+//             title: "No Data",
+//             color: Colors.grey.shade300,
+//             radius: 70,
+//             titleStyle: const TextStyle(
+//               fontSize: 14,
+//               fontWeight: FontWeight.w600,
+//               color: Colors.black54,
+//             ),
+//           ),
+//         ];
+//       }
+//
+//       return [
+//         PieChartSectionData(
+//           value: favorites,
+//           title:
+//               favorites == 0
+//                   ? ""
+//                   : "${(favorites / total * 100).toStringAsFixed(0)}%",
+//           radius: 70,
+//           color: ColorRes.primary,
+//           titleStyle: const TextStyle(
+//             fontSize: 12,
+//             fontWeight: FontWeight.bold,
+//             color: Colors.white,
+//           ),
+//         ),
+//         PieChartSectionData(
+//           value: inquiries,
+//           title:
+//               inquiries == 0
+//                   ? ""
+//                   : "${(inquiries / total * 100).toStringAsFixed(0)}%",
+//           radius: 70,
+//           color: ColorRes.leadTealColor,
+//           titleStyle: const TextStyle(
+//             fontSize: 12,
+//             fontWeight: FontWeight.bold,
+//             color: Colors.white,
+//           ),
+//         ),
+//         PieChartSectionData(
+//           value: views,
+//           title:
+//               views == 0 ? "" : "${(views / total * 100).toStringAsFixed(0)}%",
+//           radius: 70,
+//           color: ColorRes.purpleColor,
+//           titleStyle: const TextStyle(
+//             fontSize: 12,
+//             fontWeight: FontWeight.bold,
+//             color: Colors.white,
+//           ),
+//         ),
+//         PieChartSectionData(
+//           value: visits,
+//           title:
+//               visits == 0 ? "" : "${(visits / total * 100).toStringAsFixed(0)}%",
+//           radius: 70,
+//           color: ColorRes.orangeColor,
+//           titleStyle: const TextStyle(
+//             fontSize: 12,
+//             fontWeight: FontWeight.bold,
+//             color: Colors.white,
+//           ),
+//         ),PieChartSectionData(
+//           value: share,
+//           title:
+//               share == 0 ? "" : "${(share / total * 100).toStringAsFixed(0)}%",
+//           radius: 70,
+//           color: ColorRes.green,
+//           titleStyle: const TextStyle(
+//             fontSize: 12,
+//             fontWeight: FontWeight.bold,
+//             color: Colors.white,
+//           ),
+//         ),
+//
+//       ];
+//     }
+//
+//     return Container(
+//       color: color,
+//       padding: EdgeInsets.symmetric(horizontal: 12),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text(
+//             "Engagement Breakdown",
+//             style: TextStyle(
+//               fontSize: AppFontSizes.body,
+//               fontWeight: AppFontWeights.semiBold,
+//               color: ColorRes.leadGreyColor[800],
+//             ),
+//           ),
+//           const SizedBox(height: 10),
+//
+//           Column(
+//             crossAxisAlignment: CrossAxisAlignment.center,
+//             children: [
+//               SizedBox(
+//                 height: 240,
+//                 child: PieChart(
+//                   PieChartData(
+//                     sectionsSpace: 2,
+//                     centerSpaceRadius: 36,
+//                     sections: _chartSections(),
+//                   ),
+//                 ),
+//               ),
+//
+//               const SizedBox(height: 12),
+//
+//               /// Legend
+//               Wrap(
+//                 alignment: WrapAlignment.center,
+//                 runAlignment: WrapAlignment.center,
+//                 spacing: 14,
+//                 runSpacing: 10,
+//                 children: [
+//                   _legendItem(ColorRes.primary, "Favorites"),
+//                   _legendItem(ColorRes.leadTealColor, "Inquiries"),
+//                   _legendItem(ColorRes.purpleColor, "Views"),
+//                   _legendItem(ColorRes.orangeColor, "Visits"),
+//                   _legendItem(ColorRes.green, "Shares"),
+//                 ],
+//               ),
+//
+//
+//               const SizedBox(height: 20),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _legendItem(Color color, String title) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 10),
+//       child: Row(
+//         children: [
+//           Container(
+//             height: 10,
+//             width: 10,
+//             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+//           ),
+//           const SizedBox(width: 5),
+//           Text(title, style: const TextStyle(fontSize: 12)),
+//         ],
+//       ),
+//     );
+//   }
+// }

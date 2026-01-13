@@ -15,6 +15,7 @@ import '../../../data/network/contractor/model/contractor_lead_model/contractor_
 import '../../../data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
 import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
 import '../../../data/network/contractor/service/project/contractor_project_service.dart';
+import '../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'contractor_project_controller.dart';
 import 'contractot_employee_controller.dart';
 
@@ -649,15 +650,4 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   }
 }
 
-String capitalizeEachWord(String? text) {
-  if (text == null || text.isEmpty) return '';
-  return text
-      .split(RegExp(r'\s+|_+')) // split by space or underscore
-      .map(
-        (word) =>
-            word.isNotEmpty
-                ? word[0].toUpperCase() + word.substring(1).toLowerCase()
-                : '',
-      )
-      .join(' ');
-}
+

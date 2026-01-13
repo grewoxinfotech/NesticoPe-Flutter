@@ -906,6 +906,9 @@ class ProjectVariant {
   double price;
   double? pricePerSqFt;
   int totalUnits;
+  double? platformFees;
+  double? brokerCommission;
+
   int availableUnits;
   List<String> specifications;
   List<String> images;
@@ -918,6 +921,9 @@ class ProjectVariant {
     required this.name,
     required this.builtUpArea,
     required this.carpetArea,
+    this.platformFees,
+    this.brokerCommission,
+
     required this.price,
     this.pricePerSqFt,
     required this.totalUnits,
@@ -935,6 +941,9 @@ class ProjectVariant {
     return ProjectVariant(
       name: json['name'] ?? '',
       builtUpArea: (json['builtUpArea'] ?? 0).toDouble(),
+      platformFees: (json['platformFees'] ?? 0).toDouble(),
+      brokerCommission: (json['brokerCommission'] ?? 0).toDouble(),
+
       carpetArea: (json['carpetArea'] ?? 0).toDouble(),
       price: (json['price'] ?? 0).toDouble(),
       pricePerSqFt: json['pricePerSqFt']?.toDouble(),
@@ -958,6 +967,9 @@ class ProjectVariant {
     'totalUnits': totalUnits,
     'availableUnits': availableUnits,
     'specifications': specifications,
+    'platformFees': platformFees,
+    'brokerCommission': brokerCommission,
+
     'images': images,
     'videos': videos,
     'models': models,
@@ -997,6 +1009,9 @@ class ProjectItem {
   final String projectName;
   final String projectArea;
   final ProjectSize? projectSize;
+  final double? performanceScorePercent;
+
+
   final SizeRange? sizeRange;
   final String? launchDate;
   final String? possessionDate;
@@ -1070,6 +1085,8 @@ class ProjectItem {
     required this.brochures,
     required this.isVerified,
     required this.isActive,
+    this.performanceScorePercent,
+
     required this.createdAt,
     required this.updatedAt,
     this.createdBy,
@@ -1105,6 +1122,9 @@ class ProjectItem {
         json['projectSize'] != null
             ? ProjectSize.fromJson(json['projectSize'])
             : null,
+    performanceScorePercent:
+    (json['performanceScorePercent'] ?? 0).toDouble(),
+
     sizeRange:
         json['sizeRange'] != null
             ? SizeRange.fromJson(json['sizeRange'])
@@ -1188,6 +1208,8 @@ class ProjectItem {
     'configurations': configuration.map((v) => v.toJson()).toList(),
     'reraId': reraId,
     'propertyTypes': propertyTypes,
+    'performanceScorePercent': performanceScorePercent,
+
     'projectContactInfo': projectContactInfo?.toJson(),
     'status': status,
     'address': address,

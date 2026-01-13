@@ -881,45 +881,54 @@ class InquiryCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildActionButton(
+                                icon: Icons.delete_outline,
+                                label: 'Delete',
+                                color: ColorRes.error,
+                                onPressed: onDelete,
+                              ),
+                            ),
                           ],
 
-                          Expanded(
-                            child: (inquiry.isConvertedToQuotation
-                            )
-                                ? GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: ColorRes.green.withOpacity(0.3),
-                                    width: 1,
-                                  ),
-                                  color: ColorRes.green.withOpacity(0.08),
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'Converted',
-                                  style: TextStyle(
-                                    color: ColorRes.green,
-                                    fontSize: AppFontSizes.bodySmall,
-                                    fontWeight: AppFontWeights.semiBold,
-                                  ),
-                                ),
-                              ),
-                            )
-                                : _buildActionButton(
-                              icon: Icons.transform,
-                              label: 'Lead Convert',
-                              color: ColorRes.success,
-                              onPressed: onLeadConvert,
+
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      (inquiry.isConvertedToQuotation
+                      )
+                          ? GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: ColorRes.green.withOpacity(0.3),
+                              width: 1,
+                            ),
+                            color: ColorRes.green.withOpacity(0.08),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Converted',
+                            style: TextStyle(
+                              color: ColorRes.green,
+                              fontSize: AppFontSizes.bodySmall,
+                              fontWeight: AppFontWeights.semiBold,
                             ),
                           ),
-                        ],
+                        ),
+                      )
+                          : _buildActionButton(
+                        icon: Icons.transform,
+                        label: 'Convert to Quotation',
+                        color: ColorRes.success,
+                        onPressed: onLeadConvert,
                       ),
                       // const SizedBox(height: 8),
                       //
@@ -941,15 +950,7 @@ class InquiryCard extends StatelessWidget {
                       // ),
                       const SizedBox(height: 8),
 
-                      SizedBox(
-                        width: double.infinity,
-                        child: _buildActionButton(
-                          icon: Icons.delete_outline,
-                          label: 'Delete',
-                          color: ColorRes.error,
-                          onPressed: onDelete,
-                        ),
-                      ),
+
                     ],
                   ),
                 ),

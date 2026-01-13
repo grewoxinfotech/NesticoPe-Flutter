@@ -20,6 +20,7 @@ import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../property/controllers/top_seller_profile_controller.dart';
 import '../../property/controllers/top_seller_project_controller.dart';
+import '../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../../reseller/view/listing/property_listing.dart';
 
 // /// --- DATA MODEL ---

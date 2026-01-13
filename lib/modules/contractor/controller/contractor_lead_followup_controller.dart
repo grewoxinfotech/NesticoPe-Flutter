@@ -14,6 +14,7 @@ import '../../../app/constants/color_res.dart';
 import '../../../data/network/contractor/model/contractor_lead_model/contractor_lead_followup_model.dart';
 import '../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../add_property/view/create_property.dart';
+import '../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../view/widget/cotractor_active_switch.dart';
 
 class ContractorLeadFollowupController

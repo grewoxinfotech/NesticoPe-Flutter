@@ -642,10 +642,12 @@ class ReferralProgramScreen extends StatelessWidget {
             _buildBonusCard(),
             const SizedBox(height: 16),
             _buildHowItWorks(),
-            if (referrals?.first.referredUsers?.isNotEmpty != null &&referrals!.first.referredUsers!.isNotEmpty)...[
-              SizedBox(height: 16),
+            if (hasReferrals &&
+                referrals!.first.referredUsers != null &&
+                referrals.first.referredUsers!.isNotEmpty) ...[
+              const SizedBox(height: 16),
               _buildReferredSellersSection(),
-            ]
+            ],
           ],
         );
       }),
@@ -926,6 +928,9 @@ class ReferralProgramScreen extends StatelessWidget {
   );
 
   Widget _buildStatsGrid(DataWrapper? data) {
+    final referrals = data?.referrals;
+    final firstReferral = (referrals != null && referrals.isNotEmpty) ? referrals.first : null;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -935,7 +940,7 @@ class ReferralProgramScreen extends StatelessWidget {
               Expanded(
                 child: buildMetricCard(
                   'Referral Codes',
-                  '${data?.referrals?.length ?? 0}',
+                  '${referrals?.length ?? 0}',
                   Icons.card_giftcard,
                   ColorRes.purpleColor,
                 ),
@@ -944,7 +949,7 @@ class ReferralProgramScreen extends StatelessWidget {
               Expanded(
                 child: buildMetricCard(
                   'Sellers Referred',
-                  '${data?.referrals?.first.totalReferrals ?? 0}',
+                  '${firstReferral?.totalReferrals ?? 0}',
                   Icons.person_add_alt_1,
                   ColorRes.blueColor,
                 ),
@@ -966,7 +971,7 @@ class ReferralProgramScreen extends StatelessWidget {
               Expanded(
                 child: buildMetricCard(
                   'Points Redeemed',
-                  '${data?.referrals?.first.totalRewards ?? 0}',
+                  '${firstReferral?.totalRewards ?? 0}',
                   Icons.currency_exchange,
                   ColorRes.orangeColor,
                 ),
@@ -977,6 +982,7 @@ class ReferralProgramScreen extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildBonusCard() {
     return Container(
@@ -1006,7 +1012,7 @@ class ReferralProgramScreen extends StatelessWidget {
                       children: [
                         const TextSpan(text: 'Refer '),
                         TextSpan(
-                          text: '${controller.requiredResellers.value - (controller.dummyReferral.value?.data?.referrals?.first.totalReferrals ?? 0)} more active sellers',
+                          text: '${controller.requiredResellers.value - referredUsers} more active sellers',
                           style: TextStyle(
                             fontWeight: AppFontWeights.extraBold,
                             color: Color(0xFF4A90E2),
@@ -1032,7 +1038,7 @@ class ReferralProgramScreen extends StatelessWidget {
           Obx(
                 () {
               final int totalRequired = 10;
-              final int referedUser = controller.dummyReferral.value?.data?.referrals?.first.totalReferrals ?? 0;
+              final int referedUser = referredUsers;
               final int completed = 10 - (totalRequired - referedUser);
               final progress = totalRequired > 0
                   ? (completed / totalRequired).clamp(0.0, 1.0)
@@ -1054,6 +1060,13 @@ class ReferralProgramScreen extends StatelessWidget {
     );
   }
 
+  int get referredUsers {
+    final referrals = controller.dummyReferral.value?.data?.referrals;
+    if (referrals != null && referrals.isNotEmpty) {
+      return referrals.first.totalReferrals ?? 0;
+    }
+    return 0;
+  }
 
   Widget _buildHowItWorks() {
     return Container(

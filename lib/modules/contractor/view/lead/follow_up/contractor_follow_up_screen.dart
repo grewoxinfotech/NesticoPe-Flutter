@@ -9,6 +9,7 @@ import 'package:housing_flutter_app/modules/contractor/controller/contractor_lea
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../widgets/New folder/inputs/dropdown_field.dart';
+import '../../../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
 class ContractorFollowUpScreen extends StatefulWidget {
   ContractorLeadItem lead;
@@ -628,13 +629,5 @@ String getTitle(String type) {
       return type;
   }
 }
-String capitalizeEachWord(String? text) {
-  if (text == null || text.isEmpty) return '';
-  return text
-      .split(RegExp(r'\s+|_+')) // split by space or underscore
-      .map((word) => word.isNotEmpty
-      ? word[0].toUpperCase() + word.substring(1).toLowerCase()
-      : '')
-      .join(' ');
-}
+
 

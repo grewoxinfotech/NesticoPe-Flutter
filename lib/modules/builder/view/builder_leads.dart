@@ -263,6 +263,9 @@ import '../../../data/network/property/models/property_model.dart';
 import '../../../widgets/bottom_sheet/lead_filter_bottomsheet.dart';
 import '../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
 import '../../seller/module/lead_screen/controllers/lead_controller.dart';
+import '../../seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
+import '../../seller/module/lead_screen/controllers/lead_property_negotiable_price_controller.dart';
+import '../../seller/module/lead_screen/controllers/lead_visit_controller.dart';
 import '../../seller/module/lead_screen/model/lead_model.dart';
 import '../controller/builder_form_controller.dart';
 
@@ -284,6 +287,17 @@ class _BuilderLeadsState extends State<BuilderLeads> {
   final RxList<String> selectedFilters = <String>[].obs;
   final controller = Get.find<ProjectWizardController>(tag: "builder");
   bool isLoading = false;
+  final LeadPropertyInquiryController propertyInquiryController = Get.put(
+    LeadPropertyInquiryController(),
+  );
+  final LeadVisitController leadVisitController = Get.put(
+    LeadVisitController(),
+  );
+
+  final LeadPropertyNegotiablePriceController
+  leadPropertyNegotiablePriceController = Get.put(
+    LeadPropertyNegotiablePriceController(),
+  );
 
   // Determine if we're showing property-specific leads
   bool get isPropertyView =>
@@ -475,49 +489,57 @@ class _BuilderLeadsState extends State<BuilderLeads> {
                             final lead = currentLeads[index];
                             return LeadCardWidget(
                               lead: lead,
-                              // onTap: () {
-                              //   log("String builderLead Data ${lead.toJson()}");
-                              //   final project = controller.items.firstWhere(
-                              //     (prop) => prop.id == lead.propertyId,
-                              //   );
-                              //   Get.to(
-                              //     () => BuilderLeadOverView(
-                              //       lead: lead,
-                              //       project: project,
-                              //     ),
-                              //   );
-                              // },
-                              onTap: () {
-                                log("BuilderLead Data ${lead.toJson()}");
 
-                                final project = controller.items.firstWhereOrNull((
-                                  prop,
-                                ) {
-                                  log(
-                                    "BuilderLead Data lead ${lead.propertyId}",
-                                  );
-                                  log("BuilderLead Data pro ${prop.id}");
-                                  return prop.id == lead.propertyId;
-                                });
+                                onTap: () async {
+                                  try {
+                                    log("String builderLead Data ${lead.toJson()}");
 
-                                if (project == null) {
-                                  Get.snackbar(
-                                    "Project not found",
-                                    "This project is no longer available",
-                                    snackPosition: SnackPosition.BOTTOM,
-                                  );
-                                  return;
-                                }
+                                    // Safely find the project
+                                    final project = controller.items.firstWhere(
+                                          (prop) => prop.id == lead.propertyId,
+                                      orElse: () {
+                                        throw Exception("Project not found for propertyId: ${lead.propertyId}");
+                                      },
+                                    );
 
-                                Get.to(
-                                  () => BuilderLeadOverView(
-                                    lead: lead,
-                                    project: project,
-                                  ),
-                                );
-                              },
+                                    // Get lead ID
+                                    leadVisitController.getLeadId(lead.id);
 
-                              isCompact:
+                                    // Fetch full lead detail
+                                    await leadController.getLeadDetailByID(lead.id ?? '');
+
+                                    // Handle new lead data
+                                    final newLead = leadController.newUpdatedLeadModel.value;
+                                    if (newLead != null) {
+                                      // Set inquiry ID
+                                      final inquiryId = int.tryParse(newLead.inquiryId ?? '0') ?? 0;
+                                      propertyInquiryController.setLeadInquiryId(inquiryId);
+
+                                      log('Inquiry ID set: ${propertyInquiryController.items.map((e) => e.toMap())}');
+                                    } else {
+                                      log('Warning: newUpdatedLeadModel is null for leadId: ${lead.id}');
+                                    }
+
+                                    // Navigate to BuilderLeadOverView
+                                    await Get.to(
+                                          () => BuilderLeadOverView(
+                                        lead: lead,
+                                        project: project,
+                                      ),
+                                    );
+                                  } catch (e, stackTrace) {
+                                    log("❌ Error in onTap: $e");
+                                    log("StackTrace: $stackTrace");
+                                    Get.snackbar(
+                                      "Error",
+                                      "Something went wrong while opening lead details.",
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.red.withOpacity(0.8),
+                                      colorText: Colors.white,
+                                    );
+                                  }
+                                },
+                                isCompact:
                                   MediaQuery.of(context).size.width < 600,
                               showDataMasking: false,
                               onView: () {

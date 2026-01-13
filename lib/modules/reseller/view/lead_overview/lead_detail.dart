@@ -481,11 +481,13 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               );
               leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
                 selectedInquiry.propertyId ?? '',
+               buyerID:  selectedInquiry.userId??'',
               );
               log(
                 'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
               );
             }
+
             Get.to(
               () => LeadNegotiablePriceScreen(
                 controller: leadPropertyNegotiablePriceController,
@@ -515,6 +517,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               );
               leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
                 selectedInquiry.propertyId ?? '',
+              buyerID:   selectedInquiry.userId??'',
               );
               log(
                 'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',

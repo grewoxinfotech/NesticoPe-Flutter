@@ -445,7 +445,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                   color: ColorRes.primary.withOpacity(0.2),
                 ),
                 child: Text(
-                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data.propertyMetrics.totalProperties ?? 0)}',
+                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data?.propertyMetrics?.totalProperties ?? 0)}',
 
                   style: TextStyle(
                     color: ColorRes.primary,
@@ -533,7 +533,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                   color: ColorRes.primary.withOpacity(0.2),
                 ),
                 child: Text(
-                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data.propertyMetrics.totalProperties ?? 0)}',
+                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data?.propertyMetrics?.totalProperties ?? 0)}',
 
                   style: TextStyle(
                     color: ColorRes.primary,
@@ -628,7 +628,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                   color: ColorRes.primary.withOpacity(0.2),
                 ),
                 child: Text(
-                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data.leadAnalytics.totalLeads ?? 0)}',
+                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data?.leadAnalytics?.totalLeads ?? 0)}',
 
                   style: TextStyle(
                     color: ColorRes.primary,
@@ -650,8 +650,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       .overviewData
                       .value
                       ?.data
-                      .leadAnalytics
-                      .stageBreakdown,
+                      ?.leadAnalytics
+                      ?.stageBreakdown.toMap(),
             ),
           ),
         ],
@@ -705,7 +705,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                   color: ColorRes.primary.withOpacity(0.2),
                 ),
                 child: Text(
-                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data.leadAnalytics.totalLeads ?? 0)}',
+                  'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data?.leadAnalytics?.totalLeads ?? 0)}',
 
                   style: TextStyle(
                     color: ColorRes.primary,
@@ -728,8 +728,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       .overviewData
                       .value
                       ?.data
-                      .leadAnalytics
-                      .sourceDistribution ??
+                      ?.leadAnalytics
+                      ?.sourceDistribution.toMap() ??
                   {},
             ),
           ),
@@ -772,19 +772,19 @@ class OverViewCard extends StatelessWidget {
             ),
             buildMetricCard(
               'Total Revenue',
-              '${Formatter.formatPrice(data.financialMetrics.totalRevenue)}',
+              '${Formatter.formatPrice(data?.financialMetrics?.totalRevenue??0)}',
               Icons.currency_rupee_outlined,
               ColorRes.green,
             ),
             buildMetricCard(
               'Total Leads',
-              '${data?.leadAnalytics.totalLeads}',
+              '${data?.leadAnalytics?.totalLeads}',
               Icons.person_add_alt_1,
               ColorRes.orangeColor,
             ),
             buildMetricCard(
               'Total Visits',
-              '${data?.engagementMetrics.totalVisits}',
+              '${data?.engagementMetrics?.totalVisits}',
               Icons.add_chart,
               ColorRes.purpleColor,
             ),
@@ -1560,7 +1560,7 @@ class CustomerSupportCard extends StatelessWidget {
 
 Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
   final leadsTrend =
-      overviewController.overviewData.value?.data.leadAnalytics.leadsTimeline
+      overviewController.overviewData.value?.data?.leadAnalytics?.leadsTimeline
           ?.map<Map<String, dynamic>>(
             (e) => {"month": e.month ?? '', "leads": e.count ?? 0},
           )
@@ -1664,7 +1664,7 @@ Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
 
 Widget buildSellerCommissionGraph(SellerOverviewController overviewController) {
   final leadsTrend =
-      overviewController.overviewData.value?.data.propertyMetrics.viewsHistory
+      overviewController.overviewData.value?.data?.propertyMetrics?.viewsHistory
           .map<Map<String, dynamic>>(
             (e) => {"month": e.month ?? '', "views": e.views ?? 0},
           )
@@ -1732,7 +1732,7 @@ Widget buildSellerCommissionGraph(SellerOverviewController overviewController) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Property Views',
+                    'Project Views',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(

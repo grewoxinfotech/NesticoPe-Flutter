@@ -35,7 +35,7 @@ class EntityActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SharePropertyController propertyShareController=Get.find<SharePropertyController>();
+    final SharePropertyController propertyShareController=Get.put(SharePropertyController());
     return Row(
       children: [
         // ------------------ COMPARE BUTTON ------------------

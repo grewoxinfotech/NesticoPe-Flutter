@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_project_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractot_employee_controller.dart';
@@ -210,6 +211,8 @@ Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.
                   "Completed At",
                   _formatDate(project.completedAt),
                 ),
+                _buildTimelineRow("Progress", project.progress.toString()),
+                _buildTimelineRow("Price", Formatter.formatPrice(num.tryParse(project?.projectPrice??'') ?? 0)),
                 const SizedBox(height: 10),
 
                 // Client Details

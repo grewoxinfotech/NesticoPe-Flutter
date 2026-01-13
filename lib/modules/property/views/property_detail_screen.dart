@@ -4561,6 +4561,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                           email,
                                           phone,
                                           currentProperty.id ?? '',
+                                          currentProperty.listingType?.toLowerCase().replaceAll(" ", "_")??'',
+                                          "property"
                                         );
                                       } catch (e, s) {
                                         debugPrint(
@@ -4685,6 +4687,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   top: 16,
                                 ),
                                 child: ContactOwnerBottom(
+                                  isProject: 'property',
                                   pgRoomData:
                                       currentProperty
                                           .propertyDetails
@@ -4746,6 +4749,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     date,
                                     time,
                                     roomInfo,
+                                      selectedVariant
                                   ) async {
                                     final inquiry = {
                                       "name": name ?? "",
@@ -4832,6 +4836,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     String email,
     String phone,
     String propertyID,
+      String propertyType,
+      String type,
   ) {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -5003,7 +5009,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 "phone": phone ?? "",
                                 "email": email ?? "",
                                 "agreeToContact": true,
-                                "meta": {"inquiryType": "offer_request"},
+\
+                                "meta": {
+                                  "inquiryType": "$propertyType",
+                                  "type": "$type",
+                                },
+
                               };
 
                               print('Submitting inquiry: ${inquiry}');

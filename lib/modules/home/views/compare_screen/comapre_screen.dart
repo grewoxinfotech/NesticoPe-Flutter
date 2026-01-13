@@ -369,6 +369,9 @@ class PropertyCardForCompare extends StatelessWidget {
                                         displayName,
                                         email,
                                         phone, item.id ?? '',
+                                        item.listingType ?? '',
+                                        'property' ?? '',
+
                                           controller,
 
                                       );
@@ -440,6 +443,9 @@ void addInquiryFromApp(
     String email,
     String phone,
     String propertyID,
+    String propertyType,
+    String type,
+
     PropertyController controller,
     ) {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -608,12 +614,15 @@ void addInquiryFromApp(
                           if (_formKey.currentState!.validate()) {
                             // perform your submission logic here
                             final inquiry = {
+
                               "name": name ?? "",
                               "phone": phone ?? "",
                               "email": email ?? "",
                               "agreeToContact": true,
                               "meta": {
-                                "inquiryType": "contact_seller"
+                                "inquiryType": "${propertyType.toLowerCase().replaceAll(" ", "_")}",
+
+                                "type": "$type",
                               },
                             };
 

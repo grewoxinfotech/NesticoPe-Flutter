@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:intl/intl.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
@@ -43,6 +46,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +66,21 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
         if (items.isEmpty) {
           return const Center(child: Text('No negotiable prices found.'));
         }
+        final buyerIds = widget.controller.items
+            .map((item) => item.buyerId)
+            .whereType<String>() // removes null values safely
+            .toList();
+
+        // Log or debug
+        log("✅ Extracted Buyer IDs: $buyerIds");
+
+        // Optionally: fetch profiles for each buyer
+        for (final id in buyerIds) {
+
+          widget.controller.getTheVisitersProfile(id);
+        }
+
+
 
         return RefreshIndicator(
           onRefresh: widget.controller.refreshLead,
@@ -71,7 +90,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
-              widget.controller.getTheVisitersProfile(item.buyerId ?? '');
+
               return _buildNegotiableCard(item, context, widget.controller);
             },
           ),
@@ -129,18 +148,22 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                           const Icon(Icons.account_circle_outlined,
                               size: 20, color: Colors.grey),
                           const SizedBox(width: 6),
+
                           Flexible(
-                            child: Text(
-                              controller.selectedVisit.value?.username ??
-                                  'John D.',
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.textColor,
-                                fontSize: AppFontSizes.bodySmall,
-                              ),
-                            ),
+                            child: Obx(() {
+                              final username = controller.buyerProfiles[item.buyerId]?.username ?? 'John D.';
+                              return Text(
+                                username,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.textColor,
+                                  fontSize: AppFontSizes.bodySmall,
+                                ),
+                              );
+                            }),
                           ),
+
                         ],
                       ),
                     ),
@@ -257,8 +280,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
             children: [
               Expanded(
                 child: Text(
-                  Formatter.formatPrice(
-                      num.tryParse(item.negotiablePrice ?? '0') ?? 0),
+      item.negotiablePrice.toString(),
                   style:  TextStyle(
                     fontSize: AppFontSizes.body,
                     fontWeight: AppFontWeights.semiBold,
@@ -269,7 +291,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
 
 
               Text(
-                "${Formatter.formatPrice(num.tryParse(item.previousNegotiablePrice ?? '0.0') ?? 0)}",
+                "${item.previousNegotiablePrice}",
                 style: TextStyle(
                   color: ColorRes.textColor,
                   fontWeight: AppFontWeights.medium,

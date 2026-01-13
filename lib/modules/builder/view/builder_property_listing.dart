@@ -35,10 +35,17 @@ class BuilderPropertyListing extends StatefulWidget {
 class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
   final RxList<String> selectedPropertyIds = <String>[].obs;
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+  late final ProjectWizardController controller;
+  late final ProjectController projectController;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller = Get.find<ProjectWizardController>(tag: "builder");
+    projectController = Get.put(ProjectController(), permanent: true);
+  }
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ProjectWizardController>(tag: "builder");
-    final projectController = Get.put(ProjectController());
     return Scaffold(
       backgroundColor: ColorRes.leadGreyColor.shade100,
       appBar: AppBar(
@@ -130,6 +137,7 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
       body: SafeArea(
         child: Column(
           children: [
+            /// ---------------- FILTER BAR ----------------
             Obx(() {
               return FilterChipsBar(
                 filters: selectedFilters.value,
@@ -143,52 +151,60 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                     Map<String, String>.from(selectedFilters),
                   );
                 },
-                priceRangeFormatter: (min, max) => formatPriceRange(min, max),
+                priceRangeFormatter: formatPriceRange,
               );
             }),
+
+            /// ---------------- PROJECT LIST ----------------
             Expanded(
               child: Obx(() {
-                if (controller.isLoading.value && controller.items.isEmpty) {
+                final isLoading = controller.isLoading.value;
+                final items = controller.items;
+
+                if (isLoading && items.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (!controller.isLoading.value && controller.items.isEmpty) {
-                  return const Center(child: Text('No projects found'));
+                if (!isLoading && items.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No projects found',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: ColorRes.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
                 }
 
-                return ListView.builder(
-                  itemCount: controller.items.length,
+                return ListView.separated(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: items.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
-                    final data = controller.items[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: GestureDetector(
-                        onTap: () {
-                          log("Project Item Tapped: ${data.toJson()}");
+                    final data = items[index];
 
-                          Get.to(() => ProjectDetailsScreen(projectItem: data));
-                        },
-                        child: BuilderProjectCard(
-                          project: data,
-                          developersName:
-                              data.projectContactInfo?.name ?? 'Unknown',
-                          imageUrl:
-                              (data.mediaGallery?.images?.isNotEmpty ?? false)
-                                  ? data.mediaGallery!.images.first
-                                  : IMGRes.home3,
-                          projectName:
-                              (data.projectName ?? '').isNotEmpty
-                                  ? data.projectName!
-                                  : 'N/A',
-                          location:
-                              (data.address ?? '').isNotEmpty
-                                  ? data.address!
-                                  : 'Not specified',
-                          price: data.getPriceRange(),
-                          propertySize:
-                              data.projectSize?.totalBuildings?.toString() ??
-                              '',
-                        ),
+                    return GestureDetector(
+                      onTap: () {
+                        log("Project Item Tapped: ${data.toJson()}");
+                        Get.to(() => ProjectDetailsScreen(projectItem: data,isBuilder: true,));
+                      },
+                      child: BuilderProjectCard(
+                        project: data,
+                        developersName: data.projectContactInfo?.name ?? 'Unknown',
+                        imageUrl: (data.mediaGallery?.images?.isNotEmpty ?? false)
+                            ? data.mediaGallery!.images.first
+                            : IMGRes.home3,
+                        projectName: (data.projectName ?? '').isNotEmpty
+                            ? data.projectName!
+                            : 'N/A',
+                        location: (data.address ?? '').isNotEmpty
+                            ? data.address!
+                            : 'Not specified',
+                        price: data.getPriceRange(),
+                        propertySize:
+                        data.projectSize?.totalBuildings?.toString() ?? '',
                       ),
                     );
                   },
@@ -198,6 +214,7 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
           ],
         ),
       ),
+
     );
   }
 }
@@ -708,12 +725,16 @@ class BuilderProjectCard extends StatelessWidget {
                                           color: ColorRes.blueColor[700],
                                         ),
                                         const SizedBox(width: 4),
-                                        Text(
-                                          configText.split(",").first,
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.extraSmall,
-                                            color: ColorRes.blueColor[700],
-                                            fontWeight: AppFontWeights.semiBold,
+                                        SizedBox(
+                                          width: 50,
+                                          child: Text(
+                                            configText.split(",").first,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.extraSmall,
+                                              color: ColorRes.blueColor[700],
+                                              fontWeight: AppFontWeights.semiBold,
+                                            ),
                                           ),
                                         ),
                                       ],

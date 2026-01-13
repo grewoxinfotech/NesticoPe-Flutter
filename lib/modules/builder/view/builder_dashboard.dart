@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -19,6 +21,7 @@ import '../../seller/controllers/seller_overview_controller.dart';
 import '../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../seller/module/seller_home_screen/views/property_overview_screen.dart';
 import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
+import '../../seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
 import '../controller/builder_form_controller.dart';
 import 'builder_form_screen.dart';
 
@@ -77,197 +80,455 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
           ),
         ),
       ),
-      child: Column(
-        children: [
-          Obx(() {
-            final overview = overviewController.overviewData.value;
-            if (controller.isLoading.value && controller.items.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      child: Obx(() {
+        log('UI Obx rebuilding - isLoading: ${overviewController.isLoading.value}, overviewData: ${overviewController.overviewData.value != null ? "HAS DATA" : "NULL"}');
 
-            if (overviewController.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        // Show loading indicator
+        if (overviewController.isLoading.value) {
+          log('Showing loading indicator');
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        // Get overview data
+        final overview = overviewController.overviewData.value;
+        log('overview variable: ${overview != null ? "HAS DATA" : "NULL"}');
 
-            return Column(
+        // Show empty state if no data
+        if (!overviewController.isLoading.value && overview == null) {
+          log('Showing empty state');
+          return RefreshIndicator(
+            onRefresh: overviewController.refreshSellerDashboard,
+            color: ColorRes.primary,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "No Dashboard Data available",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.body,
+                          color: ColorRes.textSecondary,
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          log('Retry button pressed');
+                          overviewController.getFetchSellerApi(
+                            overviewController.selectedGraphYear.value,
+                          );
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
+        log('Showing main content');
+
+        if(overview == null){
+          return SizedBox.shrink();
+        }
+
+        // Main content
+        return RefreshIndicator(
+          onRefresh: overviewController.refreshSellerDashboard,
+          color: ColorRes.primary,
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Overview",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                    _buildYearDropdown(overviewController),
+                  ],
+                ),
+                const SizedBox(height: 10),
                 OverBuilderViewCard(
                   property: controller.items,
                   overview: overview ?? SellerInsightsModel.fromJson({}),
                 ),
                 const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    children: [
+                      Obx(() => buildSellerLeadGraph(overviewController)),
+                      const SizedBox(height: 12),
+                      Obx(() => buildSellerCommissionGraph(overviewController)),
+                      // const SizedBox(height: 20),
+                      const SizedBox(height: 12),
+                      Obx(() =>  buildProjectDistributionGraph(overviewController)),
+                      const SizedBox(height: 12),
+                      Obx(() =>  buildProjectLeadSourceDistributionGraph(overviewController)),
+                      const SizedBox(height: 12),
+                      // const SizedBox(height: 12),
+                      leadBuilderLifecycleFunnel(overviewController),
+                    ],
+                  ),
+                ),
               ],
-            );
-          }),
-          Obx(() => buildSellerLeadGraph(overviewController)),
-          const SizedBox(height: 20),
-          Obx(() => buildSellerCommissionGraph(overviewController)),
-          const SizedBox(height: 20),
-        ],
-      ),
+            ),
+          ),
+        );
+      }),
+      // child: Column(
+      //   children: [
+      //     Obx(() {
+      //       final overview = overviewController.overviewData.value;
+      //       if (controller.isLoading.value && controller.items.isEmpty) {
+      //         return const Center(child: CircularProgressIndicator());
+      //       }
+      //
+      //       if (overviewController.isLoading.value) {
+      //         return const Center(child: CircularProgressIndicator());
+      //       }
+      //
+      //       return Column(
+      //         crossAxisAlignment: CrossAxisAlignment.start,
+      //         children: [
+      //           Row(
+      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //             children: [
+      //               Text(
+      //                 "Overview",
+      //                 style: TextStyle(
+      //                   fontSize: AppFontSizes.medium,
+      //                   fontWeight: AppFontWeights.semiBold,
+      //                   color: ColorRes.textColor,
+      //                 ),
+      //               ),
+      //               _buildYearDropdown(overviewController),
+      //             ],
+      //           ),
+      //           const SizedBox(height: 10),
+      //           OverBuilderViewCard(
+      //             property: controller.items,
+      //             overview: overview ?? SellerInsightsModel.fromJson({}),
+      //           ),
+      //           const SizedBox(height: 20),
+      //         ],
+      //       );
+      //     }),
+      //     Obx(() => buildSellerLeadGraph(overviewController)),
+      //     const SizedBox(height: 12),
+      //     Obx(() => buildSellerCommissionGraph(overviewController)),
+      //     // const SizedBox(height: 20),
+      //     const SizedBox(height: 12),
+      //     Obx(() =>  buildProjectDistributionGraph(overviewController)),
+      //     const SizedBox(height: 12),
+      //     Obx(() =>  buildProjectLeadSourceDistributionGraph(overviewController)),
+      //     const SizedBox(height: 12),
+      //     // const SizedBox(height: 12),
+      //     leadBuilderLifecycleFunnel(overviewController),
+      //   ],
+      // ),
     );
   }
 }
-//class BuilderDashboard extends StatefulWidget {
-//   const BuilderDashboard({Key? key}) : super(key: key);
-//
-//   @override
-//   State<BuilderDashboard> createState() => _BuilderDashboardState();
-// }
-//
-// class _BuilderDashboardState extends State<BuilderDashboard> {
-//   final controller = Get.find<PropertyController>();
-//
-//   @override
-//   void initState() {
-//     loadPropertyBySeller();
-//     super.initState();
-//   }
-//
-//   Future<void> loadPropertyBySeller() async {
-//     final user = await SecureStorage.getUserData();
-//     if (user != null) {
-//       controller.applyFilter("created_by", user.user?.id.toString() ?? "");
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     Get.lazyPut(() => LeadController());
-//     Get.lazyPut(() => SellerOverviewController());
-//     final overviewController = Get.find<SellerOverviewController>();
-//
-//     return Scaffold(
-//       backgroundColor: ColorRes.white,
-//       appBar: AppBar(
-//         title: Text(
-//           'Dashboard',
-//           style: TextStyle(fontWeight: AppFontWeights.bold),
-//         ),
-//         backgroundColor: ColorRes.white,
-//         elevation: 0,
-//         automaticallyImplyLeading: false,
-//         actions: [
-//           TextButton(
-//             onPressed: () {
-//               Get.offAll(() => DashboardScreen());
-//             },
-//             child: Text('Switch To Buyer'),
-//           ),
-//         ],
-//       ),
-//       body: SingleChildScrollView(
-//         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             // Welcome Card
-//             Container(
-//               padding: const EdgeInsets.all(20),
-//               decoration: BoxDecoration(
-//                 color: ColorRes.primary,
-//                 borderRadius: BorderRadius.circular(16),
-//               ),
-//               child: Row(
-//                 children: [
-//                   Expanded(
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Text(
-//                           'Welcome Back!',
-//                           style: TextStyle(
-//                             fontSize: AppFontSizes.large,
-//                             fontWeight: AppFontWeights.bold,
-//                             color: ColorRes.white,
-//                           ),
-//                         ),
-//                         const SizedBox(height: 6),
-//                         Text(
-//                           'Manage your properties efficiently',
-//                           style: TextStyle(
-//                             fontSize: AppFontSizes.bodySmall,
-//                             color: ColorRes.white.withOpacity(0.9),
-//                           ),
-//                           maxLines: 2,
-//
-//                           overflow: TextOverflow.ellipsis,
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                   const SizedBox(width: 12),
-//                   Container(
-//                     padding: const EdgeInsets.all(12),
-//                     decoration: BoxDecoration(
-//                       color: ColorRes.white.withOpacity(0.2),
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     child: const Icon(
-//                       Icons.home_work_rounded,
-//                       size: 40,
-//                       color: ColorRes.white,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             const SizedBox(height: 20),
-//             Obx(() {
-//               final overview = overviewController.overviewData.value;
-//               if (controller.isLoading.value && controller.items.isEmpty) {
-//                 return const Center(child: CircularProgressIndicator());
-//               }
-//
-//               if (overviewController.isLoading.value) {
-//                 return const Center(child: CircularProgressIndicator());
-//               }
-//
-//               return Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   OverBuilderViewCard(
-//                     property: controller.items,
-//                     overview: overview ?? SellerInsightsModel.fromJson({}),
-//                   ),
-//                   const SizedBox(height: 20),
-//                 ],
-//               );
-//             }),
-//             Obx(() => buildSellerLeadGraph(overviewController)),
-//             const SizedBox(height: 20),
-//             Obx(() => buildSellerCommissionGraph(overviewController)),
-//             const SizedBox(height: 20),
-//
-//             // Recent Activities
-//           ],
-//         ),
-//       ),
-//
-//       floatingActionButton: FloatingActionButton.extended(
-//         onPressed: () {
-//           final controller = Get.put(
-//             ProjectWizardController(isBuilderView: false),
-//             tag: "builder",
-//           );
-//           controller.resetForm();
-//           Get.to(CreateProjectScreen());
-//           // Get.to(ProjectWizardView(),binding: BindingsBuilder(() {
-//           //     Get.put(ProjectWizardController());
-//           //   },));
-//         },
-//         label: Text(
-//           '+ Add Project',
-//           style: TextStyle(
-//             color: ColorRes.white,
-//             fontWeight: AppFontWeights.semiBold,
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+Widget _buildYearDropdown(SellerOverviewController overviewController) {
+  final baseYear = overviewController.createdUserYear.value;
+  final currentYear = DateTime.now().year;
+
+  final List<int> years = (baseYear == currentYear)
+      ? [currentYear]
+      : List.generate(
+    currentYear - baseYear + 1,
+        (index) => baseYear + index,
+  ).reversed.toList();
+
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: DropdownButtonHideUnderline(
+      child: DropdownButton<int>(
+        value: overviewController.selectedGraphYear.value,
+        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+        style: TextStyle(
+          color: ColorRes.textColor,
+          fontSize: AppFontSizes.medium,
+          fontWeight: AppFontWeights.medium,
+        ),
+        items: years.map((year) {
+          return DropdownMenuItem<int>(
+            value: year,
+            child: Text("$year"),
+          );
+        }).toList(),
+        onChanged: (value) {
+          if (value != null) {
+            log('Dropdown changed to: $value');
+            overviewController.updateLeadsYear(value);
+          }
+        },
+      ),
+    ),
+  );
+}
+Widget leadBuilderLifecycleFunnel(SellerOverviewController overviewController) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.area_chart_outlined, color: ColorRes.green, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lead Lifecycle Funnel',
+                    style: TextStyle(
+                      color: ColorRes.green,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: ColorRes.primary.withOpacity(0.2),
+              ),
+              child: Text(
+                'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data?.leadAnalytics?.totalLeads ?? 0)}',
+
+                style: TextStyle(
+                  color: ColorRes.primary,
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        // --- Chart section ---
+        SizedBox(
+          height: 350,
+          width: double.infinity,
+          child: LeadFunnelChart(
+            stageBreakdown:
+            overviewController
+                .overviewData
+                .value
+                ?.data
+                ?.leadAnalytics
+                ?.stageBreakdown.toMap(),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+Widget buildProjectLeadSourceDistributionGraph(
+    SellerOverviewController overviewController,
+    ) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.area_chart_outlined,
+              color: ColorRes.leadTealColor,
+              size: 24,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lead Source Distribution',
+                    style: TextStyle(
+                      color: ColorRes.leadTealColor,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: ColorRes.primary.withOpacity(0.2),
+              ),
+              child: Text(
+                'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data?.leadAnalytics?.totalLeads ?? 0)}',
+
+                style: TextStyle(
+                  color: ColorRes.primary,
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // --- Chart section ---
+        SizedBox(
+          height: 350,
+          width: double.infinity,
+          child: LeadSourceDistributionPieGraph(
+            breakdown:
+            overviewController
+                .overviewData
+                .value
+                ?.data
+                ?.leadAnalytics
+                ?.sourceDistribution.toMap() ??
+                {},
+          ),
+        ),
+      ],
+    ),
+  );
+}
+Widget buildProjectDistributionGraph(
+    SellerOverviewController overviewController,
+    ) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.area_chart_outlined, color: ColorRes.green, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Project Distribution',
+                    style: TextStyle(
+                      color: ColorRes.green,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: ColorRes.primary.withOpacity(0.2),
+              ),
+              child: Text(
+                'Total: ${Formatter.formatNumber(overviewController.overviewData.value?.data?.propertyMetrics?.totalProperties ?? 0)}',
+
+                style: TextStyle(
+                  color: ColorRes.primary,
+                  fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // --- Chart section ---
+        SizedBox(
+          height: 300,
+          width: double.infinity,
+          child: PropertyDistributionPieGraph(
+            breakdown: {
+              'active':
+              overviewController
+                  .overviewData
+                  .value
+                  ?.data
+                  ?.propertyMetrics
+                  ?.activeListings,
+              'pending':
+              overviewController
+                  .overviewData
+                  .value
+                  ?.data
+                  ?.propertyMetrics
+                  ?.pendingListings,
+              'rejected':
+              overviewController
+                  .overviewData
+                  .value
+                  ?.data
+                  ?.propertyMetrics
+                  ?.rejectedListings,
+            },
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
 class OverBuilderViewCard extends StatelessWidget {
   final List<Items> property;
@@ -295,26 +556,30 @@ class OverBuilderViewCard extends StatelessWidget {
           childAspectRatio: 1.5,
           children: [
             buildMetricCard(
-              'Total Properties',
-              data.propertyMetrics.totalProperties.toString() ?? '',
+              'Total Projects',
+              data?.propertyMetrics?.totalProperties.toString() ?? '',
               Icons.home_work,
               ColorRes.blueColor,
             ),
             buildMetricCard(
-              'Total Revenue',
-              '${Formatter.formatPrice(data.financialMetrics.totalRevenue)}',
+              'Total Project Views',
+              Formatter.formatNumber(
+                data?.propertyMetrics?.viewsHistory
+                    .map((e) => e.views)
+                    .fold<int>(0, (sum, item) => sum + item) ?? 0,
+              ),
               Icons.currency_rupee_outlined,
               ColorRes.green,
             ),
             buildMetricCard(
               'Total Leads',
-              '${data?.leadAnalytics.totalLeads}',
+              '${data?.leadAnalytics?.totalLeads}',
               Icons.person_add_alt_1,
               ColorRes.orangeColor,
             ),
             buildMetricCard(
               'Total Visits',
-              '${data?.engagementMetrics.totalVisits}',
+              '${data?.engagementMetrics?.totalVisits}',
               Icons.add_chart,
               ColorRes.purpleColor,
             ),
