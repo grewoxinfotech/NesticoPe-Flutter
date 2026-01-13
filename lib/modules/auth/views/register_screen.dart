@@ -441,15 +441,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       try {
         final data = {
-          "password": _passwordController.text.trim(),
-          "email": _emailController.text.trim(),
+          "username": _usernameController.text.trim(),
           "firstName": _firstNameController.text.trim(),
           "lastName": _lastNameController.text.trim(),
-          "address": _addressController.text.trim(),
-          "city": _cityController.text.trim(),
-          "state": _stateController.text.trim(),
-          "zip_code": _zipCodeController.text.trim(),
-          "username": _usernameController.text.trim(),
+          "email": _emailController.text.trim(),
+
+          "password": _passwordController.text.trim(),
+          // "address": _addressController.text.trim(),
+          // "city": _cityController.text.trim(),
+          // "state": _stateController.text.trim(),
+          // "zip_code": _zipCodeController.text.trim(),
         };
 
         final success = await authController.sellerRegister(
@@ -539,17 +540,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       try {
         final data = {
-          "password": _passwordController.text.trim(),
-          "email": _emailController.text.trim(),
-          "firstName": _firstNameController.text.trim(),
-          "lastName": _lastNameController.text.trim(),
-          "address": _addressController.text.trim(),
-          "city": _cityController.text.trim(),
-          "state": _stateController.text.trim(),
-          "zip_code": _zipCodeController.text.trim(),
           "username": _usernameController.text.trim(),
-          "contractorType": _contractorType ?? 'Labour',
+          "email": _emailController.text.trim(),
           "phone": _phoneController.text.trim(),
+          "contractorType": _contractorType ?? 'Labour',
+          "city": _cityController.text.trim(),
+          "password": _passwordController.text.trim(),
+          // "firstName": _firstNameController.text.trim(),
+          // "lastName": _lastNameController.text.trim(),
+          // "address": _addressController.text.trim(),
+          // "state": _stateController.text.trim(),
+          // "zip_code": _zipCodeController.text.trim(),
           "referralCode": _referralCodeController.text.trim(),
         };
 
@@ -560,8 +561,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // contractorType: _contractorType?.toLowerCase() ?? 'labour',
           data: data,
         );
-
-
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
       } finally {
@@ -682,6 +681,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
 
+                // if (_selectedRole == UserRole.buyer ||
+                //     _selectedRole == UserRole.contractor ||
+                //     _selectedRole == UserRole.reseller)...[
                 NesticoPeTextField(
                   title: "Username",
                   controller: _usernameController,
@@ -697,43 +699,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
 
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: NesticoPeTextField(
-                        title: "First Name",
-                        controller: _firstNameController,
-                        hintText: 'Enter First Name',
-                        prefixIcon: Icons.person_outline,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter first name';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: NesticoPeTextField(
-                        title: "Last Name",
-                        controller: _lastNameController,
-                        hintText: 'Enter Last Name',
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        prefixIcon: Icons.person_outline,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter last name';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
 
-                const SizedBox(height: 10),
+                // ],
+                if (_selectedRole == UserRole.seller) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: NesticoPeTextField(
+                          title: "First Name",
+                          controller: _firstNameController,
+                          hintText: 'Enter First Name',
+                          prefixIcon: Icons.person_outline,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter first name';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: NesticoPeTextField(
+                          title: "Last Name",
+                          controller: _lastNameController,
+                          hintText: 'Enter Last Name',
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          prefixIcon: Icons.person_outline,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter last name';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
+
                 NesticoPeTextField(
                   title: "Email Address",
                   controller: _emailController,
@@ -766,6 +772,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
 
                 const SizedBox(height: 10),
+
                 // if (_selectedRole == UserRole.contractor) ...[
                 //   Text(
                 //     "Contractor Type",
@@ -784,7 +791,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //   ),
                 //   const SizedBox(height: 10),
                 // ],
-
                 if (_selectedRole == UserRole.contractor)
                   CommonRadioGroup<String>(
                     title: "Contractor Type",
@@ -799,60 +805,63 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
 
                 // const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: NesticoPeTextField(
-                        hintText: 'Enter City',
-                        title: "City",
-                        controller: _cityController,
-                        prefixIcon: Icons.location_city_outlined,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                if (_selectedRole == UserRole.contractor) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: NesticoPeTextField(
+                          hintText: 'Enter City',
+                          title: "City",
+                          controller: _cityController,
+                          prefixIcon: Icons.location_city_outlined,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
 
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter city';
-                          }
-                          return null;
-                        },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter city';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: NesticoPeTextField(
-                        hintText: 'Enter State',
-                        title: "State",
-                        controller: _stateController,
-                        prefixIcon: Icons.map_outlined,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      // const SizedBox(width: 10),
+                      // Expanded(
+                      //   child: NesticoPeTextField(
+                      //     hintText: 'Enter State',
+                      //     title: "State",
+                      //     controller: _stateController,
+                      //     prefixIcon: Icons.map_outlined,
+                      //     autovalidateMode: AutovalidateMode.onUserInteraction,
+                      //
+                      //     validator: (value) {
+                      //       if (value == null || value.isEmpty) {
+                      //         return 'Please enter state';
+                      //       }
+                      //       return null;
+                      //     },
+                      //   ),
+                      // ),
+                    ],
+                  ),
 
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter state';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                  // const SizedBox(height: 10),
+                  // NesticoPeTextField(
+                  //   hintText: 'Enter Zip Code',
+                  //   title: "Zip Code",
+                  //   controller: _zipCodeController,
+                  //   prefixIcon: Icons.numbers_outlined,
+                  //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  //
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'Please enter zip code';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  const SizedBox(height: 10),
+                ],
 
-                // const SizedBox(height: 10),
-                // NesticoPeTextField(
-                //   hintText: 'Enter Zip Code',
-                //   title: "Zip Code",
-                //   controller: _zipCodeController,
-                //   prefixIcon: Icons.numbers_outlined,
-                //   autovalidateMode: AutovalidateMode.onUserInteraction,
-                //
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Please enter zip code';
-                //     }
-                //     return null;
-                //   },
-                // ),
-                const SizedBox(height: 10),
                 NesticoPeTextField(
                   hintText: 'Enter Password',
                   title: "Password",
@@ -1049,8 +1058,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 }
 
-
-
 class CommonRadioGroup<T> extends StatelessWidget {
   final String title;
   final List<T> options;
@@ -1084,17 +1091,18 @@ class CommonRadioGroup<T> extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Row(
-          children: options.map((option) {
-            return Padding(
-              padding: EdgeInsets.only(right: spacing),
-              child: CommonRadioOption<T>(
-                value: option,
-                groupValue: groupValue,
-                label: labelBuilder(option),
-                onChanged: onChanged,
-              ),
-            );
-          }).toList(),
+          children:
+              options.map((option) {
+                return Padding(
+                  padding: EdgeInsets.only(right: spacing),
+                  child: CommonRadioOption<T>(
+                    value: option,
+                    groupValue: groupValue,
+                    label: labelBuilder(option),
+                    onChanged: onChanged,
+                  ),
+                );
+              }).toList(),
         ),
         const SizedBox(height: 10),
       ],
@@ -1131,10 +1139,7 @@ class CommonRadioOption<T> extends StatelessWidget {
           activeColor: activeColor ?? ColorRes.primary,
           onChanged: onChanged,
         ),
-        Text(
-          label,
-          style: TextStyle(fontSize: fontSize),
-        ),
+        Text(label, style: TextStyle(fontSize: fontSize)),
       ],
     );
   }

@@ -13,6 +13,7 @@ import '../../builder/view/builder_main_screen.dart';
 import '../../contractor/view/contractor_main.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../home/views/select_city_screen/select_city_screen.dart';
+import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -50,72 +51,222 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
+  // Future<void> splash() async {
+  //   await Future.delayed(const Duration(seconds: 1));
+  //
+  //   try {
+  //     // Initialize user type (can be guest if not logged in)
+  //     await UserHelper.initUserType();
+  //
+  //     final isFirstTime = await SecureStorage.getFirstTime();
+  //
+  //     if (isFirstTime)
+  //       // Fetch login info from secure storage
+  //       final bool isLogin = await SecureStorage.getLoggedIn();
+  //     final String? token = await SecureStorage.getToken();
+  //     final String? selectedCity =
+  //         await SecureStorage.getSelectedCity(); // 🆕 store selected city locally
+  //     if (!isLogin) {
+  //       final data = await SecureStorage.getTermAndConditionValue();
+  //       log("Sjhdshuh $data");
+  //       bool isAcceptable = data == "true";
+  //       if (!isAcceptable) {
+  //         await SecureStorage.saveTermAndConditionValue(false.toString());
+  //       }
+  //     }
+  //
+  //     print(
+  //       "DEBUG >> isLogin=$isLogin, token=$token, role=${UserHelper.userType}, city=$selectedCity",
+  //     );
+  //
+  //     // 🔹 Handle invalid login state (logged in but token missing)
+  //     if (isLogin && (token == null || token.isEmpty)) {
+  //       await SecureStorage.clearAll();
+  //       UserHelper.clearUserType();
+  //     }
+  //
+  //     // 🔹 City selection logic
+  //     if (selectedCity == null || selectedCity.isEmpty) {
+  //       // Ask user to select city before going to dashboard
+  //       // final selected = "Surat";
+  //       final selected = await Get.to(() => SelectCityScreen());
+  //       print("Selected city: ${selected}");
+  //
+  //       if (selected != null) {
+  //         await SecureStorage.saveSelectedCity(selected ?? "");
+  //       }
+  //     }
+  //
+  //     // ✅ Continue to dashboard (guest or logged in)
+  //     Get.put(PropertyFavoriteController(), permanent: true);
+  //
+  //     if (UserHelper.isBuyer) {
+  //       Get.offAll(() => const DashboardScreen());
+  //       return;
+  //     }
+  //     if (UserHelper.isSellerOwner) {
+  //       Get.offAll(() => const SellerDashboardScreen());
+  //       return;
+  //     }
+  //     if (UserHelper.isSellerBuilder) {
+  //       Get.offAll(() => const BuilderMainScreen());
+  //       return;
+  //     }
+  //     if (UserHelper.isContractor) {
+  //       Get.offAll(() => const ContractorMainScreen());
+  //       return;
+  //     }
+  //     Get.offAll(() => const DashboardScreen());
+  //   } catch (e) {
+  //     print("❌ Error during splash init: $e");
+  //     Get.offAll(() => const LoginScreen());
+  //   }
+  // }
+
+  // Future<void> splash() async {
+  //   await Future.delayed(const Duration(seconds: 1));
+  //
+  //   try {
+  //     // Initialize user type (guest / buyer / seller etc.)
+  //     await UserHelper.initUserType();
+  //
+  //     // 🔹 FIRST TIME USER CHECK
+  //     final bool isFirstTimeUser = await SecureStorage.isFirstTimeUser();
+  //
+  //     if (isFirstTimeUser) {
+  //       await Get.offAll(() => const OnboardingScreen());
+  //       await SecureStorage.setAppLaunched();
+  //       return;
+  //     }
+  //
+  //     // 🔹 LOGIN STATE
+  //     final bool isLogin = await SecureStorage.getLoggedIn();
+  //     final String? token = await SecureStorage.getToken();
+  //     // final String? selectedCity = await SecureStorage.getSelectedCity();
+  //
+  //     // 🔹 Terms & Conditions (only for non-logged users)
+  //     if (!isLogin) {
+  //       final data = await SecureStorage.getTermAndConditionValue();
+  //       bool isAcceptable = data == "true";
+  //
+  //       if (!isAcceptable) {
+  //         await SecureStorage.saveTermAndConditionValue(false.toString());
+  //       }
+  //     }
+  //
+  //     // debugPrint(
+  //     //   "DEBUG >> isLogin=$isLogin, token=$token, role=${UserHelper.userType}, city=$selectedCity",
+  //     // );
+  //
+  //     // 🔹 Invalid login state fix
+  //     if (isLogin && (token == null || token.isEmpty)) {
+  //       await SecureStorage.clearAll();
+  //       UserHelper.clearUserType();
+  //     }
+  //
+  //     // 🔹 City selection logic
+  //     // if (selectedCity == null || selectedCity.isEmpty) {
+  //     //   final selected = await Get.to(() => SelectCityScreen());
+  //     //
+  //     //   if (selected != null) {
+  //     //     await SecureStorage.saveSelectedCity(selected);
+  //     //   }
+  //     // }
+  //
+  //     // 🔹 Controllers
+  //     Get.put(PropertyFavoriteController(), permanent: true);
+  //
+  //     // 🔹 Role-based navigation
+  //     if (UserHelper.isBuyer) {
+  //       Get.offAll(() => const DashboardScreen());
+  //       return;
+  //     }
+  //     if (UserHelper.isSellerOwner) {
+  //       Get.offAll(() => const SellerDashboardScreen());
+  //       return;
+  //     }
+  //     if (UserHelper.isSellerBuilder) {
+  //       Get.offAll(() => const BuilderMainScreen());
+  //       return;
+  //     }
+  //     if (UserHelper.isContractor) {
+  //       Get.offAll(() => const ContractorMainScreen());
+  //       return;
+  //     }
+  //
+  //     // Default fallback
+  //     Get.offAll(() => const DashboardScreen());
+  //   } catch (e) {
+  //     debugPrint("❌ Error during splash init: $e");
+  //     Get.offAll(() => const LoginScreen());
+  //   }
+  // }
+
   Future<void> splash() async {
     await Future.delayed(const Duration(seconds: 1));
 
     try {
-      // Initialize user type (can be guest if not logged in)
+      // Initialize user type (guest / buyer / seller etc.)
       await UserHelper.initUserType();
 
-      // Fetch login info from secure storage
-      final bool isLogin = await SecureStorage.getLoggedIn();
-      final String? token = await SecureStorage.getToken();
-      final String? selectedCity =
-          await SecureStorage.getSelectedCity(); // 🆕 store selected city locally
-      if (!isLogin) {
-        final data = await SecureStorage.getTermAndConditionValue();
-        log("Sjhdshuh $data");
-        bool isAcceptable = data == "true";
-        if (!isAcceptable) {
-          await SecureStorage.saveTermAndConditionValue(false.toString());
-        }
+      // 🔹 FIRST TIME USER CHECK
+      final bool isFirstTimeUser = await SecureStorage.isFirstTimeUser();
+
+      if (isFirstTimeUser) {
+        // Just go to onboarding - let it handle the rest
+        await Get.offAll(() => const OnboardingScreen());
+        return; // ✅ Stop here - onboarding will handle city selection
       }
 
-      print(
-        "DEBUG >> isLogin=$isLogin, token=$token, role=${UserHelper.userType}, city=$selectedCity",
-      );
+      // 🔹 LOGIN STATE
+      final bool isLogin = await SecureStorage.getLoggedIn();
+      final String? token = await SecureStorage.getToken();
 
-      // 🔹 Handle invalid login state (logged in but token missing)
+      // 🔹 Invalid login state fix
       if (isLogin && (token == null || token.isEmpty)) {
         await SecureStorage.clearAll();
         UserHelper.clearUserType();
+        await Get.offAll(() => const LoginScreen());
+        return;
       }
 
-      // 🔹 City selection logic
-      if (selectedCity == null || selectedCity.isEmpty) {
-        // Ask user to select city before going to dashboard
-        final selected = "Surat";
-        // final selected = await Get.to(() => SelectCityScreen());
-        print("Selected city: ${selected}");
+      // 🔹 Terms & Conditions (only for non-logged users)
+      if (!isLogin) {
+        final data = await SecureStorage.getTermAndConditionValue();
+        bool isAcceptable = data == "true";
 
-        if (selected != null) {
-          await SecureStorage.saveSelectedCity(selected ?? "");
+        if (!isAcceptable) {
+          await SecureStorage.saveTermAndConditionValue(false.toString());
+          // TODO: Show terms & conditions dialog/screen if needed
         }
       }
 
-      // ✅ Continue to dashboard (guest or logged in)
+      // 🔹 Controllers
       Get.put(PropertyFavoriteController(), permanent: true);
 
+      // 🔹 Role-based navigation
       if (UserHelper.isBuyer) {
-        Get.offAll(() => const DashboardScreen());
+        await Get.offAll(() => const DashboardScreen());
         return;
       }
       if (UserHelper.isSellerOwner) {
-        Get.offAll(() => const SellerDashboardScreen());
+        await Get.offAll(() => const SellerDashboardScreen());
         return;
       }
       if (UserHelper.isSellerBuilder) {
-        Get.offAll(() => const BuilderMainScreen());
+        await Get.offAll(() => const BuilderMainScreen());
         return;
       }
       if (UserHelper.isContractor) {
-        Get.offAll(() => const ContractorMainScreen());
+        await Get.offAll(() => const ContractorMainScreen());
         return;
       }
-      Get.offAll(() => const DashboardScreen());
+
+      // Default fallback
+      await Get.offAll(() => const DashboardScreen());
     } catch (e) {
-      print("❌ Error during splash init: $e");
-      Get.offAll(() => const LoginScreen());
+      debugPrint("❌ Error during splash init: $e");
+      await Get.offAll(() => const LoginScreen());
     }
   }
 

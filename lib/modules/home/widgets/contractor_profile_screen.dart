@@ -42,6 +42,13 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
       ContractorServiceController(contractorId: contractor.userId),
     );
 
+    final displayName = getDisplayName(
+      contractorFirstName:
+          contractorServiceController.userData.value?.firstName,
+      contractorLastName: contractorServiceController.userData.value?.lastName,
+      userName: contractor.username,
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -88,18 +95,22 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               // Avatar
-                              Container(
-                                height: 60,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary.withOpacity(0.3),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.build,
-                                  size: 32,
-                                  color: ColorRes.primary,
-                                ),
+                              // Container(
+                              //   height: 60,
+                              //   width: 60,
+                              //   decoration: BoxDecoration(
+                              //     color: ColorRes.primary.withOpacity(0.3),
+                              //     shape: BoxShape.circle,
+                              //   ),
+                              //   child: const Icon(
+                              //     Icons.build,
+                              //     size: 32,
+                              //     color: ColorRes.primary,
+                              //   ),
+                              // ),
+                              buildProfileAvatar(
+                                displayName: displayName,
+                                profilePic: contractor.imageUrl,
                               ),
                               const SizedBox(width: 16),
 
@@ -109,9 +120,9 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Name (only if available)
-                                    if (contractor.username.isNotEmpty)
+                                    if (displayName.isNotEmpty)
                                       Text(
-                                        contractor.username,
+                                        displayName,
                                         style: TextStyle(
                                           fontSize: AppFontSizes.body,
                                           fontWeight: AppFontWeights.semiBold,
@@ -226,16 +237,67 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 12),
 
                   // ---------------- CONTACT BUTTON ----------------
-                  Obx(
-                    () => SizedBox(
+                  // Obx(
+                  //   () => SizedBox(
+                  //     width: double.infinity,
+                  //     child: ElevatedButton(
+                  //       onPressed: () {
+                  //         if (UserHelper.isGuest) {
+                  //           Get.to(() => LoginScreen());
+                  //         }
+                  //
+                  //         if (isListSelectable.value) {
+                  //           if (contractorServiceController
+                  //               .selectedItems
+                  //               .isEmpty) {
+                  //             Get.snackbar(
+                  //               "No Service Selected",
+                  //               "Please select at least one service to continue",
+                  //               snackPosition: SnackPosition.BOTTOM,
+                  //             );
+                  //             return;
+                  //           }
+                  //           contactContractor();
+                  //           return;
+                  //         }
+                  //
+                  //         isListSelectable.value = true;
+                  //       },
+                  //       style: ElevatedButton.styleFrom(
+                  //         backgroundColor: ColorRes.primary,
+                  //         padding: const EdgeInsets.symmetric(vertical: 14),
+                  //         shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(10),
+                  //         ),
+                  //       ),
+                  //       child: Text(
+                  //         UserHelper.isGuest
+                  //             ? "Login to Contact"
+                  //             : isListSelectable.value
+                  //             ? "Contact Now"
+                  //             : "Select Services",
+                  //         style: TextStyle(
+                  //           fontSize: AppFontSizes.bodySmall,
+                  //           fontWeight: AppFontWeights.semiBold,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  Obx(() {
+                    final bool isSelectable = isListSelectable.value;
+                    final bool isGuest = UserHelper.isGuest;
+
+                    return SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          if (UserHelper.isGuest) {
+                          if (isGuest) {
                             Get.to(() => LoginScreen());
+                            return;
                           }
 
-                          if (isListSelectable.value) {
+                          if (isSelectable) {
                             if (contractorServiceController
                                 .selectedItems
                                 .isEmpty) {
@@ -247,10 +309,9 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                               return;
                             }
                             contactContractor();
-                            return;
+                          } else {
+                            isListSelectable.value = true;
                           }
-
-                          isListSelectable.value = true;
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,
@@ -260,9 +321,9 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          UserHelper.isGuest
+                          isGuest
                               ? "Login to Contact"
-                              : isListSelectable.value
+                              : isSelectable
                               ? "Contact Now"
                               : "Select Services",
                           style: TextStyle(
@@ -271,8 +332,8 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
 
                   const SizedBox(height: 12),
 
@@ -442,6 +503,52 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  String getDisplayName({
+    String? contractorFirstName,
+    String? contractorLastName,
+    String? userName,
+  }) {
+    final fullName =
+        '${contractorFirstName ?? ''} ${contractorLastName ?? ''}'.trim();
+
+    print("Full Name: $fullName");
+
+    if (fullName.isNotEmpty) {
+      return fullName;
+    }
+
+    return userName?.trim().isNotEmpty == true ? userName!.trim() : 'User';
+  }
+
+  String getAvatarLetter(String name) {
+    return name.isNotEmpty ? name[0].toUpperCase() : '?';
+  }
+
+  Widget buildProfileAvatar({
+    required String displayName,
+    String? profilePic,
+    double radius = 22,
+  }) {
+    final hasImage = profilePic != null && profilePic.isNotEmpty;
+
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: Colors.grey.shade300,
+      backgroundImage: hasImage ? NetworkImage(profilePic) : null,
+      child:
+          hasImage
+              ? null
+              : Text(
+                getAvatarLetter(displayName),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
     );
   }
 

@@ -68,6 +68,7 @@ class Pagination {
     'fetchedAll': fetchedAll,
   };
 }
+
 class Contractor {
   final String id;
   final String userId;
@@ -76,10 +77,12 @@ class Contractor {
   final int totalServices;
   final int activeServices;
   String username;
-   int totalExperience;
+  String firstName;
+  String lastName;
+  int totalExperience;
   final String imageUrl;
-   ProjectStats projectStats;
-   final String? contractorType;
+  ProjectStats projectStats;
+  final String? contractorType;
   final Subscription subscription;
 
   Contractor({
@@ -91,9 +94,11 @@ class Contractor {
     required this.totalServices,
     required this.activeServices,
     required this.username,
+    required this.firstName,
+    required this.lastName,
     required this.totalExperience,
     required this.projectStats,
-     this.contractorType,
+    this.contractorType,
     required this.subscription,
   });
 
@@ -107,11 +112,12 @@ class Contractor {
       totalServices: json['totalServices'] ?? 0,
       activeServices: json['activeServices'] ?? 0,
       username: json['username'] ?? '',
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
       totalExperience: json['totalExperience'] ?? 0,
       projectStats: ProjectStats.fromJson(json['projectData'] ?? {}),
       subscription: Subscription.fromJson(json['subscription'] ?? {}),
       contractorType: json['contractorType'] ?? null,
-
     );
   }
 
@@ -125,6 +131,8 @@ class Contractor {
       'totalServices': totalServices,
       'activeServices': activeServices,
       'username': username,
+      'firstName': firstName,
+      'lastName': lastName,
       'totalExperience': totalExperience,
       'projectData': projectStats.toJson(),
       'subscription': subscription.toJson(),
@@ -134,11 +142,11 @@ class Contractor {
 }
 
 class ProjectStats {
-   int totalProjects;
-   int pendingProjects;
-   int inProgressProjects;
-   int completedProjects;
-   int cancelledProjects;
+  int totalProjects;
+  int pendingProjects;
+  int inProgressProjects;
+  int completedProjects;
+  int cancelledProjects;
 
   ProjectStats({
     required this.totalProjects,
@@ -196,7 +204,6 @@ class Subscription {
     };
   }
 }
-
 
 class TypeConverter {
   static int? parseInt(dynamic value) {

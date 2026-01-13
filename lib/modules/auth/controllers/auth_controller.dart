@@ -231,7 +231,7 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       errorMessage.value = e.toString();
-    }finally {
+    } finally {
       isLoading.value = false;
     }
   }

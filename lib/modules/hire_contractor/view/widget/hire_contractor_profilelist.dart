@@ -532,6 +532,8 @@ class _AllContractorCardState extends State<AllContractorCard> {
         log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
 
         contractorProfile?.username = widget.data.user.username ?? '';
+        contractorProfile?.firstName = widget.data.user.firstName ?? '';
+        contractorProfile?.lastName = widget.data.user.lastName ?? '';
         contractorProfile?.totalExperience =
             widget.data.user.totalExperience ?? 0;
         // contractorProfile?.projectStats.totalProjects = data.profile.??  0;
@@ -660,7 +662,8 @@ class _AllContractorCardState extends State<AllContractorCard> {
                   children: [
                     Row(
                       children: List.generate(5, (index) {
-                        final rating = double.tryParse(profile.overallRating) ?? 0;
+                        final rating =
+                            double.tryParse(profile.overallRating) ?? 0;
                         if (index < rating.floor()) {
                           return const Icon(
                             Icons.star,
@@ -704,23 +707,30 @@ class _AllContractorCardState extends State<AllContractorCard> {
                     ),
                   ],
                 ),
-                if(profile.contractorType != null && profile.contractorType!.isNotEmpty)...[
+                if (profile.contractorType != null &&
+                    profile.contractorType!.isNotEmpty) ...[
                   Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: ColorRes.primary.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: ColorRes.primary.withOpacity(0.3)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: ColorRes.primary.withOpacity(0.3),
                       ),
-                      child: Text(
-                          profile.contractorType!,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.primary,
-                          ))
-                  )
-                ]
+                    ),
+                    child: Text(
+                      profile.contractorType!,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        fontWeight: AppFontWeights.medium,
+                        color: ColorRes.primary,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
 

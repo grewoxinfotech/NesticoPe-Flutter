@@ -2435,6 +2435,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _initializeControllers() {
     // Initialize all controllers
     propertyController = Get.put(PropertyController());
+    Get.lazyPut(() => PropertyFavoriteController());
     favoriteController = Get.find<PropertyFavoriteController>();
     newsController = Get.put(NewsController());
     trendingCityController = Get.put(TrendingCityController());

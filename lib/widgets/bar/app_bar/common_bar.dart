@@ -27,12 +27,13 @@ class CommonNesticoPeAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final canPop = Navigator.of(context).canPop();
 
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: ColorRes.white, // Background color of status bar
-        statusBarIconBrightness: Brightness.dark, // Android
-        statusBarBrightness: Brightness.light, // iOS
+        statusBarColor: ColorRes.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
       ),
     );
 
@@ -42,18 +43,24 @@ class CommonNesticoPeAppBar extends StatelessWidget
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Back arrow or spacer
-            if (showBackArrow)
+            // ✅ Back arrow ONLY if allowed
+            if (showBackArrow && canPop)
               IconButton(
                 icon: Icon(
                   leadingIcon ?? Icons.arrow_back,
-                  color: ColorRes.primary, // Themed icon color
+                  color: ColorRes.primary,
                 ),
-                onPressed: onBack ?? () => Navigator.of(context).pop(),
+                onPressed:
+                    onBack ??
+                    () {
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      }
+                    },
                 tooltip: 'Back',
               )
             else
-              const SizedBox(width: 48),
+              const SizedBox(width: 48), // keep title centered
 
             const SizedBox(width: 4),
 
@@ -65,13 +72,12 @@ class CommonNesticoPeAppBar extends StatelessWidget
                   fontSize: AppFontSizes.large,
                   fontWeight: AppFontWeights.semiBold,
                 ),
-
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
 
-            // Right-aligned actions
+            // Actions
             if (actions != null)
               Row(
                 mainAxisSize: MainAxisSize.min,

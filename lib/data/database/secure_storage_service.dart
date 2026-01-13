@@ -18,6 +18,19 @@ class SecureStorage {
   static const String _keyUpdatePhoneToken = 'updatePhoneToken';
   static const String _termsAndConditionApply = "termAndConditionApply";
   static const String _keyAadharVerified = 'isAadharVerified';
+  static const String _keyHasLaunched = 'hasLaunchedApp';
+
+  /// Mark that the app has been opened once
+  static Future<void> setAppLaunched() async {
+    await _storage.write(key: _keyHasLaunched, value: 'true');
+  }
+
+  /// TRUE → First time user
+  /// FALSE → App opened before
+  static Future<bool> isFirstTimeUser() async {
+    final value = await _storage.read(key: _keyHasLaunched);
+    return value == null;
+  }
 
   // Token
   static Future<void> saveToken(String token) async {
