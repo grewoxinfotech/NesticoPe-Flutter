@@ -144,6 +144,7 @@ class SecureStorage {
   // Clear everything
   static Future<void> clearAll() async {
     await _storage.deleteAll();
+    await _storage.write(key: _keyHasLaunched, value: 'true');
   }
 
   static Future<void> updateAadharVerified({required bool value}) async {

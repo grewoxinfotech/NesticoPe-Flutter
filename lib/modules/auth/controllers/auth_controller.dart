@@ -599,6 +599,6 @@ class AuthController extends GetxController {
     currentUser.value = null;
     authState.value = AuthState.unauthenticated;
     // Get.offAll(() => const LoginScreen());
-    Get.offAll(() => const SplashScreen());
+    Get.offAll(() => const DashboardScreen());
   }
 }
